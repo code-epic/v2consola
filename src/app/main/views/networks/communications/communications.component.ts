@@ -3,19 +3,22 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
-import { CoreTranslationService } from '@core/services/translation.service';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 
-import { Comunicaciones, ComunicationsService, IComunicaciones } from '@services/networks/comunications.service';
-
 import { WsocketsService } from '@services/websockets/wsockets.service';
+import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectConfig } from '@ng-select/ng-select';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UtilService } from '@services/util/util.service';
+
 
 
 @Component({
   selector: 'app-communications',
   templateUrl: './communications.component.html',
   styleUrls: ['./communications.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  providers: [NgbModalConfig, NgbModal]
 })
 
 export class CommunicationsComponent implements OnInit {
@@ -46,31 +49,13 @@ export class CommunicationsComponent implements OnInit {
     logs : false
   };
 
-  public Conn : Comunicaciones = {
-    id : '',
-    host : '',
-    mac : '',
-    tipo : '',
-    descripcion : '',
-    estatus : false,
-  }
-
-  public IConn : IComunicaciones = {
-    coleccion: 'sys-conection',
-    objeto : this.Conn,
-  }
 
   // Private
   private _unsubscribeAll: Subject<any>;
-  private tempData = [];
-
-  host: string = ''
-  mac: string = ''
-  descripcion: string = ''
-  identificador: string = ''
-  estatus = 0
-  rowData: any;
-  dispositivo: string = '0'
+ 
+  public ListaComunicaciones = []
+  public tempData = [];
+  public rowData = [];
 
   public sDispositivo
 
@@ -84,33 +69,54 @@ export class CommunicationsComponent implements OnInit {
     {id:'CIP', descripcion: 'CAMARAS IP'},
   ]
 
+  public status = [
+    {id:true, name: 'ACTIVO'},
+    {id:false, name: 'INACTIVO'},
+  ]
+
 
   // public
+  public submitted = false;
+  public loginForm: UntypedFormGroup;
   public contentHeader: object;
-  public rows: any;
   public selected = [];
   public kitchenSinkRows: any;
   public basicSelectedOption: number = 10;
   public ColumnMode = ColumnMode;
-  public expanded = {};
-  public editingName = {};
-  public editingStatus = {};
-  public editingAge = {};
-  public editingSalary = {};
-  public chkBoxSelected = [];
   public SelectionType = SelectionType;
-  public exportCSVData;
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @ViewChild('tableRowDetails') tableRowDetails: any;
 
 
   constructor(
     private apiService : ApiService,
+    private modalService: NgbModal,
     private ws : WsocketsService,
-  ) { }
+    private config: NgSelectConfig,
+    private _formBuilder: UntypedFormBuilder,
+    private utilservice: UtilService,
+
+  ) {
+    this.config.notFoundText = 'Custom not found';
+      this.config.appendTo = 'body';
+      this.config.bindValue = 'value';
+  }
+
+    // convenience getter for easy access to form fields
+    get f() {
+      return this.loginForm.controls;
+    }
 
   async ngOnInit() {
+
+    this.loginForm = this._formBuilder.group({
+      host: ['', [Validators.required]],
+      mac: ['', [Validators.required]],
+      descripcion: ['', [Validators.required]],
+      id: ['', [Validators.required]],
+      tipo: [undefined],
+      estatus: [undefined],
+    });
 
     if(this.sDispositivo == undefined){
       await this.CargarLista('SRV')
@@ -118,7 +124,7 @@ export class CommunicationsComponent implements OnInit {
 
      // content header
      this.contentHeader = {
-      headerTitle: 'Datatables',
+      headerTitle: 'Redes',
       actionButton: true,
       breadcrumb: {
         type: '',
@@ -126,15 +132,14 @@ export class CommunicationsComponent implements OnInit {
           {
             name: 'Home',
             isLink: true,
-            link: '/'
+            link: '/home'
           },
           {
-            name: 'Forms & Tables',
-            isLink: true,
-            link: '/'
+            name: 'Redes',
+            isLink: false
           },
           {
-            name: 'Datatables',
+            name: 'Comunicaciones',
             isLink: false
           }
         ]
@@ -167,14 +172,14 @@ export class CommunicationsComponent implements OnInit {
   async CargarLista(e: any){
     this.xAPI.funcion = "LstComunicaciones";
     this.xAPI.parametros = e;
-    this.rows = []
+    this.ListaComunicaciones = []
      await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.rows = data;
+          this.ListaComunicaciones.push(data);
           setTimeout(() => {
-            this.rows = data;
-            this.tempData = this.rows;
-        }, 450);
+            this.rowData = data;
+            this.tempData = this.rowData;
+        }, 400);
       },
       (error) => {
         console.log(error)
@@ -183,10 +188,67 @@ export class CommunicationsComponent implements OnInit {
   }
 
   async capturar(e:any){
-    await this.CargarLista(e.id)
+    await this.CargarLista(e)
   }
 
 
-  
+  ModalEdit(modal, data){
+    this.loginForm = this._formBuilder.group({
+      host: [data.host, [Validators.required]],
+      mac: [data.mac, [Validators.required]],
+      descripcion: [data.descripcion, [Validators.required]],
+      id: [data.id, [Validators.required]],
+      tipo: [data.tipo],
+      estatus: [data.estatus],
+    });
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+
+  ModalAdd(modal){
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  submit(){
+    this.submitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    } else {
+      var obj = {
+        "coleccion": "sys-conection",
+        "objeto": this.loginForm.value,
+        "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
+        "driver": "MGDBA",
+        "upsert": true
+      }
+      this.rowData.push(this.ListaComunicaciones)
+      this.apiService.ExecColeccion(obj).subscribe(
+        (data) => {
+          console.log(data)
+          this.ListaComunicaciones = []
+          this.CargarLista('SRV')
+          this.modalService.dismissAll('Close')
+          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`,3000)
+          
+        }, (error) => {
+          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          console.log(error)
+        }
+      )
+
+    }
+  }
 
 }

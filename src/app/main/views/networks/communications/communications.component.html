@@ -7,37 +7,25 @@
     <section id="ngx-datatable-kitchen-sink">
           <div class="row">
             <div class="col-12 mb-50">
-              <button class="btn btn-primary ml-1" rippleEffect>
+              <button (click)="ModalAdd(ModalAddDevice)" class="btn btn-primary ml-1" rippleEffect>
                 <i data-feather="plus" class="mr-0 mr-sm-1"></i
-                ><span class="d-none d-sm-inline-block">Add New Record</span>
+                ><span class="d-none d-sm-inline-block">Agregar Dispositivo</span>
               </button>
 
 
             </div>
-            <div class="col-md-6 col-12">
+            <div class="col-md-3 col-12">
               <div class="d-flex justify-content-between align-items-center m-1">
                 <label class="d-flex align-items-center"
-                  >Show
+                  >Mostrar
                   <select class="form-control mx-25" [(ngModel)]="basicSelectedOption">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
                   </select>
-                  entries</label
+                  registros</label
                 >
-              </div>
-            </div>
-            <div class="col-md-3 col-12 d-flex justify-content-md-end">
-              <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
-                <label class="d-flex align-items-center"
-                  >Search<input
-                    type="search"
-                    placeholder="Search"
-                    class="form-control ml-25"
-                    (keyup)="filterUpdate($event)"
-                    (search)="filterUpdate($event)"
-                /></label>
               </div>
             </div>
             <div class="col-md-3 col-12 d-flex justify-content-md-end">
@@ -45,9 +33,10 @@
                 <label class="d-flex align-items-center">
                   <ng-select
                         [items]="dispositivos"
-                        placeholder="Seleccione Tipo"
-                        bindLabel="id"
-                        name="descripcion"
+                        placeholder="Seleccione Tipo Dispositivo"
+                        bindLabel="descripcion"
+                        name="id"
+                        bindValue="id"
                         [(ngModel)]="sDispositivo"
                         [ngModelOptions]="{standalone: true}"
                         required
@@ -58,9 +47,22 @@
                 </label>
               </div>
             </div>
+
+            <div class="col-md-6 col-12 d-flex justify-content-md-end">
+              <div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+                <label class="d-flex align-items-center"
+                  >Buscar<input
+                    type="search"
+                    placeholder="Buscar..."
+                    class="form-control ml-25"
+                    (keyup)="filterUpdate($event)"
+                    (search)="filterUpdate($event)"
+                /></label>
+              </div>
+            </div>
           </div>
           <ngx-datatable
-            [rows]="rows"
+            [rows]="rowData"
             [rowHeight]="58"
             class="bootstrap core-bootstrap"
             [limit]="10"
@@ -117,7 +119,7 @@
               </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Host" prop="host" [width]="10">
+            <ngx-datatable-column name="HOST" prop="host" [width]="10">
                 <ng-template let-host="value" ngx-datatable-cell-template>
                   <div>
                     <span class="font-weight-bold">{{ host }} </span>
@@ -125,7 +127,7 @@
                 </ng-template>
               </ngx-datatable-column>
 
-              <ngx-datatable-column name="Mac" prop="mac" [width]="10">
+              <ngx-datatable-column name="MAC" prop="mac" [width]="10">
                 <ng-template let-mac="value" ngx-datatable-cell-template>
                   <div>
                     <span class="font-weight-bold">{{ mac }} </span>
@@ -133,7 +135,7 @@
                 </ng-template>
               </ngx-datatable-column>
 
-              <ngx-datatable-column name="Tipo" prop="tipo" [width]="10">
+              <ngx-datatable-column name="TIPO" prop="tipo" [width]="10">
                 <ng-template let-tipo="value" ngx-datatable-cell-template>
                   <div>
                     <span class="font-weight-bold">{{ tipo }} </span>
@@ -141,30 +143,30 @@
                 </ng-template>
               </ngx-datatable-column>
 
-              <ngx-datatable-column name="Identificador" prop="id" [width]="10">
+              <ngx-datatable-column name="IDENTIFICADOR" prop="id" [width]="10">
                 <ng-template let-id="value" ngx-datatable-cell-template>
                   <div>
-                    <span class="font-weight-bold">{{ id }} </span>
+                    <span class="font-weight-bold">{{ id.toUpperCase() }} </span>
                   </div>
                 </ng-template>
               </ngx-datatable-column>
 
-              <ngx-datatable-column name="Descripcion" prop="descripcion" [width]="10">
+              <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [width]="10">
                 <ng-template let-descripcion="value" ngx-datatable-cell-template>
                   <div>
-                    <span class="font-weight-bold">{{ descripcion }} </span>
+                    <span class="font-weight-bold">{{ descripcion.toUpperCase() }} </span>
                   </div>
                 </ng-template>
               </ngx-datatable-column>
 
-              <ngx-datatable-column name="Accion" [width]="20" [sortable]="false">
+              <ngx-datatable-column name="ACCIÓN" [width]="20" [sortable]="false">
                 <ng-template  ngx-datatable-cell-template let-row="row">
                   <div ngbDropdown container="body">
                     <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
                       <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                     </button>
                     <div ngbDropdownMenu>
-                        <a (click)="DetalleModal(ModalDetails,row)" ngbDropdownItem><span
+                        <a (click)="ModalEdit(ModalEditDevice,row)" ngbDropdownItem><span
                           [data-feather]="'eye'" [size]="16" [class]="'mr-50'"></span> Detalles</a>
                           <a (click)="DownloadFichaResumen(row)" ngbDropdownItem><span
                             [data-feather]="'download'" [size]="16" [class]="'mr-50'"></span> Descargar Ficha</a>
@@ -180,3 +182,247 @@
 
     </div>
 </div>
+
+
+
+
+<ng-template #ModalAddDevice let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Agregar Dispositivo</h5>
+  </div>
+  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="submit()">
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <!-- Invoice -->
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row">
+
+        <div class="col-md-4 col-12 mb-1">
+            <label for="login-host" class="form-label">Dirección Host/IP</label>
+            <input
+              type="text"
+              formControlName="host"
+              class="form-control"
+              placeholder="Dirección Host/IP"
+              aria-describedby="login-host"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.host.errors }"
+            />
+            <div *ngIf="submitted && f.host.errors" class="invalid-feedback">
+              <div *ngIf="f.host.errors.required">Dirección Host/IP es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-mac" class="form-label">MAC Address</label>
+            <input
+              type="text"
+              formControlName="mac"
+              class="form-control"
+              placeholder="MAC Address"
+              aria-describedby="login-mac"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.mac.errors }"
+            />
+            <div *ngIf="submitted && f.mac.errors" class="invalid-feedback">
+              <div *ngIf="f.mac.errors.required">MAC Address es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-descripcion" class="form-label">Descripción</label>
+            <input
+              type="text"
+              formControlName="descripcion"
+              class="form-control"
+              placeholder="Descripción"
+              aria-describedby="login-descripcion"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }"
+            />
+            <div *ngIf="submitted && f.descripcion.errors" class="invalid-feedback">
+              <div *ngIf="f.descripcion.errors.required">Descripción es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-id" class="form-label">Identificador</label>
+            <input
+              type="text"
+              formControlName="id"
+              class="form-control"
+              placeholder="Identificador"
+              aria-describedby="login-id"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.id.errors }"
+            />
+            <div *ngIf="submitted && f.id.errors" class="invalid-feedback">
+              <div *ngIf="f.id.errors.required">Identificador es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-tipo" class="form-label">Seleccione Dispositivo</label>
+            <ng-select [items]="dispositivos" 
+           bindLabel="descripcion"
+           formControlName="tipo"
+           placeholder="Seleccione Dispositivo"
+           bindValue="id" >
+            </ng-select>
+            <!-- <div *ngIf="submitted && f.tipo.errors" class="invalid-feedback">
+              <div *ngIf="f.tipo.errors.required">Tipo es requerido</div>
+            </div> -->
+          </div>
+
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-estatus" class="form-label">Seleccione Dispositivo</label>
+            <ng-select [items]="status" formControlName="estatus"
+           bindLabel="name" 
+           placeholder="Seleccione Dispositivo"
+           bindValue="id">
+            </ng-select>
+            <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
+              <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
+            </div> -->
+          </div>
+          
+
+        
+      </div>
+      
+    </div>
+  
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" tabindex="4" rippleEffect>Guardar</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+  </div>
+</form>
+</ng-template>
+
+
+<ng-template #ModalEditDevice let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Editar Dispositivo</h5>
+  </div>
+  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="submit()">
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <!-- Invoice -->
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="row">
+
+        <div class="col-md-4 col-12 mb-1">
+            <label for="login-host" class="form-label">Dirección Host/IP</label>
+            <input
+              type="text"
+              formControlName="host"
+              class="form-control"
+              placeholder="Dirección Host/IP"
+              aria-describedby="login-host"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.host.errors }"
+            />
+            <div *ngIf="submitted && f.host.errors" class="invalid-feedback">
+              <div *ngIf="f.host.errors.required">Dirección Host/IP es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-mac" class="form-label">MAC Address</label>
+            <input
+              type="text"
+              formControlName="mac"
+              class="form-control"
+              placeholder="MAC Address"
+              aria-describedby="login-mac"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.mac.errors }"
+            />
+            <div *ngIf="submitted && f.mac.errors" class="invalid-feedback">
+              <div *ngIf="f.mac.errors.required">MAC Address es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-descripcion" class="form-label">Descripción</label>
+            <input
+              type="text"
+              formControlName="descripcion"
+              class="form-control"
+              placeholder="Descripción"
+              aria-describedby="login-descripcion"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }"
+            />
+            <div *ngIf="submitted && f.descripcion.errors" class="invalid-feedback">
+              <div *ngIf="f.descripcion.errors.required">Descripción es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-id" class="form-label">Identificador</label>
+            <input
+              type="text"
+              [readOnly]="true"
+              formControlName="id"
+              class="form-control"
+              placeholder="Identificador"
+              aria-describedby="login-id"
+              tabindex="1"
+              autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.id.errors }"
+            />
+            <div *ngIf="submitted && f.id.errors" class="invalid-feedback">
+              <div *ngIf="f.id.errors.required">Identificador es requerido</div>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-tipo" class="form-label">Seleccione Dispositivo</label>
+            <ng-select [items]="dispositivos" 
+           bindLabel="descripcion"
+           formControlName="tipo"
+           placeholder="Seleccione Dispositivo"
+           bindValue="id" >
+            </ng-select>
+            <!-- <div *ngIf="submitted && f.tipo.errors" class="invalid-feedback">
+              <div *ngIf="f.tipo.errors.required">Tipo es requerido</div>
+            </div> -->
+          </div>
+
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-estatus" class="form-label">Seleccione Estatus</label>
+            <ng-select [items]="status" formControlName="estatus"
+           bindLabel="name" 
+           placeholder="Seleccione Estatus"
+           bindValue="id">
+            </ng-select>
+            <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
+              <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
+            </div> -->
+          </div>
+          
+
+        
+      </div>
+      
+    </div>
+  
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" tabindex="4" rippleEffect>Actualizar</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+  </div>
+</form>
+
+</ng-template>

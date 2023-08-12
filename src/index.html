@@ -23,7 +23,6 @@
       rel="stylesheet"
     /> -->
     <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgjNW0WA93qphgZW-joXVR6VC3IiYFjfo"></script> -->
-
     <!-- Vuexy loading Screen CSS -->
     <style type="text/css">
       #loading-bg {
@@ -38,8 +37,8 @@
 
       .loading-logo {
         position: absolute;
-        left: calc(50% - 45px);
-        top: 50%;
+        left: calc(50% - 125px);
+        top: 35%;
       }
 
       .loading {
@@ -116,6 +115,55 @@
           opacity: 1;
         }
       }
+
+  .btn-whatsapp {
+	position: fixed;
+	z-index: 999;
+	bottom: 20px;
+	right: 80px;
+}
+
+.btn-whatsapp:before,
+.btn-whatsapp:after {
+	content: "";
+	position: absolute;
+	top: 25px;
+	left: 20px;
+	width: 150px;
+	height: 150px;
+	border-radius: 50%;
+	background-color: #eda409;
+	opacity: 0;
+	animation: onda 1s infinite;
+}
+
+.btn-whatsapp:before {
+	animation-delay: 0.5s;
+}
+
+.btn-whatsapp:after {
+	animation-delay: 1s;
+}
+
+.btn-whatsapp img {
+	position: relative;
+	z-index: 2;
+}
+
+@keyframes onda {
+	0% {
+		transform: scale(1);
+	}
+
+	15%{
+		opacity: 1;
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(2.5);
+	}
+}
     </style>
     <!-- / Vuexy loading Screen CSS -->
   </head>
@@ -123,13 +171,13 @@
   <body>
     <!-- Vuexy loading Screen -->
     <core-loading-screen id="loading-bg">
-      <div class="loading-logo">
-        <img src="assets/images/logo/logo.png" width="5%" height="5%" alt="Logo" />
+      <div class="loading-logo btn-whatsapp">
+        <img src="assets/images/logo/logo.png" width="200px" height="200px" alt="Logo" />
       </div>
       <div class="loading">
-        <div class="effect-1 effects"></div>
+        <!-- <div class="effect-1 effects"></div>
         <div class="effect-2 effects"></div>
-        <div class="effect-3 effects"></div>
+        <div class="effect-3 effects"></div> -->
       </div>
     </core-loading-screen>
     <!-- / Vuexy loading Screen -->

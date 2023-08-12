@@ -126,7 +126,7 @@ export class AuthLoginV1Component implements OnInit {
     this._unsubscribeAll.complete();
   }
 
-  async login(position, status){
+  async login(){
     this.submitted = true;
     // stop here if form is invalid
     if (this.loginForm.invalid) {

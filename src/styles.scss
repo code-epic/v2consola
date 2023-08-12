@@ -1,2 +1,20 @@
 @import '@core/scss/core.scss';
 @import './assets/scss/styles';
+
+
+// @import '@core/scss/angular/libs/datatables.component.scss';
+@import '@core/scss/base/pages/app-user.scss';
+@import '@core/scss/angular/libs/select.component.scss';
+
+@import '@core/scss/angular/libs/date-time-picker.component.scss';
+
+@import "~@ng-select/ng-select/themes/default.theme.css";
+
+
+.fondo-modal{
+    background-color: #00000031;
+}
+
+.datatable-scroll {
+    width: auto !important;
+  }

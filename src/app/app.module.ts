@@ -13,6 +13,12 @@ import { CoreModule } from '@core/core.module';
 import { CoreCommonModule } from '@core/common.module';
 import { CoreSidebarModule, CoreThemeCustomizerModule } from '@core/components';
 
+import { NgSelectModule } from '@ng-select/ng-select';
+
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+
 import { coreConfig } from 'app/app-config';
 
 import { AppComponent } from 'app/app.component';
@@ -64,8 +70,11 @@ const appRoutes: Routes = [
     NetworksModule,
     ApplicationsModule,
     OptionsModule,
+    FormsModule,
+    ReactiveFormsModule,
     SecurityModule,
-    ToolsModule
+    ToolsModule,
+    NgSelectModule
 
   ],
 
