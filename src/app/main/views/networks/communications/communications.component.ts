@@ -142,14 +142,12 @@ export class CommunicationsComponent implements OnInit {
     };
   }
 
-  filterUpdate(event) {
-    const val = event.target.value.toLowerCase();
-
+  filterUpdate(event: any) {
+    const val = event.target.value;
     // filter our data
     const temp = this.tempData.filter(function (d) {
-      return d.full_name.toLowerCase().indexOf(val) !== -1 || !val;
+      return d.host.indexOf(val) !== -1 ;
     });
-
     // update the rows
     this.kitchenSinkRows = temp;
     // Whenever the filter changes, always go back to the first page

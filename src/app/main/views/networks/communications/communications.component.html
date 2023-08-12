@@ -1,4 +1,3 @@
-<p>communications works!</p>
 <div class="content-wrapper container-xxl p-0">
     <div class="content-body">
       <!-- content-header component -->
@@ -74,7 +73,7 @@
             (activate)="onActivate($event)"
             (select)="onSelect($event)"
           >
-            <!-- <ngx-datatable-column
+            <ngx-datatable-column
               [width]="50"
               [sortable]="false"
               [canAutoResize]="false"
@@ -116,7 +115,7 @@
                   <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
                 </div>
               </ng-template>
-            </ngx-datatable-column> -->
+            </ngx-datatable-column>
 
             <ngx-datatable-column name="Host" prop="host" [width]="10">
                 <ng-template let-host="value" ngx-datatable-cell-template>
