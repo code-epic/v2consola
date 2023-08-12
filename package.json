@@ -1,5 +1,5 @@
 {
-  "name": "consola-sandra-server",
+  "name": "v2consola",
   "version": "2.0.0",
   "description": "Consola Sandra Server = Code Epic Technologies",
   "author": {
@@ -14,8 +14,12 @@
       "url": "https://github.com/gesaodin"
     },
     {
-      "name": "Andrés Rodríguez Durán",
-      "url": "https://github.com/elpoloxrodriguez"
+      "name": "Angel Jesus Herrera Santaella",
+      "url": "https://github.com/angel1995angel"
+    },
+    {
+      "name": "Carlos Eduardo Montero Castillo",
+      "url": "https://github.com/monterocarlos"
     }
   ],
   "homepage": "https://code-epic.com",
