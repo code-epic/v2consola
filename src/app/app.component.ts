@@ -2,6 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, ElementRef, Renderer2 } from '@an
 import { DOCUMENT } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 
+
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,6 +18,8 @@ import jwt_decode from "jwt-decode";
 import { menu } from 'app/menu/menu';
 import { locale as menuEnglish } from 'app/menu/i18n/en';
 import { locale as menuEspanish } from 'app/menu/i18n/es';
+import { ReCaptchaV3Service } from 'ng-recaptcha';
+import { NgForm } from '@angular/forms';
 // import { locale as menuFrench } from 'app/menu/i18n/fr';
 // import { locale as menuGerman } from 'app/menu/i18n/de';
 // import { locale as menuPortuguese } from 'app/menu/i18n/pt';
@@ -28,6 +31,9 @@ import { locale as menuEspanish } from 'app/menu/i18n/es';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit, OnDestroy {
+
+  token: string|undefined;
+
   coreConfig: any;
   menu: any;
   defaultLanguage: 'es'; // This language will be used as a fallback when a translation isn't found in the current language
@@ -38,6 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any>;
 
   public Token
+  
   /**
    * Constructor
    *
@@ -55,6 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
   constructor(
     @Inject(DOCUMENT) private document: any,
     private _title: Title,
+    private recaptchaV3Service: ReCaptchaV3Service,
     private _renderer: Renderer2,
     private _elementRef: ElementRef,
     public _coreConfigService: CoreConfigService,
@@ -64,6 +72,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private _coreTranslationService: CoreTranslationService,
     private _translateService: TranslateService
   ) {
+    this.token = undefined;
     // Get the application main menu
     // this.menu = menu;
 
@@ -300,4 +309,17 @@ export class AppComponent implements OnInit, OnDestroy {
   toggleSidebar(key): void {
     this._coreSidebarService.getSidebarRegistry(key).toggleOpen();
   }
+
+  public send(form: NgForm): void {
+    if (form.invalid) {
+      for (const control of Object.keys(form.controls)) {
+        form.controls[control].markAsTouched();
+      }
+      return;
+    }
+
+    console.debug(`Token [${this.token}] generated`);
+  }
+
+
 }

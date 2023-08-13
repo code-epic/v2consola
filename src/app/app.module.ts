@@ -13,11 +13,7 @@ import { CoreModule } from '@core/core.module';
 import { CoreCommonModule } from '@core/common.module';
 import { CoreSidebarModule, CoreThemeCustomizerModule } from '@core/components';
 
-import { NgSelectModule } from '@ng-select/ng-select';
-
-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 
 import { coreConfig } from 'app/app-config';
 
@@ -29,6 +25,16 @@ import { OptionsModule } from './main/views/options/options.module';
 import { SecurityModule } from './main/views/security/security.module';
 import { ToolsModule } from './main/views/tools/tools.module';
 import { ApplicationsModule } from './main/views/applications/applications.module';
+
+// Recaptcha V3
+import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
+import { environment } from 'environments/environment';
+
+
+//  Recaptcha V2
+// import { RECAPTCHA_SETTINGS, RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings } from 'ng-recaptcha';
+// import { environment } from 'environments/environment';
+
 
 const appRoutes: Routes = [
   {
@@ -54,6 +60,13 @@ const appRoutes: Routes = [
     }),
     TranslateModule.forRoot(),
 
+    //  Recaptcha V3
+    RecaptchaV3Module,
+    //  Recaptcha V2
+    // RecaptchaFormsModule,
+    // RecaptchaModule,
+    
+
     //NgBootstrap
     NgbModule,
     ToastrModule.forRoot(),
@@ -64,6 +77,8 @@ const appRoutes: Routes = [
     CoreSidebarModule,
     CoreThemeCustomizerModule,
 
+
+    // BlockUIModule.forRoot(),
     // App modules
     LayoutModule,
     HomeModule,
@@ -74,10 +89,14 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     SecurityModule,
     ToolsModule,
-    NgSelectModule
 
   ],
-
+  providers: [
+    {
+      provide: RECAPTCHA_V3_SITE_KEY,
+      useValue: environment.recaptcha.siteKey,
+    },
+  ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

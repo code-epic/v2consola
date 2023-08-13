@@ -3,6 +3,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef, HostListener, EventEmi
 import { BlockUIService } from 'ng-block-ui';
 
 import { CoreBlockUiComponent } from '@core/components/core-card/core-block-ui/core-block-ui.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'core-card',
@@ -52,7 +53,7 @@ export class CoreCardComponent implements OnInit {
    *
    * @param {BlockUIService} blockUIService
    */
-  constructor(private blockUIService: BlockUIService) {
+  constructor(private blockUIService: BlockUIService, private modalService: NgbModal,) {
     this.events = new EventEmitter<any>();
   }
 
@@ -117,6 +118,22 @@ export class CoreCardComponent implements OnInit {
       cardHeaderEl.classList.remove('pb-2');
     }
   }
+
+  /**
+   * Add
+   */
+  add(modal) {
+    this.events.emit('add');
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+    // this.onclickEvent.expandStatus = !this.onclickEvent.expandStatus;
+  }
+
 
   /**
    * Expand

@@ -1,4 +1,4 @@
-<div class="auth-wrapper auth-v1 px-2">
+<div class="login__heading auth-wrapper auth-v1 px-2">
   <div class="auth-inner py-2">
     <!-- Login v1 -->
     <div class="card mb-0">
@@ -9,6 +9,9 @@
         </a>
 
         <h2 class="card mb-1 text-center"><strong>Sandra Server</strong></h2>
+
+
+       
 
         <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="login()">
           <div class="form-group">
@@ -73,8 +76,16 @@
               <label class="custom-control-label" for="remember-me"> Recuérdame </label>
             </div>
           </div>
+          
+
           <button class="btn btn-primary btn-block" tabindex="4" rippleEffect>Iniciar Sesión</button>
         </form>
+
+
+        <div class="login">
+          <h1 class="login__heading"></h1>
+          <span class="login__circuit-mask"></span>
+        </div>
 
         <p class="text-center mt-2">
           <span>Nuevo en nuestra plataforma?</span>
