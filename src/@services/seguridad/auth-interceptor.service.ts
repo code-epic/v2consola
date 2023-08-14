@@ -31,7 +31,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401) {
+        if (err.status === 401 || err.status === 403) {
           sessionStorage.removeItem('token')
           this.cerrar(err.error.msj)
         }

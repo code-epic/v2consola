@@ -13,6 +13,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
 import { ConexionesService } from '@services/networks/connections.service';
+import { LoginService } from '@services/seguridad/login.service';
+import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
 
 @Component({
   selector: 'app-functions',
@@ -92,6 +94,8 @@ export class FunctionsComponent implements OnInit {
 
 
   constructor(
+    private interceptor : AuthInterceptorService,
+    private loginService: LoginService,
     private comunicacionesService : ComunicationsService,
     private apiService : ApiService,
     private modalService: NgbModal,
