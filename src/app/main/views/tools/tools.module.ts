@@ -55,7 +55,7 @@ const routes = [
 @NgModule({
   declarations: [
     FunctionsComponent,
-    // ApiComponent,
+    ApiComponent,
     WorkflowComponent
   ],
   imports: [

@@ -248,5 +248,8 @@ export class InstallComponent implements OnInit {
         ]
       }
     }
+  
+
   }
+  
   }
