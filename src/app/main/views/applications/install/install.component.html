@@ -62,39 +62,42 @@
               <div class="row">
                 <div class="form-group col-md-4">
                   <label class="form-label" for="tipo">Tipo de instalación</label>
-                  <input [(ngModel)]="mtipo" #TDTipoRef="ngModel" required type="text" name="tipo" id="tipo"
-                    class="form-control" [class.error]="!TDTipoRef.valid && accountDetailsForm.submitted"
-                    placeholder="tipo" />
-                  <span *ngIf="accountDetailsForm.submitted && TDTipoRef.invalid" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="TDTipoRef.errors.required">Este campo es
-                      requerido!</small>
+                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="tipo"
+                      placeholder="Seleccione" bindValue="id">
+                  </ng-select>
+                  <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="!TDTipoRef.valid">Este
+                          campo es requerido!</small>
                   </span>
-                </div>
-                <div class="form-group col-md-4">
-                  <label class="form-label" for="servidor">Servidor</label>
-                  <input [(ngModel)]="mservidor" #TDSerRef="ngModel" required type="text" name="servidor" id="servidor"
-                    class="form-control" [class.error]="!TDSerRef.valid && accountDetailsForm.submitted"
-                    placeholder="servidor" />
-                  <span *ngIf="accountDetailsForm.submitted && TDSerRef.invalid" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="!TDSerRef.valid">Este campo es requerido!</small>
-                  </span>
-                </div>
-                <div class="form-group col-md-4">
-                  <label class="form-label" for="sistema">Sistema Operativo</label>
-                  <input [(ngModel)]="msistema" #TDSisRef="ngModel" required type="text" name="sistema" id="sistema"
-                    class="form-control" [class.error]="!TDSisRef.valid && accountDetailsForm.submitted"
-                    placeholder="sistema" />
-                  <span *ngIf="accountDetailsForm.submitted && TDSisRef.invalid" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="!TDSisRef.valid">Este campo es requerido!</small>
-                  </span>
-                </div>
+              </div>
+
+              <div class="form-group col-md-4">
+                <label class="form-label" for="servidor">Servidor</label>
+                <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="servidor"
+                    placeholder="Seleccione" bindValue="id">
+                </ng-select>
+                <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="!TDSerRef.valid">Este
+                        campo es requerido!</small>
+                </span>
+            </div>
+            <div class="form-group col-md-4">
+              <label class="form-label" for="sistema">Sistema Operativo</label>
+              <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="sistema"
+                  placeholder="Seleccione" bindValue="id">
+              </ng-select>
+              <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                  <small class="form-text text-danger" *ngIf="!TDSisRef.valid">Este
+                      campo es requerido!</small>
+              </span>
+          </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-4">
                   <label class="form-label" for="repo">Repositorio Url</label>
                   <input [(ngModel)]="mrepo" #TDRepRef="ngModel" required type="text" name="repo" id="repo"
                     class="form-control" [class.error]="!TDRepRef.valid && accountDetailsForm.submitted"
-                    placeholder="repo" />
+                    placeholder="Repositorio" />
                   <span *ngIf="accountDetailsForm.submitted && TDRepRef.invalid" class="invalid-form">
                     <small class="form-text text-danger" *ngIf="!TDRepRef.valid">Este campo es requerido!</small>
                   </span>
@@ -133,14 +136,14 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <label class="form-label" for="bdatos">Base de Datos</label>
-                  <input [(ngModel)]="mbdatos" #TDDatoRef="ngModel" required type="text" name="bdatos" id="bdatos"
-                    class="form-control" [class.error]="!TDDatoRef.valid && accountDetailsForm.submitted"
-                    placeholder="bdatos" />
-                  <span *ngIf="accountDetailsForm.submitted && TDDatoRef.invalid" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="TDDatoRef.errors.required">Este campo es
-                      requerido!</small>
+                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="bdatos"
+                      placeholder="Seleccione" bindValue="id">
+                  </ng-select>
+                  <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="!TDDatoRef.valid">Este
+                          campo es requerido!</small>
                   </span>
-                </div>
+              </div>
                 <div class="form-group col-md-2">
                   <label class="form-label" for="version">Versión</label>
                   <input [(ngModel)]="mversion" #TDVerRef="ngModel" required type="text" name="version" id="version"
@@ -153,14 +156,14 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label class="form-label" for="lenguaje">Lenguaje</label>
-                  <input [(ngModel)]="mlenguaje" #TDLenRef="ngModel" required type="text" name="lenguaje" id="lenguaje"
-                    class="form-control" [class.error]="!TDLenRef.valid && accountDetailsForm.submitted"
-                    placeholder="lenguaje" />
-                  <span *ngIf="accountDetailsForm.submitted && TDLenRef.invalid" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="TDLenRef.errors.required">Este campo es
-                      requerido!</small>
+                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="lenguaje"
+                      placeholder="Seleccione" bindValue="id">
+                  </ng-select>
+                  <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="!TDLenRef.valid">Este
+                          campo es requerido!</small>
                   </span>
-                </div>
+              </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-12">
@@ -187,16 +190,17 @@
             </form>
           </div>
           <div id="personal-info" class="content">
-            <form #personalInfoForm="ngForm">
+            <form #personalInfoForm="ngForm" >
               <div class="content-header">
                 <h5 class="mb-0">Personal Info</h5>
                 <small>Enter Your Personal Info.</small>
               </div>
 
               <div class="row">
-                <div class="form-group col-md-6">
+                
+                <!-- <div class="form-group col-md-6">
                   <label class="form-label" for="first-name">First Name</label>
-                  <input id="first-name" class="form-control" [class.error]="personalInfoForm.submitted"
+                  <input id="first-name" [class.error]="personalInfoForm.submitted"
                     placeholder="John" />
                   <span *ngIf="personalInfoForm.submitted" class="invalid-form">
                     <small class="form-text text-danger" *ngIf="TDFirstNameRef.errors.required">This field is
@@ -210,24 +214,24 @@
                     <small class="form-text text-danger" *ngIf="TDLastNameRef.errors.required">This field is
                       required!</small>
                   </span>
-                </div>
+                </div> -->
               </div>
               <div class="row">
-                <div class="form-group col-md-6">
-                  <label class="form-label" for="country">Country</label>
+               <!--  <div class="form-group col-md-6">
+                  <label class="form-label" for="country">Country</label> -->
                   <!--  <ng-select bindLabel="name"> </ng-select> -->
-                </div>
+                <!-- </div>
                 <div class="form-group col-md-6">
-                  <label class="form-label" for="language">Language</label>
+                  <label class="form-label" for="language">Language</label> -->
                   <!--   <ng-select
                     
                   > -->
-                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                  <!-- <ng-template ng-label-tmp let-item="item" let-clear="clear">
                     <span class="ng-value-label"> {{ item.name }}</span>
                     <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-                  </ng-template>
+                  </ng-template> -->
                   <!--  </ng-select> -->
-                </div>
+               <!--  </div> -->
               </div>
 
               <div class="d-flex justify-content-between">
@@ -251,7 +255,7 @@
               </div>
 
               <div class="row">
-                <div class="form-group col-md-6">
+                <!-- <div class="form-group col-md-6">
                   <label class="form-label" for="address">Address</label>
                   <input id="address" name="address" class="form-control" [class.error]="addressForm.submitted"
                     placeholder="98  Borough bridge Road, Birmingham" />
@@ -268,17 +272,17 @@
                     <small class="form-text text-danger" *ngIf="landmarkRef.errors.required">This field is
                       required!</small>
                   </span>
-                </div>
+                </div> -->
               </div>
               <div class="row">
-                <div class="form-group col-md-6">
+                <!-- <div class="form-group col-md-6">
                   <label class="form-label" for="pincode1">Pincode</label>
                   <input type="text" id="pincode1" class="form-control" placeholder="658921" />
                 </div>
                 <div class="form-group col-md-6">
                   <label class="form-label" for="city1">City</label>
                   <input type="text" id="city1" class="form-control" placeholder="Birmingham" />
-                </div>
+                </div> -->
               </div>
 
               <div class="d-flex justify-content-between">
@@ -300,7 +304,7 @@
                 <small>Enter Your Social Links.</small>
               </div>
               <div class="row">
-                <div class="form-group col-md-6">
+                <!-- <div class="form-group col-md-6">
                   <label class="form-label" for="twitter">Twitter</label>
                   <input class="form-control" [class.error]="socialLinkForm.submitted"
                     placeholder="https://twitter.com/abc" />
@@ -317,10 +321,10 @@
                     <small class="form-text text-danger" *ngIf="facebookRef.errors.required">This field is
                       required!</small>
                   </span>
-                </div>
+                </div> -->
               </div>
               <div class="row">
-                <div class="form-group col-md-6">
+                <!-- <div class="form-group col-md-6">
                   <label class="form-label" for="google">Google+</label>
                   <input id="google" name="google" class="form-control" [class.error]="socialLinkForm.submitted"
                     placeholder="https://plus.google.com/abc" />
@@ -337,7 +341,7 @@
                     <small class="form-text text-danger" *ngIf="linkedinRef.errors.required">This field is
                       required!</small>
                   </span>
-                </div>
+                </div> -->
               </div>
               <div class="d-flex justify-content-between">
                 <button type="button" class="btn btn-primary btn-prev" rippleEffect>

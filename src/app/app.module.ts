@@ -4,13 +4,12 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-<<<<<<< HEAD
-import { HttpClientModule } from '@angular/common/http';
+
+//import { HttpClientModule } from '@angular/common/http';
 import { NgSelectModule } from '@ng-select/ng-select';
-=======
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
->>>>>>> 25736f785efeb248ff31186ddd31742b59d9d7ac
 import 'hammerjs';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
