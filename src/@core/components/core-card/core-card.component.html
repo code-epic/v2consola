@@ -10,19 +10,12 @@
     <!-- heading elements -->
     <div class="heading-elements">
       <ul class="list-inline mb-0">
-         <!-- AGREGAR -->
-         <!-- <li *ngIf="actionsView.collapse" (click)="add(modal)">
-          <a data-action="collapse" [ngClass]="{ rotate: onclickEvent.collapseStatus }">
-            <i class="feather icon-plus"></i>
-          </a>
-        </li> -->
-        <!-- AGREGAR -->
         <!-- collapse -->
-        <!-- <li *ngIf="actionsView.collapse" (click)="collapse()">
+        <li *ngIf="actionsView.collapse" (click)="collapse()">
           <a data-action="collapse" [ngClass]="{ rotate: onclickEvent.collapseStatus }">
             <i class="feather icon-chevron-down"></i>
           </a>
-        </li> -->
+        </li>
         <!-- expand -->
         <li *ngIf="actionsView.expand" (click)="expand()">
           <a data-action="expand">
@@ -36,11 +29,11 @@
           </a>
         </li>
         <!-- close -->
-        <!-- <li *ngIf="actionsView.close" (click)="close()">
+        <li *ngIf="actionsView.close" (click)="close()">
           <a data-action="close">
             <i class="feather icon-x"></i>
           </a>
-        </li> -->
+        </li>
       </ul>
     </div>
     <!--/ heading elements -->
@@ -62,28 +55,3 @@
 </div>
 
 <!-- /core card component -->
-
-
-
-<!-- Modal Dinamico -->
-  <!-- Modal -->
-  <ng-template #modal let-modal>
-    <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">Small Modal</h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-      Tart lemon drops macaroon oat cake chocolate toffee chocolate bar icing. Pudding jelly beans
-      carrot cake pastry gummies cheesecake lollipop. I love cookie lollipop cake I love sweet
-      gummi
-      bears cupcake dessert.
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-primary"
-        (click)="modal.close('Accept click')">Cerrar</button>
-    </div>
-  </ng-template>
-  <!-- / Modal -->
-<!-- Modal Dinamico -->
