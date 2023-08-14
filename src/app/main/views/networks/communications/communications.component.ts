@@ -58,9 +58,6 @@ export class CommunicationsComponent implements OnInit {
 
   // Private
   public count
-  public isReload = false;
-
-  private _unsubscribeAll: Subject<any>;
  
   public ListaComunicaciones = []
   public tempData = [];
@@ -108,9 +105,6 @@ export class CommunicationsComponent implements OnInit {
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
   ) {
-    this.config.notFoundText = 'Custom not found';
-      this.config.appendTo = 'body';
-      this.config.bindValue = 'value';
   }
 
     // convenience getter for easy access to form fields
@@ -118,31 +112,6 @@ export class CommunicationsComponent implements OnInit {
       return this.loginForm.controls;
     }
 
-      /**
-   * Emitted Events
-   *
-   * @param $event
-   */
-  emittedEvents($event) {
-    console.log('Action : ', $event);
-  }
-
-  /**
-   * Reload
-   *
-   * @param $event
-   */
-  reload($event) {
-    // This is fake API call example for reload
-    if ($event === 'reload') {
-      console.log($event, ': Start');
-      this.isReload = true;
-      setTimeout(() => {
-        this.isReload = false;
-        console.log($event, ': End');
-      }, 5000);
-    }
-  }
 
   async ngOnInit() {
     await this.CargarLista()
@@ -161,7 +130,7 @@ export class CommunicationsComponent implements OnInit {
     
      // content header
      this.contentHeader = {
-      headerTitle: 'Redes',
+      headerTitle: 'Comunicaciones',
       actionButton: true,
       breadcrumb: {
         type: '',
@@ -200,7 +169,7 @@ export class CommunicationsComponent implements OnInit {
   }
 
   filterDispositivo(event: any) {
-    const val = event;
+    const val = event ? event : '';
     // filter our data
     const temp = this.tempData.filter(function (d) {
       return d.tipo.indexOf(val) !== -1 || !val;
@@ -210,16 +179,6 @@ export class CommunicationsComponent implements OnInit {
     this.count = this.rowData.length
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
-  }
-
-  onActivate(event) {
-    // console.log('Activate Event', event);
-  }
-
-  onSelect({ selected }) {
-    console.log('Select Event', selected, this.selected);
-    this.selected.splice(0, this.selected.length);
-    this.selected.push(...selected);
   }
 
   LimpiarForm(){
@@ -250,13 +209,6 @@ export class CommunicationsComponent implements OnInit {
       }
     ) 
   }
-
-  async capturar(e:any){
-    if(e !== null){
-      await this.CargarLista()
-    } 
-  }
-
 
   ModalEdit(modal, data){
     this.loginForm = this._formBuilder.group({

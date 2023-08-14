@@ -33,5 +33,6 @@ export interface CoreConfig {
     customizer: boolean;
     scrollTop: boolean;
     buyNow: boolean;
+    ReCaptchaV3: boolean;
   };
 }

@@ -47,6 +47,7 @@ export const coreConfig: CoreConfig = {
     enableLocalStorage: true,
     customizer  : true,                       // Boolean: true, false (Enable theme customizer)
     scrollTop   : true,                       // Boolean: true, false (Enable scroll to top button)
-    buyNow      : false                        // Boolean: true, false (Set false in real project, For demo purpose only)
+    buyNow      : false,                      // Boolean: true, false (Set false in real project, For demo purpose only)
+    ReCaptchaV3 : false                       // Boolean: true, false (Enable ReCaptChaV3)
   }
 }

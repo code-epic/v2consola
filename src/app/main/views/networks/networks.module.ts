@@ -24,12 +24,12 @@ import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
+import { BlockUIModule } from 'ng-block-ui';
 
 
 import { CommunicationsComponent } from './communications/communications.component';
 import { ConnectionsComponent } from './connections/connections.component';
 import { MonitoringComponent } from './monitoring/monitoring.component';
-import { BlockUIModule } from 'ng-block-ui';
 
 const routes = [
   {
@@ -78,6 +78,7 @@ const routes = [
     BlockUIModule,
     CorePipesModule,
     CoreSidebarModule,
-    CoreCommonModule],
+    CoreCommonModule
+  ],
 })
 export class NetworksModule { }

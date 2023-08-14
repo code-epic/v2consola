@@ -29,6 +29,8 @@ import { ApplicationsModule } from './main/views/applications/applications.modul
 // Recaptcha V3
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 import { environment } from 'environments/environment';
+import { BlockUIModule } from 'ng-block-ui';
+
 
 
 //  Recaptcha V2
@@ -64,8 +66,7 @@ const appRoutes: Routes = [
     RecaptchaV3Module,
     //  Recaptcha V2
     // RecaptchaFormsModule,
-    // RecaptchaModule,
-    
+    // RecaptchaModule,    
 
     //NgBootstrap
     NgbModule,
@@ -78,7 +79,7 @@ const appRoutes: Routes = [
     CoreThemeCustomizerModule,
 
 
-    // BlockUIModule.forRoot(),
+    BlockUIModule.forRoot(),
     // App modules
     LayoutModule,
     HomeModule,
