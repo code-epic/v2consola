@@ -26,7 +26,6 @@ const routes = [
     component: HomeComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'home' }
   }
 ];
 

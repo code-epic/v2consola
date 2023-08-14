@@ -16,17 +16,14 @@ const routes: Routes = [
   {
     path: 'login2',
     component: AuthLoginV2Component,
-    data: { animation: 'auth' }
   },
   {
     path: '',
     component: AuthLoginV1Component,
-    data: { animation: 'auth' }
   },
   {
     path: 'login',
     component: AuthLoginV1Component,
-    data: { animation: 'auth' }
   }
 ];
 

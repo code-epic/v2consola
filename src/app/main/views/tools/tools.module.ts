@@ -37,21 +37,18 @@ const routes = [
     component: FunctionsComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'functions' }
   },
   {
     path: 'tools/api',
     component: ApiComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'api' }
   },
   {
     path: 'tools/workflow',
     component: WorkflowComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'workflow' }
   }
 ];
 

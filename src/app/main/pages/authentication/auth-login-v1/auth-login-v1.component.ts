@@ -58,7 +58,7 @@ export class AuthLoginV1Component implements OnInit {
     private utilservice: UtilService,
     ) {
       if (sessionStorage.getItem("token") != undefined ){
-        this.router.navigate(['principal']);
+        this.router.navigate(['home']);
       }
     this._unsubscribeAll = new Subject();
 

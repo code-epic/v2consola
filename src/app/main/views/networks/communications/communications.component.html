@@ -85,7 +85,7 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [width]="10">
+          <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [width]="100">
             <ng-template let-descripcion="value" ngx-datatable-cell-template>
               <div>
                 <span class="font-weight-bold">{{ descripcion.toUpperCase() }} </span>
@@ -93,7 +93,7 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="Status" prop="estatus" [width]="50">
+          <ngx-datatable-column name="Status" prop="estatus" [width]="10">
             <ng-template let-estatus="value" ngx-datatable-cell-template>
 
               <div class="badge badge-success" *ngIf="estatus === true">Activo</div>
@@ -101,7 +101,7 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="ACCIÓN" [width]="20" [sortable]="false">
+          <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
             <ng-template ngx-datatable-cell-template let-row="row">
               <div ngbDropdown container="body">
                 <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>

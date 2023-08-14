@@ -37,21 +37,18 @@ const routes = [
     component: CommunicationsComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'communications' }
   },
   {
     path: 'networks/connections',
     component: ConnectionsComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'connections' }
   },
   {
     path: 'networks/monitoring',
     component: MonitoringComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'monitoring' }
   }
 ];
 

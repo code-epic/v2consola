@@ -18,21 +18,18 @@ const routes = [
     component: RoleComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'role' }
   },
   {
     path: 'security/profile',
     component: ProfileComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'profile' }
   },
   {
     path: 'security/user',
     component: UserComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'user' }
   }
 ];
 

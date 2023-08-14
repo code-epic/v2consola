@@ -17,7 +17,6 @@ const routes = [
     component: UpdateComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'update' }
   }
 ];
 
