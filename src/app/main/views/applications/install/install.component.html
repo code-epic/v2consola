@@ -1,13 +1,13 @@
-    <div class="modal-header">
-        <h4 class="modal-title" id="myModalLabel1">Modelo WAS ( Servidor de Aplicaciones Web )</h4>
-        <button type="button" class="close" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
+<div class="modal-header">
+  <h4 class="modal-title" id="myModalLabel1">Modelo WAS ( Servidor de Aplicaciones Web )</h4>
+  <button type="button" class="close" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body" tabindex="0" ngbAutofocus>
 
-        <!-- Horizontal Wizard -->
-<section class="horizontal-wizard">
+  <!-- Horizontal Wizard -->
+  <section class="horizontal-wizard">
     <div id="stepper1" class="bs-stepper horizontal-wizard-example">
       <div class="bs-stepper-header">
         <div class="step" data-target="#account-details">
@@ -61,167 +61,125 @@
 
               <div class="row">
                 <div class="form-group col-md-4">
-                    <label class="form-label" for="tipo">Tipo de instalación</label>
-                    <input
-                      class="form-control"
-                      [class.error]="accountDetailsForm.submitted"
-                      placeholder="Seleccione"
-                      aria-label="Seleccione"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="!TDEmailRef.valid">Este campo es requerido!</small>
-                    </span>
-                  </div>
-                <div class="form-group col-md-4">
-                  <label class="form-label" for="servidor">Servidor</label>
-                  <input
-                    class="form-control"
-                    [class.error]="accountDetailsForm.submitted"
-                    placeholder="Seleccione"
-                    aria-label="Seleccione"
-                  />
-                  <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="!TDEmailRef.valid">Este campo es requerido!</small>
+                  <label class="form-label" for="tipo">Tipo de instalación</label>
+                  <input [(ngModel)]="mtipo" #TDTipoRef="ngModel" required type="text" name="tipo" id="tipo"
+                    class="form-control" [class.error]="!TDTipoRef.valid && accountDetailsForm.submitted"
+                    placeholder="tipo" />
+                  <span *ngIf="accountDetailsForm.submitted && TDTipoRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="TDTipoRef.errors.required">Este campo es
+                      requerido!</small>
                   </span>
                 </div>
-
                 <div class="form-group col-md-4">
-                    <label class="form-label" for="sistema">Sistema Operativo</label>
-                    <input
-                      class="form-control"
-                      [class.error]="accountDetailsForm.submitted"
-                      placeholder="Seleccione"
-                      aria-label="Seleccione"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="!TDEmailRef.valid">Este campo es requerido!</small>
-                    </span>
-                  </div>
+                  <label class="form-label" for="servidor">Servidor</label>
+                  <input [(ngModel)]="mservidor" #TDSerRef="ngModel" required type="text" name="servidor" id="servidor"
+                    class="form-control" [class.error]="!TDSerRef.valid && accountDetailsForm.submitted"
+                    placeholder="servidor" />
+                  <span *ngIf="accountDetailsForm.submitted && TDSerRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="!TDSerRef.valid">Este campo es requerido!</small>
+                  </span>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="form-label" for="sistema">Sistema Operativo</label>
+                  <input [(ngModel)]="msistema" #TDSisRef="ngModel" required type="text" name="sistema" id="sistema"
+                    class="form-control" [class.error]="!TDSisRef.valid && accountDetailsForm.submitted"
+                    placeholder="sistema" />
+                  <span *ngIf="accountDetailsForm.submitted && TDSisRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="!TDSisRef.valid">Este campo es requerido!</small>
+                  </span>
+                </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-4">
-                    <label class="form-label" for="tipo">Repositorio Url</label>
-                    <input
-                      class="form-control"
-                      [class.error]="accountDetailsForm.submitted"
-                      placeholder="URL"
-                      aria-label="URL"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="!TDEmailRef.valid">Este campo es requerido!</small>
-                    </span>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label class="form-label" for="usuario">Usuario</label>
-                    <input
-                    class="form-control"
-                    [class.error]="accountDetailsForm.submitted"
-                    placeholder="Usuario"
-                    aria-label="Usuario"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="TDNameRef.errors.required"
-                        >Este campo es requerido!</small
-                      >
-                    </span>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label class="form-label" for="password">Password / Token</label>
-                    <input
-                    class="form-control"
-                    [class.error]="accountDetailsForm.submitted"
-                    placeholder="Password / Token"
-                    aria-label="Password / Token"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="TDNameRef.errors.required"
-                        >Este campo es requerido!</small
-                      >
-                    </span>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label class="form-label" for="montaje">Punto Montaje</label>
-                    <input class="form-control"
-                    [class.error]="accountDetailsForm.submitted"
-                    placeholder="Punto Montaje"
-                    aria-label="Punto Montaje"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="TDNameRef.errors.required"
-                        >Este campo es requerido!</small
-                      >
-                    </span>
-                  </div>
+                  <label class="form-label" for="repo">Repositorio Url</label>
+                  <input [(ngModel)]="mrepo" #TDRepRef="ngModel" required type="text" name="repo" id="repo"
+                    class="form-control" [class.error]="!TDRepRef.valid && accountDetailsForm.submitted"
+                    placeholder="repo" />
+                  <span *ngIf="accountDetailsForm.submitted && TDRepRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="!TDRepRef.valid">Este campo es requerido!</small>
+                  </span>
+                </div>
+                <div class="form-group col-md-2">
+                  <label class="form-label" for="usuario">Usuario</label>
+                  <input [(ngModel)]="musuario" #TDUsuRef="ngModel" required type="text" name="usuario" id="usuario"
+                    class="form-control" [class.error]="!TDUsuRef.valid && accountDetailsForm.submitted"
+                    placeholder="usuario" />
+                  <span *ngIf="accountDetailsForm.submitted && TDUsuRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="TDUsuRef.errors.required">Este campo es
+                      requerido!</small>
+                  </span>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="form-label" for="password">Password / Token</label>
+                  <input [(ngModel)]="mpassword" #TDPassRef="ngModel" required type="text" name="password" id="password"
+                    class="form-control" [class.error]="!TDPassRef.valid && accountDetailsForm.submitted"
+                    placeholder="password" />
+                  <span *ngIf="accountDetailsForm.submitted && TDPassRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="TDPassRef.errors.required">Este campo es
+                      requerido!</small>
+                  </span>
+                </div>
+                <div class="form-group col-md-2">
+                  <label class="form-label" for="montaje">Punto Montaje</label>
+                  <input [(ngModel)]="mmontaje" #TDMonRef="ngModel" required type="text" name="montaje" id="montaje"
+                    class="form-control" [class.error]="!TDMonRef.valid && accountDetailsForm.submitted"
+                    placeholder="montaje" />
+                  <span *ngIf="accountDetailsForm.submitted && TDMonRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="TDMonRef.errors.required">Este campo es
+                      requerido!</small>
+                  </span>
+                </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-6">
-                    <label class="form-label" for="bdatos">Base de Datos</label>
-                    <input
-                    class="form-control"
-                    [class.error]="accountDetailsForm.submitted"
-                    placeholder="Base de Datos"
-                    aria-label="Base de Datos"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="TDNameRef.errors.required"
-                        >Este campo es requerido!</small
-                      >
-                    </span>
-                  </div>
-                  <div class="form-group col-md-2">
-                    <label class="form-label" for="version">Versión</label>
-                    <input
-                    class="form-control"
-                    [class.error]="accountDetailsForm.submitted"
-                    placeholder="Versión"
-                    aria-label="Versión"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="TDNameRef.errors.required"
-                        >Este campo es requerido!</small
-                      >
-                    </span>
-                  </div>
-                  <div class="form-group col-md-4">
-                    <label class="form-label" for="lenguaje">Lenguaje</label>
-                    <input
-                    class="form-control"
-                    [class.error]="accountDetailsForm.submitted"
-                    placeholder="Lenguaje"
-                    aria-label="Lenguaje"
-                    />
-                    <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="TDNameRef.errors.required"
-                        >Este campo es requerido!</small
-                      >
-                    </span>
-                  </div>
+                  <label class="form-label" for="bdatos">Base de Datos</label>
+                  <input [(ngModel)]="mbdatos" #TDDatoRef="ngModel" required type="text" name="bdatos" id="bdatos"
+                    class="form-control" [class.error]="!TDDatoRef.valid && accountDetailsForm.submitted"
+                    placeholder="bdatos" />
+                  <span *ngIf="accountDetailsForm.submitted && TDDatoRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="TDDatoRef.errors.required">Este campo es
+                      requerido!</small>
+                  </span>
+                </div>
+                <div class="form-group col-md-2">
+                  <label class="form-label" for="version">Versión</label>
+                  <input [(ngModel)]="mversion" #TDVerRef="ngModel" required type="text" name="version" id="version"
+                    class="form-control" [class.error]="!TDVerRef.valid && accountDetailsForm.submitted"
+                    placeholder="version" />
+                  <span *ngIf="accountDetailsForm.submitted && TDVerRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="TDVerRef.errors.required">Este campo es
+                      requerido!</small>
+                  </span>
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="form-label" for="lenguaje">Lenguaje</label>
+                  <input [(ngModel)]="mlenguaje" #TDLenRef="ngModel" required type="text" name="lenguaje" id="lenguaje"
+                    class="form-control" [class.error]="!TDLenRef.valid && accountDetailsForm.submitted"
+                    placeholder="lenguaje" />
+                  <span *ngIf="accountDetailsForm.submitted && TDLenRef.invalid" class="invalid-form">
+                    <small class="form-text text-danger" *ngIf="TDLenRef.errors.required">Este campo es
+                      requerido!</small>
+                  </span>
+                </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-12">
-                    <label for="basicTextarea">Descripción</label>
-                    <fieldset class="form-group">
-                      <textarea class="form-control" id="basicTextarea" rows="3" placeholder="Enter.."></textarea>
-                    </fieldset>
-                  </div>
-        
+                  <label for="basicTextarea">Descripción</label>
+                  <fieldset class="form-group">
+                    <textarea class="form-control" id="basicTextarea" rows="3" placeholder="Enter.."></textarea>
+                  </fieldset>
+                </div>
+
               </div>
 
               <div class="d-flex justify-content-between">
-                <button
-                
-                  class="btn btn-outline-secondary btn-prev"
-                  disabled
-                  rippleEffect
-                >
+                <button (click)="horizontalWizardStepperPrevious()" class="btn btn-outline-secondary btn-prev" disabled
+                  rippleEffect>
                   <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button
-                  type="submit"
-                  class="btn btn-primary btn-next"
-                  rippleEffect
-                >
+                <button type="submit"
+                  class="btn btn-primary btn-next" rippleEffect>
                   <span class="align-middle d-sm-inline-block d-none">Next</span>
                   <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
                 </button>
@@ -238,64 +196,47 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <label class="form-label" for="first-name">First Name</label>
-                  <input
-                
-                    id="first-name"
-                    class="form-control"
-                    [class.error]="personalInfoForm.submitted"
-                    placeholder="John"
-                  />
+                  <input id="first-name" class="form-control" [class.error]="personalInfoForm.submitted"
+                    placeholder="John" />
                   <span *ngIf="personalInfoForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="TDFirstNameRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="TDFirstNameRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
                 <div class="form-group col-md-6">
                   <label class="form-label" for="last-name">Last Name</label>
-                  <input
-                    class="form-control"
-                    [class.error]="personalInfoForm.submitted"
-                    placeholder="Doe"
-                  />
+                  <input class="form-control" [class.error]="personalInfoForm.submitted" placeholder="Doe" />
                   <span *ngIf="personalInfoForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="TDLastNameRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="TDLastNameRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-6">
                   <label class="form-label" for="country">Country</label>
-                 <!--  <ng-select bindLabel="name"> </ng-select> -->
+                  <!--  <ng-select bindLabel="name"> </ng-select> -->
                 </div>
                 <div class="form-group col-md-6">
                   <label class="form-label" for="language">Language</label>
-                <!--   <ng-select
+                  <!--   <ng-select
                     
                   > -->
-                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
-                      <span class="ng-value-label"> {{ item.name }}</span>
-                      <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
-                    </ng-template>
-                 <!--  </ng-select> -->
+                  <ng-template ng-label-tmp let-item="item" let-clear="clear">
+                    <span class="ng-value-label"> {{ item.name }}</span>
+                    <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                  </ng-template>
+                  <!--  </ng-select> -->
                 </div>
               </div>
 
               <div class="d-flex justify-content-between">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-prev"
-                  rippleEffect
-                >
+                <button (click)="horizontalWizardStepperPrevious()" type="button" class="btn btn-primary btn-prev"
+                  rippleEffect>
                   <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button
-                  class="btn btn-primary btn-next"
-                  rippleEffect
-                >
+                <button class="btn btn-primary btn-next" rippleEffect>
                   <span class="align-middle d-sm-inline-block d-none">Next</span>
                   <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
                 </button>
@@ -312,33 +253,20 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <label class="form-label" for="address">Address</label>
-                  <input
-    
-                    id="address"
-                    name="address"
-                    class="form-control"
-                    [class.error]="addressForm.submitted"
-                    placeholder="98  Borough bridge Road, Birmingham"
-                  />
+                  <input id="address" name="address" class="form-control" [class.error]="addressForm.submitted"
+                    placeholder="98  Borough bridge Road, Birmingham" />
                   <span *ngIf="addressForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="addressRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="addressRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
                 <div class="form-group col-md-6">
                   <label class="form-label" for="landmark">Landmark</label>
-                  <input
-                    
-                    id="landmark"
-                    class="form-control"
-                    [class.error]="addressForm.submitted"
-                    placeholder="Borough bridge"
-                  />
+                  <input id="landmark" class="form-control" [class.error]="addressForm.submitted"
+                    placeholder="Borough bridge" />
                   <span *ngIf="addressForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="landmarkRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="landmarkRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
               </div>
@@ -354,18 +282,11 @@
               </div>
 
               <div class="d-flex justify-content-between">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-prev"
-                  rippleEffect
-                >
+                <button type="button" class="btn btn-primary btn-prev" rippleEffect>
                   <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
-                <button
-                  class="btn btn-primary btn-next"
-                  rippleEffect
-                >
+                <button class="btn btn-primary btn-next" rippleEffect>
                   <span class="align-middle d-sm-inline-block d-none">Next</span>
                   <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
                 </button>
@@ -381,71 +302,45 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <label class="form-label" for="twitter">Twitter</label>
-                  <input
-                    class="form-control"
-                    [class.error]="socialLinkForm.submitted"
-                    placeholder="https://twitter.com/abc"
-                  />
+                  <input class="form-control" [class.error]="socialLinkForm.submitted"
+                    placeholder="https://twitter.com/abc" />
                   <span *ngIf="socialLinkForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="twitterkRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="twitterkRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
                 <div class="form-group col-md-6">
                   <label class="form-label" for="facebook">Facebook</label>
-                  <input
-                    name="facebook"
-                    class="form-control"
-                    [class.error]="socialLinkForm.submitted"
-                    placeholder="https://facebook.com/abc"
-                  />
+                  <input name="facebook" class="form-control" [class.error]="socialLinkForm.submitted"
+                    placeholder="https://facebook.com/abc" />
                   <span *ngIf="socialLinkForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="facebookRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="facebookRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
               </div>
               <div class="row">
                 <div class="form-group col-md-6">
                   <label class="form-label" for="google">Google+</label>
-                  <input
-                   
-                    id="google"
-                    name="google"
-                    class="form-control"
-                    [class.error]="socialLinkForm.submitted"
-                    placeholder="https://plus.google.com/abc"
-                  />
+                  <input id="google" name="google" class="form-control" [class.error]="socialLinkForm.submitted"
+                    placeholder="https://plus.google.com/abc" />
                   <span *ngIf="socialLinkForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="googleRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="googleRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
                 <div class="form-group col-md-6">
                   <label class="form-label" for="linkedin">Linkedin</label>
-                  <input
-                    id="linkedin"
-                    name="linkedin"
-                    class="form-control"
-                    [class.error]="socialLinkForm.submitted"
-                    placeholder="https://linkedin.com/abc"
-                  />
+                  <input id="linkedin" name="linkedin" class="form-control" [class.error]="socialLinkForm.submitted"
+                    placeholder="https://linkedin.com/abc" />
                   <span *ngIf="socialLinkForm.submitted" class="invalid-form">
-                    <small class="form-text text-danger" *ngIf="linkedinRef.errors.required"
-                      >This field is required!</small
-                    >
+                    <small class="form-text text-danger" *ngIf="linkedinRef.errors.required">This field is
+                      required!</small>
                   </span>
                 </div>
               </div>
               <div class="d-flex justify-content-between">
-                <button
-                  type="button"
-                  class="btn btn-primary btn-prev"
-                  rippleEffect
-                >
+                <button type="button" class="btn btn-primary btn-prev" rippleEffect>
                   <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                   <span class="align-middle d-sm-inline-block d-none">Previous</span>
                 </button>
@@ -458,6 +353,3 @@
     </div>
   </section>
   <!--/ Horizontal Wizard -->
-
-
-  
