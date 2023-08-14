@@ -24,7 +24,7 @@ export const coreConfig: CoreConfig = {
   layout: {
     skin  : 'default',                        // default, dark, bordered, semi-dark
     type  : 'vertical',                       // vertical, horizontal
-    animation : 'fadeIn',                     // fadeInLeft, zoomIn , fadeIn, none
+    animation : 'zoomIn',                     // fadeInLeft, zoomIn , fadeIn, none
     menu : {
       hidden               : false,           // Boolean: true, false
       collapsed            : false,           // Boolean: true, false
@@ -32,14 +32,14 @@ export const coreConfig: CoreConfig = {
     // ? For horizontal menu, navbar type will work for navMenu type
     navbar: {
       hidden               : false,           // Boolean: true, false
-      type                 : 'floating-nav',  // navbar-static-top, fixed-top, floating-nav, d-none
+      type                 : 'fixed-top',  // navbar-static-top, fixed-top, floating-nav, d-none
       background           : 'navbar-light',  // navbar-light. navbar-dark
       customBackgroundColor: true,            // Boolean: true, false
       backgroundColor      : ''               // BS color i.e bg-primary, bg-success
     },
     footer: {
       hidden               : false,           // Boolean: true, false
-      type                 : 'footer-static', // footer-static, footer-sticky, d-none
+      type                 : 'footer-sticky', // footer-static, footer-sticky, d-none
       background           : 'footer-light',  // footer-light. footer-dark
       customBackgroundColor: false,           // Boolean: true, false
       backgroundColor      : ''               // BS color i.e bg-primary, bg-success
@@ -47,6 +47,6 @@ export const coreConfig: CoreConfig = {
     enableLocalStorage: true,
     customizer  : true,                       // Boolean: true, false (Enable theme customizer)
     scrollTop   : true,                       // Boolean: true, false (Enable scroll to top button)
-    buyNow      : false                        // Boolean: true, false (Set false in real project, For demo purpose only)
+    buyNow      : false,                      // Boolean: true, false (Set false in real project, For demo purpose only)
   }
 }

@@ -4,6 +4,9 @@
 
 export const environment = {
   production: false,
+  recaptcha: {
+    siteKey: '6LdwJNwlAAAAAI8-p7XKKCtfJ51goRFyBBbjaAJL',
+  },
   hmr: false,
   apiUrl: 'https://localhost',
   Url: 'https://localhost',

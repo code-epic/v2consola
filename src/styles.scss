@@ -1,8 +1,11 @@
 @import '@core/scss/core.scss';
 @import './assets/scss/styles';
 
+@import '@core/scss/base/bootstrap-extended/include'; // Bootstrap includes
+@import '@core/scss/base/pages/page-auth.scss';
 
-// @import '@core/scss/angular/libs/datatables.component.scss';
+
+@import '@core/scss/angular/libs/datatables.component.scss';
 @import '@core/scss/base/pages/app-user.scss';
 @import '@core/scss/angular/libs/select.component.scss';
 

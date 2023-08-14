@@ -14,8 +14,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 
+
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectModule } from '@ng-select/ng-select';
 import { ApiComponent } from '../views/tools/api/api.component';
 // import { MiscellaneousModule } from '../miscellaneous/miscellaneous.module';
 
@@ -26,7 +26,6 @@ const routes = [
     component: HomeComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'home' }
   }
 ];
 
@@ -41,7 +40,6 @@ const routes = [
     NgxDatatableModule,
     CoreCommonModule,
     NgbModule,
-    NgSelectModule,
     FormsModule,
     ReactiveFormsModule,
   ],

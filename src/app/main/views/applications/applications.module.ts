@@ -23,35 +23,30 @@ const routes = [
     component: InstallComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'install' }
   },
   {
     path: 'applications/versions',
     component: VersionsComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'versions' }
   },
   {
     path: 'applications/menu',
     component: MenuComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'menu' }
   },
   {
     path: 'applications/monitoring',
     component: MonitoringComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'monitoring' }
   },
   {
     path: 'applications/events',
     component: EventsComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-    data: { animation: 'events' }
   }
 ];
 

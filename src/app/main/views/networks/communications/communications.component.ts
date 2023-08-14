@@ -1,16 +1,17 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
 import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { BlockUI, NgBlockUI } from 'ng-block-ui';
+
 
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
-
+import { ComunicationsService } from '@services/networks/comunications.service';
 
 
 @Component({
@@ -22,6 +23,11 @@ import { UtilService } from '@services/util/util.service';
 })
 
 export class CommunicationsComponent implements OnInit {
+  
+  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
+
 
   public xAPI : IAPICore = {
     funcion: '',
@@ -51,7 +57,7 @@ export class CommunicationsComponent implements OnInit {
 
 
   // Private
-  private _unsubscribeAll: Subject<any>;
+  public count
  
   public ListaComunicaciones = []
   public tempData = [];
@@ -76,6 +82,10 @@ export class CommunicationsComponent implements OnInit {
 
 
   // public
+  public mac
+  public data : any
+  public xrs = ''
+  public host = ''
   public submitted = false;
   public loginForm: UntypedFormGroup;
   public contentHeader: object;
@@ -85,21 +95,16 @@ export class CommunicationsComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
-  @ViewChild(DatatableComponent) table: DatatableComponent;
-
 
   constructor(
+    private comunicacionesService : ComunicationsService,
     private apiService : ApiService,
     private modalService: NgbModal,
     private ws : WsocketsService,
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
-
   ) {
-    this.config.notFoundText = 'Custom not found';
-      this.config.appendTo = 'body';
-      this.config.bindValue = 'value';
   }
 
     // convenience getter for easy access to form fields
@@ -107,7 +112,9 @@ export class CommunicationsComponent implements OnInit {
       return this.loginForm.controls;
     }
 
+
   async ngOnInit() {
+    await this.CargarLista()
 
     this.loginForm = this._formBuilder.group({
       host: ['', [Validators.required]],
@@ -118,13 +125,12 @@ export class CommunicationsComponent implements OnInit {
       estatus: [undefined],
     });
 
-    if(this.sDispositivo == undefined){
-      await this.CargarLista('SRV')
-    } 
-
+    // this.sectionBlockUI.start('Loading...');
+    // this.sectionBlockUI.stop();
+    
      // content header
      this.contentHeader = {
-      headerTitle: 'Redes',
+      headerTitle: 'Comunicaciones',
       actionButton: true,
       breadcrumb: {
         type: '',
@@ -147,50 +153,62 @@ export class CommunicationsComponent implements OnInit {
     };
   }
 
+
+
   filterUpdate(event: any) {
-    const val = event.target.value;
+    const val = event.target.value.toLowerCase();
     // filter our data
     const temp = this.tempData.filter(function (d) {
-      return d.host.indexOf(val) !== -1 ;
+      return d.descripcion.toLowerCase().indexOf(val) !== -1 || !val;
     });
     // update the rows
-    this.kitchenSinkRows = temp;
+    this.rowData = temp;
+    this.count = this.rowData.length
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
 
-  onActivate(event) {
-    // console.log('Activate Event', event);
+  filterDispositivo(event: any) {
+    const val = event ? event : '';
+    // filter our data
+    const temp = this.tempData.filter(function (d) {
+      return d.tipo.indexOf(val) !== -1 || !val;
+    });
+    // update the rows
+    this.rowData = temp;
+    this.count = this.rowData.length
+    // Whenever the filter changes, always go back to the first page
+    this.table.offset = 0;
   }
 
-  onSelect({ selected }) {
-    console.log('Select Event', selected, this.selected);
-    this.selected.splice(0, this.selected.length);
-    this.selected.push(...selected);
+  LimpiarForm(){
+    this.loginForm = this._formBuilder.group({
+      host: ['', [Validators.required]],
+      mac: ['', [Validators.required]],
+      descripcion: ['', [Validators.required]],
+      id: ['', [Validators.required]],
+      tipo: [undefined],
+      estatus: [undefined],
+    });
   }
 
-  async CargarLista(e: any){
-    this.xAPI.funcion = "LstComunicaciones";
-    this.xAPI.parametros = e;
+  async CargarLista(){
+    this.xAPI.funcion = "_SYS_LstComunicaciones";
+    this.xAPI.parametros = ''
     this.ListaComunicaciones = []
+    this.count = 0
      await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
           this.ListaComunicaciones.push(data);
-          setTimeout(() => {
-            this.rowData = data;
-            this.tempData = this.rowData;
-        }, 400);
+              this.rowData = data;
+              this.count = this.rowData.length
+              this.tempData = this.rowData;
       },
       (error) => {
         console.log(error)
       }
     ) 
   }
-
-  async capturar(e:any){
-    await this.CargarLista(e)
-  }
-
 
   ModalEdit(modal, data){
     this.loginForm = this._formBuilder.group({
@@ -210,6 +228,43 @@ export class CommunicationsComponent implements OnInit {
     });
   }
 
+  ModalEscaneo(modal, data){
+    this.data = data
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+   async ScanRed(){
+     await this.comunicacionesService.ScanNmap(this.data.host).subscribe(
+      (data)=>{
+        console.log(data)
+        this.xrs = data.msj
+      },
+      (error)=>{
+        this.utilservice.AlertMini('top-end','error','Error al generar Nmap',3000)
+        console.error(error)
+      }
+    )
+  }
+
+  async ScanRedMac(){
+    await this.comunicacionesService.ScanMac(this.host).subscribe(
+      (data)=>{ 
+        this.mac = data.msj
+      },
+      (error)=>{
+        this.utilservice.AlertMini('top-end','error','Error al escanear red',3000)
+        console.error(error)
+      }
+    )
+    
+  }
+
 
   ModalAdd(modal){
     this.modalService.open(modal,{
@@ -221,7 +276,7 @@ export class CommunicationsComponent implements OnInit {
     });
   }
 
-  submit(){
+  GuardarDispositivo(){
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -236,15 +291,43 @@ export class CommunicationsComponent implements OnInit {
       this.rowData.push(this.ListaComunicaciones)
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
-          console.log(data)
           this.ListaComunicaciones = []
-          this.CargarLista('SRV')
+          this.CargarLista()
           this.modalService.dismissAll('Close')
           this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`,3000)
-          
+          this.LimpiarForm()
         }, (error) => {
           this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
-          console.log(error)
+          // console.log(error)
+        }
+      )
+
+    }
+  }
+
+  EditarDispositivo(){
+    this.submitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    } else {
+      var obj = {
+        "coleccion": "sys-conection",
+        "objeto": this.loginForm.value,
+        "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
+        "driver": "MGDBA",
+        "upsert": true
+      }
+      this.rowData.push(this.ListaComunicaciones)
+      this.apiService.ExecColeccion(obj).subscribe(
+        (data) => {
+          this.ListaComunicaciones = []
+          this.CargarLista()
+          this.modalService.dismissAll('Close')
+          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido actualizada`,3000)
+          this.LimpiarForm()
+        }, (error) => {
+          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          // console.log(error)
         }
       )
 

@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { NgForm, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -58,7 +58,7 @@ export class AuthLoginV1Component implements OnInit {
     private utilservice: UtilService,
     ) {
       if (sessionStorage.getItem("token") != undefined ){
-        this.router.navigate(['principal']);
+        this.router.navigate(['home']);
       }
     this._unsubscribeAll = new Subject();
 
@@ -149,6 +149,7 @@ export class AuthLoginV1Component implements OnInit {
     );
     }
   }
+
 
   
 }
