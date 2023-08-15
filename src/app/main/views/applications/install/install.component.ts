@@ -124,3 +124,4 @@ export class InstallComponent implements OnInit {
     this.lstAplicaciones()
   }
 }
+

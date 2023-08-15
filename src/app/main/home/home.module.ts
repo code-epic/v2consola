@@ -16,7 +16,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ApiComponent } from '../views/tools/api/api.component';
+// import { ApiComponent } from '../views/tools/api/api.component';
 // import { MiscellaneousModule } from '../miscellaneous/miscellaneous.module';
 
 
@@ -30,7 +30,7 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [HomeComponent,ApiComponent],
+  declarations: [HomeComponent],
   imports: [
     RouterModule.forChild(routes),
     ContentHeaderModule,
