@@ -62,7 +62,7 @@
               <div class="row">
                 <div class="form-group col-md-4">
                   <label class="form-label" for="tipo">Tipo de instalación</label>
-                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="tipo"
+                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" [(ngModel)]="mtipo" [ngModelOptions]="{standalone: true}"
                       placeholder="Seleccione" bindValue="id">
                   </ng-select>
                   <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
@@ -73,7 +73,7 @@
 
               <div class="form-group col-md-4">
                 <label class="form-label" for="servidor">Servidor</label>
-                <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="servidor"
+                <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" [(ngModel)]="mservidor" [ngModelOptions]="{standalone: true}"
                     placeholder="Seleccione" bindValue="id">
                 </ng-select>
                 <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
@@ -83,7 +83,7 @@
             </div>
             <div class="form-group col-md-4">
               <label class="form-label" for="sistema">Sistema Operativo</label>
-              <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="sistema"
+              <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" [(ngModel)]="msistema" [ngModelOptions]="{standalone: true}"
                   placeholder="Seleccione" bindValue="id">
               </ng-select>
               <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
@@ -136,7 +136,7 @@
               <div class="row">
                 <div class="form-group col-md-6">
                   <label class="form-label" for="bdatos">Base de Datos</label>
-                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="bdatos"
+                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" [(ngModel)]="mbdatos" [ngModelOptions]="{standalone: true}"
                       placeholder="Seleccione" bindValue="id">
                   </ng-select>
                   <span *ngIf="accountDetailsForm.submitted" class="invalid-form">
@@ -156,7 +156,7 @@
                 </div>
                 <div class="form-group col-md-4">
                   <label class="form-label" for="lenguaje">Lenguaje</label>
-                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" formControlName="lenguaje"
+                  <ng-select [items]="tipo" [class.error]="accountDetailsForm.submitted" bindLabel="descripcion" [(ngModel)]="mlenguaje" [ngModelOptions]="{standalone: true}"
                       placeholder="Seleccione" bindValue="id">
                   </ng-select>
                   <span *ngIf="accountDetailsForm.submitted" class="invalid-form">

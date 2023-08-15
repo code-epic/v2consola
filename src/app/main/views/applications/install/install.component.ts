@@ -2,7 +2,6 @@ import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { InstallService, SSB_IAplicacion } from '@services/applications/install.service';
-import { FormGroup, FormControl } from '@angular/forms';
 import JSONFormatter from 'json-formatter-js';
 import Stepper from 'bs-stepper';
 import { NgSelectConfig } from '@ng-select/ng-select';
@@ -84,8 +83,10 @@ export class InstallComponent implements OnInit {
 
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.Cuerpo.forEach(e => {    
-          console.log(e.nombre)      
+        this.dataApp.push(data);
+        console.log(data);
+        data.Cuerpo.map(e => {    
+        //  console.log(e.nombre)      
           this.dataApp.push({id: e.identificador, name: e.nombre + " | " + e.version });  
         });             
       },
