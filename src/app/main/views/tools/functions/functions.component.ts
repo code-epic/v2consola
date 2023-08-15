@@ -100,7 +100,7 @@ export class FunctionsComponent implements OnInit {
     private apiService : ApiService,
     private modalService: NgbModal,
     private conexionesService : ConexionesService,
-    private ws : WsocketsService,
+    private msjService : WsocketsService,
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
@@ -160,6 +160,8 @@ export class FunctionsComponent implements OnInit {
       }
     };
   }
+
+
 
 
 

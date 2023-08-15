@@ -3,19 +3,21 @@
   <a class="brand-logo" href="javascript:void(0);">
     <img src="{{ coreConfig.app.appLogoImage }}" alt="brand-logo" height="28" />
     <h2 class="brand-text text-primary ml-1">{{coreConfig.app.appName}}</h2></a>
-  <div class="misc-inner d-none d-lg-flex col-lg-12 align-items-center p-5">
+  <div class="misc-inner d-lg-flex col-lg-12 align-items-center p-5">
     <div class="w-100 text-center">
       <h1 class="mb-1"><strong>{{coreConfig.app.appTitle}}</strong></h1>
       <h2 class="mb-1">Usted no está autorizado! 🔐</h2>
       <p class="mb-2">No tienes permisos para ingresar a esta URL, te recomendamos salir de esta página</p>
+      <div class="btn-whatsapp">
       <img
       class="img-fluid drop"
       [src]="
       coreConfig.layout.skin === 'dark' ? 'assets/images/logo/logo.png' : 'assets/images/logo/logo.png'
       "
       alt="Error page"
-      width="300px"
+      width="200px"
     />
+    </div>
     <p class="mb-1 drop">
       <br>
       <a class="btn btn-warning mb-2 btn-sm-block" align="center" routerLink="/" rippleEffect>Salir de esta Página</a>

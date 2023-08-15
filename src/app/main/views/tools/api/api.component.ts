@@ -155,10 +155,6 @@ export class ApiComponent implements OnInit {
     this.production = []
     await this.apiService.Listar().subscribe(
       (data) => {
-        // this.ListaApis.push(data);
-        // this.rowData = data;
-        // this.count = this.rowData.length
-        // this.tempData = this.rowData;      
         data.forEach(e => {
           switch (e.entorno) {
             case t:
@@ -225,10 +221,10 @@ export class ApiComponent implements OnInit {
   }
 
   filterStatus(event: any) {
-    const val = event.id ? event.id : '';
+    const val = event.id
     // filter our data
     const temp = this.tempData.filter(function (d) {
-      return d.estatus.toLowerCase().indexOf(val) !== -1 || !val;
+      return d.estatus.indexOf(val) !== -1 || !val;
     });
     // update the rows
     this.rowData = temp;
@@ -266,15 +262,7 @@ export class ApiComponent implements OnInit {
     ) 
   }
 
-  ModalEdit(modal, data){
-    this.loginForm = this._formBuilder.group({
-      host: [data.host, [Validators.required]],
-      mac: [data.mac, [Validators.required]],
-      descripcion: [data.descripcion, [Validators.required]],
-      id: [data.id, [Validators.required]],
-      tipo: [data.tipo],
-      estatus: [data.estatus],
-    });
+  ModalEditApi(modal, data){
     this.modalService.open(modal,{
       centered: true,
       size: 'lg',
@@ -295,34 +283,31 @@ export class ApiComponent implements OnInit {
     });
   }
 
-   async ScanRed(){
-     await this.comunicacionesService.ScanNmap(this.data.host).subscribe(
-      (data)=>{
-        console.log(data)
-        this.xrs = data.msj
-      },
-      (error)=>{
-        this.utilservice.AlertMini('top-end','error','Error al generar Nmap',3000)
-        console.error(error)
-      }
-    )
+
+  ModalApi(modal){
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
   }
 
-  async ScanRedMac(){
-    await this.comunicacionesService.ScanMac(this.host).subscribe(
-      (data)=>{ 
-        this.mac = data.msj
-      },
-      (error)=>{
-        this.utilservice.AlertMini('top-end','error','Error al escanear red',3000)
-        console.error(error)
-      }
-    )
-    
+  ModalPromover(data){
+    console.log(data)
   }
 
+  ModalEliminar(data){
+    console.log(data)
+  }
 
-  ModalAdd(modal){
+  ModalModificar(modal){
+    console.log(modal)
+  }
+
+  ModalProbar(modal, data){
+    console.log(data)
     this.modalService.open(modal,{
       centered: true,
       size: 'lg',
