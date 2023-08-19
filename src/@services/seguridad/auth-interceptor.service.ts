@@ -31,11 +31,20 @@ export class AuthInterceptorService implements HttpInterceptor {
     
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
-        if (err.status === 401 || err.status === 403) {
-          sessionStorage.removeItem('token')
-          this.cerrar(err.error.msj)
+        switch(err.status){
+          case 401:
+            sessionStorage.removeItem('token')
+            this.cerrar(err.error.msj)
+          break;
+          case 403:
+            sessionStorage.removeItem('token')
+            this.cerrar(err.error.msj)
+          break;
+          case 504:
+            sessionStorage.removeItem('token')
+            this.cerrar(err.error)
+          break
         }
-
         return throwError( err );
       })
     )

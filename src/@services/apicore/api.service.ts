@@ -119,14 +119,15 @@ export class ApiService {
     return this.http.get<any>(url, this.httpOptions);
   }
 
-
-  ConsultarPidRecursivo(id:string){
+  // Consulta el Pid recursivamente
+  ConsultarPidRecursivo(id:string, fnx:any){
     this.ExecFnxId(id).subscribe(
       (data) => {
         console.log(data)
         setTimeout(()=> {
           if(data.documento == 'PROCESADO'){
             this.ws.lstpid$.emit(false)
+            this.ws.lstpidPeso$.emit(data.Duracion.segundos)
             Swal.fire({
               title: 'Proceso Finalizado',
               text: `Su proyecto a sido clonado exitosamente!`,
@@ -137,11 +138,11 @@ export class ApiService {
               confirmButtonText: 'Ir al proyecto!'
             }).then((result) => {
               if (result.isConfirmed) {
-                window.open('https://localhost/code-epic')
+                window.open(environment.Url+'/'+fnx.paquete)
               }
             })
           } else {
-            this.ConsultarPidRecursivo(id)
+            this.ConsultarPidRecursivo(id,fnx)
           }
         },10000)
       },
