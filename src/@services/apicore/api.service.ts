@@ -55,6 +55,14 @@ export interface ObjectoGenerico {
   obse: string
 }
 
+export interface ProcessID {
+  estatus: boolean,
+  contenido ?: string,
+  mensaje ?: string,
+  segundos : string,
+  rs ?: any
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -71,6 +79,12 @@ export class ApiService {
     })
   };
 
+  public pID : ProcessID = {
+    estatus: false,
+    mensaje: '',
+    segundos: '',
+    contenido: ''
+  }
 
   constructor(
     private utilService: UtilService,
@@ -126,8 +140,10 @@ export class ApiService {
         console.log(data)
         setTimeout(()=> {
           if(data.documento == 'PROCESADO'){
-            this.ws.lstpid$.emit(false)
-            this.ws.lstpidPeso$.emit(data.Duracion.segundos)
+            this.pID.estatus = false
+            this.pID.segundos = data.Duracion.segundos
+            this.pID.rs = data.rs
+            this.ws.lstpid$.emit(this.pID)
             Swal.fire({
               title: 'Proceso Finalizado',
               text: `Su proyecto a sido clonado exitosamente!`,

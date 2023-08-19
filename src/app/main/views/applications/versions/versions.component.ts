@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
-import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { ApiService, IAPICore, ProcessID } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 import Swal from 'sweetalert2';
@@ -52,6 +52,12 @@ export class VersionsComponent implements OnInit {
     logs: false
   };
 
+  public pID : ProcessID = {
+    estatus: false,
+    mensaje: '',
+    segundos: '',
+    contenido: ''
+  }
 
   // Private
 
@@ -138,7 +144,8 @@ export class VersionsComponent implements OnInit {
       confirmButtonText: 'Si, Clonar!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.msjService.lstpid$.emit(true)
+        this.pID.estatus = true
+        this.msjService.lstpid$.emit(this.pID)
         this.apiService.ExecFnx(this.fnx).subscribe(
           (data) => {
             this.xAPI.funcion = "_SYS_U_Aplicaciones";

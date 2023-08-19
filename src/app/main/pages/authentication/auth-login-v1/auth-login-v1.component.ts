@@ -14,6 +14,8 @@ import { environment } from 'environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { UtilService } from '@services/util/util.service';
 
+import { ReCaptchaV3Service } from 'ng-recaptcha';
+
 
 @Component({
   selector: 'app-auth-login-v1',
@@ -22,6 +24,7 @@ import { UtilService } from '@services/util/util.service';
   encapsulation: ViewEncapsulation.None
 })
 export class AuthLoginV1Component implements OnInit {
+  token: string|undefined;
   //  Public
   public coreConfig: any;
   public loginForm: UntypedFormGroup;
@@ -50,6 +53,7 @@ export class AuthLoginV1Component implements OnInit {
    * @param {FormBuilder} _formBuilder
    */
   constructor(
+    private recaptchaV3Service: ReCaptchaV3Service,
     private _coreConfigService: CoreConfigService,
     private _formBuilder: UntypedFormBuilder,
     private router: Router,
@@ -150,6 +154,14 @@ export class AuthLoginV1Component implements OnInit {
     }
   }
 
-
+  public send(form: NgForm): void {
+    if (form.invalid) {
+      for (const control of Object.keys(form.controls)) {
+        form.controls[control].markAsTouched();
+      }
+      return;
+    }
+    console.debug(`Token [${this.token}] generated`);
+  }
   
 }

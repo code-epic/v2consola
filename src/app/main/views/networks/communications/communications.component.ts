@@ -58,12 +58,17 @@ export class CommunicationsComponent implements OnInit {
 
   // Private
   public count
+
+  public titleModal
+
+  public fnx
  
   public ListaComunicaciones = []
   public tempData = [];
   public rowData = [];
 
   public sDispositivo
+  public hostIP
 
   public dispositivos = [
     {id:'SRV', descripcion: 'SERVIDORES'},
@@ -80,6 +85,7 @@ export class CommunicationsComponent implements OnInit {
     {id:false, name: 'INACTIVO'},
   ]
 
+  public btnShow = false
 
   // public
   public mac
@@ -97,10 +103,10 @@ export class CommunicationsComponent implements OnInit {
 
 
   constructor(
+    private msjService: WsocketsService,
     private comunicacionesService : ComunicationsService,
     private apiService : ApiService,
     private modalService: NgbModal,
-    private ws : WsocketsService,
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
@@ -124,6 +130,13 @@ export class CommunicationsComponent implements OnInit {
       tipo: [undefined],
       estatus: [undefined],
     });
+
+    this.msjService.lstpid$.subscribe(
+      (e)=> {
+        this.xrs = e.rs
+        this.btnShow = true
+      }
+    )
 
     // this.sectionBlockUI.start('Loading...');
     // this.sectionBlockUI.stop();
@@ -229,6 +242,9 @@ export class CommunicationsComponent implements OnInit {
   }
 
   ModalEscaneo(modal, data){
+    this.hostIP = data.host
+    this.titleModal = `IP: ${data.host} - ${data.descripcion}` 
+    this.btnShow = true
     this.data = data
     this.modalService.open(modal,{
       centered: true,
@@ -239,18 +255,23 @@ export class CommunicationsComponent implements OnInit {
     });
   }
 
-   async ScanRed(){
-     await this.comunicacionesService.ScanNmap(this.data.host).subscribe(
-      (data)=>{
-        console.log(data)
-        this.xrs = data.msj
+  async Nmap(){
+    this.btnShow = false
+    this.fnx = {
+      'funcion': 'Fnx_NMap',
+      'ip': this.hostIP
+    }
+    await this.apiService.ExecFnx(this.fnx).subscribe(
+      (data) => {
+        this.utilservice.AlertMini('top-end','success','Realizando Escaneo Nmap',3000)
+        this.apiService.ConsultarPidRecursivo(data.contenido.id, this.fnx)
       },
-      (error)=>{
+      (error) => {
         this.utilservice.AlertMini('top-end','error','Error al generar Nmap',3000)
-        console.error(error)
       }
     )
   }
+
 
   async ScanRedMac(){
     await this.comunicacionesService.ScanMac(this.host).subscribe(
