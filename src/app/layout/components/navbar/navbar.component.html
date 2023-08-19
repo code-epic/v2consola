@@ -68,7 +68,7 @@
       <a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" ngbDropdownToggle
         id="navbarUserDropdown" aria-haspopup="true" aria-expanded="false">
         <div class="user-nav d-sm-flex d-none">
-          <span class="user-name font-weight-bolder">{{ coreConfig.app.appName }}</span><span class="user-status">Administrador</span>
+          <span class="user-name font-weight-bolder">{{ usuario }}</span><span class="user-status">{{tipo}}</span>
         </div>
         <span class="avatar"><img class="round" src="../../../../assets/images/logo/logo.png"
             alt="avatar" height="40" width="40" /><span class="avatar-status-online"></span></span>
@@ -85,3 +85,5 @@
     <!--/ User Dropdown -->
   </ul>
 </div>
+
+<div *ngIf="blCargando" class="segundo-plano"></div>

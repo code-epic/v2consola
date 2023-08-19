@@ -27,6 +27,7 @@ import { CoreSidebarModule } from '@core/components';
 import { BlockUIModule } from 'ng-block-ui';
 
 
+
 import { InstallComponent } from './install/install.component';
 import { VersionsComponent } from './versions/versions.component';
 import { MenuComponent } from './menu/menu.component';

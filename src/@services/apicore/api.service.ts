@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { environment } from '../../environments/environment';
+import { WsocketsService } from '@services/websockets/wsockets.service';
+import { UtilService } from '@services/util/util.service';
 
 
 
@@ -70,7 +72,12 @@ export class ApiService {
   };
 
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(
+    private utilService: UtilService,
+    private router: Router,
+    private http: HttpClient,
+    private ws: WsocketsService
+    ) {
 
   }
 
@@ -104,6 +111,44 @@ export class ApiService {
   ExecFnx(fnx : any): Observable<any> {
     var url = this.URL + "fnx";
     return this.http.post<any>(url, fnx, this.httpOptions);
+  }
+
+  //  Consulta el PID de una funcion
+  ExecFnxId(id: string): Observable<any> {
+    var url = this.URL + `fnx:${id}`;
+    return this.http.get<any>(url, this.httpOptions);
+  }
+
+
+  ConsultarPidRecursivo(id:string){
+    this.ExecFnxId(id).subscribe(
+      (data) => {
+        console.log(data)
+        setTimeout(()=> {
+          if(data.documento == 'PROCESADO'){
+            this.ws.lstpid$.emit(false)
+            Swal.fire({
+              title: 'Proceso Finalizado',
+              text: `Su proyecto a sido clonado exitosamente!`,
+              icon: 'success',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ir al proyecto!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.open('https://localhost/code-epic')
+              }
+            })
+          } else {
+            this.ConsultarPidRecursivo(id)
+          }
+        },10000)
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
 
