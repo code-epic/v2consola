@@ -1,23 +1,20 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, ViewEncapsulation } from '@angular/core'
 import { Router } from '@angular/router'
 import { NgbModalConfig, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap'
-import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
-import { LoginService } from '@services/seguridad/login.service';
-import jwt_decode from "jwt-decode";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  host: { class: 'ecommerce-application' }
 })
 export class HomeComponent implements OnInit {
 
   constructor(
     config: NgbModalConfig,
-    private modalService: NgbModal,
     private ruta: Router,
-    private _coreMenuService: CoreMenuService,
-    private loginService: LoginService) {
+    ) {
     config.backdrop = false;
     config.keyboard = false;
   }
@@ -28,6 +25,44 @@ export class HomeComponent implements OnInit {
 
   closeResult: string = ''
 
+  public products = [
+    {
+      id: 1,
+      name: 'Servidores',
+      description: 'Los servidores operan a través de una arquitectura cliente-servidor. Los servidores son programas de computadora en ejecución.',
+      img: '../../../assets/items/servidores.png',
+      estatus: true,
+      base: 'networks',
+      ruta: 'communications'
+    },
+    {
+      id: 2,
+      name: 'Conexiones',
+      description: 'La conexión es el enlace que se establece entre el emisor y el receptor a través del que se envía el mensaje.',
+      img: '../../../assets/items/conexiones.png',
+      estatus: true,
+      base: 'networks',
+      ruta: 'connections'
+    },
+    {
+      id: 3,
+      name: 'API REST',
+      description: 'Es una interfaz de programación de aplicaciones (Application Programming Interface).',
+      img: '../../../assets/items/api.png',
+      estatus: true,
+      base: 'tools',
+      ruta: 'api'
+    },
+    {
+      id: 4,
+      name: 'Seguridad',
+      description: 'Se puede referir a la ausencia de riesgo o a la confianza en algo o en alguien.',
+      img: '../../../assets/items/seguridad.png',
+      estatus: true,
+      base: 'security',
+      ruta: 'role'
+    }
+  ]
 
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
@@ -39,35 +74,13 @@ export class HomeComponent implements OnInit {
     this.ruta.navigate([base, ruta])
   }
 
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'backdrop';
-    } else {
-      return `with: ${reason}`;
-    }
-  }
-
-  activarFormulario(content) {
-    this.modalService.open(content, {
-      centered: true,
-      size: 'xl',
-      scrollable: true
-    }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-      }, (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-      });
-  }
 
   /**
    * On init
    */
   async ngOnInit() {
     this.contentHeader = {
-      headerTitle: 'Dashboard',
+      headerTitle: 'Principal',
       actionButton: true,
       breadcrumb: {
         type: '',

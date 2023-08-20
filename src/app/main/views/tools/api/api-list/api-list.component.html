@@ -1,0 +1,41 @@
+<div class="content-wrapper container-xxl p-0">
+  <app-content-header [contentHeader]="contentHeader"></app-content-header>
+  <div class="content-body">
+    <section id="wishlist" class="grid-view wishlist-items">
+      <ng-container *ngFor="let product of drivers">
+
+
+        <!-- Ecommerce Item -->
+        <div class="card ecommerce-card">
+        <div class="item-img text-center">
+          <a (click)="irA('tools','api-list')">
+            <img class="img-fluid card-img-top" src="assets/integraciones/mongodb.png" *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
+            <img class="img-fluid card-img-top" src="assets/integraciones/mysql.png" *ngIf="product.driver == 'mysql8'" alt="img-placeholder" />
+            <img class="img-fluid card-img-top" src="assets/integraciones/mariadb.png" *ngIf="product.driver == 'mariadb'" alt="img-placeholder" />
+            <img class="img-fluid card-img-top" src="assets/integraciones/postgres.png" *ngIf="product.driver == 'postgres13' || product.driver == 'postgres96'" alt="img-placeholder" />
+          </a>
+        </div>
+        <div class="card-body">
+          <div class="item-wrapper">
+            <div class="item-rating">
+              <div class="rating rating-sm">
+                <div class="badge badge-success" *ngIf="product.estatus === true">Activo</div>
+                <div class="badge badge-danger" *ngIf="product.estatus === false">Inactivo</div>
+              </div>
+            </div>
+            <div class="item-cost">
+              <h6 class="item-price">{{ product.driver }}</h6>
+            </div>
+          </div>
+          <p class="card-text item-description">
+            {{ product.descripcion }}
+          </p>
+        </div>
+        </div>
+        <!--/ Ecommerce Item -->
+      </ng-container>
+    </section>
+    
+
+  </div>
+</div>

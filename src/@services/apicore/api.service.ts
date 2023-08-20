@@ -63,6 +63,11 @@ export interface ProcessID {
   rs ?: any
 }
 
+export interface WTipoArchivo {
+  ruta	 ?:	string
+	archivo	 ?:	string //CodeEncrypt
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -167,6 +172,40 @@ export class ApiService {
       }
     )
   }
+
+  DwsCdn(peticion : string){
+    let ruta = this.URL + 'dwsother/' + peticion
+    console.log(ruta)
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      responseType: 'blob' as 'json'
+    };
+    
+    this.http.get(ruta, httpOptions).subscribe((response: any) => {
+      const blob = new Blob([response], { type: 'application/zip' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url);
+    });
+  }
+
+
+  getDwsCdn(tpf : WTipoArchivo) : Observable<any> {
+    let ruta = this.URL + 'dwscdn'
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      responseType: 'blob' as 'json'
+    };
+    
+    return this.http.post<any>(ruta,  tpf, httpOptions)
+  }
+
 
 
   //ListarModulos

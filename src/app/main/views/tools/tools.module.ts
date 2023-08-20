@@ -31,6 +31,7 @@ import { ApiComponent } from './api/api.component';
 import { WorkflowComponent } from './workflow/workflow.component';
 
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { ApiListComponent } from './api/api-list/api-list.component';
 
 
 const routes = [
@@ -42,6 +43,12 @@ const routes = [
   },
   {
     path: 'tools/api',
+    component: ApiListComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'tools/api-list',
     component: ApiComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
@@ -58,7 +65,8 @@ const routes = [
   declarations: [
     FunctionsComponent,
     ApiComponent,
-    WorkflowComponent
+    WorkflowComponent,
+    ApiListComponent
   ],
   imports: [
     RouterModule.forChild(routes),

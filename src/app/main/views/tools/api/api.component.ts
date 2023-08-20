@@ -30,6 +30,8 @@ export class ApiComponent implements OnInit {
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
+  public fnx
+
   public xAPI : IAPICore = {
     funcion: '',
     parametros: '',
@@ -201,6 +203,27 @@ export class ApiComponent implements OnInit {
               this.ListarApis('desarrollo')       
               break;
             } 
+  }
+
+  ExportApi(){
+    this.fnx = {
+      'funcion': 'Fnx_ExportarAPI',
+      'base-datos': 'sandra-server',
+      'user': '',
+      'passw': '',
+      'categoria': 'CORE'
+
+    }
+    this.apiService.ExecFnx(this.fnx).subscribe(
+      (data) => {
+        console.log(data)
+        this.utilservice.AlertMini('top-end','success','Backup Generado',3000)
+        this.apiService.DwsCdn('bck-export/apicore.zip')
+      },
+      (error) => {
+        this.utilservice.AlertMini('top-end','success',error,3000)
+        console.log(error)
+      })
   }
 
   rowDetailsToggleExpand(row) {
