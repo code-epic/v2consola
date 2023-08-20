@@ -9,7 +9,7 @@ export const environment = {
   },
   hmr: false,
   apiUrl: 'https://localhost',
-  Url: 'https://localhost',
+  Url: 'https://localhost', // requerido para la Fnx_Eliminar proyectos 
   API: '/v1/api/',
   ID : 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',

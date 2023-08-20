@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { environment } from '../../environments/environment';
+import { WsocketsService } from '@services/websockets/wsockets.service';
+import { UtilService } from '@services/util/util.service';
 
 
 
@@ -53,6 +55,14 @@ export interface ObjectoGenerico {
   obse: string
 }
 
+export interface ProcessID {
+  estatus: boolean,
+  contenido ?: string,
+  mensaje ?: string,
+  segundos : string,
+  rs ?: any
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -69,8 +79,19 @@ export class ApiService {
     })
   };
 
+  public pID : ProcessID = {
+    estatus: false,
+    mensaje: '',
+    segundos: '',
+    contenido: ''
+  }
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(
+    private utilService: UtilService,
+    private router: Router,
+    private http: HttpClient,
+    private ws: WsocketsService
+    ) {
 
   }
 
@@ -104,6 +125,47 @@ export class ApiService {
   ExecFnx(fnx : any): Observable<any> {
     var url = this.URL + "fnx";
     return this.http.post<any>(url, fnx, this.httpOptions);
+  }
+
+  //  Consulta el PID de una funcion
+  ExecFnxId(id: string): Observable<any> {
+    var url = this.URL + `fnx:${id}`;
+    return this.http.get<any>(url, this.httpOptions);
+  }
+
+  // Consulta el Pid recursivamente
+  ConsultarPidRecursivo(id:string, fnx:any){
+    this.ExecFnxId(id).subscribe(
+      (data) => {
+        console.log(data)
+        setTimeout(()=> {
+          if(data.documento == 'PROCESADO'){
+            this.pID.estatus = false
+            this.pID.segundos = data.Duracion.segundos
+            this.pID.rs = data.rs
+            this.ws.lstpid$.emit(this.pID)
+            Swal.fire({
+              title: 'Proceso Finalizado',
+              text: `Su proyecto a sido clonado exitosamente!`,
+              icon: 'success',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Ir al proyecto!'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.open(environment.Url+'/'+fnx.paquete)
+              }
+            })
+          } else {
+            this.ConsultarPidRecursivo(id,fnx)
+          }
+        },10000)
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
 

@@ -10,12 +10,15 @@ import { AuthenticationService } from 'app/auth/service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMediaService } from '@core/services/media.service';
+import jwt_decode from "jwt-decode";
+
 
 import { User } from 'app/auth/models';
 
 import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
 import { LoginService } from '@services/seguridad/login.service';
+import { WsocketsService } from '@services/websockets/wsockets.service';
 
 @Component({
   selector: 'app-navbar',
@@ -32,6 +35,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public prevSkin: string;
 
   public currentUser: User;
+
+  public token
+  public usuario
+  public tipo
+
+  public peso
+
+  public spiner = false
+
+  public blCargando = false
 
   public languageOptions: any;
   public navigation: any;
@@ -76,6 +89,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @param {TranslateService} _translateService
    */
   constructor(
+    private msjService: WsocketsService,
     private _router: Router,
     private _authenticationService: AuthenticationService,
     private _coreConfigService: CoreConfigService,
@@ -160,10 +174,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
    */
   logout() {
     this.loginService.logout()
-    // this._authenticationService.logout();
-    // this._router.navigate(['/']);
-    // sessionStorage.removeItem("token");
-    // sessionStorage.removeItem("id");
   }
 
   // Lifecycle Hooks
@@ -173,6 +183,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+
+    this.msjService.lstpid$.subscribe(
+      (e)=> {
+        // console.log(e)
+        this.blCargando = e
+        this.spiner = e
+        this.peso = e.segundos
+      }
+    )
+
+
+    this.token = jwt_decode(sessionStorage.getItem('token'));
+    this.usuario = this.token.Usuario.usuario
+    this.tipo = this.token.Usuario.nombre
     // get the currentUser details from localStorage
     this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 

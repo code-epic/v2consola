@@ -13,6 +13,10 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
 import { ConexionesService } from '@services/networks/connections.service';
+import { LoginService } from '@services/seguridad/login.service';
+import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
+import { IFunciones } from '@services/tools/functions.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-functions',
@@ -25,6 +29,22 @@ export class FunctionsComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @BlockUI() blockUI: NgBlockUI;
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
+
+
+  public codeMirrorOptions: any = {
+    theme: 'idea',
+    mode: 'text/x-idn',
+    lineNumbers: true,
+    lineWrapping: true,
+    foldGutter: true,
+    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lint: true,
+    indentUnit: 2,
+    tabSize: 2,
+    indentWithTabs: true
+  };
 
 
   public xAPI : IAPICore = {
@@ -54,6 +74,41 @@ export class FunctionsComponent implements OnInit {
   };
 
 
+  public existe: boolean = false
+  public fecha = new Date().toISOString()
+  public Fnx: IFunciones = {
+    id: '',
+    tipo: 'S',
+    nombre: '',
+    version: '0.0.1',
+    lenguaje: 'S',
+    categoria: 'S',
+    retorno: 'S',
+    codigo: '',
+    descripcion: '',
+    parametros: '',
+    fecha: this.fecha,
+    tiempo: '',
+    estatus: 0
+  }
+  public FnxAux: IFunciones = {
+    id: '',
+    tipo: 'S',
+    nombre: '',
+    version: '0.0.1',
+    lenguaje: 'S',
+    categoria: 'S',
+    retorno: 'S',
+    codigo: '',
+    descripcion: '',
+    parametros: '',
+    fecha: this.fecha,
+    tiempo: '',
+    estatus: 0
+  }
+
+  public divTiempo: boolean = false
+
   // Private
   public lbd = 'Base de Datos'
   public count
@@ -71,10 +126,46 @@ export class FunctionsComponent implements OnInit {
   public drivers = []
   public hosts = []
 
-  public status = [
-    {id:1, name: 'ACTIVO'},
-    {id:0, name: 'INACTIVO'},
+  public tipo = [
+    {id:1, name: 'LOGICA'},
+    {id:2, name: 'MATEMATICAS'},
+    {id:3, name: 'BASEDATOS'},
   ]
+  public estatus = [
+    {id:0, name: 'INACTIVO', disabled: false},
+    {id:1, name: 'ACTIVO', disabled: false},
+    {id:2, name: 'EJECUTANDOSE', disabled: true},
+    {id:3, name: 'FINALIZADO', disabled: true},
+    {id:4, name: 'ZOMBIE', disabled: true},
+  ]
+  public lenguaje = [
+    {id:1, name: 'PHP', descripcion: 'PHP +7'},
+    {id:2, name: 'PYTHON', descripcion: 'PYTHON'},
+    {id:3, name: 'RUST', descripcion: 'RUST'},
+    {id:4, name: 'BASH', descripcion: 'SCRIPT BASH'},
+    {id:5, name: 'SHELL', descripcion: 'SHELL COMMANDS'},
+    {id:6, name: 'NJS', descripcion: 'NODE JS'},
+    {id:7, name: 'GO', descripcion: 'GOLANG'},
+    {id:8, name: 'C++', descripcion: 'C++'},
+    {id:9, name: 'RDN', descripcion: 'REGLAS DE NEGOCIOS'},
+  ]
+  public categoria = [
+    {id:1, name: 'EXEC', descripcion: 'EJECUCION'},
+    {id:2, name: 'PROGRAM', descripcion: 'TAREA PROGRAMADA'},
+    {id:3, name: 'ESCALAR', descripcion: 'ESCALABILIDAD'},
+  ]
+  public retorno = [
+    {id:1, name: 'BOOL', descripcion: 'LOGICO'},
+    {id:2, name: 'STRING', descripcion: 'CADENA'},
+    {id:3, name: 'ARRAY', descripcion: 'ARREGLO'},
+    {id:4, name: 'OBJECT', descripcion: 'OBJETO'},
+    {id:5, name: 'FILE', descripcion: 'ARCHIVO'},
+    {id:6, name: 'NULL', descripcion: 'NULL'},
+  ]
+
+  public obj;
+
+  public btnCategoria
 
   // public
   public mac
@@ -92,11 +183,13 @@ export class FunctionsComponent implements OnInit {
 
 
   constructor(
+    private interceptor : AuthInterceptorService,
+    private loginService: LoginService,
     private comunicacionesService : ComunicationsService,
     private apiService : ApiService,
     private modalService: NgbModal,
     private conexionesService : ConexionesService,
-    private ws : WsocketsService,
+    private msjService : WsocketsService,
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
@@ -110,23 +203,25 @@ export class FunctionsComponent implements OnInit {
 
 
   async ngOnInit() {
-    await this.CargarDrivers()
-    await this.ListarHostname()
     await this.CargarListaFunciones()
+
+    // this.Fnx.id = this.utilservice.GenerarUnicId()
+    // this.loginForm.value.id = 'csdcddcd'
 
 
     this.loginForm = this._formBuilder.group({
-      id: ['', [Validators.required]],
-      usuario: ['',[Validators.required]],
-      basedatos: ['', [Validators.required]],
-      url: [''],
+      id: [this.utilservice.GenerarUnicId(), [Validators.required]],
+      tipo: [undefined,[Validators.required]],
+      nombre: [''],
+      version: [this.Fnx.version,[Validators.required]],
       estatus: [undefined, [Validators.required]],
-      driver: [undefined, [Validators.required]],
-      clave: ['',[Validators.required]],
-      protocolo: [''],
-      host: [undefined, [Validators.required]],
-      puerto: ['', [Validators.required]],
-      descripcion: ['', [Validators.required]],
+      lenguaje: [undefined, [Validators.required]],
+      categoria: [undefined,[Validators.required]],
+      retorno: [undefined,[Validators.required]],
+      descripcion: ['',[Validators.required]],
+      codigo: ['',[Validators.required]],
+      tiempo: [''],
+      fecha: [this.Fnx.fecha],
     });
 
     // this.sectionBlockUI.start('Loading...');
@@ -158,6 +253,54 @@ export class FunctionsComponent implements OnInit {
   }
 
 
+  validarVersion() {
+    let version = this.Fnx.version.split('.')
+    let mayor = parseInt(version[0])
+    let menor = parseInt(version[1])
+    let menor_aux = parseInt(version[2])
+    const _fnx = this.Fnx
+    const _aux = this.FnxAux
+    if (_fnx.retorno != _aux.retorno || _fnx.lenguaje != _aux.lenguaje || _fnx.nombre != _aux.nombre) {
+      mayor = parseInt(version[0]) + 1
+    }
+    if (_fnx.tipo != _aux.tipo || _fnx.categoria != _aux.categoria) {
+      menor = parseInt(version[1]) + 1
+    }
+    if (_fnx.descripcion != _aux.descripcion || _fnx.codigo != _aux.codigo) {
+      menor_aux = parseInt(version[2]) + 1
+    }
+    return mayor + '.' + menor + '.' + menor_aux
+  }
+
+
+  cambiarModo(): string {
+    var idioma = 'text/x-idn'
+    switch (this.loginForm.value.lenguaje) {
+      case "GO":
+        idioma = 'text/x-go'
+        break;
+      case "PHP":
+        idioma = 'text/x-php'
+        break;
+      case "SHELL":
+        idioma = 'text/x-sh'
+        break;
+      case "BASH":
+        idioma = 'text/x-sh'
+        break;
+      case "PYTHON":
+        idioma = 'text/x-python'
+        break;
+      case "RUST":
+        idioma = 'text/x-rustsrc'
+        break;
+      case "RDN":
+        idioma = 'text/x-idn'
+        break;
+    }
+    this.codeMirrorOptions.mode = idioma
+    return idioma
+  }
 
   filterUpdate(event: any) {
     const val = event.target.value.toLowerCase();
@@ -185,29 +328,20 @@ export class FunctionsComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  async CargarDrivers(){
-    await this.comunicacionesService.ListarDrivers().subscribe(
-      (data) => {
-        this.drivers = data
-      },
-      (error) => {
-        console.error(error)
-      }
-    )
-  }
-
   LimpiarForm(){
     this.loginForm = this._formBuilder.group({
-      usuario: ['', [Validators.required]],
-      identificador: ['', [Validators.required]],
-      basedatos: ['', [Validators.required]],
-      url: ['', [Validators.required]],
-      estatus: ['', [Validators.required]],
-      driver: ['', [Validators.required]],
-      clave: ['', [Validators.required]],
-      host: ['', [Validators.required]],
-      puerto: ['', [Validators.required]],
-      descripcion: ['', [Validators.required]],
+      id: ['', [Validators.required]],
+      tipo: [undefined,[Validators.required]],
+      nombre: ['',[Validators.required]],
+      version: ['0.0.1',[Validators.required]],
+      estatus: [undefined, [Validators.required]],
+      lenguaje: [undefined, [Validators.required]],
+      categoria: [undefined,[Validators.required]],
+      retorno: [undefined,[Validators.required]],
+      descripcion: ['',[Validators.required]],
+      codigo: ['',[Validators.required]],
+      tiempo: [''],
+      fecha: [this.Fnx.fecha],
     });
   }
 
@@ -231,101 +365,53 @@ export class FunctionsComponent implements OnInit {
     ) 
   }
 
-  async ListarHostname(){
-    await this.comunicacionesService.Listar().subscribe(
-      (data) => {
-        this.hosts = data
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
-
-  CambiarVisibilidadDriver(){
-    if (this.driver == "puenteurl") {
-      this.showBaseDatos = false
-      this.showPuente = true      
-    } else {
-      this.showBaseDatos = true
-      this.showPuente = false      
-    } if (this.driver === 'oracle19c') {
-      this.lbd = "Oracle_SID"
-    } else {
-      this.lbd = "Base de Datos"
-    } if(this.driver == null){
-      this.showBaseDatos = false
-      this.showPuente = false      
-    }
-  }
 
   ModalEdit(modal, data){
-    this.driver = data.driver
+    this.existe = false
+    this.btnCategoria = data.categoria
     this.loginForm = this._formBuilder.group({
       id: [data.id, [Validators.required]],
-      usuario: [data.usuario,[Validators.required]],
-      basedatos: [data.basedatos, [Validators.required]],
-      url: [data.url],
+      tipo: [data.tipo,[Validators.required]],
+      nombre: [data.nombre],
+      version: [data.version,[Validators.required]],
       estatus: [data.estatus, [Validators.required]],
-      driver: [data.driver, [Validators.required]],
-      clave: [data.clave,[Validators.required]],
-      protocolo: [data.protocolo],
-      host: [data.host, [Validators.required]],
-      puerto: [data.puerto, [Validators.required]],
-      descripcion: [data.descripcion, [Validators.required]],
+      lenguaje: [data.lenguaje, [Validators.required]],
+      categoria: [data.categoria,[Validators.required]],
+      retorno: [data.retorno,[Validators.required]],
+      descripcion: [data.descripcion,[Validators.required]],
+      codigo: [data.codigo,[Validators.required]],
+      tiempo: [data.tiempo],
+      fecha: [this.loginForm.value.fecha],
     });
     this.modalService.open(modal,{
       centered: true,
-      size: 'lg',
+      size: 'xl',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',
     });
   }
 
-  ModalEscaneo(modal, data){
-    this.data = data
-    this.modalService.open(modal,{
-      centered: true,
-      size: 'lg',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
-  }
-
-  async EvaluarConexion(){
-    if(this.loginForm.value.basedatos == undefined || this.loginForm.value.clave == undefined || this.loginForm.value.basedatos === "" || this.loginForm.value.clave === ""){
-      this.utilservice.AlertMini('top-end','warning','Debe introducir los datos para establecer la conexión',3000)
-      return false;
-    }
-    await this.conexionesService.EvaluarConexion(this.loginForm.value, 'evaluarconexion').subscribe(
-      (data)=>{
-        this.utilservice.AlertMini('top-end','success',data.msj,3000)
-      },
-      (errot)=>{
-        this.utilservice.AlertMini('top-end','error','Error al momento de realizar la conexión, verifique e intente nuevamente',3000)
-      }
-    )
-  }
 
   ModalAdd(modal){
     this.modalService.open(modal,{
       centered: true,
-      size: 'lg',
+      size: 'xl',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',
     });
   }
 
-  GuardarConexion(){
+
+  GuardarFuncion(){
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
     } else {
+      this.loginForm.value.version = this.existe ? this.validarVersion() : this.loginForm.value.version
       var obj = {
-        "coleccion": "sys-drivers",
+        "coleccion": "sys-function",
         "objeto": this.loginForm.value,
         "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
         "driver": "MGDBA",
@@ -337,7 +423,7 @@ export class FunctionsComponent implements OnInit {
           this.ListaFunciones = []
           this.CargarListaFunciones()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Conexión) ha sido registrada codigo: ${data.UpsertedID}`,3000)
+          this.utilservice.AlertMini('top-end','success',`Tu (Función) ha sido registrada codigo: ${data.UpsertedID}`,3000)
           this.LimpiarForm()
         }, (error) => {
           this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
@@ -346,13 +432,64 @@ export class FunctionsComponent implements OnInit {
     }
   }
 
-  EditarDispositivo(){
+  SeleccionarPrograma() {
+    this.divTiempo = false
+    switch (this.btnCategoria) {
+      case "PROGRAM":
+        this.divTiempo = true
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  openHelp(modal: any) {
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+
+  ModalConfig(modal: any, data: any) {
+    this.btnCategoria = data.categoria
+    this.loginForm = this._formBuilder.group({
+      id: [data.id, [Validators.required]],
+      tipo: [data.tipo,[Validators.required]],
+      nombre: [data.nombre],
+      version: [data.version,[Validators.required]],
+      estatus: [data.estatus, [Validators.required]],
+      lenguaje: [data.lenguaje, [Validators.required]],
+      categoria: [data.categoria,[Validators.required]],
+      retorno: [data.retorno,[Validators.required]],
+      descripcion: [data.descripcion,[Validators.required]],
+      codigo: [data.codigo,[Validators.required]],
+      tiempo: [data.tiempo],
+      fecha: [this.loginForm.value.fecha],
+    });
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+
+
+  Editarfuncion(){
+    this.loginForm.value.version = this.existe ? this.validarVersion() : this.loginForm.value.version
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
     } else {
       var obj = {
-        "coleccion": "ys-drivers",
+        "coleccion": "sys-function",
         "objeto": this.loginForm.value,
         "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
         "driver": "MGDBA",
@@ -364,14 +501,13 @@ export class FunctionsComponent implements OnInit {
           this.ListaFunciones = []
           this.CargarListaFunciones()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Conexión) ha sido actualizada`,3000)
+          this.utilservice.AlertMini('top-end','success',`Tu (Función) ha sido actualizada`,3000)
           this.LimpiarForm()
         }, (error) => {
           this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
           // console.log(error)
         }
       )
-
     }
   }
 

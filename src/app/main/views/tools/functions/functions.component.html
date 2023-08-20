@@ -21,7 +21,7 @@
                       <option value="100">100</option>
                     </select>
                   </label>
-                  <button type="button" (click)="ModalAdd(ModalAddDevice)" class="btn btn-icon btn-info" rippleEffect>
+                  <button type="button" (click)="ModalAdd(ModalAddFunction)" class="btn btn-icon btn-info" rippleEffect>
                     <span [data-feather]="'plus'"></span></button>
                 </div>
               </div>
@@ -54,18 +54,57 @@
             [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
             [limit]="basicSelectedOption">
   
-            <ngx-datatable-column name="Funcion"  [width]="150">
+            <!-- <ngx-datatable-column name="Funcion"  [width]="150">
               <ng-template let-row="row" ngx-datatable-cell-template>
                 <div>
                   <span class="font-weight-bold"> <strong>{{ row.fecha | date:"dd-MM-yyyy" }} <strong>|</strong> {{ row.nombre }} </strong></span>
                 </div>
               </ng-template>
+            </ngx-datatable-column> -->
+
+            <ngx-datatable-column name="DRIVER" [width]="150">
+              <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                <div class="d-flex align-items-center">
+                  <div *ngIf="row.length > 0; else customAvatar">
+                    <img class="rounded-circle mr-1" src="{{ row.avatar }}" height="32" width="32"
+                      alt="datatable-avatar" />
+                  </div>
+                  <ng-template #customAvatar>
+                    <div class="avatar mr-1 ml-0" [ngClass]="{
+                        'bg-light-success': row.estatus == true,
+                        'bg-light-danger': row.estatus == false
+                      }">
+                      <div class="avatar-content">{{ row.nombre.toUpperCase() | initials }}</div>
+                    </div>
+                  </ng-template>
+                  <div class="cell-line-height">
+                    <span class="font-weight-bold d-block "><strong>{{ row.nombre }}</strong></span>
+                    <span class="text-muted font-small-2">{{ row.fecha | date:"dd-MM-yyyy" }}</span>
+                  </div>
+                </div>
+              </ng-template>
             </ngx-datatable-column>
 
-            <ngx-datatable-column name="Tipo"  [width]="50">
+            <ngx-datatable-column name="Lenguaje"  [width]="50">
               <ng-template let-row="row" ngx-datatable-cell-template>
                 <div>
-                  <span class="font-weight-bold"> {{ row.lenguaje | uppercase }} <strong>|</strong> V{{ row.version | uppercase }} </span>
+                  <span class="font-weight-bold">
+                    <div class="badge badge-glow" [ngClass]="{
+                      'badge-success': row.lenguaje == 'PHP',
+                      'badge-warning': row.lenguaje == 'PYTHON',
+                      'badge-primary': row.lenguaje == 'RUST',
+                      'badge-secondary': row.lenguaje == 'BASH',
+                      'badge-info': row.lenguaje == 'SHELL',
+                      'badge-primary': row.lenguaje == 'NJS',
+                      'badge-danger': row.lenguaje == 'GO',
+                      'badge-danger': row.lenguaje == 'C++',
+                      'badge-warning': row.lenguaje == 'RDN'
+                    }">
+                    {{ row.lenguaje}}
+                  </div>
+                    <!-- <div class="badge badge-glow badge-dark"> {{ row.lenguaje | uppercase }} </div>  -->
+                    <strong> - </strong>
+                    <div class="badge badge-glow badge-dark">V {{ row.version | uppercase }} </div></span>
                 </div>
               </ng-template>
             </ngx-datatable-column>
@@ -96,9 +135,9 @@
                     <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                   </button>
                   <div ngbDropdownMenu>
-                    <a (click)="ModalEdit(ModalEditDevice,row)" ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
+                    <a (click)="ModalEdit(ModalEditFunction,row)" ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
                         [class]="'mr-50'"></span> Editar</a>
-                        <a (click)="ModalEdit(ModalEditDevice,row)" ngbDropdownItem><span [data-feather]="'settings'" [size]="16"
+                        <a (click)="ModalConfig(ModalConfigFunction,row)" ngbDropdownItem *ngIf="row.tiempo!=''"><span [data-feather]="'settings'" [size]="16"
                           [class]="'mr-50'"></span> Configurar</a>
                   </div>
                 </div>
@@ -120,14 +159,14 @@
   
   
   
-  <ng-template #ModalAddDevice let-modal>
+  <ng-template #ModalAddFunction let-modal>
     <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">Agregar Conexión</h5>
+      <h5 class="modal-title" id="myModalLabel160">Agregar Función</h5>
       <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="GuardarConexion()">
+    <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="GuardarFuncion()">
       <div class="modal-body" tabindex="0" ngbAutofocus>
         <!-- Invoice -->
         <div class="col-xl-12 col-md-12 col-12">
@@ -136,110 +175,98 @@
   
           <div class="row">
   
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-host" class="form-label">Hosname</label>
-              <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion" bindLabel="descripcion"
-                placeholder="Seleccione Hostname" bindValue="host">
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-id" class="form-label">Id del proceso</label>
+              <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="Id de proceso"
+              aria-describedby="login-basedatos" tabindex="1" autofocus
+              />
+            </div>
+
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-tipo" class="form-label">Tipo</label>
+              <ng-select [items]="tipo" formControlName="tipo" bindLabel="name"
+                placeholder="Seleccione Tipo" bindValue="name">
               </ng-select>
             </div>
   
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-driver" class="form-label">Driver de Conexión</label>
-              <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
-                [(ngModel)]="driver" [ngModelOptions]="{standalone: true}" bindValue="id"
-                (ngModelChange)="CambiarVisibilidadDriver($event)">
+            <div class="col-md-4 col-12 mb-1">
+              <label for="login-nombre" class="form-label">Nombre Función</label>
+              <input type="text" formControlName="nombre" class="form-control" placeholder="Ingrese Nombre"
+                aria-describedby="login-nombre" tabindex="1" autofocus
+                [ngClass]="{ 'is-invalid': submitted && f.nombre.errors }" />
+              <div *ngIf="submitted && f.nombre.errors" class="invalid-feedback">
+                <div *ngIf="f.nombre.errors.required">Nombre Funcion es requerido</div>
+              </div>
+            </div>
+
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-version" class="form-label">Version</label>
+              <input type="text" formControlName="version" [readonly]="true" class="form-control" placeholder="Version"
+              aria-describedby="login-basedatos" tabindex="1" autofocus
+              />
+            </div>
+
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-estatus" class="form-label">Estatus</label>
+              <ng-select [items]="estatus" formControlName="estatus" 
+                placeholder="Seleccione Estatus" [disabled]="estatus.disabled" bindLabel="name" bindValue="id">
               </ng-select>
             </div>
-  
-            <!-- Input Fijos -->
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-basedatos" class="form-label">{{lbd}}</label>
-              <input type="text" formControlName="basedatos" class="form-control" placeholder="Base de Datos"
-                aria-describedby="login-basedatos" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.basedatos.errors }" />
-              <div *ngIf="submitted && f.basedatos.errors" class="invalid-feedback">
-                <div *ngIf="f.basedatos.errors.required">Base de Datos es requerido</div>
-              </div>
-            </div>
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-puerto" class="form-label">Puerto</label>
-              <input type="text" formControlName="puerto" class="form-control" placeholder="Puerto"
-                aria-describedby="login-puerto" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.puerto.errors }" />
-              <div *ngIf="submitted && f.puerto.errors" class="invalid-feedback">
-                <div *ngIf="f.puerto.errors.required">Puerto es requerido</div>
-              </div>
-            </div>
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-usuario" class="form-label">Usuario</label>
-              <input type="text" formControlName="usuario" class="form-control" placeholder="Usuario"
-                aria-describedby="login-usuario" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.usuario.errors }" />
-              <div *ngIf="submitted && f.usuario.errors" class="invalid-feedback">
-                <div *ngIf="f.usuario.errors.required">Usuario es requerido</div>
-              </div>
-            </div>
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-clave" class="form-label">Clave</label>&nbsp;
-              <div class="badge badge-info" (click)="EvaluarConexion()">Escanear</div>
-              <input type="text" formControlName="clave" class="form-control" placeholder="Clave"
-                aria-describedby="login-clave" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.clave.errors }" />
-              <div *ngIf="submitted && f.clave.errors" class="invalid-feedback">
-                <div *ngIf="f.clave.errors.required">Clave es requerido</div>
-              </div>
-            </div>
-            <!-- Fin Input Fijos -->
-  
-            <!-- Empieza el juego de input -->
-            <!-- input driver puente url -->
-            <div class="col-md-4 col-12 mb-1" *ngIf="showPuente == true">
-              <label for="login-protocolo" formControlName="protocolo" class="form-label">Protocolo</label>
-              <ng-select [items]="protocolo" bindLabel="name" placeholder="Seleccione Hostname" bindValue="name">
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-lenguaje" class="form-label">Lenguaje</label>
+              <ng-select [items]="lenguaje" formControlName="lenguaje" bindLabel="descripcion"
+                placeholder="Seleccione Lenguaje" bindValue="name">
               </ng-select>
             </div>
-            <div class="col-md-8 col-12 mb-1" *ngIf="showPuente == true">
-              <label for="login-url" class="form-label">URL Para establecer puente de conexión</label>
-              <input type="text" formControlName="url" class="form-control"
-                placeholder="URL Para establecer puente de conexión" aria-describedby="login-url" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.url.errors }" />
-              <div *ngIf="submitted && f.url.errors" class="invalid-feedback">
-                <div *ngIf="f.url.errors.required">Descripción es requerido</div>
-              </div>
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-categoria" class="form-label">Categoria</label>
+              <ng-select [items]="categoria" formControlName="categoria"
+              [(ngModel)]="btnCategoria" [ngModelOptions]="{standalone: true}"
+              [ngModelChange]="SeleccionarPrograma()" formControlName="categoria" bindLabel="descripcion"
+                placeholder="Seleccione Categoria" bindValue="name">
+              </ng-select>
             </div>
-            <!-- input driver puente url -->
-            <!-- Finaliza el juego de input -->
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
+              <ng-select [items]="retorno" formControlName="retorno" bindLabel="descripcion"
+                placeholder="Seleccione Valor Retorno" bindValue="name">
+              </ng-select>
+            </div>
+
+            <div class="col-md-3 col-12 mb-1" *ngIf="divTiempo">
+              <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
+              <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
+              <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
+                aria-describedby="login-tiempo" tabindex="1" autofocus
+               />
+            </div>
+  
+  
             <div class="col-md-12 col-12 mb-1">
               <label for="login-descripcion" class="form-label">Descripción</label>
-              <input type="text" formControlName="descripcion" class="form-control" placeholder="Descripción"
+              <textarea type="text" formControlName="descripcion" rows="3" class="form-control" placeholder="Ingrese Descripción"
                 aria-describedby="login-descripcion" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }" />
+                [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }" ></textarea>
               <div *ngIf="submitted && f.descripcion.errors" class="invalid-feedback">
                 <div *ngIf="f.descripcion.errors.required">Descripción es requerido</div>
               </div>
             </div>
-  
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-id" class="form-label">Identificador</label>
-              <input type="text" formControlName="id" class="form-control" placeholder="Identificador"
-                aria-describedby="login-id" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.id.errors }" />
-              <div *ngIf="submitted && f.id.errors" class="invalid-feedback">
-                <div *ngIf="f.id.errors.required">Identificador es requerido</div>
-              </div>
+
+            <div class="col-md-12 col-12 mb-1">
+              <label for="login-codigo" class="form-label">Escribir codigo fuente</label>
+              <ngx-codemirror #codemirror aria-describedby="login-codigo" tabindex="1" autofocus
+              [ngClass]="{ 'is-invalid': submitted && f.codigo.errors }"
+              formControlName="codigo"
+              [options]="codeMirrorOptions"
+              >
+            </ngx-codemirror>
+            <div *ngIf="submitted && f.codigo.errors" class="invalid-feedback">
+              <div *ngIf="f.codigo.errors.required">Codigo es requerido</div>
             </div>
-  
-  
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-estatus" class="form-label">Seleccione Status</label>
-              <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Status"
-                bindValue="id">
-              </ng-select>
-              <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
-                  <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
-                </div> -->
             </div>
-  
   
   
           </div>
@@ -253,126 +280,131 @@
       </div>
     </form>
   </ng-template>
-  
-  
-  <ng-template #ModalEditDevice let-modal>
+
+  <ng-template #ModalHelp let-modal>
     <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">Editar Dispositivo</h5>
+      <h5 class="modal-title" id="myModalLabel160">Opciones del tiempo</h5>
       <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
       <div class="modal-body" tabindex="0" ngbAutofocus>
         <!-- Invoice -->
         <div class="col-xl-12 col-md-12 col-12">
           <!-- Header Starts -->
-          <div class="row">
+          
+          
+    <!-- <code> -->
+        Cron es un administrador regular de procesos en segundo plano.<br>
+        Los procesos que deben ejecutarse y la hora a la que deben hacerlo se especifican en<br>
+        la funcion. El nombre cron proviene del griego chronos que significa "tiempo".<br>
+        .--------------- minuto (0-59)<br>
+        |  .------------ hora (0-23)<br>
+        |  |  .--------- día del mes (1-31)<br>
+        |  |  |  .------ mes (1-12) o jan,feb,mar,apr,may,jun,jul...<br>
+        |  |  |  |  .--- día de la semana (0-6) (domingo=0 o 7)<br>
+        |  |  |  |  |<br>
+        *  *  *  *  *  comando a ejecutar<br>
+        */5 * * * *  se ejecuta cada 5 minutos.<br>
+    <!-- </code> -->
   
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-host" class="form-label">Hosname</label>
-              <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion" bindLabel="descripcion"
-                placeholder="Seleccione Hostname" bindValue="host">
+        </div>
+  
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+      </div>
+  </ng-template>
+
+  <ng-template #ModalConfigFunction let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">Ejecución de funciones</h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <form class="auth-login-form mt-2" [formGroup]="loginForm">
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+      <!-- Invoice -->
+      <div class="col-xl-12 col-md-12 col-12">
+        <!-- Header Starts -->
+        <div class="row">
+          
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-id" class="form-label">Id del proceso</label>
+              <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="Id de proceso"
+              aria-describedby="login-basedatos" tabindex="1" autofocus
+              />
+            </div>
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-tipo" class="form-label">Tipo</label>
+              <ng-select [items]="tipo" [readonly]="true" formControlName="tipo" bindLabel="name"
+                placeholder="Seleccione Tipo" bindValue="name">
               </ng-select>
             </div>
   
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-driver" class="form-label">Driver de Conexión</label>
-              <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
-                [(ngModel)]="driver" [ngModelOptions]="{standalone: true}" bindValue="id"
-                (ngModelChange)="CambiarVisibilidadDriver($event)">
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-nombre" class="form-label">Nombre Función</label>
+              <input type="text" formControlName="nombre" [readonly]="true" class="form-control" placeholder="Ingrese Nombre"
+                aria-describedby="login-nombre" tabindex="1" autofocus
+                 />
+            </div>
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-version" class="form-label">Version</label>
+              <input type="text" formControlName="version" [readonly]="true" [readonly]="true" class="form-control" placeholder="Version"
+              aria-describedby="login-version" tabindex="1" autofocus
+              />
+            </div>
+
+
+            <div class="col-md-4 col-12 mb-1">
+              <label for="login-lenguaje" class="form-label">Lenguaje</label>
+              <ng-select [items]="lenguaje" [readonly]="true" (ngModelChange)="cambiarModo()" formControlName="lenguaje" bindLabel="descripcion"
+                placeholder="Seleccione Lenguaje" bindValue="name">
+              </ng-select>
+            </div>
+
+            <div class="col-md-4 col-12 mb-1">
+              <label for="login-categoria" class="form-label">Categoria</label>
+              <ng-select [items]="categoria" [readonly]="true" formControlName="categoria"
+              [(ngModel)]="btnCategoria" [ngModelOptions]="{standalone: true}"
+               formControlName="categoria" bindLabel="descripcion"
+                placeholder="Seleccione Categoria" bindValue="name">
+              </ng-select>
+            </div>
+
+            <div class="col-md-4 col-12 mb-1">
+              <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
+              <ng-select [items]="retorno" [readonly]="true" formControlName="retorno" bindLabel="descripcion"
+                placeholder="Seleccione Valor Retorno" bindValue="name">
               </ng-select>
             </div>
   
-            <!-- Input Fijos -->
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-basedatos" class="form-label">{{lbd}}</label>
-              <input type="text" formControlName="basedatos" class="form-control" placeholder="Base de Datos"
-                aria-describedby="login-basedatos" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.basedatos.errors }" />
-              <div *ngIf="submitted && f.basedatos.errors" class="invalid-feedback">
-                <div *ngIf="f.basedatos.errors.required">Base de Datos es requerido</div>
-              </div>
-            </div>
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-puerto" class="form-label">Puerto</label>
-              <input type="text" formControlName="puerto" class="form-control" placeholder="Puerto"
-                aria-describedby="login-puerto" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.puerto.errors }" />
-              <div *ngIf="submitted && f.puerto.errors" class="invalid-feedback">
-                <div *ngIf="f.puerto.errors.required">Puerto es requerido</div>
-              </div>
-            </div>
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-usuario" class="form-label">Usuario</label>
-              <input type="text" formControlName="usuario" class="form-control" placeholder="Usuario"
-                aria-describedby="login-usuario" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.usuario.errors }" />
-              <div *ngIf="submitted && f.usuario.errors" class="invalid-feedback">
-                <div *ngIf="f.usuario.errors.required">Usuario es requerido</div>
-              </div>
-            </div>
-            <div class="col-md-6 col-12 mb-1" *ngIf="showBaseDatos == true">
-              <label for="login-clave" class="form-label">Clave</label>&nbsp;
-              <div class="badge badge-info" (click)="EvaluarConexion()">Probar Conexión</div>
-              <input type="text" formControlName="clave" class="form-control" placeholder="Clave"
-                aria-describedby="login-clave" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.clave.errors }" />
-              <div *ngIf="submitted && f.clave.errors" class="invalid-feedback">
-                <div *ngIf="f.clave.errors.required">Clave es requerido</div>
-              </div>
-            </div>
-            <!-- Fin Input Fijos -->
   
-            <!-- Empieza el juego de input -->
-            <!-- input driver puente url -->
-            <div class="col-md-4 col-12 mb-1" *ngIf="showPuente == true">
-              <label for="login-protocolo" formControlName="protocolo" class="form-label">Protocolo</label>
-              <ng-select [items]="protocolo" bindLabel="name" placeholder="Seleccione Hostname" bindValue="name">
-              </ng-select>
-            </div>
-            <div class="col-md-8 col-12 mb-1" *ngIf="showPuente == true">
-              <label for="login-url" class="form-label">URL Para establecer puente de conexión</label>
-              <input type="text" formControlName="url" class="form-control"
-                placeholder="URL Para establecer puente de conexión" aria-describedby="login-url" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.url.errors }" />
-              <div *ngIf="submitted && f.url.errors" class="invalid-feedback">
-                <div *ngIf="f.url.errors.required">Descripción es requerido</div>
-              </div>
-            </div>
-            <!-- input driver puente url -->
-            <!-- Finaliza el juego de input -->
             <div class="col-md-12 col-12 mb-1">
               <label for="login-descripcion" class="form-label">Descripción</label>
-              <input type="text" formControlName="descripcion" class="form-control" placeholder="Descripción"
+              <textarea type="text" formControlName="descripcion" [readonly]="true" rows="3" class="form-control" placeholder="Ingrese Descripción"
                 aria-describedby="login-descripcion" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }" />
-              <div *ngIf="submitted && f.descripcion.errors" class="invalid-feedback">
-                <div *ngIf="f.descripcion.errors.required">Descripción es requerido</div>
-              </div>
+                ></textarea>
             </div>
-  
+
+
             <div class="col-md-6 col-12 mb-1">
-              <label for="login-id" class="form-label">Identificador</label>
-              <input type="text" [readOnly]="true" formControlName="id" class="form-control" placeholder="Identificador"
-                aria-describedby="login-id" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.id.errors }" />
-              <div *ngIf="submitted && f.id.errors" class="invalid-feedback">
-                <div *ngIf="f.id.errors.required">Identificador es requerido</div>
-              </div>
+              <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
+              <input type="text" formControlName="tiempo" [readonly]="true" class="form-control" placeholder="Ingrese Especificacion"
+                aria-describedby="login-tiempo" tabindex="1" autofocus
+               />
             </div>
-  
-  
+
             <div class="col-md-6 col-12 mb-1">
-              <label for="login-estatus" class="form-label">Seleccione Status</label>
-              <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Status"
-                bindValue="id">
+              <label for="login-estatus" class="form-label">Estatus</label>
+              <ng-select [items]="estatus" formControlName="estatus" 
+                placeholder="Seleccione Estatus" [disabled]="estatus.disabled" bindLabel="name" bindValue="id">
               </ng-select>
-              <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
-                  <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
-                </div> -->
             </div>
-  
+
   
   
           </div>
@@ -381,44 +413,121 @@
   
       </div>
       <div class="modal-footer">
-        <button class="btn btn-success" tabindex="4" rippleEffect>Actualizar</button>
+        <button class="btn btn-success" tabindex="4" rippleEffect>Procesar</button>
         <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
       </div>
     </form>
-  
   </ng-template>
   
-  <ng-template #ModalEscaneoNmap let-modal>
+
+  <ng-template #ModalEditFunction let-modal>
     <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">Escaneando: nmap -sT</h5>
+      <h5 class="modal-title" id="myModalLabel160">Editar Función</h5>
       <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-      <!-- Invoice -->
-      <div class="col-xl-12 col-md-12 col-12">
-        <!-- Header Starts -->
-        <div class="row">
+    <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="Editarfuncion()">
+      <div class="modal-body" tabindex="0" ngbAutofocus>
+        <!-- Invoice -->
+        <div class="col-xl-12 col-md-12 col-12">
+          <!-- Header Starts -->
   
-          <div class="col-md-12">
-            <div class="form-group">
-              <label>Resultado</label>
-              <div style="width:100%; height:400px; overflow: scroll;">
-                <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
-                  [ngModelOptions]="{standalone: true}" [(ngModel)]="xrs" value="{{xrs}}"></textarea>
-              </div>
+  
+          <div class="row">
+  
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-id" class="form-label">Id del proceso</label>
+              <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="Id de proceso"
+              aria-describedby="login-basedatos" tabindex="1" autofocus
+              />
             </div>
+
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-tipo" class="form-label">Tipo</label>
+              <ng-select [items]="tipo" formControlName="tipo" bindLabel="name"
+                placeholder="Seleccione Tipo" bindValue="name">
+              </ng-select>
+            </div>
+  
+            <div class="col-md-4 col-12 mb-1">
+              <label for="login-nombre" class="form-label">Nombre Función</label>
+              <input type="text" formControlName="nombre" class="form-control" placeholder="Ingrese Nombre"
+                aria-describedby="login-nombre" tabindex="1" autofocus
+                 />
+            </div>
+
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-version" class="form-label">Version</label>
+              <input type="text" formControlName="version" [readonly]="true" class="form-control" placeholder="Version"
+              aria-describedby="login-version" tabindex="1" autofocus
+              />
+            </div>
+
+            <div class="col-md-2 col-12 mb-1">
+              <label for="login-estatus" class="form-label">Estatus</label>
+              <ng-select [items]="estatus" formControlName="estatus" 
+                placeholder="Seleccione Estatus" [disabled]="estatus.disabled" bindLabel="name" bindValue="id">
+              </ng-select>
+            </div>
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-lenguaje" class="form-label">Lenguaje</label>
+              <ng-select [items]="lenguaje" (ngModelChange)="cambiarModo()" formControlName="lenguaje" bindLabel="descripcion"
+                placeholder="Seleccione Lenguaje" bindValue="name">
+              </ng-select>
+            </div>
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-categoria" class="form-label">Categoria</label>
+              <ng-select [items]="categoria" formControlName="categoria"
+              [(ngModel)]="btnCategoria" [ngModelOptions]="{standalone: true}"
+              [ngModelChange]="SeleccionarPrograma()" formControlName="categoria" bindLabel="descripcion"
+                placeholder="Seleccione Categoria" bindValue="name">
+              </ng-select>
+            </div>
+
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
+              <ng-select [items]="retorno" formControlName="retorno" bindLabel="descripcion"
+                placeholder="Seleccione Valor Retorno" bindValue="name">
+              </ng-select>
+            </div>
+
+            <div class="col-md-3 col-12 mb-1" *ngIf="divTiempo">
+              <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
+              <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
+              <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
+                aria-describedby="login-tiempo" tabindex="1" autofocus
+               />
+            </div>
+  
+  
+            <div class="col-md-12 col-12 mb-1">
+              <label for="login-descripcion" class="form-label">Descripción</label>
+              <textarea type="text" formControlName="descripcion" rows="3" class="form-control" placeholder="Ingrese Descripción"
+                aria-describedby="login-descripcion" tabindex="1" autofocus
+                ></textarea>
+            </div>
+
+            <div class="col-md-12 col-12 mb-1">
+              <label for="login-codigo" class="form-label">Escribir codigo fuente</label>
+              <ngx-codemirror #codeEditor aria-describedby="login-codigo" tabindex="1" autofocus
+              formControlName="codigo"
+              [options]="codeMirrorOptions"
+              >
+            </ngx-codemirror>
+            </div>
+  
+  
           </div>
   
         </div>
   
       </div>
-  
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" (click)="ScanRed()" rippleEffect>Escanear</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-    </div>
-  
+      <div class="modal-footer">
+        <button class="btn btn-success" tabindex="4" rippleEffect>Guardar</button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+      </div>
+    </form>
   </ng-template>

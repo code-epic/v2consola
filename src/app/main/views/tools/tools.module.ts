@@ -30,6 +30,8 @@ import { FunctionsComponent } from './functions/functions.component';
 import { ApiComponent } from './api/api.component';
 import { WorkflowComponent } from './workflow/workflow.component';
 
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+
 
 const routes = [
   {
@@ -55,7 +57,7 @@ const routes = [
 @NgModule({
   declarations: [
     FunctionsComponent,
-    // ApiComponent,
+    ApiComponent,
     WorkflowComponent
   ],
   imports: [
@@ -64,6 +66,7 @@ const routes = [
     ContentHeaderModule,
     TranslateModule,
     FormsModule,
+    CodemirrorModule,
     CoreCardModule,
     ReactiveFormsModule,
     NgxDatatableModule,

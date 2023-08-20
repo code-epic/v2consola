@@ -11,6 +11,8 @@ export class WsocketsService {
   wsk: any
   lst$ = new EventEmitter<any>();
   lst : []
+  pid$: any
+  lstpid$ = new EventEmitter<any>();
   estatusText$ = new EventEmitter<string>();
   estatusText: string = ''
   constructor() { 

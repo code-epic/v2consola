@@ -1,171 +1,155 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { ApiService, IAPICore } from '@services/apicore/api.service';
-import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import JSONFormatter from 'json-formatter-js';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Subject } from 'rxjs';
+import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
+import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { BlockUI, NgBlockUI } from 'ng-block-ui';
+
+
+import { WsocketsService } from '@services/websockets/wsockets.service';
+import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectConfig } from '@ng-select/ng-select';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UtilService } from '@services/util/util.service';
+import { ComunicationsService } from '@services/networks/comunications.service';
 
 @Component({
   selector: 'app-api',
   templateUrl: './api.component.html',
   styleUrls: ['./api.component.scss'],
   encapsulation: ViewEncapsulation.None,
-  host: { class: 'ecommerce-application' }
+  providers: [NgbModalConfig, NgbModal]
 })
+
 export class ApiComponent implements OnInit {
 
+  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild('tableRowDetails') tableRowDetails: any;
+  
+  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
+  public xAPI : IAPICore = {
+    funcion: '',
+    parametros: '',
+    relacional: false,
+    concurrencia : false,
+    protocolo: '',
+    ruta : '',
+    retorna : false,
+    migrar : false,
+    modulo : '',
+    valores : {},
+    coleccion : '',
+    http : 0,
+    https : 0,
+    consumidores : 0,
+    puertohttp : 0,
+    puertohttps : 0,
+    driver : '',
+    query : '',
+    metodo : '',
+    tipo : '',
+    prioridad : '',
+    entorno: '',
+    logs : false
+  };
+
+
+  public searchValue = ''
+
+  public developer
+  public quality
+  public production
+
+  // Private
+  public count
+ 
+  public ListaApis = []
+  public tempData = [];
+  public rowData = [];
+
+  public sDispositivo
+
+  public driver = []
+
+  public status = [
+    {id:true, name: 'ACTIVO'},
+    {id:false, name: 'INACTIVO'},
+  ]
+
+
+  // public
+  public mac
+  public data : any
+  public xrs = ''
+  public host = ''
+  public submitted = false;
+  public loginForm: UntypedFormGroup;
   public contentHeader: object;
-  public developer = []
-  public quality = []
-  public production = []
-
-  public shopSidebarToggle = false;
-  public shopSidebarReset = false;
-  public gridViewRef = false;
-  public products;
-  public wishlist;
-  public cartList;
-  public page = 1;
-  public pageSize = 9;
-  public searchText = '';
-
-  closeResult: string = ''
-
-  codeTypeJs = ''
-  data: any;
-  xentorno: string = ''
-  resultado: any;
-  xresultado: any;
-  xparametro: string = ''
-  valores: string = ''
-
-
-
-  xAPI: IAPICore;
-
-
+  public selected = [];
+  public kitchenSinkRows: any;
+  public basicSelectedOption: number = 10;
+  public ColumnMode = ColumnMode;
+  public SelectionType = SelectionType;
 
 
   constructor(
-    config: NgbModalConfig,
+    private comunicacionesService : ComunicationsService,
+    private apiService : ApiService,
     private modalService: NgbModal,
-    private apiService: ApiService,
+    private ws : WsocketsService,
+    private config: NgSelectConfig,
+    private _formBuilder: UntypedFormBuilder,
+    private utilservice: UtilService,
   ) {
-    config.backdrop = false;
-    config.keyboard = false;
   }
 
-
-    /**
-   * Update to List View
-   */
-     listView() {
-      this.gridViewRef = false;
-    }
-  
-    /**
-     * Update to Grid View
-     */
-    gridView() {
-      this.gridViewRef = true;
+    // convenience getter for easy access to form fields
+    get f() {
+      return this.loginForm.controls;
     }
 
-      /**
-   * Sort Product
-   */
-  sortProduct(sortParam) {
-    // this._ecommerceService.sortProduct(sortParam);
-    console.info(sortParam);
+
+  async ngOnInit() {
+    await this.ListarApis('desarrollo')
+
+    this.loginForm = this._formBuilder.group({
+      host: ['', [Validators.required]],
+      mac: ['', [Validators.required]],
+      descripcion: ['', [Validators.required]],
+      id: ['', [Validators.required]],
+      tipo: [undefined],
+      estatus: [undefined],
+    });
+    
+     // content header
+     this.contentHeader = {
+      headerTitle: 'Herramientas',
+      actionButton: true,
+      breadcrumb: {
+        type: '',
+        links: [
+          {
+            name: 'Home',
+            isLink: true,
+            link: '/home'
+          },
+          {
+            name: 'Herramientas',
+            isLink: false
+          },
+          {
+            name: 'Api Rest',
+            isLink: false
+          }
+        ]
+      }
+    };
   }
 
-  private getDismissReason(reason: any): string {
-    if (reason === ModalDismissReasons.ESC) {
-      return 'ESC';
-    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
-      return 'backdrop';
-    } else {
-      return `with: ${reason}`;
-    }
-  }
-
-  codeMOEsquemaJson: any = {
-      theme: 'idea',
-      mode: 'application/ld+json',
-      lineNumbers: true,
-      lineWrapping: true,
-      foldGutter: true,
-      // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-      autoCloseBrackets: true,
-      matchBrackets: true,
-      lint: true,
-      autofocus: true
-  };
-
-  codeJson: any = {
-    theme: 'idea',
-    mode: 'text/typescript',
-    lineNumbers: true,
-    lineWrapping: true,
-    foldGutter: true,
-    // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lint: true
-  };
-
-  clickRefresh(e) {
-    this.codeJson = {
-      theme: 'idea',
-      mode: 'text/typescript',
-      lineNumbers: true,
-      lineWrapping: true,
-      foldGutter: true,
-      // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-      autoCloseBrackets: true,
-      matchBrackets: true,
-      lint: true
-    }
-  }
-
-  activarFormulario(content, item) {
-    console.log(item);
-    this.modalService.open(content, {
-      centered: true,
-      size: 'lg',
-      scrollable: true
-    }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-      }, (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-      });
-      var api = item.entorno == "produccion" ? "/v1/" : "/devel/"
-    this.xentorno = api + "api/crud:" + item.id;
-    this.data = item
-    if (item.entradas != undefined) {
-      this.codeTypeJs = this.apiService.GenerarCodigo(item.entradas, item.funcion, this.xentorno)
-      this.clickRefresh(0)
-    }
-  }
-
-
-  RegistrarAPI(content) {
-    console.log(content);
-    this.modalService.open(content, {
-      centered: true,
-      size: 'lg',
-      scrollable: true
-    }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-      }, (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-      });
-  }
-
-
-  async ListarApis() {
+  async ListarApis(t : string) {
     this.developer = []
     this.quality = []
     this.production = []
@@ -173,20 +157,28 @@ export class ApiComponent implements OnInit {
       (data) => {
         data.forEach(e => {
           switch (e.entorno) {
-            case "desarrollo":
+            case t:
               this.developer.push(e)
+              this.rowData = this.developer;
+              this.count = this.rowData.length
+              this.tempData = this.rowData;            
               break;
-              case "calidad":
+              case t:
                 this.quality.push(e)
+                this.rowData = this.quality;
+                this.count = this.rowData.length
+                this.tempData = this.rowData;              
                 break;
-                case "produccion":
-                  this.production.push(e)
+                case t:
+                 this.production.push(e)
+                  this.rowData = this.production;
+                  this.count = this.rowData.length
+                  this.tempData = this.rowData;                
                   break;
                   default:
                     break;
                   }
-                });
-                
+                });       
       },
       (error) => {
         console.error(error)
@@ -194,44 +186,192 @@ export class ApiComponent implements OnInit {
     );
   }
 
-  async ejecutarApi() {
-
-    this.xAPI = this.data;
-    this.xAPI.parametros = this.xparametro
-    this.xAPI.valores = this.valores
-    console.log(this.xAPI);
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        const formatter = new JSONFormatter(data);
-        document.getElementById("xrs").appendChild(formatter.render());
-      },
-      (error) => {
-        this.resultado = error;
-      }
-    )
+  Capturar(event){ // Capturar que tipo de API quiero ver
+    switch (event) {
+      case 'desarrollo':
+        this.ListarApis('desarrollo')           
+        break;
+        case 'calidad':
+          this.ListarApis('calidad')                
+          break;
+          case 'produccion':
+            this.ListarApis('produccion')                
+            break;
+            default:
+              this.ListarApis('desarrollo')       
+              break;
+            } 
   }
 
-  async ngOnInit() {
-    this.ListarApis()
-    this.products = this.developer;
+  rowDetailsToggleExpand(row) {
+    this.tableRowDetails.rowDetail.toggleExpandRow(row);
+  }
 
-    this.contentHeader = {
-      headerTitle: 'Herramientas',
-      actionButton: true,
-      breadcrumb: {
-        type: '',
-        links: [
-          {
-            name: 'APIRESTFULL',
-            isLink: true,
-            link: '/'
-          },
-          {
-            name: 'Lista de APIS',
-            isLink: false
-          }
-        ]
+  filterUpdate(event: any) {
+    const val = event.target.value.toLowerCase();
+    // filter our data
+    const temp = this.tempData.filter(function (d) {
+      return d.funcion.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+    // update the rows
+    this.rowData = temp;
+    this.count = this.rowData.length
+    // Whenever the filter changes, always go back to the first page
+    this.table.offset = 0;
+  }
+
+  filterStatus(event: any) {
+    const val = event.id
+    // filter our data
+    const temp = this.tempData.filter(function (d) {
+      return d.estatus.indexOf(val) !== -1 || !val;
+    });
+    // update the rows
+    this.rowData = temp;
+    this.count = this.rowData.length
+    // Whenever the filter changes, always go back to the first page
+    this.table.offset = 0;
+  }
+
+  LimpiarForm(){
+    this.loginForm = this._formBuilder.group({
+      host: ['', [Validators.required]],
+      mac: ['', [Validators.required]],
+      descripcion: ['', [Validators.required]],
+      id: ['', [Validators.required]],
+      tipo: [undefined],
+      estatus: [undefined],
+    });
+  }
+
+  async CargarLista(){
+    this.xAPI.funcion = "_SYS_LstComunicaciones";
+    this.xAPI.parametros = ''
+    this.ListaApis = []
+    this.count = 0
+     await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+          this.ListaApis.push(data);
+              this.rowData = data;
+              this.count = this.rowData.length
+              this.tempData = this.rowData;
+      },
+      (error) => {
+        console.log(error)
       }
+    ) 
+  }
+
+  ModalEditApi(modal, data){
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  ModalEscaneo(modal, data){
+    this.data = data
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+
+  ModalApi(modal){
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  ModalPromover(data){
+    console.log(data)
+  }
+
+  ModalEliminar(data){
+    console.log(data)
+  }
+
+  ModalModificar(modal){
+    console.log(modal)
+  }
+
+  ModalProbar(modal, data){
+    console.log(data)
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  GuardarDispositivo(){
+    this.submitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    } else {
+      var obj = {
+        "coleccion": "sys-conection",
+        "objeto": this.loginForm.value,
+        "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
+        "driver": "MGDBA",
+        "upsert": true
+      }
+      this.rowData.push(this.ListaApis)
+      this.apiService.ExecColeccion(obj).subscribe(
+        (data) => {
+          this.ListaApis = []
+          this.CargarLista()
+          this.modalService.dismissAll('Close')
+          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`,3000)
+          this.LimpiarForm()
+        }, (error) => {
+          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          // console.log(error)
+        }
+      )
+
+    }
+  }
+
+  EditarDispositivo(){
+    this.submitted = true;
+    if (this.loginForm.invalid) {
+      return;
+    } else {
+      var obj = {
+        "coleccion": "sys-conection",
+        "objeto": this.loginForm.value,
+        "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
+        "driver": "MGDBA",
+        "upsert": true
+      }
+      this.rowData.push(this.ListaApis)
+      this.apiService.ExecColeccion(obj).subscribe(
+        (data) => {
+          this.ListaApis = []
+          this.CargarLista()
+          this.modalService.dismissAll('Close')
+          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido actualizada`,3000)
+          this.LimpiarForm()
+        }, (error) => {
+          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          // console.log(error)
+        }
+      )
+
     }
   }
 

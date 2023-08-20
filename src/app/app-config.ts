@@ -18,7 +18,7 @@ export const coreConfig: CoreConfig = {
   app: {
     appName     : 'CodeEpic',                                        // App Name
     appTitle    : 'Code-Epic Technologies', // App Title
-    appLogoImage: 'assets/images/logo/logo.svg',                  // App Logo
+    appLogoImage: 'assets/images/logo/logo.png',                  // App Logo
     appLanguage : 'es',                                           // App Default Language (en, fr, de, pt etc..)
   },
   layout: {
@@ -38,7 +38,7 @@ export const coreConfig: CoreConfig = {
       backgroundColor      : ''               // BS color i.e bg-primary, bg-success
     },
     footer: {
-      hidden               : false,           // Boolean: true, false
+      hidden               : true,           // Boolean: true, false
       type                 : 'footer-sticky', // footer-static, footer-sticky, d-none
       background           : 'footer-light',  // footer-light. footer-dark
       customBackgroundColor: false,           // Boolean: true, false
