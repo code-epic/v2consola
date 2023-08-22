@@ -8,7 +8,7 @@
         <!-- Ecommerce Item -->
         <div class="card ecommerce-card">
         <div class="item-img text-center">
-          <a (click)="irA('tools','api-list')">
+          <a [routerLink]="'/tools/api-list/'+product.id">
             <img class="img-fluid card-img-top" src="assets/integraciones/mongodb.png" *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
             <img class="img-fluid card-img-top" src="assets/integraciones/mysql.png" *ngIf="product.driver == 'mysql8'" alt="img-placeholder" />
             <img class="img-fluid card-img-top" src="assets/integraciones/mariadb.png" *ngIf="product.driver == 'mariadb'" alt="img-placeholder" />
@@ -24,11 +24,11 @@
               </div>
             </div>
             <div class="item-cost">
-              <h6 class="item-price">{{ product.driver }}</h6>
+              <h6 class="item-price">{{ product.driver | uppercase }}</h6>
             </div>
           </div>
           <p class="card-text item-description">
-            {{ product.descripcion }}
+            <strong>{{ product.descripcion }}</strong>
           </p>
         </div>
         </div>

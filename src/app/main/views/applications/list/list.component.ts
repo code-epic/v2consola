@@ -12,14 +12,15 @@ import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { UtilService } from '@services/util/util.service';
 
+
 @Component({
-  selector: 'app-versions',
-  templateUrl: './versions.component.html',
-  styleUrls: ['./versions.component.scss'],
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss'],
   encapsulation: ViewEncapsulation.None,
   providers: [NgbModalConfig, NgbModal]
 })
-export class VersionsComponent implements OnInit {
+export class ListComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @BlockUI() blockUI: NgBlockUI;

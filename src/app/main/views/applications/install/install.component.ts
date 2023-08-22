@@ -12,8 +12,7 @@ import { NgSelectConfig } from '@ng-select/ng-select';
   selector: 'app-install',
   templateUrl: './install.component.html',
   styleUrls: ['./install.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  host: { class: 'ecommerce-application' }
+  encapsulation: ViewEncapsulation.None
 })
 
 
@@ -99,16 +98,11 @@ export class InstallComponent implements OnInit {
   public horizontalWizardStepper: Stepper;
 
   horizontalWizardStepperNext(e){
-    console.log(e);
-   
       this.horizontalWizardStepper.next();
-    
   }
 
   horizontalWizardStepperPrevious(){
-   
       this.horizontalWizardStepper.previous();
-    
   }
 
   

@@ -29,22 +29,22 @@ import { BlockUIModule } from 'ng-block-ui';
 
 
 import { InstallComponent } from './install/install.component';
-import { VersionsComponent } from './versions/versions.component';
 import { MenuComponent } from './menu/menu.component';
 import { MonitoringComponent } from './monitoring/monitoring.component';
 import { EventsComponent } from './events/events.component';
+import { ListComponent } from './list/list.component';
 
 
 const routes = [
   {
-    path: 'applications/install',
-    component: InstallComponent,
+    path: 'applications/list',
+    component: ListComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
   {
-    path: 'applications/versions',
-    component: VersionsComponent,
+    path: 'applications/install',
+    component: InstallComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
@@ -72,10 +72,10 @@ const routes = [
 @NgModule({
   declarations: [
     InstallComponent,
-    VersionsComponent,
     MenuComponent,
     MonitoringComponent,
-    EventsComponent
+    EventsComponent,
+    ListComponent
   ],
   imports: [
     RouterModule.forChild(routes),

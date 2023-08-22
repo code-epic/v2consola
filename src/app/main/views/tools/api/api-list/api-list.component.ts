@@ -3,6 +3,7 @@ import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ComunicationsService } from '@services/networks/comunications.service';
 import { Router } from '@angular/router';
+import { WsocketsService } from '@services/websockets/wsockets.service';
 
 @Component({
   selector: 'app-api-list',
@@ -30,6 +31,7 @@ export class ApiListComponent implements OnInit {
   public drivers = []
 
   constructor(
+    private msjService: WsocketsService,
     private ruta: Router,
     private comunicacionesService : ComunicationsService,
     config: NgbModalConfig,
