@@ -40,6 +40,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public usuario
   public tipo
 
+  public peso
+
+  public spiner = false
+
   public blCargando = false
 
   public languageOptions: any;
@@ -183,6 +187,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.msjService.lstpid$.subscribe(
       (e)=> {
         this.blCargando = e
+        this.spiner = e
+      }
+    )
+
+    this.msjService.lstpidPeso$.subscribe(
+      (e)=> {
+        this.peso = e
       }
     )
 

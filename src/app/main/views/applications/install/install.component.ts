@@ -5,6 +5,7 @@ import { InstallService, SSB_IAplicacion } from '@services/applications/install.
 import JSONFormatter from 'json-formatter-js';
 import Stepper from 'bs-stepper';
 import { NgSelectConfig } from '@ng-select/ng-select';
+import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
 //import { NgSelectModule } from '@ng-select/ng-select';
 
 
@@ -20,7 +21,42 @@ import { NgSelectConfig } from '@ng-select/ng-select';
 
 export class InstallComponent implements OnInit {
 
-  
+
+  hosts     = []
+
+  public selectBasic = [
+    { name: 'UK' },
+    { name: 'USA' },
+    { name: 'Spain' },
+    { name: 'France' },
+    { name: 'Italy' },
+    { name: 'Australia' }
+  ];
+
+  public selectMulti = [{ name: 'English' }, { name: 'French' }, { name: 'Spanish' }];
+  public selectMultiSelected;
+
+  public contentHeader: object;
+  public TipoVar;
+  public SerVar;
+  public SysVar;
+  public RepoVar;
+  public UsuVar;
+  public PassVar;
+  public MonVar;
+  public BdatoVar;
+  public VersionVar;
+  public LenVar;
+  public DescripcionVar;
+  public AplicacionVar;
+  public TDFirstNameVar;
+  public TDLastNameVar;
+  public twitterVar;
+  public facebookVar;
+  public googleVar;
+  public linkedinVar;
+  public landmarkVar;
+  public addressVar;
 
   public mtipo;
   public mservidor;
@@ -69,46 +105,129 @@ export class InstallComponent implements OnInit {
     estatus       : false
   };
 
-  public tipo = [
+  public tipos = [
     { id: "0", descripcion: 'SELECCIONE' },
     { id: "1", descripcion: 'PRE-INSTALADA' },
     { id: "2", descripcion: 'INSTALAR' },
     { id: "3", descripcion: 'REPOSITORIO' },
   ]
 
-  async lstAplicaciones(){
-    console.log("llegooo")
-    this.xAPI.funcion = "LstAplicaciones";
-    this.xAPI.valores = null;
+  public sistemasOperativos = [
+    { id: "0", descripcion: 'SELECCIONE' },
+    { id: "WINNDOWS", descripcion: 'WINDOWS' },
+    { id: "LINUX", descripcion: 'LINUX' },
+    { id: "MACOS", descripcion: 'MACOS' },
+  ]
 
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
+  public basesDatos = [
+    { id: "0", descripcion: 'SELECCIONE' },
+    { id: "POSTGRES", descripcion: 'POSTGRES' },
+    { id: "MYSQL", descripcion: 'MYSQL' },
+    { id: "MARIADB", descripcion: 'MARIADB' },
+    { id: "SQLSERVER", descripcion: 'SQLSERVER' },
+    { id: "ORACLE", descripcion: 'ORACLE' },
+    { id: "SYBASE", descripcion: 'SYBASE' },
+    { id: "INFORMIX", descripcion: 'INFORMIX' },
+    { id: "MONGODB", descripcion: 'MONGODB' },
+    { id: "RETHINKDB", descripcion: 'RETHINKDB' },
+    { id: "SQLSERVER", descripcion: 'SQLSERVER' },
+    { id: "FIREBASE", descripcion: 'FIREBASE' },
+  ]
+
+  public lenguaje = [
+    { id: "0", descripcion: 'SELECCIONE' },
+    { id: "PHP", descripcion: 'PHP' },
+    { id: "J2EE", descripcion: 'JAVA J2EE' },
+    { id: "HCJS", descripcion: 'HTML / CSS3 / JAVASCRIPT' },
+    { id: "TSC", descripcion: 'ANGULAR' },
+    { id: "VBA", descripcion: 'VISUAL BASIC' },
+    { id: "VBN", descripcion: 'VISUAL STUDIO .NET' },
+    { id: "GO", descripcion: 'GOLANG' },
+    { id: "PYC", descripcion: 'PYTHON' },
+    { id: "C++", descripcion: 'C++' },
+    { id: "C", descripcion: 'C' },
+  ]
+
+
+public nameApp
+
+
+  onSubmit() {
+    alert('Submitted!!');
+    return false;
+  }
+  // private
+  private horizontalWizardStepper: Stepper;
+  private verticalWizardStepper: Stepper;
+  private modernWizardStepper: Stepper;
+  private modernVerticalWizardStepper: Stepper;
+  private bsStepper;
+
+  /**
+   * Horizontal Wizard Stepper Next
+   *
+   * @param data
+   */
+  horizontalWizardStepperNext(data) {
+    if (data.form.valid === true) {
+      this.horizontalWizardStepper.next();
+    }
+  }
+  /**
+   * Horizontal Wizard Stepper Previous
+   */
+  horizontalWizardStepperPrevious() {
+    this.horizontalWizardStepper.previous();
+  }
+
+  /**
+   * Vertical Wizard Stepper Next
+   */
+  verticalWizardNext() {
+    this.verticalWizardStepper.next();
+  }
+  /**
+   * Vertical Wizard Stepper Previous
+   */
+  verticalWizardPrevious() {
+    this.verticalWizardStepper.previous();
+  }
+  /**
+   * Modern Horizontal Wizard Stepper Next
+   */
+  modernHorizontalNext() {
+    this.modernWizardStepper.next();
+  }
+  /**
+   * Modern Horizontal Wizard Stepper Previous
+   */
+  modernHorizontalPrevious() {
+    this.modernWizardStepper.previous();
+  }
+  /**
+   * Modern Vertical Wizard Stepper Next
+   */
+  modernVerticalNext() {
+    this.modernVerticalWizardStepper.next();
+  }
+  /**
+   * Modern Vertical Wizard Stepper Previous
+   */
+  modernVerticalPrevious() {
+    this.modernVerticalWizardStepper.previous();
+  }
+
+  async ListarIP(){
+    
+    await this.comunicacionesServices.Listar().subscribe(
       (data) => {
-        this.dataApp.push(data);
-        console.log(data);
-        data.Cuerpo.map(e => {    
-        //  console.log(e.nombre)      
-          this.dataApp.push({id: e.identificador, name: e.nombre + " | " + e.version });  
-        });             
+
+        this.hosts = data
       },
       (error) => {
         console.log(error)
       }
     )
-  }
-
-  public horizontalWizardStepper: Stepper;
-
-  horizontalWizardStepperNext(e){
-    console.log(e);
-   
-      this.horizontalWizardStepper.next();
-    
-  }
-
-  horizontalWizardStepperPrevious(){
-   
-      this.horizontalWizardStepper.previous();
-    
   }
 
   
@@ -117,11 +236,70 @@ export class InstallComponent implements OnInit {
     private modalService: NgbModal,
     private config: NgSelectConfig,
     //private configmodul: NgSelectModule,
+    private comunicacionesServices : ComunicacionesService,
   ) { }
 
   ngOnInit(): void {
+    this.ListarIP();
+    this.lstAplicaciones();
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
-    this.lstAplicaciones()
-  }
-}
 
+    /*  this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
+      linear: false,
+      animation: true
+    });
+
+    this.modernWizardStepper = new Stepper(document.querySelector('#stepper3'), {
+      linear: false,
+      animation: true
+    });
+
+    this.modernVerticalWizardStepper = new Stepper(document.querySelector('#stepper4'), {
+      linear: false,
+      animation: true
+    });
+
+    this.bsStepper = document.querySelectorAll('.bs-stepper'); */
+     
+   /*  this.products = this.developer; */
+
+ /*    this.contentHeader = {
+      headerTitle: 'Aplicaciones',
+      actionButton: true,
+      breadcrumb: {
+        type: '',
+        links: [
+          {
+            name: 'Home',
+            isLink: true,
+            link: '/'
+          },
+          {
+            name: 'Instalar',
+            isLink: false
+          }
+        ]
+      }
+    } */
+  
+
+  }
+
+  async lstAplicaciones(){
+    this.xAPI.funcion = "LstAplicaciones";
+    this.xAPI.valores = null;
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => { 
+        this.dataApp = data.Cuerpo.map(e => {  
+          e.name = `${e.nombre} | ${e.version}`   
+          this.nameApp = e.name 
+          return e
+        });      
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+  
+  }

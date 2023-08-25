@@ -13,6 +13,7 @@ export class WsocketsService {
   lst : []
   pid$: any
   lstpid$ = new EventEmitter<any>();
+  lstpidPeso$ = new EventEmitter<any>();
   estatusText$ = new EventEmitter<string>();
   estatusText: string = ''
   constructor() { 
