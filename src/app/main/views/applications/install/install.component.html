@@ -14,8 +14,8 @@
                                 <button class="step-trigger">
                                     <span class="bs-stepper-box">1</span>
                                     <span class="bs-stepper-label">
-                                        <span class="bs-stepper-title">Account Details</span>
-                                        <span class="bs-stepper-subtitle">Setup Account Details</span>
+                                        <span class="bs-stepper-title">Registrar</span>
+                                        <span class="bs-stepper-subtitle">Aplicacion</span>
                                     </span>
                                 </button>
                             </div>
@@ -55,24 +55,36 @@
                                 <div id="account-details" class="content">
                                     <form #accountDetailsForm="ngForm">
                                         <div class="content-header">
-                                            <h5 class="mb-0">Account Details</h5>
-                                            <small class="text-muted">Enter Your Account Details.</small>
+                                            <h5 class="mb-0">Registro Aplicacion.</h5>
+                                            <small class="text-muted"></small>
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-4"></div>
-                                            <div class="form-group col-md-4">
-                                                <label class="form-label" for="tipo">Tipo de instalación</label>
-                                                <ng-select  [items]="dataApp" #Tipo="ngModel" [(ngModel)]="nameApp" 
+                                           <!--  <div class="form-group col-md-4">
+                                                <label class="form-label" for="apli">Aplicacion</label>
+                                                <ng-select  [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp" 
                                                 [ngModelOptions]="{standalone: true}" 
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="name"
-                                                    name="tipo" id="tipo" required placeholder="Seleccione"
-                                                    bindValue="id">
+                                                    name="aplicacion" id="aplicacion" required placeholder="Seleccione"
+                                                    bindValue="id"> -->
                                                    <!--  <ng-option *ngFor="let mdl of dataApp" value="{{mdl.identificador}}" >{{ mdl.nombre }} | {{ mdl.version }}</ng-option> -->
-                                                </ng-select>
-                                                <span *ngIf="accountDetailsForm.submitted && Tipo.invalid"
+                                               <!--  </ng-select>
+                                                <span *ngIf="accountDetailsForm.submitted && aplicacion.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
-                                                        *ngIf="Tipo.errors.required">Este campo es requerido!</small>
+                                                        *ngIf="aplicacion.errors.required">Este campo es requerido!</small>
+                                                </span>
+                                            </div> -->
+                                            <div class="form-group col-md-4">
+                                                <label class="form-label" for="aplicacion">Aplicacion</label>
+                                                <input [(ngModel)]="iApp.nombre" #Apliref="ngModel" required type="text"
+                                                    name="aplicacion" id="aplicacion" class="form-control" (blur)='selectEventModulo()'
+                                                    [class.error]="!Apliref.valid && accountDetailsForm.submitted" />
+
+                                                <span *ngIf="accountDetailsForm.submitted && Apliref.invalid"
+                                                    class="invalid-form">
+                                                    <small class="form-text text-danger"
+                                                        *ngIf="Apliref.errors.required">Este campo es requerido!</small>
                                                 </span>
                                             </div>
                                             <div class="form-group col-md-4"></div>
@@ -81,7 +93,7 @@
                                         <div class="row">
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="tipo">Tipo de instalación</label>
-                                                <ng-select  [items]="tipos" #Tipo="ngModel" [(ngModel)]="TipoVar" 
+                                                <ng-select  [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo" 
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="tipo" id="tipo" required placeholder="Seleccione"
                                                     bindValue="id">
@@ -95,7 +107,7 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="servidor">Servidor</label>
-                                                <ng-select #Server="ngModel" [(ngModel)]="SerVar"
+                                                <ng-select #Server="ngModel" [(ngModel)]="iApp.origen"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="servidor" id="servidor" required
                                                     placeholder="Seleccione Servidor" bindValue="id">
@@ -109,7 +121,7 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="sistemas">Sistema Operativo</label>
-                                                <ng-select [items]="sistemasOperativos" #System="ngModel" [(ngModel)]="SysVar"
+                                                <ng-select [items]="sistemasOperativos" #System="ngModel" [(ngModel)]="iApp.sistema"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="sistemas" id="sistemas" required
                                                     placeholder="Seleccione Servidor" bindValue="id">
@@ -124,7 +136,7 @@
                                         <div class="row">
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="repositorio">Repositorio Url</label>
-                                                <input [(ngModel)]="RepoVar" #Reporef="ngModel" required type="text"
+                                                <input [(ngModel)]="iApp.repositorio" #Reporef="ngModel" required type="text"
                                                     name="repositorio" id="repositorio" class="form-control"
                                                     [class.error]="!Reporef.valid && accountDetailsForm.submitted" />
 
@@ -136,7 +148,7 @@
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="usuario">Usuario</label>
-                                                <input [(ngModel)]="UsuVar" #Usuref="ngModel" required type="text"
+                                                <input [(ngModel)]="iApp.usuario" #Usuref="ngModel" required type="text"
                                                     name="usuario" id="usuario" class="form-control"
                                                     [class.error]="!Usuref.valid && accountDetailsForm.submitted" />
 
@@ -148,7 +160,7 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="password">Password / Token</label>
-                                                <input [(ngModel)]="PassVar" #Passref="ngModel" required type="text"
+                                                <input [(ngModel)]="iApp.clave" #Passref="ngModel" required type="text"
                                                     name="password" id="password" class="form-control"
                                                     [class.error]="!Passref.valid && accountDetailsForm.submitted" />
 
@@ -160,7 +172,7 @@
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="montaje">Punto Montaje</label>
-                                                <input [(ngModel)]="MonVar" #Monref="ngModel" required type="text"
+                                                <input [(ngModel)]="iApp.puntoMontaje" #Monref="ngModel" required type="text"
                                                     name="montaje" id="montaje" class="form-control"
                                                     [class.error]="!Monref.valid && accountDetailsForm.submitted" />
 
@@ -177,7 +189,7 @@
                                                 <!-- <input [(ngModel)]="TipoVar" #Tipo="ngModel" required type="text"
                                                     name="tipo" id="tipo" class="form-control"
                                                     [class.error]="!Tipo.valid && accountDetailsForm.submitted" /> -->
-                                                <ng-select [items]="basesDatos" #Bdatos="ngModel" [(ngModel)]="BdatoVar"
+                                                <ng-select [items]="basesDatos" #Bdatos="ngModel" [(ngModel)]="iApp.basedatos"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="bdatos" id="bdatos" required placeholder="Seleccione"
                                                     bindValue="id">
@@ -190,7 +202,7 @@
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="version">Versión</label>
-                                                <input [(ngModel)]="VersionVar" #Verref="ngModel" required type="text"
+                                                <input [(ngModel)]="iApp.version" #Verref="ngModel" required type="text"
                                                     name="version" id="version" class="form-control"
                                                     [class.error]="!Verref.valid && accountDetailsForm.submitted" />
 
@@ -202,7 +214,7 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="lenguaje">Lenguaje</label>
-                                                <ng-select [items]="lenguaje" #Lenref="ngModel" [(ngModel)]="LenVar"
+                                                <ng-select [items]="lenguaje" #Lenref="ngModel" [(ngModel)]="iApp.lenguaje"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="lenguaje" id="lenguaje" required placeholder="Seleccione"
                                                     bindValue="id">
@@ -218,7 +230,7 @@
                                             <div class="form-group col-md-12">
                                                 <label for="descripcion">Descripción</label>
                                                 <fieldset class="form-group">
-                                                    <textarea [(ngModel)]="DescripcionVar" #Desref="ngModel" required
+                                                    <textarea [(ngModel)]="iApp.observacion" #Desref="ngModel" required
                                                         type="text" name="descripcion" id="descripcion"
                                                         class="form-control"
                                                         [class.error]="!Desref.valid && accountDetailsForm.submitted"></textarea>

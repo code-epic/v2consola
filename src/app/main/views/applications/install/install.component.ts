@@ -36,6 +36,7 @@ export class InstallComponent implements OnInit {
   public selectMultiSelected;
 
   public contentHeader: object;
+  public ApliVar;
   public TipoVar;
   public SerVar;
   public SysVar;
@@ -67,6 +68,12 @@ export class InstallComponent implements OnInit {
   public mbdatos;
   public mversion;
   public mlenguaje;
+
+  nombreapp     : string  = ''
+  xnombreapi    : string  = ''
+  xnombrecon    : string  = ''
+  funcion       : string  = ''
+  xparametroapi : string  = ''
 
   dataApp     = []
   rowData     = []
@@ -169,6 +176,7 @@ public nameApp
    */
   horizontalWizardStepperNext(data) {
     if (data.form.valid === true) {
+      this.guardarAplicacion();
       this.horizontalWizardStepper.next();
     }
   }
@@ -281,6 +289,65 @@ public nameApp
     } */
   
 
+  }
+
+  async guardarAplicacion(){
+    console.log("Llego a guardar")
+    this.xAPI.funcion = "SSB_IAplicacion" 
+    this.xAPI.valores = JSON.stringify(this.iApp) 
+    console.log(this.xAPI.valores)
+    if(this.iApp.identificador != 0) this.xAPI.funcion = "SSB_UAplicacion"
+     
+    
+
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        var msj = "Actualizado"
+        if(this.xAPI.funcion == "SSB_IAplicacion") {
+          this.iApp.identificador = data.msj;
+          var msj = "Agregado"
+        }
+
+        /* this.toastrService.success(
+          'Se ha ' + msj + ' el registro con exito ',
+          `CodeEpic Middleware`
+        ); */
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+   
+
+  }
+
+  selectEventModulo(){
+    console.log("select llegoooooooooo")
+    console.log(this.iApp.identificador)
+    console.log(this.iApp.nombre)
+    /* this.iApp.identificador = this.iApp.identificador; */
+    //this.nombreapp = this.iApp.nombre;
+    this.consultarAplicacion()    
+  }
+
+  async consultarAplicacion(){
+    console.log("llego consultarAplicacion")
+    this.xAPI.funcion = "SEC_CAplicacion" //Consultar Aplicacion del sistema 
+    this.xAPI.parametros =  this.iApp.identificador.toString()
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        console.log(data)
+        console.log(this.xAPI.parametros)
+        var xapp : SSB_IAplicacion
+        xapp = data.Cuerpo[0]
+        console.log(xapp)
+        this.iApp = xapp;
+
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
   async lstAplicaciones(){
