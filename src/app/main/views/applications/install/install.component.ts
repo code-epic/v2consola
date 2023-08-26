@@ -95,15 +95,69 @@ export class InstallComponent implements OnInit {
     )
   }
 
-  public horizontalWizardStepper: Stepper;
+  // private
+  private horizontalWizardStepper: Stepper;
+  private verticalWizardStepper: Stepper;
+  private modernWizardStepper: Stepper;
+  private modernVerticalWizardStepper: Stepper;
+  private bsStepper;
 
-  horizontalWizardStepperNext(e){
-      this.horizontalWizardStepper.next();
+/**
+   * Horizontal Wizard Stepper Next
+   *
+   * @param data
+   */
+horizontalWizardStepperNext(data) {
+  if (data.form.valid === true) {
+    this.horizontalWizardStepper.next();
   }
+}
+/**
+ * Horizontal Wizard Stepper Previous
+ */
+horizontalWizardStepperPrevious() {
+  this.horizontalWizardStepper.previous();
+}
 
-  horizontalWizardStepperPrevious(){
-      this.horizontalWizardStepper.previous();
-  }
+/**
+ * Vertical Wizard Stepper Next
+ */
+verticalWizardNext() {
+  this.verticalWizardStepper.next();
+}
+/**
+ * Vertical Wizard Stepper Previous
+ */
+verticalWizardPrevious() {
+  this.verticalWizardStepper.previous();
+}
+/**
+ * Modern Horizontal Wizard Stepper Next
+ */
+modernHorizontalNext() {
+  this.modernWizardStepper.next();
+}
+/**
+ * Modern Horizontal Wizard Stepper Previous
+ */
+modernHorizontalPrevious() {
+  this.modernWizardStepper.previous();
+}
+/**
+ * Modern Vertical Wizard Stepper Next
+ */
+modernVerticalNext() {
+  this.modernVerticalWizardStepper.next();
+}
+/**
+ * Modern Vertical Wizard Stepper Previous
+ */
+modernVerticalPrevious() {
+  this.modernVerticalWizardStepper.previous();
+}
+
+
+
 
   
   constructor(

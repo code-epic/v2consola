@@ -35,6 +35,7 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { ApiListComponent } from './api/api-list/api-list.component';
 import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.module';
 import { ApiDetailsComponent } from './api/api-details/api-details.component';
+import { RegisterApiComponent } from './api/register-api/register-api.component';
 
 const routes = [
   {
@@ -66,6 +67,12 @@ const routes = [
     component: WorkflowComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'tools/register-api/:id',
+    component: RegisterApiComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
   }
 ];
 
@@ -75,7 +82,8 @@ const routes = [
     ApiComponent,
     WorkflowComponent,
     ApiListComponent,
-    ApiDetailsComponent
+    ApiDetailsComponent,
+    RegisterApiComponent
   ],
   imports: [
     RouterModule.forChild(routes),

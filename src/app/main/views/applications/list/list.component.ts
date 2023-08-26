@@ -227,7 +227,7 @@ export class ListComponent implements OnInit {
 
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "LstAplicaciones";
+    this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.parametros = ''
     this.ListaAplicaciones = []
     await this.apiService.Ejecutar(this.xAPI).subscribe(

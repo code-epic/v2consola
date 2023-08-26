@@ -7,6 +7,7 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 import JSONFormatter from 'json-formatter-js';
 
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -34,6 +35,7 @@ export class ApiComponent implements OnInit {
   @BlockUI() blockUI: NgBlockUI;
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
+
   public codeMirrorOptions: any = {
     theme: 'idea',
     mode: 'text/x-idn',
@@ -48,6 +50,7 @@ export class ApiComponent implements OnInit {
     tabSize: 2,
     indentWithTabs: true
   };
+
 
 
   public fnx
@@ -127,40 +130,6 @@ export class ApiComponent implements OnInit {
 
 
 
-  public horizontalWizardStepper: Stepper;
-
-  horizontalWizardStepperNext(e){
-      this.horizontalWizardStepper.next();
-  }
-
-  horizontalWizardStepperPrevious(){
-      this.horizontalWizardStepper.previous();
-  }
-
-  public TDNameVar;
-  public TDEmailVar;
-  public TDFirstNameVar;
-  public TDLastNameVar;
-  public twitterVar;
-  public facebookVar;
-  public googleVar;
-  public linkedinVar;
-  public landmarkVar;
-  public addressVar;
-
-  public selectBasic = [
-    { name: 'UK' },
-    { name: 'USA' },
-    { name: 'Spain' },
-    { name: 'France' },
-    { name: 'Italy' },
-    { name: 'Australia' }
-  ];
-
-  public selectMulti = [{ name: 'English' }, { name: 'French' }, { name: 'Spanish' }];
-  public selectMultiSelected;
-
-
 
   constructor(
     private rutaActiva: ActivatedRoute,
@@ -178,13 +147,12 @@ export class ApiComponent implements OnInit {
 
 
   async ngOnInit() {
-
-    // this.horizontalWizardStepper = new Stepper(document.querySelector('#stepperAPI'), {});
-
+    
     this.driversAPP = this.rutaActiva.snapshot.params.id
-
+    
     await this.ListarApis('desarrollo',this.driversAPP)
 
+    
     this.loginForm = this._formBuilder.group({
       host: ['', [Validators.required]],
       mac: ['', [Validators.required]],
