@@ -209,7 +209,7 @@
             <div class="col-md-2 col-12 mb-1">
               <label for="login-estatus" class="form-label">Estatus</label>
               <ng-select [items]="estatus" formControlName="estatus" 
-                placeholder="Seleccione Estatus" [disabled]="estatus.disabled" bindLabel="name" bindValue="id">
+                placeholder="Seleccione Estatus" [attr.disabled]="true" bindLabel="name" bindValue="id">
               </ng-select>
             </div>
 
@@ -401,7 +401,7 @@
             <div class="col-md-6 col-12 mb-1">
               <label for="login-estatus" class="form-label">Estatus</label>
               <ng-select [items]="estatus" formControlName="estatus" 
-                placeholder="Seleccione Estatus" [disabled]="estatus.disabled" bindLabel="name" bindValue="id">
+                placeholder="Seleccione Estatus"  [attr.disabled]="true" bindLabel="name" bindValue="id">
               </ng-select>
             </div>
 
@@ -467,7 +467,7 @@
             <div class="col-md-2 col-12 mb-1">
               <label for="login-estatus" class="form-label">Estatus</label>
               <ng-select [items]="estatus" formControlName="estatus" 
-                placeholder="Seleccione Estatus" [disabled]="estatus.disabled" bindLabel="name" bindValue="id">
+                placeholder="Seleccione Estatus" [attr.disabled]="true" bindLabel="name" bindValue="id">
               </ng-select>
             </div>
 

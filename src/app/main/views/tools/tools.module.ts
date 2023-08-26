@@ -94,7 +94,8 @@ const routes = [
     CorePipesModule,
     CoreSidebarModule,
     CoreCommonModule,
-    CardSnippetModule
+    CardSnippetModule,
+    CodemirrorModule
   ],
 })
 export class ToolsModule { }
