@@ -26,12 +26,15 @@ import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
 import { BlockUIModule } from 'ng-block-ui';
 
+
 import { FunctionsComponent } from './functions/functions.component';
-import { ApiComponent } from './api/api.component';
+import { ApiComponent } from './api/api-collection/api.component';
 import { WorkflowComponent } from './workflow/workflow.component';
 
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
-
+import { ApiListComponent } from './api/api-list/api-list.component';
+import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.module';
+import { ApiDetailsComponent } from './api/api-details/api-details.component';
 
 const routes = [
   {
@@ -42,7 +45,19 @@ const routes = [
   },
   {
     path: 'tools/api',
+    component: ApiListComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'tools/api-list/:id',
     component: ApiComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'tools/api-details/:id',
+    component: ApiDetailsComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
@@ -58,7 +73,9 @@ const routes = [
   declarations: [
     FunctionsComponent,
     ApiComponent,
-    WorkflowComponent
+    WorkflowComponent,
+    ApiListComponent,
+    ApiDetailsComponent
   ],
   imports: [
     RouterModule.forChild(routes),
@@ -66,7 +83,6 @@ const routes = [
     ContentHeaderModule,
     TranslateModule,
     FormsModule,
-    CodemirrorModule,
     CoreCardModule,
     ReactiveFormsModule,
     NgxDatatableModule,
@@ -77,8 +93,8 @@ const routes = [
     BlockUIModule,
     CorePipesModule,
     CoreSidebarModule,
-    CoreCommonModule
-
+    CoreCommonModule,
+    CardSnippetModule
   ],
 })
 export class ToolsModule { }

@@ -5,13 +5,15 @@ import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-dat
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
-
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
+import { ActivatedRoute, Router } from '@angular/router';
+import Stepper from 'bs-stepper';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-api',
@@ -29,6 +31,8 @@ export class ApiComponent implements OnInit {
   @BlockUI() blockUI: NgBlockUI;
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
+
+  public fnx
 
   public xAPI : IAPICore = {
     funcion: '',
@@ -94,13 +98,48 @@ export class ApiComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
+  public driversAPP
+
+
+  public horizontalWizardStepper: Stepper;
+
+  horizontalWizardStepperNext(e){
+      this.horizontalWizardStepper.next();
+  }
+
+  horizontalWizardStepperPrevious(){
+      this.horizontalWizardStepper.previous();
+  }
+
+  public TDNameVar;
+  public TDEmailVar;
+  public TDFirstNameVar;
+  public TDLastNameVar;
+  public twitterVar;
+  public facebookVar;
+  public googleVar;
+  public linkedinVar;
+  public landmarkVar;
+  public addressVar;
+
+  public selectBasic = [
+    { name: 'UK' },
+    { name: 'USA' },
+    { name: 'Spain' },
+    { name: 'France' },
+    { name: 'Italy' },
+    { name: 'Australia' }
+  ];
+
+  public selectMulti = [{ name: 'English' }, { name: 'French' }, { name: 'Spanish' }];
+  public selectMultiSelected;
+
+
 
   constructor(
-    private comunicacionesService : ComunicationsService,
+    private rutaActiva: ActivatedRoute,
     private apiService : ApiService,
     private modalService: NgbModal,
-    private ws : WsocketsService,
-    private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
   ) {
@@ -113,7 +152,12 @@ export class ApiComponent implements OnInit {
 
 
   async ngOnInit() {
-    await this.ListarApis('desarrollo')
+
+    // this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
+
+    this.driversAPP = this.rutaActiva.snapshot.params.id
+
+    await this.ListarApis('desarrollo',this.driversAPP)
 
     this.loginForm = this._formBuilder.group({
       host: ['', [Validators.required]],
@@ -141,67 +185,85 @@ export class ApiComponent implements OnInit {
             isLink: false
           },
           {
-            name: 'Api Rest',
+            name: 'API REST',
+            isLink: true,
+            link: '/tools/api'
+          },
+          {
+            name: this.driversAPP,
             isLink: false
-          }
+          },
         ]
       }
     };
   }
 
-  async ListarApis(t : string) {
+  async ListarApis(r:string, t : string) {
     this.developer = []
     this.quality = []
     this.production = []
-    await this.apiService.Listar().subscribe(
+    this.xAPI.funcion = '_SYS_R_ListarApis'
+    this.xAPI.parametros = t+','+r
+    this.xAPI.valores = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.forEach(e => {
-          switch (e.entorno) {
-            case t:
-              this.developer.push(e)
-              this.rowData = this.developer;
-              this.count = this.rowData.length
-              this.tempData = this.rowData;            
-              break;
-              case t:
-                this.quality.push(e)
-                this.rowData = this.quality;
-                this.count = this.rowData.length
-                this.tempData = this.rowData;              
-                break;
-                case t:
-                 this.production.push(e)
-                  this.rowData = this.production;
-                  this.count = this.rowData.length
-                  this.tempData = this.rowData;                
-                  break;
-                  default:
-                    break;
-                  }
-                });       
+        data.map(e => {
+          this.developer.push(e)
+          this.rowData = this.developer;
+          this.count = this.rowData.length
+          this.tempData = this.rowData;     
+        })
       },
       (error) => {
         console.error(error)
       }
     );
   }
+  
+  ExportApi(){
+    this.fnx = {
+      'funcion': 'Fnx_ExportarAPI',
+      'base-datos': 'sandra-server',
+      'user': '',
+      'passw': '',
+      'driver': this.driversAPP
 
-  Capturar(event){ // Capturar que tipo de API quiero ver
-    switch (event) {
-      case 'desarrollo':
-        this.ListarApis('desarrollo')           
-        break;
-        case 'calidad':
-          this.ListarApis('calidad')                
-          break;
-          case 'produccion':
-            this.ListarApis('produccion')                
-            break;
-            default:
-              this.ListarApis('desarrollo')       
-              break;
-            } 
+    }
+    // console.log(this.fnx)
+    this.apiService.ExecFnx(this.fnx).subscribe(
+      (data) => {
+        this.utilservice.AlertMini('bottom-end','success','Backup Generado',3000)
+        this.apiService.DwsCdn('bck-export/apicore.zip')
+      },
+      (error) => {
+        this.utilservice.AlertMini('top-end','success',error,3000)
+        console.log(error)
+      })
   }
+
+  async ImportApi(){
+    const { value: file } = await Swal.fire({
+      title: 'Sube el documento',
+      input: 'file',
+      inputAttributes: {
+        'accept': 'application/zip',
+        'aria-label': 'Upload your profile picture'
+      }
+    })
+    
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        // Swal.fire({
+        //   title: 'Your uploaded picture',
+        //   imageUrl: e.target.result,
+        //   imageAlt: 'The uploaded picture'
+        // })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
 
   rowDetailsToggleExpand(row) {
     this.tableRowDetails.rowDetail.toggleExpandRow(row);
@@ -243,6 +305,7 @@ export class ApiComponent implements OnInit {
       estatus: [undefined],
     });
   }
+
 
   async CargarLista(){
     this.xAPI.funcion = "_SYS_LstComunicaciones";
@@ -287,7 +350,7 @@ export class ApiComponent implements OnInit {
   ModalApi(modal){
     this.modalService.open(modal,{
       centered: true,
-      size: 'lg',
+      size: 'xl',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',

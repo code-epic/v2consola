@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
-import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { ApiService, IAPICore, ProcessID } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 import Swal from 'sweetalert2';
@@ -12,14 +12,15 @@ import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { UtilService } from '@services/util/util.service';
 
+
 @Component({
-  selector: 'app-versions',
-  templateUrl: './versions.component.html',
-  styleUrls: ['./versions.component.scss'],
+  selector: 'app-list',
+  templateUrl: './list.component.html',
+  styleUrls: ['./list.component.scss'],
   encapsulation: ViewEncapsulation.None,
   providers: [NgbModalConfig, NgbModal]
 })
-export class VersionsComponent implements OnInit {
+export class ListComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @BlockUI() blockUI: NgBlockUI;
@@ -52,6 +53,12 @@ export class VersionsComponent implements OnInit {
     logs: false
   };
 
+  public pID : ProcessID = {
+    estatus: false,
+    mensaje: '',
+    segundos: '',
+    contenido: ''
+  }
 
   // Private
 
@@ -138,7 +145,8 @@ export class VersionsComponent implements OnInit {
       confirmButtonText: 'Si, Clonar!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.msjService.lstpid$.emit(true)
+        this.pID.estatus = true
+        this.msjService.lstpid$.emit(this.pID)
         this.apiService.ExecFnx(this.fnx).subscribe(
           (data) => {
             this.xAPI.funcion = "_SYS_U_Aplicaciones";

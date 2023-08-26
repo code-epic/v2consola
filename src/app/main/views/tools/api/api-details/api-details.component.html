@@ -1,0 +1,163 @@
+<div class="content-wrapper container-xxl p-0">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+    <div class="content-body">
+      <!-- app e-commerce details start -->
+      <section class="app-ecommerce-details">
+        <div class="card">
+          <!-- Product Details starts -->
+          <div class="card-body">
+            <div class="row my-2">
+              <div class="col-12 col-md-5 d-flex align-items-center justify-content-center mb-2 mb-md-0">
+                <div class="d-flex align-items-center justify-content-center">
+                  <img src="../../../../../../assets/images/logo/logo.png" width="250px" height="250px" class="img-fluid" alt="product image" />
+                </div>
+              </div>
+              <div class="col-12 col-md-7">
+                <h4><strong>{{ api.funcion }}</strong></h4>
+                <!-- <span class="card-text item-company">
+                    <label class="card-text">Hash - {{api.hash}}</label>
+                    </span> -->
+                <div class="ecommerce-details-price d-flex flex-wrap mt-1"></div>
+                <label class="card-text">Hash - {{api.hash}}</label><br>
+                <label class="card-text">Estatus - 
+                  <div class="badge badge-pill" [ngClass]="{
+                    'badge-light-success': api.estatus == true,
+                    'badge-light-danger': api.estatus == false
+                  }">
+                                      {{
+                                      api.estatus == true
+                                      ? 'Activo'
+                                      : api.estatus == false
+                                      ? 'Inactivo'
+                                      : 'Inactivo'
+                                      }}
+                                    </div>
+                </label>
+                <br>
+                <label class="card-text">Version - <div class="badge badge-glow badge-dark">{{api.version}}</div></label>
+                <p class="card-text">
+                  {{ api.descripcion }}
+                </p>
+                <ul class="product-features list-unstyled">
+                  <li *ngIf="product.hasFreeShipping"><i data-feather="shopping-cart"></i> <span>Free Shipping</span></li>
+                  <li>
+                    <i data-feather="dollar-sign"></i>
+                    <span>EMI options available</span>
+                  </li>
+                </ul>
+                <hr />
+                <div class="product-color-options">
+                  <h6>Colors</h6>
+                  <ul class="list-unstyled mb-0">
+                    <li class="d-inline-block selected">
+                      <div class="color-option b-primary">
+                        <div class="filloption bg-primary"></div>
+                      </div>
+                    </li>
+                    <li class="d-inline-block">
+                      <div class="color-option b-success">
+                        <div class="filloption bg-success"></div>
+                      </div>
+                    </li>
+                    <li class="d-inline-block">
+                      <div class="color-option b-danger">
+                        <div class="filloption bg-danger"></div>
+                      </div>
+                    </li>
+                    <li class="d-inline-block">
+                      <div class="color-option b-warning">
+                        <div class="filloption bg-warning"></div>
+                      </div>
+                    </li>
+                    <li class="d-inline-block">
+                      <div class="color-option b-info">
+                        <div class="filloption bg-info"></div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <hr />
+                <div class="d-flex flex-column flex-sm-row pt-1">
+                    <div class="col-md-12 text-center">
+                        <button type="button" class="btn btn-primary"  rippleEffect>Promover</button>&nbsp;
+                        <button type="button" class="btn btn-danger"  rippleEffect>Eliminar</button>&nbsp;
+                        <button [routerLink]="'/tools/api-list/' + api.driver" class="btn btn-dark"  rippleEffect>Regresar</button>&nbsp;
+                        <button type="button" class="btn btn-warning"  rippleEffect>Modificar</button>&nbsp;
+                        <button type="button" class="btn btn-info" rippleEffect>Probar</button>&nbsp;
+                      </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Product Details ends -->
+
+                 <!-- Item features starts -->
+        <!-- <div class="item-features">
+            <div class="row text-center">
+              <div class="col-12 col-md-4 mb-4 mb-md-0">
+                <div class="w-75 mx-auto">
+                  <i data-feather="award"></i>
+                  <h4 class="mt-2 mb-1">100% Original</h4>
+                  <p class="card-text">Chocolate bar candy canes ice cream toffee. Croissant pie cookie halvah.</p>
+                </div>
+              </div>
+              <div class="col-12 col-md-4 mb-4 mb-md-0">
+                <div class="w-75 mx-auto">
+                  <i data-feather="clock"></i>
+                  <h4 class="mt-2 mb-1">10 Day Replacement</h4>
+                  <p class="card-text">Marshmallow biscuit donut dragée fruitcake. Jujubes wafer cupcake.</p>
+                </div>
+              </div>
+              <div class="col-12 col-md-4 mb-4 mb-md-0">
+                <div class="w-75 mx-auto">
+                  <i data-feather="shield"></i>
+                  <h4 class="mt-2 mb-1">1 Year Warranty</h4>
+                  <p class="card-text">Cotton candy gingerbread cake I love sugar plum I love sweet croissant.</p>
+                </div>
+              </div>
+            </div>
+          </div> -->
+          <!-- Item features ends -->
+  
+          <!-- Related Products starts -->
+          <!-- <div class="card-body">
+            <div class="mt-4 mb-2 text-center">
+              <h4>Related Products</h4>
+              <p class="card-text">People also search for this items</p>
+            </div>
+            <div class="swiper-responsive-breakpoints swiper-container px-4 py-2" >
+              <div class="swiper-wrapper mb-2">
+                <div class="swiper-slide" *ngFor="let relatedProduct of productxx">
+                  <a href="javascript:void(0)">
+                    <div class="item-heading">
+                      <h5 class="text-truncate mb-0">{{ relatedProduct.name }}</h5>
+                      <small class="text-body">by {{ relatedProduct.brand }}</small>
+                    </div>
+                    <div class="img-container mx-auto py-75">
+                      <img [src]="relatedProduct.image" class="img-fluid" alt="image" />
+                    </div>
+                    <div class="item-meta">
+                      <div class="rating rating-sm">
+                        <ngb-rating [rate]="relatedProduct.rating" [readonly]="true" [max]="5" class="outline-none">
+                          <ng-template let-fill="fill" let-index="index"
+                            ><span class="fa fa-star-o mr-25" [class.fa-star]="fill === 100"></span
+                          ></ng-template>
+                        </ngb-rating>
+                      </div>
+                      <p class="card-text text-primary mb-0">${{ relatedProduct.price }}</p>
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div class="swiper-button-next"></div>
+              <div class="swiper-button-prev"></div>
+            </div>
+          </div> -->
+          <!-- Related Products ends -->
+  
+        </div>
+      </section>
+      <!-- app e-commerce details end -->
+    </div>
+  </div>
+  

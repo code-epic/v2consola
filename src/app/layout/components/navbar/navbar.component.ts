@@ -186,16 +186,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.msjService.lstpid$.subscribe(
       (e)=> {
+        // console.log(e)
         this.blCargando = e
         this.spiner = e
+        this.peso = e.segundos
       }
     )
 
-    this.msjService.lstpidPeso$.subscribe(
-      (e)=> {
-        this.peso = e
-      }
-    )
 
     this.token = jwt_decode(sessionStorage.getItem('token'));
     this.usuario = this.token.Usuario.usuario

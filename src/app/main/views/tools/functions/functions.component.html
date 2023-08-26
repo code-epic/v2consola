@@ -114,7 +114,7 @@
             <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [width]="500">
               <ng-template let-descripcion="value" ngx-datatable-cell-template>
                 <div>
-                  <span class="font-weight-bold">{{ descripcion }} </span>
+                  <span class="font-weight-bold">{{ descripcion.slice(0.40) }}... </span>
                 </div>
               </ng-template>
             </ngx-datatable-column>

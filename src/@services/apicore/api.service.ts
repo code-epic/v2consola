@@ -55,6 +55,19 @@ export interface ObjectoGenerico {
   obse: string
 }
 
+export interface ProcessID {
+  estatus: boolean,
+  contenido ?: string,
+  mensaje ?: string,
+  segundos : string,
+  rs ?: any
+}
+
+export interface WTipoArchivo {
+  ruta	 ?:	string
+	archivo	 ?:	string //CodeEncrypt
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -71,6 +84,12 @@ export class ApiService {
     })
   };
 
+  public pID : ProcessID = {
+    estatus: false,
+    mensaje: '',
+    segundos: '',
+    contenido: ''
+  }
 
   constructor(
     private utilService: UtilService,
@@ -126,8 +145,10 @@ export class ApiService {
         console.log(data)
         setTimeout(()=> {
           if(data.documento == 'PROCESADO'){
-            this.ws.lstpid$.emit(false)
-            this.ws.lstpidPeso$.emit(data.Duracion.segundos)
+            this.pID.estatus = false
+            this.pID.segundos = data.Duracion.segundos
+            this.pID.rs = data.rs
+            this.ws.lstpid$.emit(this.pID)
             Swal.fire({
               title: 'Proceso Finalizado',
               text: `Su proyecto a sido clonado exitosamente!`,
@@ -151,6 +172,40 @@ export class ApiService {
       }
     )
   }
+
+  DwsCdn(peticion : string){
+    let ruta = this.URL + 'dwsother/' + peticion
+    console.log(ruta)
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      responseType: 'blob' as 'json'
+    };
+    
+    this.http.get(ruta, httpOptions).subscribe((response: any) => {
+      const blob = new Blob([response], { type: 'application/zip' });
+      const url = window.URL.createObjectURL(blob);
+      window.open(url);
+    });
+  }
+
+
+  getDwsCdn(tpf : WTipoArchivo) : Observable<any> {
+    let ruta = this.URL + 'dwscdn'
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      }),
+      responseType: 'blob' as 'json'
+    };
+    
+    return this.http.post<any>(ruta,  tpf, httpOptions)
+  }
+
 
 
   //ListarModulos

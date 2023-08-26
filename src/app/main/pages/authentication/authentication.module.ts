@@ -16,6 +16,7 @@ import { AuthResetPasswordV1Component } from './auth-reset-password-v1/auth-rese
 import { AuthResetPasswordV2Component } from './auth-reset-password-v2/auth-reset-password-v2.component';
 import { AuthForgotPasswordV1Component } from './auth-forgot-password-v1/auth-forgot-password-v1.component';
 import { AuthForgotPasswordV2Component } from './auth-forgot-password-v2/auth-forgot-password-v2.component';
+import { AsistenteVirtualComponent } from 'app/main/asistente-virtual/asistente-virtual.component';
 
 // routing
 const routes: Routes = [
@@ -59,15 +60,14 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AuthLoginV2Component,
     AuthLoginV1Component,
+    AuthLoginV2Component,
     AuthRegisterV1Component,
     AuthRegisterV2Component,
     AuthResetPasswordV1Component,
     AuthResetPasswordV2Component,
     AuthForgotPasswordV1Component,
-    AuthForgotPasswordV2Component,
-
+    AsistenteVirtualComponent
   ],
   imports: [CommonModule,
     RouterModule.forChild(routes),

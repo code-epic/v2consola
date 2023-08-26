@@ -13,8 +13,7 @@ import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.s
   selector: 'app-install',
   templateUrl: './install.component.html',
   styleUrls: ['./install.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  host: { class: 'ecommerce-application' }
+  encapsulation: ViewEncapsulation.None
 })
 
 
@@ -230,7 +229,6 @@ public nameApp
     )
   }
 
-  
   constructor(
     private apiService: ApiService,
     private modalService: NgbModal,
