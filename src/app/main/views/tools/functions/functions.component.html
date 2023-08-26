@@ -134,6 +134,9 @@
                   <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
                     <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                   </button>
+                  <button (click)="ModalExePlay(ModalPlay,row)" type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                    <span [data-feather]="'play'" [class]="'cursor-pointer'"></span>
+                  </button>
                   <div ngbDropdownMenu>
                     <a (click)="ModalEdit(ModalEditFunction,row)" ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
                         [class]="'mr-50'"></span> Editar</a>
@@ -530,4 +533,39 @@
         <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
       </div>
     </form>
+  </ng-template>
+
+  <ng-template #ModalPlay let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">Escaneando de Redes</h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+      <!-- Invoice -->
+      <div class="col-xl-12 col-md-12 col-12">
+        <!-- Header Starts -->
+        <div class="row">
+  
+          <div class="col-md-12">
+            <div class="form-group">
+              <label>Resultado</label>
+              <div style="width:100%; height:400px; overflow: scroll;">
+                <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
+                  [ngModelOptions]="{standalone: true}" [(ngModel)]="xrs" value="{{xrs}}"></textarea>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+  
+      </div>
+  
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" tabindex="4" (click)="ScanRed()" rippleEffect>Escanear</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    </div>
+  
   </ng-template>
