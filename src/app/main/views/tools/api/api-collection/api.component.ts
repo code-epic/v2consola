@@ -5,6 +5,9 @@ import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-dat
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
+import JSONFormatter from 'json-formatter-js';
+
+
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectConfig } from '@ng-select/ng-select';
@@ -30,6 +33,21 @@ export class ApiComponent implements OnInit {
   
   @BlockUI() blockUI: NgBlockUI;
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
+
+  public codeMirrorOptions: any = {
+    theme: 'idea',
+    mode: 'text/x-idn',
+    lineNumbers: true,
+    lineWrapping: true,
+    foldGutter: true,
+    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lint: true,
+    indentUnit: 2,
+    tabSize: 2,
+    indentWithTabs: true
+  };
 
 
   public fnx
@@ -99,6 +117,14 @@ export class ApiComponent implements OnInit {
   public SelectionType = SelectionType;
 
   public driversAPP
+  
+
+  public xentorno
+  resultado: any;
+  xresultado: any;
+  xparametro: string = ''
+  valores: string = ''
+
 
 
   public horizontalWizardStepper: Stepper;
@@ -153,7 +179,7 @@ export class ApiComponent implements OnInit {
 
   async ngOnInit() {
 
-    // this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
+    // this.horizontalWizardStepper = new Stepper(document.querySelector('#stepperAPI'), {});
 
     this.driversAPP = this.rutaActiva.snapshot.params.id
 
@@ -370,14 +396,38 @@ export class ApiComponent implements OnInit {
   }
 
   ModalProbar(modal, data){
-    console.log(data)
+    var api = data.entorno == "produccion" ? "/v1/" : "/devel/"
+    this.xentorno = api + "api/crud:" + data.id;
+    this.data = data
     this.modalService.open(modal,{
       centered: true,
-      size: 'lg',
+      size: 'xl',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',
     });
+  }
+
+  async ejecutarApi() {
+    this.xAPI = this.data;
+    this.xAPI.parametros = this.xparametro
+    this.xAPI.valores = this.valores
+    // console.log(this.xAPI);
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data !== null) {
+          this.utilservice.AlertMini('top-end','success','Consulta Exitosa!', 3000)
+          const formatter = new JSONFormatter(data);
+          document.getElementById("xrs").appendChild(formatter.render());
+        } else {
+          this.resultado = null
+          this.utilservice.AlertMini('top-end','error','La API respondio NULL', 3000)
+        }
+      },
+      (error) => {
+        this.resultado = error;
+      }
+    )
   }
 
   GuardarDispositivo(){

@@ -206,7 +206,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.horizontalMenu = config.layout.type === 'horizontal';
       this.hiddenMenu = config.layout.menu.hidden === true;
       this.currentSkin = config.layout.skin;
-
       // Fix: for vertical layout if default navbar fixed-top than set isFixed = true
       if (this.coreConfig.layout.type === 'vertical') {
         setTimeout(() => {
@@ -216,6 +215,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }, 0);
       }
     });
+    
+    
 
     // Horizontal Layout Only: Add class fixed-top to navbar below large screen
     if (this.coreConfig.layout.type == 'horizontal') {
