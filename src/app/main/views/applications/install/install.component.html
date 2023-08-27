@@ -59,25 +59,25 @@
                                             <small class="text-muted"></small>
                                         </div>
                                         <div class="row">
-                                            <div class="form-group col-md-4"></div>
-                                           <!--  <div class="form-group col-md-4">
+                                            <!-- <div class="form-group col-md-4"></div> -->
+                                            <div class="form-group col-md-4">
                                                 <label class="form-label" for="apli">Aplicacion</label>
                                                 <ng-select  [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp" 
-                                                [ngModelOptions]="{standalone: true}" 
+                                                [ngModelOptions]="{standalone: true}"  (ngModelChange)='selectEventModuloo($event)'
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="name"
                                                     name="aplicacion" id="aplicacion" required placeholder="Seleccione"
-                                                    bindValue="id"> -->
+                                                    bindValue="identificador">
                                                    <!--  <ng-option *ngFor="let mdl of dataApp" value="{{mdl.identificador}}" >{{ mdl.nombre }} | {{ mdl.version }}</ng-option> -->
-                                               <!--  </ng-select>
+                                                </ng-select>
                                                 <span *ngIf="accountDetailsForm.submitted && aplicacion.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
                                                         *ngIf="aplicacion.errors.required">Este campo es requerido!</small>
                                                 </span>
-                                            </div> -->
+                                            </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="aplicacion">Aplicacion</label>
-                                                <input [(ngModel)]="iApp.nombre" #Apliref="ngModel" required type="text"
+                                                <input [(ngModel)]="iApp.nombre" #Apliref="ngModel" [ngModelOptions]="{standalone: true}" required type="text"
                                                     name="aplicacion" id="aplicacion" class="form-control" (blur)='selectEventModulo()'
                                                     [class.error]="!Apliref.valid && accountDetailsForm.submitted" />
 

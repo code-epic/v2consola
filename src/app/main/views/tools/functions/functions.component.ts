@@ -454,6 +454,16 @@ export class FunctionsComponent implements OnInit {
     });
   }
 
+  ModalExePlay(modal: any, data: any){
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
 
   ModalConfig(modal: any, data: any) {
     this.btnCategoria = data.categoria

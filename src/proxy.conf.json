@@ -1,11 +1,11 @@
 {
     "/v1/api/*": {
-        "target": "https://192.168.1.102",
+        "target": "https://65.108.62.7",
         "secure": false,
         "logLevel": "debug"
     },
     "/devel/api/*": {
-        "target": "https://192.168.1.102",
+        "target": "https://65.108.62.7",
         "secure": false,
         "logLevel": "debug"
     }

@@ -327,6 +327,11 @@ public nameApp
     console.log(this.iApp.nombre)
     /* this.iApp.identificador = this.iApp.identificador; */
     //this.nombreapp = this.iApp.nombre;
+   // this.consultarAplicacion()    
+  }
+  selectEventModuloo(e){
+    console.log(e)
+    this.iApp.identificador = e
     this.consultarAplicacion()    
   }
 
@@ -351,13 +356,14 @@ public nameApp
   }
 
   async lstAplicaciones(){
-    this.xAPI.funcion = "LstAplicaciones";
+    this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.valores = null;
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => { 
         this.dataApp = data.Cuerpo.map(e => {  
-          e.name = `${e.nombre} | ${e.version}`   
+          e.name = `${e.nombre} | ${e.VERSION}`   
           this.nameApp = e.name 
+          console.log(e)
           return e
         });      
       },
