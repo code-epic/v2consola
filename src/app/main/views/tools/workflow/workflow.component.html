@@ -1,1 +1,65 @@
-<p>workflow works!</p>
+
+<div class="animated fadeIn" [ngStyle]="{'display':sectionConsultar}">
+    <section class="esb">        
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                     <!--    <ngx-ui-loader [loaderId]="'loader-01'"></ngx-ui-loader> -->
+                        <h3>Flujos de Trabajos </h3>
+                        <hr>
+                        <div class="container">
+                           
+
+                            
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    <br>
+                                    <br>
+                                    <img class = "card-img-top" 
+                                        src = "../../assets/images/logo/WorkFlow.png" 
+                                        style = "width:90%"   
+                                        alt="WorkFlow">
+                                </div>
+                                <div class="col-md-9">
+                                    <app-registrar-workflow></app-registrar-workflow>
+                                </div>
+                               
+
+                                
+                            </div>
+                            <div class="row">
+                                <div class="nav-align-top">
+                                    <ul class="nav nav-pills mb-3" role="tablist" >
+                                      <li class="nav-item">
+                                        <button type="button" class="nav-link active" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-home" aria-controls="navs-pills-top-home" aria-selected="true">ESTADOS</button>
+                                      </li>
+                                      <li class="nav-item">
+
+                                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-profile" aria-controls="navs-pills-top-profile" aria-selected="false" >TRANSICIONES</button>
+                                      </li>
+                                      <li class="nav-item">
+                                        <button type="button" class="nav-link" role="tab" data-bs-toggle="tab" data-bs-target="#navs-pills-top-messages" aria-controls="navs-pills-top-messages" aria-selected="false">DEFINIR RED</button>
+                                      </li>
+                                    </ul>
+                                    <div class="tab-content">
+                                      <div class="tab-pane fade show active" id="navs-pills-top-home" role="tabpanel">
+                                          <!--   <app-estados></app-estados> -->
+                                      </div>
+                                      <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
+                                          <!--    <app-transiciones></app-transiciones> -->
+                                      </div>
+                                      <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
+                                       <!--   <app-red></app-red> -->
+                                      </div>
+                                    </div>
+                                  </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+ </div>
