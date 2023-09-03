@@ -1,1 +1,99 @@
-<p>transiciones works!</p>
+<br>
+<!-- <form #rolPrivilegios="ngForm" (ngSubmit)="onClickSubmit(rolPrivilegios)"> -->
+<form  class="normal-form">
+    <div class="row">
+        <!-- <div class="col-md-4">
+            <div class="form-group">
+                <label>Funciones</label>
+                <input type="text" id="txtName" class="form-control" placeholder="Enter ..." >
+            </div>
+        </div> -->
+        <div class="form-group col-md-4">
+            <label class="form-label" for="funciones">Funciones</label>
+            <input type="text" name="funciones" id="txtName" placeholder="Enter ..." class="form-control" />
+    
+          </div>
+          <div class="col-md-8">
+            <label class="form-label" for="descripcion">Descripción</label>
+            <div class="input-group mb-3">
+                
+                <input style="font-size:14px;" type="text" class="form-control" >
+                <div class="input-group-prepend">
+                    
+                    <button type="button" class="btn btn-primary" >
+                        <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar
+                    </button>
+                </div>
+            </div>
+    
+          </div>
+     <!--    <div class="col-md-8">
+            <label>Descripcion</label>
+            <div class="input-group mb-3">
+                
+                <input style="font-size:14px;" type="text" class="form-control" >
+                <div class="input-group-prepend">
+                    
+                    <button type="button" mat-raised-button color="accent" >
+                        <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar
+                    </button>
+                </div>
+            </div>
+        </div> -->
+    </div>
+    
+    
+</form>
+
+<div class="row">
+    <div class="col-md-12">
+      <ngx-datatable  [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
+        [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
+
+
+        <ngx-datatable-column name="#" prop="id" [width]="100">
+          <ng-template let-basedatos="value" ngx-datatable-cell-template>
+            <div>
+              <span class="font-weight-bold">1</span>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+        <ngx-datatable-column name="NOMBRE" prop="nom" [width]="400">
+          <ng-template let-nom="value" ngx-datatable-cell-template>
+            <div>
+              <span class="font-weight-bold">Nombre</span>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+
+        <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="600">
+          <ng-template let-obse="value" ngx-datatable-cell-template>
+            <div>
+              <span class="font-weight-bold">Descripción</span>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+        <ngx-datatable-column name="OBJETIVOS" [width]="300" [sortable]="false">
+          <ng-template ngx-datatable-cell-template let-row="row">
+            <div ngbDropdown container="body">
+              <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+              </button>
+              <div ngbDropdownMenu>
+                <a (click)="ModalEdit(ModalEditDevice,row)" ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
+                    [class]="'mr-50'"></span> Editar</a>
+              </div>
+            </div>
+          </ng-template>
+        </ngx-datatable-column>
+
+      </ngx-datatable>
+    </div>
+
+  </div>
+
+

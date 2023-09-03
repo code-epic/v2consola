@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { Wdefinicion, WListaEstado, WorkflowService } from '@services/workflow/workflow.service';
+import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
 
 @Component({
   selector: 'app-registrar-workflow',
@@ -23,12 +24,21 @@ export class RegistrarWorkflowComponent implements OnInit {
     estatus: false
   };
 
+  public tipos = [
+    { id: "-", descripcion: 'SELECCIONE' },
+    { id: "1", descripcion: 'DOCUMENTOS' },
+    { id: "0", descripcion: 'SISTEMA' },
+    { id: "2", descripcion: 'SERVIDORES' },
+  ]
+
   lstApps = []
   dataModulo = []
-  aplicacion : string = '0'
+  aplicacion : string = undefined
+  xdrivers: string = undefined
+  drivers: any
 
   public Definicion = []
-  xmodulo :  string = '0'
+  xmodulo :  string = undefined
 
   
   nombre  :  string = ''
@@ -47,10 +57,12 @@ export class RegistrarWorkflowComponent implements OnInit {
   }
 
   constructor(private apiService : ApiService,
+    private comunicacionesService: ComunicacionesService,
      private wkf : WorkflowService) { }
 
   ngOnInit(): void {
     this.lstAplicaciones()    
+    this.CargarDrivers()
   }
 
   async lstAplicaciones(){
@@ -86,14 +98,14 @@ export class RegistrarWorkflowComponent implements OnInit {
   consultarRed(){
     this.xAPI.funcion = 'Wk_SDefinicion'
     this.xAPI.parametros = this.aplicacion +","+ this.xmodulo
-   /*  this.wkf.msjText$.emit( this.xmodulo) */
+    this.wkf.msjText$.emit( this.xmodulo)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.isBtnSalvar = false
         if (data.Cuerpo == undefined) return
         data.Cuerpo.forEach(e => {         
           if (e != ' ') {
-         /*    this.wkf.msjText$.emit( e.id ) */
+            this.wkf.msjText$.emit( e.id )
             this.isBtnSalvar = false
             this.isDisabledInput = true
             this.isButtonVisibleSalvar = true
@@ -107,6 +119,30 @@ export class RegistrarWorkflowComponent implements OnInit {
         console.error(err)
       }
     )
+  }
+
+  async CargarDrivers() {
+    this.xAPI.funcion = "LESBDrivers";
+
+    await this.comunicacionesService.ListarConexiones().subscribe(
+      (data) => {
+        
+        this.drivers = data
+        this.apiService.Ejecutar(this.xAPI).subscribe(
+          (data) => {
+
+            this.drivers = data.filter(e => {
+              
+               return e.driver.indexOf('mysql') == 0  
+              
+            });
+          },
+          (error) => { console.log(error) }
+        )
+      },
+      (error) => { console.log(error) }
+    )
+
   }
 
   limpiar(){

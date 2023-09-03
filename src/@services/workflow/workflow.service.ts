@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
+import { Observable } from 'rxjs';
 
 export interface WListaEstado{
   idw : number,
@@ -19,7 +20,7 @@ export interface Wdefinicion{
   providedIn: 'root'
 })
 export class WorkflowService {
-  /* msjText$ = new EventEmitter<string>(); */
+   msjText$ = new EventEmitter<string>(); 
   msjText: string = ''
   constructor() { }
 }

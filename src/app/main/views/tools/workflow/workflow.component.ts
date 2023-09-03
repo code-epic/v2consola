@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { EstadosComponent } from './estados/estados.component';
+import { RegistrarWorkflowComponent } from './registrar-workflow/registrar-workflow.component';
+import { TransicionesComponent } from './transiciones/transiciones.component';
+import { EstatusComponent } from './estatus/estatus.component';
 
 @Component({
   selector: 'app-workflow',
@@ -8,9 +12,12 @@ import { Component, OnInit } from '@angular/core';
 export class WorkflowComponent implements OnInit {
 
 
- /*  @ViewChild(RegistrarWorkflowComponent) registrarWorkFlow: RegistrarWorkflowComponent
+  
+
+  @ViewChild(RegistrarWorkflowComponent) registrarWorkFlow: RegistrarWorkflowComponent
   @ViewChild(EstadosComponent) estadosWorkFlow: EstadosComponent
-  @ViewChild(TransicionesComponent) transicionesWorkFlow: TransicionesComponent */
+  @ViewChild(TransicionesComponent) transicionesWorkFlow: TransicionesComponent
+  @ViewChild(EstatusComponent) estatusWorkFlow: EstatusComponent
   
   public sectionConsultar : string = ''
   

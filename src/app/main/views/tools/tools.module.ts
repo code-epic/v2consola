@@ -40,6 +40,7 @@ import { RegistrarWorkflowComponent } from './workflow/registrar-workflow/regist
 import { RedComponent } from './workflow/red/red.component';
 import { EstadosComponent } from './workflow/estados/estados.component';
 import { TransicionesComponent } from './workflow/transiciones/transiciones.component';
+import { EstatusComponent } from './workflow/estatus/estatus.component';
 
 const routes = [
   {
@@ -91,7 +92,8 @@ const routes = [
     RegistrarWorkflowComponent,
     RedComponent,
     EstadosComponent,
-    TransicionesComponent
+    TransicionesComponent,
+    EstatusComponent
   ],
   imports: [
     RouterModule.forChild(routes),
