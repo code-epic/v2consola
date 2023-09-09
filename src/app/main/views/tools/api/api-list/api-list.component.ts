@@ -20,13 +20,17 @@ export class ApiListComponent implements OnInit {
 
   codeTypeJs = ''
 
-
-
+  
   xAPI: IAPICore = {
     funcion: '',
     parametros: '',
     valores: ''
   };
+  
+  public searchText: string = '';
+  public page = 1;
+  public pageSize = 12;
+  public pageBasic = 1;
 
   public drivers = []
 
@@ -119,8 +123,6 @@ export class ApiListComponent implements OnInit {
       }
     ) 
   }
-
-  
 
 
 }

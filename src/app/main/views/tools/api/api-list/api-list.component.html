@@ -1,12 +1,39 @@
 <div class="content-wrapper container-xxl p-0">
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
+
+    <section id="ecommerce-searchbar" class="ecommerce-searchbar">
+      <div class="row mt-1">
+          <div class="col-sm-12">
+              <div class="input-group input-group-merge">
+                  <input type="text" class="form-control search-product"
+                      id="shop-search" placeholder="Buscar"
+                      [(ngModel)]="searchText"
+                      aria-label="Search..." aria-describedby="shop-search"
+                       />
+                  <div class="input-group-append">
+                      <span class="input-group-text"><i data-feather="search"
+                              class="text-muted"></i></span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <br>
+
     <section id="wishlist" class="grid-view wishlist-items">
-      <ng-container *ngFor="let product of drivers">
+      <ng-container *ngFor="let product of drivers  | filter: searchText:'funcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
 
-
+      
         <!-- Ecommerce Item -->
         <div class="card ecommerce-card">
+          <!-- <label align="center" *ngIf="product.descripcion == 'MongoDB v.4.4.0' || product.descripcion == 'Sandra Server Core 1.0.0'">
+            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
+            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
+            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
+            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
+            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
+          </label> -->
         <div class="item-img text-center">
           <a [routerLink]="'/tools/api-list/'+product.id">
             <img class="img-fluid card-img-top" src="assets/integraciones/mongodb.png" *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
@@ -24,7 +51,9 @@
               </div>
             </div>
             <div class="item-cost">
-              <h6 class="item-price">{{ product.driver | uppercase }}</h6>
+              <h6 class="item-price">
+                {{ product.driver | uppercase }}
+              </h6>
             </div>
           </div>
           <p class="card-text item-description">
@@ -35,7 +64,43 @@
         <!--/ Ecommerce Item -->
       </ng-container>
     </section>
-    
+
+
+        <!-- E-commerce Pagination Starts -->
+        <section id="ecommerce-pagination">
+          <div class="row">
+              <div class="col-sm-12">
+                  <div class="d-flex justify-content-center">
+                      <ngb-pagination
+                          [collectionSize]="(drivers | filter: searchText:'funcion').length"
+                          [(page)]="page" [maxSize]="5" [rotate]="true"
+                          [ellipses]="false" [boundaryLinks]="true">
+                          <!-- Custom pagination icons -->
+                          <ng-template ngbPaginationPrevious><span
+                                  [data-feather]="'chevron-left'"
+                                  [class]="'font-weight-bolder'"
+                                  [size]="18"></span>
+                          </ng-template>
+                          <ng-template ngbPaginationFirst><span
+                                  [data-feather]="'chevrons-left'"
+                                  [class]="'font-weight-bolder'"
+                                  [size]="18"></span>
+                          </ng-template>
+                          <ng-template ngbPaginationNext><span
+                                  [data-feather]="'chevron-right'"
+                                  [class]="'font-weight-bolder'"
+                                  [size]="18"></span></ng-template>
+                          <ng-template ngbPaginationLast><span
+                                  [data-feather]="'chevrons-right'"
+                                  [class]="'font-weight-bolder'"
+                                  [size]="18"></span>
+                          </ng-template>
+                      </ngb-pagination>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <!-- E-commerce Pagination Ends -->
 
   </div>
 </div>

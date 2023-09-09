@@ -84,6 +84,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "codemirror": "^5.65.6",
     "core-js": "^3.23.1",
+    "crypto-js": "^4.1.1",
     "feather-icons": "^4.29.0",
     "file-saver": "^2.0.5",
     "flatpickr": "^4.6.13",

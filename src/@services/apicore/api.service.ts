@@ -47,6 +47,8 @@ export interface IAPICore {
   autor?: string
   totalizar?: string
   columnas?: string
+  prefijo ?: string
+  distribucion ?: string
 }
 
 export interface ObjectoGenerico {
