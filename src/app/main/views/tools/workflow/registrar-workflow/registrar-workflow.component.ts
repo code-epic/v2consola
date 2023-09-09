@@ -66,11 +66,12 @@ export class RegistrarWorkflowComponent implements OnInit {
   }
 
   async lstAplicaciones(){
-    this.xAPI.funcion = "LstAplicaciones";
+    console.info('llego lista aplicaciones')
+    this.xAPI.funcion = "SEC_CAplicaciones";
     this.xAPI.valores = null;
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // console.info(data)
+         console.info(data)
         this.lstApps = data.Cuerpo
       },
       (error) => {
@@ -96,24 +97,39 @@ export class RegistrarWorkflowComponent implements OnInit {
   }
 
   consultarRed(){
-    this.xAPI.funcion = 'Wk_SDefinicion'
-    this.xAPI.parametros = this.aplicacion +","+ this.xmodulo
-    this.wkf.msjText$.emit( this.xmodulo)
+    this.xAPI.funcion = 'WKF_CDefinicion'
+    let app = this.aplicacion.split('|')
+    console.log('app')
+    console.log(app[0])
+    console.log(app[1])
+    console.log(this.xAPI.funcion)
+    this.xAPI.parametros = app[0]
+   this.wkf.msjText$.emit( this.aplicacion)
+    this.apiService.hash =  ':' + app[1]
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         this.isBtnSalvar = false
-        if (data.Cuerpo == undefined) return
-        data.Cuerpo.forEach(e => {         
-          if (e != ' ') {
-            this.wkf.msjText$.emit( e.id )
-            this.isBtnSalvar = false
-            this.isDisabledInput = true
-            this.isButtonVisibleSalvar = true
-            this.isButtonVisibleUpdate = true
-            this.nombre = e.nombre
-            this.descripcion = e.observacion
-          } 
-      });
+
+        if (data.Cuerpo != undefined ) {
+          console.log(data.Cuerpo.length)
+          if (data.Cuerpo.length == 0 ) return
+
+          this.wkf.msjText$.emit( data.Cuerpo[0].wkf )
+          data.Cuerpo.forEach(e => {         
+            if (e != ' ') {
+              
+              this.isBtnSalvar = false
+              this.isDisabledInput = true
+              this.isButtonVisibleSalvar = true
+              this.isButtonVisibleUpdate = true
+              this.nombre = e.nomb
+              this.xdrivers = e.driver
+              this.descripcion = e.obse
+            } 
+          
+          })
+        }
       },
       (err) => {
         console.error(err)
@@ -154,6 +170,7 @@ export class RegistrarWorkflowComponent implements OnInit {
     this.descripcion = ''
     this.aplicacion = ''
     this.xmodulo = ''
+    this.xdrivers = ''
   }
 
   salvar(){

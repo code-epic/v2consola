@@ -1,68 +1,99 @@
 <div class="animated fadeIn" [ngStyle]="{'display':sectionConsultar}">
-    <section class="esb">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body">
-                        <!--    <ngx-ui-loader [loaderId]="'loader-01'"></ngx-ui-loader> -->
-                        <h3>Flujos de Trabajos </h3>
-                        <hr>
-                        <div class="container fluid">
+  <section class="esb">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <!--    <ngx-ui-loader [loaderId]="'loader-01'"></ngx-ui-loader> -->
+            <h3>Flujos de Trabajos </h3>
+            <hr>
+            <div class="container fluid">
 
 
 
-                            <div class="row">
-                                <!-- <div class="col-md-3 text-center">
+              <div class="row">
+                <div class="col-md-3 text-center">
                                     <br>
                                     <br>
                                     <img class="card-img-top" src="../../assets/images/logo/WorkFlow.png"
                                         style="width:90%" alt="WorkFlow">
-                                </div> -->
-                                <div class="col-md-12">
-                                    <app-registrar-workflow></app-registrar-workflow>
                                 </div>
-
-
-
-                            </div>
-                            <br>
-
-                            <div class="row ">
-                                <div class="col-md-12 ">
-                                <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
-                                    <li ngbNavItem>
-                                        <a ngbNavLink><span [data-feather]="'cast'"></span>ESTADOS</a>
-                                        <ng-template ngbNavContent>
-                                            <app-estados></app-estados>
-                                        </ng-template>
-                                    </li>
-                                    <li ngbNavItem>
-                                        <a ngbNavLink><span [data-feather]="'settings'"></span>TRANSACIONES</a>
-                                        <ng-template ngbNavContent>
-                                            <app-transiciones></app-transiciones>
-                                        </ng-template>
-                                    </li>
-                                    <li ngbNavItem>
-                                        <a ngbNavLink><span [data-feather]="'lock'"></span>ESTATUS</a>
-                                        <ng-template ngbNavContent>
-                                           <app-estatus></app-estatus>
-                                        </ng-template>
-                                    </li>
-                                    <li ngbNavItem>
-                                        <a ngbNavLink><span [data-feather]="'award'"></span>DEFINIR RED</a>
-                                        <ng-template ngbNavContent>
-                                            <app-red></app-red>
-                                        </ng-template>
-                                    </li>
-                                </ul>
-                                <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
-                            </div>
-                            </div>
-
-                        </div>
-                    </div>
+                <div class="col-md-9" style="margin-top: 25px;">
+                  <app-registrar-workflow></app-registrar-workflow>
                 </div>
+
+
+
+              </div>
+              <br>
+
+              <div class="row ">
+                <div class="col-md-12 ">
+                  <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+                    <li ngbNavItem>
+                      <a ngbNavLink><span [data-feather]="'cast'"></span>ESTADOS</a>
+                      <ng-template ngbNavContent>
+                        <app-estados></app-estados>
+                      </ng-template>
+                    </li>
+                    <li ngbNavItem>
+                      <a ngbNavLink><span [data-feather]="'settings'"></span>TRANSACIONES</a>
+                      <ng-template ngbNavContent>
+                        <app-transiciones></app-transiciones>
+                      </ng-template>
+                    </li>
+                    <li ngbNavItem>
+                      <a ngbNavLink><span [data-feather]="'lock'"></span>ESTATUS</a>
+                      <ng-template ngbNavContent>
+                        <app-estatus></app-estatus>
+                      </ng-template>
+                    </li>
+                    <li ngbNavItem>
+                      <a ngbNavLink><span [data-feather]="'award'"></span>RED</a>
+                      <ng-template ngbNavContent>
+                        <app-red></app-red>
+                      </ng-template>
+                    </li>
+                  </ul>
+                  <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+
+
+                </div>
+              </div>
+
             </div>
+          </div>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 </div>
+
+<!-- <div class="col-md-12">
+  <ngb-accordion #acc="ngbAccordion" activeIds="ngb-panel-1">
+    <ngb-panel title="ACTIVIDAD">
+      <ng-template ngbPanelContent>
+        <app-estados></app-estados>
+      </ng-template>
+    </ngb-panel>
+    <ngb-panel>
+      <ng-template ngbPanelTitle>
+        ESTATUS
+      </ng-template>
+      <ng-template ngbPanelContent>
+        <app-estatus></app-estatus>
+      </ng-template>
+    </ngb-panel>
+    <ngb-panel title="TRANSACIONES" >
+      <ng-template ngbPanelContent>
+        <app-transiciones></app-transiciones>
+      </ng-template>
+    </ngb-panel>
+    <ngb-panel title="RED" >
+      <ng-template ngbPanelContent>
+        <app-red></app-red>
+      </ng-template>
+    </ngb-panel>
+  </ngb-accordion>
+
+</div> -->

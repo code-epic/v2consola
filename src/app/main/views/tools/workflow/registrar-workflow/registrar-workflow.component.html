@@ -7,13 +7,15 @@
                 <div class="form-group col-md-4">
 
                     <label class="form-label" for="aplicacion">Aplicación</label>
-                    <ng-select #Aplication="ngModel" [(ngModel)]="aplicacion" bindLabel="descripcion" name="aplicacion"
-                        id="aplicacion" required placeholder="Seleccione" bindValue="id" (change)="selModulo()">
-                        <ng-option *ngFor="let xapp of lstApps" value="{{xapp.id}}">{{ mdl.nomb }} | {{ mdl.vers
-                            }}</ng-option>
+                    <ng-select #Aplication="ngModel" [disabled]="isDisabledInput" [(ngModel)]="aplicacion"
+                        bindLabel="descripcion" name="aplicacion" id="aplicacion" required placeholder="Seleccione"
+                        bindValue="id" (change)="selModulo()">
+                        <ng-option *ngFor="let xapp of lstApps"
+                            value="{{ xapp.identificador + '|' + xapp.llave}}">{{xapp.nombre}} :
+                            {{xapp.version}}</ng-option>
                     </ng-select>
                 </div>
-               <!--  <div class="form-group col-md-4 ">
+                <!--  <div class="form-group col-md-4 ">
 
                     <label class="form-label" for="arquitectura">Arquitectura</label>
                     <ng-select #Arquitectura="ngModel" [(ngModel)]="xmodulo" bindLabel="descripcion" name="arquitectura"
@@ -24,46 +26,52 @@
                 </div> -->
                 <div class="form-group col-md-4">
                     <label class="form-label" for="arquitectura">Arquitectura</label>
-                    <ng-select  [items]="tipos" [(ngModel)]="xmodulo" bindLabel="descripcion"
-                        name="arquitectura" id="arquitectura" required placeholder="Seleccione"
-                        bindValue="id">
+                    <ng-select [items]="tipos" [disabled]="isDisabledInput" [(ngModel)]="xmodulo"
+                        (change)="consultarRed()" bindLabel="descripcion" name="arquitectura" id="arquitectura" required
+                        placeholder="Seleccione" bindValue="id">
                     </ng-select>
                 </div>
                 <div class="form-group col-md-4">
                     <label class="form-label" for="driver">Driver</label>
-                    <ng-select #Module="ngModel" [(ngModel)]="xdrivers" bindLabel="descripcion" name="driver" id="driver"
-                        required placeholder="Seleccione" bindValue="id" (change)="consultarRed()">
-                        <ng-option *ngFor="let item of drivers" value="{{item.id}}">{{ item.descripcion }} ( {{item.basedatos}} ) </ng-option>
+                    <ng-select #Module="ngModel" [disabled]="isDisabledInput" [(ngModel)]="xdrivers"
+                        bindLabel="descripcion" name="driver" id="driver" required placeholder="Seleccione"
+                        bindValue="id">
+                        <ng-option *ngFor="let item of drivers" value="{{item.id}}">{{ item.descripcion }} (
+                            {{item.basedatos}} ) </ng-option>
                     </ng-select>
                 </div>
             </div>
             <div class="row">
                 <div class="form-group col-md-4">
                     <label class="form-label" for="nombre">Nombre</label>
-                    <input [(ngModel)]="nombre" value="{{nombre}}" #NombreRef="ngModel" required type="text"
-                        name="nombre" id="nombre" class="form-control" />
+                    <input [(ngModel)]="nombre" [disabled]="isDisabledInput" value="{{nombre}}" #NombreRef="ngModel"
+                        required type="text" name="nombre" id="nombre" class="form-control" />
 
                 </div>
 
-                <div class="form-group col-md-7">
+                <div class="form-group col-md-8">
                     <label class="form-label" for="descripcion">Descripcion</label>
+                    <div class="input-group mb-3">
                     <input [(ngModel)]="descripcion" [disabled]="isDisabledInput" value="{{descripcion}}"
                         #DescripcionRef="ngModel" required type="text" name="descripcion id=" descripcion
                         class="form-control" />
 
-                </div>
-                <div class="form-group col-md-1" style="margin-top: 23px;">
-                    <div *ngIf="!isButtonVisibleSalvar">
-                        <button type="button" class="btn btn-success" [disabled]="isBtnSalvar" (click)="salvar()">Salvar
-                        </button>
+                    <div class="input-group-prepend">
+                        <!--    <div class="form-group col-md-1" > -->
+                        <div *ngIf="!isButtonVisibleSalvar">
+                            <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
+                                (click)="salvar()">Salvar
+                            </button>
+                        </div>
+                        <div *ngIf="isButtonVisibleUpdate">
+                            <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
+                                (click)="modificar()"><i class="fa fa-edit" aria-hidden="true"></i>Modificar
+                            </button>
+                            <button type="button" class="btn btn-danger" [disabled]="isBtnSalvar" (click)="limpiar()"><i
+                                    class="fa fa-edit" aria-hidden="true"></i>Cancelar
+                            </button>
+                        </div>
                     </div>
-                    <div *ngIf="isButtonVisibleUpdate">
-                        <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
-                            (click)="modificar()">Modificar
-                        </button>
-                        <button type="button" class="btn btn-cancel" [disabled]="isBtnSalvar"
-                            (click)="limpiar()">Cancelar
-                        </button>
                     </div>
                 </div>
             </div>

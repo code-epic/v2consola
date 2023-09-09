@@ -23,9 +23,9 @@ export class EstatusComponent implements OnInit {
     orden: 0,
   }
 
-  public estado = "-"
+  public estado = undefined
   public estatus = 0
-  public orden = "-"
+  public orden = undefined
 
   xidW: number = 0
 

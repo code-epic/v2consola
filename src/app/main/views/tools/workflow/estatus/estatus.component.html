@@ -46,7 +46,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <ngx-datatable [rows]="rowEstado" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
+            <ngx-datatable [rows]="rowEstatus" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
                 [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
 
 
@@ -59,16 +59,16 @@
                 </ngx-datatable-column>
 
 
-                <ngx-datatable-column name="NOMBRE" prop="nom" [width]="400">
-                    <ng-template let-nom="value" ngx-datatable-cell-template>
+                <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="200">
+                    <ng-template let-nomb="value" ngx-datatable-cell-template>
                         <div>
-                            <span class="font-weight-bold">{{ nom.toUpperCase() }} </span>
+                            <span class="font-weight-bold">{{ nomb.toUpperCase() }} </span>
                         </div>
                     </ng-template>
                 </ngx-datatable-column>
 
 
-                <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="600">
+                <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="700">
                     <ng-template let-obse="value" ngx-datatable-cell-template>
                         <div>
                             <span class="font-weight-bold">{{ obse.toUpperCase() }} </span>
@@ -76,7 +76,15 @@
                     </ng-template>
                 </ngx-datatable-column>
 
-                <ngx-datatable-column name="ACCIÓN" [width]="300" [sortable]="false">
+                <ngx-datatable-column name="ESTADO" prop="ide" [width]="200">
+                    <ng-template let-ide="value" ngx-datatable-cell-template>
+                        <div>
+                            <span class="font-weight-bold">{{ ide.toUpperCase() }} </span>
+                        </div>
+                    </ng-template>
+                </ngx-datatable-column>
+
+                <ngx-datatable-column name="ACCIÓN" [width]="100" [sortable]="false">
                     <ng-template ngx-datatable-cell-template let-row="row">
                         <div ngbDropdown container="body">
                             <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>

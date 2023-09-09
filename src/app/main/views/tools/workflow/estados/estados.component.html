@@ -9,7 +9,7 @@
           required type="text" name="nombre" id="nombre" placeholder="Enter ..." class="form-control" />
 
       </div>
-      <div class="col-md-4">
+      <div class="form-group col-md-4">
         <label class="form-label" for="descripcion">Descripcion</label>
         <!-- <div class="input-group mb-3"> -->
         <input [ngModelOptions]="{standalone: true}" [(ngModel)]="xObj.obse" value="{{xObj.obse}}" #NombreRef="ngModel"
@@ -30,16 +30,13 @@
         </div>
 
       </div> -->
-      <div class="col-md-3">
+      <div class="form-group col-md-3">
         <label class="form-label" for="nivel">Nivel</label>
         <ng-select [items]="niveles" [(ngModel)]="estatus" bindLabel="descripcion" name="nivel" id="nivel" required
           placeholder="Seleccione" bindValue="id">
         </ng-select>
-
-
-
       </div>
-      <div class="col-md-2" style="margin-top: 22px;">
+      <div class="form-group col-md-2" style="margin-top: 22px;">
         <button type="button" class="btn btn-primary" (click)="Guardar()"><i class="fa fa-arrow-down"
             aria-hidden="true"></i>  Agregar
         </button>
@@ -51,7 +48,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <ngx-datatable [rows]="rowEstado" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
+      <ngx-datatable [rows]="rowEstado" [rowHeight]="58" class="bootstrap core-bootstrap bordered-table" [limit]="10"
         [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
 
 
@@ -64,7 +61,7 @@
         </ngx-datatable-column>
 
 
-        <ngx-datatable-column name="NOMBRE" prop="nom" [width]="400">
+        <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="400">
           <ng-template let-nom="value" ngx-datatable-cell-template>
             <div>
               <span class="font-weight-bold">{{ nom.toUpperCase() }} </span>

@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
 import { environment } from 'environments/environment';
-import * as CryptoJS from 'crypto-js';
+//import * as CryptoJS from 'crypto-js';
 import { UtilService } from '@services/util/util.service';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { IUsuario, LoginService, Usuario } from '@services/seguridad/login.service';
