@@ -28,6 +28,76 @@ export interface UClave {
   correo: string,
 }
 
+
+export interface Usuario {
+  _id:          ID;
+  cedula:       string;
+  nombre:       string;
+  login:        string;
+  correo:       string;
+  clave:        string;
+  sucursal:     string;
+  direccion:    string;
+  cargo:        string;
+  telefono:     string;
+  sistema:      string;
+  token:        string;
+  Perfil:       Perfil;
+  Aplicacion:   Aplicacion[];
+  firmadigital: Firmadigital;
+}
+
+export interface Aplicacion {
+  id:         string;
+  nombre:     string;
+  url:        string;
+  comentario: string;
+  version:    string;
+  autor:      string;
+  Rol:        Rol;
+}
+
+export interface Rol {
+  descripcion: string;
+  Menu:        Menu[];
+}
+
+export interface Menu {
+  url:          string;
+  js:           string;
+  icono:        string;
+  descripcion:  string;
+  nombre:       string;
+  accion:       string;
+  clase:        string;
+  color:        string;
+  Privilegio?:  any[];
+  SubMenu?:     Menu[];
+  Privilegios?: Privilegio[];
+}
+
+export interface Privilegio {
+  metodo:      string;
+  descripcion: string;
+  accion:      string;
+  directivas:  string;
+}
+
+export interface Perfil {
+  descripcion: string;
+}
+
+export interface ID {
+  $oid: string;
+}
+
+export interface Firmadigital {
+  direccionmac: string;
+  direccionip:  string;
+  tiempo:       Date;
+}
+
+
 @Injectable({
   providedIn: 'root'
 })
@@ -70,6 +140,16 @@ export class LoginService {
       "clave": clave,
     };
     var url = this.urlGet + 'wusuario/login';
+    // console.info(url)
+    return this.http.post<IToken>(url, usuario);
+  }
+
+  getCrear(user: string, clave: string): Observable<IToken> {
+    var usuario = {
+      "nombre": user,
+      "clave": clave,
+    };
+    var url = this.urlGet + 'wusuario/crear';
     // console.info(url)
     return this.http.post<IToken>(url, usuario);
   }

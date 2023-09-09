@@ -1,0 +1,45 @@
+
+<ngb-pagination [collectionSize]="70" [(page)]="pageBasic" aria-label="Default pagination">
+  <ng-template ngbPaginationPrevious
+    ><span [data-feather]="'chevron-left'" [size]="18" [class]="'font-weight-bolder'"></span>
+  </ng-template>
+  <ng-template ngbPaginationNext
+    ><span [data-feather]="'chevron-right'" [size]="18" [class]="'font-weight-bolder'"></span
+  ></ng-template>
+</ngb-pagination>
+  
+
+
+<section id="ecommerce-pagination">
+  <div class="row">
+      <div class="col-sm-12">
+          <div class="d-flex justify-content-center">
+              <ngb-pagination
+                  [collectionSize]="(drivers | filter: searchText:'funcion').length"
+                  [(page)]="page" [maxSize]="5" [rotate]="true"
+                  [ellipses]="false" [boundaryLinks]="true">
+                  <!-- Custom pagination icons -->
+                  <ng-template ngbPaginationPrevious><span
+                          [data-feather]="'chevron-left'"
+                          [class]="'font-weight-bolder'"
+                          [size]="18"></span>
+                  </ng-template>
+                  <ng-template ngbPaginationFirst><span
+                          [data-feather]="'chevrons-left'"
+                          [class]="'font-weight-bolder'"
+                          [size]="18"></span>
+                  </ng-template>
+                  <ng-template ngbPaginationNext><span
+                          [data-feather]="'chevron-right'"
+                          [class]="'font-weight-bolder'"
+                          [size]="18"></span></ng-template>
+                  <ng-template ngbPaginationLast><span
+                          [data-feather]="'chevrons-right'"
+                          [class]="'font-weight-bolder'"
+                          [size]="18"></span>
+                  </ng-template>
+              </ngb-pagination>
+          </div>
+      </div>
+  </div>
+</section>

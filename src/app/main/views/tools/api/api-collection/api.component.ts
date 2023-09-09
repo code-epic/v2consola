@@ -150,7 +150,7 @@ export class ApiComponent implements OnInit {
     
     this.driversAPP = this.rutaActiva.snapshot.params.id
     
-    await this.ListarApis('desarrollo',this.driversAPP)
+    await this.ListarApis(this.driversAPP)
 
     
     this.loginForm = this._formBuilder.group({
@@ -192,12 +192,10 @@ export class ApiComponent implements OnInit {
     };
   }
 
-  async ListarApis(r:string, t : string) {
+  async ListarApis(t : string) {
     this.developer = []
-    this.quality = []
-    this.production = []
     this.xAPI.funcion = '_SYS_R_ListarApis'
-    this.xAPI.parametros = t+','+r
+    this.xAPI.parametros = t
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {

@@ -33,7 +33,6 @@ import { BlockUIModule } from 'ng-block-ui';
 import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
 
 
-
 //  Recaptcha V2
 // import { RECAPTCHA_SETTINGS, RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings } from 'ng-recaptcha';
 // import { environment } from 'environments/environment';
@@ -50,6 +49,7 @@ const appRoutes: Routes = [
   }
 ];
 
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -62,6 +62,7 @@ const appRoutes: Routes = [
       useHash: true
     }),
     TranslateModule.forRoot(),
+
 
     //  Recaptcha V3
     RecaptchaV3Module,
