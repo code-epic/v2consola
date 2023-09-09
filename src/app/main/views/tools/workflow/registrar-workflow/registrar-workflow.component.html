@@ -1,0 +1,75 @@
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header></app-content-header>
+        <form class="normal-form">
+            <div class="row">
+                <div class="form-group col-md-4">
+
+                    <label class="form-label" for="aplicacion">Aplicación</label>
+                    <ng-select #Aplication="ngModel" [(ngModel)]="aplicacion" bindLabel="descripcion" name="aplicacion"
+                        id="aplicacion" required placeholder="Seleccione" bindValue="id" (change)="selModulo()">
+                        <ng-option *ngFor="let xapp of lstApps" value="{{xapp.id}}">{{ mdl.nomb }} | {{ mdl.vers
+                            }}</ng-option>
+                    </ng-select>
+                </div>
+               <!--  <div class="form-group col-md-4 ">
+
+                    <label class="form-label" for="arquitectura">Arquitectura</label>
+                    <ng-select #Arquitectura="ngModel" [(ngModel)]="xmodulo" bindLabel="descripcion" name="arquitectura"
+                        id="arquitectura" required placeholder="Seleccione" bindValue="id" (change)="selModulo()">
+                        <ng-option *ngFor="let xapp of lstApps" value="{{xapp.id}}">{{ mdl.nomb }} | {{ mdl.vers
+                            }}</ng-option>
+                    </ng-select>
+                </div> -->
+                <div class="form-group col-md-4">
+                    <label class="form-label" for="arquitectura">Arquitectura</label>
+                    <ng-select  [items]="tipos" [(ngModel)]="xmodulo" bindLabel="descripcion"
+                        name="arquitectura" id="arquitectura" required placeholder="Seleccione"
+                        bindValue="id">
+                    </ng-select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label class="form-label" for="driver">Driver</label>
+                    <ng-select #Module="ngModel" [(ngModel)]="xdrivers" bindLabel="descripcion" name="driver" id="driver"
+                        required placeholder="Seleccione" bindValue="id" (change)="consultarRed()">
+                        <ng-option *ngFor="let item of drivers" value="{{item.id}}">{{ item.descripcion }} ( {{item.basedatos}} ) </ng-option>
+                    </ng-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label class="form-label" for="nombre">Nombre</label>
+                    <input [(ngModel)]="nombre" value="{{nombre}}" #NombreRef="ngModel" required type="text"
+                        name="nombre" id="nombre" class="form-control" />
+
+                </div>
+
+                <div class="form-group col-md-7">
+                    <label class="form-label" for="descripcion">Descripcion</label>
+                    <input [(ngModel)]="descripcion" [disabled]="isDisabledInput" value="{{descripcion}}"
+                        #DescripcionRef="ngModel" required type="text" name="descripcion id=" descripcion
+                        class="form-control" />
+
+                </div>
+                <div class="form-group col-md-1" style="margin-top: 23px;">
+                    <div *ngIf="!isButtonVisibleSalvar">
+                        <button type="button" class="btn btn-success" [disabled]="isBtnSalvar" (click)="salvar()">Salvar
+                        </button>
+                    </div>
+                    <div *ngIf="isButtonVisibleUpdate">
+                        <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
+                            (click)="modificar()">Modificar
+                        </button>
+                        <button type="button" class="btn btn-cancel" [disabled]="isBtnSalvar"
+                            (click)="limpiar()">Cancelar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+        </form>
+
+    </div>
+</div>

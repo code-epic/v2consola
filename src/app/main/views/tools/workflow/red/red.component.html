@@ -1,0 +1,44 @@
+<br>
+<!-- <form #rolPrivilegios="ngForm" (ngSubmit)="onClickSubmit(rolPrivilegios)"> -->
+<form class="normal-form">
+    <div class="row">
+
+        <div class="form-group col-md-4">
+            <label class="form-label" for="origen">Estado Origen</label>
+            <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                bindValue="id">
+                <ng-option *ngFor="let e of rowEstado; let i = index" value="{{ e.id }}">{{e.nomb}}</ng-option>
+            </ng-select>
+        </div>
+
+        <div class="form-group col-md-4">
+            <label class="form-label" for="transiciones">Transición</label>
+            <input required type="text" name="transiciones" id="transiciones" placeholder="Enter ..."
+                class="form-control" />
+
+        </div>
+
+        <div class="form-group col-md-4">
+            <label class="form-label" for="destino">Estado Destino</label>
+            <ng-select bindLabel="descripcion" name="destino" id="destino" required placeholder="Seleccione"
+                bindValue="id">
+                <ng-option *ngFor="let e of rowEstado; let i = index" value="{{ e.id }}">{{e.nomb}}</ng-option>
+            </ng-select>
+        </div>
+        <div class="col-md-12">
+            <label class="form-label" for="descripcion">Descripción</label>
+            <div class="input-group mb-3">
+
+                <input style="font-size:14px;" type="text" class="form-control">
+                <div class="input-group-prepend">
+
+                    <button type="button" class="btn btn-danger">
+                        <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar Definición
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</form>

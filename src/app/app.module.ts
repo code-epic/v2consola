@@ -1,7 +1,13 @@
 import { NgModule } from '@angular/core';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
+//import { HttpClientModule } from '@angular/common/http';
+import { NgSelectModule } from '@ng-select/ng-select';
+
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import 'hammerjs';
@@ -14,7 +20,6 @@ import { CoreCommonModule } from '@core/common.module';
 import { CoreSidebarModule, CoreThemeCustomizerModule } from '@core/components';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 import { coreConfig } from 'app/app-config';
 
 import { AppComponent } from 'app/app.component';
@@ -52,6 +57,7 @@ const appRoutes: Routes = [
 
 @NgModule({
   declarations: [AppComponent],
+  schemas: [NO_ERRORS_SCHEMA,CUSTOM_ELEMENTS_SCHEMA],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -92,7 +98,8 @@ const appRoutes: Routes = [
     ReactiveFormsModule,
     SecurityModule,
     ToolsModule,
-
+    NgSelectModule,
+    
   ],
   providers: [
     {

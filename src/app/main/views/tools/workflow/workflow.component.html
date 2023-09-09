@@ -1,1 +1,68 @@
-<p>workflow works!</p>
+<div class="animated fadeIn" [ngStyle]="{'display':sectionConsultar}">
+    <section class="esb">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!--    <ngx-ui-loader [loaderId]="'loader-01'"></ngx-ui-loader> -->
+                        <h3>Flujos de Trabajos </h3>
+                        <hr>
+                        <div class="container fluid">
+
+
+
+                            <div class="row">
+                                <!-- <div class="col-md-3 text-center">
+                                    <br>
+                                    <br>
+                                    <img class="card-img-top" src="../../assets/images/logo/WorkFlow.png"
+                                        style="width:90%" alt="WorkFlow">
+                                </div> -->
+                                <div class="col-md-12">
+                                    <app-registrar-workflow></app-registrar-workflow>
+                                </div>
+
+
+
+                            </div>
+                            <br>
+
+                            <div class="row ">
+                                <div class="col-md-12 ">
+                                <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+                                    <li ngbNavItem>
+                                        <a ngbNavLink><span [data-feather]="'cast'"></span>ESTADOS</a>
+                                        <ng-template ngbNavContent>
+                                            <app-estados></app-estados>
+                                        </ng-template>
+                                    </li>
+                                    <li ngbNavItem>
+                                        <a ngbNavLink><span [data-feather]="'settings'"></span>TRANSACIONES</a>
+                                        <ng-template ngbNavContent>
+                                            <app-transiciones></app-transiciones>
+                                        </ng-template>
+                                    </li>
+                                    <li ngbNavItem>
+                                        <a ngbNavLink><span [data-feather]="'lock'"></span>ESTATUS</a>
+                                        <ng-template ngbNavContent>
+                                           <app-estatus></app-estatus>
+                                        </ng-template>
+                                    </li>
+                                    <li ngbNavItem>
+                                        <a ngbNavLink><span [data-feather]="'award'"></span>DEFINIR RED</a>
+                                        <ng-template ngbNavContent>
+                                            <app-red></app-red>
+                                        </ng-template>
+                                    </li>
+                                </ul>
+                                <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+                            </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

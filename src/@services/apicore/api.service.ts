@@ -51,6 +51,21 @@ export interface IAPICore {
   distribucion ?: string
 }
 
+
+export interface WkfEstatus {
+  estado: number;
+  nombre: string;
+  descripcion: string;
+  estatus: number;
+  orden: number;
+}
+export interface WkfEstado {
+  wkf: number;
+  nombre: string;
+  descripcion: string;
+  estatus: number;
+}
+
 export interface ObjectoGenerico {
   idw: number,
   nomb: string,
