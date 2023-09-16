@@ -30,7 +30,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public horizontalMenu: boolean;
   public hiddenMenu: boolean;
 
-  public coreConfig: any;
+  public coreConfig = coreConfig;
   public currentSkin: string;
   public prevSkin: string;
 
@@ -99,6 +99,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     public _translateService: TranslateService,
     private loginService: LoginService
   ) {
+
+ 
+
     this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
 
     this.languageOptions = {

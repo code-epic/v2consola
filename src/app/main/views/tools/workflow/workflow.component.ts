@@ -25,7 +25,7 @@ export class WorkflowComponent implements OnInit {
   
 
   ngOnInit(): void {
-   
+   console.log("Control")
   }
 
 }

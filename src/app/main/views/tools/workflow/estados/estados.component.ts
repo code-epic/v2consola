@@ -48,7 +48,12 @@ export class EstadosComponent implements OnInit {
     private wkf: WorkflowService) { }
 
   ngOnInit(): void {
-    console.info('NgInit')
+    // console.info('NgInit')
+
+    if ( window.sessionStorage.getItem('estados') != undefined) {
+      this.rowEstado = JSON.parse(window.sessionStorage.getItem('estados'));
+      return
+    }
     this.wkf.msjText$.subscribe(e => {
       console.info(e)
       if ( e == 'CLEAN') this.rowEstado = []
@@ -59,14 +64,15 @@ export class EstadosComponent implements OnInit {
   }
 
   lstEstados(idw: string): any {
-    console.log('llego lstEstados')
+    // console.log('llego lstEstados')
     this.xAPI.funcion = 'WKF_CEstados'
     this.xAPI.parametros = idw
     this.xAPI.valores = {}
-    console.log(this.xAPI)
+    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.rowEstado = data.Cuerpo
+        window.sessionStorage.setItem('estados', JSON.stringify(this.rowEstado));
       },
       (err) => {
         console.error(err)

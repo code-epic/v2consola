@@ -61,12 +61,13 @@ export class RegistrarWorkflowComponent implements OnInit {
      private wkf : WorkflowService) { }
 
   ngOnInit(): void {
+    window.sessionStorage.removeItem('estados')
     this.lstAplicaciones()    
     this.CargarDrivers()
-  }
+  }2
 
   async lstAplicaciones(){
-    console.info('llego lista aplicaciones')
+    // console.info('llego lista aplicaciones')
     this.xAPI.funcion = "SEC_CAplicaciones";
     this.xAPI.valores = null;
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -99,36 +100,28 @@ export class RegistrarWorkflowComponent implements OnInit {
   consultarRed(){
     this.xAPI.funcion = 'WKF_CDefinicion'
     let app = this.aplicacion.split('|')
-    console.log('app')
-    console.log(app[0])
-    console.log(app[1])
-    console.log(this.xAPI.funcion)
     this.xAPI.parametros = app[0]
-   this.wkf.msjText$.emit( this.aplicacion)
+  //  this.wkf.msjText$.emit( this.aplicacion)
     this.apiService.hash =  ':' + app[1]
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        // console.log(data)
         this.isBtnSalvar = false
 
         if (data.Cuerpo != undefined ) {
-          console.log(data.Cuerpo.length)
+          console.log(data.Cuerpo)
           if (data.Cuerpo.length == 0 ) return
 
           this.wkf.msjText$.emit( data.Cuerpo[0].wkf )
-          data.Cuerpo.forEach(e => {         
-            if (e != ' ') {
-              
-              this.isBtnSalvar = false
-              this.isDisabledInput = true
-              this.isButtonVisibleSalvar = true
-              this.isButtonVisibleUpdate = true
-              this.nombre = e.nomb
-              this.xdrivers = e.driver
-              this.descripcion = e.obse
-            } 
-          
-          })
+          let obj = data.Cuerpo[0]
+          this.isBtnSalvar = false
+          this.isDisabledInput = true
+          this.isButtonVisibleSalvar = true
+          this.isButtonVisibleUpdate = true
+          this.nombre = obj.nomb
+          this.xdrivers = obj.driver
+          this.descripcion = obj.obse
+           
         }
       },
       (err) => {
