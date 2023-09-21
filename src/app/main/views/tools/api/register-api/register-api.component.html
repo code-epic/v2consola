@@ -65,17 +65,18 @@
 
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label class="form-label" for="http">Prefijo</label>
-                    <ng-select [items]="http" [(ngModel)]="xAPI.prefijo" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Prefijo"></ng-select>
-                  </div>
-                  <div class="form-group col-md-6">
                     <label class="form-label" for="https">Distribución</label>
                     <ng-select [items]="distribucion" [(ngModel)]="xAPI.distribucion" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Distribución"></ng-select>
                   </div>
+                  <div class="form-group col-md-6">
+                    <label class="form-label" for="http">Aplicación</label>
+                    <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPI.prefijo" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Aplicación"></ng-select>
+                  </div>
+                  
                 </div>
 
                 <div class="row">
