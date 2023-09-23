@@ -23,19 +23,10 @@ export class RegisterApiComponent implements OnInit {
     public linkedinVar;
     public landmarkVar;
     public addressVar;
-  
-    public selectBasic = [
-      { name: 'UK' },
-      { name: 'USA' },
-      { name: 'Spain' },
-      { name: 'France' },
-      { name: 'Italy' },
-      { name: 'Australia' }
-    ];
-  
-    public selectMulti = [{ name: 'English' }, { name: 'French' }, { name: 'Spanish' }];
-    public selectMultiSelected;
 
+  
+  public ListaAplicaciones
+  
   public driversAPP
 
   public drivers: any
@@ -242,6 +233,8 @@ export class RegisterApiComponent implements OnInit {
 
     this.CargarDrivers()
 
+    this.CargarListaAplicaciones()
+
     this.driversAPP = this.rutaActiva.snapshot.params.id
 
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
@@ -358,6 +351,22 @@ export class RegisterApiComponent implements OnInit {
       lint: true
     }
 
+  }
+
+  async CargarListaAplicaciones() {
+    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI.parametros = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.ListaAplicaciones = data.Cuerpo.map(e => {
+          e.name = e.nombre+' : '+e.VERSION
+          return e
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
 }
