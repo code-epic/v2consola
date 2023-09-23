@@ -13,11 +13,11 @@
 
               <div class="row">
                 <div class="col-md-3 text-center">
-                                    <br>
-                                    <br>
-                                    <img class="card-img-top" src="../../assets/images/logo/WorkFlow.png"
-                                        style="width:90%" alt="WorkFlow">
-                                </div>
+                  <br>
+                  <br>
+                  <img class="card-img-top" src="../../assets/images/logo/WorkFlow.png" style="width:90%"
+                    alt="WorkFlow">
+                </div>
                 <div class="col-md-9" style="margin-top: 25px;">
                   <app-registrar-workflow></app-registrar-workflow>
                 </div>
@@ -37,15 +37,16 @@
                       </ng-template>
                     </li>
                     <li ngbNavItem>
-                      <a ngbNavLink><span [data-feather]="'settings'"></span>TRANSACIONES</a>
+                      <a ngbNavLink><span [data-feather]="'settings'"></span>ESTATUS</a>
                       <ng-template ngbNavContent>
-                        <app-transiciones></app-transiciones>
+
+                        <app-estatus></app-estatus>
                       </ng-template>
                     </li>
                     <li ngbNavItem>
-                      <a ngbNavLink><span [data-feather]="'lock'"></span>ESTATUS</a>
+                      <a ngbNavLink><span [data-feather]="'lock'"></span>TRANSACIONES</a>
                       <ng-template ngbNavContent>
-                        <app-estatus></app-estatus>
+                        <app-transiciones></app-transiciones>
                       </ng-template>
                     </li>
                     <li ngbNavItem>

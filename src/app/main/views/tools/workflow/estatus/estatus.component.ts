@@ -38,6 +38,11 @@ export class EstatusComponent implements OnInit {
   constructor(private apiService: ApiService, private wkf: WorkflowService) {}
 
   ngOnInit(): void {
+    if ( window.sessionStorage.getItem('estatus') != undefined) {
+      this.rowEstatus = JSON.parse(window.sessionStorage.getItem('estatus'));
+      return
+    }
+
     this.wkf.msjText$.subscribe((e) => {
       if (e == "CLEAN") this.rowEstado = []
       this.lstEstados(e)
@@ -67,6 +72,7 @@ export class EstatusComponent implements OnInit {
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.rowEstatus = data.Cuerpo
+        window.sessionStorage.setItem('estatus', JSON.stringify(this.rowEstatus));
       },
       (err) => {
         console.error(err)
