@@ -248,7 +248,24 @@
 
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label class="form-label" for="version">Funciones</label>
+                    <label class="form-label" for="version">Parametros</label>
+                   <input type="text" class="form-control" placeholder="Parametros">
+                  </div>
+
+                  <div class="form-group col-md-6">
+                    <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
+                    <ng-select [items]="retorn" formControlName="retorno" bindLabel="descripcion"
+                      placeholder="Seleccione Valor Retorno" bindValue="name">
+                    </ng-select>
+                  </div>
+                  
+                </div>
+
+  
+
+                <div class="row">
+                  <div class="form-group col-md-6">
+                    <label class="form-label" for="version">Funciones de la prueba</label>
                     <ng-select [items]="funciones" [(ngModel)]="xAPI.funcionalidad" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Funciones"></ng-select>
@@ -314,14 +331,18 @@
                 </div>
 
                 <div class="row">
-                  <div class="form-group col-md-3">
-                    <label class="form-label" for="http">Tiempo Max Consumo</label>
-                    <ng-select [items]="http" [(ngModel)]="xAPI.http" [ngModelOptions]="{standalone: true}"
+                  <div class="form-group col-md-2">
+                    <label class="form-label" for="http">Tiempo de Duracion</label>
+                    <input type="number" placeholder="Seleccione Tiempo" class="form-control">
+                  </div>
+                  <div class="form-group col-md-2">
+                    <label class="form-label" for="http">Tipo de Duración</label>
+                    <ng-select [items]="duracion" [(ngModel)]="xAPI.http" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Tiempo Max"></ng-select>
+                      placeholder="Seleccione Tipo Duración"></ng-select>
                   </div>
 
-                  <div class="form-group col-md-3">
+                  <div class="form-group col-md-2">
                     <label class="form-label" for="funcion">Prioridad</label>
                     <ng-select [items]="prioridad" [(ngModel)]="xAPI.prioridad" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"

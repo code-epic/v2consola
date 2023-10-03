@@ -99,6 +99,13 @@ export class RegisterApiComponent implements OnInit {
     parametros: ''
   }
 
+  public duracion = [
+    {id: 0, name:'Segundos'},
+    {id: 1, name:'Minutos'},
+    {id: 2, name:'Horas'}
+  ]
+  
+
   public http = [
     {id: 8012, name:'8012'},
     {id: 8013, name:'8013'}
@@ -160,6 +167,15 @@ export class RegisterApiComponent implements OnInit {
   public retorno = [
     {id: true, name:'SI'},
     {id: false, name:'NO'},
+  ]
+
+  public retorn = [
+    {id:1, name: 'BOOL', descripcion: 'LOGICO'},
+    {id:2, name: 'STRING', descripcion: 'CADENA'},
+    {id:3, name: 'ARRAY', descripcion: 'ARREGLO'},
+    {id:4, name: 'OBJECT', descripcion: 'OBJETO'},
+    {id:5, name: 'FILE', descripcion: 'ARCHIVO'},
+    {id:6, name: 'NULL', descripcion: 'NULL'},
   ]
 
   public prioridad = [
