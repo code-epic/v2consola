@@ -22,18 +22,12 @@
   <br>
 
     <section id="wishlist" class="grid-view wishlist-items">
-      <ng-container *ngFor="let product of drivers  | filter: searchText:'funcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
+      <ng-container *ngFor="let product of drivers  | filter: searchText:'descripcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
 
       
         <!-- Ecommerce Item -->
         <div class="card ecommerce-card">
-          <!-- <label align="center" *ngIf="product.descripcion == 'MongoDB v.4.4.0' || product.descripcion == 'Sandra Server Core 1.0.0'">
-            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
-            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
-            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
-            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
-            <span [data-feather]="'star'" [class]="'ficon text-warning'"></span>
-          </label> -->
+          
         <div class="item-img text-center">
           <a [routerLink]="'/tools/api-list/'+product.id">
             <img class="img-fluid card-img-top" src="assets/integraciones/mongodb.png" *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />

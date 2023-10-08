@@ -97,6 +97,8 @@ export class ConnectionsComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
+  public ListaAplicaciones
+
 
   constructor(
     private comunicacionesService : ComunicationsService,
@@ -120,6 +122,7 @@ export class ConnectionsComponent implements OnInit {
     await this.CargarDrivers()
     await this.ListarHostname()
     await this.CargarListaConexiones()
+    await this.CargarListaAplicaciones()
 
 
     this.loginForm = this._formBuilder.group({
@@ -378,6 +381,22 @@ export class ConnectionsComponent implements OnInit {
       )
 
     }
+  }
+
+  async CargarListaAplicaciones() {
+    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI.parametros = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.ListaAplicaciones = data.Cuerpo.map(e => {
+          e.name = e.nombre+' : '+e.VERSION
+          return e
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
 }

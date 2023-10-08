@@ -313,7 +313,7 @@ $search-bar-height: 48px;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100%;
+        height: 50px;
       }
 
       .card-body {
@@ -405,7 +405,7 @@ $search-bar-height: 48px;
     .ecommerce-card {
       .item-img {
         img {
-          width: 200px;
+          width: 100px;
         }
       }
       // adding order as we have updated order for shop list view

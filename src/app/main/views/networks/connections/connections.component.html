@@ -250,7 +250,7 @@
             </div>
           </div>
 
-          <div class="col-md-6 col-12 mb-1">
+          <div class="col-md-4 col-12 mb-1">
             <label for="login-id" class="form-label">Identificador</label>
             <input type="text" formControlName="id" class="form-control" placeholder="Identificador"
               aria-describedby="login-id" tabindex="1" autofocus
@@ -261,14 +261,18 @@
           </div>
 
 
-          <div class="col-md-6 col-12 mb-1">
+          <div class="col-md-4 col-12 mb-1">
             <label for="login-estatus" class="form-label">Seleccione Status</label>
             <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Status"
               bindValue="id">
             </ng-select>
-            <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
-                <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
-              </div> -->
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label class="form-label" for="http">Aplicación</label>
+            <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPI.prefijo" [ngModelOptions]="{standalone: true}"
+              bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+              placeholder="Seleccione Aplicación"></ng-select>
           </div>
 
 

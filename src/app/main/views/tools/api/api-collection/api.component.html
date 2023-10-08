@@ -33,7 +33,7 @@
                   style="height: 38px; margin-top: -4px;" rippleEffect>
                   <span [data-feather]="'database'"></span> Importar</button>
                 &nbsp;
-                <button type="button" (click)="ExportApi()" class="btn btn-icon btn-dark"
+                <button type="button" (click)="ListadoApis()" class="btn btn-icon btn-dark"
                   style="height: 38px; margin-top: -4px;" rippleEffect>
                   <span [data-feather]="'file'"></span> Generar PDF</button>
               </div>
@@ -72,7 +72,7 @@
               <div class="ml-75 pl-4 pt-50">
                 <div class="col-md-11">
                   <table class="table table-striped border datatable">
-                    <thead class="thead-dark">
+                    <thead class="thead">
                       <tr>
                         <th>Hash</th>
                         <th>Funcionalidad</th>
@@ -116,7 +116,7 @@
                         </td>
                       </tr>
                     </tbody>
-                    <thead class="thead-dark">
+                    <thead class="thead">
                       <tr>
                         <th>Retorno</th>
                         <th>Prioridad</th>
@@ -203,18 +203,8 @@
              {{ row.query }}
                </code>
                   </p>
-                  <hr>
-                  <div class="col-md-12 text-center">
-                    <button type="button" class="btn btn-primary" (click)="ModalPromover(row)"
-                      rippleEffect>Promover</button>&nbsp;
-                    <button type="button" class="btn btn-danger" (click)="ModalEliminar(row)"
-                      rippleEffect>Eliminar</button>&nbsp;
-                    <button type="button" class="btn btn-warning" (click)="ModalModificar(ModalEditApis,row)"
-                      rippleEffect>Modificar</button>&nbsp;
-                    <button type="button" class="btn btn-info" (click)="ModalProbar(ModalProbarApi,row)"
-                      rippleEffect>Probar</button>&nbsp;
-                  </div>
-                  <hr>
+                 <hr>
+
                 </div>
               </div>
             </ng-template>
@@ -247,7 +237,13 @@
                 <div class="cell-line-height">
                   <span class="font-weight-bold d-block "><strong>{{ row.funcion }}</strong></span>
                   <span class="text-muted font-small-2">
+                    <div class="badge badge-pill" [ngClass]="{
+                      'badge-light-success': row.entorno == 'calidad',
+                      'badge-light-info': row.entorno == 'desarrollo',
+                      'badge-light-warning': row.entorno == 'produccion'
+                    }">
                     {{row.entorno | uppercase}}
+                    </div>
                   </span>
                 </div>
               </div>
@@ -282,21 +278,17 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="Actions" [width]="5" [sortable]="false">
+          <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
             <ng-template ngx-datatable-cell-template let-row="row">
               <div ngbDropdown container="body">
-                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                <button [routerLink]="'/tools/api-details/'+ row.funcion" type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                  <span [data-feather]="'play'" [class]="'cursor-pointer'"></span>
                 </button>
-                <div ngbDropdownMenu>
-                  <a (click)="ModalEditApi(ModalEditApis,row)" ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
-                      [class]="'mr-50'"></span> Editar</a>
-                  <a [routerLink]="'/tools/api-details/'+ row.funcion" ngbDropdownItem><span
-                      [data-feather]="'align-left'" [size]="16" [class]="'mr-50'"></span> Detalles</a>
-                </div>
               </div>
             </ng-template>
           </ngx-datatable-column>
+
+
         </ngx-datatable>
 
         <!--/ Invoice List Table -->

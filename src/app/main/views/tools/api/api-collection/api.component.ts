@@ -7,6 +7,8 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 import JSONFormatter from 'json-formatter-js';
 
+import { PdfService } from '@services/pdf/pdf.service';
+
 import { FormGroup, FormBuilder } from '@angular/forms';
 
 import { WsocketsService } from '@services/websockets/wsockets.service';
@@ -137,6 +139,7 @@ export class ApiComponent implements OnInit {
     private modalService: NgbModal,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
+    private pdf: PdfService,
   ) {
   }
 
@@ -231,6 +234,10 @@ export class ApiComponent implements OnInit {
         this.utilservice.AlertMini('top-end','success',error,3000)
         console.log(error)
       })
+  }
+
+  ListadoApis(){
+    this.pdf.ListadoDeApis(this.rowData)
   }
 
   async ImportApi(){
