@@ -20,6 +20,7 @@ import { ComunicationsService } from '@services/networks/comunications.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Stepper from 'bs-stepper';
 import Swal from 'sweetalert2';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-api',
@@ -106,6 +107,8 @@ export class ApiComponent implements OnInit {
     {id:false, name: 'INACTIVO'},
   ]
 
+  public archivos = []
+
 
   // public
   public mac
@@ -130,7 +133,8 @@ export class ApiComponent implements OnInit {
   xparametro: string = ''
   valores: string = ''
 
-
+  public llave : string
+  public hashcontrol : string
 
 
   constructor(
@@ -150,6 +154,8 @@ export class ApiComponent implements OnInit {
 
 
   async ngOnInit() {
+    this.llave = this.utilservice.GenerarUnicId();
+    this.hashcontrol = btoa("ING" + this.llave);
     
     this.driversAPP = this.rutaActiva.snapshot.params.id
     
@@ -346,10 +352,69 @@ export class ApiComponent implements OnInit {
   }
 
 
+  fileSelected(e) {
+    this.archivos = e.target.files;
+  }
+
+  async SubirArchivo() {
+    var frm = new FormData(document.forms.namedItem("forma"));
+    try {
+      await this.apiService.EnviarArchivos(frm).subscribe((data) => {
+        this.ValoresMasivos();
+        console.log(data)
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  ValoresMasivos() {
+    let cargaMasiva = {
+      codigo: this.llave,
+      ruta: this.hashcontrol,
+      nombre: this.archivos[0].name,
+      funcion: "SetPath",
+      fin: this.utilservice.FechaActual(0),
+      tipo: 'ZIP',
+      sistema: 'CORE',
+      contenido: 'Importar API',
+      cantidad: 0,
+      estatus: 0,
+      usuario: environment.Hash,
+    };
+    this.xAPI.funcion = "_SYS_ISetPath";
+    this.xAPI.parametros = "";
+    this.xAPI.valores = JSON.stringify(cargaMasiva);
+
+    document.forms.namedItem("forma").reset();
+
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.modalService.dismissAll('Close')
+        this.utilservice.AlertMini('top-end','success','Archivo Subido Exitosamente',3000)
+      },
+      (errot) => {
+        console.log(errot);
+        this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+      }
+    );
+  }
+
+
   ModalApi(modal){
     this.modalService.open(modal,{
       centered: true,
       size: 'xl',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  ModalSubirArchivo(modal){
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'lg',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',

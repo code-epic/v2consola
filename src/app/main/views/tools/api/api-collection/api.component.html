@@ -29,7 +29,7 @@
                   style="height: 38px; margin-top: -4px;" rippleEffect>
                   <span [data-feather]="'database'"></span> Exportar</button>
                 &nbsp;
-                <button type="button" (click)="ImportApi()" class="btn btn-icon btn-warning"
+                <button type="button" (click)="ModalSubirArchivo(ModalSubir)" class="btn btn-icon btn-warning"
                   style="height: 38px; margin-top: -4px;" rippleEffect>
                   <span [data-feather]="'database'"></span> Importar</button>
                 &nbsp;
@@ -425,3 +425,45 @@
 
 </ng-template>
 
+
+<ng-template #ModalSubir let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Subir Archivo</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <!-- Invoice -->
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+      <div class="form-row">
+        <div class="form-group col-md-12">
+        </div>
+        <div class="form-group col-md-12">
+            <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+                <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="input_container">
+                            <input (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos"
+                                accept=".zip" />
+      
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div> 
+      
+      <hr>
+
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-success" tabindex="4" (click)="SubirArchivo()" rippleEffect>Subir Archivo</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+  </div>
+
+</ng-template>

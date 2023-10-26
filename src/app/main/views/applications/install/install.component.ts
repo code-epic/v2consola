@@ -6,7 +6,6 @@ import JSONFormatter from 'json-formatter-js';
 import Stepper from 'bs-stepper';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
-//import { NgSelectModule } from '@ng-select/ng-select';
 
 
 @Component({
@@ -241,7 +240,6 @@ public nameApp
     private apiService: ApiService,
     private modalService: NgbModal,
     private config: NgSelectConfig,
-    //private configmodul: NgSelectModule,
     private comunicacionesServices : ComunicacionesService,
   ) { }
 
@@ -250,26 +248,7 @@ public nameApp
     this.lstAplicaciones();
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
 
-    /*  this.verticalWizardStepper = new Stepper(document.querySelector('#stepper2'), {
-      linear: false,
-      animation: true
-    });
-
-    this.modernWizardStepper = new Stepper(document.querySelector('#stepper3'), {
-      linear: false,
-      animation: true
-    });
-
-    this.modernVerticalWizardStepper = new Stepper(document.querySelector('#stepper4'), {
-      linear: false,
-      animation: true
-    });
-
-    this.bsStepper = document.querySelectorAll('.bs-stepper'); */
-     
-   /*  this.products = this.developer; */
-
- /*    this.contentHeader = {
+ this.contentHeader = {
       headerTitle: 'Aplicaciones',
       actionButton: true,
       breadcrumb: {
@@ -286,7 +265,7 @@ public nameApp
           }
         ]
       }
-    } */
+    } 
   
 
   }
@@ -298,8 +277,6 @@ public nameApp
     console.log(this.xAPI.valores)
     if(this.iApp.identificador != 0) this.xAPI.funcion = "SSB_UAplicacion"
      
-    
-
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         var msj = "Actualizado"
@@ -307,11 +284,6 @@ public nameApp
           this.iApp.identificador = data.msj;
           var msj = "Agregado"
         }
-
-        /* this.toastrService.success(
-          'Se ha ' + msj + ' el registro con exito ',
-          `CodeEpic Middleware`
-        ); */
       },
       (error) => {
         console.log(error)
@@ -336,7 +308,6 @@ public nameApp
   }
 
   async consultarAplicacion(){
-    console.log("llego consultarAplicacion")
     this.xAPI.funcion = "SEC_CAplicacion" //Consultar Aplicacion del sistema 
     this.xAPI.parametros =  this.iApp.identificador.toString()
     await this.apiService.Ejecutar(this.xAPI).subscribe(

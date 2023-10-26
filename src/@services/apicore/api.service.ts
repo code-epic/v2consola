@@ -10,45 +10,111 @@ import { UtilService } from '@services/util/util.service';
 
 
 export interface IAPICore {
-  id?: string
-  concurrencia?: boolean
-  ruta?: string
-  funcion?: string
+  id ?: string
+  http ?: number
+  https ?: number
+  tipo ?: string
+  distribucion ?: string
+  aplicacion ?: string
+  funcion ?: string
+  version ?: string
+  conexion ?: string
+  categoria?: string
+  funcionalidad?: string
+  descripcion?: string
+  metodo?: string
+  relacional?: boolean
+  coleccion?: string
+  // nombre de tabla
+  // tipo de dato
+  // valor por defecto
+  // condiciones
+  //  nombre de campos
+  //  alias
+  // tipo de dato
+  // esquema entrada
+  // Consula SQL ? NO SQL
   parametros?: string
-  protocolo?: string
+  valores?: any
+  //  funciones prueba
+  // agregar columna de la consula
+  consumidores?: number
+  cache?: number
+  logs?: boolean
+  concurrencia?: boolean
   retorna?: boolean
+  // tiempo de duracion
+  //  tipo de duracion
+  prioridad?: string
+  entorno?: string
+  // waf
+  accion?: boolean
+  estatus?: boolean
+  ruta?: string
+// fin
+  protocolo?: string
   migrar?: false
   modulo?: string
-  relacional?: boolean
-  valores?: any
-  coleccion?: string
-  version?: string
-  http?: number
-  https?: number
-  consumidores?: number
   puertohttp?: number
   puertohttps?: number
   driver?: string
   query?: string
-  metodo?: string
-  accion?: boolean
-  tipo?: string
-  prioridad?: string
-  logs?: boolean
-  descripcion?: string
-  entorno?: string
-  cache?: number
-  estatus?: boolean
-  categoria?: string
   entradas?: string
   salidas?: string
-  funcionalidad?: string
   fecha?: string
   autor?: string
   totalizar?: string
   columnas?: string
   prefijo ?: string
-  distribucion ?: string
+}
+
+export interface IAPI {
+  id : string
+  http : number
+  https : number
+  tipo : string
+  distribucion : string
+  aplicacion : string
+  funcion : string
+  version : string
+  // conexion : string
+  driver : string
+  categoria: string
+  funcionalidad: string
+  descripcion: string
+  metodo: string
+  relacional: boolean
+  coleccion: string
+  // nombre de tabla
+  // tipo de dato
+  // valor por defecto
+  // condiciones
+  //  nombre de campos
+  //  alias
+  alias: string
+  // tipo de dato
+  // esquema entrada
+  entradas: string
+  // Consula SQL  NO SQL
+  query: string
+  parametros: string
+  valores: any
+  //  funciones prueba
+  // agregar columna de la consula
+  consumidores: number
+  cache: number
+  logs: boolean
+  concurrencia: boolean
+  retorna: boolean
+  // tiempo de duracion
+  //  tipo de duracion
+  prioridad: string
+  entorno: string
+  // waf
+  accion: boolean
+  estatus: boolean
+  ruta: string
+  // 
 }
 
 
@@ -116,6 +182,18 @@ export class ApiService {
     ) {
 
   }
+
+  //EnviarArchivos generales
+  EnviarArchivos(frm: FormData): Observable<any> {
+    var httpOptions = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    };
+    return this.http.post<any>(this.URL + "subirarchivos", frm, httpOptions);
+  }
+
+  
 
   Guardar(xAPI: IAPICore, sApi: string): Observable<any> {
 

@@ -1,11 +1,10 @@
 <div class="content-wrapper container-xxl p-0">
     <div class="content-body">
         <!-- content-header component -->
-        <app-content-header></app-content-header>
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
         <!-- Invoice List -->
         <section class="invoice-list-wrapper">
-
             <div class="card">
                 <section class="horizontal-wizard">
                     <div id="stepper1" class="bs-stepper horizontal-wizard-example">
@@ -62,23 +61,27 @@
                                             <!-- <div class="form-group col-md-4"></div> -->
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="apli">Aplicacion</label>
-                                                <ng-select  [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp" 
-                                                [ngModelOptions]="{standalone: true}"  (ngModelChange)='selectEventModuloo($event)'
+                                                <ng-select [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    (ngModelChange)='selectEventModuloo($event)'
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="name"
                                                     name="aplicacion" id="aplicacion" required placeholder="Seleccione"
                                                     bindValue="identificador">
-                                                   <!--  <ng-option *ngFor="let mdl of dataApp" value="{{mdl.identificador}}" >{{ mdl.nombre }} | {{ mdl.version }}</ng-option> -->
+                                                    <!--  <ng-option *ngFor="let mdl of dataApp" value="{{mdl.identificador}}" >{{ mdl.nombre }} | {{ mdl.version }}</ng-option> -->
                                                 </ng-select>
                                                 <span *ngIf="accountDetailsForm.submitted && aplicacion.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
-                                                        *ngIf="aplicacion.errors.required">Este campo es requerido!</small>
+                                                        *ngIf="aplicacion.errors.required">Este campo es
+                                                        requerido!</small>
                                                 </span>
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="aplicacion">Aplicacion</label>
-                                                <input [(ngModel)]="iApp.nombre" #Apliref="ngModel" [ngModelOptions]="{standalone: true}" required type="text"
-                                                    name="aplicacion" id="aplicacion" class="form-control" (blur)='selectEventModulo()'
+                                                <input [(ngModel)]="iApp.nombre" #Apliref="ngModel"
+                                                    [ngModelOptions]="{standalone: true}" required type="text"
+                                                    name="aplicacion" id="aplicacion" class="form-control"
+                                                    (blur)='selectEventModulo()'
                                                     [class.error]="!Apliref.valid && accountDetailsForm.submitted" />
 
                                                 <span *ngIf="accountDetailsForm.submitted && Apliref.invalid"
@@ -93,7 +96,7 @@
                                         <div class="row">
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="tipo">Tipo de instalación</label>
-                                                <ng-select  [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo" 
+                                                <ng-select [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="tipo" id="tipo" required placeholder="Seleccione"
                                                     bindValue="id">
@@ -111,7 +114,8 @@
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="servidor" id="servidor" required
                                                     placeholder="Seleccione Servidor" bindValue="id">
-                                                    <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option>
+                                                    <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}">{{ mdl.id
+                                                        }} | {{ mdl.descripcion }}</ng-option>
                                                 </ng-select>
                                                 <span *ngIf="accountDetailsForm.submitted && Server.invalid"
                                                     class="invalid-form">
@@ -121,7 +125,8 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="sistemas">Sistema Operativo</label>
-                                                <ng-select [items]="sistemasOperativos" #System="ngModel" [(ngModel)]="iApp.sistema"
+                                                <ng-select [items]="sistemasOperativos" #System="ngModel"
+                                                    [(ngModel)]="iApp.sistema"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="sistemas" id="sistemas" required
                                                     placeholder="Seleccione Servidor" bindValue="id">
@@ -136,8 +141,8 @@
                                         <div class="row">
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="repositorio">Repositorio Url</label>
-                                                <input [(ngModel)]="iApp.repositorio" #Reporef="ngModel" required type="text"
-                                                    name="repositorio" id="repositorio" class="form-control"
+                                                <input [(ngModel)]="iApp.repositorio" #Reporef="ngModel" required
+                                                    type="text" name="repositorio" id="repositorio" class="form-control"
                                                     [class.error]="!Reporef.valid && accountDetailsForm.submitted" />
 
                                                 <span *ngIf="accountDetailsForm.submitted && Reporef.invalid"
@@ -172,8 +177,8 @@
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="montaje">Punto Montaje</label>
-                                                <input [(ngModel)]="iApp.puntoMontaje" #Monref="ngModel" required type="text"
-                                                    name="montaje" id="montaje" class="form-control"
+                                                <input [(ngModel)]="iApp.puntoMontaje" #Monref="ngModel" required
+                                                    type="text" name="montaje" id="montaje" class="form-control"
                                                     [class.error]="!Monref.valid && accountDetailsForm.submitted" />
 
                                                 <span *ngIf="accountDetailsForm.submitted && Monref.invalid"
@@ -189,7 +194,8 @@
                                                 <!-- <input [(ngModel)]="TipoVar" #Tipo="ngModel" required type="text"
                                                     name="tipo" id="tipo" class="form-control"
                                                     [class.error]="!Tipo.valid && accountDetailsForm.submitted" /> -->
-                                                <ng-select [items]="basesDatos" #Bdatos="ngModel" [(ngModel)]="iApp.basedatos"
+                                                <ng-select [items]="basesDatos" #Bdatos="ngModel"
+                                                    [(ngModel)]="iApp.basedatos"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="bdatos" id="bdatos" required placeholder="Seleccione"
                                                     bindValue="id">
@@ -202,8 +208,9 @@
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="version">Versión</label>
-                                                <input [(ngModel)]="iApp.version" #Verref="ngModel" required type="text"
-                                                    name="version" id="version" class="form-control"
+                                                <input [(ngModel)]="iApp.version" [readOnly]="true" #Verref="ngModel"
+                                                    required type="text" name="version" id="version"
+                                                    class="form-control"
                                                     [class.error]="!Verref.valid && accountDetailsForm.submitted" />
 
                                                 <span *ngIf="accountDetailsForm.submitted && Verref.invalid"
@@ -214,7 +221,8 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="lenguaje">Lenguaje</label>
-                                                <ng-select [items]="lenguaje" #Lenref="ngModel" [(ngModel)]="iApp.lenguaje"
+                                                <ng-select [items]="lenguaje" #Lenref="ngModel"
+                                                    [(ngModel)]="iApp.lenguaje"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
                                                     name="lenguaje" id="lenguaje" required placeholder="Seleccione"
                                                     bindValue="id">
@@ -250,7 +258,8 @@
                                                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                                                 <span class="align-middle d-sm-inline-block d-none">Previous</span>
                                             </button>
-                                            <button (click)="horizontalWizardStepperNext(accountDetailsForm)"
+                                            <button
+                                                (click)="horizontalWizardStepperNext(accountDetailsForm)"
                                                 type="submit" class="btn btn-primary btn-next" rippleEffect>
                                                 <span class="align-middle d-sm-inline-block d-none">Next</span>
                                                 <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>

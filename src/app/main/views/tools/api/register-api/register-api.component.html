@@ -22,7 +22,7 @@
               <span class="bs-stepper-box">2</span>
               <span class="bs-stepper-label">
                 <span class="bs-stepper-title">Paso 2</span>
-                <span class="bs-stepper-subtitle">Tipo de Inforació<nav></nav></span>
+                <span class="bs-stepper-subtitle">Tipo de Inforación<nav></nav></span>
               </span>
             </button>
           </div>
@@ -41,85 +41,96 @@
           <form (ngSubmit)="(HWForm.form.valid)" #HWForm="ngForm">
             <div id="account-details" class="content">
               <form #accountDetailsForm="ngForm">
-
                 <div class="row">
+
                   <div class="form-group col-md-4">
                     <label class="form-label" for="http">HTTP / Puerto</label>
-                    <ng-select [items]="http" [(ngModel)]="xAPI.http" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Puerto HTTP"></ng-select>
+                    <ng-select [items]="http" #http="ngModel" [(ngModel)]="xAPIDB.http" 
+                    [class.error]="!http.valid && accountDetailsForm.submitted"
+                    id="http" name="http" required bindLabel="name" bindId="id" bindValue="name"
+                      placeholder="Seleccione Puerto HTTP">
+                    </ng-select>
+                    <span *ngIf="accountDetailsForm.submitted && http.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="http.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
+
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="https">HTTPS / Puerto</label>
-                    <ng-select [items]="https" [(ngModel)]="xAPI.https" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Puerto HTTPS"></ng-select>
+                    <label class="form-label" for="https">HTTP / Puerto</label>
+                    <ng-select [items]="https" #https="ngModel" [(ngModel)]="xAPIDB.https" 
+                    [class.error]="!https.valid && accountDetailsForm.submitted"
+                    id="https" name="https" required bindLabel="name" bindId="id" bindValue="name"
+                      placeholder="Seleccione Puerto HTTPS">
+                    </ng-select>
+                    <span *ngIf="accountDetailsForm.submitted && https.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="https.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
+
+
                   <div class="form-group col-md-4">
                     <label class="form-label" for="tipo">Tipo</label>
-                    <ng-select [items]="tipo" [(ngModel)]="xAPI.tipo" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Tipo"></ng-select>
+                    <ng-select [items]="tipo" [(ngModel)]="xAPIDB.tipo" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindId="id" bindValue="name" placeholder="Seleccione Tipo"></ng-select>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label class="form-label" for="https">Distribución</label>
-                    <ng-select [items]="distribucion" [(ngModel)]="xAPI.distribucion" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <label class="form-label" for="distribucion">Distribución</label>
+                    <ng-select [items]="distribucion" [(ngModel)]="xAPIDB.distribucion"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id" bindValue="name"
                       placeholder="Seleccione Distribución"></ng-select>
                   </div>
                   <div class="form-group col-md-6">
-                    <label class="form-label" for="http">Aplicación</label>
-                    <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPI.prefijo" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <label class="form-label" for="aplicacion">Aplicación</label>
+                    <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPIDB.aplicacion"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="nombre"
                       placeholder="Seleccione Aplicación"></ng-select>
                   </div>
-                  
+
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label class="form-label" for="funcion">Función</label>
-                    <input required type="text" name="last-names" id="last-names" class="form-control">
+                    <input required type="text" name="last-names" id="last-names" [(ngModel)]="xAPIDB.funcion"
+                      [ngModelOptions]="{standalone: true}" class="form-control">
                   </div>
                   <div class="form-group col-md-2">
                     <label class="form-label" for="version">Versión</label>
-                    <input [(ngModel)]="xAPI.version" [ngModelOptions]="{standalone: true}" [disabled]="true" required
+                    <input [(ngModel)]="xAPIDB.version" [ngModelOptions]="{standalone: true}" [disabled]="true" required
                       type="text" name="last-namew" id="last-namew" class="form-control">
                   </div>
                   <div class="form-group col-md-6">
                     <label class="form-label" for="conexion">Conexión</label>
-                    <ng-select [items]="drivers" bindLabel="name" bindId="id" bindValue="name"
+                    <ng-select [items]="drivers" [(ngModel)]="xAPIDB.driver" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" (ngModelChange)="selDataBase($event)"
                       placeholder="Seleccione Conexión"></ng-select>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="funcion">Categoria</label>
-                    <ng-select [items]="categoria" [(ngModel)]="xAPI.categoria" [ngModelOptions]="{standalone: true}"
+                    <label class="form-label" for="categoria">Categoria</label>
+                    <ng-select [items]="categoria" [(ngModel)]="xAPIDB.categoria" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Categoria"></ng-select>
                   </div>
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="version">Funcionalidad</label>
-                    <ng-select [items]="funcionalidad" [(ngModel)]="xAPI.funcionalidad"
+                    <label class="form-label" for="funcionalidad">Funcionalidad</label>
+                    <ng-select [items]="funcionalidad" [(ngModel)]="xAPIDB.funcionalidad"
                       [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id" bindValue="name"
                       bindLabel="name" bindValue="id" placeholder="Seleccione Funcionalidad"></ng-select>
                   </div>
-                  <!-- <div class="form-group col-md-6">
-                    <label class="form-label" for="conexion">Conexión</label>
-                    <ng-select [items]="drivers"  bindLabel="name" bindId="id" bindValue="name"
-                     placeholder="Seleccione Conexión"></ng-select>
-                  </div> -->
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-12">
-                    <label class="form-label" for="version">Descripción</label>
-                    <textarea [(ngModel)]="xAPI.descripcion" rows="7" [ngModelOptions]="{standalone: true}" required
+                    <label class="form-label" for="descripcion">Descripción</label>
+                    <textarea [(ngModel)]="xAPIDB.descripcion" rows="7" [ngModelOptions]="{standalone: true}" required
                       type="text" name="last-namew" id="last-namew" class="form-control"></textarea>
                   </div>
                 </div>
@@ -145,49 +156,49 @@
 
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="funcion">Metodo</label>
-                    <ng-select [items]="metodo" [(ngModel)]="xAPI.metodo" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <label class="form-label" for="metodo">Metodo</label>
+                    <ng-select [items]="metodo" (ngModelChange)="onMetodo($event)" [(ngModel)]="xAPIDB.metodo"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Metodo"></ng-select>
                   </div>
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="version">Relacional</label>
-                    <ng-select [items]="relacional" [(ngModel)]="xAPI.funcionalidad"
-                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id" bindValue="name"
-                      bindLabel="name" bindValue="id" placeholder="Seleccione Relacional"></ng-select>
+                    <label class="form-label" for="relacional">Relacional</label>
+                    <ng-select [items]="relacional" [(ngModel)]="xAPIDB.relacional" [ngModelOptions]="{standalone:true}"
+                      bindLabel="name" bindId="id" bindValue="id" (ngModelChange)="clickRelacional(xAPIDB.relacional)"
+                      placeholder="Seleccione Relacional"></ng-select>
                   </div>
                   <div class="form-group col-md-6">
-                    <label class="form-label" for="conexion">Colección en caso de ser NOSQL</label>
-                    <input type="text" [(ngModel)]="xAPI.coleccion" [ngModelOptions]="{standalone: true}"
-                      class="form-control" placeholder="Coleccion">
+                    <label class="form-label" for="coleccion">Colección en caso de ser NOSQL</label>
+                    <input type="text" [(ngModel)]="xAPIDB.coleccion" [disabled]="DisabledNoSql == true"
+                      [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Coleccion">
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="version">Nombre de la tabla</label>
-                    <ng-select [items]="tabla" [(ngModel)]="xAPI.funcionalidad" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <label class="form-label" for="nombretabla">Nombre de la tabla</label>
+                    <ng-select [items]="dataModulo" [(ngModel)]="tabla" [ngModelOptions]="{standalone:true}"
+                      bindLabel="name" (ngModelChange)='selectEventModulo($event)'
                       placeholder="Seleccione Relacional"></ng-select>
                   </div>
 
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="version">Tipo de dato</label>
-                    <ng-select [items]="tabla" [(ngModel)]="xAPI.funcionalidad" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <label class="form-label" for="tipodato">Tipo de dato</label>
+                    <ng-select [items]="lstDml" [(ngModel)]="xdml" [ngModelOptions]="{standalone: true}"
+                      (ngModelChange)='onDml($event)' bindLabel="nombre" bindId="id" bindValue="nombre"
                       placeholder="Seleccione Tipo de dato"></ng-select>
                   </div>
 
                   <div class="form-group col-md-2">
                     <label class="form-label" for="funcion">Valor por defecto</label>
-                    <input type="number" [(ngModel)]="xAPI.consumidores" [ngModelOptions]="{standalone: true}"
-                      class="form-control" placeholder="Valor por defecto">
+                    <input type="text" [(ngModel)]="defecto" [ngModelOptions]="{standalone: true}" class="form-control"
+                      placeholder="Valor por defecto">
                   </div>
 
                   <div class="form-group col-md-4">
                     <label class="form-label" for="version">Condición</label>
-                    <ng-select [items]="tabla" [(ngModel)]="xAPI.funcionalidad" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <ng-select [items]="lstcondicion" [disabled]="xcondicion == true" [(ngModel)]="xAPIDB.funcionalidad"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id" bindValue="name"
                       placeholder="Seleccione Condición"></ng-select>
                   </div>
 
@@ -195,27 +206,25 @@
 
                 <div class="row">
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="version">Nombre del campo</label>
-                    <ng-select [items]="tabla" [(ngModel)]="xAPI.funcionalidad" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Campo"></ng-select>
+                    <label class="form-label" for="campo">Nombre del campo</label>
+                    <ng-select [items]="dataCampo" [(ngModel)]="campo" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindId="id" bindValue="name" placeholder="Seleccione Campo"></ng-select>
                   </div>
 
 
                   <div class="form-group col-md-3">
-                    <label class="form-label" for="funcion">Alias</label>
-                    <input type="number" [(ngModel)]="xAPI.consumidores" [ngModelOptions]="{standalone: true}"
-                      class="form-control" placeholder="Alias">
+                    <label class="form-label" for="alias">Alias</label>
+                    <input type="text" [(ngModel)]="alias" [ngModelOptions]="{standalone: true}" class="form-control"
+                      placeholder="Alias">
                   </div>
 
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="version">Tipo de dato</label>
-                    <ng-select [items]="tabla" [(ngModel)]="xAPI.funcionalidad" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Tipo de dato"></ng-select>
+                    <label class="form-label" for="tipodedato">Tipo de dato</label>
+                    <ng-select [items]="lsttipodato" [(ngModel)]="tipodato" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindId="id" bindValue="id" placeholder="Seleccione Tipo de dato"></ng-select>
                   </div>
                   <div class="form-group col-md-1" style="margin-top: 24px;">
-                    <button class="btn btn-success">+</button>
+                    <button class="btn btn-success" (click)="agregarEntrada()">+</button>
                   </div>
                 </div>
 
@@ -223,8 +232,8 @@
                   <div class="form-group col-md-12">
                     <label>Esquema de entrada:</label>
                     <div class="form-group text-justify">
-                      <ngx-codemirror [ngModelOptions]="{standalone: true}" [(ngModel)]="xAPI.entradas"
-                        [options]="codeJson">
+                      <ngx-codemirror [ngModelOptions]="{standalone: true}" [(ngModel)]="xAPIDB.entradas"
+                        (ngModelChange)="setEditorContent($event)" (click)="clickRefresh($event)" [options]="codeJson">
                       </ngx-codemirror>
                     </div>
                   </div>
@@ -232,15 +241,10 @@
                   <div class="form-group col-md-12">
                     <label>Consulta / SQL / NOSQL </label>
                     <div class="form-group text-justify">
-                        <!-- <ngx-codemirror
-                            [ngModelOptions]="{standalone: true}" 
-                            [(ngModel)]="xAPI.query"
-                            [options]="codeSQL">
-                        </ngx-codemirror> -->
-                        <ngx-codemirror #codemirror aria-describedby="login-codigo" tabindex="1" autofocus
-                      [options]="codeSQL"
-              >
-            </ngx-codemirror>
+                      <ngx-codemirror #codemirror aria-describedby="login-codigo" [ngModelOptions]="{standalone: true}"
+                        [(ngModel)]="xAPIDB.query" (ngModelChange)="setEditorContent($event)"
+                        (click)="clickRefresh($event)" tabindex="1" autofocus [options]="codeSQL">
+                      </ngx-codemirror>
                     </div>
                   </div>
 
@@ -248,33 +252,33 @@
 
                 <div class="row">
                   <div class="form-group col-md-6">
-                    <label class="form-label" for="version">Parametros</label>
-                   <input type="text" class="form-control" placeholder="Parametros">
+                    <label class="form-label" for="parametros">Parametros</label>
+                    <input type="text" class="form-control" placeholder="Parametros">
                   </div>
 
                   <div class="form-group col-md-6">
                     <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
-                    <ng-select [items]="retorn" formControlName="retorno" bindLabel="descripcion"
-                      placeholder="Seleccione Valor Retorno" bindValue="name">
+                    <ng-select [items]="retorn" bindLabel="descripcion" placeholder="Seleccione Valor Retorno"
+                      bindId="id">
                     </ng-select>
                   </div>
-                  
+
                 </div>
 
-  
+
 
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label class="form-label" for="version">Funciones de la prueba</label>
-                    <ng-select [items]="funciones" [(ngModel)]="xAPI.funcionalidad" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <ng-select [items]="funciones" [(ngModel)]="xAPIDB.funcionalidad"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id"
                       placeholder="Seleccione Funciones"></ng-select>
                   </div>
 
 
                   <div class="form-group col-md-6">
                     <label class="form-label" for="funcion">Agregar columna de la consulta</label>
-                    <input type="text" [(ngModel)]="xAPI.consumidores" [ngModelOptions]="{standalone: true}"
+                    <input type="text" [(ngModel)]="xAPIDB.consumidores" [ngModelOptions]="{standalone: true}"
                       class="form-control" placeholder="Agregar columna de la consulta">
                   </div>
 
@@ -296,85 +300,81 @@
                 </div>
               </form>
             </div>
+
             <div id="social-links" class="content">
               <form #socialLinkForm="ngForm">
 
 
                 <div class="row">
                   <div class="form-group col-md-3">
-                    <label class="form-label" for="funcion">Consumidores</label>
-                    <input type="number" [(ngModel)]="xAPI.consumidores" [ngModelOptions]="{standalone: true}"
+                    <label class="form-label" for="consumidores">Consumidores</label>
+                    <input type="number" [(ngModel)]="xAPIDB.consumidores" [ngModelOptions]="{standalone: true}"
                       class="form-control" placeholder="Consumidores">
                   </div>
                   <div class="form-group col-md-3">
-                    <label class="form-label" for="version">Cache</label>
-                    <ng-select [items]="cache" [(ngModel)]="xAPI.cache" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Cache"></ng-select>
+                    <label class="form-label" for="cache">Cache</label>
+                    <ng-select [items]="cache" [(ngModel)]="xAPIDB.cache" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Cache"></ng-select>
                   </div>
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="conexion">Logs</label>
-                    <ng-select [items]="logs" [(ngModel)]="xAPI.logs" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" placeholder="Seleccione Logs"></ng-select>
+                    <label class="form-label" for="logs">Logs</label>
+                    <ng-select [items]="logs" [(ngModel)]="xAPIDB.logs" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Logs"></ng-select>
                   </div>
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="conexion">Concurrente</label>
-                    <ng-select [items]="concurrente" [(ngModel)]="xAPI.concurrencia"
-                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id" bindValue="name"
+                    <label class="form-label" for="concurrente">Concurrente</label>
+                    <ng-select [items]="concurrente" [(ngModel)]="xAPIDB.concurrencia"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Concurrente"></ng-select>
                   </div>
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="conexion">Retorno</label>
-                    <ng-select [items]="retorno" [(ngModel)]="xAPI.retorna" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" placeholder="Seleccione Retorno"></ng-select>
+                    <label class="form-label" for="retorno">Retorno</label>
+                    <ng-select [items]="retorno" [(ngModel)]="xAPIDB.retorna" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Retorno"></ng-select>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="http">Tiempo de Duracion</label>
+                    <label class="form-label" for="tiempoduracion">Tiempo de Duracion</label>
                     <input type="number" placeholder="Seleccione Tiempo" class="form-control">
                   </div>
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="http">Tipo de Duración</label>
-                    <ng-select [items]="duracion" [(ngModel)]="xAPI.http" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                    <label class="form-label" for="tipoduracion">Tipo de Duración</label>
+                    <ng-select [items]="duracion" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Tipo Duración"></ng-select>
                   </div>
 
                   <div class="form-group col-md-2">
-                    <label class="form-label" for="funcion">Prioridad</label>
-                    <ng-select [items]="prioridad" [(ngModel)]="xAPI.prioridad" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Prioridad"></ng-select>
+                    <label class="form-label" for="prioridad">Prioridad</label>
+                    <ng-select [items]="prioridad" [(ngModel)]="xAPIDB.prioridad" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Prioridad"></ng-select>
                   </div>
                   <div class="form-group col-md-3">
-                    <label class="form-label" for="version">Entorno</label>
-                    <ng-select [items]="entorno" [(ngModel)]="xAPI.entorno" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Entorno"></ng-select>
+                    <label class="form-label" for="entorno">Entorno</label>
+                    <ng-select [items]="entorno" [(ngModel)]="xAPIDB.entorno" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Entorno"></ng-select>
                   </div>
                   <div class="form-group col-md-3">
-                    <label class="form-label" for="conexion">Aplicar Waf</label>
-                    <ng-select [items]="waf" [(ngModel)]="xAPI.accion" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" placeholder="Seleccione Aplicar Waf"></ng-select>
+                    <label class="form-label" for="Waf">Aplicar Waf</label>
+                    <ng-select [items]="waf" [(ngModel)]="xAPIDB.accion" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Aplicar Waf"></ng-select>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-3">
-                    <label class="form-label" for="http">Estatus</label>
-                    <ng-select [items]="estatus" [(ngModel)]="xAPI.http" [ngModelOptions]="{standalone: true}"
-                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                      placeholder="Seleccione Estatus"></ng-select>
+                    <label class="form-label" for="estatus">Estatus</label>
+                    <ng-select [items]="estatus" [(ngModel)]="xAPIDB.estatus" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Estatus"></ng-select>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-12">
-                    <label class="form-label" for="version">URL</label>
-                    <input required type="text" name="last-namew" [disabled]="true" placeholder="http://...:xxxx/..."
-                      id="last-namew" class="form-control">
+                    <label class="form-label" for="url">URL</label>
+                    <input required type="text" name="last-namew" [disabled]="true" [placeholder]="ruta" id="last-namew"
+                      class="form-control">
                   </div>
                 </div>
 
