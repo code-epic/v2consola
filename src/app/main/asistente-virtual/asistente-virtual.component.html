@@ -44,7 +44,11 @@
                         <img class="chat-box-overlay_robot"  width="60px" src="assets/images/logo/logo.png">
                     </span>
                     <div class="cm-msg-text">
-                        <p class="maquina-escribir">¡Hola! Soy <strong>SANDRA </strong>, ¿en qué puedo ayudarlo? <span class="cursor">|</span></p>
+                        <!-- <div id="chat-messages" #chatMessages>
+                            <div *ngFor="let message of messages">{{ message }}</div>
+                          </div> -->
+                        <p class="maquina-escribir">¡Hola! Soy <strong>SANDRA IA</strong>, ¿en qué puedo ayudarlo? <span class="cursor">|</span></p>
+                        <!-- <div id="texto-maquina"></div> -->
                     </div>
                 </div>
 
@@ -64,7 +68,7 @@
                             <img class="chat-box-overlay_robot"  width="60px" src="assets/images/logo/logo.png">
                         </span>
                         <div class="cm-msg-text">
-                            <p class="maquina-escribir"> {{ item.resp }}</p>
+                             {{ item.resp }}
                         </div>
                     </div>
                 </div>

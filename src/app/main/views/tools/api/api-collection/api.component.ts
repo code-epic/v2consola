@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
-import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { ApiService, IAPICore, RestoreAPI } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 import JSONFormatter from 'json-formatter-js';
@@ -84,6 +84,15 @@ export class ApiComponent implements OnInit {
     logs : false
   };
 
+  public xRestore : RestoreAPI = {
+    nombre: '',
+    ruta: '',
+    pass: '',
+    basedatos: '',
+    coleccion: '',
+    funcion: '',
+    user: ''
+  }
 
   public searchValue = ''
 
@@ -223,14 +232,12 @@ export class ApiComponent implements OnInit {
   
   ExportApi(){
     this.fnx = {
-      'funcion': 'Fnx_ExportarAPI',
-      'base-datos': 'sandra-server',
-      'user': '',
-      'passw': '',
+      'funcion': 'Fnx_ExportAPI',
+      'basedatos': 'sandra-server',
+      'user': 'elpolox',
+      'passw': 'Arrd17818665',
       'driver': this.driversAPP
-
     }
-    // console.log(this.fnx)
     this.apiService.ExecFnx(this.fnx).subscribe(
       (data) => {
         this.utilservice.AlertMini('bottom-end','success','Backup Generado',3000)
@@ -361,12 +368,13 @@ export class ApiComponent implements OnInit {
     try {
       await this.apiService.EnviarArchivos(frm).subscribe((data) => {
         this.ValoresMasivos();
-        console.log(data)
       });
     } catch (error) {
       console.error(error);
     }
   }
+
+
 
   ValoresMasivos() {
     let cargaMasiva = {
@@ -390,14 +398,56 @@ export class ApiComponent implements OnInit {
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.modalService.dismissAll('Close')
-        this.utilservice.AlertMini('top-end','success','Archivo Subido Exitosamente',3000)
+        if (data.tipo == 1) {
+          this.ObtenerNombreArchivo()
+          this.modalService.dismissAll('Close')
+          this.utilservice.AlertMini('top-end','success','Archivo Subido Exitosamente',3000)          
+        } else {
+          this.utilservice.AlertMini('top-end','error','El archivo no pudo ser subido, por favor verifica e intente de nuevo',3000)
+        }
       },
       (errot) => {
         console.log(errot);
         this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
       }
     );
+  }
+
+  ObtenerNombreArchivo(){
+    this.xAPI.funcion = "SYS_getFileName";
+    this.xAPI.parametros = this.llave;
+    this.xAPI.valores = "";
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data.Cuerpo.length > 0) {
+          this.xRestore.nombre = data.Cuerpo[0].nomb
+          this.xRestore.ruta = data.Cuerpo[0].ruta
+          this.xRestore.pass = 'Arrd17818665'
+          this.xRestore.user = 'elpolox'
+          this.xRestore.basedatos = 'sandra-server'
+          this.xRestore.coleccion = 'apicore'
+          this.ejecutarFuncion()
+        }
+      },
+      (errot) => {
+        console.log(errot);
+        this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+      }
+    )
+  }
+
+  ejecutarFuncion(){
+    this.xRestore.funcion = 'Fnx_RestoreAPI'
+    this.apiService.ExecFnx(this.xRestore).subscribe(
+      data => {
+        console.log(data)
+        this.ListarApis(this.driversAPP)
+        this.utilservice.AlertMini('top-end','success','Se han importado las APIS de la Base de datos XXXXX y la Coleccion XXXX',3000)          
+      },
+      error => {
+        console.log(error)
+      }
+    )
   }
 
 
@@ -450,7 +500,6 @@ export class ApiComponent implements OnInit {
     this.xAPI = this.data;
     this.xAPI.parametros = this.xparametro
     this.xAPI.valores = this.valores
-    // console.log(this.xAPI);
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data !== null) {

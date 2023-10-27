@@ -7,7 +7,15 @@ import { environment } from '../../environments/environment';
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { UtilService } from '@services/util/util.service';
 
-
+export interface RestoreAPI {
+  nombre: string,
+  ruta: string,
+  user: string,
+  pass: string,
+  basedatos: string,
+  coleccion: string,
+  funcion: string
+}
 
 export interface IAPICore {
   id ?: string
@@ -270,7 +278,7 @@ export class ApiService {
 
   DwsCdn(peticion : string){
     let ruta = this.URL + 'dwsother/' + peticion
-    console.log(ruta)
+    // console.log(ruta)
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

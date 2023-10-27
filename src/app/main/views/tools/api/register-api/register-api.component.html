@@ -46,7 +46,7 @@
                   <div class="form-group col-md-4">
                     <label class="form-label" for="http">HTTP / Puerto</label>
                     <ng-select [items]="http" #http="ngModel" [(ngModel)]="xAPIDB.http" 
-                    [class.error]="!http.valid && accountDetailsForm.submitted"
+                    [class.error]="accountDetailsForm.submitted"
                     id="http" name="http" required bindLabel="name" bindId="id" bindValue="name"
                       placeholder="Seleccione Puerto HTTP">
                     </ng-select>
@@ -57,9 +57,9 @@
                   </div>
 
                   <div class="form-group col-md-4">
-                    <label class="form-label" for="https">HTTP / Puerto</label>
+                    <label class="form-label" for="https">HTTPS / Puerto</label>
                     <ng-select [items]="https" #https="ngModel" [(ngModel)]="xAPIDB.https" 
-                    [class.error]="!https.valid && accountDetailsForm.submitted"
+                    [class.error]="accountDetailsForm.submitted"
                     id="https" name="https" required bindLabel="name" bindId="id" bindValue="name"
                       placeholder="Seleccione Puerto HTTPS">
                     </ng-select>

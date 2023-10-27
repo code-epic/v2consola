@@ -1,4 +1,4 @@
-import { Component, OnInit, } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 
 interface Mensaje {
@@ -20,6 +20,11 @@ export class AsistenteVirtualComponent implements OnInit {
     parametros: ''
   }
 
+  @ViewChild('chatMessages') chatMessages!: ElementRef;
+
+  messages: string[] = [];
+  userInput: string = '';
+
   public status = false
   public msj: any
   public preg: any
@@ -39,6 +44,7 @@ export class AsistenteVirtualComponent implements OnInit {
 
   ngOnInit(): void {
     this.status = true
+    // this.escribirComoMaquina("¡Hola! Bienvenid@ Soy SANDRA IA, ¿en qué puedo ayudarlo?.", 50, "texto-maquina");
   }
 
 
@@ -89,6 +95,38 @@ export class AsistenteVirtualComponent implements OnInit {
     this.MostrarChat = false
     this.ChatMessage = false
     this.status = true
+  }
+
+  escribirComoMaquina(texto, velocidad, tipo) {
+    var i = 0;
+    var intervalo = setInterval(function() {
+      document.getElementById(tipo).textContent += texto.charAt(i);
+      i++;
+      if (i >= texto.length) {
+        clearInterval(intervalo);
+        document.getElementById(tipo).innerHTML += "<br>";
+        this.escribirComoMaquina(texto, velocidad);
+      }
+    }, velocidad);
+  }
+
+  enviarMensaje() {
+    const mensajeUsuario = this.userInput;
+
+    // Simular respuesta del chat
+    const respuestaChat = 'Hola, ¿en qué puedo ayudarte?';
+    this.messages.push(mensajeUsuario);
+    this.messages.push(respuestaChat);
+
+    this.userInput = '';
+    this.scrollChat();
+  }
+
+  scrollChat() {
+    setTimeout(() => {
+      const chatMessagesElement = this.chatMessages.nativeElement;
+      chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
+    }, 100);
   }
 
 
