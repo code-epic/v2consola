@@ -15,6 +15,7 @@ const dbPromise = openDB("sandrad-task", 1, {
 });
 
 export interface ITask {
+  id : string;
   funcion: string;
   estatus: boolean;
   nombre: string;
@@ -29,6 +30,7 @@ export interface ITask {
 })
 export class TaskService  {
   public iTask: ITask = {
+    id: '',
     funcion: '',
     nombre: '',
     estatus: false,
@@ -43,6 +45,7 @@ export class TaskService  {
     return (await dbPromise).get("task", key);
   }
   async set(key, val, app) {
+    this.iTask.id = key
     this.iTask.inicio = new Date()
     this.iTask.funcion = val
     this.iTask.estatus = true
@@ -55,10 +58,9 @@ export class TaskService  {
    update(key) {
     this.get(key).then(
       async data  => {
-        this.iTask = data
-        this.iTask.fin = new Date()
-        this.iTask.estatus = false
-        console.log(data);
+        this.iTask = data;
+        this.iTask.fin = new Date();
+        this.iTask.estatus = false;
 
         (await dbPromise).put("task", this.iTask, key);
       }

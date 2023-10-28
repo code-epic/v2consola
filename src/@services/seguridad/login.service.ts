@@ -187,45 +187,62 @@ export class LoginService {
   }
 
   async clearSession(){
-    let lst = []
+    let lstApp = []
     await this.taskService.keys().then(
-      data => {
-        data.map(e => {
-          console.log(e)
+      async lst => {
+        let cnt = lst.length;
+        for (let i = 0; i < cnt; i++) {
+          const e = lst[i];
           this.taskService.get(e).then(
-            contenido => {
-              lst.push(contenido)
+            data => {
+              console.log(data)
+              if(data.estatus) lstApp.push(data)
+              if(i == cnt-1) this.inserCommitDB(lstApp)
             }
-          ) 
-        }) 
-
-
-        let cl = {
-          'coleccion': 'user-task',
-          'driver': 'MGDBA',
-          'objeto': lst,
-          'donde': '{"id":"panel"}',
-          'upsert': true
+          )
+          
         }
-
-        this.apiService.ExecColeccion(cl).subscribe(
-          x => {
-            console.log('cone ', x)
-            this.taskService.clear().then(
-              xdata => {
-    
-              }
-            )
-          },
-          e => {
-            console.error(e)
-          }
-
-        );
+      
+       
+        
       }
     )
     sessionStorage.clear();
     localStorage.clear();
+  }
+
+
+
+  inserCommitDB(lst){
+    let idUser = "panel"
+    
+    let obj = {
+      "usuario": idUser,
+      "task": lst,
+      "fecha": new Date()
+    }
+    let cl = {
+      'coleccion': 'user-task',
+      'driver': 'MGDBA',
+      'objeto': obj,
+      'donde': '{\"usuario\":\"'+ idUser +'\"}',
+      'upsert': true
+    }
+
+    this.apiService.ExecColeccion(cl).subscribe(
+      x => {
+        console.log('cone ', x)
+        // this.taskService.clear().then(
+        //   xdata => {
+
+        //   }
+        // )
+      },
+      e => {
+        console.error(e)
+      }
+
+    );
   }
 
   getUserDecrypt() {

@@ -186,36 +186,6 @@ export class ListComponent implements OnInit {
     });
   }
 
-  inserCommitDB(lst){
-    console.log(lst)
-    let obj = {
-      "usuario": "panel",
-      "task": lst,
-      "fecha": new Date()
-    }
-    let cl = {
-      'coleccion': 'user-task',
-      'driver': 'MGDBA',
-      'objeto': obj,
-      'donde': '{"id":"panel"}',
-      'upsert': true
-    }
-
-    this.apiService.ExecColeccion(cl).subscribe(
-      x => {
-        console.log('cone ', x)
-        // this.taskService.clear().then(
-        //   xdata => {
-
-        //   }
-        // )
-      },
-      e => {
-        console.error(e)
-      }
-
-    );
-  }
 
   async Pull(app: any) {
     let nameFnx = "Fnx_Actualizar";
@@ -223,60 +193,41 @@ export class ListComponent implements OnInit {
       funcion: nameFnx,
       repositorio: app.repositorio,
     };
-    let lstApp = []
-    await this.taskService.keys().then(
-      async lst => {
-        let cnt = lst.length;
-        for (let i = 0; i < cnt; i++) {
-          const e = lst[i];
-          this.taskService.get(e).then(
-            data => {
-              console.log(data)
-              lstApp.push(data)
-              if(i == cnt-1) this.inserCommitDB(lstApp)
-            }
-          )
-          
-        }
-      
-       
-        
-      }
-    )
+    
     
    
-    // await Swal.fire({
-    //   title: `Va a actualizar el proyecto <br> ${app.repositorio} `,
-    //   text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
-    //   icon: "warning",
-    //   showCancelButton: true,
-    //   confirmButtonColor: "#3085d6",
-    //   cancelButtonText: "Cancelar",
-    //   cancelButtonColor: "#d33",
-    //   confirmButtonText: "Si, Actualizar!",
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     this.apiService.ExecFnx(this.fnx).subscribe(
-    //       (data) => {
-    //         this.pID.id = data.contenido.id;
-    //         this.pID.estatus = true;
-    //         this.msjService.lstpid$.emit(this.pID);
-    //         this.taskService
-    //           .set(data.contenido.id, nameFnx, app.repositorio)
-    //           .then((e) => {
-    //             this.apiService.ConsultarPidRecursivo(
-    //               data.contenido.id,
-    //               app.repositorio
-    //             );
-    //           })
-    //           .catch((e) => console.log(e));
-    //       },
-    //       (error) => {
-    //         console.log(error);
-    //       }
-    //     );
-    //   }
-    // });
+    await Swal.fire({
+      title: `Va a actualizar el proyecto <br> ${app.repositorio} `,
+      text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonText: "Cancelar",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, Actualizar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.apiService.ExecFnx(this.fnx).subscribe(
+          (data) => {
+            this.pID.id = data.contenido.id;
+            this.pID.estatus = true;
+            this.msjService.lstpid$.emit(this.pID);
+            this.taskService
+              .set(data.contenido.id, nameFnx, app.repositorio)
+              .then((e) => {
+                this.apiService.ConsultarPidRecursivo(
+                  data.contenido.id,
+                  app.repositorio
+                );
+              })
+              .catch((e) => console.log(e));
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
+    });
   }
 
   filterUpdate(event: any) {
