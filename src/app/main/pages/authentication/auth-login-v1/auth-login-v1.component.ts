@@ -1,47 +1,51 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { NgForm, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import {
+  NgForm,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from "@angular/forms";
 
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
 
-import { CoreConfigService } from '@core/services/config.service';
+import { CoreConfigService } from "@core/services/config.service";
 
-import { IToken, LoginService } from '@services/seguridad/login.service';
+import { IToken, LoginService } from "@services/seguridad/login.service";
 
-import { Router } from '@angular/router';
+import { Router } from "@angular/router";
 
-import { environment } from 'environments/environment';
-import { ToastrService } from 'ngx-toastr';
-import { UtilService } from '@services/util/util.service';
+import { environment } from "environments/environment";
+import { ToastrService } from "ngx-toastr";
+import { UtilService } from "@services/util/util.service";
 
-import { ReCaptchaV3Service } from 'ng-recaptcha';
-
+import { ReCaptchaV3Service } from "ng-recaptcha";
+import { TaskService } from "@services/apicore/task.service";
 
 @Component({
-  selector: 'app-auth-login-v1',
-  templateUrl: './auth-login-v1.component.html',
-  styleUrls: ['./auth-login-v1.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  selector: "app-auth-login-v1",
+  templateUrl: "./auth-login-v1.component.html",
+  styleUrls: ["./auth-login-v1.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class AuthLoginV1Component implements OnInit {
-  token: string|undefined;
+  token: string | undefined;
   //  Public
   public coreConfig: any;
   public loginForm: UntypedFormGroup;
   public submitted = false;
   public passwordTextType: boolean;
-  public usuario : string;
+  public usuario: string;
   public clave: string;
 
   public loading = false;
   public isHidden: boolean = true;
 
   public iToken: IToken = {
-    token: '',
+    token: "",
   };
 
   public itk: IToken;
-
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -53,34 +57,35 @@ export class AuthLoginV1Component implements OnInit {
    * @param {FormBuilder} _formBuilder
    */
   constructor(
+    private taskService: TaskService,
     private recaptchaV3Service: ReCaptchaV3Service,
     private _coreConfigService: CoreConfigService,
     private _formBuilder: UntypedFormBuilder,
     private router: Router,
-    private loginService: LoginService, 
+    private loginService: LoginService,
     private toastrService: ToastrService,
-    private utilservice: UtilService,
-    ) {
-      if (sessionStorage.getItem("token") != undefined ){
-        this.router.navigate(['home']);
-      }
+    private utilservice: UtilService
+  ) {
+    if (sessionStorage.getItem("token") != undefined) {
+      this.router.navigate(["home"]);
+    }
     this._unsubscribeAll = new Subject();
 
     // Configure the layout
     this._coreConfigService.config = {
       layout: {
         navbar: {
-          hidden: true
+          hidden: true,
         },
         menu: {
-          hidden: true
+          hidden: true,
         },
         footer: {
-          hidden: true
+          hidden: true,
         },
         customizer: false,
-        enableLocalStorage: false
-      }
+        enableLocalStorage: false,
+      },
     };
   }
 
@@ -96,9 +101,8 @@ export class AuthLoginV1Component implements OnInit {
     this.passwordTextType = !this.passwordTextType;
   }
 
-
-  public version = "1.0.0"
-  public fecha = ""
+  public version = "1.0.0";
+  public fecha = "";
 
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
@@ -107,18 +111,20 @@ export class AuthLoginV1Component implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    this.version = environment.version
-    this.fecha = environment.fecha
+    this.version = environment.version;
+    this.fecha = environment.fecha;
 
     this.loginForm = this._formBuilder.group({
-      email: ['', [Validators.required]],
-      password: ['', Validators.required]
+      email: ["", [Validators.required]],
+      password: ["", Validators.required],
     });
 
     // Subscribe to config changes
-    this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
-      this.coreConfig = config;
-    });
+    this._coreConfigService.config
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((config) => {
+        this.coreConfig = config;
+      });
   }
 
   /**
@@ -130,27 +136,37 @@ export class AuthLoginV1Component implements OnInit {
     this._unsubscribeAll.complete();
   }
 
-  async login(){
+  async login() {
     this.submitted = true;
     // stop here if form is invalid
     if (this.loginForm.invalid) {
       return;
     } else {
-    this.loading = true;
-    await this.loginService.getLogin(this.loginForm.value.email, this.loginForm.value.password).subscribe(
-      (data) => { // Success
-        this.itk = data;
-        sessionStorage.setItem("token", this.itk.token );
-        this.loading = false;
-        this.isHidden = false;
-        this.router.navigate(['home']).then(() => { window.location.reload() });
-      },
-      (error) => {
-        this.loading = false;
-        this.isHidden = false;
-        this.utilservice.AlertMini('top-end','error','Error al acceder a los datos de conexion del Bus Empresarial',3000)
-      }
-    );
+      this.loading = true;
+      this.loginService
+        .getLogin(this.loginForm.value.email, this.loginForm.value.password)
+        .subscribe(
+          (data) => {
+            this.itk = data;
+            sessionStorage.setItem("token", this.itk.token);
+            this.loading = false;
+            this.isHidden = false;
+
+            this.router.navigate(["home"]).then(() => {
+              window.location.reload();
+            });
+          },
+          (error) => {
+            this.loading = false;
+            this.isHidden = false;
+            this.utilservice.AlertMini(
+              "top-end",
+              "error",
+              "Error al acceder a los datos de conexion del Bus Empresarial",
+              3000
+            );
+          }
+        );
     }
   }
 
@@ -163,5 +179,4 @@ export class AuthLoginV1Component implements OnInit {
     }
     console.debug(`Token [${this.token}] generated`);
   }
-  
 }

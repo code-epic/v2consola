@@ -19,6 +19,9 @@ import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
 import { LoginService } from '@services/seguridad/login.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
+import { TaskService } from '@services/apicore/task.service';
+import Swal from 'sweetalert2';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-navbar',
@@ -39,11 +42,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public token
   public usuario
   public tipo
-
-  public peso
-
-  public spiner = false
-
   public blCargando = false
 
   public languageOptions: any;
@@ -90,6 +88,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    */
   constructor(
     private msjService: WsocketsService,
+    private taskService: TaskService,
     private _router: Router,
     private _authenticationService: AuthenticationService,
     private _coreConfigService: CoreConfigService,
@@ -188,12 +187,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
 
     this.msjService.lstpid$.subscribe(
-      (e)=> {
-        // console.log(e)
-        this.blCargando = e
-        this.spiner = e
-        this.peso = e.segundos
+      pid => {
+        this.blCargando = pid.estatus
+        if ( !pid.estatus){
+          this.taskService.update(pid.id)
+          Swal.fire({
+            title: 'Proceso Finalizado',
+            text: `Su proyecto a sido clonado exitosamente!`,
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Ir al proyecto!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.open(environment.Url+'/'+ pid.contenido)
+            }
+          })
+        }
       }
+      
     )
 
 

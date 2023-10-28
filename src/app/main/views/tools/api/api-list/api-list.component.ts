@@ -117,6 +117,7 @@ export class ApiListComponent implements OnInit {
      this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.drivers = data
+				console.log(data)
       },
       (error) => {
         console.log(error)

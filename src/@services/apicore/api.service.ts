@@ -6,6 +6,7 @@ import Swal, { SweetAlertIcon } from 'sweetalert2';
 import { environment } from '../../environments/environment';
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { UtilService } from '@services/util/util.service';
+import { TaskService } from './task.service';
 
 export interface RestoreAPI {
   nombre: string,
@@ -147,6 +148,7 @@ export interface ObjectoGenerico {
 }
 
 export interface ProcessID {
+  id : string,
   estatus: boolean,
   contenido ?: string,
   mensaje ?: string,
@@ -176,6 +178,7 @@ export class ApiService {
   };
 
   public pID : ProcessID = {
+    id: '',
     estatus: false,
     mensaje: '',
     segundos: '',
@@ -183,6 +186,7 @@ export class ApiService {
   }
 
   constructor(
+    private taskService: TaskService,
     private utilService: UtilService,
     private router: Router,
     private http: HttpClient,
@@ -242,31 +246,18 @@ export class ApiService {
   }
 
   // Consulta el Pid recursivamente
-  ConsultarPidRecursivo(id:string, fnx:any){
+  ConsultarPidRecursivo(id:string, paquete:any){
     this.ExecFnxId(id).subscribe(
       (data) => {
-        console.log(data)
         setTimeout(()=> {
           if(data.documento == 'PROCESADO'){
+            this.pID.id = id
             this.pID.estatus = false
-            this.pID.segundos = data.Duracion.segundos
-            this.pID.rs = data.rs
+            this.pID.contenido = paquete
             this.ws.lstpid$.emit(this.pID)
-            Swal.fire({
-              title: 'Proceso Finalizado',
-              text: `Su proyecto a sido clonado exitosamente!`,
-              icon: 'success',
-              showCancelButton: true,
-              confirmButtonColor: '#3085d6',
-              cancelButtonColor: '#d33',
-              confirmButtonText: 'Ir al proyecto!'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                window.open(environment.Url+'/'+fnx.paquete)
-              }
-            })
+          
           } else {
-            this.ConsultarPidRecursivo(id,fnx)
+            this.ConsultarPidRecursivo(id, paquete)
           }
         },10000)
       },

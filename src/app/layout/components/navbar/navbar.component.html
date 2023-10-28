@@ -33,11 +33,11 @@
   <!-- </div> -->
   <!-- <app-navbar-bookmark></app-navbar-bookmark> -->
   <!--/ Bookmark -->
-  <div class="spinner-grow warning text-warning" style="margin-top: 5px;" ></div>
-  <ul class="nav navbar-nav align-items-center">
-    <li  class="nav-item dropdown dropdown-language">
+  <div class="spinner-grow warning text-warning" style="margin-top: 5px;"  *ngIf="blCargando" ></div>
+  <ul class="nav navbar-nav align-items-center" >
+    <li  class="nav-item dropdown dropdown-language" >
       
-      <span class="selected-language" >&nbsp;&nbsp;&nbsp;Procesando: Duración 20s</span>
+      <span class="selected-language"  *ngIf="blCargando">&nbsp;&nbsp;&nbsp;Procesando tareas en segundo  plano...</span>
     </li>
   </ul>
 

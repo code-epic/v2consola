@@ -1,6 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core'
 import { Router } from '@angular/router'
 import { NgbModalConfig, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap'
+import { ITask, TaskService } from '@services/apicore/task.service';
+import { openDB } from 'idb';
+
 
 @Component({
   selector: 'app-home',
@@ -11,9 +14,22 @@ import { NgbModalConfig, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-
 })
 export class HomeComponent implements OnInit {
 
+  // public task : ITask = {
+  //   funcion: '',
+  //   estatus: false,
+  //   time: '',
+  //   inicio: {
+  //     hours: 0,
+  //     minutes: 0
+  //   },
+  //   prioridad: 0,
+  //   usuario: ''
+  // }
+
   constructor(
     config: NgbModalConfig,
     private ruta: Router,
+    private taskService: TaskService
     ) {
     config.backdrop = false;
     config.keyboard = false;
@@ -79,6 +95,8 @@ export class HomeComponent implements OnInit {
    * On init
    */
   async ngOnInit() {
+    console.log('Iniciando IndexDB')
+
     this.contentHeader = {
       headerTitle: 'Principal',
       actionButton: true,

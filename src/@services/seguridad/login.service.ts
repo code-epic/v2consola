@@ -6,6 +6,9 @@ import { environment } from 'environments/environment';
 import Swal from 'sweetalert2';
 //import { CodeEpic, Configuracion } from 'code.epic.module'
 import jwt_decode from "jwt-decode";
+import { TaskService } from '@services/apicore/task.service';
+import { ApiService } from '@services/apicore/api.service';
+import { forEach } from 'lodash';
 
 export interface IUsuario {
   nombre: string,
@@ -122,7 +125,7 @@ export class LoginService {
 
   //public Epic: CodeEpic = new CodeEpic
 
-  constructor(private router: Router, private http: HttpClient) {
+  constructor(private router: Router, private http: HttpClient, private taskService : TaskService, private apiService : ApiService) {
     //environment.Url +
     this.urlGet = environment.API;
 
@@ -176,11 +179,53 @@ export class LoginService {
           'Te esperamos',
           'success'
         )
+        this.clearSession()
         this.router.navigate(['login']);
-        sessionStorage.clear();
-        localStorage.clear();
+        
       }
     })
+  }
+
+  async clearSession(){
+    let lst = []
+    await this.taskService.keys().then(
+      data => {
+        data.map(e => {
+          console.log(e)
+          this.taskService.get(e).then(
+            contenido => {
+              lst.push(contenido)
+            }
+          ) 
+        }) 
+
+
+        let cl = {
+          'coleccion': 'user-task',
+          'driver': 'MGDBA',
+          'objeto': lst,
+          'donde': '{"id":"panel"}',
+          'upsert': true
+        }
+
+        this.apiService.ExecColeccion(cl).subscribe(
+          x => {
+            console.log('cone ', x)
+            this.taskService.clear().then(
+              xdata => {
+    
+              }
+            )
+          },
+          e => {
+            console.error(e)
+          }
+
+        );
+      }
+    )
+    sessionStorage.clear();
+    localStorage.clear();
   }
 
   getUserDecrypt() {
