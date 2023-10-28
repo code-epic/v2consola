@@ -89,9 +89,9 @@
       </a>
       <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
         <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'user'" [class]="'mr-50'"></span> Profile</a>
-        <!-- <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'mail'" [class]="'mr-50'"></span> Inbox</a>
-        <a angbDropdownItem [routerLink]="['/']"><span [data-feather]="'check-square'" [class]="'mr-50'"></span>Task</a>
-        <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'message-square'" [class]="'mr-50'"></span> Chats</a> -->
+       <a ngbDropdownItem [routerLink]="['/task/task-monitor']"><span [data-feather]="'monitor'" [class]="'mr-50'"></span> Monitor</a>
+        <!-- <a angbDropdownItem [routerLink]="['/']"><span [data-feather]="'check-square'" [class]="'mr-50'"></span>Task</a> -->
+        <!-- <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'message-square'" [class]="'mr-50'"></span> Chats</a>  -->
         <div class="dropdown-divider"></div>
         <a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Salir</a>
       </div>
