@@ -13,6 +13,7 @@ import { NgSelectConfig } from '@ng-select/ng-select';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
+import { TaskService } from '@services/apicore/task.service';
 
 
 @Component({
@@ -37,18 +38,12 @@ export class TaskMonitorComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public tempData = [];
   public rowData = [
-    {
-      pid : '5843779',
-      programa : 'cdddc',
-      argumento : 'adcsc',
-      usuario : 'sqxac',
-      tiempo : 'dcfec',
-      estatus : true
-    }
+
   ];
 
 
-  constructor() { }
+  constructor(private taskService : TaskService, private msjService: WsocketsService,
+    ) { }
 
   ngOnInit(): void {
     // content header
@@ -74,8 +69,35 @@ export class TaskMonitorComponent implements OnInit {
         ]
       }
     };
+    this.initProcess()
+    this.escucharPID()
+
   }
 
+  escucharPID(){
+    this.msjService.lstpid$.subscribe(
+      pid => {
+        console.log(pid)
+        if ( !pid.estatus){
+
+            this.buscarElemento(pid.id)
+        }
+      }
+    )
+
+  }
+
+  async buscarElemento(pid: string){
+   
+    this.rowData = (await this.rowData).map(e => {
+      if (e.pid == pid.substring(0,6)) {
+        e.tiempo = new Date().toUTCString().substring(0,16)
+        e.estatus = false
+      }
+      return e
+    })
+    this.tempData = this.rowData
+  }
 
   filterUpdate(event: any) {
     const val = event.target.value.toLowerCase();
@@ -88,6 +110,40 @@ export class TaskMonitorComponent implements OnInit {
     this.count = this.rowData.length
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
+  }
+
+  async initProcess(){
+    let lstApp = []
+    await this.taskService.keys().then(
+      async lst => {
+        let cnt = lst.length;
+        for (let i = 0; i < cnt; i++) {
+          const e = lst[i];
+          this.taskService.get(e).then(
+            data => {
+
+              lstApp.push(
+                {
+                  pid : data.id.substring(0,6),
+                  programa : data.funcion,
+                  argumento : data.nombre,
+                  usuario : data.usuario,
+                  tiempo : data.fin==undefined?'':data.fin.toUTCString().substring(0,16),
+                  estatus : data.estatus
+                }
+              )
+              if(i == cnt-1) this.insertCommitDB(lstApp)
+            }
+          )
+          
+        }
+      }
+    )
+  }
+
+  insertCommitDB(lst){
+    this.rowData = lst
+    this.tempData = this.rowData
   }
 
 

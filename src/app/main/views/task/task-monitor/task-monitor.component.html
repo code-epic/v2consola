@@ -81,13 +81,13 @@
               </ng-template>
             </ngx-datatable-column>
   
-            <ngx-datatable-column name="Usuario" prop="usuario" [width]="10">
+            <!-- <ngx-datatable-column name="Usuario" prop="usuario" [width]="10">
               <ng-template let-usuario="value" ngx-datatable-cell-template>
                 <div>
                   <span class="font-weight-bold">{{ usuario }} </span>
                 </div>
               </ng-template>
-            </ngx-datatable-column>
+            </ngx-datatable-column> -->
   
             <ngx-datatable-column name="Tiempo" prop="tiempo" [width]="100">
               <ng-template let-tiempo="value" ngx-datatable-cell-template>
@@ -99,8 +99,8 @@
   
             <ngx-datatable-column name="Estatus" prop="estatus" [width]="10">
               <ng-template let-estatus="value" ngx-datatable-cell-template>
-                <div class="badge badge-success" *ngIf="estatus === true">Activo</div>
-                <div class="badge badge-danger" *ngIf="estatus === false">Inactivo</div>
+                <div class="badge badge-success" *ngIf="estatus">En Proceso</div>
+                <div class="badge badge-danger" *ngIf="!estatus">Finalizado</div>
               </ng-template>
             </ngx-datatable-column>  
 

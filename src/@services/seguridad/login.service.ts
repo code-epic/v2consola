@@ -195,7 +195,6 @@ export class LoginService {
           const e = lst[i];
           this.taskService.get(e).then(
             data => {
-              console.log(data)
               if(data.estatus) lstApp.push(data)
               if(i == cnt-1) this.inserCommitDB(lstApp)
             }
@@ -231,12 +230,11 @@ export class LoginService {
 
     this.apiService.ExecColeccion(cl).subscribe(
       x => {
-        console.log('cone ', x)
-        // this.taskService.clear().then(
-        //   xdata => {
+        this.taskService.clear().then(
+          xdata => {
 
-        //   }
-        // )
+          }
+        )
       },
       e => {
         console.error(e)
