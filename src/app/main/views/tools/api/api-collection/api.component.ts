@@ -5,6 +5,13 @@ import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-dat
 import { ApiService, IAPICore, RestoreAPI } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
+import { SqlFormatPipe } from '@core/pipes/sql-format.pipe';
+
+import { AES } from 'crypto-js';
+const clave = '5412892DF0D2919B04ADD29EDEFABA30E30F6D7F5A62A9B84AD46BDE23B25491';
+import { enc } from 'crypto-js';
+
+
 import JSONFormatter from 'json-formatter-js';
 
 import { PdfService } from '@services/pdf/pdf.service';
@@ -17,7 +24,7 @@ import { NgSelectConfig } from '@ng-select/ng-select';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import Stepper from 'bs-stepper';
 import Swal from 'sweetalert2';
 import { environment } from 'environments/environment';
@@ -118,6 +125,7 @@ export class ApiComponent implements OnInit {
 
   public archivos = []
 
+  public rutaURL 
 
   // public
   public mac
@@ -153,6 +161,7 @@ export class ApiComponent implements OnInit {
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
     private pdf: PdfService,
+    private router: Router
   ) {
   }
 
@@ -166,8 +175,8 @@ export class ApiComponent implements OnInit {
     this.llave = this.utilservice.GenerarUnicId();
     this.hashcontrol = btoa("ING" + this.llave);
     
-    this.driversAPP = this.rutaActiva.snapshot.params.id
-    
+    this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
+    this.rutaURL = this.rutaActiva.snapshot.params.id
     await this.ListarApis(this.driversAPP)
 
     
@@ -440,7 +449,6 @@ export class ApiComponent implements OnInit {
     this.xRestore.funcion = 'Fnx_RestoreAPI'
     this.apiService.ExecFnx(this.xRestore).subscribe(
       data => {
-        console.log(data)
         this.ListarApis(this.driversAPP)
         this.utilservice.AlertMini('top-end','success','Se han importado las APIS de la Base de datos XXXXX y la Coleccion XXXX',3000)          
       },
@@ -471,6 +479,7 @@ export class ApiComponent implements OnInit {
     });
   }
 
+
   ModalPromover(data){
     console.log(data)
   }
@@ -483,39 +492,6 @@ export class ApiComponent implements OnInit {
     console.log(modal)
   }
 
-  ModalProbar(modal, data){
-    var api = data.entorno == "produccion" ? "/v1/" : "/devel/"
-    this.xentorno = api + "api/crud:" + data.id;
-    this.data = data
-    this.modalService.open(modal,{
-      centered: true,
-      size: 'xl',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
-  }
-
-  async ejecutarApi() {
-    this.xAPI = this.data;
-    this.xAPI.parametros = this.xparametro
-    this.xAPI.valores = this.valores
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        if (data !== null) {
-          this.utilservice.AlertMini('top-end','success','Consulta Exitosa!', 3000)
-          const formatter = new JSONFormatter(data);
-          document.getElementById("xrs").appendChild(formatter.render());
-        } else {
-          this.resultado = null
-          this.utilservice.AlertMini('top-end','error','La API respondio NULL', 3000)
-        }
-      },
-      (error) => {
-        this.resultado = error;
-      }
-    )
-  }
 
   GuardarDispositivo(){
     this.submitted = true;

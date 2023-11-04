@@ -21,7 +21,7 @@
                     <option value="100">100</option>
                   </select>
                 </label>
-                <button type="button" [routerLink]="'/tools/register-api/'+driversAPP" class="btn btn-icon btn-info"
+                <button type="button" [routerLink]="'/tools/register-api/'+rutaURL" class="btn btn-icon btn-info"
                   style="height: 38px; margin-top: -4px;" rippleEffect>
                   <span [data-feather]="'plus'"></span> Agregar</button>
                 &nbsp;
@@ -190,19 +190,21 @@
                           </div>
                         </td>
                       </tr>
-                      <tr class="align-middle">
+                      <tr class="align-middle code-container">
                         <td colspan="5">
                           {{ row.descripcion ? row.descripcion : 'Sin Descripción' }}
                         </td>
                       </tr>
                     </tbody>
                   </table>
-                  <p class="card-text text-justify">
+                  <div class="code-container">
+                  <!-- <p class="card-text text-justify"> -->
                     <br>
-                    <code>
-             {{ row.query }}
+                    <code style="background-color: transparent;">
+                     {{ row.query }}
                </code>
-                  </p>
+              <!-- </p> -->
+            </div>
                  <hr>
 
                 </div>
@@ -330,100 +332,6 @@
 
 </ng-template>
 
-<ng-template #ModalProbarApi let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Probar Api</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-
-
-      <ul ngbNav #navCenter="ngbNav" class="nav-tabs justify-content-center">
-        <li ngbNavItem>
-          <a ngbNavLink>Laboratorio de Pruebas</a>
-          <ng-template ngbNavContent>
-
-            <div class="row">
-              <div class="col-xl-6 col-md-6 col-12">
-                <div class="form-group">
-                  <label for="basicInput">Parametros</label>
-                  <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="xparametro"
-                    value="{{xparametro}}" id="basicInput" placeholder="Ingrese Parametros" />
-                </div>
-              </div>
-              <div class="col-xl-6 col-md-6 col-12">
-                <div class="form-group">
-                  <label for="basicInput">Url Api</label>
-                  <div class="input-group form-password-toggle mb-2">
-                    <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="xentorno"
-                      value="{{xentorno}}" placeholder="" [attr.disabled]="true" />
-                    <div class="input-group-append" (click)="ejecutarApi()">
-                      <span class="input-group-text cursor-pointer btn-success">
-                        <span [data-feather]="'play'" [class]="'mr-25'"></span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xl-6 col-md-6 col-12 mb-1">
-                <div class="form-group">
-                  <label for="basicInput">Valores</label>
-                  <ngx-codemirror
-                  [ngModelOptions]="{standalone: true}" 
-                  [(ngModel)]="valores"
-                  [options]="codeMirrorOptions"
-                  ></ngx-codemirror>
-                </div>
-              </div>
-              <div class="col-xl-6 col-md-6 col-12 mb-1">
-                <div class="form-group">
-                  <label for="basicInput">Resultado</label>
-                  <div style="width:100%; height:300px; overflow: scroll;">
-                    <div id="xrs"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </ng-template>
-        </li>
-        <li ngbNavItem>
-          <a ngbNavLink>Fragmento de Codido</a>
-          <ng-template ngbNavContent>
-            <fieldset class="form-label-group mb-0">
-              <textarea [ngModelOptions]="{standalone: true}" [(ngModel)]="codeTypeJs"
-                  value="{{codeTypeJs}}" #textLength [maxlength]="99999999999"
-                  class="form-control char-textarea" id="textarea-counter" rows="17"
-                  placeholder="Ejemplo de ejecución"></textarea>
-              <label for="textarea-counter">Ejemplo de ejecución</label>
-          </fieldset>
-          <small class="textarea-counter-value float-right"><span *ngIf="textLength" class="char-count">{{
-                  textLength.value.length
-          }}</span>
-              <span *ngIf="!textLength" class="char-count">0 </span>
-          </small>
-          </ng-template>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="navCenter" class="mt-2"></div>
-
-
-
-
-    </div>
-
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-success" (click)="ejecutarApi()" rippleEffect>Probar <span [data-feather]="'play'" [class]="'mr-25'"></span></button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-  </div>
-
-</ng-template>
 
 
 <ng-template #ModalSubir let-modal>

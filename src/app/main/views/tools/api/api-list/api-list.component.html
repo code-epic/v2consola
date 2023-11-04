@@ -29,7 +29,7 @@
         <div class="card ecommerce-card">
           
         <div class="item-img text-center">
-          <a [routerLink]="'/tools/api-list/'+product.id">
+          <a [routerLink]="'/tools/api-list/'+product.ruta">
             <img class="img-fluid card-img-top" src="assets/integraciones/mongodb.png" *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
             <img class="img-fluid card-img-top" src="assets/integraciones/mysql.png" *ngIf="product.driver == 'mysql8'" alt="img-placeholder" />
             <img class="img-fluid card-img-top" src="assets/integraciones/mariadb.png" *ngIf="product.driver == 'mariadb'" alt="img-placeholder" />

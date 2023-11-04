@@ -31,6 +31,9 @@ export class RegistrarWorkflowComponent implements OnInit {
     { id: "2", descripcion: 'SERVIDORES' },
   ]
 
+
+  public showWKF: boolean = false
+ 
   lstApps = []
   dataModulo = []
   aplicacion : string = undefined
@@ -107,11 +110,10 @@ export class RegistrarWorkflowComponent implements OnInit {
       (data) => {
         // console.log(data)
         this.isBtnSalvar = false
-
         if (data.Cuerpo != undefined ) {
-          console.log(data.Cuerpo)
+          // console.log(data.Cuerpo)
           if (data.Cuerpo.length == 0 ) return
-
+          this.showWKF = true
           this.wkf.msjText$.emit( data.Cuerpo[0].wkf )
           let obj = data.Cuerpo[0]
           this.isBtnSalvar = false
@@ -132,18 +134,13 @@ export class RegistrarWorkflowComponent implements OnInit {
 
   async CargarDrivers() {
     this.xAPI.funcion = "LESBDrivers";
-
     await this.comunicacionesService.ListarConexiones().subscribe(
-      (data) => {
-        
+      (data) => {     
         this.drivers = data
         this.apiService.Ejecutar(this.xAPI).subscribe(
           (data) => {
-
-            this.drivers = data.filter(e => {
-              
-               return e.driver.indexOf('mysql') == 0  
-              
+            this.drivers = data.filter(e => {         
+               return e.driver.indexOf('mysql') == 0          
             });
           },
           (error) => { console.log(error) }
@@ -151,7 +148,6 @@ export class RegistrarWorkflowComponent implements OnInit {
       },
       (error) => { console.log(error) }
     )
-
   }
 
   limpiar(){

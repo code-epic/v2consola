@@ -59,7 +59,7 @@
                                         </div>
                                         <div class="row">
                                             <!-- <div class="form-group col-md-4"></div> -->
-                                            <div class="form-group col-md-4">
+                                            <div class="form-group col-md-8" *ngIf="showAppA">
                                                 <label class="form-label" for="apli">Aplicacion</label>
                                                 <ng-select [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp"
                                                     [ngModelOptions]="{standalone: true}"
@@ -67,7 +67,6 @@
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="name"
                                                     name="aplicacion" id="aplicacion" required placeholder="Seleccione"
                                                     bindValue="identificador">
-                                                    <!--  <ng-option *ngFor="let mdl of dataApp" value="{{mdl.identificador}}" >{{ mdl.nombre }} | {{ mdl.version }}</ng-option> -->
                                                 </ng-select>
                                                 <span *ngIf="accountDetailsForm.submitted && aplicacion.invalid"
                                                     class="invalid-form">
@@ -76,12 +75,12 @@
                                                         requerido!</small>
                                                 </span>
                                             </div>
-                                            <div class="form-group col-md-4">
+                                            <div class="form-group col-md-8" *ngIf="showAppB">
                                                 <label class="form-label" for="aplicacion">Aplicacion</label>
                                                 <input [(ngModel)]="iApp.nombre" #Apliref="ngModel"
                                                     [ngModelOptions]="{standalone: true}" required type="text"
                                                     name="aplicacion" id="aplicacion" class="form-control"
-                                                    (blur)='selectEventModulo()'
+                                                    (blur)='selectEventModulo($event)'
                                                     [class.error]="!Apliref.valid && accountDetailsForm.submitted" />
 
                                                 <span *ngIf="accountDetailsForm.submitted && Apliref.invalid"
@@ -165,27 +164,14 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="password">Password / Token</label>
-                                                <input [(ngModel)]="iApp.clave" #Passref="ngModel" required type="text"
-                                                    name="password" id="password" class="form-control"
-                                                    [class.error]="!Passref.valid && accountDetailsForm.submitted" />
-
-                                                <span *ngIf="accountDetailsForm.submitted && Passref.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Passref.errors.required">Este campo es requerido!</small>
-                                                </span>
+                                                <input [(ngModel)]="iApp.clave" type="text"
+                                                [ngModelOptions]="{standalone: true}" class="form-control" />
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="montaje">Punto Montaje</label>
-                                                <input [(ngModel)]="iApp.puntoMontaje" #Monref="ngModel" required
-                                                    type="text" name="montaje" id="montaje" class="form-control"
-                                                    [class.error]="!Monref.valid && accountDetailsForm.submitted" />
-
-                                                <span *ngIf="accountDetailsForm.submitted && Monref.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Monref.errors.required">Este campo es requerido!</small>
-                                                </span>
+                                                <input [(ngModel)]="iApp.puntoMontaje" [ngModelOptions]="{standalone: true}"
+                                                    type="text" class="form-control"
+                                                 />
                                             </div>
                                         </div>
                                         <div class="row">

@@ -16,6 +16,7 @@ export interface SSB_IAplicacion {
   usuario?: string
   creador?: string
   version?: string
+  llave ?: string
 }
 
 /**

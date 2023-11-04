@@ -123,6 +123,8 @@ export interface IAPI {
   accion: boolean
   estatus: boolean
   ruta: string
+  tiempoduracion : string
+  tipoduracion: number
   // 
 }
 
@@ -133,6 +135,11 @@ export interface WkfEstatus {
   descripcion: string;
   estatus: number;
   orden: number;
+}
+export interface wkfTransicion {
+  idw: number;
+  funcion: string;
+  parametro: string;
 }
 export interface WkfEstado {
   wkf: number;

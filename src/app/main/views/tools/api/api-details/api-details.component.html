@@ -7,39 +7,41 @@
           <!-- Product Details starts -->
           <div class="card-body">
             <div class="row my-2">
-              <div class="col-12 col-md-5 d-flex align-items-center justify-content-center mb-2 mb-md-0">
+              <!-- <div class="col-12 col-md-5 d-flex align-items-center justify-content-center mb-2 mb-md-0">
                 <div class="d-flex align-items-center justify-content-center">
                   <img src="../../../../../../assets/images/logo/logo.png" width="250px" height="250px" class="img-fluid" alt="product image" />
                 </div>
-              </div>
-              <div class="col-12 col-md-7">
-                <h4><strong>{{ api.funcion }}</strong></h4>
+              </div> -->
+              <div class="col-12 col-md-12">
+                <h4><strong>{{ xAPI.funcion }}</strong></h4>
                 <!-- <span class="card-text item-company">
-                    <label class="card-text">Hash - {{api.hash}}</label>
+                    <label class="card-text">Hash - {{xAPI.hash}}</label>
                     </span> -->
                 <div class="ecommerce-details-price d-flex flex-wrap mt-1"></div>
-                <label class="card-text">Hash - {{api.hash}}</label><br>
+                <label class="card-text">Hash - {{xAPI.id}}</label><br>
                 <label class="card-text">Estatus - 
                   <div class="badge badge-pill" [ngClass]="{
-                    'badge-light-success': api.estatus == true,
-                    'badge-light-danger': api.estatus == false
+                    'badge-light-success': xAPI.estatus == true,
+                    'badge-light-danger': xAPI.estatus == false
                   }">
                                       {{
-                                      api.estatus == true
-                                      ? 'Activo'
-                                      : api.estatus == false
-                                      ? 'Inactivo'
-                                      : 'Inactivo'
+                                      xAPI.estatus == true
+                                      ? 'ACTIVO'
+                                      : xAPI.estatus == false
+                                      ? 'INACTIVO'
+                                      : 'INACTIVO'
                                       }}
                                     </div>
                 </label>
                 <br>
-                <label class="card-text">Version - <div class="badge badge-glow badge-dark">{{api.version}}</div></label>
+                <label class="card-text">Version - <div class="badge badge-glow badge-dark">{{xAPI.version}}</div></label>
+                <br>
+                <label class="card-text">Entorno - <div class="badge badge-glow badge-info">{{xAPI.entorno | uppercase}}</div></label>
                 <p class="card-text">
-                  {{ api.descripcion }}
+                  {{ xAPI.descripcion }}
                 </p>
                 <ul class="product-features list-unstyled">
-                  <li *ngIf="product.hasFreeShipping"><i data-feather="shopping-cart"></i> <span>Free Shipping</span></li>
+                  <li><i data-feather="shopping-cart"></i> <span>Free Shipping</span></li>
                   <li>
                     <i data-feather="dollar-sign"></i>
                     <span>EMI options available</span>
@@ -79,11 +81,12 @@
                 <hr />
                 <div class="d-flex flex-column flex-sm-row pt-1">
                     <div class="col-md-12 text-center">
-                        <button type="button" class="btn btn-primary"  rippleEffect>Promover</button>&nbsp;
-                        <button type="button" class="btn btn-danger"  rippleEffect>Eliminar</button>&nbsp;
-                        <button [routerLink]="'/tools/api-list/' + api.driver" class="btn btn-dark"  rippleEffect>Regresar</button>&nbsp;
-                        <button type="button" class="btn btn-warning"  rippleEffect>Modificar</button>&nbsp;
-                        <button type="button" class="btn btn-info" rippleEffect>Probar</button>&nbsp;
+                        <button type="button" class="btn btn-primary" (click)="promover('calidad', xAPI.funcion, 'promover')" *ngIf="xAPI.entorno == 'desarrollo'"  rippleEffect>Promover</button>
+                        <button type="button" class="btn btn-danger" *ngIf="xAPI.entorno != 'desarrollo'" (click)="promover('desarrollo', xAPI.funcion, 'reversar')"  rippleEffect>Reversar a Desarrollo</button>&nbsp;
+                        <button type="button" class="btn btn-info" *ngIf="xAPI.entorno == 'calidad'" (click)="promover('produccion', xAPI.funcion, 'instalar')"  rippleEffect>Instalar</button>&nbsp;
+                        <button [routerLink]="'/tools/api-list/' + xAPI.driver" class="btn btn-dark"  rippleEffect>Regresar</button>&nbsp;
+                        <button type="button" class="btn btn-warning" *ngIf="xAPI.entorno != 'produccion'" [routerLink]="'/tools/update-api/'+xAPI.funcion"  rippleEffect>Modificar</button>&nbsp;
+                        <button type="button" class="btn btn-info" (click)="ModalProbar(ModalProbarApi,xAPI)" *ngIf="xAPI.entorno != 'produccion'" rippleEffect>{{xAPI.entorno == 'calidad' ? 'Probar Versión' : 'Probar'}}</button>&nbsp;
                       </div>
                 </div>
               </div>
@@ -161,3 +164,100 @@
     </div>
   </div>
   
+
+
+
+<ng-template #ModalProbarApi let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Probar Api</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <!-- Invoice -->
+    <div class="col-xl-12 col-md-12 col-12">
+      <!-- Header Starts -->
+
+
+      <ul ngbNav #navCenter="ngbNav" class="nav-tabs justify-content-center">
+        <li ngbNavItem>
+          <a ngbNavLink>Laboratorio de Pruebas</a>
+          <ng-template ngbNavContent>
+
+            <div class="row">
+              <div class="col-xl-6 col-md-6 col-12">
+                <div class="form-group">
+                  <label for="basicInput">Parametros</label>
+                  <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="xparametro"
+                    value="{{xparametro}}" id="basicInput" autocomplete="off" placeholder="Ingrese Parametros" />
+                </div>
+              </div>
+              <div class="col-xl-6 col-md-6 col-12">
+                <div class="form-group">
+                  <label for="basicInput">Url Api</label>
+                  <div class="input-group form-password-toggle mb-2">
+                    <input type="text" class="form-control" [ngModelOptions]="{standalone: true}" [(ngModel)]="xentorno"
+                      value="{{xentorno}}" placeholder="" [attr.disabled]="true" />
+                    <div class="input-group-append" (click)="ejecutarApi()">
+                      <span class="input-group-text cursor-pointer btn-success">
+                        <span [data-feather]="'play'" [class]="'mr-25'"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xl-6 col-md-6 col-12 mb-1">
+                <div class="form-group">
+                  <label for="basicInput">Valores</label>
+                  <ngx-codemirror
+                  [ngModelOptions]="{standalone: true}" 
+                  [(ngModel)]="valores"
+                  [options]="codeMirrorOptions"
+                  ></ngx-codemirror>
+                </div>
+              </div>
+              <div class="col-xl-6 col-md-6 col-12 mb-1">
+                <div class="form-group">
+                  <label for="basicInput">Resultado</label>
+                  <div style="width:100%; height:300px; overflow: scroll;">
+                    <div id="xrs"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </ng-template>
+        </li>
+        <li ngbNavItem>
+          <a ngbNavLink>Fragmento de Codido</a>
+          <ng-template ngbNavContent>
+            <fieldset class="form-label-group mb-0">
+              <textarea [ngModelOptions]="{standalone: true}" [(ngModel)]="codeTypeJs"
+                  value="{{codeTypeJs}}" #textLength [maxlength]="99999999999"
+                  class="form-control char-textarea" id="textarea-counter" rows="17"
+                  placeholder="Ejemplo de ejecución"></textarea>
+              <label for="textarea-counter">Ejemplo de ejecución</label>
+          </fieldset>
+          <small class="textarea-counter-value float-right"><span *ngIf="textLength" class="char-count">{{
+                  textLength.value.length
+          }}</span>
+              <span *ngIf="!textLength" class="char-count">0 </span>
+          </small>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="navCenter" class="mt-2"></div>
+
+
+
+
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-success" (click)="ejecutarApi()" rippleEffect>Probar <span [data-feather]="'play'" [class]="'mr-25'"></span></button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+  </div>
+
+</ng-template>

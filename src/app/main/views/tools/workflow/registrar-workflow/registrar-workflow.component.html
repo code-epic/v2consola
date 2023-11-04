@@ -57,16 +57,18 @@
                         class="form-control" />
 
                     <div class="input-group-prepend">
-                        <!--    <div class="form-group col-md-1" > -->
+                        <div class="form-group col-md-1" >
                         <div *ngIf="!isButtonVisibleSalvar">
                             <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
                                 (click)="salvar()">Salvar
                             </button>
                         </div>
+                        </div>
                         <div *ngIf="isButtonVisibleUpdate">
                             <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
                                 (click)="modificar()"><i class="fa fa-edit" aria-hidden="true"></i>Modificar
                             </button>
+                            &nbsp;
                             <button type="button" class="btn btn-danger" [disabled]="isBtnSalvar" (click)="limpiar()"><i
                                     class="fa fa-edit" aria-hidden="true"></i>Cancelar
                             </button>

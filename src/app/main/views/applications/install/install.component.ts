@@ -6,6 +6,7 @@ import JSONFormatter from 'json-formatter-js';
 import Stepper from 'bs-stepper';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
+import { UtilService } from '@services/util/util.service';
 
 
 @Component({
@@ -80,16 +81,16 @@ export class InstallComponent implements OnInit {
 
   public iApp : SSB_IAplicacion = {
     identificador : 0,
-    basedatos: '0',
-    lenguaje: '0',
+    basedatos: undefined,
+    lenguaje: undefined,
     nombre: '',
     observacion: '',
     clave: '',
     puntoMontaje: '',
-    origen: '0',
+    origen: undefined,
     repositorio: '',
-    sistema: '0',
-    tipo: 0,
+    sistema: undefined,
+    tipo: undefined,
     usuario: '',
     creador: '',
     version: '0.0.1'
@@ -111,21 +112,18 @@ export class InstallComponent implements OnInit {
   };
 
   public tipos = [
-    { id: "0", descripcion: 'SELECCIONE' },
     { id: "1", descripcion: 'PRE-INSTALADA' },
     { id: "2", descripcion: 'INSTALAR' },
     { id: "3", descripcion: 'REPOSITORIO' },
   ]
 
   public sistemasOperativos = [
-    { id: "0", descripcion: 'SELECCIONE' },
     { id: "WINNDOWS", descripcion: 'WINDOWS' },
     { id: "LINUX", descripcion: 'LINUX' },
     { id: "MACOS", descripcion: 'MACOS' },
   ]
 
   public basesDatos = [
-    { id: "0", descripcion: 'SELECCIONE' },
     { id: "POSTGRES", descripcion: 'POSTGRES' },
     { id: "MYSQL", descripcion: 'MYSQL' },
     { id: "MARIADB", descripcion: 'MARIADB' },
@@ -140,7 +138,6 @@ export class InstallComponent implements OnInit {
   ]
 
   public lenguaje = [
-    { id: "0", descripcion: 'SELECCIONE' },
     { id: "PHP", descripcion: 'PHP' },
     { id: "J2EE", descripcion: 'JAVA J2EE' },
     { id: "HCJS", descripcion: 'HTML / CSS3 / JAVASCRIPT' },
@@ -153,8 +150,11 @@ export class InstallComponent implements OnInit {
     { id: "C", descripcion: 'C' },
   ]
 
+  public showAppA : boolean = true
+  public showAppB : boolean = false
 
-public nameApp
+
+public nameApp = undefined
 
 
   onSubmit() {
@@ -186,67 +186,20 @@ public nameApp
     this.horizontalWizardStepper.previous();
   }
 
-  /**
-   * Vertical Wizard Stepper Next
-   */
-  verticalWizardNext() {
-    this.verticalWizardStepper.next();
-  }
-  /**
-   * Vertical Wizard Stepper Previous
-   */
-  verticalWizardPrevious() {
-    this.verticalWizardStepper.previous();
-  }
-  /**
-   * Modern Horizontal Wizard Stepper Next
-   */
-  modernHorizontalNext() {
-    this.modernWizardStepper.next();
-  }
-  /**
-   * Modern Horizontal Wizard Stepper Previous
-   */
-  modernHorizontalPrevious() {
-    this.modernWizardStepper.previous();
-  }
-  /**
-   * Modern Vertical Wizard Stepper Next
-   */
-  modernVerticalNext() {
-    this.modernVerticalWizardStepper.next();
-  }
-  /**
-   * Modern Vertical Wizard Stepper Previous
-   */
-  modernVerticalPrevious() {
-    this.modernVerticalWizardStepper.previous();
-  }
-
-  async ListarIP(){
-    
-    await this.comunicacionesServices.Listar().subscribe(
-      (data) => {
-
-        this.hosts = data
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
 
   constructor(
     private apiService: ApiService,
     private modalService: NgbModal,
     private config: NgSelectConfig,
+    private utilservice : UtilService,
     private comunicacionesServices : ComunicacionesService,
   ) { }
 
-  ngOnInit(): void {
-    this.ListarIP();
-    this.lstAplicaciones();
+  async ngOnInit() {
+    await this.ListarIP();
+    await this.lstAplicaciones();
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
+
 
  this.contentHeader = {
       headerTitle: 'Aplicaciones',
@@ -267,16 +220,27 @@ public nameApp
       }
     } 
   
+  }
 
+  async ListarIP(){
+    await this.comunicacionesServices.Listar().subscribe(
+      async (data) => {
+         await data.map(e => {
+        this.hosts.push(e)
+         });
+        this.hosts.push({id:'SERVIDOR', host: 'github', descripcion:'@GITHUB'},{id:'SERVIDOR', host: 'gitlab', descripcion:'@GITLAB'})
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
   async guardarAplicacion(){
-    console.log("Llego a guardar")
     this.xAPI.funcion = "SSB_IAplicacion" 
+    this.iApp.llave = this.iApp.nombre + '.sse'
     this.xAPI.valores = JSON.stringify(this.iApp) 
-    console.log(this.xAPI.valores)
-    if(this.iApp.identificador != 0) this.xAPI.funcion = "SSB_UAplicacion"
-     
+    if(this.iApp.identificador != null) this.xAPI.funcion = "SSB_UAplicacion"
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         var msj = "Actualizado"
@@ -284,25 +248,31 @@ public nameApp
           this.iApp.identificador = data.msj;
           var msj = "Agregado"
         }
+        this.utilservice.AlertMini('top-end', 'success','Se ha ' + msj + ' el registro con exito',3000)
       },
       (error) => {
+        this.utilservice.AlertMini('top-end', 'error','Oops! Algo salio mal!',3000)
         console.log(error)
       }
     )
-   
-
   }
 
   selectEventModulo(){
-    console.log("select llegoooooooooo")
-    console.log(this.iApp.identificador)
-    console.log(this.iApp.nombre)
+    // console.log(this.iApp.identificador)
+    // console.log(this.iApp.nombre)
     /* this.iApp.identificador = this.iApp.identificador; */
-    //this.nombreapp = this.iApp.nombre;
-   // this.consultarAplicacion()    
+    this.nombreapp = this.iApp.nombre;
+   this.consultarAplicacion()    
   }
+
   selectEventModuloo(e){
-    console.log(e)
+    if (e == null) {
+      this.showAppA = false
+      this.showAppB = true
+    } else {
+      this.showAppA = true
+      this.showAppB = false
+    }
     this.iApp.identificador = e
     this.consultarAplicacion()    
   }
@@ -312,11 +282,8 @@ public nameApp
     this.xAPI.parametros =  this.iApp.identificador.toString()
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
-        console.log(this.xAPI.parametros)
         var xapp : SSB_IAplicacion
         xapp = data.Cuerpo[0]
-        console.log(xapp)
         this.iApp = xapp;
 
       },
@@ -330,13 +297,13 @@ public nameApp
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.valores = null;
     await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => { 
-        this.dataApp = data.Cuerpo.map(e => {  
-          e.name = `${e.nombre} | ${e.VERSION}`   
+     async data => { 
+        this.dataApp = await data.Cuerpo.map(e => {  
+          e.name = `${e.nombre} | ${e.VERSION}`
           this.nameApp = e.name 
-          console.log(e)
           return e
-        });      
+        }); 
+        this.dataApp.push({aplicacion:'Crear Nuevo', name: ' Crear Nuevo'})
       },
       (error) => {
         console.log(error)

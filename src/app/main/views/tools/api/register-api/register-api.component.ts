@@ -5,6 +5,11 @@ import { UtilService } from '@services/util/util.service';
 import Stepper from 'bs-stepper';
 import { environment } from 'environments/environment';
 
+import { AES } from 'crypto-js';
+const clave = '5412892DF0D2919B04ADD29EDEFABA30E30F6D7F5A62A9B84AD46BDE23B25491';
+import { enc } from 'crypto-js';
+
+
 @Component({
   selector: 'app-register-api',
   templateUrl: './register-api.component.html',
@@ -28,6 +33,11 @@ export class RegisterApiComponent implements OnInit {
     parametros: '',
     valores: {},
   };
+
+  public apiUpdate: IAPICore = {
+    funcion: '',
+    entorno: ''
+  }
 
   public codeJson: any = {
     theme: 'idea',
@@ -70,22 +80,29 @@ export class RegisterApiComponent implements OnInit {
     relacional: undefined,
     coleccion: '',
     valores: undefined,
-    consumidores: 0,
-    cache: undefined,
-    logs: undefined,
-    concurrencia: undefined,
-    retorna: undefined,
-    prioridad: undefined,
-    entorno: undefined,
-    accion: undefined,
-    estatus: undefined,
+    consumidores: 100,
+    cache: 0,
+    logs: false,
+    concurrencia: false,
+    retorna: false,
+    prioridad: '0',
+    entorno: 'desarrollo',
+    accion: false,
+    estatus: true,
     ruta: '',
     entradas: '',
     query: '',
     alias: '',
-    driver: '',
-    id: ''
+    driver: undefined,
+    id: '',
+    tiempoduracion: '20',
+    tipoduracion: 0
   }
+
+  public xAPIAux: IAPICore
+
+  public existe: boolean = false
+
 
   public duracion = [
     { id: 0, name: 'Segundos' },
@@ -178,9 +195,9 @@ export class RegisterApiComponent implements OnInit {
   ]
 
   public prioridad = [
-    { id: 0, name: 'BAJA' },
-    { id: 1, name: 'MEDIA' },
-    { id: 2, name: 'ALTA' },
+    { id: '0', name: 'BAJA' },
+    { id: '1', name: 'MEDIA' },
+    { id: '2', name: 'ALTA' },
   ]
 
   public entorno = [
@@ -229,25 +246,30 @@ export class RegisterApiComponent implements OnInit {
 
   public Xmetodo
 
-  campo: any = 'SELECCIONE'
-  alias: string = ''
-  tipodato: string = 'SELECCIONE'
-  tabla: any = 'SELECCIONE'
-  xdml: string = 'SELECCIONE'
-  defecto: string = ''
-  condicion: string = ''
+  public DisabledTipoDato = true
 
+  public campo = undefined
+  public alias = ''
+  public tipodato = undefined
+  public tabla = undefined
+  public xdml = undefined
+  public defecto = ''
+  public condicion = ''
+
+
+  public getURL
 
   public IEntrada = [] //Detalles de la entrada
 
-  public DML: any = ["$values", "$set", "WHERE"]
+  public DML: any = ["$values", "$set", "$where"]
   //Listado general de entradas
   public IEntradas = {
     "$values": [],
     "$set": [],
-    "WHERE": []
+    "$where": []
   }
 
+  public rutaURL
 
 
   Dml: any = [
@@ -284,13 +306,19 @@ export class RegisterApiComponent implements OnInit {
   }
 
 
-  ngOnInit(): void {
+  async ngOnInit() {
 
     this.CargarDrivers()
 
     this.CargarListaAplicaciones()
 
-    this.driversAPP = this.rutaActiva.snapshot.params.id
+    
+    this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
+    this.rutaURL = this.rutaActiva.snapshot.params.id
+    
+    this.LeerAPI(this.rutaActiva.snapshot.params.id)
+    
+    this.getURL = this.rutaActiva.snapshot.url[1].path
 
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
 
@@ -316,9 +344,9 @@ export class RegisterApiComponent implements OnInit {
             link: '/tools/api'
           },
           {
-            name: 'Lista APIS',
+            name: 'LISTA APIS',
             isLink: true,
-            link: `/tools/api-list/${this.driversAPP}`
+            link: `/tools/api-list/${this.rutaURL}`
           },
           {
             name: this.driversAPP,
@@ -344,7 +372,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   RegistrarAPI() {
-    console.log(this.xAPIDB)
+    this.xAPIDB.driver = this.driversAPP
     var obj = {
       "coleccion": "apicore",
       "objeto": this.xAPIDB,
@@ -354,7 +382,7 @@ export class RegisterApiComponent implements OnInit {
     }
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
-        this.router.navigate([`tools/api-list/${this.driversAPP}`]);
+        this.router.navigate([`tools/api-list/${this.rutaURL}`]);
         this.utilservice.AlertMini('top-end','success',`Tu (API) ha sido registrada codigo: ${data.UpsertedID}`,3000)
       }, (error) => {
         this.utilservice.AlertMini('top-end','error','Error al Guardadar API',3000)
@@ -362,21 +390,152 @@ export class RegisterApiComponent implements OnInit {
     )
   }
 
-  consultarBDDriver() {
-    let bd = ''
-    this.drivers.map(e => {
-      if (this.xAPI.driver == e.id) {
-        bd = e.basedatos
-        return
+  LeerAPI(funcion){
+    this.existe = true
+    this.xAPI.funcion = "_SYS_R_ListarApisID";
+    this.xAPI.parametros = funcion
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data != null) {
+          this.xAPIDB = data[0];
+        }
+        this.onTipo(this.xAPIDB.tipo);
+        this.xAPIDB.version = this.existe ? this.validarVersion() : this.xAPI.version;
+      },
+      (error) => {
+        console.log(error);
       }
-    });
-    return bd
+    )
+  }
+
+ async UpdateAPI(funcion: string, entorno: string){
+    var obj = {
+      "coleccion": "apicore",
+      "objeto": this.xAPIDB,
+      "donde": `{\"funcion\":\"${this.xAPIDB.funcion}\"}`,
+      "driver": "MGDBA",
+      "upsert": true
+    }
+   await this.apiService.ExecColeccion(obj).subscribe(
+      (data) => {
+        console.log(data)
+        // this.router.navigate([`tools/api-details/${this.rutaURL}`]);
+        this.utilservice.AlertMini('top-end','success',`Tu (API) ha sido actualizada`,3000)
+      }, (error) => {
+        this.utilservice.AlertMini('top-end','error','Error al Guardadar API',3000)
+      }
+    )
+  //   this.apiUpdate.entorno = entorno
+  //   this.apiUpdate.funcion = funcion
+  //   let jsonG = {
+  //     "coleccion": "apicore",
+  //     "relacional": false,
+  //     "tipo": 'ACTUALIZAR',
+  //     "entorno": entorno,
+  //     "valores": this.xAPIDB
+  //   };
+  //   let sApi = 'crud';
+  //   this.xAPI = {}
+  //  await  this.apiService.Guardar(jsonG, sApi).subscribe(
+  //     (data) => {
+  //       console.log(data)
+  //       this.router.navigate([`tools/api-list/${this.rutaURL}`]);
+  //       this.utilservice.AlertMini('top-end', 'success', `Tu (API) ha sido actualizada`, 3000)
+  //     },
+  //     (errot) => {
+  //       this.utilservice.AlertMini('top-end', 'error', 'Fallo la conexión, con el API', 3000)
+  //     }
+  //   )
+  }
+
+
+  validarVersion() {
+    let version = this.xAPIDB.version.split('.')
+    let mayor = parseInt(version[0])
+    let menor = parseInt(version[1])
+    let menor_aux = parseInt(version[2])
+    const _api = this.xAPIDB
+    const _aux = this.xAPIAux
+    if (_api.tipo != _aux.tipo || _api.driver != _aux.driver ||
+      _api.concurrencia != _aux.concurrencia || _api.entradas != _aux.entradas ||
+      _api.query != _aux.query) {
+      mayor = parseInt(version[0]) + 1
+    }
+    if (_api.logs != _aux.logs || _api.cache != _aux.cache || _api.prioridad != _aux.prioridad || _api.accion != _aux.accion) {
+      menor = parseInt(version[1]) + 1
+    }
+    if (_api.descripcion != _aux.descripcion || _api.categoria != _aux.categoria) {
+      menor_aux = parseInt(version[2]) + 1
+    }
+    console.log(_api)
+    console.log(_aux)
+    console.log(mayor + '.' + menor + '.' + menor_aux)
+    return mayor + '.' + menor + '.' + menor_aux
+  }
+
+
+  onTipo(e) {
+    console.log(e)
+    // this._divInit()
+    switch (this.xAPIDB.tipo) {
+      case 'CODIGO':
+        // this.divCodigofuente = ''
+        // this.divArchivosng = ''
+        break;
+      case 'ARCHIVO':
+
+        break;
+      case 'LOGICA':
+        // this.divCodigofuente = ''
+        // this.divArchivosng = ''
+        break;
+      case 'CONSULTA':
+        // this.divConsultang = ''
+        // this.clickRefresh(0)
+        break;
+      case 'INTERFAZ':
+
+        break;
+
+      default:
+
+        break;
+    }
   }
 
   selDataBase(valor: any): void {
-    this.xAPI.funcion = "_SYS_MYSQL";
+    this.xAPIDB.driver = valor.id
     this.xAPI.parametros = valor.basedatos;
     this.dataModulo = [];
+    switch (valor.driver) {
+      case 'mysql8':
+        this.xAPI.funcion = "_SYS_MYSQL";
+        break;
+        case 'mariadb':
+        this.xAPI.funcion = "_SYS_MYSQL";
+        break;
+        case 'postgres13':
+          this.xAPI.funcion = "_SYS_POSTGRES";
+          break;
+        case 'postgres96':
+          this.xAPI.funcion = "_SYS_POSTGRES";
+        break;
+        case 'mongodb':
+
+        break;
+        case 'puenteurl':
+
+        break;
+        case 'sqlserver17':
+
+        break;
+        case 'oracle19c':
+
+        break;
+    
+      default:
+        break;
+    }
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         let i = 0
@@ -459,7 +618,12 @@ export class RegisterApiComponent implements OnInit {
   onMetodo(ev) {
     this.lstDml = []
     this.Dml.map(e => {
-      if (e.tipo == ev.name) {
+      if(ev != 'CONSULTAR'){
+        this.DisabledTipoDato = false
+      } else {
+        this.DisabledTipoDato = true
+      }
+      if (e.tipo == ev) {
         this.lstDml.push(e)
       }
     });
@@ -467,7 +631,7 @@ export class RegisterApiComponent implements OnInit {
 
   onDml(ev) {
     this.xcondicion = true
-    if (this.xdml == "WHERE") {
+    if (ev == "$where") {
       this.xcondicion = false
     }
   }
@@ -552,7 +716,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   selMetodo(metodo) {
-    switch (metodo.name) {
+    switch (metodo) {
       case "INSERTAR":
         this.xAPIDB.query = `INSERT INTO ${this.tabla.name} $exec`
         break;
@@ -567,5 +731,6 @@ export class RegisterApiComponent implements OnInit {
         break;
     }
   }
+
 
 }

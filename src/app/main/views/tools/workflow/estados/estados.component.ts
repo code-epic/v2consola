@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService, IAPICore, ObjectoGenerico } from '@services/apicore/api.service';
+import { ApiService, IAPICore, ObjectoGenerico, WkfEstado } from '@services/apicore/api.service';
 import { Wdefinicion, WListaEstado, WorkflowService } from '@services/workflow/workflow.service';
 import Swal from "sweetalert2"
 
@@ -31,10 +31,12 @@ export class EstadosComponent implements OnInit {
     { id: "2", descripcion: 'SUBSISTEMA' },
   ]
 
-  public xObj: ObjectoGenerico = {
-    nomb: '',
-    obse: '',
-    idw: 0
+
+  public wkfEstado : WkfEstado = {
+    wkf: 0,
+    nombre: '',
+    descripcion: '',
+    estatus: 0
   }
 
   public estatus = undefined
@@ -55,20 +57,17 @@ export class EstadosComponent implements OnInit {
       return
     }
     this.wkf.msjText$.subscribe(e => {
-      console.info(e)
+      // console.info(e)
       if ( e == 'CLEAN') this.rowEstado = []
       this.lstEstados(e)
       this.xidW = parseInt(e)
-
     })
   }
 
   lstEstados(idw: string): any {
-    // console.log('llego lstEstados')
     this.xAPI.funcion = 'WKF_CEstados'
     this.xAPI.parametros = idw
     this.xAPI.valores = {}
-    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.rowEstado = data.Cuerpo
@@ -106,17 +105,50 @@ export class EstadosComponent implements OnInit {
   }
 
   Guardar(): any {
-    this.xAPI.funcion = 'Wk_IEstados'
-    this.xObj.idw = this.xidW
-    this.xAPI.valores = JSON.stringify(this.xObj)
+    this.xAPI.funcion = 'WKF_IEstados'
+    this.wkfEstado.wkf = this.xidW
+    this.wkfEstado.estatus = parseInt(this.estatus)
+    this.xAPI.valores = JSON.stringify(this.wkfEstado)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        this.Ok(data.msj)
+        console.log(this.xidW.toString())
+        this.lstEstados(this.xidW.toString())
+        this.limpiarEstados()
+
       },
       (err) => {
         console.error(err)
       }
     )
+  }
+
+  Ok(id: any) {
+    Swal.fire({
+      title: "Creando Estatus del Workflow ",
+      text: "El estado ha sido creado con exito (#" + id + ") ",
+      icon: "info",
+      showCancelButton: false,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Aceptar / Continuar",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (!result.isConfirmed) return
+    })
+  }
+
+  limpiarEstados() {
+    this.wkfEstado = {
+      wkf: 0,
+      nombre: '',
+      descripcion: '',
+      estatus: 0
+    }
+    this.niveles = undefined
+    this.rowEstado = []
+    this.wkf.msjText$.emit(this.xidW.toString())
+     this.lstEstados(this.xidW.toString())
   }
 
 }

@@ -5,6 +5,10 @@ import { ComunicationsService } from '@services/networks/comunications.service';
 import { Router } from '@angular/router';
 import { WsocketsService } from '@services/websockets/wsockets.service';
 
+import { AES } from 'crypto-js';
+const clave = '5412892DF0D2919B04ADD29EDEFABA30E30F6D7F5A62A9B84AD46BDE23B25491';
+import { enc } from 'crypto-js';
+
 @Component({
   selector: 'app-api-list',
   templateUrl: './api-list.component.html',
@@ -116,8 +120,10 @@ export class ApiListComponent implements OnInit {
     this.drivers = []
      this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.drivers = data
-				console.log(data)
+        data.forEach(e => {
+          e.ruta = AES.encrypt(e.id,clave).toString()
+          this.drivers.push(e)
+        });
       },
       (error) => {
         console.log(error)

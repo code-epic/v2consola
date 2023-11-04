@@ -241,6 +241,13 @@
               </ng-select>
             </div>
 
+            <div class="col-md-3 col-12 mb-1">
+              <label class="form-label" for="http">Aplicación</label>
+              <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPI.prefijo" [ngModelOptions]="{standalone: true}"
+                bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                placeholder="Seleccione Aplicación"></ng-select>
+            </div>
+
             <div class="col-md-3 col-12 mb-1" *ngIf="divTiempo">
               <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
               <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
@@ -248,6 +255,8 @@
                 aria-describedby="login-tiempo" tabindex="1" autofocus
                />
             </div>
+
+
   
   
             <div class="col-md-12 col-12 mb-1">

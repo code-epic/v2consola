@@ -41,6 +41,7 @@ import { RedComponent } from './workflow/red/red.component';
 import { EstadosComponent } from './workflow/estados/estados.component';
 import { TransicionesComponent } from './workflow/transiciones/transiciones.component';
 import { EstatusComponent } from './workflow/estatus/estatus.component';
+import { SqlFormatPipe } from '@core/pipes/sql-format.pipe';
 
 const routes = [
   {
@@ -78,6 +79,12 @@ const routes = [
     component: RegisterApiComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'tools/update-api/:id',
+    component: RegisterApiComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
   }
 ];
 
@@ -93,7 +100,8 @@ const routes = [
     RedComponent,
     EstadosComponent,
     TransicionesComponent,
-    EstatusComponent
+    EstatusComponent,
+    SqlFormatPipe
   ],
   imports: [
     RouterModule.forChild(routes),

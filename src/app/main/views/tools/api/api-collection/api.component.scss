@@ -23,6 +23,17 @@
 //   border-radius: 0px 8px 9px 0px;
 // }
 
+.code-container {
+  overflow: auto;
+  white-space: pre-wrap;
+  width: 100%;
+  height: 100px;
+  // margin: 0 auto;
+  resize: both; /* Permite que el usuario ajuste el tamaño del contenedor */
+  border: 1px solid #ccc; /* Agrega un borde para indicar que el contenedor es redimensionable */
+  // padding: 5px; /* Agrega un poco de espacio alrededor del código SQL */
+}
+
 .input_container {
     border: 1px solid #e5e5e5;
     text-transform: capitalize;

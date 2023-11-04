@@ -181,6 +181,7 @@ export class FunctionsComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
+  public ListaAplicaciones
 
   constructor(
     private interceptor : AuthInterceptorService,
@@ -204,7 +205,7 @@ export class FunctionsComponent implements OnInit {
 
   async ngOnInit() {
     await this.CargarListaFunciones()
-
+    this.CargarListaAplicaciones()
     // this.Fnx.id = this.utilservice.GenerarUnicId()
     // this.loginForm.value.id = 'csdcddcd'
 
@@ -401,6 +402,22 @@ export class FunctionsComponent implements OnInit {
       keyboard: false,
       windowClass: 'fondo-modal',
     });
+  }
+
+  async CargarListaAplicaciones() {
+    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI.parametros = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.ListaAplicaciones = data.Cuerpo.map(e => {
+          e.name = e.nombre+' : '+e.VERSION
+          return e
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
 
