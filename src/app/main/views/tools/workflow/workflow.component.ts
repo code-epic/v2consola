@@ -299,7 +299,7 @@ export class WorkflowComponent implements OnInit {
     this.xAPI.valores = JSON.stringify(this.wkfEstado)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.Ok(data.msj)
+        this.Ok(data.msj, 'Estado')
         this.lstEstados(this.xidW.toString())
         this.limpiarEstados()
       },
@@ -317,7 +317,7 @@ export class WorkflowComponent implements OnInit {
     this.xAPI.valores = JSON.stringify(this.wkfEstatus)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.Ok(data.msj)
+        this.Ok(data.msj, 'Estatus')
         this.lstEstatus()
         this.limpiarEstatus()
       },
@@ -327,10 +327,10 @@ export class WorkflowComponent implements OnInit {
     )
   }
 
-  Ok(id: any) {
+  Ok(id: any, title: string) {
     Swal.fire({
-      title: "Creando Estatus del Workflow ",
-      text: "El estado ha sido creado con exito (#" + id + ") ",
+      title: `Creando ${title} del Workflow`,
+      text: `El ${title} ha sido creado con exito (#" ${ id } ") `,
       icon: "info",
       showCancelButton: false,
       confirmButtonColor: "#3085d6",
@@ -489,7 +489,7 @@ export class WorkflowComponent implements OnInit {
     this.rowDataTransiciones = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.Ok(data.msj)
+        this.Ok(data.msj,'Transición')
         this.lstTranscion(this.xidW.toString())
         this.limpiarTransicion()
       },
@@ -533,7 +533,7 @@ export class WorkflowComponent implements OnInit {
     this.rowDataRed = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.Ok(data.msj)
+        this.Ok(data.msj, 'Red')
         this.lstRed(this.xidW.toString())
         this.limpiarRed()
       },
