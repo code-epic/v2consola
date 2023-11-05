@@ -416,7 +416,7 @@
                         <ng-select bindLabel="descripcion" [(ngModel)]="wkfRed.estadoDestinoFalso"
                         [ngModelOptions]="{standalone: true}"
                         name="destino" id="destino" required placeholder="Seleccione"
-                          bindValue="id">
+                          bindValue="id" (change)="lstEstatusRedDF($event)">
                           <ng-option *ngFor="let e of rowEstado; let i = index"
                             value="{{ e.id }}">{{e.nomb}}</ng-option>
                         </ng-select>
@@ -427,7 +427,7 @@
                         <ng-select bindLabel="descripcion" name="destino" id="destino" required placeholder="Seleccione"
                           bindValue="id" [(ngModel)]="wkfRed.estatusDestinoFalso"
                           [ngModelOptions]="{standalone: true}">
-                          <ng-option *ngFor="let e of rowEstatusRedF; let i = index"
+                          <ng-option *ngFor="let e of rowEstatusDF; let i = index"
                             value="{{ e.id }}">{{e.nomb}}</ng-option>
                         </ng-select>
                       </div>

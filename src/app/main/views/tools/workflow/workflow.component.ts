@@ -88,6 +88,8 @@ export class WorkflowComponent implements OnInit {
   public dataModulo = []
   public Definicion = []
   public rowEstado: []
+  public rowEstadoDF = []
+  public rowEstatusDF = []
   public rowEstatus: []
   public rowEstatusRedV = []
   public rowEstatusRedF = []
@@ -408,6 +410,22 @@ export class WorkflowComponent implements OnInit {
       (data) => {
         data.Cuerpo.forEach(e => {
           this.rowEstatusRedF.push(e)
+        });
+      },
+      (err) => {
+        console.error(err)
+      }
+    )
+  }
+  lstEstatusRedDF(event): any {
+    this.rowEstatusDF = []
+    this.xAPI.funcion = "WKF_CEstatus"
+    this.xAPI.parametros = event
+    this.xAPI.valores = {}
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        data.Cuerpo.forEach(e => {
+          this.rowEstatusDF.push(e)
         });
       },
       (err) => {
