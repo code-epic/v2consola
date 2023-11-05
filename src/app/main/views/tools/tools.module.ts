@@ -36,11 +36,6 @@ import { ApiListComponent } from './api/api-list/api-list.component';
 import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.module';
 import { ApiDetailsComponent } from './api/api-details/api-details.component';
 import { RegisterApiComponent } from './api/register-api/register-api.component';
-import { RegistrarWorkflowComponent } from './workflow/registrar-workflow/registrar-workflow.component';
-import { RedComponent } from './workflow/red/red.component';
-import { EstadosComponent } from './workflow/estados/estados.component';
-import { TransicionesComponent } from './workflow/transiciones/transiciones.component';
-import { EstatusComponent } from './workflow/estatus/estatus.component';
 import { SqlFormatPipe } from '@core/pipes/sql-format.pipe';
 
 const routes = [
@@ -96,11 +91,6 @@ const routes = [
     ApiListComponent,
     ApiDetailsComponent,
     RegisterApiComponent,
-    RegistrarWorkflowComponent,
-    RedComponent,
-    EstadosComponent,
-    TransicionesComponent,
-    EstatusComponent,
     SqlFormatPipe
   ],
   imports: [

@@ -321,7 +321,7 @@
                     </div>
                     <!-- FIN REGISTRO DE TRANSACCIONES WORKFLOW -->
 
-                    <!-- INICIO REGISTRO DE TRANSACCIONES WORKFLOW -->
+                    <!-- INICIO TABLA DE TRANSACCIONES WORKFLOW -->
                     <div class="row">
                       <div class="col-md-12">
 
@@ -351,7 +351,7 @@
                       </div>
 
                     </div>
-                    <!-- FIN REGISTRO DE TABLA TRANSACCIONES WORKFLOW -->
+                    <!-- FIN TABLA DE TRANSACCIONES WORKFLOW -->
                   </ng-template>
                 </li>
                 <li ngbNavItem>
@@ -360,55 +360,97 @@
                     <!-- INICIO REGISTRO DE RED WORKFLOW -->
                     <div class="row">
 
-                      <div class="form-group col-md-4">
+                      <div class="form-group col-md-6">
                         <label class="form-label" for="origen">Estado Origen</label>
                         <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                          bindValue="id" (change)="lstEstatusRedV($event)" [(ngModel)]="wkfRed.estadoOrigen"
+                          [ngModelOptions]="{standalone: true}">
+                          <ng-option *ngFor="let e of rowEstado; let i = index"
+                            value="{{ e.id }}">{{e.nomb}}</ng-option>
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="origen">Estatus Origen</label>
+                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                          bindValue="id" [(ngModel)]="wkfRed.estatusOrigen"
+                          [ngModelOptions]="{standalone: true}">
+                          <ng-option *ngFor="let e of rowEstatusRedV; let i = index"
+                            value="{{ e.id }}">{{e.nomb}}</ng-option>
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-12">
+                        <label class="form-label" for="origen">Transición</label>
+                        <ng-select bindLabel="descripcion" [(ngModel)]="wkfRed.transicionVerdadero"
+                        [ngModelOptions]="{standalone: true}" name="origen" id="origen" required placeholder="Seleccione"
+                          bindValue="id">
+                          <ng-option *ngFor="let e of ListaTransiciones; let i = index"
+                            value="{{ e.id }}">{{e.func}}</ng-option>
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="destino">Estado Destino Verdadero</label>
+                        <ng-select bindLabel="descripcion" [(ngModel)]="wkfRed.estadoDestinoVerdadero"
+                        [ngModelOptions]="{standalone: true}"
+                        (change)="lstEstatusRedF($event)" name="destino" id="destino" required placeholder="Seleccione"
                           bindValue="id">
                           <ng-option *ngFor="let e of rowEstado; let i = index"
                             value="{{ e.id }}">{{e.nomb}}</ng-option>
                         </ng-select>
                       </div>
 
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="transiciones">Transición</label>
-                        <input required type="text" name="transiciones" id="transiciones" placeholder="Enter ..."
-                          class="form-control" />
-
-                      </div>
-
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="destino">Estado Destino</label>
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="destino">Estatus Destino Verdadero</label>
                         <ng-select bindLabel="descripcion" name="destino" id="destino" required placeholder="Seleccione"
+                          bindValue="id" [(ngModel)]="wkfRed.estatusDestinoVerdadero"
+                          [ngModelOptions]="{standalone: true}">
+                          <ng-option *ngFor="let e of rowEstatusRedF; let i = index"
+                            value="{{ e.id }}">{{e.nomb}}</ng-option>
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-6">
+                        <label class="form-label" for="destino">Estado Destino Falso</label>
+                        <ng-select bindLabel="descripcion" [(ngModel)]="wkfRed.estadoDestinoFalso"
+                        [ngModelOptions]="{standalone: true}"
+                        name="destino" id="destino" required placeholder="Seleccione"
                           bindValue="id">
                           <ng-option *ngFor="let e of rowEstado; let i = index"
                             value="{{ e.id }}">{{e.nomb}}</ng-option>
                         </ng-select>
                       </div>
 
-                      <!-- <div class="col-md-12"> -->
                       <div class="form-group col-md-6">
-                        <label class="form-label" for="derror">Estado Error</label>
-                        <ng-select bindLabel="descripcion" name="derror" id="derror" required placeholder="Seleccione"
-                          bindValue="id">
-                          <ng-option *ngFor="let e of rowEstado; let i = index"
+                        <label class="form-label" for="destino">Estatus Destino Falso</label>
+                        <ng-select bindLabel="descripcion" name="destino" id="destino" required placeholder="Seleccione"
+                          bindValue="id" [(ngModel)]="wkfRed.estatusDestinoFalso"
+                          [ngModelOptions]="{standalone: true}">
+                          <ng-option *ngFor="let e of rowEstatusRedF; let i = index"
                             value="{{ e.id }}">{{e.nomb}}</ng-option>
                         </ng-select>
                       </div>
-                      <!-- </div> -->
-                      <div class="form-group col-md-6">
-                        <label class="form-label" for="etransiciones">Transición Error</label>
-                        <input required type="text" name="etransiciones" id="etransiciones" placeholder="Enter ..."
-                          class="form-control" />
 
+                      <div class="form-group col-md-12">
+                        <label class="form-label" for="origen">Transición Error</label>
+                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                          bindValue="id" [(ngModel)]="wkfRed.transicionFalsa"
+                          [ngModelOptions]="{standalone: true}">
+                          <ng-option *ngFor="let e of ListaTransiciones; let i = index"
+                            value="{{ e.id }}">{{e.func}}</ng-option>
+                        </ng-select>
                       </div>
+                      
                       <div class="col-md-12">
                         <label class="form-label" for="descripcion">Descripción</label>
                         <div class="input-group mb-3">
-
-                          <input style="font-size:14px;" type="text" class="form-control">
+                          <input style="font-size:14px;" [(ngModel)]="wkfRed.descripcion"
+                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
                           <div class="input-group-prepend">
+                            &nbsp;
 
-                            <button type="button" class="btn btn-danger">
+                            <button type="button" class="btn btn-danger" (click)="GuardarRed()">
                               <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar Definición
                             </button>
                           </div>
@@ -417,9 +459,28 @@
                     </div>
                     <!-- FIN REGISTRO DE RED WORKFLOW -->
 
-                    <!-- INICIO REGISTRO DE RED WORKFLOW -->
+                    <!-- INICIO TABLA DE RED WORKFLOW -->
+                    <div class="row">
+                      <div class="col-md-12">
 
-                    <!-- FIN REGISTRO DE TABLA RED WORKFLOW -->
+                        <ngx-datatable [rows]="rowDataRed" [rowHeight]="58" class="bootstrap core-bootstrap bordered-table"
+                          [limit]="10" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
+
+
+
+                          <ngx-datatable-column name="DESCRIPCIÓN" prop="des" [width]="950">
+                            <ng-template let-des="value" ngx-datatable-cell-template>
+                              <div>
+                                <span class="font-weight-bold">{{ des.slice(0.100) }} ... </span>
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-column>
+
+                        </ngx-datatable>
+                      </div>
+
+                    </div>
+                    <!-- FIN TABLA RED WORKFLOW -->
 
                   </ng-template>
                 </li>

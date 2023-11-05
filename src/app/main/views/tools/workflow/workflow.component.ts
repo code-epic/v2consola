@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ApiService, IAPICore, WkfEstado, WkfEstatus, wkfTransicion } from '@services/apicore/api.service';
+import { ApiService, IAPICore, WkfEstado, WkfEstatus, wkfRed, wkfTransicion } from '@services/apicore/api.service';
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
 import { Wdefinicion, WorkflowService } from '@services/workflow/workflow.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
@@ -55,6 +55,21 @@ export class WorkflowComponent implements OnInit {
       funcion: undefined,
       parametro: ''
     }
+
+    // Interface Red
+    public wkfRed : wkfRed = {
+      idw: 0,
+      estadoOrigen: undefined,
+      estatusOrigen: undefined,
+      transicionVerdadero: undefined,
+      estadoDestinoVerdadero: undefined,
+      estatusDestinoVerdadero: undefined,
+      estadoDestinoFalso: undefined,
+      estatusDestinoFalso: undefined,
+      transicionFalsa: undefined,
+      descripcion: '',
+      usuario: ''
+    }
   
    //  Lista de Niveles de Estatus
   public niveles = [
@@ -74,12 +89,17 @@ export class WorkflowComponent implements OnInit {
   public Definicion = []
   public rowEstado: []
   public rowEstatus: []
+  public rowEstatusRedV = []
+  public rowEstatusRedF = []
   public ListaFunciones = []
   public tempData = [];
   public rowData = [];
   public ListaTransiciones = []
   public rowDataTransiciones = []
   public tempDataTransiciones = []
+  public ListaRed = []
+  public rowDataRed = []
+  public tempDataRed = []
   
   public showWKF: boolean = false
   public estado = undefined
@@ -110,6 +130,7 @@ export class WorkflowComponent implements OnInit {
       if ( e == 'CLEAN') this.rowEstado = []
       this.lstEstados(e)
       this.lstTranscion(e)
+      this.lstRed(e)
       this.xidW = parseInt(e)
     })
     this.lstAplicaciones()    
@@ -362,6 +383,39 @@ export class WorkflowComponent implements OnInit {
     )
   }
 
+  lstEstatusRedV(event): any {
+    this.rowEstatusRedV = []
+    this.xAPI.funcion = "WKF_CEstatus"
+    this.xAPI.parametros = event
+    this.xAPI.valores = {}
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        data.Cuerpo.forEach(e => {
+          this.rowEstatusRedV.push(e)
+        });
+      },
+      (err) => {
+        console.error(err)
+      }
+    )
+  }
+  lstEstatusRedF(event): any {
+    this.rowEstatusRedF = []
+    this.xAPI.funcion = "WKF_CEstatus"
+    this.xAPI.parametros = event
+    this.xAPI.valores = {}
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        data.Cuerpo.forEach(e => {
+          this.rowEstatusRedF.push(e)
+        });
+      },
+      (err) => {
+        console.error(err)
+      }
+    )
+  }
+
   lstTranscion(e :any): any {
     this.ListaTransiciones = []
     this.xAPI.funcion = "WKF_RTransicion"
@@ -432,6 +486,58 @@ export class WorkflowComponent implements OnInit {
       idw: 0,
       funcion: '',
       parametro: ''
+    }
+  }
+
+  lstRed(e :any): any {
+    this.ListaRed = []
+    this.xAPI.funcion = "WKF_RRed"
+    this.xAPI.parametros = e
+    this.xAPI.valores = {}
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+          data.Cuerpo.map(e => {
+            this.ListaRed.push(e)
+          });
+          this.rowDataRed = this.ListaRed;
+          this.tempDataRed = this.rowDataRed;
+      },
+      (err) => {
+        console.error(err)
+      }
+    )
+  }
+
+  GuardarRed(){
+    this.wkfRed.idw = this.xidW
+    this.xAPI.funcion = "WKF_IRed"
+    this.xAPI.valores = JSON.stringify(this.wkfRed)
+    this.rowDataRed = []
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.Ok(data.msj)
+        this.lstRed(this.xidW.toString())
+        this.limpiarRed()
+      },
+      (err) => {
+        console.error(err)
+      }
+    )
+  }
+
+  limpiarRed(){
+    this.wkfRed = {
+      idw: 0,
+      estadoOrigen: undefined,
+      estatusOrigen: undefined,
+      transicionVerdadero: undefined,
+      estadoDestinoVerdadero: undefined,
+      estatusDestinoVerdadero: undefined,
+      estadoDestinoFalso: undefined,
+      estatusDestinoFalso: undefined,
+      transicionFalsa: undefined,
+      descripcion: '',
+      usuario: ''
     }
   }
 
