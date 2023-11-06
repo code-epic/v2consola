@@ -5,11 +5,10 @@
       <div class="card-body">
         <a href="javascript:void(0);" class="brand-logo">
           <img src="{{ coreConfig.app.appLogoImage }}" alt="brand-logo" height="28" />
-          <h2 class="brand-text text-primary ml-1">{{ coreConfig.app.appName }}</h2>
+          <h2 class="brand-text text-primary ml-1">{{ coreConfig.app.appName }} Technologies</h2>
         </a>
 
         <h2 class="mb-1 text-center"><strong>Sandra Server</strong></h2>
-          <p class="card-text text-center"><small>Broglie {{version}} <br> {{fecha}}</small></p>
 
         <form class="auth-register-form mt-2" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
@@ -104,6 +103,8 @@
             <i data-feather="github"></i>
           </a>
         </div>
+        <p class="card-text text-center"><small>Broglie {{version}} <br> {{fecha}}</small></p>
+
       </div>
     </div>
     <!-- /Register v1 -->

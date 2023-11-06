@@ -174,13 +174,16 @@ export class LoginService {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) { 
-        Swal.fire(
-          'Hasta la próxima!',
-          'Te esperamos',
-          'success'
-        )
-        this.clearSession()
-        this.router.navigate(['login']);
+        // Swal.fire(
+        //   'Hasta la próxima!',
+        //   'Te esperamos',
+        //   'success'
+        // )
+        // this.router.navigate(['login']);
+        this.router.navigate(["login"]).then(() => {
+          this.clearSession()
+          window.location.reload();
+        });
         
       }
     })
@@ -201,9 +204,6 @@ export class LoginService {
           )
           
         }
-      
-       
-        
       }
     )
     sessionStorage.clear();
