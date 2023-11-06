@@ -68,7 +68,10 @@ export class WorkflowComponent implements OnInit {
       estatusDestinoFalso: undefined,
       transicionFalsa: undefined,
       descripcion: '',
-      usuario: ''
+      usuario: '',
+      nombre: '',
+      tipo: undefined,
+      estatus: undefined
     }
   
    //  Lista de Niveles de Estatus
@@ -102,6 +105,15 @@ export class WorkflowComponent implements OnInit {
   public ListaRed = []
   public rowDataRed = []
   public tempDataRed = []
+
+  public rowTipologia = [
+    {id:1, name:'Acción'},
+    {id:2, name:'Área'}
+  ]
+  public rowStatus = [
+    {id:1, name:'Activo'},
+    {id:0, name:'Inactivo'}
+  ]
   
   public showWKF: boolean = false
   public estado = undefined
@@ -555,7 +567,11 @@ export class WorkflowComponent implements OnInit {
       estatusDestinoFalso: undefined,
       transicionFalsa: undefined,
       descripcion: '',
-      usuario: ''
+      usuario: '',
+      nombre: '',
+      tipo: undefined,
+      estatus: undefined
+
     }
   }
 

@@ -360,6 +360,39 @@
                     <!-- INICIO REGISTRO DE RED WORKFLOW -->
                     <div class="row">
 
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="descripcion">Nombre</label>
+                          <input style="font-size:14px;" [(ngModel)]="wkfRed.nombre"
+                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="origen">Tipologia</label>
+                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                          bindValue="id" [(ngModel)]="wkfRed.tipo"
+                          [ngModelOptions]="{standalone: true}">
+                          <ng-option *ngFor="let e of rowTipologia; let i = index"
+                            value="{{ e.id }}">{{e.name}}</ng-option>
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="origen">Estatus</label>
+                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                          bindValue="id" [(ngModel)]="wkfRed.estatus"
+                          [ngModelOptions]="{standalone: true}">
+                          <ng-option *ngFor="let e of rowStatus; let i = index"
+                            value="{{ e.id }}">{{e.name}}</ng-option>
+                        </ng-select>
+                      </div>
+
+
+                      <div class="form-group col-md-12">
+                        <label class="form-label" for="descripcion">Descripción</label>
+                          <input style="font-size:14px;" [(ngModel)]="wkfRed.descripcion"
+                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
+                      </div>
+
                       <div class="form-group col-md-6">
                         <label class="form-label" for="origen">Estado Origen</label>
                         <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
@@ -442,21 +475,16 @@
                         </ng-select>
                       </div>
                       
-                      <div class="col-md-12">
-                        <label class="form-label" for="descripcion">Descripción</label>
-                        <div class="input-group mb-3">
-                          <input style="font-size:14px;" [(ngModel)]="wkfRed.descripcion"
-                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
-                          <div class="input-group-prepend">
-                            &nbsp;
-
+                      <br>
+                      <div class="col-md-12" align="right">
                             <button type="button" class="btn btn-danger" (click)="GuardarRed()">
                               <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar Definición
                             </button>
                           </div>
-                        </div>
-                      </div>
+
                     </div>
+                    <br>
+                    <hr>
                     <!-- FIN REGISTRO DE RED WORKFLOW -->
 
                     <!-- INICIO TABLA DE RED WORKFLOW -->
@@ -467,12 +495,28 @@
                           [limit]="10" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
 
 
+                          <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="400">
+                            <ng-template let-nomb="value" ngx-datatable-cell-template>
+                              <div>
+                                <span class="font-weight-bold">{{ nomb }} ... </span>
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-column>
 
-                          <ngx-datatable-column name="DESCRIPCIÓN" prop="des" [width]="950">
+                          
+
+                          <ngx-datatable-column name="DESCRIPCIÓN" prop="des" [width]="650">
                             <ng-template let-des="value" ngx-datatable-cell-template>
                               <div>
                                 <span class="font-weight-bold">{{ des.slice(0.100) }} ... </span>
                               </div>
+                            </ng-template>
+                          </ngx-datatable-column>
+
+                          <ngx-datatable-column name="Status" prop="est" [width]="200">
+                            <ng-template let-est="value" ngx-datatable-cell-template>
+                              <div class="badge badge-success" *ngIf="est == 1">Activo</div>
+                              <div class="badge badge-danger" *ngIf="est == 0">Inactivo</div>
                             </ng-template>
                           </ngx-datatable-column>
 

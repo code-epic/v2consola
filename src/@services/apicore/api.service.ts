@@ -144,6 +144,10 @@ export interface wkfTransicion {
 
 export interface wkfRed {
   idw : number, // Id WorkFlow
+  nombre: string // Nombre de la Red
+  tipo: number // Tipologia de la REd
+  estatus: number // Estatus de la Red
+  descripcion : string, // Descripcion
   estadoOrigen : number, // Estado de Origen
   estatusOrigen : number, // Estatus de Origen
   transicionVerdadero : number, // Transicion
@@ -152,7 +156,6 @@ export interface wkfRed {
   estadoDestinoFalso : number, // Estado de Destino Falso
   estatusDestinoFalso : number, // Estatus de Destino Falso
   transicionFalsa: number,// Transicion de Error
-  descripcion : string, // Descripcion
   usuario: string // Usuario WKF
 }
 
