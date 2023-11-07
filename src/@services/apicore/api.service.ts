@@ -142,6 +142,17 @@ export interface wkfTransicion {
   parametro: string;
 }
 
+export interface DefinirMenu {
+  nombre: string
+  url: string
+  js: string
+  icon: string
+  clase: string
+  color: string
+  tipo: number
+  idmod: number
+}
+
 export interface wkfRed {
   idw : number, // Id WorkFlow
   nombre: string // Nombre de la Red
