@@ -121,7 +121,7 @@ export class ApiListComponent implements OnInit {
      this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.forEach(e => {
-          e.ruta = AES.encrypt(e.id,clave).toString()
+          e.ruta = e.id
           this.drivers.push(e)
         });
       },

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { ApiService, IAPICore, WkfEstado, WkfEstatus, wkfRed, wkfTransicion } from '@services/apicore/api.service';
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
+import { UtilService } from '@services/util/util.service';
 import { Wdefinicion, WorkflowService } from '@services/workflow/workflow.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import Swal from 'sweetalert2';
@@ -133,6 +134,7 @@ export class WorkflowComponent implements OnInit {
   public isButtonVisibleUpdate : boolean = false
   
   constructor(
+    private utilservice : UtilService,
     private apiService : ApiService,
     private comunicacionesService: ComunicacionesService,
     private wkf : WorkflowService
@@ -196,6 +198,7 @@ export class WorkflowComponent implements OnInit {
 
   // Carga la Lista de las Apliaciones
   async lstAplicaciones(){
+    this.lstApps = []
     // console.info('llego lista aplicaciones')
     this.xAPI.funcion = "SEC_CAplicaciones";
     this.xAPI.valores = null;
@@ -285,17 +288,28 @@ export class WorkflowComponent implements OnInit {
   //  Salva el registro del WorkFlow
   salvar(){
     var ObjSalvar = {
-      'idap' : this.aplicacion,
-      'idmo' : this.xmodulo,
-      'nomb' : this.nombre,
-      'obse' : this.descripcion,
+      'aplicacion' : parseInt(this.aplicacion.split('|')[0]),
+      'modulo' : parseInt(this.xmodulo),
+      'nombre' : this.nombre,
+      'descripcion' : this.descripcion,
+      'driver' : this.xdrivers
     }
     this.Definicion.push(ObjSalvar)
-    this.xAPI.funcion = 'Wk_IDefinicion'
+    this.xAPI.funcion = 'WKF_IDefinicion'
     this.xAPI.valores = JSON.stringify(ObjSalvar)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data.msj)
+        if (data.tipo == 1) {
+          this.utilservice.AlertMini('top-end','success', 'WorkFlow Creado Exitosamente',3000)
+          this.aplicacion = undefined
+          this.xmodulo = undefined
+          this.nombre = ''
+          this.descripcion = ''
+          this.xdrivers = undefined
+          this.lstAplicaciones()
+        } else {
+          this.utilservice.AlertMini('top-end','error', 'Oops, Algo salio mal!',3000) 
+        }
       },
       (err) => {
         console.error(err)

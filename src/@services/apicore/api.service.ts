@@ -143,6 +143,7 @@ export interface wkfTransicion {
 }
 
 export interface DefinirMenu {
+  id ?: number,
   nombre: string
   url: string
   js: string
@@ -151,6 +152,33 @@ export interface DefinirMenu {
   color: string
   tipo: number
   idmod: number
+}
+
+export interface AgregarAccion {
+  endpoint: string
+  nomb: string
+  func: string
+  direc: string
+}
+
+export interface AddModulo {
+  nomb : string
+  idapp: number
+}
+
+export interface AccionMenu {
+  menuid: number
+  accionid: number
+}
+
+export interface AddSubMenu {
+  url: string
+  js: string
+  icon: string
+  nomb: string
+  clase: string
+  color: string
+  tipo: number
 }
 
 export interface wkfRed {

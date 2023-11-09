@@ -28,7 +28,7 @@
 
                   <div class="form-group col-md-4">
                     <label class="form-label" for="arquitectura">Arquitectura</label>
-                    <ng-select [items]="tipos" [disabled]="isDisabledInput" [(ngModel)]="xmodulo"
+                    <ng-select [items]="tipos" [(ngModel)]="xmodulo"
                       (change)="consultarRed()" bindLabel="descripcion" name="arquitectura" id="arquitectura" required
                       placeholder="Seleccione" bindValue="id">
                     </ng-select>
@@ -271,7 +271,7 @@
                             </ng-template>
                           </ngx-datatable-column>
 
-                          <ngx-datatable-column name="ACCIÓN" [width]="10" [sortable]="false">
+                          <ngx-datatable-column name="ACCIÓN" [width]="100" [sortable]="false">
                             <ng-template ngx-datatable-cell-template let-row="row">
                               <div ngbDropdown container="body">
                                 <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow"

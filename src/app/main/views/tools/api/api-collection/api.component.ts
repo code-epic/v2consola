@@ -175,8 +175,9 @@ export class ApiComponent implements OnInit {
     this.llave = this.utilservice.GenerarUnicId();
     this.hashcontrol = btoa("ING" + this.llave);
     
-    this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
-    this.rutaURL = this.rutaActiva.snapshot.params.id
+    // this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
+    this.driversAPP =  this.rutaActiva.snapshot.params.id
+    // this.rutaURL = this.rutaActiva.snapshot.params.id
     await this.ListarApis(this.driversAPP)
 
     
