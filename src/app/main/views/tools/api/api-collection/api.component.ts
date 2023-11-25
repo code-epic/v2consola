@@ -221,12 +221,15 @@ export class ApiComponent implements OnInit {
   }
 
   async ListarApis(t : string) {
+
+    if (t == "") return
     this.developer = []
     this.xAPI.funcion = '_SYS_R_ListarApis'
     this.xAPI.parametros = t
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        if (data == null) return
         data.map(e => {
           this.developer.push(e)
           this.rowData = this.developer;

@@ -94,7 +94,7 @@ export class RegisterApiComponent implements OnInit {
     query: '',
     alias: '',
     driver: undefined,
-    id: '',
+    // id: '',
     tiempoduracion: '20',
     tipoduracion: 0
   }
@@ -282,7 +282,7 @@ export class RegisterApiComponent implements OnInit {
   constructor(
     private rutaActiva: ActivatedRoute,
     private apiService: ApiService,
-    private utilservice : UtilService,
+    private utilservice: UtilService,
     private router: Router,
   ) { }
 
@@ -312,12 +312,12 @@ export class RegisterApiComponent implements OnInit {
 
     this.CargarListaAplicaciones()
 
-    
+
     this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
     this.rutaURL = this.rutaActiva.snapshot.params.id
-    
+
     this.LeerAPI(this.rutaActiva.snapshot.params.id)
-    
+
     this.getURL = this.rutaActiva.snapshot.url[1].path
 
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
@@ -383,69 +383,54 @@ export class RegisterApiComponent implements OnInit {
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
         this.router.navigate([`tools/api-list/${this.rutaURL}`]);
-        this.utilservice.AlertMini('top-end','success',`Tu (API) ha sido registrada codigo: ${data.UpsertedID}`,3000)
+        this.utilservice.AlertMini('top-end', 'success', `Tu (API) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
       }, (error) => {
-        this.utilservice.AlertMini('top-end','error','Error al Guardadar API',3000)
+        this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar API', 3000)
       }
     )
   }
 
-  LeerAPI(funcion){
+  LeerAPI(funcion: string) {
     this.existe = true
-    this.xAPI.funcion = "_SYS_R_ListarApisID";
+    this.xAPI.funcion = "_SYS_R_ListarApisID"
     this.xAPI.parametros = funcion
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data != null) {
-          this.xAPIDB = data[0];
+          this.xAPIDB = data[0]
+          this.xAPIAux = data[0]
         }
-        this.onTipo(this.xAPIDB.tipo);
-        this.xAPIDB.version = this.existe ? this.validarVersion() : this.xAPI.version;
+        this.onTipo(this.xAPIDB.tipo)
+        this.xAPIDB.version = this.existe ? this.validarVersion() : this.xAPI.version
       },
       (error) => {
-        console.log(error);
+        console.log(error)
       }
     )
   }
 
- async UpdateAPI(funcion: string, entorno: string){
-    var obj = {
+  async UpdateAPI(funcion: string, entorno: string) {
+    console.log(this.xAPIDB)
+    this.apiUpdate.entorno = entorno
+    this.apiUpdate.funcion = funcion
+    let jsonG = {
       "coleccion": "apicore",
-      "objeto": this.xAPIDB,
-      "donde": `{\"funcion\":\"${this.xAPIDB.funcion}\"}`,
-      "driver": "MGDBA",
-      "upsert": true
-    }
-   await this.apiService.ExecColeccion(obj).subscribe(
+      "relacional": false,
+      "tipo": 'INSERTAR',
+      "entorno": entorno,
+      "valores": this.xAPIDB
+    };
+    let sApi = 'crud';
+    this.xAPI = {}
+    await this.apiService.Guardar(jsonG, sApi).subscribe(
       (data) => {
-        console.log(data)
-        // this.router.navigate([`tools/api-details/${this.rutaURL}`]);
-        this.utilservice.AlertMini('top-end','success',`Tu (API) ha sido actualizada`,3000)
-      }, (error) => {
-        this.utilservice.AlertMini('top-end','error','Error al Guardadar API',3000)
+        this.router.navigate([`tools/api-list/${this.rutaURL}`]);
+        this.utilservice.AlertMini('top-end', 'success', `Tu (API) ha sido actualizada`, 3000)
+      },
+      (errot) => {
+        this.utilservice.AlertMini('top-end', 'error', 'Fallo la conexión, con el API', 3000)
       }
     )
-  //   this.apiUpdate.entorno = entorno
-  //   this.apiUpdate.funcion = funcion
-  //   let jsonG = {
-  //     "coleccion": "apicore",
-  //     "relacional": false,
-  //     "tipo": 'ACTUALIZAR',
-  //     "entorno": entorno,
-  //     "valores": this.xAPIDB
-  //   };
-  //   let sApi = 'crud';
-  //   this.xAPI = {}
-  //  await  this.apiService.Guardar(jsonG, sApi).subscribe(
-  //     (data) => {
-  //       console.log(data)
-  //       this.router.navigate([`tools/api-list/${this.rutaURL}`]);
-  //       this.utilservice.AlertMini('top-end', 'success', `Tu (API) ha sido actualizada`, 3000)
-  //     },
-  //     (errot) => {
-  //       this.utilservice.AlertMini('top-end', 'error', 'Fallo la conexión, con el API', 3000)
-  //     }
-  //   )
   }
 
 
@@ -456,6 +441,7 @@ export class RegisterApiComponent implements OnInit {
     let menor_aux = parseInt(version[2])
     const _api = this.xAPIDB
     const _aux = this.xAPIAux
+
     if (_api.tipo != _aux.tipo || _api.driver != _aux.driver ||
       _api.concurrencia != _aux.concurrencia || _api.entradas != _aux.entradas ||
       _api.query != _aux.query) {
@@ -467,9 +453,9 @@ export class RegisterApiComponent implements OnInit {
     if (_api.descripcion != _aux.descripcion || _api.categoria != _aux.categoria) {
       menor_aux = parseInt(version[2]) + 1
     }
-    console.log(_api)
-    console.log(_aux)
-    console.log(mayor + '.' + menor + '.' + menor_aux)
+    // console.log(_api)
+    // console.log(_aux)
+    // console.log(mayor + '.' + menor + '.' + menor_aux)
     return mayor + '.' + menor + '.' + menor_aux
   }
 
@@ -511,28 +497,28 @@ export class RegisterApiComponent implements OnInit {
       case 'mysql8':
         this.xAPI.funcion = "_SYS_MYSQL";
         break;
-        case 'mariadb':
+      case 'mariadb':
         this.xAPI.funcion = "_SYS_MYSQL";
         break;
-        case 'postgres13':
-          this.xAPI.funcion = "_SYS_POSTGRES";
-          break;
-        case 'postgres96':
-          this.xAPI.funcion = "_SYS_POSTGRES";
+      case 'postgres13':
+        this.xAPI.funcion = "_SYS_POSTGRES";
         break;
-        case 'mongodb':
+      case 'postgres96':
+        this.xAPI.funcion = "_SYS_POSTGRES";
+        break;
+      case 'mongodb':
 
         break;
-        case 'puenteurl':
+      case 'puenteurl':
 
         break;
-        case 'sqlserver17':
+      case 'sqlserver17':
 
         break;
-        case 'oracle19c':
+      case 'oracle19c':
 
         break;
-    
+
       default:
         break;
     }
@@ -618,7 +604,7 @@ export class RegisterApiComponent implements OnInit {
   onMetodo(ev) {
     this.lstDml = []
     this.Dml.map(e => {
-      if(ev != 'CONSULTAR'){
+      if (ev != 'CONSULTAR') {
         this.DisabledTipoDato = false
       } else {
         this.DisabledTipoDato = true
@@ -657,12 +643,12 @@ export class RegisterApiComponent implements OnInit {
   async agregarEntrada() {
 
     if (this.xdml == "") {
-      this.utilservice.AlertMini('top-end','warning','Debe registrar todos los campos requeridos seleccione el campo VALUES',3000)
+      this.utilservice.AlertMini('top-end', 'warning', 'Debe registrar todos los campos requeridos seleccione el campo VALUES', 3000)
       return
     }
 
     if (this.campo == "" || this.tipodato == "") {
-      this.utilservice.AlertMini('top-end','warning','Debe registrar todos los campos requeridos; nombre, alias, tipo de dato',3000)
+      this.utilservice.AlertMini('top-end', 'warning', 'Debe registrar todos los campos requeridos; nombre, alias, tipo de dato', 3000)
 
       return
     }
@@ -678,7 +664,7 @@ export class RegisterApiComponent implements OnInit {
     var blAct = await this.selEntradas().then(e => { return e })
     this.Xmetodo = this.xAPIDB.metodo
     if (this.Xmetodo.name == "ACTUALIZAR" && blAct != true) {
-      this.utilservice.AlertMini('top-end','warning','Es recomendable agragar un parametro para actualizar WHERE',3000)
+      this.utilservice.AlertMini('top-end', 'warning', 'Es recomendable agragar un parametro para actualizar WHERE', 3000)
     }
     this.xAPIDB.entradas = JSON.stringify(this.IEntrada, null, '\t')
 

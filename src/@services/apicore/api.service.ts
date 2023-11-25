@@ -78,7 +78,7 @@ export interface IAPICore {
 }
 
 export interface IAPI {
-  id : string
+  id ?: string
   http : number
   https : number
   tipo : string

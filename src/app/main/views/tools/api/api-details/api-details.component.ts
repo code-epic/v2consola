@@ -157,6 +157,7 @@ export class ApiDetailsComponent implements OnInit {
     this.xAPI.parametros = api
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         data.map(e => {
           this.xAPI = e
         });
