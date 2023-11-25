@@ -243,12 +243,16 @@ public nameApp = undefined
     if(this.iApp.identificador != null) this.xAPI.funcion = "SSB_UAplicacion"
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        var msj = "Actualizado"
-        if(this.xAPI.funcion == "SSB_IAplicacion") {
-          this.iApp.identificador = data.msj;
-          var msj = "Agregado"
+        if (data.tipo == 1) {
+          var msj = "Actualizado"
+          if(this.xAPI.funcion == "SSB_IAplicacion") {
+            this.iApp.identificador = data.msj;
+            var msj = "Agregado"
+          }
+          this.utilservice.AlertMini('top-end', 'success','Se ha ' + msj + ' el registro con exito',3000)  
+        } else {
+          this.utilservice.AlertMini('top-end', 'error','Oops! Algo salio mal!',3000)
         }
-        this.utilservice.AlertMini('top-end', 'success','Se ha ' + msj + ' el registro con exito',3000)
       },
       (error) => {
         this.utilservice.AlertMini('top-end', 'error','Oops! Algo salio mal!',3000)

@@ -135,6 +135,7 @@ export class ConnectionsComponent implements OnInit {
       clave: ['',[Validators.required]],
       protocolo: [''],
       host: [undefined, [Validators.required]],
+      aplicacion: [undefined, [Validators.required]],
       puerto: ['', [Validators.required]],
       descripcion: ['', [Validators.required]],
     });
@@ -228,8 +229,10 @@ export class ConnectionsComponent implements OnInit {
     this.count = 0
      await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.ListaConexiones.push(data);
-        this.rowData = data;
+        data.map(e => {
+         this.ListaConexiones.push(e);
+        });
+        this.rowData = this.ListaConexiones;
         this.count = this.rowData.length
         this.tempData = this.rowData;
       },

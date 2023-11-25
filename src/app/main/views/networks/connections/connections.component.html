@@ -91,7 +91,7 @@
           <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [width]="150">
             <ng-template let-descripcion="value" ngx-datatable-cell-template>
               <div>
-                <span class="font-weight-bold">{{ descripcion.toUpperCase() }} </span>
+                <span class="font-weight-bold">{{ descripcion.slice(0,25).toUpperCase() }} ... </span>
               </div>
             </ng-template>
           </ngx-datatable-column>
@@ -269,10 +269,14 @@
           </div>
 
           <div class="col-md-4 col-12 mb-1">
-            <label class="form-label" for="http">Aplicación</label>
-            <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPI.prefijo" [ngModelOptions]="{standalone: true}"
-              bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+            <label class="form-label" for="login-aplicacion">Aplicación</label>
+            <ng-select [items]="ListaAplicaciones" formControlName="aplicacion"
+            aria-describedby="login-aplicacion" tabindex="1" autofocus class=""
+              bindLabel="name" bindId="id" bindValue="nombre" [ngClass]="{ 'is-invalid': submitted && f.aplicacion.errors }"
               placeholder="Seleccione Aplicación"></ng-select>
+              <div *ngIf="submitted && f.aplicacion.errors" class="invalid-feedback">
+                <div *ngIf="f.aplicacion.errors.required">Aplicación es requerido</div>
+              </div>
           </div>
 
 
@@ -387,7 +391,7 @@
             </div>
           </div>
 
-          <div class="col-md-6 col-12 mb-1">
+          <div class="col-md-4 col-12 mb-1">
             <label for="login-id" class="form-label">Identificador</label>
             <input type="text" [readOnly]="true" formControlName="id" class="form-control" placeholder="Identificador"
               aria-describedby="login-id" tabindex="1" autofocus
@@ -398,7 +402,7 @@
           </div>
 
 
-          <div class="col-md-6 col-12 mb-1">
+          <div class="col-md-4 col-12 mb-1">
             <label for="login-estatus" class="form-label">Seleccione Status</label>
             <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Status"
               bindValue="id">
@@ -406,6 +410,17 @@
             <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
                 <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
               </div> -->
+          </div>
+
+          <div class="col-md-4 col-12 mb-1">
+            <label class="form-label" for="login-aplicacion">Aplicación</label>
+            <ng-select [items]="ListaAplicaciones" formControlName="aplicacion"
+            aria-describedby="login-aplicacion" tabindex="1" autofocus class=""
+              bindLabel="name" bindId="id" bindValue="nombre" [ngClass]="{ 'is-invalid': submitted && f.aplicacion.errors }"
+              placeholder="Seleccione Aplicación"></ng-select>
+              <div *ngIf="submitted && f.aplicacion.errors" class="invalid-feedback">
+                <div *ngIf="f.aplicacion.errors.required">Aplicación es requerido</div>
+              </div>
           </div>
 
 
