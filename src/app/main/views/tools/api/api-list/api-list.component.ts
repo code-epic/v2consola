@@ -120,7 +120,7 @@ export class ApiListComponent implements OnInit {
     this.drivers = []
      this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.forEach(e => {
+        data.map(e => {
           e.ruta = e.id
           this.drivers.push(e)
         });
