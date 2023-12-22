@@ -349,10 +349,12 @@ export class FunctionsComponent implements OnInit {
   async CargarListaFunciones(){
     this.xAPI.funcion = "SSB_LFunciones";
     this.xAPI.parametros = ''
+    this.xAPI.valores = ''
     this.ListaFunciones = []
     this.count = 0
      await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        // console.log(data)
         data.map(e => {
           this.ListaFunciones.push(e);
         });
