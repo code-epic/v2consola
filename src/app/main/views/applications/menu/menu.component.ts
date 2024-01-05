@@ -173,6 +173,7 @@ export class MenuComponent implements OnInit {
     this.xAPI.parametros = event;
     this.xAPI.valores = ''
     this.dataModulo = [];
+    console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
           this.dataModulo = data.Cuerpo.map(e => {
@@ -316,6 +317,7 @@ export class MenuComponent implements OnInit {
       (data) => {
         var i = 0
         var lista = []
+        console.log(data)
         data.Cuerpo.map(e => {
           // if (i == 0) {
           //   this.IDefinirMenu.nombre = e.nomb

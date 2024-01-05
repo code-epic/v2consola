@@ -1,1 +1,441 @@
-<p>role works!</p>
+<div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+
+        <!-- Invoice List -->
+        <section class="invoice-list-wrapper">
+            <div class="card">
+
+                <div class="col-md-12" style="margin-top: 25px;">
+
+                    <!-- Primer -->
+                    <div class="row">
+
+
+                        <div class="form-group col-md-12">
+                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
+                                [ngModelOptions]="{standalone: true}" bindLabel="name"
+                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                                placeholder="Seleccione Aplicación"></ng-select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="form-label" for="origen">Modulo</label>
+                            <ng-select [items]="dataModulo" [name]="xmodulo" [addTag]="true" [(ngModel)]="xmodulo"
+                                [ngModelOptions]="{standalone: true}" bindLabel="name" 
+                                (ngModelChange)="selectEventModulo($event)"
+                                (input)="onFocusedModulo($event)"
+                                placeholder="Seleccione Modulo"></ng-select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="form-label" for="origen">Menu</label>
+                            <ng-select [items]="datamenu" [addTag]="true" [(ngModel)]="menu"
+                                [ngModelOptions]="{standalone: true}" (ngModelChange)="selectEventMenu($event)"
+                                (input)='onFocusedMenu($event)'
+                                bindLabel="name" placeholder="Seleccione Menu"></ng-select>
+                        </div>
+
+                        <div class="col-md-12" align="right">
+                            <button type="button" class="btn btn-success" (click)="procesar()">
+                                <i class="fa fa-arrow-up" aria-hidden="true"></i> &nbsp; Procesar
+                            </button>
+                            &nbsp;
+                            <button type="button" class="btn btn-warning" (click)="Limpiar()">
+                                <i class="fa fa-trash" aria-hidden="true"></i> &nbsp; Limpiar
+                            </button>
+                        </div>
+
+
+                        <div *ngIf="!showDiv">
+                            <br><br><br>
+                        </div>
+
+
+                    </div>
+                    <!-- Primer -->
+
+                    <!-- Segundo Panel -->
+                    <div class="row" *ngIf="showDiv">
+                        <hr>
+
+                        <div class="form-group col-md-4">
+                            <label class="form-label" for="descripcion">Nombre</label>
+                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.nombre"
+                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre"
+                                class="form-control">
+                        </div>
+
+                        <div class="form-group col-md-8">
+                            <label class="form-label" for="origen">Dirección URL</label>
+                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.url"
+                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Dirección"
+                                class="form-control">
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label class="form-label" for="descripcion">Icono</label>
+                            <input style="font-size:14px;" type="text" [(ngModel)]="IDefinirMenu.icon"
+                                [ngModelOptions]="{standalone: true}" placeholder="Ingrese Icono" class="form-control">
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label class="form-label" for="descripcion">Color</label>
+                            <input style="font-size:14px;" type="text" [(ngModel)]="IDefinirMenu.color"
+                                [ngModelOptions]="{standalone: true}" placeholder="Ingrese Color" class="form-control">
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label class="form-label" for="descripcion">Clase Css</label>
+                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.clase"
+                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Clase Css"
+                                class="form-control">
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label class="form-label" for="descripcion">Codigo JavaScript</label>
+                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.js"
+                                [ngModelOptions]="{standalone: true}" type="text"
+                                placeholder="Ingrese Codigo JavaScript" class="form-control">
+                        </div>
+
+                        <div class="form-group col-md-4">
+                            <label class="form-label" for="descripcion">Seleccionar Tipo</label>
+                            <ng-select [items]="lstEstatus" [(ngModel)]="IDefinirMenu.tipo"
+                                [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                                placeholder="Seleccione Tipo"></ng-select>
+                        </div>
+
+                        <br>
+                        <div class="form-group col-md-2" style="margin-top: 25px;">
+                            <label class="form-label"></label>
+                            <button type="button" *ngIf="!btnMenu" class="btn btn-success" (click)="GuardarMenu()">
+                                <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar
+                            </button>
+                            <button type="button" *ngIf="btnMenu" class="btn btn-warning" (click)="UpdateMenu(IDefinirMenu.id)">
+                                <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Actualizar
+                            </button>
+                        </div>
+                        <hr>
+                    </div>
+                    <!-- Segundo Panel -->
+                    <!-- TABLA -->
+                    <div class="container" *ngIf="showDiv">
+                        <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-left">
+                            <li ngbNavItem>
+                                <a ngbNavLink><span [data-feather]="'cast'"></span> Acciones</a>
+                                <ng-template ngbNavContent>
+
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div class="d-flex justify-content-between align-items-center m-1">
+                                                <div class="d-flex align-items-center">
+                                                    <label class="d-flex align-items-center">Mostrar
+                                                        <select class="form-control mx-25"
+                                                            [(ngModel)]="basicSelectedOption">
+                                                            <option value="10">10</option>
+                                                            <option value="25">25</option>
+                                                            <option value="50">50</option>
+                                                            <option value="100">100</option>
+                                                        </select>
+                                                    </label>
+                                                    <button type="button" style="height: 38px; margin-top: -4px;"
+                                                        (click)="ModalAddAcciones(ModalAcciones)"
+                                                        class="btn btn-icon btn-info" rippleEffect>
+                                                        <span [data-feather]="'plus'"></span> Agregar Acciones</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="
+                                                    col-md-6 col-lg-4 col-12
+                                                    d-flex
+                                                    justify-content-start justify-content-md-end
+                                                    align-items-center
+                                                    offset-lg-2
+                                                  ">
+                                            <div class="col-10 col-md-6 mt-2 ml-1 ml-md-0 mt-md-0">
+                                                <fieldset class="form-group mb-0">
+                                                    <label class="d-flex align-items-center mb-0 ml-1 ml-md-0"><input
+                                                            [(ngModel)]="searchAccion" name="searchValue" type="search"
+                                                            autocomplete="off"
+                                                            class="form-control" placeholder="Buscar..."
+                                                            (keyup)="filterUpdateAcciones($event)"
+                                                            (search)="filterUpdateAcciones($event)" /></label>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+
+                                            <ngx-datatable [rows]="rowDataAcc" [rowHeight]="58"
+                                                class="bootstrap core-bootstrap bordered-table" [limit]="10"
+                                                [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
+
+
+                                                <ngx-datatable-column name="NOMBRE" prop="accnomb" [width]="300">
+                                                    <ng-template let-accnomb="value" ngx-datatable-cell-template>
+                                                        <div>
+                                                            <span class="font-weight-bold">{{ accnomb }} </span>
+                                                        </div>
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+
+
+
+                                                <ngx-datatable-column name="FUNCION" prop="func" [width]="200">
+                                                    <ng-template let-func="value" ngx-datatable-cell-template>
+                                                        <div>
+                                                            <span class="font-weight-bold">{{ func }}</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+
+                                                <ngx-datatable-column name="EndPoint" prop="endpoint" [width]="600">
+                                                    <ng-template let-endpoint="value" ngx-datatable-cell-template>
+                                                        <div>
+                                                            <span class="font-weight-bold">{{ endpoint }}</span>
+                                                        </div>
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+
+                                            </ngx-datatable>
+                                        </div>
+
+                                    </div>
+                                </ng-template>
+                            </li>
+                            <li ngbNavItem>
+                                <a ngbNavLink><span [data-feather]="'settings'"></span> Sub Menu</a>
+                                <ng-template ngbNavContent>
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <div class="d-flex justify-content-between align-items-center m-1">
+                                                <div class="d-flex align-items-center">
+                                                    <label class="d-flex align-items-center">Mostrar
+                                                        <select class="form-control mx-25"
+                                                            [(ngModel)]="basicSelectedOption">
+                                                            <option value="10">10</option>
+                                                            <option value="25">25</option>
+                                                            <option value="50">50</option>
+                                                            <option value="100">100</option>
+                                                        </select>
+                                                    </label>
+                                                    <button type="button" style="height: 38px; margin-top: -4px;"
+                                                        (click)="ModalAddSubMenu(ModalSubMenu)"
+                                                        class="btn btn-icon btn-warning" rippleEffect>
+                                                        <span [data-feather]="'plus'"></span> Agregar Sub Menu</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="
+                                                    col-md-6 col-lg-4 col-12
+                                                    d-flex
+                                                    justify-content-start justify-content-md-end
+                                                    align-items-center
+                                                    offset-lg-2
+                                                  ">
+                                            <div class="col-10 col-md-6 mt-2 ml-1 ml-md-0 mt-md-0">
+                                                <fieldset class="form-group mb-0">
+                                                    <label class="d-flex align-items-center mb-0 ml-1 ml-md-0"><input
+                                                            [(ngModel)]="searchSubMenu" name="searchValue" type="search"
+                                                            class="form-control" placeholder="Buscar..."
+                                                            autocomplete="off"
+                                                            (keyup)="filterUpdateSubMenu($event)"
+                                                            (search)="filterUpdateSubMenu($event)" /></label>
+                                                </fieldset>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+
+                                            <ngx-datatable [rows]="ListarowSubMenu" [rowHeight]="58"
+                                                class="bootstrap core-bootstrap bordered-table" [limit]="10"
+                                                [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
+
+
+                                                <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="400">
+                                                    <ng-template let-nomb="value" ngx-datatable-cell-template>
+                                                        <div>
+                                                            <span class="font-weight-bold">{{ nomb }} ... </span>
+                                                        </div>
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+
+
+
+                                                <ngx-datatable-column name="DESCRIPCIÓN" prop="des" [width]="650">
+                                                    <ng-template let-des="value" ngx-datatable-cell-template>
+                                                        <div>
+                                                            <span class="font-weight-bold">{{ des.slice(0.100) }} ...
+                                                            </span>
+                                                        </div>
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+
+                                                <ngx-datatable-column name="Status" prop="est" [width]="200">
+                                                    <ng-template let-est="value" ngx-datatable-cell-template>
+                                                        <div class="badge badge-success" *ngIf="est == 1">Activo</div>
+                                                        <div class="badge badge-danger" *ngIf="est == 0">Inactivo</div>
+                                                    </ng-template>
+                                                </ngx-datatable-column>
+
+                                            </ngx-datatable>
+                                        </div>
+
+                                    </div>
+                                </ng-template>
+                            </li>
+                        </ul>
+                        <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+                    </div>
+                    <!-- TABLA -->
+
+                </div>
+
+            </div>
+        </section>
+
+    </div>
+</div>
+
+
+<ng-template #ModalAcciones let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">{{ titleModal }}</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form class="auth-login-form mt-2">
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <!-- Invoice -->
+            <div class="col-xl-12 col-md-12 col-12">
+                <!-- Header Starts -->
+                <div class="row">
+
+                    <div class="col-md-4 col-12 mb-1">
+                        <label for="login-tipo" class="form-label">Seleccione Metodo</label>
+                        <ng-select [items]="metodos" bindLabel="descripcion" placeholder="Seleccione Metodo"
+                            [(ngModel)]="IAccion.nombre" [ngModelOptions]="{standalone: true}" bindValue="id"
+                            bindLabel="name">
+                        </ng-select>
+                    </div>
+
+                    <div class="col-md-4 col-12 mb-1">
+                        <label for="login-host" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" [(ngModel)]="IAccion.nomb"
+                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" aria-describedby="login-host"
+                            tabindex="1" autofocus />
+                    </div>
+
+                    <div class="col-md-4 col-12 mb-1">
+                        <label for="login-host" class="form-label">Función</label>
+                        <input type="text" class="form-control" [(ngModel)]="IAccion.func"
+                            [ngModelOptions]="{standalone: true}" placeholder="Función" aria-describedby="login-host"
+                            tabindex="1" autofocus />
+                    </div>
+
+                    <div class="col-md-12 col-12 mb-1">
+                        <label for="login-host" class="form-label">EndPoint</label>
+                        <input type="text" [(ngModel)]="IAccion.endpoint" [ngModelOptions]="{standalone: true}"
+                            class="form-control" placeholder="EndPoint" aria-describedby="login-host" tabindex="1"
+                            autofocus />
+                    </div>
+
+                    <div class="col-md-12 col-12 mb-1">
+                        <label for="login-host" class="form-label">Directiva</label>
+                        <textarea type="text" row="5" [(ngModel)]="IAccion.direc" [ngModelOptions]="{standalone: true}"
+                            class="form-control" placeholder="Directiva" aria-describedby="login-host" tabindex="1"
+                            autofocus></textarea>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" tabindex="4" rippleEffect
+                (click)="GuardarAccion()">{{titleBtnModal}}</button>
+            <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
+                rippleEffect>Cerrar</button>
+        </div>
+    </form>
+
+</ng-template>
+
+
+<ng-template #ModalSubMenu let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">{{ titleModal }}</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form class="auth-login-form mt-2">
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <!-- Invoice -->
+            <div class="col-xl-12 col-md-12 col-12">
+                <!-- Header Starts -->
+                <div class="row">
+
+
+                    <div class="col-md-6 col-12 mb-1">
+                        <label for="login-host" class="form-label">Nombre</label>
+                        <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.nomb"
+                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" aria-describedby="login-host"
+                            tabindex="1" autofocus />
+                    </div>
+
+                    <div class="col-md-6 col-12 mb-1">
+                        <label for="login-host" class="form-label">Dirección URL</label>
+                        <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.url"
+                            [ngModelOptions]="{standalone: true}" placeholder="Dirección URL" aria-describedby="login-host"
+                            tabindex="1" autofocus />
+                    </div>
+
+                    <div class="col-md-5 col-12 mb-1">
+                        <label for="login-host" class="form-label">Codigo JavaScript</label>
+                        <input type="text" [(ngModel)]="IAddSubMenu.js" [ngModelOptions]="{standalone: true}"
+                            class="form-control" placeholder="Codigo JavaScript" aria-describedby="login-host" tabindex="1"
+                            autofocus />
+                    </div>
+
+                    <div class="col-md-4 col-12 mb-1">
+                        <label for="login-host" class="form-label">Clase Css</label>
+                        <input type="text" [(ngModel)]="IAddSubMenu.clase" [ngModelOptions]="{standalone: true}"
+                            class="form-control" placeholder="Clase Css" aria-describedby="login-host" tabindex="1"
+                            autofocus />
+                    </div>
+
+                    <div class="col-md-3 col-12 mb-1">
+                        <label for="login-tipo" class="form-label">Estatus</label>
+                        <ng-select [items]="tipoMenu" bindLabel="descripcion" placeholder="Seleccione"
+                            [(ngModel)]="IAddSubMenu.tipo" [ngModelOptions]="{standalone: true}" bindValue="id"
+                            bindLabel="name">
+                        </ng-select>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" tabindex="4" rippleEffect
+                (click)="GuardarSubMenu()">{{titleBtnModal}}</button>
+            <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
+                rippleEffect>Cerrar</button>
+        </div>
+    </form>
+
+</ng-template>
