@@ -65,8 +65,8 @@ export class RegisterApiComponent implements OnInit {
 
 
   public xAPIDB: IAPI = {
-    http: undefined,
-    https: undefined,
+    puertohttp: undefined,
+    puertohttps: undefined,
     tipo: undefined,
     distribucion: undefined,
     aplicacion: undefined,
@@ -112,12 +112,12 @@ export class RegisterApiComponent implements OnInit {
 
 
   public http = [
-    { id: '8012', name: '8012' },
-    { id: '8013', name: '8013' }
+    { id: 8012, name: '8012' },
+    { id: 8013, name: '8013' }
   ]
   public https = [
-    { id: '2286', name: '2286' },
-    { id: '2385', name: '2385' }
+    { id: 2286, name: '2286' },
+    { id: 2385, name: '2385' }
   ]
 
   public estatus = [
