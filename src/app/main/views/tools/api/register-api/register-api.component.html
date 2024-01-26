@@ -88,7 +88,7 @@
                     <label class="form-label" for="distribucion">Distribución</label>
                     <ng-select [items]="distribucion" [(ngModel)]="xAPIDB.distribucion" #distribucionx="ngModel"
                     [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion" required
-                      bindLabel="name" bindId="id" bindValue="name"
+                      bindLabel="name" bindId="id" bindValue="id"
                       placeholder="Seleccione Distribución"></ng-select>
                       <span *ngIf="accountDetailsForm.submitted && distribucionx.invalid" class="invalid-form">
                         <small class="form-text text-danger" *ngIf="distribucionx.errors.required">Este campo es

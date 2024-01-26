@@ -68,7 +68,7 @@ export class RegisterApiComponent implements OnInit {
     puertohttp: undefined,
     puertohttps: undefined,
     tipo: undefined,
-    distribucion: undefined,
+    distribucion: 0,
     aplicacion: undefined,
     funcion: '',
     version: '0.0.1',
@@ -374,6 +374,7 @@ export class RegisterApiComponent implements OnInit {
     this.xAPIDB.driver = this.driversAPP
     this.xAPIDB.puertohttp =  parseInt(this.xAPIDB.puertohttp.toString())
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
+    // this.xAPIDB.distribucion = this.xAPIDB.distribucion == 'PRIVADA' ? 0 : 1
     var obj = {
       "coleccion": "apicore",
       "objeto": this.xAPIDB,
