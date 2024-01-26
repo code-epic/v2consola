@@ -23,7 +23,7 @@ export interface IAPICore {
   http ?: number
   https ?: number
   tipo ?: string
-  distribucion ?: string
+  distribucion ?: number
   aplicacion ?: string
   funcion ?: string
   version ?: string
@@ -82,7 +82,7 @@ export interface IAPI {
   puertohttp : number
   puertohttps : number
   tipo : string
-  distribucion : string
+  distribucion : number
   aplicacion : string
   funcion : string
   version : string

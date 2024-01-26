@@ -94,7 +94,6 @@ export class RegisterApiComponent implements OnInit {
     query: '',
     alias: '',
     driver: undefined,
-    // id: '',
     tiempoduracion: '20',
     tipoduracion: 0
   }
@@ -150,8 +149,8 @@ export class RegisterApiComponent implements OnInit {
   ]
 
   public distribucion = [
-    { id: 'COMPARTIDA', name: 'COMPARTIDA' },
-    { id: 'PRIVADA', name: 'PRIVADA' },
+    { id: 1, name: 'COMPARTIDA' },
+    { id: 0, name: 'PRIVADA' },
   ]
 
 
@@ -373,6 +372,8 @@ export class RegisterApiComponent implements OnInit {
 
   RegistrarAPI() {
     this.xAPIDB.driver = this.driversAPP
+    this.xAPIDB.puertohttp =  parseInt(this.xAPIDB.puertohttp.toString())
+    this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
     var obj = {
       "coleccion": "apicore",
       "objeto": this.xAPIDB,
@@ -410,7 +411,8 @@ export class RegisterApiComponent implements OnInit {
   }
 
   async UpdateAPI(funcion: string, entorno: string) {
-    console.log(this.xAPIDB)
+    this.xAPIDB.puertohttp =  parseInt(this.xAPIDB.puertohttp.toString())
+    this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
     this.apiUpdate.entorno = entorno
     this.apiUpdate.funcion = funcion
     let jsonG = {
