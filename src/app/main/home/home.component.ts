@@ -4,7 +4,6 @@ import { NgbModalConfig, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-
 import { ITask, TaskService } from '@services/apicore/task.service';
 import { openDB } from 'idb';
 
-
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -13,6 +12,7 @@ import { openDB } from 'idb';
   host: { class: 'ecommerce-application' }
 })
 export class HomeComponent implements OnInit {
+
 
   // public task : ITask = {
   //   funcion: '',

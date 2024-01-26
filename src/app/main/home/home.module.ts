@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
 import { AuthGuard } from 'app/auth/helpers';
 
+
 import { CoreCommonModule } from '@core/common.module';
 
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';

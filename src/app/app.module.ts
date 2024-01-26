@@ -5,6 +5,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { RouterModule, Routes } from '@angular/router';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+
+
+
 //import { HttpClientModule } from '@angular/common/http';
 import { NgSelectModule } from '@ng-select/ng-select';
 
@@ -90,6 +93,9 @@ const appRoutes: Routes = [
 
 
     BlockUIModule.forRoot(),
+
+    
+   
     // App modules
     LayoutModule,
     HomeModule,

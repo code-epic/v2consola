@@ -4,8 +4,6 @@
     <section id="wishlist" class="grid-view wishlist-items">
       <ng-container *ngFor="let product of products">
 
-
-        <!-- Ecommerce Item -->
         <div class="card ecommerce-card">
           <div class="item-img text-center">
             <img class="img-fluid card-img-top" (click)='irA(product.base,product.ruta)' [src]="product.img"
@@ -30,7 +28,6 @@
             </p>
           </div>
         </div>
-        <!--/ Ecommerce Item -->
       </ng-container>
     </section>
 
@@ -84,5 +81,6 @@
 
     </div>
   </div>
+
 
 </div>
