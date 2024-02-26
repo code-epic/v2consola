@@ -52,10 +52,10 @@
                   </div>
 
                   <div class="form-group col-md-8">
-                    <label class="form-label" for="descripcion">Descripcion</label>
+                    <label class="form-label" for="descripcion">Descripción</label>
                     <div class="input-group mb-3">
                       <input [(ngModel)]="descripcion" [disabled]="isDisabledInput" value="{{descripcion}}"
-                        #DescripcionRef="ngModel" required type="text" name="descripcion id=" descripcion
+                        #DescripcionRef="ngModel" required type="text" name="descripcion" id="`descripcion"
                         class="form-control" />
 
                       <div class="input-group-prepend">
@@ -362,14 +362,14 @@
 
                       <div class="form-group col-md-4">
                         <label class="form-label" for="descripcion">Nombre</label>
-                          <input style="font-size:14px;" [(ngModel)]="wkfRed.nombre"
+                          <input style="font-size:14px;" [(ngModel)]="DescripcionRed.nombre"
                           [ngModelOptions]="{standalone: true}" type="text" class="form-control">
                       </div>
 
                       <div class="form-group col-md-4">
                         <label class="form-label" for="origen">Tipologia</label>
                         <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                          bindValue="id" [(ngModel)]="wkfRed.tipo"
+                          bindValue="id" [(ngModel)]="DescripcionRed.tipo"
                           [ngModelOptions]="{standalone: true}">
                           <ng-option *ngFor="let e of rowTipologia; let i = index"
                             value="{{ e.id }}">{{e.name}}</ng-option>
@@ -379,7 +379,7 @@
                       <div class="form-group col-md-4">
                         <label class="form-label" for="origen">Estatus</label>
                         <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                          bindValue="id" [(ngModel)]="wkfRed.estatus"
+                          bindValue="id" [(ngModel)]="DescripcionRed.estatus"
                           [ngModelOptions]="{standalone: true}">
                           <ng-option *ngFor="let e of rowStatus; let i = index"
                             value="{{ e.id }}">{{e.name}}</ng-option>
@@ -387,11 +387,53 @@
                       </div>
 
 
+
+
                       <div class="form-group col-md-12">
                         <label class="form-label" for="descripcion">Descripción</label>
-                          <input style="font-size:14px;" [(ngModel)]="wkfRed.descripcion"
-                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
+                        <div class="input-group md-4">
+                          <input [(ngModel)]="DescripcionRed.descripcion" value="{{DescripcionRed.descripcion}}"
+                            type="text" class="form-control" />
+    
+                            <div class="input-group-prepend">
+                              <div class="form-group col-md-2">
+                            
+                                  <button type="button" class="btn btn-success" (click)="salvarRed()">Salvar
+                                  </button>
+                              
+                              </div>
+                              
+                            </div>
+                         
+
+
+                        </div>
                       </div>
+                      
+
+                      <div class="form-group col-md-12">
+                        <hr>
+                      </div>
+
+
+                      <!-- <div class="form-group col-md-12">
+                        <label class="form-label" for="descripcion">Descripción</label>
+                          <input style="font-size:14px;" [(ngModel)]="DescripcionRed.descripcion"
+                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
+
+                          <div class="input-group-prepend">
+                            <div class="form-group col-md-1">
+                              <div>
+                                <button type="button" class="btn btn-success"
+                                  (click)="salvarRed()">Salvar Red
+                                </button>
+                              </div>
+                            </div>
+                       
+                          </div>
+
+
+                      </div> -->
 
                       <div class="form-group col-md-6">
                         <label class="form-label" for="origen">Estado Origen</label>

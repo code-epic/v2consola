@@ -30,6 +30,7 @@ import { BlockUIModule } from 'ng-block-ui';
 import { RoleComponent } from './role/role.component';
 import { ProfileComponent } from './profile/profile.component';
 import { UserComponent } from './user/user.component';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 const routes = [
   {
@@ -76,6 +77,7 @@ const routes = [
     CorePipesModule,
     CoreSidebarModule,
     CoreCommonModule,
+    CodemirrorModule,
     ContentHeaderModule, TranslateModule, CoreCommonModule],
 })
 export class SecurityModule { }

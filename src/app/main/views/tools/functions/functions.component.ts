@@ -32,8 +32,8 @@ export class FunctionsComponent implements OnInit {
 
 
   public codeMirrorOptions: any = {
-    theme: 'idea',
-    mode: 'text/x-idn',
+    theme: 'material',
+    mode: 'text/x-sh',
     lineNumbers: true,
     lineWrapping: true,
     foldGutter: true,
@@ -273,6 +273,24 @@ export class FunctionsComponent implements OnInit {
     return mayor + '.' + menor + '.' + menor_aux
   }
 
+  clickRefresh(event) {
+    this.codeMirrorOptions = {
+      theme: 'material',
+      mode: 'text/x-sh',
+      lineNumbers: true,
+      lineWrapping: true,
+      foldGutter: true,
+      gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+      autoCloseBrackets: true,
+      matchBrackets: true,
+      lint: true,
+      indentUnit: 2,
+      tabSize: 2,
+      height: '80px',
+      indentWithTabs: true
+    }
+  }
+
 
   cambiarModo(): string {
     var idioma = 'text/x-idn'
@@ -300,6 +318,7 @@ export class FunctionsComponent implements OnInit {
         break;
     }
     this.codeMirrorOptions.mode = idioma
+    console.log('edicion')
     return idioma
   }
 
@@ -370,6 +389,8 @@ export class FunctionsComponent implements OnInit {
 
 
   ModalEdit(modal, data){
+    console.log("Iniciando proceso...")
+    this.clickRefresh(0)
     this.existe = false
     this.btnCategoria = data.categoria
     this.loginForm = this._formBuilder.group({
@@ -481,7 +502,7 @@ export class FunctionsComponent implements OnInit {
       keyboard: false,
       windowClass: 'fondo-modal',
     });
-  }
+  }qqq
 
 
   ModalConfig(modal: any, data: any) {
@@ -507,6 +528,7 @@ export class FunctionsComponent implements OnInit {
       keyboard: false,
       windowClass: 'fondo-modal',
     });
+
   }
 
 

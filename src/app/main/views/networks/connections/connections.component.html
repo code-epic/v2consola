@@ -272,11 +272,9 @@
             <label class="form-label" for="login-aplicacion">Aplicación</label>
             <ng-select [items]="ListaAplicaciones" formControlName="aplicacion"
             aria-describedby="login-aplicacion" tabindex="1" autofocus class=""
-              bindLabel="name" bindId="id" bindValue="nombre" [ngClass]="{ 'is-invalid': submitted && f.aplicacion.errors }"
+              bindLabel="name" bindId="id" bindValue="nombre" 
               placeholder="Seleccione Aplicación"></ng-select>
-              <div *ngIf="submitted && f.aplicacion.errors" class="invalid-feedback">
-                <div *ngIf="f.aplicacion.errors.required">Aplicación es requerido</div>
-              </div>
+              
           </div>
 
 
@@ -394,11 +392,8 @@
           <div class="col-md-4 col-12 mb-1">
             <label for="login-id" class="form-label">Identificador</label>
             <input type="text" [readOnly]="true" formControlName="id" class="form-control" placeholder="Identificador"
-              aria-describedby="login-id" tabindex="1" autofocus
-              [ngClass]="{ 'is-invalid': submitted && f.id.errors }" />
-            <div *ngIf="submitted && f.id.errors" class="invalid-feedback">
-              <div *ngIf="f.id.errors.required">Identificador es requerido</div>
-            </div>
+              aria-describedby="login-id" tabindex="1" autofocus/>
+            
           </div>
 
 
@@ -416,11 +411,9 @@
             <label class="form-label" for="login-aplicacion">Aplicación</label>
             <ng-select [items]="ListaAplicaciones" formControlName="aplicacion"
             aria-describedby="login-aplicacion" tabindex="1" autofocus class=""
-              bindLabel="name" bindId="id" bindValue="nombre" [ngClass]="{ 'is-invalid': submitted && f.aplicacion.errors }"
+              bindLabel="name" bindId="id" bindValue="nombre" 
               placeholder="Seleccione Aplicación"></ng-select>
-              <div *ngIf="submitted && f.aplicacion.errors" class="invalid-feedback">
-                <div *ngIf="f.aplicacion.errors.required">Aplicación es requerido</div>
-              </div>
+       
           </div>
 
 

@@ -23,12 +23,12 @@
                                 <button class="step-trigger">
                                     <span class="bs-stepper-box">2</span>
                                     <span class="bs-stepper-label">
-                                        <span class="bs-stepper-title">Personal Info</span>
-                                        <span class="bs-stepper-subtitle">Add Personal Info</span>
+                                        <span class="bs-stepper-title">Conexiones</span>
+                                        <span class="bs-stepper-subtitle">Información Base De Datos</span>
                                     </span>
                                 </button>
                             </div>
-                            <div class="line"><i data-feather="chevron-right" class="font-medium-2"></i></div>
+                            <!-- <div class="line"><i data-feather="chevron-right" class="font-medium-2"></i></div>
                             <div class="step" data-target="#social-links">
                                 <button class="step-trigger">
                                     <span class="bs-stepper-box">3</span>
@@ -37,7 +37,7 @@
                                         <span class="bs-stepper-subtitle">Add Social Links</span>
                                     </span>
                                 </button>
-                            </div>
+                            </div> -->
                         </div>
                         <div class="bs-stepper-content">
                             <form (ngSubmit)="(HWForm.form.valid)" #HWForm="ngForm">
@@ -232,11 +232,11 @@
                                             <button (click)="horizontalWizardStepperPrevious()"
                                                 class="btn btn-outline-secondary btn-prev" disabled rippleEffect>
                                                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                                                <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                                                <span class="align-middle d-sm-inline-block d-none">Atrás</span>
                                             </button>
                                             <button (click)="horizontalWizardStepperNext(accountDetailsForm)"
                                                 type="submit" class="btn btn-primary btn-next" rippleEffect>
-                                                <span class="align-middle d-sm-inline-block d-none">Next</span>
+                                                <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
                                                 <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
                                             </button>
                                         </div>
@@ -245,8 +245,8 @@
                                 <div id="personal-info" class="content">
                                     <form #personalInfoForm="ngForm">
                                         <div class="content-header">
-                                            <h5 class="mb-0">Personal Info</h5>
-                                            <small>Enter Your Personal Info.</small>
+                                            <h5 class="mb-0">Conexiones</h5>
+                                            <small>Información Base De Datos</small>
                                         </div>
 
                                         <div class="row">
@@ -311,79 +311,7 @@
                                         </div>
                                     </form>
                                 </div>
-                                <div id="social-links" class="content">
-                                    <form #socialLinkForm="ngForm">
-                                        <div class="content-header">
-                                            <h5 class="mb-0">Social Links</h5>
-                                            <small>Enter Your Social Links.</small>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="twitter">Twitter</label>
-                                                <input [(ngModel)]="twitterVar" #twitterkRef="ngModel" required
-                                                    type="text" id="twitter" name="twitter" class="form-control"
-                                                    [class.error]="socialLinkForm.submitted && twitterkRef.invalid"
-                                                    placeholder="https://twitter.com/abc" />
-                                                <span *ngIf="socialLinkForm.submitted && twitterkRef.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="twitterkRef.errors.required">This field is
-                                                        required!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="facebook">Facebook</label>
-                                                <input [(ngModel)]="facebookVar" #facebookRef="ngModel" required
-                                                    type="text" id="facebook" name="facebook" class="form-control"
-                                                    [class.error]="socialLinkForm.submitted && facebookRef.invalid"
-                                                    placeholder="https://facebook.com/abc" />
-                                                <span *ngIf="socialLinkForm.submitted && facebookRef.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="facebookRef.errors.required">This field is
-                                                        required!</small>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="google">Google+</label>
-                                                <input [(ngModel)]="googleVar" #googleRef="ngModel" required type="text"
-                                                    id="google" name="google" class="form-control"
-                                                    [class.error]="socialLinkForm.submitted && googleRef.invalid"
-                                                    placeholder="https://plus.google.com/abc" />
-                                                <span *ngIf="socialLinkForm.submitted && googleRef.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="googleRef.errors.required">This field is
-                                                        required!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="linkedin">Linkedin</label>
-                                                <input [(ngModel)]="linkedinVar" #linkedinRef="ngModel" required
-                                                    type="text" id="linkedin" name="linkedin" class="form-control"
-                                                    [class.error]="socialLinkForm.submitted && linkedinRef.invalid"
-                                                    placeholder="https://linkedin.com/abc" />
-                                                <span *ngIf="socialLinkForm.submitted && linkedinRef.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="linkedinRef.errors.required">This field is
-                                                        required!</small>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex justify-content-between">
-                                            <button type="button" (click)="horizontalWizardStepperPrevious()"
-                                                class="btn btn-primary btn-prev" rippleEffect>
-                                                <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                                                <span class="align-middle d-sm-inline-block d-none">Previous</span>
-                                            </button>
-                                            <button class="btn btn-success btn-submit" rippleEffect
-                                                (click)="onSubmit()">Submit</button>
-                                        </div>
-                                    </form>
-                                </div>
+                               
                             </form>
                         </div>
                     </div>

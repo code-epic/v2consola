@@ -213,7 +213,7 @@ public nameApp = undefined
             link: '/'
           },
           {
-            name: 'Instalar',
+            name: 'Registrar',
             isLink: false
           }
         ]
@@ -237,10 +237,12 @@ public nameApp = undefined
   }
 
   async guardarAplicacion(){
+    
     this.xAPI.funcion = "SSB_IAplicacion" 
     this.iApp.llave = this.iApp.nombre + '.sse'
     this.xAPI.valores = JSON.stringify(this.iApp) 
     if(this.iApp.identificador != null) this.xAPI.funcion = "SSB_UAplicacion"
+    console.log(this.xAPI)
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
@@ -266,7 +268,7 @@ public nameApp = undefined
     // console.log(this.iApp.nombre)
     /* this.iApp.identificador = this.iApp.identificador; */
     this.nombreapp = this.iApp.nombre;
-   this.consultarAplicacion()    
+    this.consultarAplicacion()    
   }
 
   selectEventModuloo(e){
@@ -282,14 +284,17 @@ public nameApp = undefined
   }
 
   async consultarAplicacion(){
+    
+    if(this.iApp.identificador == null) return false
+
     this.xAPI.funcion = "SEC_CAplicacion" //Consultar Aplicacion del sistema 
     this.xAPI.parametros =  this.iApp.identificador.toString()
+    this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         var xapp : SSB_IAplicacion
         xapp = data.Cuerpo[0]
         this.iApp = xapp;
-
       },
       (error) => {
         console.log(error)

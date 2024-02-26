@@ -41,6 +41,7 @@ import { BlockUIModule } from 'ng-block-ui';
 import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
 import { TaskMonitorComponent } from './main/views/task/task-monitor/task-monitor.component';
 import { TaskModule } from './main/views/task/task.module';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 
 //  Recaptcha V2
@@ -73,6 +74,7 @@ const appRoutes: Routes = [
       useHash: true
     }),
     TranslateModule.forRoot(),
+    CodemirrorModule,
 
 
     //  Recaptcha V3

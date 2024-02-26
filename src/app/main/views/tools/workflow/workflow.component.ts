@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
-import { ApiService, IAPICore, WkfEstado, WkfEstatus, wkfRed, wkfTransicion } from '@services/apicore/api.service';
-import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
-import { UtilService } from '@services/util/util.service';
-import { Wdefinicion, WorkflowService } from '@services/workflow/workflow.service';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-import Swal from 'sweetalert2';
+import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core'
+import { ApiService, IAPICore, WkfDescripcionRed, WkfEstado, WkfEstatus, WkfZRed, wkfRed, wkfTransicion } from '@services/apicore/api.service'
+import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service'
+import { UtilService } from '@services/util/util.service'
+import { Wdefinicion, WorkflowService } from '@services/workflow/workflow.service'
+import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable'
+import Swal from 'sweetalert2'
 
 @Component({
   selector: 'app-workflow',
@@ -13,10 +13,10 @@ import Swal from 'sweetalert2';
 })
 export class WorkflowComponent implements OnInit {
 
-  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent) table: DatatableComponent
 
 
-  public contentHeader: object;
+  public contentHeader: object
 
   //  Interface de APICORE
   public xAPI : IAPICore = {
@@ -31,7 +31,7 @@ export class WorkflowComponent implements OnInit {
     logs : false,
     cache: 0,
     estatus: false
-  };
+  }
 
     //  Interface de WKF-ESTADOS
     public wkfEstado : WkfEstado = {
@@ -59,7 +59,7 @@ export class WorkflowComponent implements OnInit {
 
     // Interface Red
     public wkfRed : wkfRed = {
-      idw: 0,
+      idred: 0,
       estadoOrigen: undefined,
       estatusOrigen: undefined,
       transicionVerdadero: undefined,
@@ -71,8 +71,19 @@ export class WorkflowComponent implements OnInit {
       descripcion: '',
       usuario: '',
       nombre: '',
-      tipo: undefined,
       estatus: undefined
+    }
+
+    public DescripcionRed : WkfDescripcionRed = {
+      nombre: '',
+      descripcion: '',
+      tipo: 0,
+      estatus: 0
+    }
+
+    public ZRed : WkfZRed = {
+      idred: 0,
+      idw: 0
     }
   
    //  Lista de Niveles de Estatus
@@ -98,8 +109,8 @@ export class WorkflowComponent implements OnInit {
   public rowEstatusRedV = []
   public rowEstatusRedF = []
   public ListaFunciones = []
-  public tempData = [];
-  public rowData = [];
+  public tempData = []
+  public rowData = []
   public ListaTransiciones = []
   public rowDataTransiciones = []
   public tempDataTransiciones = []
@@ -175,20 +186,20 @@ export class WorkflowComponent implements OnInit {
           }
         ]
       }
-    };
+    }
 
   }
 
   //  Carga la Lista de las Funciones
   async CargarListaFunciones(){
-    this.xAPI.funcion = "SSB_LFunciones";
+    this.xAPI.funcion = "SSB_LFunciones"
     this.xAPI.parametros = ''
     this.ListaFunciones = []
      await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.map(e => {
-          this.ListaFunciones.push(e);
-        });
+          this.ListaFunciones.push(e)
+        })
       },
       (error) => {
         console.log(error)
@@ -200,8 +211,9 @@ export class WorkflowComponent implements OnInit {
   async lstAplicaciones(){
     this.lstApps = []
     // console.info('llego lista aplicaciones')
-    this.xAPI.funcion = "SEC_CAplicaciones";
-    this.xAPI.valores = null;
+    this.xAPI.funcion = "SEC_CAplicaciones"
+    this.xAPI.parametros = ''
+    this.xAPI.valores = null
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstApps = data.Cuerpo
@@ -214,17 +226,20 @@ export class WorkflowComponent implements OnInit {
 
   // Lista los Modulos 
   selModulo() : void {
-    this.xAPI.funcion = "LstModulos";
-    this.xAPI.parametros = this.aplicacion;
-    this.dataModulo = [];
+    let app = this.aplicacion.split('|')
+    this.xAPI.funcion = "LstModulos"
+    this.xAPI.parametros = app[0]
+    this.dataModulo = []
+    
+
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.Cuerpo.forEach(e => {          
           this.dataModulo.push({ id: e.id, name: e.nomb  })
-        });             
+        })             
       },
       (error) => {
-        console.log(error)
+        console.error(error)
       }
     )
   }
@@ -260,12 +275,12 @@ export class WorkflowComponent implements OnInit {
 
   // Carga la lista de los Drivers
   async CargarDrivers() {
-    this.xAPI.funcion = "LESBDrivers";
+    this.xAPI.funcion = "LESBDrivers"
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.drivers = data.filter(e => {         
            return e.driver.indexOf('mysql') == 0          
-        });
+        })
       },
       (error) => { console.log(error) }
     )
@@ -323,6 +338,8 @@ export class WorkflowComponent implements OnInit {
     this.wkfEstado.wkf = this.xidW
     this.wkfEstado.estatus = parseInt(this.estatus)
     this.xAPI.valores = JSON.stringify(this.wkfEstado)
+    console.log(this.xAPI)
+    console.log(this.wkfEstado)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.Ok(data.msj, 'Estado')
@@ -372,10 +389,11 @@ export class WorkflowComponent implements OnInit {
     this.xAPI.funcion = 'WKF_CEstados'
     this.xAPI.parametros = idw
     this.xAPI.valores = {}
+    console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.rowEstado = data.Cuerpo
-        window.sessionStorage.setItem('estados', JSON.stringify(this.rowEstado));
+        window.sessionStorage.setItem('estados', JSON.stringify(this.rowEstado))
       },
       (err) => {
         console.error(err)
@@ -420,7 +438,7 @@ export class WorkflowComponent implements OnInit {
       (data) => {
         data.Cuerpo.forEach(e => {
           this.rowEstatusRedV.push(e)
-        });
+        })
       },
       (err) => {
         console.error(err)
@@ -436,7 +454,7 @@ export class WorkflowComponent implements OnInit {
       (data) => {
         data.Cuerpo.forEach(e => {
           this.rowEstatusRedF.push(e)
-        });
+        })
       },
       (err) => {
         console.error(err)
@@ -452,7 +470,7 @@ export class WorkflowComponent implements OnInit {
       (data) => {
         data.Cuerpo.forEach(e => {
           this.rowEstatusDF.push(e)
-        });
+        })
       },
       (err) => {
         console.error(err)
@@ -469,9 +487,9 @@ export class WorkflowComponent implements OnInit {
       (data) => {
           data.Cuerpo.map(e => {
             this.ListaTransiciones.push(e)
-          });
-          this.rowDataTransiciones = this.ListaTransiciones;
-          this.tempDataTransiciones = this.rowDataTransiciones;
+          })
+          this.rowDataTransiciones = this.ListaTransiciones
+          this.tempDataTransiciones = this.rowDataTransiciones
       },
       (err) => {
         console.error(err)
@@ -542,9 +560,9 @@ export class WorkflowComponent implements OnInit {
       (data) => {
           data.Cuerpo.map(e => {
             this.ListaRed.push(e)
-          });
-          this.rowDataRed = this.ListaRed;
-          this.tempDataRed = this.rowDataRed;
+          })
+          this.rowDataRed = this.ListaRed
+          this.tempDataRed = this.rowDataRed
       },
       (err) => {
         console.error(err)
@@ -553,7 +571,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   GuardarRed(){
-    this.wkfRed.idw = this.xidW
+    this.wkfRed.idred = this.xidW
     this.xAPI.funcion = "WKF_IRed"
     this.xAPI.valores = JSON.stringify(this.wkfRed)
     this.rowDataRed = []
@@ -571,7 +589,7 @@ export class WorkflowComponent implements OnInit {
 
   limpiarRed(){
     this.wkfRed = {
-      idw: 0,
+      idred: 0,
       estadoOrigen: undefined,
       estatusOrigen: undefined,
       transicionVerdadero: undefined,
@@ -583,10 +601,14 @@ export class WorkflowComponent implements OnInit {
       descripcion: '',
       usuario: '',
       nombre: '',
-      tipo: undefined,
       estatus: undefined
 
     }
+  }
+
+
+  salvarRed(){
+    console.log(this.DescripcionRed)
   }
 
 }

@@ -19,15 +19,15 @@ export interface RestoreAPI {
 }
 
 export interface IAPICore {
-  id ?: string
-  http ?: number
-  https ?: number
-  tipo ?: string
-  distribucion ?: number
-  aplicacion ?: string
-  funcion ?: string
-  version ?: string
-  conexion ?: string
+  id?: string
+  http?: number
+  https?: number
+  tipo?: string
+  distribucion?: number
+  aplicacion?: string
+  funcion?: string
+  version?: string
+  conexion?: string
   categoria?: string
   funcionalidad?: string
   descripcion?: string
@@ -39,7 +39,7 @@ export interface IAPICore {
   // valor por defecto
   // condiciones
   //  nombre de campos
-  //  alias
+  alias?: string
   // tipo de dato
   // esquema entrada
   // Consula SQL ? NO SQL
@@ -60,7 +60,9 @@ export interface IAPICore {
   accion?: boolean
   estatus?: boolean
   ruta?: string
-// fin
+  // fin
+  tiempoduracion?: string
+  tipoduracion?: number
   protocolo?: string
   migrar?: false
   modulo?: string
@@ -74,20 +76,20 @@ export interface IAPICore {
   autor?: string
   totalizar?: string
   columnas?: string
-  prefijo ?: string
+  prefijo?: string
 }
 
 export interface IAPI {
-  id ?: string
-  puertohttp : number
-  puertohttps : number
-  tipo : string
-  distribucion : number
-  aplicacion : string
-  funcion : string
-  version : string
+  id?: string
+  puertohttp: number
+  puertohttps: number
+  tipo: string
+  distribucion: number
+  aplicacion: string
+  funcion: string
+  version: string
   // conexion : string
-  driver : string
+  driver: string
   categoria: string
   funcionalidad: string
   descripcion: string
@@ -123,7 +125,7 @@ export interface IAPI {
   accion: boolean
   estatus: boolean
   ruta: string
-  tiempoduracion : string
+  tiempoduracion: string
   tipoduracion: number
   // 
 }
@@ -143,7 +145,7 @@ export interface wkfTransicion {
 }
 
 export interface DefinirMenu {
-  id ?: number,
+  id?: number,
   nombre: string
   url: string
   js: string
@@ -162,7 +164,7 @@ export interface AgregarAccion {
 }
 
 export interface AddModulo {
-  nomb : string
+  nomb: string
   idapp: number
 }
 
@@ -182,20 +184,33 @@ export interface AddSubMenu {
 }
 
 export interface wkfRed {
-  idw : number, // Id WorkFlow
+  idred: number, // Id WorkFlow
   nombre: string // Nombre de la Red
-  tipo: number // Tipologia de la REd
+
   estatus: number // Estatus de la Red
-  descripcion : string, // Descripcion
-  estadoOrigen : number, // Estado de Origen
-  estatusOrigen : number, // Estatus de Origen
-  transicionVerdadero : number, // Transicion
-  estadoDestinoVerdadero : number, // Estado de Destino Verdadero
-  estatusDestinoVerdadero : number, // Estatus de Destino Verdadero
-  estadoDestinoFalso : number, // Estado de Destino Falso
-  estatusDestinoFalso : number, // Estatus de Destino Falso
+  descripcion: string, // Descripcion
+  estadoOrigen: number, // Estado de Origen
+  estatusOrigen: number, // Estatus de Origen
+  transicionVerdadero: number, // Transicion
+  estadoDestinoVerdadero: number, // Estado de Destino Verdadero
+  estatusDestinoVerdadero: number, // Estatus de Destino Verdadero
+  estadoDestinoFalso: number, // Estado de Destino Falso
+  estatusDestinoFalso: number, // Estatus de Destino Falso
   transicionFalsa: number,// Transicion de Error
   usuario: string // Usuario WKF
+}
+
+export interface WkfDescripcionRed {
+  nombre: string;
+  descripcion: string;
+  tipo: number // Tipologia de la REd
+  estatus: number;
+}
+
+
+export interface WkfZRed {
+  idred: number;
+  idw: number;
 }
 
 export interface WkfEstado {
@@ -212,17 +227,17 @@ export interface ObjectoGenerico {
 }
 
 export interface ProcessID {
-  id : string,
+  id: string,
   estatus: boolean,
-  contenido ?: string,
-  mensaje ?: string,
-  segundos : string,
-  rs ?: any
+  contenido?: string,
+  mensaje?: string,
+  segundos: string,
+  rs?: any
 }
 
 export interface WTipoArchivo {
-  ruta	 ?:	string
-	archivo	 ?:	string //CodeEncrypt
+  ruta?: string
+  archivo?: string //CodeEncrypt
 }
 
 @Injectable({
@@ -241,7 +256,7 @@ export class ApiService {
     })
   };
 
-  public pID : ProcessID = {
+  public pID: ProcessID = {
     id: '',
     estatus: false,
     mensaje: '',
@@ -255,7 +270,7 @@ export class ApiService {
     private router: Router,
     private http: HttpClient,
     private ws: WsocketsService
-    ) {
+  ) {
 
   }
 
@@ -269,7 +284,7 @@ export class ApiService {
     return this.http.post<any>(this.URL + "subirarchivos", frm, httpOptions);
   }
 
-  
+
 
   Guardar(xAPI: IAPICore, sApi: string): Observable<any> {
 
@@ -298,7 +313,7 @@ export class ApiService {
   }
 
   //Ejecutar Api generales
-  ExecFnx(fnx : any): Observable<any> {
+  ExecFnx(fnx: any): Observable<any> {
     var url = this.URL + "fnx";
     return this.http.post<any>(url, fnx, this.httpOptions);
   }
@@ -310,20 +325,20 @@ export class ApiService {
   }
 
   // Consulta el Pid recursivamente
-  ConsultarPidRecursivo(id:string, paquete:any){
+  ConsultarPidRecursivo(id: string, paquete: any) {
     this.ExecFnxId(id).subscribe(
       (data) => {
-        setTimeout(()=> {
-          if(data.documento == 'PROCESADO'){
+        setTimeout(() => {
+          if (data.documento == 'PROCESADO') {
             this.pID.id = id
             this.pID.estatus = false
             this.pID.contenido = paquete
             this.ws.lstpid$.emit(this.pID)
-          
+
           } else {
             this.ConsultarPidRecursivo(id, paquete)
           }
-        },10000)
+        }, 10000)
       },
       (error) => {
         console.log(error)
@@ -331,7 +346,7 @@ export class ApiService {
     )
   }
 
-  DwsCdn(peticion : string){
+  DwsCdn(peticion: string) {
     let ruta = this.URL + 'dwsother/' + peticion
     // console.log(ruta)
     const httpOptions = {
@@ -341,7 +356,7 @@ export class ApiService {
       }),
       responseType: 'blob' as 'json'
     };
-    
+
     this.http.get(ruta, httpOptions).subscribe((response: any) => {
       const blob = new Blob([response], { type: 'application/zip' });
       const url = window.URL.createObjectURL(blob);
@@ -350,7 +365,7 @@ export class ApiService {
   }
 
 
-  getDwsCdn(tpf : WTipoArchivo) : Observable<any> {
+  getDwsCdn(tpf: WTipoArchivo): Observable<any> {
     let ruta = this.URL + 'dwscdn'
 
     const httpOptions = {
@@ -360,8 +375,8 @@ export class ApiService {
       }),
       responseType: 'blob' as 'json'
     };
-    
-    return this.http.post<any>(ruta,  tpf, httpOptions)
+
+    return this.http.post<any>(ruta, tpf, httpOptions)
   }
 
 

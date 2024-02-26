@@ -135,7 +135,7 @@ export class ConnectionsComponent implements OnInit {
       clave: ['',[Validators.required]],
       protocolo: [''],
       host: [undefined, [Validators.required]],
-      aplicacion: [undefined, [Validators.required]],
+      aplicacion: [''],
       puerto: ['', [Validators.required]],
       descripcion: ['', [Validators.required]],
     });
@@ -284,6 +284,7 @@ export class ConnectionsComponent implements OnInit {
       host: [data.host, [Validators.required]],
       puerto: [data.puerto, [Validators.required]],
       descripcion: [data.descripcion, [Validators.required]],
+      aplicacion: [data.aplicacion],
     });
     this.modalService.open(modal,{
       centered: true,
@@ -389,8 +390,10 @@ export class ConnectionsComponent implements OnInit {
   async CargarListaAplicaciones() {
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.parametros = ''
+    this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         this.ListaAplicaciones = data.Cuerpo.map(e => {
           e.name = e.nombre+' : '+e.VERSION
           return e

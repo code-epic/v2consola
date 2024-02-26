@@ -102,6 +102,9 @@ export class RoleComponent implements OnInit {
 
   public btnMenu = false
 
+  public xnombre = ''
+  public xdescripcion = ''
+
 
   public lstAplicaciones = []
   public dataModulo = []
@@ -126,16 +129,42 @@ export class RoleComponent implements OnInit {
     { id: 'OPTIONS', name: 'OPTIONS' }
   ]
 
+  @ViewChild('tableRowDetails') tableRowDetails: any;
+
+  public codeMirrorOptions: any = {
+    theme: 'default',
+    mode: 'text/x-sh',
+    lineNumbers: true,
+    lineWrapping: true,
+    foldGutter: true,
+    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lint: true,
+    indentUnit: 2,
+    tabSize: 2,
+    indentWithTabs: true
+  };
+
+  public ColumnMode = ColumnMode;
+
+  public chkBoxSelected = [];
+
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
     private modalService: NgbModal,
   ) { }
 
+  customChkboxOnSelect({ selected }) {
+    this.chkBoxSelected.splice(0, this.chkBoxSelected.length);
+    this.chkBoxSelected.push(...selected);
+  }
+
+
   ngOnInit(): void {
-    // content header
     this.contentHeader = {
-      headerTitle: "Aplicaciones",
+      headerTitle: "Seguridad",
       actionButton: true,
       breadcrumb: {
         type: "",
@@ -146,11 +175,11 @@ export class RoleComponent implements OnInit {
             link: "/home",
           },
           {
-            name: "Aplicaciones",
+            name: "Seguridad",
             isLink: false,
           },
           {
-            name: "Definir Menu",
+            name: "Definir Rol",
             isLink: false,
           },
         ],
@@ -452,12 +481,14 @@ export class RoleComponent implements OnInit {
     });
   }
 
-  ModalAddAcciones(modal) {
-    this.titleModal = 'Agregar Acciones'
-    this.titleBtnModal = 'Agregar Accion'
+  MdlAccion(modal) {
+
+    this.procesar()
+    this.titleModal = 'Agregar al rol'
+    this.titleBtnModal = 'Aceptar'
     this.modalService.open(modal, {
       centered: true,
-      size: 'xl',
+      size: 'lg',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',

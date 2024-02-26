@@ -98,7 +98,39 @@ export class RegisterApiComponent implements OnInit {
     tipoduracion: 0
   }
 
-  public xAPIAux: IAPICore
+  public xAPIAux: IAPICore = {
+    puertohttp: undefined,
+    puertohttps: undefined,
+    tipo: undefined,
+    distribucion: 0,
+    aplicacion: undefined,
+    funcion: '',
+    version: '0.0.1',
+    categoria: undefined,
+    funcionalidad: undefined,
+    parametros: '',
+    descripcion: '',
+    metodo: undefined,
+    relacional: undefined,
+    coleccion: '',
+    valores: undefined,
+    consumidores: 100,
+    cache: 0,
+    logs: false,
+    concurrencia: false,
+    retorna: false,
+    prioridad: '0',
+    entorno: 'desarrollo',
+    accion: false,
+    estatus: true,
+    ruta: '',
+    entradas: '',
+    query: '',
+    alias: '',
+    driver: undefined,
+    tiempoduracion: '20',
+    tipoduracion: 0
+  }
 
   public existe: boolean = false
 
