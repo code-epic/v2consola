@@ -57,8 +57,10 @@
 
                         <div class="form-group col-md-4">
                             <label class="form-label" for="origen">Acciones</label>
-                            <select multiple class="form-control" style="height: 150px;" (dblclick)="addElement()" [(ngModel)]="xaccion" [ngModelOptions]="{standalone: true}" >
-                                <option *ngFor="let e of rowDataAcc" value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}</option>
+                            <select multiple class="form-control" style="height: 150px;" (dblclick)="addElement()"
+                                [(ngModel)]="xaccion" [ngModelOptions]="{standalone: true}">
+                                <option *ngFor="let e of rowDataAcc" value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}
+                                </option>
                             </select>
                         </div>
 
@@ -104,33 +106,53 @@
 
                 <div class="col-md-12">
                     <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-                        [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
-                        [limit]="basicSelectedOption">
+                        [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox" [headerHeight]="40"
+                        [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
 
+                        <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
+                            [draggable]="false" [resizeable]="false">
+                            <ng-template ngx-datatable-header-template let-value="value"
+                                let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
+                                        id="headerChkbxRef" />
+                                    <label class="custom-control-label" for="headerChkbxRef"></label>
+                                </div>
+                            </ng-template>
+
+                            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
+                                let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [checked]="isSelected"
+                                        (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
+                                    <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
 
                         <ngx-datatable-column name="MODULO" [width]="200">
                             <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
                                 <div>
-                                <span class="font-weight-bold">{{ modulo }} </span>
+                                    <span class="font-weight-bold">{{ modulo }} </span>
                                 </div>
                             </ng-template>
-                            
+
                         </ngx-datatable-column>
                         <ngx-datatable-column name="MENU" [width]="200">
                             <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
                                 <div>
-                                <span class="font-weight-bold">{{ menu }} </span>
+                                    <span class="font-weight-bold">{{ menu }} </span>
                                 </div>
                             </ng-template>
-                            
+
                         </ngx-datatable-column>
                         <ngx-datatable-column name="ACCION" [width]="100">
                             <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
                                 <div>
-                                <span class="font-weight-bold">{{ accion }} </span>
+                                    <span class="font-weight-bold">{{ accion }} </span>
                                 </div>
                             </ng-template>
-                            
+
                         </ngx-datatable-column>
 
 

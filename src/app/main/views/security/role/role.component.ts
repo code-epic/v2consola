@@ -23,6 +23,9 @@ export class RoleComponent implements OnInit {
   @BlockUI() blockUI: NgBlockUI;
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
+
+  public SelectionType = SelectionType;
+
   public contentHeader: object;
 
   public xAPI: IAPICore = {
@@ -33,7 +36,7 @@ export class RoleComponent implements OnInit {
 
 
 
- 
+
   public titleModal: string = ''
   public titleBtnModal: string = ''
 
@@ -143,10 +146,10 @@ export class RoleComponent implements OnInit {
     this.dataModulo = [];
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.dataModulo = data.Cuerpo.map(e => {
-            e.name = e.nomb
-            return e
-          });
+        this.dataModulo = data.Cuerpo.map(e => {
+          e.name = e.nomb
+          return e
+        });
       },
       (error) => {
         console.log(error)
@@ -173,7 +176,7 @@ export class RoleComponent implements OnInit {
 
 
   selectEventModulo(item) {
-    
+
     this.consultarMenu(this.xmodulo[0].split('|')[0])
   }
 
@@ -182,7 +185,7 @@ export class RoleComponent implements OnInit {
 
 
   async listarAcciones() {
-   
+
     console.log(this.menu[0])
     this.rowDataAcc = []
     this.xAPI.funcion = "OMenuAccion"
@@ -197,7 +200,7 @@ export class RoleComponent implements OnInit {
         console.log(error)
       }
     )
-   
+
   }
 
 
@@ -206,15 +209,15 @@ export class RoleComponent implements OnInit {
 
   LimpiarMenu() {
     this.estatus = undefined
-   
+
   }
 
-  async addElement(){
+  async addElement() {
 
     console.log(this.xaccion[0].split('|')[1])
 
     let e = {
-      "idmod" : this.xmodulo[0].split('|')[0],
+      "idmod": this.xmodulo[0].split('|')[0],
       "modulo": this.xmodulo[0].split('|')[1],
       "idmenu": this.menu[0].split('|')[0],
       "menu": this.menu[0].split('|')[1],
@@ -231,5 +234,5 @@ export class RoleComponent implements OnInit {
 
 
 
- 
+
 }
