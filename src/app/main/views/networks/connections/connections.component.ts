@@ -29,30 +29,30 @@ export class ConnectionsComponent implements OnInit {
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
-  public xAPI : IAPICore = {
+  public xAPI: IAPICore = {
     funcion: '',
     parametros: '',
     relacional: false,
-    concurrencia : false,
+    concurrencia: false,
     protocolo: '',
-    ruta : '',
-    retorna : false,
-    migrar : false,
-    modulo : '',
-    valores : {},
-    coleccion : '',
-    http : 0,
-    https : 0,
-    consumidores : 0,
-    puertohttp : 0,
-    puertohttps : 0,
-    driver : '',
-    query : '',
-    metodo : '',
-    tipo : '',
-    prioridad : '',
+    ruta: '',
+    retorna: false,
+    migrar: false,
+    modulo: '',
+    valores: {},
+    coleccion: '',
+    http: 0,
+    https: 0,
+    consumidores: 0,
+    puertohttp: 0,
+    puertohttps: 0,
+    driver: '',
+    query: '',
+    metodo: '',
+    tipo: '',
+    prioridad: '',
     entorno: '',
-    logs : false
+    logs: false
   };
 
 
@@ -64,7 +64,7 @@ export class ConnectionsComponent implements OnInit {
   public showBaseDatos = false
   public showPuente = false
   private _unsubscribeAll: Subject<any>;
- 
+
   public ListaConexiones = []
   public tempData = [];
   public rowData = [];
@@ -74,18 +74,18 @@ export class ConnectionsComponent implements OnInit {
   public hosts = []
 
   public status = [
-    {id:true, name: 'ACTIVO'},
-    {id:false, name: 'INACTIVO'},
+    { id: true, name: 'ACTIVO' },
+    { id: false, name: 'INACTIVO' },
   ]
   public protocolo = [
-    {id:1, name: 'HTTP'},
-    {id:2, name: 'HTTPS'},
+    { id: 1, name: 'HTTP' },
+    { id: 2, name: 'HTTPS' },
   ]
 
 
   // public
   public mac
-  public data : any
+  public data: any
   public xrs = ''
   public host = ''
   public submitted = false;
@@ -101,21 +101,21 @@ export class ConnectionsComponent implements OnInit {
 
 
   constructor(
-    private comunicacionesService : ComunicationsService,
-    private apiService : ApiService,
+    private comunicacionesService: ComunicationsService,
+    private apiService: ApiService,
     private modalService: NgbModal,
-    private conexionesService : ConexionesService,
-    private ws : WsocketsService,
+    private conexionesService: ConexionesService,
+    private ws: WsocketsService,
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
   ) {
   }
 
-    // convenience getter for easy access to form fields
-    get f() {
-      return this.loginForm.controls;
-    }
+  // convenience getter for easy access to form fields
+  get f() {
+    return this.loginForm.controls;
+  }
 
 
   async ngOnInit() {
@@ -127,12 +127,12 @@ export class ConnectionsComponent implements OnInit {
 
     this.loginForm = this._formBuilder.group({
       id: ['', [Validators.required]],
-      usuario: ['',[Validators.required]],
+      usuario: ['', [Validators.required]],
       basedatos: ['', [Validators.required]],
       url: [''],
       estatus: [undefined, [Validators.required]],
       driver: [undefined, [Validators.required]],
-      clave: ['',[Validators.required]],
+      clave: ['', [Validators.required]],
       protocolo: [''],
       host: [undefined, [Validators.required]],
       aplicacion: [''],
@@ -142,9 +142,9 @@ export class ConnectionsComponent implements OnInit {
 
     // this.sectionBlockUI.start('Loading...');
     // this.sectionBlockUI.stop();
-    
-     // content header
-     this.contentHeader = {
+
+    // content header
+    this.contentHeader = {
       headerTitle: 'Conexiones',
       actionButton: true,
       breadcrumb: {
@@ -196,7 +196,7 @@ export class ConnectionsComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  async CargarDrivers(){
+  async CargarDrivers() {
     await this.comunicacionesService.ListarDrivers().subscribe(
       (data) => {
         this.drivers = data
@@ -207,7 +207,7 @@ export class ConnectionsComponent implements OnInit {
     )
   }
 
-  LimpiarForm(){
+  LimpiarForm() {
     this.loginForm = this._formBuilder.group({
       usuario: ['', [Validators.required]],
       identificador: ['', [Validators.required]],
@@ -222,27 +222,27 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  async CargarListaConexiones(){
+  async CargarListaConexiones() {
     this.xAPI.funcion = "LESBDrivers";
     this.xAPI.parametros = ''
     this.ListaConexiones = []
     this.count = 0
-     await this.apiService.Ejecutar(this.xAPI).subscribe(
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.map(e => {
-         this.ListaConexiones.push(e);
-        });
-        this.rowData = this.ListaConexiones;
-        this.count = this.rowData.length
+        // data.map(e => {
+        //   this.ListaConexiones.push(e);
+        // });
+        this.rowData = data;
         this.tempData = this.rowData;
+        this.count = this.rowData.length
       },
       (error) => {
         console.log(error)
       }
-    ) 
+    )
   }
 
-  async ListarHostname(){
+  async ListarHostname() {
     await this.comunicacionesService.Listar().subscribe(
       (data) => {
         this.hosts = data
@@ -253,40 +253,40 @@ export class ConnectionsComponent implements OnInit {
     )
   }
 
-  CambiarVisibilidadDriver(){
+  CambiarVisibilidadDriver() {
     if (this.driver == "puenteurl") {
       this.showBaseDatos = false
-      this.showPuente = true      
+      this.showPuente = true
     } else {
       this.showBaseDatos = true
-      this.showPuente = false      
+      this.showPuente = false
     } if (this.driver === 'oracle19c') {
       this.lbd = "Oracle_SID"
     } else {
       this.lbd = "Base de Datos"
-    } if(this.driver == null){
+    } if (this.driver == null) {
       this.showBaseDatos = false
-      this.showPuente = false      
+      this.showPuente = false
     }
   }
 
-  ModalEdit(modal, data){
+  ModalEdit(modal, data) {
     this.driver = data.driver
     this.loginForm = this._formBuilder.group({
       id: [data.id, [Validators.required]],
-      usuario: [data.usuario,[Validators.required]],
+      usuario: [data.usuario, [Validators.required]],
       basedatos: [data.basedatos, [Validators.required]],
       url: [data.url],
       estatus: [data.estatus, [Validators.required]],
       driver: [data.driver, [Validators.required]],
-      clave: [data.clave,[Validators.required]],
+      clave: [data.clave, [Validators.required]],
       protocolo: [data.protocolo],
       host: [data.host, [Validators.required]],
       puerto: [data.puerto, [Validators.required]],
       descripcion: [data.descripcion, [Validators.required]],
       aplicacion: [data.aplicacion],
     });
-    this.modalService.open(modal,{
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -295,9 +295,9 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  ModalEscaneo(modal, data){
+  ModalEscaneo(modal, data) {
     this.data = data
-    this.modalService.open(modal,{
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -306,23 +306,23 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  async EvaluarConexion(){
-    if(this.loginForm.value.basedatos == undefined || this.loginForm.value.clave == undefined || this.loginForm.value.basedatos === "" || this.loginForm.value.clave === ""){
-      this.utilservice.AlertMini('top-end','warning','Debe introducir los datos para establecer la conexión',3000)
+  async EvaluarConexion() {
+    if (this.loginForm.value.basedatos == undefined || this.loginForm.value.clave == undefined || this.loginForm.value.basedatos === "" || this.loginForm.value.clave === "") {
+      this.utilservice.AlertMini('top-end', 'warning', 'Debe introducir los datos para establecer la conexión', 3000)
       return false;
     }
     await this.conexionesService.EvaluarConexion(this.loginForm.value, 'evaluarconexion').subscribe(
-      (data)=>{
-        this.utilservice.AlertMini('top-end','success',data.msj,3000)
+      (data) => {
+        this.utilservice.AlertMini('top-end', 'success', data.msj, 3000)
       },
-      (errot)=>{
-        this.utilservice.AlertMini('top-end','error','Error al momento de realizar la conexión, verifique e intente nuevamente',3000)
+      (errot) => {
+        this.utilservice.AlertMini('top-end', 'error', 'Error al momento de realizar la conexión, verifique e intente nuevamente', 3000)
       }
     )
   }
 
-  ModalAdd(modal){
-    this.modalService.open(modal,{
+  ModalAdd(modal) {
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -331,7 +331,7 @@ export class ConnectionsComponent implements OnInit {
     });
   }
 
-  GuardarConexion(){
+  GuardarConexion() {
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -349,16 +349,16 @@ export class ConnectionsComponent implements OnInit {
           this.ListaConexiones = []
           this.CargarListaConexiones()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Conexión) ha sido registrada codigo: ${data.UpsertedID}`,3000)
+          this.utilservice.AlertMini('top-end', 'success', `Tu (Conexión) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
         }
       )
     }
   }
 
-  EditarDispositivo(){
+  EditarDispositivo() {
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -376,10 +376,10 @@ export class ConnectionsComponent implements OnInit {
           this.ListaConexiones = []
           this.CargarListaConexiones()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Conexión) ha sido actualizada`,3000)
+          this.utilservice.AlertMini('top-end', 'success', `Tu (Conexión) ha sido actualizada`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
           // console.log(error)
         }
       )
@@ -395,7 +395,7 @@ export class ConnectionsComponent implements OnInit {
       (data) => {
         console.log(data)
         this.ListaAplicaciones = data.Cuerpo.map(e => {
-          e.name = e.nombre+' : '+e.VERSION
+          e.name = e.nombre + ' : ' + e.VERSION
           return e
         });
       },

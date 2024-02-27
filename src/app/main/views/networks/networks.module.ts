@@ -29,7 +29,6 @@ import { BlockUIModule } from 'ng-block-ui';
 
 import { CommunicationsComponent } from './communications/communications.component';
 import { ConnectionsComponent } from './connections/connections.component';
-import { MonitoringComponent } from './monitoring/monitoring.component';
 
 const routes = [
   {
@@ -44,12 +43,6 @@ const routes = [
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
-  {
-    path: 'networks/monitoring',
-    component: MonitoringComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
-    canActivate: [AuthGuardGuard],
-  }
 ];
 
 
@@ -57,7 +50,6 @@ const routes = [
   declarations: [
     CommunicationsComponent,
     ConnectionsComponent,
-    MonitoringComponent,
   ],
   imports: [
     RouterModule.forChild(routes),

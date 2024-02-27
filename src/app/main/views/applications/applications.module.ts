@@ -30,8 +30,6 @@ import { BlockUIModule } from 'ng-block-ui';
 
 import { InstallComponent } from './install/install.component';
 import { MenuComponent } from './menu/menu.component';
-import { MonitoringComponent } from './monitoring/monitoring.component';
-import { EventsComponent } from './events/events.component';
 import { ListComponent } from './list/list.component';
 
 
@@ -54,18 +52,6 @@ const routes = [
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
-  {
-    path: 'applications/monitoring',
-    component: MonitoringComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
-    canActivate: [AuthGuardGuard],
-  },
-  {
-    path: 'applications/events',
-    component: EventsComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
-    canActivate: [AuthGuardGuard],
-  }
 ];
 
 
@@ -73,8 +59,6 @@ const routes = [
   declarations: [
     InstallComponent,
     MenuComponent,
-    MonitoringComponent,
-    EventsComponent,
     ListComponent
   ],
   imports: [

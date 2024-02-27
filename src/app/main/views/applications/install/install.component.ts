@@ -21,7 +21,7 @@ import { UtilService } from '@services/util/util.service';
 export class InstallComponent implements OnInit {
 
 
-  hosts     = []
+  hosts = []
 
   public selectBasic = [
     { name: 'UK' },
@@ -69,18 +69,18 @@ export class InstallComponent implements OnInit {
   public mversion;
   public mlenguaje;
 
-  nombreapp     : string  = ''
-  xnombreapi    : string  = ''
-  xnombrecon    : string  = ''
-  funcion       : string  = ''
-  xparametroapi : string  = ''
+  nombreapp: string = ''
+  xnombreapi: string = ''
+  xnombrecon: string = ''
+  funcion: string = ''
+  xparametroapi: string = ''
 
-  dataApp     = []
-  rowData     = []
-  keyword     = 'name'
+  dataApp = []
+  rowData = []
+  keyword = 'name'
 
-  public iApp : SSB_IAplicacion = {
-    identificador : 0,
+  public iApp: SSB_IAplicacion = {
+    identificador: 0,
     basedatos: undefined,
     lenguaje: undefined,
     nombre: '',
@@ -96,19 +96,19 @@ export class InstallComponent implements OnInit {
     version: '0.0.1'
   }
 
-  public xAPI : IAPICore = {
-    id            : '',
-    funcion       : '',
-    relacional    : false,
-    concurrencia  : false,
-    retorna       : false,
-    migrar        : false,
-    parametros    : '',
-    modulo        : '',
-    valores       : null,
-    logs          : false,
-    cache         : 0,
-    estatus       : false
+  public xAPI: IAPICore = {
+    id: '',
+    funcion: '',
+    relacional: false,
+    concurrencia: false,
+    retorna: false,
+    migrar: false,
+    parametros: '',
+    modulo: '',
+    valores: null,
+    logs: false,
+    cache: 0,
+    estatus: false
   };
 
   public tipos = [
@@ -150,11 +150,13 @@ export class InstallComponent implements OnInit {
     { id: "C", descripcion: 'C' },
   ]
 
-  public showAppA : boolean = true
-  public showAppB : boolean = false
+  public showAppA: boolean = true
+  public showAppB: boolean = false
 
 
-public nameApp = undefined
+  public nameApp = undefined
+
+  public showInput: boolean = false
 
 
   onSubmit() {
@@ -186,22 +188,26 @@ public nameApp = undefined
     this.horizontalWizardStepper.previous();
   }
 
+  public ListaConexiones = []
+
 
   constructor(
     private apiService: ApiService,
     private modalService: NgbModal,
     private config: NgSelectConfig,
-    private utilservice : UtilService,
-    private comunicacionesServices : ComunicacionesService,
+    private utilservice: UtilService,
+    private comunicacionesService: ComunicacionesService,
+    private comunicacionesServices: ComunicacionesService,
   ) { }
 
   async ngOnInit() {
     await this.ListarIP();
+    await this.CargarListaConexiones();
     await this.lstAplicaciones();
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
 
 
- this.contentHeader = {
+    this.contentHeader = {
       headerTitle: 'Aplicaciones',
       actionButton: true,
       breadcrumb: {
@@ -218,17 +224,17 @@ public nameApp = undefined
           }
         ]
       }
-    } 
-  
+    }
+
   }
 
-  async ListarIP(){
+  async ListarIP() {
     await this.comunicacionesServices.Listar().subscribe(
       async (data) => {
-         await data.map(e => {
-        this.hosts.push(e)
-         });
-        this.hosts.push({id:'SERVIDOR', host: 'github', descripcion:'@GITHUB'},{id:'SERVIDOR', host: 'gitlab', descripcion:'@GITLAB'})
+        await data.map(e => {
+          this.hosts.push(e)
+        });
+        this.hosts.push({ id: 'SERVIDOR', host: 'github', descripcion: '@GITHUB' }, { id: 'SERVIDOR', host: 'gitlab', descripcion: '@GITLAB' })
       },
       (error) => {
         console.log(error)
@@ -236,42 +242,70 @@ public nameApp = undefined
     )
   }
 
-  async guardarAplicacion(){
-    
-    this.xAPI.funcion = "SSB_IAplicacion" 
+  async guardarAplicacion() {
+
+    this.xAPI.funcion = "SSB_IAplicacion"
     this.iApp.llave = this.iApp.nombre + '.sse'
-    this.xAPI.valores = JSON.stringify(this.iApp) 
-    if(this.iApp.identificador != null) this.xAPI.funcion = "SSB_UAplicacion"
+    this.xAPI.valores = JSON.stringify(this.iApp)
+    if (this.iApp.identificador != null) this.xAPI.funcion = "SSB_UAplicacion"
     console.log(this.xAPI)
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
           var msj = "Actualizado"
-          if(this.xAPI.funcion == "SSB_IAplicacion") {
+          if (this.xAPI.funcion == "SSB_IAplicacion") {
             this.iApp.identificador = data.msj;
             var msj = "Agregado"
           }
-          this.utilservice.AlertMini('top-end', 'success','Se ha ' + msj + ' el registro con exito',3000)  
+          this.utilservice.AlertMini('top-end', 'success', 'Se ha ' + msj + ' el registro con exito', 3000)
         } else {
-          this.utilservice.AlertMini('top-end', 'error','Oops! Algo salio mal!',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Oops! Algo salio mal!', 3000)
         }
       },
       (error) => {
-        this.utilservice.AlertMini('top-end', 'error','Oops! Algo salio mal!',3000)
+        this.utilservice.AlertMini('top-end', 'error', 'Oops! Algo salio mal!', 3000)
         console.log(error)
       }
     )
   }
 
-  selectEventModulo(){
+  selectEventModulo() {
     // console.log(this.iApp.identificador)
     // console.log(this.iApp.nombre)
     /* this.iApp.identificador = this.iApp.identificador; */
     this.nombreapp = this.iApp.nombre;
-    this.consultarAplicacion()    
+    this.consultarAplicacion()
   }
 
-  selectEventModuloo(e){
+  modalFile(modal: any) {
+    this.modalService.open(modal, {
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+
+  async CargarListaConexiones() {
+    this.xAPI.funcion = "LESBDrivers";
+    this.xAPI.parametros = ''
+    this.ListaConexiones = []
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.ListaConexiones = data.map(e => {
+          e.name = `(${e.driver}) - ${e.descripcion}`
+          return e
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+
+  selectEventModuloo(e) {
     if (e == null) {
       this.showAppA = false
       this.showAppB = true
@@ -280,19 +314,19 @@ public nameApp = undefined
       this.showAppB = false
     }
     this.iApp.identificador = e
-    this.consultarAplicacion()    
+    this.consultarAplicacion()
   }
 
-  async consultarAplicacion(){
-    
-    if(this.iApp.identificador == null) return false
+  async consultarAplicacion() {
+
+    if (this.iApp.identificador == null) return false
 
     this.xAPI.funcion = "SEC_CAplicacion" //Consultar Aplicacion del sistema 
-    this.xAPI.parametros =  this.iApp.identificador.toString()
+    this.xAPI.parametros = this.iApp.identificador.toString()
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        var xapp : SSB_IAplicacion
+        var xapp: SSB_IAplicacion
         xapp = data.Cuerpo[0]
         this.iApp = xapp;
       },
@@ -302,22 +336,30 @@ public nameApp = undefined
     )
   }
 
-  async lstAplicaciones(){
+  CapturarSeleccion(event: any) {
+    if (event == 2) {
+      this.showInput = true
+    } else {
+      this.showInput = false
+    }
+  }
+
+  async lstAplicaciones() {
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.valores = null;
     await this.apiService.Ejecutar(this.xAPI).subscribe(
-     async data => { 
-        this.dataApp = await data.Cuerpo.map(e => {  
+      async data => {
+        this.dataApp = await data.Cuerpo.map(e => {
           e.name = `${e.nombre} | ${e.VERSION}`
-          this.nameApp = e.name 
+          this.nameApp = e.name
           return e
-        }); 
-        this.dataApp.push({aplicacion:'Crear Nuevo', name: ' Crear Nuevo'})
+        });
+        this.dataApp.push({ aplicacion: 'Crear Nuevo', name: ' Crear Nuevo' })
       },
       (error) => {
         console.log(error)
       }
     )
   }
-  
-  }
+
+}

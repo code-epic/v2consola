@@ -51,9 +51,9 @@
 
                                             <div class="form-group col-md-8" *ngIf="showAppA">
                                                 <label class="form-label" for="apli">Aplicacion</label>
-                                                <ng-select [items]="dataApp"  #aplicacion="ngModel" [(ngModel)]="nameApp"
+                                                <ng-select [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp"
                                                     [ngModelOptions]="{standalone: true}"
-                                                    (ngModelChange)='selectEventModuloo($event)' 
+                                                    (ngModelChange)='selectEventModuloo($event)'
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="name"
                                                     name="aplicacion" id="aplicacion" required placeholder="Seleccione"
                                                     bindValue="identificador">
@@ -86,7 +86,8 @@
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="tipo">Tipo de instalación</label>
                                                 <ng-select [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo"
-                                                    [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
+                                                    [class.error]="accountDetailsForm.submitted"
+                                                    (ngModelChange)="CapturarSeleccion($event)" bindLabel="descripcion"
                                                     name="tipo" id="tipo" required placeholder="Seleccione"
                                                     bindValue="id">
                                                     <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
@@ -165,11 +166,8 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="form-group col-md-6">
+                                            <div class="form-group col-md-5">
                                                 <label class="form-label" for="bdatos">Base de Datos</label>
-                                                <!-- <input [(ngModel)]="TipoVar" #Tipo="ngModel" required type="text"
-                                                    name="tipo" id="tipo" class="form-control"
-                                                    [class.error]="!Tipo.valid && accountDetailsForm.submitted" /> -->
                                                 <ng-select [items]="basesDatos" #Bdatos="ngModel"
                                                     [(ngModel)]="iApp.basedatos"
                                                     [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
@@ -182,7 +180,7 @@
                                                         *ngIf="Bdatos.errors.required">Este campo es requerido!</small>
                                                 </span>
                                             </div>
-                                            <div class="form-group col-md-2">
+                                            <div class="form-group col-md-3">
                                                 <label class="form-label" for="version">Versión</label>
                                                 <input [(ngModel)]="iApp.version" [readOnly]="true" #Verref="ngModel"
                                                     required type="text" name="version" id="version"
@@ -195,7 +193,7 @@
                                                         *ngIf="Verref.errors.required">Este campo es requerido!</small>
                                                 </span>
                                             </div>
-                                            <div class="form-group col-md-4">
+                                            <div class="form-group col-md-3">
                                                 <label class="form-label" for="lenguaje">Lenguaje</label>
                                                 <ng-select [items]="lenguaje" #Lenref="ngModel"
                                                     [(ngModel)]="iApp.lenguaje"
@@ -206,8 +204,14 @@
                                                 <span *ngIf="accountDetailsForm.submitted && Lenref.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
-                                                        *ngIf="Lenref.errors.required">Este campo es requerido!</small>
+                                                        *ngIf="Lenref.errors.required">Este campo es
+                                                        requerido!</small>
                                                 </span>
+                                            </div>
+                                            <div class="form-group col-md-1" *ngIf="showInput">
+                                                <label class="form-label" for="lenguaje">Archivo</label>
+                                                <button class="btn btn-success" (click)="modalFile(ModalFiles)"><i
+                                                        data-feather="paperclip" class="mr-0 mr-sm-0"></i></button>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -222,7 +226,8 @@
                                                 <span *ngIf="accountDetailsForm.submitted && Desref.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
-                                                        *ngIf="Desref.errors.required">Este campo es requerido!</small>
+                                                        *ngIf="Desref.errors.required">Este campo es
+                                                        requerido!</small>
                                                 </span>
                                             </div>
 
@@ -246,55 +251,32 @@
                                     <form #personalInfoForm="ngForm">
                                         <div class="content-header">
                                             <h5 class="mb-0">Conexiones</h5>
-                                            <small>Información Base De Datos</small>
                                         </div>
 
                                         <div class="row">
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="first-name">First Name</label>
-                                                <input [(ngModel)]="TDFirstNameVar" #TDFirstNameRef="ngModel" required
-                                                    type="text" name="first-name" id="first-name" class="form-control"
-                                                    [class.error]="personalInfoForm.submitted && TDFirstNameRef.invalid"
-                                                    placeholder="John" />
-                                                <span *ngIf="personalInfoForm.submitted && TDFirstNameRef.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="TDFirstNameRef.errors.required">Este campo es
-                                                        requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="last-name">Last Name</label>
-                                                <input [(ngModel)]="TDLastNameVar" #TDLastNameRef="ngModel" required
-                                                    type="text" name="last-name" id="last-name" class="form-control"
-                                                    [class.error]="personalInfoForm.submitted && TDLastNameRef.invalid"
-                                                    placeholder="Doe" />
-                                                <span *ngIf="personalInfoForm.submitted && TDLastNameRef.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="TDLastNameRef.errors.required">This field is
-                                                        required!</small>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="country">Country</label>
-                                                <ng-select [items]="selectBasic" bindLabel="name"> </ng-select>
-                                            </div>
-                                            <div class="form-group col-md-6">
-                                                <label class="form-label" for="language">Language</label>
-                                                <ng-select [items]="selectMulti" [multiple]="true"
-                                                    [closeOnSelect]="false" [searchable]="false" bindLabel="name"
-                                                    name="selectLanguage" placeholder="Select people"
-                                                    [(ngModel)]="selectMultiSelected">
-                                                    <ng-template ng-label-tmp let-item="item" let-clear="clear">
-                                                        <span class="ng-value-label"> {{ item.name }}</span>
-                                                        <span class="ng-value-icon right" (click)="clear(item)"
-                                                            aria-hidden="true">×</span>
-                                                    </ng-template>
+
+                                            <div class="form-group col-md-12">
+                                                <label class="form-label" for="language">Driver</label>
+                                                <ng-select [items]="ListaConexiones" [(ngModel)]="iApp.sistema"
+                                                    bindLabel="name" name="driver" id="driver" required
+                                                    placeholder="Seleccione Driver" bindValue="id">
                                                 </ng-select>
                                             </div>
+
+                                            <div class="form-group col-md-12">
+                                                <label class="form-label" for="first-name">Archivo</label>
+                                                <input type="file" [(ngModel)]="TDFirstNameVar" required
+                                                    name="first-name" id="first-name" class="form-control"
+                                                    placeholder="John" />
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col-md-12">
+                                                <label class="form-label" for="country">SQL</label>
+                                                <textarea rows="7" class="form-control"></textarea>
+                                            </div>
+
                                         </div>
 
                                         <div class="d-flex justify-content-between">
@@ -311,7 +293,7 @@
                                         </div>
                                     </form>
                                 </div>
-                               
+
                             </form>
                         </div>
                     </div>
@@ -322,3 +304,45 @@
         </section>
     </div>
 </div>
+
+
+
+
+
+<ng-template #ModalFiles let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title" id="myModalLabel160">Subir Paquete</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
+        <div class="modal-body" tabindex="0" ngbAutofocus>
+            <!-- Invoice -->
+            <div class="col-xl-12 col-md-12 col-12">
+                <!-- Header Starts -->
+                <div class="row">
+
+                    <h5>Los paquetes o programas que incluiran podran ser escritas en Golang, PHP, Python, Java,
+                        JavaScript, HTML.</h5>
+                    <br>
+                    <form>
+                        <input type="file" class="form-control" />
+                    </form>
+                    <br>
+                    <h5>(.zip, .tar, .war) Limite del Archivo : 100.00 MB
+                    </h5>
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-success" tabindex="4" rippleEffect>Subir archivo</button>
+            <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
+                rippleEffect>Cerrar</button>
+        </div>
+    </form>
+
+</ng-template>
