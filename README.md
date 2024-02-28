@@ -88,3 +88,5 @@ Como en todo proceso de [comunicación](https://es.wikipedia.org/wiki/Comunicac
 
 Acceso o conexión entre equipos es un sistema de enlace con que el computador, dispositivo móvil o red de computadoras cuenta para conectarse entre si, lo que les permite visualizar otros equipos desde un navegador o los diferentes protocolos y/o puertos para acceder a otros servicios que se ofrecen, como sitios web, base de datos, mensajería instantánea, protocolo de transferencia de archivos (FTP), etcétera. Se puede acceder a Internet desde una conexión por línea conmutada (a través de cable coaxial, cables de fibra óptica o cobre), vía satélite, banda ancha móvil y teléfonos celulares o móviles con tecnología 2G/3G/4G/5G. Las empresas que otorgan acceso reciben el nombre de proveedores de servicios (Service Provider).
 
+
+
