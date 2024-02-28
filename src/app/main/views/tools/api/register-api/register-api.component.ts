@@ -26,6 +26,8 @@ export class RegisterApiComponent implements OnInit {
 
   public driversAPP
 
+  public driversID = ''
+
   public drivers: any
 
   public xAPI: IAPICore = {
@@ -40,7 +42,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   public codeJson: any = {
-    theme: 'idea',
+    theme: 'material',
     mode: 'application/ld+json',
     lineNumbers: true,
     lineWrapping: true,
@@ -52,7 +54,7 @@ export class RegisterApiComponent implements OnInit {
   };
 
   public codeSQL: any = {
-    theme: 'idea',
+    theme: 'material',
     mode: 'text/x-sql',
     lineNumbers: true,
     lineWrapping: true,
@@ -392,6 +394,7 @@ export class RegisterApiComponent implements OnInit {
     this.xAPI.funcion = "LESBDrivers";
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (datax) => {
+        console.log(datax)
         this.drivers = datax.map(e => {
           e.name = e.descripcion + ' - ' + '(' + e.basedatos + ')'
           // this.drivers.push(e)
@@ -403,7 +406,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   RegistrarAPI() {
-    this.xAPIDB.driver = this.driversAPP
+    this.xAPIDB.driver = this.driversID
     this.xAPIDB.puertohttp =  parseInt(this.xAPIDB.puertohttp.toString())
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
     // this.xAPIDB.distribucion = this.xAPIDB.distribucion == 'PRIVADA' ? 0 : 1
@@ -414,6 +417,8 @@ export class RegisterApiComponent implements OnInit {
       "driver": "MGDBA",
       "upsert": true
     }
+
+    // console.log(this.xAPIDB)
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
         this.router.navigate([`tools/api-list/${this.rutaURL}`]);
@@ -525,6 +530,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   selDataBase(valor: any): void {
+    this.driversID = valor.id
     this.xAPIDB.driver = valor.id
     this.xAPI.parametros = valor.basedatos;
     this.dataModulo = [];
@@ -557,6 +563,7 @@ export class RegisterApiComponent implements OnInit {
       default:
         break;
     }
+    console.log(this.xAPIDB)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         let i = 0
@@ -577,7 +584,7 @@ export class RegisterApiComponent implements OnInit {
 
   clickRefresh(event) {
     this.codeJson = {
-      theme: 'idea',
+      theme: 'material',
       mode: 'application/ld+json',
       lineNumbers: true,
       lineWrapping: true,
@@ -589,7 +596,7 @@ export class RegisterApiComponent implements OnInit {
     }
 
     this.codeSQL = {
-      theme: 'idea',
+      theme: 'material',
       mode: 'text/x-sql',
       lineNumbers: true,
       lineWrapping: true,

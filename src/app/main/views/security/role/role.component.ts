@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
+import { IRol } from '@services/seguridad/rol.service';
 import { UtilService } from '@services/util/util.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import JSONFormatter from 'json-formatter-js';
@@ -23,9 +24,6 @@ export class RoleComponent implements OnInit {
   @BlockUI() blockUI: NgBlockUI;
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
-
-  public SelectionType = SelectionType;
-
   public contentHeader: object;
 
   public xAPI: IAPICore = {
@@ -35,8 +33,10 @@ export class RoleComponent implements OnInit {
   };
 
 
+  
 
 
+ 
   public titleModal: string = ''
   public titleBtnModal: string = ''
 
@@ -64,6 +64,12 @@ export class RoleComponent implements OnInit {
   public menuid: string = ''
   public accionid
 
+  public Rol : IRol = {
+    nombre: '',
+    descripcion: '',
+    estatus: 0
+  }
+  
   public btnMenu = false
 
   public xnombre = ''
@@ -146,10 +152,10 @@ export class RoleComponent implements OnInit {
     this.dataModulo = [];
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.dataModulo = data.Cuerpo.map(e => {
-          e.name = e.nomb
-          return e
-        });
+          this.dataModulo = data.Cuerpo.map(e => {
+            e.name = e.nomb
+            return e
+          });
       },
       (error) => {
         console.log(error)
@@ -176,7 +182,7 @@ export class RoleComponent implements OnInit {
 
 
   selectEventModulo(item) {
-
+    
     this.consultarMenu(this.xmodulo[0].split('|')[0])
   }
 
@@ -185,7 +191,7 @@ export class RoleComponent implements OnInit {
 
 
   async listarAcciones() {
-
+   
     console.log(this.menu[0])
     this.rowDataAcc = []
     this.xAPI.funcion = "OMenuAccion"
@@ -200,7 +206,7 @@ export class RoleComponent implements OnInit {
         console.log(error)
       }
     )
-
+   
   }
 
 
@@ -209,20 +215,20 @@ export class RoleComponent implements OnInit {
 
   LimpiarMenu() {
     this.estatus = undefined
-
+   
   }
 
-  async addElement() {
+  async addElement(){
 
     console.log(this.xaccion[0].split('|')[1])
 
     let e = {
-      "idmod": this.xmodulo[0].split('|')[0],
+      "idmod" : this.xmodulo[0].split('|')[0],
       "modulo": this.xmodulo[0].split('|')[1],
       "idmenu": this.menu[0].split('|')[0],
       "menu": this.menu[0].split('|')[1],
       "accid": this.xaccion[0].split('|')[0],
-      "accion": this.xaccion[0].split('|')[1],
+      "accion": this.xaccion[0].split('|')[1]
     }
     this.lista.push(e)
     this.rowData = this.lista
@@ -234,5 +240,5 @@ export class RoleComponent implements OnInit {
 
 
 
-
+ 
 }

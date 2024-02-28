@@ -18,7 +18,7 @@
                     <label class="card-text">Hash - {{xAPI.hash}}</label>
                     </span> -->
                 <div class="ecommerce-details-price d-flex flex-wrap mt-1"></div>
-                <label class="card-text">Hash - {{xAPI.id}}</label><br>
+                <!-- <label class="card-text">Hash - {{xAPI.id}}</label><br> -->
                 <label class="card-text">Estatus - 
                   <div class="badge badge-pill" [ngClass]="{
                     'badge-light-success': xAPI.estatus == true,
@@ -37,47 +37,21 @@
                 <label class="card-text">Version - <div class="badge badge-glow badge-dark">{{xAPI.version}}</div></label>
                 <br>
                 <label class="card-text">Entorno - <div class="badge badge-glow badge-info">{{xAPI.entorno | uppercase}}</div></label>
-                <p class="card-text">
+                <p class="card-text"><br>
                   {{ xAPI.descripcion }}
                 </p>
-                <ul class="product-features list-unstyled">
-                  <li><i data-feather="shopping-cart"></i> <span>Free Shipping</span></li>
-                  <li>
-                    <i data-feather="dollar-sign"></i>
-                    <span>EMI options available</span>
-                  </li>
-                </ul>
-                <hr />
-                <div class="product-color-options">
-                  <h6>Colors</h6>
-                  <ul class="list-unstyled mb-0">
-                    <li class="d-inline-block selected">
-                      <div class="color-option b-primary">
-                        <div class="filloption bg-primary"></div>
+                
+                <div class="d-flex flex-column flex-sm-row pt-1">
+                  <div class="col-xl-12 col-md-12 col-12 mb-1">
+                    <div class="form-group">
+                      <label for="basicInput">Mapa de entrada</label>
+                      <div style="width:100%; height:300px; overflow: scroll;">
+                        <div id="xrsx"></div>
                       </div>
-                    </li>
-                    <li class="d-inline-block">
-                      <div class="color-option b-success">
-                        <div class="filloption bg-success"></div>
-                      </div>
-                    </li>
-                    <li class="d-inline-block">
-                      <div class="color-option b-danger">
-                        <div class="filloption bg-danger"></div>
-                      </div>
-                    </li>
-                    <li class="d-inline-block">
-                      <div class="color-option b-warning">
-                        <div class="filloption bg-warning"></div>
-                      </div>
-                    </li>
-                    <li class="d-inline-block">
-                      <div class="color-option b-info">
-                        <div class="filloption bg-info"></div>
-                      </div>
-                    </li>
-                  </ul>
+                    </div>
+                  </div>
                 </div>
+               
                 <hr />
                 <div class="d-flex flex-column flex-sm-row pt-1">
                     <div class="col-md-12 text-center">

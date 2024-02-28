@@ -1,271 +1,118 @@
 <div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
-  <div class="content-body">
-      <!-- content-header component -->
-      <app-content-header [contentHeader]="contentHeader"></app-content-header>
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
 
-      <!-- Invoice List -->
-      <section class="invoice-list-wrapper">
-          <div class="card">
+        <!-- Invoice List -->
+        <section class="invoice-list-wrapper">
+            <div class="card">
 
-              <div class="col-md-12" style="margin-top: 25px;">
+                <div class="col-md-12" style="margin-top: 25px;">
 
-                  <!-- Primer -->
-                  <div class="row">
-
-
-                      <div class="form-group col-md-12">
-                          <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-                          <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
-                              [ngModelOptions]="{standalone: true}" bindLabel="name"
-                              (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
-                              placeholder="Seleccione Aplicación"></ng-select>
-                      </div>
+                    <!-- Primer -->
+                    <div class="row">
 
 
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="descripcion">Nombre del Perfil</label>
-                        <input style="font-size:14px;" [(ngModel)]="xnombre"
-                            [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre del Perfil"
-                            class="form-control">
-                    </div>
-
-                    <div class="form-group col-md-8">
-                        <label class="form-label" for="origen">Descripcion del Perfil</label>
-                        <input style="font-size:14px;" [(ngModel)]="xdescripcion"
-                            [ngModelOptions]="{standalone: true}" type="text" placeholder="Breve descripcion del Perfil"
-                            class="form-control">
-                    </div>
-
-
-
-                      <div class="form-group col-md-4">
-                          <label class="form-label" for="origen">Rol</label>
-                          <ng-select [items]="dataRol" [name]="xrol" [addTag]="true" [(ngModel)]="xrol"
-                              [ngModelOptions]="{standalone: true}" bindLabel="name" 
-                              (ngModelChange)="selectEventRol($event)"
-                              placeholder="Seleccione Rol"></ng-select>
-                      </div>
-
-
-                      <div class="form-group col-md-3">
-                        <br>
-
-                        <div class="col-md-12" align="right">
-                          <button type="button" class="btn btn-success" (click)="MdlAccion(mdlAcciones)">
-                            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Listar
-                          </button>
-                          &nbsp;
-                          <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                              <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
-                          </button>
-                      </div> 
-
-                    </div>
-
-                    
-
-                  </div>
-
-                  <!-- <div class="row">
-                      <div class="col-md-12 col-12 mb-1">
-                          <label for="login-codigo" class="form-label">Escribir codigo fuente</label>
-                          <ngx-codemirror #codeEditor tabindex="1" autofocus
-                          [options]="codeMirrorOptions"
-                          >
-                        </ngx-codemirror>
+                        <div class="form-group col-md-12">
+                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
+                                [ngModelOptions]="{standalone: true}" bindLabel="name"
+                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                                placeholder="Seleccione Aplicación"></ng-select>
                         </div>
-                  </div> -->
 
-                  <br>
-    
+                        <div class="form-group col-md-5">
+                            <label class="form-label" for="descripcion">Seleccionar Rol</label>
+                            <ng-select [items]="lstRol" [(ngModel)]="rol"
+                                [ngModelOptions]="{standalone: true}" bindLabel="name"
+                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                                placeholder="Seleccione Rol"></ng-select>
+                        </div>
 
-                  
+                        <div class="form-group col-md-3">
+                            <label class="form-label" for="descripcion">Nombre del Perfil</label>
+                            <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}"
+                                type="text" placeholder="Ingrese Nombre del Perfil" class="form-control">
+                        </div>
 
-
-
-
-                  <!-- TABLA -->
-                  <div class="container" *ngIf="showDiv">
-                      <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-left">
-                          <li ngbNavItem>
-                              <a ngbNavLink><span [data-feather]="'cast'"></span> Acciones</a>
-                              <ng-template ngbNavContent>
-
-                                  
-                              </ng-template>
-                          </li>
-                          <li ngbNavItem>
-                              <a ngbNavLink><span [data-feather]="'settings'"></span> Sub Menu</a>
-                              <ng-template ngbNavContent>
-                                
-                              </ng-template>
-                          </li>
-                      </ul>
-                      <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+                        <div class="form-group col-md-4">
+                            <label class="form-label" for="origen">Descripcion del Perfil</label>
+                            <input style="font-size:14px;" [(ngModel)]="xdescripcion"
+                                [ngModelOptions]="{standalone: true}" type="text"
+                                placeholder="Breve descripcion del Perfil" class="form-control">
+                        </div>
+                    </div>
+                    <br>
 
 
-                      <div class="row">
-                          <div class="col-md-12" align="right">
-                              <button type="button" class="btn btn-success" (click)="procesar()">
-                                <i class="fa fa-plus" aria-hidden="true"></i> Agregar al rol
-                              </button>
-                             
-                          </div> 
-                      </div>
-                      <br><br>
 
-                  </div>
-                  <!-- TABLA -->
 
-              </div>
 
-          </div>
-      </section>
 
-  </div>
+
+                </div>
+
+
+                <div class="col-md-12">
+                    <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
+                        [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox" [headerHeight]="40"
+                        [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
+
+                        <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
+                            [draggable]="false" [resizeable]="false">
+                            <ng-template ngx-datatable-header-template let-value="value"
+                                let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
+                                        id="headerChkbxRef" />
+                                    <label class="custom-control-label" for="headerChkbxRef"></label>
+                                </div>
+                            </ng-template>
+
+                            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
+                                let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" [checked]="isSelected"
+                                        (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
+                                    <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
+                                </div>
+                            </ng-template>
+                        </ngx-datatable-column>
+
+                        <ngx-datatable-column name="MODULO" [width]="200">
+                            <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
+                                <div>
+                                    <span class="font-weight-bold">{{ modulo }} </span>
+                                </div>
+                            </ng-template>
+
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="MENU" [width]="200">
+                            <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
+                                <div>
+                                    <span class="font-weight-bold">{{ menu }} </span>
+                                </div>
+                            </ng-template>
+
+                        </ngx-datatable-column>
+                        <ngx-datatable-column name="ACCION" [width]="100">
+                            <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
+                                <div>
+                                    <span class="font-weight-bold">{{ accion }} </span>
+                                </div>
+                            </ng-template>
+
+                        </ngx-datatable-column>
+
+
+                    </ngx-datatable>
+
+                </div>
+
+
+            </div>
+        </section>
+
+    </div>
 </div>
-
-
-<ng-template #mdlAcciones let-modal>
-  <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">{{ titleModal }}</h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-      </button>
-  </div>
-  <form class="auth-login-form mt-2">
-      <div class="modal-body" tabindex="0" ngbAutofocus>
-          <!-- Invoice -->
-          <div class="col-xl-12 col-md-12 col-12">
-              <!-- Header Starts -->
-             
-              <div class="row">
-                  <div class="col-md-12">
-
-                      <ngx-datatable 
-                      
-                      
-                      [rows]="rowDataAcc" [rowHeight]="58"
-                          class="bootstrap core-bootstrap bordered-table" [limit]="10"
-                          [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
-
-
-                          <ngx-datatable-column name="Nombre de la accion" prop="accnomb" [width]="300">
-                              <ng-template let-accnomb="value" ngx-datatable-cell-template>
-                                  <div>
-                                      <span class="font-weight-bold">{{ accnomb }} </span>
-                                  </div>
-                              </ng-template>
-                          </ngx-datatable-column>
-
-
-
-                          <ngx-datatable-column name="Funcion" prop="func" >
-                              <ng-template let-func="value" ngx-datatable-cell-template>
-                                  <div>
-                                      <span class="font-weight-bold">{{ func }}</span>
-                                  </div>
-                              </ng-template>
-                          </ngx-datatable-column>
-
-                    
-
-
-                          <ngx-datatable-column name="Estatus">
-
-                              <ng-template let-status="value" ngx-datatable-cell-template>
-                                  <div class="badge badge-pill badge-light-primary">
-                                   ACTIVO
-                                  </div>
-                                </ng-template>
-                          </ngx-datatable-column>
-
-                      
-
-
-                      </ngx-datatable>
-                  </div>
-
-              </div>
-
-          </div>
-
-      </div>
-      <div class="modal-footer">
-          <button class="btn btn-success" tabindex="4" rippleEffect
-              (click)="GuardarAccion()">{{titleBtnModal}}</button>
-          <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
-              rippleEffect>Cerrar</button>
-      </div>
-  </form>
-
-</ng-template>
-
-
-<ng-template #ModalSubMenu let-modal>
-  <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">{{ titleModal }}</h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-      </button>
-  </div>
-  <form class="auth-login-form mt-2">
-      <div class="modal-body" tabindex="0" ngbAutofocus>
-          <!-- Invoice -->
-          <div class="col-xl-12 col-md-12 col-12">
-              <!-- Header Starts -->
-              <div class="row">
-
-
-                  <div class="col-md-6 col-12 mb-1">
-                      <label for="login-host" class="form-label">Nombre</label>
-                      <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.nomb"
-                          [ngModelOptions]="{standalone: true}" placeholder="Nombre" aria-describedby="login-host"
-                          tabindex="1" autofocus />
-                  </div>
-
-                  <div class="col-md-6 col-12 mb-1">
-                      <label for="login-host" class="form-label">Dirección URL</label>
-                      <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.url"
-                          [ngModelOptions]="{standalone: true}" placeholder="Dirección URL" aria-describedby="login-host"
-                          tabindex="1" autofocus />
-                  </div>
-
-                  <div class="col-md-5 col-12 mb-1">
-                      <label for="login-host" class="form-label">Codigo JavaScript</label>
-                      <input type="text" [(ngModel)]="IAddSubMenu.js" [ngModelOptions]="{standalone: true}"
-                          class="form-control" placeholder="Codigo JavaScript" aria-describedby="login-host" tabindex="1"
-                          autofocus />
-                  </div>
-
-                  <div class="col-md-4 col-12 mb-1">
-                      <label for="login-host" class="form-label">Clase Css</label>
-                      <input type="text" [(ngModel)]="IAddSubMenu.clase" [ngModelOptions]="{standalone: true}"
-                          class="form-control" placeholder="Clase Css" aria-describedby="login-host" tabindex="1"
-                          autofocus />
-                  </div>
-
-                  <div class="col-md-3 col-12 mb-1">
-                      <label for="login-tipo" class="form-label">Estatus</label>
-                      <ng-select [items]="tipoMenu" bindLabel="descripcion" placeholder="Seleccione"
-                          [(ngModel)]="IAddSubMenu.tipo" [ngModelOptions]="{standalone: true}" bindValue="id"
-                          bindLabel="name">
-                      </ng-select>
-                  </div>
-
-
-              </div>
-
-          </div>
-
-      </div>
-      <div class="modal-footer">
-          <button class="btn btn-success" tabindex="4" rippleEffect
-              (click)="GuardarSubMenu()">{{titleBtnModal}}</button>
-          <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
-              rippleEffect>Cerrar</button>
-      </div>
-  </form>
-
-</ng-template>

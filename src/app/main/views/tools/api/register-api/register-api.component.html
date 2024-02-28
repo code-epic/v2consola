@@ -128,7 +128,7 @@
                   <div class="form-group col-md-6">
                     <label class="form-label" for="conexion">Conexión</label>
                     <ng-select [items]="drivers" [(ngModel)]="xAPIDB.driver" #driverx="ngModel" 
-                    [class.error]="accountDetailsForm.submitted" id="driver" name="driver" required
+                    [class.error]="accountDetailsForm.submitted" id="id" name="id" required
                       bindLabel="name" (ngModelChange)="selDataBase($event)"
                       placeholder="Seleccione Conexión"></ng-select>
                       <span *ngIf="accountDetailsForm.submitted && driverx.invalid" class="invalid-form">

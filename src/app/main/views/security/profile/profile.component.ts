@@ -1,10 +1,11 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
-import { UtilService } from '@services/util/util.service';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-import JSONFormatter from 'json-formatter-js';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
+import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap'
+import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service'
+import { UtilService } from '@services/util/util.service'
+import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable'
+import JSONFormatter from 'json-formatter-js'
+import { BlockUI, NgBlockUI } from 'ng-block-ui'
+
 
 
 @Component({
@@ -14,72 +15,33 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
   encapsulation: ViewEncapsulation.None,
   providers: [NgbModalConfig, NgbModal]
 })
-export class ProfileComponent implements OnInit {
-  @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
-  public contentHeader: object;
+
+
+export class ProfileComponent implements OnInit {
+  @ViewChild(DatatableComponent) table: DatatableComponent
+  @BlockUI() blockUI: NgBlockUI
+  @BlockUI('section-block') sectionBlockUI: NgBlockUI
+
+  public contentHeader: object
 
   public xAPI: IAPICore = {
     funcion: '',
     parametros: '',
     valores: {},
-  };
-
-  public IDefinirMenu: DefinirMenu = {
-    nombre: '',
-    url: '',
-    js: '',
-    icon: '',
-    clase: '',
-    color: '',
-    tipo: 0,
-    idmod: 0
   }
 
-  public IAccion: AgregarAccion = {
-    endpoint: '',
-    nomb: '',
-    func: '',
-    direc: ''
-  }
+  public SelectionType = SelectionType
 
-  public IAddModulo: AddModulo = {
-    nomb: '',
-    idapp: 0
-  }
+ 
 
-  public IAccionMenu: AccionMenu = {
-    menuid: 0,
-    accionid: 0
-  }
+  public basicSelectedOption: number = 10
 
-  public IAddSubMenu : AddSubMenu = {
-    url: '',
-    js: '',
-    icon: '',
-    nomb: '',
-    clase: '',
-    color: '',
-    tipo: undefined
-  }
 
-  public titleModal: string = ''
-  public titleBtnModal: string = ''
 
-  public basicSelectedOption: number = 10;
-  public searchAccion = ''
-  public searchSubMenu = ''
 
-  public tempDataAcciones = []
-  public rowDataAcciones = []
-  public countAcciones
-
-  public ListarowSubMenu = []
-
-  public tempDataSubMenu = []
-  public rowDataSubMenu = []
+  public rowData = []
+  public temprowData = []
   public countSubMenu
 
   public rowDataAcc = []
@@ -88,7 +50,7 @@ export class ProfileComponent implements OnInit {
   public estatus = undefined
 
   public aplicacion
-  public xrol
+  public xmodulo
   public menu
 
   public modulo: string = ''
@@ -103,48 +65,20 @@ export class ProfileComponent implements OnInit {
 
 
   public lstAplicaciones = []
+  public lstRol = []
   public dataModulo = []
   public showDiv: boolean = false
   public datamenu = []
 
-  public lstEstatus = [
-    { id: "1", name: 'MENU' },
-    { id: '0', name: 'SUBMENU' }
-  ]
+  public xaccion = ''
+  public rol = ''
 
-  public tipoMenu = [
-    { id: 1, name: 'MENU' },
-    { id: 0, name: 'SUBMENU' }
-  ]
+  @ViewChild('tableRowDetails') tableRowDetails: any
 
-  public metodos = [
-    { id: 'GET', name: 'GET' },
-    { id: 'POST', name: 'POST' },
-    { id: 'PUT', name: 'PUT' },
-    { id: 'DELETE', name: 'DELETE' },
-    { id: 'OPTIONS', name: 'OPTIONS' }
-  ]
 
-  @ViewChild('tableRowDetails') tableRowDetails: any;
+  public ColumnMode = ColumnMode
 
-  public codeMirrorOptions: any = {
-    theme: 'default',
-    mode: 'text/x-sh',
-    lineNumbers: true,
-    lineWrapping: true,
-    foldGutter: true,
-    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lint: true,
-    indentUnit: 2,
-    tabSize: 2,
-    indentWithTabs: true
-  };
-
-  public ColumnMode = ColumnMode;
-
-  public chkBoxSelected = [];
+  public chkBoxSelected = []
 
   constructor(
     private apiService: ApiService,
@@ -152,40 +86,38 @@ export class ProfileComponent implements OnInit {
     private modalService: NgbModal,
   ) { }
 
-  customChkboxOnSelect({ selected }) {
-    this.chkBoxSelected.splice(0, this.chkBoxSelected.length);
-    this.chkBoxSelected.push(...selected);
-  }
+
 
 
   ngOnInit(): void {
     this.contentHeader = {
-      headerTitle: "Seguridad",
+      headerTitle: 'Seguridad',
       actionButton: true,
       breadcrumb: {
-        type: "",
+        type: '',
         links: [
           {
-            name: "Home",
+            name: 'Home',
             isLink: true,
-            link: "/home",
+            link: '/home',
           },
           {
-            name: "Seguridad",
+            name: 'Seguridad',
             isLink: false,
           },
           {
-            name: "Definir Perfil",
+            name: 'Definir Rol',
             isLink: false,
           },
         ],
       },
-    };
+    }
+
     this.CargarListaAplicaciones()
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI.funcion = '_SYS_LstAplicaciones'
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -193,7 +125,7 @@ export class ProfileComponent implements OnInit {
           e.id = e.identificador
           e.name = e.nombre + ' : ' + e.VERSION
           return e
-        });
+        })
       },
       (error) => {
         console.log(error)
@@ -202,16 +134,17 @@ export class ProfileComponent implements OnInit {
   }
 
   selModulo(event: any): void {
-    this.xAPI.funcion = "LstModulos";
-    this.xAPI.parametros = event;
+    console.log(event)
+    this.xAPI.funcion = 'LstModulos'
+    this.xAPI.parametros = event
     this.xAPI.valores = ''
-    this.dataModulo = [];
+    this.dataModulo = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
           this.dataModulo = data.Cuerpo.map(e => {
             e.name = e.nomb
             return e
-          });
+          })
       },
       (error) => {
         console.log(error)
@@ -219,8 +152,8 @@ export class ProfileComponent implements OnInit {
     )
   }
 
-  consultaRol(acc: string) {
-    this.xAPI.funcion = "LstMenus"
+  consultarMenu(acc: string) {
+    this.xAPI.funcion = 'LstMenus'
     this.xAPI.parametros = acc
     this.datamenu = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -228,7 +161,7 @@ export class ProfileComponent implements OnInit {
         this.datamenu = data.Cuerpo.map(e => {
           e.name = e.nomb
           return e
-        });
+        })
       },
       (error) => {
         console.log(error)
@@ -236,315 +169,65 @@ export class ProfileComponent implements OnInit {
     )
   }
 
-  selectEventRol(item) {
-    this.moduloid = item.id;
-    this.modulo = item.name;
-    this.consultaRol(item.id)
+
+  selectEventModulo(item) {
+    
+    this.consultarMenu(this.xmodulo[0].split('|')[0])
   }
 
-  guardarRol(){
-    if (this.menu != '') {
-    this.xAPI.funcion = "AgregarModulo"
-    this.xAPI.parametros =  ''
-    this.xAPI.valores = JSON.stringify(this.IAddModulo)
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        this.dataModulo = []
-       if (data.tipo == 1) {
-        this.moduloid = data.msj
-        this.utilservice.AlertMini('top-end', 'success', 'Modulo Registrado!', 3000)
-        this.selModulo(this.aplicacion)
-       } else {
-        this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
-       }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-    }
-  }
 
-  Limpiar(){
-    this.LimpiarMenu()
-    this.aplicacion = undefined
-    this.xrol = undefined
-    this.menu = undefined
-    this.showDiv = false
+
+
+
+  async listarAcciones() {
+   
+    console.log(this.menu[0])
     this.rowDataAcc = []
-  }
-
-  procesar(){
-    this.showDiv = true
-    this.listarAcciones(this.menuid)
-    this.listarSubmenu(this.menuid)
-  }
-
-  async listarAcciones(item: any) {
-    if (item > 0) {
-      // this.showDiv = true
-      this.rowDataAcc = []
-      this.xAPI.funcion = "OMenuAccion"
-      this.xAPI.parametros = item
-      this.xAPI.valores = ''
-      await this.apiService.Ejecutar(this.xAPI).subscribe(
-        (data) => {
-          var i = 0
-          this.lista = []
-          if (data.Cuerpo != undefined) {
-            this.btnMenu = true
-          }
-          data.Cuerpo.map(e => {
-            if (i == 0) {
-              this.IDefinirMenu.id = e.id
-              this.IDefinirMenu.nombre = e.nomb
-              this.IDefinirMenu.url = e.url
-              this.IDefinirMenu.js = e.js
-              this.IDefinirMenu.clase = e.clase
-              this.IDefinirMenu.icon = e.icon
-              this.IDefinirMenu.color = e.color
-              this.IDefinirMenu.tipo = e.type
-            }
-            if (e.endpoint != undefined) {
-              this.lista.push(e)
-            }
-          });
-  
-          this.rowDataAcc = this.lista;
-        },
-        (error) => {
-          console.log(error)
-        }
-      )
-       } else {
-      this.utilservice.AlertMini('top-end', 'warning', 'Debe Seleccionar Aplicacion - Modulo - Menu', 3000)
-    }
-  }
-
-  async listarSubmenu(item: string) {
-    this.ListarowSubMenu = []
-    this.xAPI.funcion = "OSubMenuAccion"
-    this.xAPI.parametros = ''
+    this.xAPI.funcion = 'OMenuAccion'
+    this.xAPI.parametros = this.menu[0].split('|')[0]
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        var i = 0
-        var lista = []
-        data.Cuerpo.map(e => {
-          // if (i == 0) {
-          //   this.IDefinirMenu.nombre = e.nomb
-          //   this.IDefinirMenu.url = e.url
-          //   this.IDefinirMenu.js = e.js
-          //   this.IDefinirMenu.clase = e.clase
-          //   this.IDefinirMenu.icon = e.icon
-          //   this.IDefinirMenu.color = e.color
-          //   this.IDefinirMenu.tipo = e.type
-          // }
-          // if (e.endpoint != undefined) {
-            lista.push(e)
-          // }
-        });
-        this.ListarowSubMenu = lista;
+        console.log(data)
+        this.rowDataAcc = data.Cuerpo
       },
       (error) => {
         console.log(error)
       }
     )
+   
   }
 
-  GuardarMenu() {
-    this.IDefinirMenu.idmod = this.xrol.id
-    this.xAPI.funcion = "AgregarMenu";
-    this.xAPI.parametros = ''
-    this.xAPI.valores = JSON.stringify(this.IDefinirMenu)
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        if (data.tipo == 1) {
-          this.LimpiarMenu()
-          this.utilservice.AlertMini('top-end', 'success', 'Menu Registrado Exitosamente!', 3000)
-          // this.menuid = this.xAPI.funcion == "AgregarMenu" ? data.msj : this.menuid
-        } else {
-          this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
-        }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
 
-  UpdateMenu(item: any) {
-    this.IDefinirMenu.id = item
-    this.IDefinirMenu.idmod = this.xrol.id
-    this.xAPI.parametros = ''
-    this.xAPI.valores = JSON.stringify(this.IDefinirMenu)
-    this.xAPI.funcion = "ActualizarMenu";
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        if (data.tipo == 1) {
-          this.LimpiarMenu()
-          this.utilservice.AlertMini('top-end', 'success', 'Menu Actualizado Exitosamente!', 3000)
-          this.listarAcciones(this.menuid)
-        } else {
-          this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
-        }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
+
+
 
   LimpiarMenu() {
     this.estatus = undefined
-    this.IDefinirMenu = {
-      nombre: '',
-      url: '',
-      js: '',
-      icon: '',
-      clase: '',
-      color: '',
-      tipo: undefined,
-      idmod: 0
+   
+  }
+
+  async addElement(){
+
+    console.log(this.xaccion[0].split('|')[1])
+
+    let e = {
+      'idmod' : this.xmodulo[0].split('|')[0],
+      'modulo': this.xmodulo[0].split('|')[1],
+      'idmenu': this.menu[0].split('|')[0],
+      'menu': this.menu[0].split('|')[1],
+      'accid': this.xaccion[0].split('|')[0],
+      'accion': this.xaccion[0].split('|')[1]
     }
-  }
-
-  limpiarModalAcciones(){
-    this.IAccion = {
-      endpoint: '',
-      nomb: '',
-      func: '',
-      direc: ''
-    }
+    this.lista.push(e)
+    this.rowData = this.lista
+    this.temprowData = this.rowData
+    console.log(this.rowData)
   }
 
 
-  filterUpdateAcciones(event: any) {
-    const val = event.target.value.toLowerCase();
-    // filter our data
-    const temp = this.tempDataAcciones.filter(function (d) {
-      return d.nomb.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this.rowDataAcciones = temp;
-    this.countAcciones = this.rowDataAcciones.length
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
-  }
-
-  filterUpdateSubMenu(event: any) {
-    const val = event.target.value.toLowerCase();
-    // filter our data
-    const temp = this.tempDataSubMenu.filter(function (d) {
-      return d.nomb.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this.ListarowSubMenu = temp;
-    this.countSubMenu = this.ListarowSubMenu.length
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
-  }
 
 
-  ModalAddSubMenu(modal) {
-    this.titleModal = 'Agregar Sub Menu'
-    this.titleBtnModal = 'Agregar Sub Menu'
-    this.modalService.open(modal, {
-      centered: true,
-      size: 'xl',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
-  }
 
-  MdlAccion(modal) {
-
-    this.procesar()
-    this.titleModal = 'Agregar al rol'
-    this.titleBtnModal = 'Aceptar'
-    this.modalService.open(modal, {
-      centered: true,
-      size: 'lg',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
-  }
-
-  GuardarAccion() {
-    this.xAPI.funcion = "AgregarAccion";
-    this.xAPI.valores = JSON.stringify(this.IAccion)
-    this.xAPI.parametros = ''
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        if (data.tipo == 1) {
-          this.accionid = data.msj
-          this.MenuAccionGuardar()
-          this.modalService.dismissAll('Close')
-          this.limpiarModalAcciones()
-          this.utilservice.AlertMini('top-end', 'success', 'Accion Registrada Exitosamente', 3000)
-        } else {
-          this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
-        }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
-
-  MenuAccionGuardar() {
-    this.IAccionMenu.accionid = parseInt(this.accionid)
-    this.IAccionMenu.menuid = parseInt(this.menuid)
-    this.xAPI.funcion = "AgregarAccionMenu";
-    this.xAPI.parametros = ''
-    this.xAPI.valores = JSON.stringify(this.IAccionMenu)
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-       (data) => {
-        if (data.tipo == 1) {
-          this.listarAcciones(this.menuid)
-          this.utilservice.AlertMini('top-end', 'success', 'Accion Registrada Exitosamente', 3000)
-        } else {
-          this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
-        }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
-
-  GuardarSubMenu() {
-    this.xAPI.funcion = "AgregarSubMenu";
-    this.xAPI.valores = JSON.stringify(this.IAddSubMenu)
-    this.xAPI.parametros = ''
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        if (data.tipo == 1) {
-          this.modalService.dismissAll('Close')
-          this.listarSubmenu(this.menuid)
-          this.LimpiarSubMenu()
-          this.utilservice.AlertMini('top-end', 'success', 'SubMenu Registrado Exitosamente', 3000)
-        } else {
-          this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
-        }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
-
-  LimpiarSubMenu(){
-    this.IAddSubMenu = {
-      url: '',
-      js: '',
-      icon: '',
-      nomb: '',
-      clase: '',
-      color: '',
-      tipo: undefined
-    }
-  }
+ 
 }

@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 export interface IRol{
   nombre: string,
   descripcion: string,
-  Modulo : IModulo[], 
+  estatus: number
 }
 
 

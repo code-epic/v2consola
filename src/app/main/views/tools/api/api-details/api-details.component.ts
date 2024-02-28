@@ -150,6 +150,9 @@ export class ApiDetailsComponent implements OnInit {
         ]
       }
     };
+
+    
+    
   }
 
   async ConsultarAPI(api: string) {
@@ -157,10 +160,12 @@ export class ApiDetailsComponent implements OnInit {
     this.xAPI.parametros = api
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        // console.log(data)
         data.map(e => {
           this.xAPI = e
         });
+        const formatter = new JSONFormatter(this.xAPI.entradas);
+        document.getElementById("xrsx").appendChild(formatter.render());
       },
       (error) => {
         console.log(error)
@@ -242,6 +247,12 @@ export class ApiDetailsComponent implements OnInit {
         this.utilservice.AlertMini('top-end', 'error', 'Fallo la conexión, con el API', 3000)
       }
     )
+  }
+
+  getContent(){
+
+    // const formatter = new JSONFormatter(this.xAPI.entradas);
+    // document.getElementById("xrsx").appendChild(formatter.render());
   }
 
 
