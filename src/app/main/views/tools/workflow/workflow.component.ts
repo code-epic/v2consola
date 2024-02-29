@@ -131,7 +131,7 @@ export class WorkflowComponent implements OnInit {
   ]
 
   public lstAPI = []
-  
+
   public tipos = [
     { id: "1", descripcion: 'DOCUMENTOS' },
     { id: "0", descripcion: 'SISTEMA' },
@@ -149,6 +149,7 @@ export class WorkflowComponent implements OnInit {
   public rowEstatusRedF = []
   public ListaFunciones = []
   public tempData = []
+  public rowForm = []
   public rowData = []
   public ListaTransiciones = []
   public rowDataTransiciones = []
@@ -677,5 +678,10 @@ export class WorkflowComponent implements OnInit {
   salvarRed() {
     console.log(this.DescripcionRed)
   }
+
+  addItemForm(){
+    this.rowForm.push(this.wkfForm)
+  }
+
 
 }
