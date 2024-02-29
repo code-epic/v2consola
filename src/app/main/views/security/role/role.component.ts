@@ -67,7 +67,7 @@ export class RoleComponent implements OnInit {
   public Rol : IRol = {
     nombre: '',
     descripcion: '',
-    estatus: 0
+    estatus: 1
   }
   
   public btnMenu = false
@@ -125,6 +125,7 @@ export class RoleComponent implements OnInit {
     };
 
     this.CargarListaAplicaciones()
+
   }
 
   async CargarListaAplicaciones() {
@@ -220,7 +221,7 @@ export class RoleComponent implements OnInit {
 
   async addElement(){
 
-    console.log(this.xaccion[0].split('|')[1])
+    
 
     let e = {
       "idmod" : this.xmodulo[0].split('|')[0],
@@ -234,6 +235,29 @@ export class RoleComponent implements OnInit {
     this.rowData = this.lista
     this.temprowData = this.rowData
     console.log(this.rowData)
+  }
+
+
+  guardarRol(){
+    this.xAPI.funcion = ''
+    this.xAPI.parametros = ''
+    this.xAPI.valores = JSON.stringify(this.Rol)
+
+    console.log(this.xAPI)
+    // this.apiService.Ejecutar(this.xAPI).subscribe(
+    //   data => {
+
+    //   },
+    //   error => {
+
+    //   }
+    // )
+
+  }
+
+
+  insertBach(){
+
   }
 
 

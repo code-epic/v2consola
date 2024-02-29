@@ -1,12 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import Swal, { SweetAlertIcon } from 'sweetalert2';
-import { environment } from '../../environments/environment';
-import { WsocketsService } from '@services/websockets/wsockets.service';
-import { UtilService } from '@services/util/util.service';
-import { TaskService } from './task.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { Router } from '@angular/router'
+import { Observable } from 'rxjs'
+import Swal, { SweetAlertIcon } from 'sweetalert2'
+import { environment } from '../../environments/environment'
+import { WsocketsService } from '@services/websockets/wsockets.service'
+import { UtilService } from '@services/util/util.service'
+import { TaskService } from './task.service'
 
 export interface RestoreAPI {
   nombre: string,
@@ -132,16 +132,16 @@ export interface IAPI {
 
 
 export interface WkfEstatus {
-  estado: number;
-  nombre: string;
-  descripcion: string;
-  estatus: number;
-  orden: number;
+  estado: number
+  nombre: string
+  descripcion: string
+  estatus: number
+  orden: number
 }
 export interface wkfTransicion {
-  idw: number;
-  funcion: string;
-  parametro: string;
+  idw: number
+  funcion: string
+  parametro: string
 }
 
 export interface DefinirMenu {
@@ -201,23 +201,35 @@ export interface wkfRed {
 }
 
 export interface WkfDescripcionRed {
-  nombre: string;
-  descripcion: string;
+  nombre: string
+  descripcion: string
   tipo: number // Tipologia de la REd
-  estatus: number;
+  estatus: number
 }
 
 
 export interface WkfZRed {
-  idred: number;
-  idw: number;
+  idred: number
+  idw: number
 }
 
 export interface WkfEstado {
-  wkf: number;
-  nombre: string;
-  descripcion: string;
-  estatus: number;
+  wkf: number
+  nombre: string
+  descripcion: string
+  estatus: number
+}
+
+export interface WkfFrom {
+  wkf: number
+  nombre: string
+  descripcion: string
+  tipo: string
+  data: number
+  origen: string
+  file: string
+  listado: string
+  estatus: number
 }
 
 export interface ObjectoGenerico {
@@ -245,7 +257,7 @@ export interface WTipoArchivo {
 })
 export class ApiService {
   //Dirección Get para servicios en la página WEB
-  URL = environment.API;
+  URL = environment.API
 
   hash = ':c521f27fb1b3311d686d511b668e5bd4'
 
@@ -254,7 +266,7 @@ export class ApiService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + sessionStorage.getItem('token')
     })
-  };
+  }
 
   public pID: ProcessID = {
     id: '',
@@ -280,48 +292,48 @@ export class ApiService {
       headers: new HttpHeaders({
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       })
-    };
-    return this.http.post<any>(this.URL + "subirarchivos", frm, httpOptions);
+    }
+    return this.http.post<any>(this.URL + "subirarchivos", frm, httpOptions)
   }
 
 
 
   Guardar(xAPI: IAPICore, sApi: string): Observable<any> {
 
-    var url = this.URL + sApi + this.hash;
-    return this.http.post<any>(url, xAPI, this.httpOptions);
+    var url = this.URL + sApi + this.hash
+    return this.http.post<any>(url, xAPI, this.httpOptions)
   }
 
   Coleccion(xAPI: IAPICore, sApi: string): Observable<any> {
 
-    var url = this.URL + sApi;
-    return this.http.post<any>(url, xAPI, this.httpOptions);
+    var url = this.URL + sApi
+    return this.http.post<any>(url, xAPI, this.httpOptions)
   }
 
   Listar(): Observable<any> {
-    var url = this.URL + 'listar';
-    return this.http.get<any>(url, this.httpOptions);
+    var url = this.URL + 'listar'
+    return this.http.get<any>(url, this.httpOptions)
   }
 
   //Ejecutar Api generales
   Ejecutar(xAPI: IAPICore): Observable<any> {
-    var url = this.URL + "crud" + this.hash;
+    var url = this.URL + "crud" + this.hash
     // if( xAPI.valores  != undefined ){
-    //     xAPI.valores = JSON.parse(xAPI.parametros);
+    //     xAPI.valores = JSON.parse(xAPI.parametros)
     // } 
-    return this.http.post<any>(url, xAPI, this.httpOptions);
+    return this.http.post<any>(url, xAPI, this.httpOptions)
   }
 
   //Ejecutar Api generales
   ExecFnx(fnx: any): Observable<any> {
-    var url = this.URL + "fnx";
-    return this.http.post<any>(url, fnx, this.httpOptions);
+    var url = this.URL + "fnx"
+    return this.http.post<any>(url, fnx, this.httpOptions)
   }
 
   //  Consulta el PID de una funcion
   ExecFnxId(id: string): Observable<any> {
-    var url = this.URL + `fnx:${id}`;
-    return this.http.get<any>(url, this.httpOptions);
+    var url = this.URL + `fnx:${id}`
+    return this.http.get<any>(url, this.httpOptions)
   }
 
   // Consulta el Pid recursivamente
@@ -355,13 +367,13 @@ export class ApiService {
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       }),
       responseType: 'blob' as 'json'
-    };
+    }
 
     this.http.get(ruta, httpOptions).subscribe((response: any) => {
-      const blob = new Blob([response], { type: 'application/zip' });
-      const url = window.URL.createObjectURL(blob);
-      window.open(url);
-    });
+      const blob = new Blob([response], { type: 'application/zip' })
+      const url = window.URL.createObjectURL(blob)
+      window.open(url)
+    })
   }
 
 
@@ -374,7 +386,7 @@ export class ApiService {
         'Authorization': 'Bearer ' + sessionStorage.getItem('token')
       }),
       responseType: 'blob' as 'json'
-    };
+    }
 
     return this.http.post<any>(ruta, tpf, httpOptions)
   }
@@ -383,19 +395,19 @@ export class ApiService {
 
   //ListarModulos
   ListarModulos(): Observable<any> {
-    var url = this.URL + "lmodulos";
+    var url = this.URL + "lmodulos"
     return this.http.get<any>(url, this.httpOptions)
   }
 
   //ListarArchivos
   ListarArchivos(id: string): Observable<any> {
-    var url = this.URL + "larchivos/" + id;
+    var url = this.URL + "larchivos/" + id
     return this.http.get<any>(url, this.httpOptions)
   }
 
   //ListarArchivos
   ProcesarArchivos(obj: any): Observable<any> {
-    var url = this.URL + "phtml";
+    var url = this.URL + "phtml"
     return this.http.post<any>(url, obj, this.httpOptions)
   }
 
@@ -412,8 +424,8 @@ export class ApiService {
     json.forEach(value => {
       value.entradas.forEach(e => {
         strI += '\t' + e.alias + '\t ?:\t' + this.seleccionarTipo(e.tipo) + '\n'
-      });
-    });
+      })
+    })
 
     strI += '}\n'
     strI += 'this.xAPI.funcion = \'' + funcion + '\'\n'
@@ -437,13 +449,13 @@ export class ApiService {
     switch (tipo) {
       case 'int':
         c = 'number'
-        break;
+        break
       case 'sql':
         c = 'string'
-        break;
+        break
       default:
         c = tipo
-        break;
+        break
     }
     return c
   }
@@ -453,8 +465,8 @@ export class ApiService {
  * @returns 
  */
   ExecColeccion(xObjeto): Observable<any> {
-    var url = this.URL + "ccoleccion";
-    return this.http.post<any>(url, xObjeto, this.httpOptions);
+    var url = this.URL + "ccoleccion"
+    return this.http.post<any>(url, xObjeto, this.httpOptions)
   }
 
   Mensaje(msj: string, txt: string, icono: SweetAlertIcon, destino: string): boolean {

@@ -91,7 +91,45 @@
           <!-- TABLA DE WORKFLOW -->
           <div class="row" *ngIf="showWKF">
             <div class="col-md-12 ">
-              <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+              <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content">
+                <li ngbNavItem>
+                  <a ngbNavLink><span [data-feather]="'layout'"></span>FORMULARIO BASE</a>
+                  <ng-template ngbNavContent>
+                    <div class="row">
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="nombre">Nombre del campo</label>
+                        <input [(ngModel)]="wkfForm.nombre"  value="{{wkfForm.nombre}}"
+                          [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
+                          id="nombre" placeholder="Nombre del campo ..." class="form-control" />
+
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="nombre">Descripción del campo</label>
+                        <input [(ngModel)]="wkfForm.descripcion"  value="{{wkfForm.descripcion}}"
+                          [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="descripcion"
+                          id="descripcion" placeholder="Descripción del campo ..." class="form-control" />
+
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="driver">Tipo de campo</label>
+                        <ng-select #Module="ngModel" [(ngModel)]="xtipo"
+                          bindLabel="descripcion" name="descripcion" id="id" required placeholder="Seleccione"
+                          bindValue="id">
+                          <ng-option *ngFor="let item of lstTipo" value="{{item.id}}">{{ item.descripcion }} </ng-option>
+                        </ng-select>
+                      </div>
+                     
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        
+                        <hr>
+                        <br><br>
+                      </div>
+                    </div>
+                  </ng-template>
+                </li> 
                 <li ngbNavItem>
                   <a ngbNavLink><span [data-feather]="'cast'"></span>ESTADOS</a>
                   <ng-template ngbNavContent>
@@ -537,30 +575,46 @@
                           [limit]="10" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
 
 
-                          <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="400">
-                            <ng-template let-nomb="value" ngx-datatable-cell-template>
+                          <ngx-datatable-column name="AREA DE ORIGEN" prop="area_origen" [width]="250">
+                            <ng-template let-area_origen="value" ngx-datatable-cell-template>
                               <div>
-                                <span class="font-weight-bold">{{ nomb }} ... </span>
+                                <span class="font-weight-bold">{{ area_origen }}</span>
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-column>
+
+                          <ngx-datatable-column name="ESTATUS DE ORIGEN" prop="area_estatus" [width]="250">
+                            <ng-template let-area_estatus="value" ngx-datatable-cell-template>
+                              <div>
+                                <span class="font-weight-bold">{{ area_estatus }}</span>
                               </div>
                             </ng-template>
                           </ngx-datatable-column>
 
                           
 
-                          <ngx-datatable-column name="DESCRIPCIÓN" prop="des" [width]="650">
-                            <ng-template let-des="value" ngx-datatable-cell-template>
+                          <ngx-datatable-column name="AREA DE DESTINO" prop="area_destino" [width]="250">
+                            <ng-template let-area_destino="value" ngx-datatable-cell-template>
                               <div>
-                                <span class="font-weight-bold">{{ des.slice(0.100) }} ... </span>
+                                <span class="font-weight-bold">{{ area_destino }}</span>
                               </div>
                             </ng-template>
                           </ngx-datatable-column>
 
-                          <ngx-datatable-column name="Status" prop="est" [width]="200">
+                          <ngx-datatable-column name="ESTATUS DESTINO" prop="estatus_destino" [width]="250">
+                            <ng-template let-estatus_destino="value" ngx-datatable-cell-template>
+                              <div>
+                                <span class="font-weight-bold">{{ estatus_destino  }}</span>
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-column>
+
+                          <!-- <ngx-datatable-column name="Status" prop="est" [width]="200">
                             <ng-template let-est="value" ngx-datatable-cell-template>
                               <div class="badge badge-success" *ngIf="est == 1">Activo</div>
                               <div class="badge badge-danger" *ngIf="est == 0">Inactivo</div>
                             </ng-template>
-                          </ngx-datatable-column>
+                          </ngx-datatable-column> -->
 
                         </ngx-datatable>
                       </div>
@@ -570,6 +624,13 @@
 
                   </ng-template>
                 </li>
+
+                <li ngbNavItem>
+                  <a ngbNavLink><span [data-feather]="'git-merge'"></span>DIAGRAMA</a>
+                  <ng-template ngbNavContent>
+                    
+                  </ng-template>
+                </li> 
               </ul>
               <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
 

@@ -25,13 +25,14 @@
 
                         <div class="form-group col-md-4">
                             <label class="form-label" for="descripcion">Nombre del Rol</label>
-                            <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}"
-                                type="text" placeholder="Ingrese Nombre del Rol" class="form-control">
+                            <input style="font-size:14px;" [(ngModel)]="Rol.nombre"
+                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre del Rol"
+                                class="form-control">
                         </div>
 
                         <div class="form-group col-md-8">
                             <label class="form-label" for="origen">Descripcion del Rol</label>
-                            <input style="font-size:14px;" [(ngModel)]="xdescripcion"
+                            <input style="font-size:14px;" [(ngModel)]="Rol.descripcion"
                                 [ngModelOptions]="{standalone: true}" type="text"
                                 placeholder="Breve descripcion del Rol" class="form-control">
                         </div>
@@ -57,53 +58,31 @@
 
                         <div class="form-group col-md-4">
                             <label class="form-label" for="origen">Acciones</label>
-                            <select multiple class="form-control" style="height: 150px;" (dblclick)="addElement()" [(ngModel)]="xaccion" [ngModelOptions]="{standalone: true}" >
-                                <option *ngFor="let e of rowDataAcc" value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}</option>
+                            <select multiple class="form-control" style="height: 150px;" (dblclick)="addElement()"
+                                [(ngModel)]="xaccion" [ngModelOptions]="{standalone: true}">
+                                <option *ngFor="let e of rowDataAcc" value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}
+                                </option>
                             </select>
                         </div>
-
-                        <!-- <div class="form-group col-md-3">
-                          <br>
-
-                          <div class="col-md-12" align="right">
-                            <button type="button" class="btn btn-success" (click)="MdlAccion(mdlAcciones)">
-                              <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Listar
-                            </button>
-                            &nbsp;
-                            <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                                <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
-                            </button>
-                        </div> 
-  
-                      </div> -->
-
-
-
                     </div>
-
-                    <!-- <div class="row">
-                        <div class="col-md-12 col-12 mb-1">
-                            <label for="login-codigo" class="form-label">Escribir codigo fuente</label>
-                            <ngx-codemirror #codeEditor tabindex="1" autofocus
-                            [options]="codeMirrorOptions"
-                            >
-                          </ngx-codemirror>
-                          </div>
-                    </div> -->
-
                     <br>
-
-
-
-
-
-
-
                 </div>
-
-
                 <div class="col-md-12">
-                    <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
+                    <table class="table">
+                            <thead>
+                                <tr><th>MODULO</th><th>MENU</th><th>ACCIONES</th><tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let e of rowData"> 
+                                    <td>{{e.modulo}}</td>
+                                    <td>{{e.menu}}</td>
+                                    <td>{{e.accion}}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                    </table>
+                    <!-- <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
                         [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
                         [limit]="basicSelectedOption">
 
@@ -111,35 +90,45 @@
                         <ngx-datatable-column name="MODULO" [width]="200">
                             <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
                                 <div>
-                                <span class="font-weight-bold">{{ modulo }} </span>
+                                    <span class="font-weight-bold">{{ modulo }} </span>
                                 </div>
                             </ng-template>
-                            
+
                         </ngx-datatable-column>
                         <ngx-datatable-column name="MENU" [width]="200">
                             <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
                                 <div>
-                                <span class="font-weight-bold">{{ menu }} </span>
+                                    <span class="font-weight-bold">{{ menu }} </span>
                                 </div>
                             </ng-template>
-                            
+
                         </ngx-datatable-column>
                         <ngx-datatable-column name="ACCION" [width]="100">
                             <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
                                 <div>
-                                <span class="font-weight-bold">{{ accion }} </span>
+                                    <span class="font-weight-bold">{{ accion }} </span>
                                 </div>
                             </ng-template>
-                            
+
                         </ngx-datatable-column>
 
 
-                    </ngx-datatable>
+                    </ngx-datatable> -->
 
                 </div>
-
+                <div class="col-md-12" align="right">
+                    <button type="button" class="btn btn-success" (click)="guardarRol()">
+                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                    </button>
+                    &nbsp;&nbsp;
+                    <button type="button" class="btn btn-warning" (click)="Limpiar()">
+                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
+                    </button>
+                </div>
+                <br><br>
 
             </div>
+
         </section>
 
     </div>

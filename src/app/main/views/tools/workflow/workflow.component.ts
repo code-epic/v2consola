@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core'
-import { ApiService, IAPICore, WkfDescripcionRed, WkfEstado, WkfEstatus, WkfZRed, wkfRed, wkfTransicion } from '@services/apicore/api.service'
+import { ApiService, IAPICore, WkfDescripcionRed, WkfEstado, WkfEstatus, WkfFrom, WkfZRed, wkfRed, wkfTransicion } from '@services/apicore/api.service'
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service'
 import { UtilService } from '@services/util/util.service'
 import { Wdefinicion, WorkflowService } from '@services/workflow/workflow.service'
@@ -38,6 +38,18 @@ export class WorkflowComponent implements OnInit {
       wkf: 0,
       nombre: '',
       descripcion: '',
+      estatus: 0
+    }
+
+    public wkfForm : WkfFrom = {
+      wkf: 0,
+      nombre: '',
+      descripcion: '',
+      tipo: '',
+      data: 0,
+      origen: '',
+      file: '',
+      listado: '',
       estatus: 0
     }
   
@@ -93,6 +105,17 @@ export class WorkflowComponent implements OnInit {
       { id: "2", descripcion: 'SUBSISTEMA' },
   ]
   // Lista de Tipos de Arquitectura
+
+  public xtipo = ''
+  public lstTipo = [
+    { id: "0", descripcion: 'TEXTO' },
+    { id: "1", descripcion: 'LISTA' },
+    { id: "2", descripcion: 'ARCHIVO' },
+    { id: "3", descripcion: 'SERVICIO' },
+    { id: "4", descripcion: 'OBSERVACIONES' },
+    { id: "5", descripcion: 'IMAGEN' },
+    { id: "6", descripcion: 'FECHA' },
+]
   public tipos = [
     { id: "1", descripcion: 'DOCUMENTOS' },
     { id: "0", descripcion: 'SISTEMA' },
@@ -553,11 +576,12 @@ export class WorkflowComponent implements OnInit {
 
   lstRed(e :any): any {
     this.ListaRed = []
-    this.xAPI.funcion = "WKF_RRed"
+    this.xAPI.funcion = "WKF_CMapaRed"
     this.xAPI.parametros = e
     this.xAPI.valores = {}
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
           data.Cuerpo.map(e => {
             this.ListaRed.push(e)
           })
