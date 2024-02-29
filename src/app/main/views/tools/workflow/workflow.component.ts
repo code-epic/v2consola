@@ -19,90 +19,90 @@ export class WorkflowComponent implements OnInit {
   public contentHeader: object
 
   //  Interface de APICORE
-  public xAPI : IAPICore = {
+  public xAPI: IAPICore = {
     funcion: '',
     relacional: false,
-    concurrencia : false,
-    retorna : false,
-    migrar : false,
+    concurrencia: false,
+    retorna: false,
+    migrar: false,
     parametros: '',
-    modulo : '',
-    valores : {},
-    logs : false,
+    modulo: '',
+    valores: {},
+    logs: false,
     cache: 0,
     estatus: false
   }
 
-    //  Interface de WKF-ESTADOS
-    public wkfEstado : WkfEstado = {
-      wkf: 0,
-      nombre: '',
-      descripcion: '',
-      estatus: 0
-    }
+  //  Interface de WKF-ESTADOS
+  public wkfEstado: WkfEstado = {
+    wkf: 0,
+    nombre: '',
+    descripcion: '',
+    estatus: 0
+  }
 
-    public wkfForm : WkfFrom = {
-      wkf: 0,
-      nombre: '',
-      descripcion: '',
-      tipo: '',
-      data: 0,
-      origen: '',
-      file: '',
-      listado: '',
-      estatus: 0
-    }
-  
-    //  Interface WKF-ESTATUS
-    public wkfEstatus: WkfEstatus = {
-      nombre: "",
-      descripcion: "",
-      estatus: 0,
-      estado: 0,
-      orden: 0,
-    }
+  public wkfForm: WkfFrom = {
+    wkf: 0,
+    nombre: '',
+    descripcion: '',
+    tipo: '',
+    data: 0,
+    origen: '',
+    file: '',
+    listado: '',
+    estatus: 0
+  }
 
-    // Interface Transición
-    public wkfTransicion : wkfTransicion = {
-      idw: 0,
-      funcion: undefined,
-      parametro: ''
-    }
+  //  Interface WKF-ESTATUS
+  public wkfEstatus: WkfEstatus = {
+    nombre: "",
+    descripcion: "",
+    estatus: 0,
+    estado: 0,
+    orden: 0,
+  }
 
-    // Interface Red
-    public wkfRed : wkfRed = {
-      idred: 0,
-      estadoOrigen: undefined,
-      estatusOrigen: undefined,
-      transicionVerdadero: undefined,
-      estadoDestinoVerdadero: undefined,
-      estatusDestinoVerdadero: undefined,
-      estadoDestinoFalso: undefined,
-      estatusDestinoFalso: undefined,
-      transicionFalsa: undefined,
-      descripcion: '',
-      usuario: '',
-      nombre: '',
-      estatus: undefined
-    }
+  // Interface Transición
+  public wkfTransicion: wkfTransicion = {
+    idw: 0,
+    funcion: undefined,
+    parametro: ''
+  }
 
-    public DescripcionRed : WkfDescripcionRed = {
-      nombre: '',
-      descripcion: '',
-      tipo: 0,
-      estatus: 0
-    }
+  // Interface Red
+  public wkfRed: wkfRed = {
+    idred: 0,
+    estadoOrigen: undefined,
+    estatusOrigen: undefined,
+    transicionVerdadero: undefined,
+    estadoDestinoVerdadero: undefined,
+    estatusDestinoVerdadero: undefined,
+    estadoDestinoFalso: undefined,
+    estatusDestinoFalso: undefined,
+    transicionFalsa: undefined,
+    descripcion: '',
+    usuario: '',
+    nombre: '',
+    estatus: undefined
+  }
 
-    public ZRed : WkfZRed = {
-      idred: 0,
-      idw: 0
-    }
-  
-   //  Lista de Niveles de Estatus
+  public DescripcionRed: WkfDescripcionRed = {
+    nombre: '',
+    descripcion: '',
+    tipo: 0,
+    estatus: 0
+  }
+
+  public ZRed: WkfZRed = {
+    idred: 0,
+    idw: 0
+  }
+
+  //  Lista de Niveles de Estatus
   public niveles = [
-      { id: "1", descripcion: 'SUPERIOR' },
-      { id: "0", descripcion: 'SISTEMA' },
-      { id: "2", descripcion: 'SUBSISTEMA' },
+    { id: "1", descripcion: 'SUPERIOR' },
+    { id: "0", descripcion: 'SISTEMA' },
+    { id: "2", descripcion: 'SUBSISTEMA' },
   ]
   // Lista de Tipos de Arquitectura
 
@@ -115,13 +115,29 @@ export class WorkflowComponent implements OnInit {
     { id: "4", descripcion: 'OBSERVACIONES' },
     { id: "5", descripcion: 'IMAGEN' },
     { id: "6", descripcion: 'FECHA' },
-]
+  ]
+
+  public xdatos_val : boolean = false
+  public xdatos_api : boolean = false
+  public xdatos_archivo : boolean = false
+  public xdatos_defecto : boolean = false
+
+  public xdatos = ''
+  public xorigen = ''
+  public lstDatos = [
+    { id: "0", descripcion: 'ARCHIVO DE TEXTO' },
+    { id: "1", descripcion: 'API REST-FULL' },
+    { id: "1", descripcion: 'DATOS POR DEFECTO' },
+  ]
+
+  public lstAPI = []
+  
   public tipos = [
     { id: "1", descripcion: 'DOCUMENTOS' },
     { id: "0", descripcion: 'SISTEMA' },
     { id: "2", descripcion: 'SERVIDORES' },
   ]
-  public lstOrden = [1,2,3,4,5,6,7,8,9,10]
+  public lstOrden = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
   public lstApps = []
   public dataModulo = []
   public Definicion = []
@@ -142,53 +158,53 @@ export class WorkflowComponent implements OnInit {
   public tempDataRed = []
 
   public rowTipologia = [
-    {id:1, name:'Acción'},
-    {id:2, name:'Área'}
+    { id: 1, name: 'Acción' },
+    { id: 2, name: 'Área' }
   ]
   public rowStatus = [
-    {id:1, name:'Activo'},
-    {id:0, name:'Inactivo'}
+    { id: 1, name: 'Activo' },
+    { id: 0, name: 'Inactivo' }
   ]
-  
+
   public showWKF: boolean = false
   public estado = undefined
   public orden = undefined
   public xidW: number = 0
-  public sectionConsultar : string = ''
+  public sectionConsultar: string = ''
   public estatus = undefined
-  public aplicacion : string = undefined
+  public aplicacion: string = undefined
   public xdrivers: string = undefined
-  public xmodulo :  string = undefined
+  public xmodulo: string = undefined
   public drivers: any
-  public nombre  :  string = ''
-  public descripcion  :  string = ''
-  public isBtnSalvar : boolean = true
-  public isDisabledInput : boolean = false
-  public isButtonVisibleSalvar : boolean = false
-  public isButtonVisibleUpdate : boolean = false
-  
+  public nombre: string = ''
+  public descripcion: string = ''
+  public isBtnSalvar: boolean = true
+  public isDisabledInput: boolean = false
+  public isButtonVisibleSalvar: boolean = false
+  public isButtonVisibleUpdate: boolean = false
+
   constructor(
-    private utilservice : UtilService,
-    private apiService : ApiService,
+    private utilservice: UtilService,
+    private apiService: ApiService,
     private comunicacionesService: ComunicacionesService,
-    private wkf : WorkflowService
+    private wkf: WorkflowService
   ) { }
-  
+
 
   ngOnInit(): void {
     this.wkf.msjText$.subscribe(e => {
-      if ( e == 'CLEAN') this.rowEstado = []
+      if (e == 'CLEAN') this.rowEstado = []
       this.lstEstados(e)
       this.lstTranscion(e)
       this.lstRed(e)
       this.xidW = parseInt(e)
     })
-    this.lstAplicaciones()    
+    this.lstAplicaciones()
     this.CargarDrivers()
     this.CargarListaFunciones()
-    
+
     // content header
-     this.contentHeader = {
+    this.contentHeader = {
       headerTitle: 'Herramientas',
       actionButton: true,
       breadcrumb: {
@@ -214,11 +230,11 @@ export class WorkflowComponent implements OnInit {
   }
 
   //  Carga la Lista de las Funciones
-  async CargarListaFunciones(){
+  async CargarListaFunciones() {
     this.xAPI.funcion = "SSB_LFunciones"
     this.xAPI.parametros = ''
     this.ListaFunciones = []
-     await this.apiService.Ejecutar(this.xAPI).subscribe(
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.map(e => {
           this.ListaFunciones.push(e)
@@ -227,11 +243,11 @@ export class WorkflowComponent implements OnInit {
       (error) => {
         console.log(error)
       }
-    ) 
+    )
   }
 
   // Carga la Lista de las Apliaciones
-  async lstAplicaciones(){
+  async lstAplicaciones() {
     this.lstApps = []
     // console.info('llego lista aplicaciones')
     this.xAPI.funcion = "SEC_CAplicaciones"
@@ -248,18 +264,18 @@ export class WorkflowComponent implements OnInit {
   }
 
   // Lista los Modulos 
-  selModulo() : void {
+  selModulo(): void {
     let app = this.aplicacion.split('|')
     this.xAPI.funcion = "LstModulos"
     this.xAPI.parametros = app[0]
     this.dataModulo = []
-    
+
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.Cuerpo.forEach(e => {          
-          this.dataModulo.push({ id: e.id, name: e.nomb  })
-        })             
+        data.Cuerpo.forEach(e => {
+          this.dataModulo.push({ id: e.id, name: e.nomb })
+        })
       },
       (error) => {
         console.error(error)
@@ -267,19 +283,46 @@ export class WorkflowComponent implements OnInit {
     )
   }
 
+  selTipo(): void {
+    this.visibleFalse()
+    if(this.xtipo == "1") {
+      this.xdatos_val = true
+    }
+  }
+
+  visibleFalse(){
+    this.xdatos_val = false
+    this.xdatos_api = false
+    this.xdatos_archivo = false
+    this.xdatos_defecto = false
+  }
+
+  selOrigen(): void {
+    this.xdatos_api = false
+    this.xdatos_archivo = false
+    this.xdatos_defecto = false
+    switch (this.xdatos) {
+      case "1":
+        this.xdatos_api = true
+        break;
+    
+      default:
+        break;
+    }
+  }
   //  Consula la Red y la Carga
-  consultarRed(){
+  consultarRed() {
     this.xAPI.funcion = 'WKF_CDefinicion'
     let app = this.aplicacion.split('|')
     this.xAPI.parametros = app[0]
-    this.apiService.hash =  ':' + app[1]
+    this.apiService.hash = ':' + app[1]
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.isBtnSalvar = false
-        if (data.Cuerpo != undefined ) {
-          if (data.Cuerpo.length == 0 ) return
+        if (data.Cuerpo != undefined) {
+          if (data.Cuerpo.length == 0) return
           this.showWKF = true
-          this.wkf.msjText$.emit( data.Cuerpo[0].wkf)
+          this.wkf.msjText$.emit(data.Cuerpo[0].wkf)
           let obj = data.Cuerpo[0]
           this.isBtnSalvar = false
           this.isDisabledInput = true
@@ -301,8 +344,8 @@ export class WorkflowComponent implements OnInit {
     this.xAPI.funcion = "LESBDrivers"
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.drivers = data.filter(e => {         
-           return e.driver.indexOf('mysql') == 0          
+        this.drivers = data.filter(e => {
+          return e.driver.indexOf('mysql') == 0
         })
       },
       (error) => { console.log(error) }
@@ -310,7 +353,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   // Limpiar los Registros de la Interface de Registrar WorkFlow
-  limpiarRegistroWKF(){
+  limpiarRegistroWKF() {
     this.isBtnSalvar = true
     this.isDisabledInput = false
     this.isButtonVisibleSalvar = false
@@ -324,13 +367,13 @@ export class WorkflowComponent implements OnInit {
   }
 
   //  Salva el registro del WorkFlow
-  salvar(){
+  salvar() {
     var ObjSalvar = {
-      'aplicacion' : parseInt(this.aplicacion.split('|')[0]),
-      'modulo' : parseInt(this.xmodulo),
-      'nombre' : this.nombre,
-      'descripcion' : this.descripcion,
-      'driver' : this.xdrivers
+      'aplicacion': parseInt(this.aplicacion.split('|')[0]),
+      'modulo': parseInt(this.xmodulo),
+      'nombre': this.nombre,
+      'descripcion': this.descripcion,
+      'driver': this.xdrivers
     }
     this.Definicion.push(ObjSalvar)
     this.xAPI.funcion = 'WKF_IDefinicion'
@@ -338,7 +381,7 @@ export class WorkflowComponent implements OnInit {
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
-          this.utilservice.AlertMini('top-end','success', 'WorkFlow Creado Exitosamente',3000)
+          this.utilservice.AlertMini('top-end', 'success', 'WorkFlow Creado Exitosamente', 3000)
           this.aplicacion = undefined
           this.xmodulo = undefined
           this.nombre = ''
@@ -346,7 +389,7 @@ export class WorkflowComponent implements OnInit {
           this.xdrivers = undefined
           this.lstAplicaciones()
         } else {
-          this.utilservice.AlertMini('top-end','error', 'Oops, Algo salio mal!',3000) 
+          this.utilservice.AlertMini('top-end', 'error', 'Oops, Algo salio mal!', 3000)
         }
       },
       (err) => {
@@ -396,7 +439,7 @@ export class WorkflowComponent implements OnInit {
   Ok(id: any, title: string) {
     Swal.fire({
       title: `Creando ${title} del Workflow`,
-      text: `El ${title} ha sido creado con exito (#" ${ id } ") `,
+      text: `El ${title} ha sido creado con exito (#" ${id} ") `,
       icon: "info",
       showCancelButton: false,
       confirmButtonColor: "#3085d6",
@@ -434,7 +477,7 @@ export class WorkflowComponent implements OnInit {
     this.estatus = undefined
     this.rowEstado = []
     this.wkf.msjText$.emit(this.xidW.toString())
-     this.lstEstados(this.xidW.toString())
+    this.lstEstados(this.xidW.toString())
   }
 
   lstEstatus(): any {
@@ -501,18 +544,18 @@ export class WorkflowComponent implements OnInit {
     )
   }
 
-  lstTranscion(e :any): any {
+  lstTranscion(e: any): any {
     this.ListaTransiciones = []
     this.xAPI.funcion = "WKF_RTransicion"
     this.xAPI.parametros = e
     this.xAPI.valores = {}
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          data.Cuerpo.map(e => {
-            this.ListaTransiciones.push(e)
-          })
-          this.rowDataTransiciones = this.ListaTransiciones
-          this.tempDataTransiciones = this.rowDataTransiciones
+        data.Cuerpo.map(e => {
+          this.ListaTransiciones.push(e)
+        })
+        this.rowDataTransiciones = this.ListaTransiciones
+        this.tempDataTransiciones = this.rowDataTransiciones
       },
       (err) => {
         console.error(err)
@@ -534,7 +577,7 @@ export class WorkflowComponent implements OnInit {
     // this.lstEstados(this.xidW.toString())
   }
 
-  EliminarEstatus(estatus : any){
+  EliminarEstatus(estatus: any) {
     Swal.fire({
       title: "Esta seguro?",
       html: `Eliminar el estatus <font><strong>${estatus.nomb}</strong></font> ?`,
@@ -549,14 +592,14 @@ export class WorkflowComponent implements OnInit {
     })
   }
 
-  GuardarTransaccion(){
+  GuardarTransaccion() {
     this.wkfTransicion.idw = this.xidW
     this.xAPI.funcion = "WKF_ITransicion"
     this.xAPI.valores = JSON.stringify(this.wkfTransicion)
     this.rowDataTransiciones = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.Ok(data.msj,'Transición')
+        this.Ok(data.msj, 'Transición')
         this.lstTranscion(this.xidW.toString())
         this.limpiarTransicion()
       },
@@ -566,7 +609,7 @@ export class WorkflowComponent implements OnInit {
     )
   }
 
-  limpiarTransicion(){
+  limpiarTransicion() {
     this.wkfTransicion = {
       idw: 0,
       funcion: '',
@@ -574,7 +617,7 @@ export class WorkflowComponent implements OnInit {
     }
   }
 
-  lstRed(e :any): any {
+  lstRed(e: any): any {
     this.ListaRed = []
     this.xAPI.funcion = "WKF_CMapaRed"
     this.xAPI.parametros = e
@@ -582,11 +625,11 @@ export class WorkflowComponent implements OnInit {
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         console.log(data)
-          data.Cuerpo.map(e => {
-            this.ListaRed.push(e)
-          })
-          this.rowDataRed = this.ListaRed
-          this.tempDataRed = this.rowDataRed
+        data.Cuerpo.map(e => {
+          this.ListaRed.push(e)
+        })
+        this.rowDataRed = this.ListaRed
+        this.tempDataRed = this.rowDataRed
       },
       (err) => {
         console.error(err)
@@ -594,7 +637,7 @@ export class WorkflowComponent implements OnInit {
     )
   }
 
-  GuardarRed(){
+  GuardarRed() {
     this.wkfRed.idred = this.xidW
     this.xAPI.funcion = "WKF_IRed"
     this.xAPI.valores = JSON.stringify(this.wkfRed)
@@ -611,7 +654,7 @@ export class WorkflowComponent implements OnInit {
     )
   }
 
-  limpiarRed(){
+  limpiarRed() {
     this.wkfRed = {
       idred: 0,
       estadoOrigen: undefined,
@@ -631,7 +674,7 @@ export class WorkflowComponent implements OnInit {
   }
 
 
-  salvarRed(){
+  salvarRed() {
     console.log(this.DescripcionRed)
   }
 

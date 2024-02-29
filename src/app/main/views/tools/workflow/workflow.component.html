@@ -112,14 +112,36 @@
                       </div>
 
                       <div class="form-group col-md-4">
-                        <label class="form-label" for="driver">Tipo de campo</label>
+                        <label class="form-label" for="tipo">Tipo de campo</label>
                         <ng-select #Module="ngModel" [(ngModel)]="xtipo" bindLabel="descripcion" name="descripcion"
-                          id="id" required placeholder="Seleccione" bindValue="id">
+                          id="id" required placeholder="Seleccione" bindValue="id"  (change)="selTipo()">
                           <ng-option *ngFor="let item of lstTipo" value="{{item.id}}">{{ item.descripcion }}
                           </ng-option>
                         </ng-select>
                       </div>
 
+                    </div>
+
+                    <div class="row">
+
+                      <div class="form-group col-md-4"  *ngIf="xdatos_val">
+                        <label class="form-label" for="datos">Origen de datos</label>
+                        <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion" name="descripcion"
+                          id="id" required placeholder="Origen de datos" bindValue="id"  (change)="selOrigen()">
+                          <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{ item.descripcion }}
+                          </ng-option>
+                        </ng-select>
+                      </div>
+
+                      <div class="form-group col-md-8" *ngIf="xdatos_api">
+                        <label class="form-label" for="api">Origen de API</label>
+                        <ng-select #Module="ngModel" [(ngModel)]="xorigen" bindLabel="descripcion" name="descripcion"
+                          id="id" required placeholder="Origen de API" bindValue="id">
+                          <ng-option *ngFor="let item of lstAPI" value="{{item.id}}">{{ item.descripcion }}
+                          </ng-option>
+                        </ng-select>
+                      </div>
+                      
                     </div>
                     <div class="row">
                       <div class="col-md-12">
