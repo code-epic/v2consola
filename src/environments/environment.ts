@@ -8,8 +8,8 @@ export const environment = {
     siteKey: '6LdcDsknAAAAAC44xkc214BZ2giOxN8JQsL7L9x2',
   },
   hmr: false,
-  apiUrl: 'https://localhost',
-  Url: 'https://localhost', // requerido para la Fnx_Eliminar proyectos 
+  apiUrl: 'https://65.108.62.7',
+  Url: 'https://65.108.62.7', // requerido para la Fnx_Eliminar proyectos 
   API: '/v1/api/',
   ID: 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',

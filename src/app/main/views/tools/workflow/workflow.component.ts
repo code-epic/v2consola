@@ -5,6 +5,9 @@ import { UtilService } from '@services/util/util.service'
 import { Wdefinicion, WorkflowService } from '@services/workflow/workflow.service'
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable'
 import Swal from 'sweetalert2'
+import Stepper from 'bs-stepper'
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 
 @Component({
   selector: 'app-workflow',
@@ -15,6 +18,7 @@ export class WorkflowComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent
 
+  private horizontalWizardStepper: Stepper;
 
   public contentHeader: object
 
@@ -188,7 +192,8 @@ export class WorkflowComponent implements OnInit {
     private utilservice: UtilService,
     private apiService: ApiService,
     private comunicacionesService: ComunicacionesService,
-    private wkf: WorkflowService
+    private wkf: WorkflowService,
+    private modalService: NgbModal,
   ) { }
 
 
@@ -576,6 +581,19 @@ export class WorkflowComponent implements OnInit {
     this.rowEstatus = []
     //this.wkf.msjText$.emit(this.xidW.toString())
     // this.lstEstados(this.xidW.toString())
+  }
+
+  abrirModal(modalPrimary){
+    this.modalService.open(modalPrimary, {
+      centered: true,
+      windowClass: 'modal modal-primary',
+      size: 'lg',
+      backdrop: false 
+    });
+  }
+
+  onCloseClick(event: Event) {
+    this.modalService.dismissAll();
   }
 
   EliminarEstatus(estatus: any) {

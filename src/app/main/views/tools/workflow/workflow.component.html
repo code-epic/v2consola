@@ -372,8 +372,90 @@
                                   <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                                 </button>
                                 <div ngbDropdownMenu>
-                                  <a (click)="EliminarEstatus(row)" ngbDropdownItem><span [data-feather]="'trash'"
-                                      [size]="16" [class]="'mr-50'"></span> Eliminar</a>
+                                  <a (click)="abrirModal(modalPrimary)" ngbDropdownItem>
+                                    <span [data-feather]="'grid'"
+                                      [size]="16" [class]="'mr-50'">
+                                    </span> Frame
+                                  </a>
+                                  <!-- INICIO DEL MODAL -->
+                                  <ng-template #modalPrimary style="width: 100vw; z-index: 2000;">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="myModalLabel160">Frame</h5>
+                                      <button type="button" class="close" (click)="onCloseClick($event)" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <div class="modal-body" tabindex="0" ngbAutofocus>
+                                      <div class="row">
+                                        <div class="form-group col-md-4">
+                                          <label class="form-label" for="nombre">Nombre del campo</label>
+                                          <input [(ngModel)]="wkfForm.nombre" value="{{wkfForm.nombre}}"
+                                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
+                                            id="nombre" placeholder="Nombre del campo ..." class="form-control" />
+                  
+                                        </div>
+                                        <div class="form-group col-md-4">
+                                          <label class="form-label" for="nombre">Descripción del campo</label>
+                                          <input [(ngModel)]="wkfForm.descripcion" value="{{wkfForm.descripcion}}"
+                                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text"
+                                            name="descripcion" id="descripcion" placeholder="Descripción del campo ..."
+                                            class="form-control" />
+                  
+                                        </div>
+                  
+                                        <div class="form-group col-md-4">
+                                          <label class="form-label" for="tipo">Tipo de campo</label>
+                                          <ng-select #Module="ngModel" [(ngModel)]="xtipo" bindLabel="descripcion" name="descripcion"
+                                            id="id" required placeholder="Seleccione" bindValue="id"  (change)="selTipo()">
+                                            <ng-option *ngFor="let item of lstTipo" value="{{item.id}}">{{ item.descripcion }}
+                                            </ng-option>
+                                          </ng-select>
+                                        </div>
+                  
+                                      </div>
+                  
+                                      <div class="row">
+                  
+                                        <div class="form-group col-md-4"  *ngIf="xdatos_val">
+                                          <label class="form-label" for="datos">Origen de datos</label>
+                                          <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion" name="descripcion"
+                                            id="id" required placeholder="Origen de datos" bindValue="id"  (change)="selOrigen()">
+                                            <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{ item.descripcion }}
+                                            </ng-option>
+                                          </ng-select>
+                                        </div>
+                  
+                                        <div class="form-group col-md-8" *ngIf="xdatos_api">
+                                          <label class="form-label" for="api">Origen de API</label>
+                                          <ng-select #Module="ngModel" [(ngModel)]="xorigen" bindLabel="descripcion" name="descripcion"
+                                            id="id" required placeholder="Origen de API" bindValue="id">
+                                            <ng-option *ngFor="let item of lstAPI" value="{{item.id}}">{{ item.descripcion }}
+                                            </ng-option>
+                                          </ng-select>
+                                        </div>
+                  
+
+                                      </div>
+                                        <div class="modal-footer">
+                                          <div class="col-md-12">
+                                            <div class="d-flex justify-content-end">
+                                              <button type="button" class="btn btn-success mr-2"
+                                                (click)="addItemForm()">Agregar
+                                              </button>
+                                                  <button type="button" class="btn btn-danger"
+                                                    (click)="onCloseClick(e)">Cerrar
+                                                  </button>
+                                              </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                  </ng-template>
+                                  <!-- FIN DEL MODAL -->
+                                  <a (click)="EliminarEstatus(row)" ngbDropdownItem>
+                                    <span [data-feather]="'trash'"
+                                      [size]="16" [class]="'mr-50'">
+                                    </span> Eliminar
+                                  </a>
                                 </div>
                               </div>
                             </ng-template>
