@@ -1,6 +1,6 @@
 
 @import '@core/scss/angular/libs/form-wizard.component.scss';
-@import '@core/scss/angular/libs/select.component.scss';
+//@import '@core/scss/angular/libs/select.component.scss';
 
 .example-headers-align .mat-expansion-panel-header-title,
 .example-headers-align .mat-expansion-panel-header-description {
@@ -14,4 +14,13 @@
 
 .example-headers-align .mat-form-field + .mat-form-field {
   margin-left: 8px;
+}
+
+
+.dark-layout .ng-select, .dark-layout .ng-select div, .dark-layout .ng-select input, .dark-layout .ng-select span {
+  background-color: #283046!important;
+}
+
+.ng-select.ng-select-disabled>.ng-select-container {
+  background-color: #283046!important;  
 }

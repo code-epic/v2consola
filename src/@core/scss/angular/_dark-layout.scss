@@ -50,4 +50,8 @@
   .ng-select span {
     color: $theme-dark-body-color;
   }
+
+  .ng-select.ng-select-disabled>.ng-select-container {
+    background-color: #353f59;
+}
 }

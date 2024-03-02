@@ -67,11 +67,11 @@
                         </div>
                         <div *ngIf="isButtonVisibleUpdate">
                           <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
-                            (click)="modificar()"><i class="fa fa-edit" aria-hidden="true"></i>Modificar
+                            (click)="modificar()"><i class="fa fa-edit" aria-hidden="true"></i> Modificar
                           </button>
                           &nbsp;
                           <button type="button" class="btn btn-danger" [disabled]="isBtnSalvar"
-                            (click)="limpiarRegistroWKF()"><i class="fa fa-edit" aria-hidden="true"></i>Cancelar
+                            (click)="limpiarRegistroWKF()"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar
                           </button>
                         </div>
                       </div>
@@ -90,7 +90,7 @@
           <!-- TABLA DE WORKFLOW -->
           <div class="row" *ngIf="showWKF">
             <div class="col-md-12 ">
-              <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content">
+              <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
                 <li ngbNavItem>
                   <a ngbNavLink><span [data-feather]="'layout'"></span>FORMULARIO BASE</a>
                   <ng-template ngbNavContent>
@@ -124,37 +124,43 @@
 
                     <div class="row">
 
-                      <div class="form-group col-md-4"  *ngIf="xdatos_val">
-                        <label class="form-label" for="datos">Origen de datos</label>
-                        <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion" name="descripcion"
-                          id="id" required placeholder="Origen de datos" bindValue="id"  (change)="selOrigen()">
-                          <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{ item.descripcion }}
-                          </ng-option>
+                      <div class="form-group col-md-4">
+                        <!-- <div *ngIf="xdatos_val"> -->
+
+                            <label class="form-label" for="datos">Origen de datos</label>
+                            <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion" name="descripcion"
+                            id="id" required placeholder="Origen de datos" bindValue="id"  (change)="selOrigen()" [disabled]="!xdatos_val">
+                            <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{ item.descripcion }}
+                            </ng-option>
                         </ng-select>
+                        <!-- </div> -->
                       </div>
 
-                      <div class="form-group col-md-6" *ngIf="xdatos_api">
-                        <label class="form-label" for="api">Origen de API</label>
+                      <div class="form-group col-md-6">
+                        <div>
+                          <label class="form-label" for="api">Origen de API</label>
                         <ng-select #Module="ngModel" [(ngModel)]="xorigen" bindLabel="descripcion" name="descripcion"
-                          id="id" required placeholder="Origen de API" bindValue="id">
+                          id="id" required placeholder="Origen de API" bindValue="id" [disabled]="!xdatos_api">
                           <ng-option *ngFor="let item of lstAPI" value="{{item.id}}">{{ item.descripcion }}
                           </ng-option>
                         </ng-select>
-                      </div>
-
-                      <div class="col-md-2">
-                        <div class="input-group-prepend">
-                          <div class="form-group col-md-1">
-                            <label class="form-label"></label>
-                              <button type="button" class="btn btn-success"
-                                (click)="addItemForm()">Agregar
-                              </button>
-                         
-                          </div>
-                         
                         </div>
                       </div>
-                      
+
+                      <div class="form-group col-md-2 d-flex align-items-end">
+                            
+                        <label class="form-label"></label>
+                        <button type="button" class="btn btn-primary"
+                        (click)="addItemForm()" style="width: 100%;">
+                        <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+                      </button>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md">
+
+                        </div>
+                        
                     </div>
                     <div class="row">
                       <div class="col-md-12">
@@ -226,7 +232,7 @@
                       <div class="col-md-12">
                         <ngx-datatable [rows]="rowEstado" [rowHeight]="58"
                           class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true">
+                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
 
 
                           <ngx-datatable-column name="#" prop="id" [width]="10">
@@ -327,7 +333,7 @@
                       <div class="col-md-12">
                         <ngx-datatable [rows]="rowEstatus" [rowHeight]="58"
                           class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true">
+                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
 
 
                           <ngx-datatable-column name="#" prop="id" [width]="10">
@@ -483,7 +489,7 @@
                         <div class="input-group mb-3">
                           <input style="font-size:14px;" type="text" [(ngModel)]="wkfTransicion.parametro"
                             autocomplete="off" [ngModelOptions]="{standalone: true}" class="form-control">
-                          <div class="input-group-prepend">
+                          <div>
                             &nbsp;
                             <button type="button" class="btn btn-primary" (click)="GuardarTransaccion()"><i
                                 class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
@@ -501,7 +507,7 @@
 
                         <ngx-datatable [rows]="rowDataTransiciones" [rowHeight]="58"
                           class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true">
+                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
 
 
 
@@ -687,7 +693,7 @@
 
                       <br>
                       <div class="col-md-12" align="right">
-                        <button type="button" class="btn btn-danger" (click)="GuardarRed()">
+                        <button type="button" class="btn btn-primary" (click)="GuardarRed()">
                           <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar Definición
                         </button>
                       </div>
@@ -703,7 +709,7 @@
 
                         <ngx-datatable [rows]="rowDataRed" [rowHeight]="58"
                           class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true">
+                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
 
 
                           <ngx-datatable-column name="AREA DE ORIGEN" prop="area_origen" [width]="250">
