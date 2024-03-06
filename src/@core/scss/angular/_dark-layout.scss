@@ -51,7 +51,24 @@
     color: $theme-dark-body-color;
   }
 
+  .ng-select.wkfFalse,
+  .ng-select.wkfFalse div,
+  .ng-select.wkfFalse input,
+  .ng-select.wkfFalse span,
+  .ng-select.wkfTrue,
+  .ng-select.wkfTrue div,
+  .ng-select.wkfTrue input,
+  .ng-select.wkfTrue span{
+    color: #fff;
+  }
+
   .ng-select.ng-select-disabled>.ng-select-container {
     background-color: #353f59;
 }
+
+.ng-select.wkfTrue .ng-select-container .ng-value-container .ng-placeholder,
+.ng-select.wkfFalse .ng-select-container .ng-value-container .ng-placeholder{
+  color: #fff!important;
+}
+
 }
