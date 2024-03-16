@@ -4,99 +4,90 @@
 
     <section id="ecommerce-searchbar" class="ecommerce-searchbar">
       <div class="row mt-1">
-          <div class="col-sm-12">
-              <div class="input-group input-group-merge">
-                  <input type="text" class="form-control search-product"
-                      id="shop-search" placeholder="Buscar"
-                      [(ngModel)]="searchText"
-                      aria-label="Search..." aria-describedby="shop-search"
-                       />
-                  <div class="input-group-append">
-                      <span class="input-group-text"><i data-feather="search"
-                              class="text-muted"></i></span>
-                  </div>
-              </div>
+        <div class="col-sm-12">
+          <div class="input-group input-group-merge">
+            <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
+              [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" />
+            <div class="input-group-append">
+              <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
+            </div>
           </div>
+        </div>
       </div>
-  </section>
-  <br>
+    </section>
+    <br>
 
     <section id="wishlist" class="grid-view wishlist-items">
-      <ng-container *ngFor="let product of drivers  | filter: searchText:'descripcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
+      <ng-container
+        *ngFor="let product of drivers  | filter: searchText:'descripcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
 
-      
+
         <!-- Ecommerce Item -->
-        
+
         <div class="card ecommerce-card col-sm-12">
-          
-        <div class="item-img text-center">
-          <a [routerLink]="'/tools/api-list/'+product.ruta">
-            <img class="img-fluid card-img-top" width="50px" height="50px" src="assets/integraciones/mongodb.png" *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
-            <img class="img-fluid card-img-top" width="50px" height="50px" src="assets/integraciones/mysql.png" *ngIf="product.driver == 'mysql8'" alt="img-placeholder" />
-            <img class="img-fluid card-img-top" width="50px" height="50px" src="assets/integraciones/mariadb.png" *ngIf="product.driver == 'mariadb'" alt="img-placeholder" />
-            <img class="img-fluid card-img-top" width="50px" height="50px" src="assets/integraciones/postgres.png" *ngIf="product.driver == 'postgres13' || product.driver == 'postgres96'" alt="img-placeholder" />
-          </a>
-        </div>
-        <div class="card-body">
-          <div class="item-wrapper">
-            <div class="item-rating">
-              <div class="rating rating-sm">
-                <div class="badge badge-success" *ngIf="product.estatus === true">Activo</div>
-                <div class="badge badge-danger" *ngIf="product.estatus === false">Inactivo</div>
+
+          <div class="item-img text-center efecto-img">
+            <a [routerLink]="'/tools/api-list/'+product.ruta">
+              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mongodb.png"
+                *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
+              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mysql.png"
+                *ngIf="product.driver == 'mysql8'" alt="img-placeholder" />
+              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mariadb.png"
+                *ngIf="product.driver == 'mariadb'" alt="img-placeholder" />
+              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/postgres.png"
+                *ngIf="product.driver == 'postgres13' || product.driver == 'postgres96'" alt="img-placeholder" />
+            </a>
+          </div>
+          <div class="card-body">
+            <div class="item-wrapper">
+              <div class="item-rating">
+                <div class="rating rating-sm">
+                  <div class="badge badge-success" *ngIf="product.estatus === true">Activo</div>
+                  <div class="badge badge-danger" *ngIf="product.estatus === false">Inactivo</div>
+                </div>
+              </div>
+              <div class="item-cost">
+                <h6 class="item-price">
+                  {{ product.driver | uppercase }}
+                </h6>
               </div>
             </div>
-            <div class="item-cost">
-              <h6 class="item-price">
-                {{ product.driver | uppercase }}
-              </h6>
-            </div>
+            <p class="card-text item-description">
+              <strong>{{ product.descripcion }}</strong>
+            </p>
           </div>
-          <p class="card-text item-description">
-            <strong>{{ product.descripcion }}</strong>
-          </p>
-        </div>
-        
+
         </div>
         <!--/ Ecommerce Item -->
       </ng-container>
     </section>
 
 
-        <!-- E-commerce Pagination Starts -->
-        <section id="ecommerce-pagination">
-          <div class="row">
-              <div class="col-sm-12">
-                  <div class="d-flex justify-content-center">
-                      <ngb-pagination
-                          [collectionSize]="(drivers | filter: searchText:'funcion').length"
-                          [(page)]="page" [maxSize]="5" [rotate]="true"
-                          [ellipses]="false" [boundaryLinks]="true">
-                          <!-- Custom pagination icons -->
-                          <ng-template ngbPaginationPrevious><span
-                                  [data-feather]="'chevron-left'"
-                                  [class]="'font-weight-bolder'"
-                                  [size]="18"></span>
-                          </ng-template>
-                          <ng-template ngbPaginationFirst><span
-                                  [data-feather]="'chevrons-left'"
-                                  [class]="'font-weight-bolder'"
-                                  [size]="18"></span>
-                          </ng-template>
-                          <ng-template ngbPaginationNext><span
-                                  [data-feather]="'chevron-right'"
-                                  [class]="'font-weight-bolder'"
-                                  [size]="18"></span></ng-template>
-                          <ng-template ngbPaginationLast><span
-                                  [data-feather]="'chevrons-right'"
-                                  [class]="'font-weight-bolder'"
-                                  [size]="18"></span>
-                          </ng-template>
-                      </ngb-pagination>
-                  </div>
-              </div>
+    <!-- E-commerce Pagination Starts -->
+    <section id="ecommerce-pagination">
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="d-flex justify-content-center">
+            <ngb-pagination [collectionSize]="(drivers | filter: searchText:'funcion').length" [(page)]="page"
+              [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true">
+              <!-- Custom pagination icons -->
+              <ng-template ngbPaginationPrevious><span [data-feather]="'chevron-left'" [class]="'font-weight-bolder'"
+                  [size]="18"></span>
+              </ng-template>
+              <ng-template ngbPaginationFirst><span [data-feather]="'chevrons-left'" [class]="'font-weight-bolder'"
+                  [size]="18"></span>
+              </ng-template>
+              <ng-template ngbPaginationNext><span [data-feather]="'chevron-right'" [class]="'font-weight-bolder'"
+                  [size]="18"></span></ng-template>
+              <ng-template ngbPaginationLast><span [data-feather]="'chevrons-right'" [class]="'font-weight-bolder'"
+                  [size]="18"></span>
+              </ng-template>
+            </ngb-pagination>
           </div>
-      </section>
-      <!-- E-commerce Pagination Ends -->
+        </div>
+      </div>
+    </section>
+    <!-- E-commerce Pagination Ends -->
 
   </div>
 </div>

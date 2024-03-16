@@ -16,26 +16,19 @@
       <div class="content-header-right text-md-right col-md-3 col-12 d-md-block d-none">
         <div class="form-group breadcrum-right">
           <div ngbDropdown>
-            <button
-              ngbDropdownToggle
-              id="dropdownSettings"
-              class="btn-icon btn btn-primary btn-round btn-sm"
-              type="button"
-              rippleEffect
-            >
+            <button ngbDropdownToggle id="dropdownSettings" class="btn-icon btn btn-primary btn-round btn-sm"
+              type="button" rippleEffect>
               <span [data-feather]="'grid'"></span>
             </button>
             <div ngbDropdownMenu aria-labelledby="dropdownSettings">
-              <a ngbDropdownItem [routerLink]="['/networks/communications']"
-                ><span [data-feather]="'server'" [class]="'mr-50'"></span> Servidores</a
-              >
-              <a ngbDropdownItem [routerLink]="['/networks/connections']"
-                ><span [data-feather]="'hard-drive'" [class]="'mr-50'"></span> Conexiones</a
-              >
-              <a ngbDropdownItem [routerLink]="['/tools/api']"><span [data-feather]="'tool'" [class]="'mr-50'"></span> Api Rest</a>
-              <a ngbDropdownItem [routerLink]="['/security/role']"
-                ><span [data-feather]="'lock'" [class]="'mr-50'"></span> Seguridad</a
-              >
+              <a ngbDropdownItem [routerLink]="['/networks/communications']"><span [data-feather]="'server'"
+                  [class]="'mr-50'"></span> Servidores</a>
+              <a ngbDropdownItem [routerLink]="['/networks/connections']"><span [data-feather]="'hard-drive'"
+                  [class]="'mr-50'"></span> Conexiones</a>
+              <a ngbDropdownItem [routerLink]="['/tools/applications']"><span [data-feather]="'tool'"
+                  [class]="'mr-50'"></span> Api Rest</a>
+              <a ngbDropdownItem [routerLink]="['/security/role']"><span [data-feather]="'lock'"
+                  [class]="'mr-50'"></span> Seguridad</a>
             </div>
           </div>
         </div>

@@ -33,57 +33,57 @@ export interface UClave {
 
 
 export interface Usuario {
-  _id:          ID;
-  cedula:       string;
-  nombre:       string;
-  login:        string;
-  correo:       string;
-  clave:        string;
-  sucursal:     string;
-  direccion:    string;
-  cargo:        string;
-  telefono:     string;
-  sistema:      string;
-  token:        string;
-  Perfil:       Perfil;
-  Aplicacion:   Aplicacion[];
+  _id: ID;
+  cedula: string;
+  nombre: string;
+  login: string;
+  correo: string;
+  clave: string;
+  sucursal: string;
+  direccion: string;
+  cargo: string;
+  telefono: string;
+  sistema: string;
+  token: string;
+  Perfil: Perfil;
+  Aplicacion: Aplicacion[];
   firmadigital: Firmadigital;
 }
 
 export interface Aplicacion {
-  id:         string;
-  nombre:     string;
-  url:        string;
+  id: string;
+  nombre: string;
+  url: string;
   comentario: string;
-  version:    string;
-  autor:      string;
-  Rol:        Rol;
+  version: string;
+  autor: string;
+  Rol: Rol;
 }
 
 export interface Rol {
   descripcion: string;
-  Menu:        Menu[];
+  Menu: Menu[];
 }
 
 export interface Menu {
-  url:          string;
-  js:           string;
-  icono:        string;
-  descripcion:  string;
-  nombre:       string;
-  accion:       string;
-  clase:        string;
-  color:        string;
-  Privilegio?:  any[];
-  SubMenu?:     Menu[];
+  url: string;
+  js: string;
+  icono: string;
+  descripcion: string;
+  nombre: string;
+  accion: string;
+  clase: string;
+  color: string;
+  Privilegio?: any[];
+  SubMenu?: Menu[];
   Privilegios?: Privilegio[];
 }
 
 export interface Privilegio {
-  metodo:      string;
+  metodo: string;
   descripcion: string;
-  accion:      string;
-  directivas:  string;
+  accion: string;
+  directivas: string;
 }
 
 export interface Perfil {
@@ -96,8 +96,8 @@ export interface ID {
 
 export interface Firmadigital {
   direccionmac: string;
-  direccionip:  string;
-  tiempo:       Date;
+  direccionip: string;
+  tiempo: Date;
 }
 
 
@@ -109,23 +109,23 @@ export interface Firmadigital {
 
 export class LoginService {
   //Dirección Get para servicios en la página WEB
-  public URL : string =  environment.API
-  
-  public Id : string = ''
-  
-  public SToken : any
+  public URL: string = environment.API
 
-  public Token : any
+  public Id: string = ''
 
-  public Usuario : any
+  public SToken: any
 
-  public Aplicacion : any
-  
+  public Token: any
+
+  public Usuario: any
+
+  public Aplicacion: any
+
   urlGet = '';
 
   //public Epic: CodeEpic = new CodeEpic
 
-  constructor(private router: Router, private http: HttpClient, private taskService : TaskService, private apiService : ApiService) {
+  constructor(private router: Router, private http: HttpClient, private taskService: TaskService, private apiService: ApiService) {
     //environment.Url +
     this.urlGet = environment.API;
 
@@ -173,7 +173,7 @@ export class LoginService {
       confirmButtonText: 'Si, cerrar',
       cancelButtonText: 'Cancelar'
     }).then((result) => {
-      if (result.isConfirmed) { 
+      if (result.isConfirmed) {
         // Swal.fire(
         //   'Hasta la próxima!',
         //   'Te esperamos',
@@ -184,12 +184,12 @@ export class LoginService {
           this.clearSession()
           window.location.reload();
         });
-        
+
       }
     })
   }
 
-  async clearSession(){
+  async clearSession() {
     let lstApp = []
     await this.taskService.keys().then(
       async lst => {
@@ -198,11 +198,11 @@ export class LoginService {
           const e = lst[i];
           this.taskService.get(e).then(
             data => {
-              if(data.estatus) lstApp.push(data)
-              if(i == cnt-1) this.inserCommitDB(lstApp)
+              if (data.estatus) lstApp.push(data)
+              if (i == cnt - 1) this.inserCommitDB(lstApp)
             }
           )
-          
+
         }
       }
     )
@@ -212,9 +212,9 @@ export class LoginService {
 
 
 
-  inserCommitDB(lst){
+  inserCommitDB(lst) {
     let idUser = "panel"
-    
+
     let obj = {
       "usuario": idUser,
       "task": lst,
@@ -224,7 +224,7 @@ export class LoginService {
       'coleccion': 'user-task',
       'driver': 'MGDBA',
       'objeto': obj,
-      'donde': '{\"usuario\":\"'+ idUser +'\"}',
+      'donde': '{\"usuario\":\"' + idUser + '\"}',
       'upsert': true
     }
 
@@ -251,43 +251,43 @@ export class LoginService {
     return t;
   }
 
-    //ObenterAplicacion 
-    protected obenterAplicacion(){
-      var Aplicacion = this.Token.Usuario.Aplicacion
-      Aplicacion.forEach(e => {
-        if(e.id == this.Id ){
-          this.Aplicacion = e;
-        }
-      });
-      return this.Aplicacion
-    }
-    
-    obtenerMenu() : any {
-      var i = 0
-      return  this.Aplicacion.Rol.Menu.map(e => {
-        e.id = e.url
-        e.type = e.clase
-        e.title = e.descripcion
-        if(  e.SubMenu != undefined ) {
-          e.children = e.SubMenu.map(el => {
-            el.id =   el.url.replace('/', '-')
-            el.title = el.descripcion
-            el.type = el.clase
-            el.url =  el.url
-            return el
-          }) 
-          e.url = ''
-        }
-        return e
-      }) 
-      // return this.Aplicacion.Rol.Menu
-    }
-  
-    obtenerSubMenu(idUrl : string) : any{   
-      var App = this.Aplicacion
-      var SubMenu = [] 
-      App.Rol.Menu.forEach(e => {if (e.url == idUrl) SubMenu = e.SubMenu});
-      return SubMenu
-    }
+  //ObenterAplicacion 
+  protected obenterAplicacion() {
+    var Aplicacion = this.Token.Usuario.Aplicacion
+    Aplicacion.forEach(e => {
+      if (e.id == this.Id) {
+        this.Aplicacion = e;
+      }
+    });
+    return this.Aplicacion
+  }
+
+  obtenerMenu(): any {
+    var i = 0
+    return this.Aplicacion.Rol.Menu.map(e => {
+      e.id = e.url
+      e.type = e.clase
+      e.title = e.descripcion
+      if (e.SubMenu != undefined) {
+        e.children = e.SubMenu.map(el => {
+          el.id = el.url.replace('/', '-')
+          el.title = el.descripcion
+          el.type = el.clase
+          el.url = el.url
+          return el
+        })
+        e.url = ''
+      }
+      return e
+    })
+    // return this.Aplicacion.Rol.Menu
+  }
+
+  obtenerSubMenu(idUrl: string): any {
+    var App = this.Aplicacion
+    var SubMenu = []
+    App.Rol.Menu.forEach(e => { if (e.url == idUrl) SubMenu = e.SubMenu });
+    return SubMenu
+  }
 
 }

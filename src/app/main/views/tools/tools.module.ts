@@ -37,6 +37,7 @@ import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.mo
 import { ApiDetailsComponent } from './api/api-details/api-details.component';
 import { RegisterApiComponent } from './api/register-api/register-api.component';
 import { SqlFormatPipe } from '@core/pipes/sql-format.pipe';
+import { ApplicationsComponent } from './applications/applications.component';
 
 const routes = [
   {
@@ -48,6 +49,12 @@ const routes = [
   {
     path: 'tools/api',
     component: ApiListComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'tools/applications',
+    component: ApplicationsComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
@@ -91,7 +98,8 @@ const routes = [
     ApiListComponent,
     ApiDetailsComponent,
     RegisterApiComponent,
-    SqlFormatPipe
+    SqlFormatPipe,
+    ApplicationsComponent
   ],
   imports: [
     RouterModule.forChild(routes),

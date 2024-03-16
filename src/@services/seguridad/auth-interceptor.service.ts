@@ -13,10 +13,10 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   constructor(
     private router: Router
-  ) {}
+  ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-  
+
     const token: string = sessionStorage.getItem('token')
 
     let request = req;
@@ -28,7 +28,8 @@ export class AuthInterceptorService implements HttpInterceptor {
       //   }
       // });
     }
-    
+
+
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
         console.log(err.status)
@@ -46,12 +47,12 @@ export class AuthInterceptorService implements HttpInterceptor {
         //     this.cerrar(err.error)
         //   break
         // }
-        return throwError( err );
+        return throwError(err);
       })
     )
   }
 
-  cerrar(msj : string){
+  cerrar(msj: string) {
     Swal.fire({
       title: 'Alerta',
       text: msj,
@@ -64,6 +65,6 @@ export class AuthInterceptorService implements HttpInterceptor {
         sessionStorage.removeItem('token')
         window.location.href = '/';
       }
-    })    
+    })
   }
 }

@@ -1,0 +1,90 @@
+<div class="content-wrapper container-xxl p-0">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+    <div class="content-body">
+
+        <section id="ecommerce-searchbar" class="ecommerce-searchbar">
+            <div class="row mt-1">
+                <div class="col-sm-12">
+                    <div class="input-group input-group-merge">
+                        <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
+                            [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" />
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <br>
+
+        <section id="wishlist" class="grid-view wishlist-items">
+            <ng-container
+                *ngFor="let product of ListaAplicaciones  | filter: searchText:'nombre'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
+
+
+                <!-- Ecommerce Item -->
+
+                <div class="card ecommerce-card col-sm-12 tarjeta">
+                    <a [routerLink]="'/tools/api'">
+
+                        <div class="item-img text-center efecto-img">
+                            <img class="img-fluid" width="100px" height="100px" src="assets/images/logo/logo.png"
+                                alt="img-placeholder" />
+                        </div>
+
+                        <div class="card-body">
+
+                            <div class="item-wrapper">
+                                <div class="item-rating">
+                                    <div class="rating rating-sm">
+                                        <div class="badge badge-success" *ngIf="product.status === '1'">Activo</div>
+                                        <div class="badge badge-danger" *ngIf="product.status === '0'">Inactivo</div>
+                                    </div>
+                                </div>
+                                <div class="item-cost">
+                                    <h6 class="item-price">
+                                        {{ product.nombre | uppercase }}
+                                    </h6>
+                                </div>
+                            </div>
+                            <p class="card-text item-description">
+                                <strong>{{ product.basedatos }}</strong> - {{ product.fecha }}
+                            </p>
+                        </div>
+
+                    </a>
+
+                </div>
+                <!--/ Ecommerce Item -->
+            </ng-container>
+        </section>
+
+
+        <!-- E-commerce Pagination Starts -->
+        <section id="ecommerce-pagination">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="d-flex justify-content-center">
+                        <ngb-pagination [collectionSize]="(drivers | filter: searchText:'funcion').length"
+                            [(page)]="page" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true">
+                            <!-- Custom pagination icons -->
+                            <ng-template ngbPaginationPrevious><span [data-feather]="'chevron-left'"
+                                    [class]="'font-weight-bolder'" [size]="18"></span>
+                            </ng-template>
+                            <ng-template ngbPaginationFirst><span [data-feather]="'chevrons-left'"
+                                    [class]="'font-weight-bolder'" [size]="18"></span>
+                            </ng-template>
+                            <ng-template ngbPaginationNext><span [data-feather]="'chevron-right'"
+                                    [class]="'font-weight-bolder'" [size]="18"></span></ng-template>
+                            <ng-template ngbPaginationLast><span [data-feather]="'chevrons-right'"
+                                    [class]="'font-weight-bolder'" [size]="18"></span>
+                            </ng-template>
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- E-commerce Pagination Ends -->
+
+    </div>
+</div>
