@@ -67,7 +67,7 @@ export class HomeComponent implements OnInit {
       img: 'assets/items/api.png',
       estatus: true,
       base: 'tools',
-      ruta: 'api'
+      ruta: 'applications'
     },
     {
       id: 4,
