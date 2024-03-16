@@ -30,7 +30,7 @@ export class HomeComponent implements OnInit {
     config: NgbModalConfig,
     private ruta: Router,
     private taskService: TaskService
-    ) {
+  ) {
     config.backdrop = false;
     config.keyboard = false;
   }
@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
       id: 1,
       name: 'Servidores',
       description: 'Los servidores operan a través de una arquitectura cliente-servidor. Los servidores son programas de computadora en ejecución.',
-      img: '../../../assets/items/servidores.png',
+      img: 'assets/items/servidores.png',
       estatus: true,
       base: 'networks',
       ruta: 'communications'
@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit {
       id: 2,
       name: 'Conexiones',
       description: 'La conexión es el enlace que se establece entre el emisor y el receptor a través del que se envía el mensaje.',
-      img: '../../../assets/items/conexiones.png',
+      img: 'assets/items/conexiones.png',
       estatus: true,
       base: 'networks',
       ruta: 'connections'
@@ -64,7 +64,7 @@ export class HomeComponent implements OnInit {
       id: 3,
       name: 'API REST',
       description: 'Es una interfaz de programación de aplicaciones (Application Programming Interface).',
-      img: '../../../assets/items/api.png',
+      img: 'assets/items/api.png',
       estatus: true,
       base: 'tools',
       ruta: 'api'
@@ -73,7 +73,7 @@ export class HomeComponent implements OnInit {
       id: 4,
       name: 'Seguridad',
       description: 'Se puede referir a la ausencia de riesgo o a la confianza en algo o en alguien.',
-      img: '../../../assets/items/seguridad.png',
+      img: 'assets/items/seguridad.png',
       estatus: true,
       base: 'security',
       ruta: 'role'

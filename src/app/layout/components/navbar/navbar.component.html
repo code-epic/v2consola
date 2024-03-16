@@ -4,7 +4,7 @@
     <li class="nav-item">
       <a class="navbar-brand" [routerLink]="['/']">
         <span class="brand-logo">
-        <img src="../../../../assets/images/logo/logo.png" alt="brand-logo" width="36" />
+          <img src="assets/images/logo/logo.png" alt="brand-logo" width="36" />
         </span>
         <h2 class="brand-text mb-0">{{ coreConfig.app.appName }}</h2>
       </a>
@@ -28,16 +28,16 @@
   </div>
   <!-- Bookmark -->
   <!-- <div class="spinner-grow warning text-warning" *ngIf="spiner"> -->
-    <!-- <span class="sr-only">Loading...</span> -->
-    <!-- <label>{{peso}}</label> -->
+  <!-- <span class="sr-only">Loading...</span> -->
+  <!-- <label>{{peso}}</label> -->
   <!-- </div> -->
   <!-- <app-navbar-bookmark></app-navbar-bookmark> -->
   <!--/ Bookmark -->
-  <div class="spinner-grow warning text-warning" style="margin-top: 5px;"  *ngIf="blCargando" ></div>
-  <ul class="nav navbar-nav align-items-center" >
-    <li  class="nav-item dropdown dropdown-language" >
-      
-      <span class="selected-language"  *ngIf="blCargando">&nbsp;&nbsp;&nbsp;Procesando tareas en segundo  plano...</span>
+  <div class="spinner-grow warning text-warning" style="margin-top: 5px;" *ngIf="blCargando"></div>
+  <ul class="nav navbar-nav align-items-center">
+    <li class="nav-item dropdown dropdown-language">
+
+      <span class="selected-language" *ngIf="blCargando">&nbsp;&nbsp;&nbsp;Procesando tareas en segundo plano...</span>
     </li>
   </ul>
 
@@ -84,12 +84,13 @@
         <div class="user-nav d-sm-flex d-none">
           <span class="user-name font-weight-bolder">{{ usuario }}</span><span class="user-status">{{tipo}}</span>
         </div>
-        <span class="avatar"><img class="round" src="../../../../assets/images/logo/logo.png"
-            alt="avatar" height="40" width="40" /><span class="avatar-status-online"></span></span>
+        <span class="avatar"><img class="round" src="assets/images/logo/logo.png" alt="avatar" height="40"
+            width="40" /><span class="avatar-status-online"></span></span>
       </a>
       <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
         <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'user'" [class]="'mr-50'"></span> Profile</a>
-       <a ngbDropdownItem [routerLink]="['/task/task-monitor']"><span [data-feather]="'monitor'" [class]="'mr-50'"></span> Monitor</a>
+        <a ngbDropdownItem [routerLink]="['/task/task-monitor']"><span [data-feather]="'monitor'"
+            [class]="'mr-50'"></span> Monitor</a>
         <!-- <a angbDropdownItem [routerLink]="['/']"><span [data-feather]="'check-square'" [class]="'mr-50'"></span>Task</a> -->
         <!-- <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'message-square'" [class]="'mr-50'"></span> Chats</a>  -->
         <div class="dropdown-divider"></div>

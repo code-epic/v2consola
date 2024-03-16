@@ -11,14 +11,29 @@
     "allowSyntheticDefaultImports": true,
     "importHelpers": true,
     "target": "es2022",
-    "typeRoots": ["node_modules/@types"],
-    "lib": ["es2022", "dom"],
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "lib": [
+      "es2022",
+      "dom"
+    ],
     "paths": {
-      "@core": ["@core/"],
-      "@aseets": ["@aseets/"],
-      "@services": ["@services/"],
-      "@fake-db": ["@fake-db/"],
-      "environments": ["environments/"]
+      "@core": [
+        "@core/"
+      ],
+      "@aseets": [
+        "assets/"
+      ],
+      "@services": [
+        "@services/"
+      ],
+      "@fake-db": [
+        "@fake-db/"
+      ],
+      "environments": [
+        "environments/"
+      ]
     }
   },
   "angularCompilerOptions": {
