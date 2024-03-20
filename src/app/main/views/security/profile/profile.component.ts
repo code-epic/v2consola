@@ -33,7 +33,7 @@ export class ProfileComponent implements OnInit {
 
   public SelectionType = SelectionType
 
- 
+
 
   public basicSelectedOption: number = 10
 
@@ -72,7 +72,7 @@ export class ProfileComponent implements OnInit {
   public datamenu = []
 
   public xaccion = ''
-  public rol = ''
+  public rol = undefined
 
   @ViewChild('tableRowDetails') tableRowDetails: any
 
@@ -80,6 +80,8 @@ export class ProfileComponent implements OnInit {
   public ColumnMode = ColumnMode
 
   public chkBoxSelected = []
+
+  public SelectOn = {}
 
   constructor(
     private apiService: ApiService,
@@ -134,6 +136,15 @@ export class ProfileComponent implements OnInit {
     )
   }
 
+
+  onSelect({ selected }) {
+    this.SelectOn = selected
+  }
+
+
+
+
+
   selRol(event: any): void {
     console.log(event)
     this.xAPI.funcion = '_SYS_CRoles'
@@ -142,12 +153,12 @@ export class ProfileComponent implements OnInit {
     this.dataRol = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          console.log(data)
-          this.dataRol = data.Cuerpo.map(e => {
-            e.id = e.idrol
-            e.name = e.nomb
-            return e
-          })
+        console.log(data)
+        this.dataRol = data.Cuerpo.map(e => {
+          e.id = e.idrol
+          e.name = e.nomb
+          return e
+        })
       },
       (error) => {
         console.log(error)
@@ -163,10 +174,10 @@ export class ProfileComponent implements OnInit {
     this.dataRolDetalles = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.dataRolDetalles = data.Cuerpo.map(e => {
-            e.name = e.nomb
-            return e
-          })
+        this.dataRolDetalles = data.Cuerpo.map(e => {
+          e.name = e.nomb
+          return e
+        })
       },
       (error) => {
         console.log(error)
@@ -193,16 +204,18 @@ export class ProfileComponent implements OnInit {
 
 
   selectEventModulo(item) {
-    
+
     this.consultarMenu(this.xmodulo[0].split('|')[0])
   }
 
 
-
+  guardarRol() {
+    console.log(this.SelectOn)
+  }
 
 
   async listarAcciones() {
-   
+
     console.log(this.menu[0])
     this.rowDataAcc = []
     this.xAPI.funcion = 'OMenuAccion'
@@ -217,7 +230,7 @@ export class ProfileComponent implements OnInit {
         console.log(error)
       }
     )
-   
+
   }
 
 
@@ -226,7 +239,7 @@ export class ProfileComponent implements OnInit {
 
   LimpiarMenu() {
     this.estatus = undefined
-   
+
   }
 
   async guardarPerfil(){
@@ -238,5 +251,5 @@ export class ProfileComponent implements OnInit {
 
 
 
- 
+
 }
