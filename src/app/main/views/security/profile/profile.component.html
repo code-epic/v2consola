@@ -18,15 +18,15 @@
                             <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
                             <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
                                 [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                                (ngModelChange)="selRol($event)" bindLabel="name" bindValue="id"
                                 placeholder="Seleccione Aplicación"></ng-select>
                         </div>
 
                         <div class="form-group col-md-5">
                             <label class="form-label" for="descripcion">Seleccionar Rol</label>
-                            <ng-select [items]="lstRol" [(ngModel)]="rol"
+                            <ng-select [items]="dataRol" [(ngModel)]="rol"
                                 [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                                (ngModelChange)="selRolDetalle($event)" bindLabel="name" bindValue="id"
                                 placeholder="Seleccione Rol"></ng-select>
                         </div>
 
@@ -55,7 +55,7 @@
 
 
                 <div class="col-md-12">
-                    <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
+                    <ngx-datatable [rows]="dataRolDetalles" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
                         [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox" [headerHeight]="40"
                         [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
 
@@ -109,6 +109,20 @@
                     </ngx-datatable>
 
                 </div>
+
+
+
+                <div class="col-md-12" align="right">
+                    <br>
+                    <button type="button" class="btn btn-success" (click)="guardarRol()">
+                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                    </button>
+                    &nbsp;&nbsp;
+                    <button type="button" class="btn btn-warning" (click)="Limpiar()">
+                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
+                    </button>
+                </div>
+                <br><br>
 
 
             </div>

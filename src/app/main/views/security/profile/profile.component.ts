@@ -66,7 +66,8 @@ export class ProfileComponent implements OnInit {
 
   public lstAplicaciones = []
   public lstRol = []
-  public dataModulo = []
+  public dataRolDetalles = []
+  public dataRol = []
   public showDiv: boolean = false
   public datamenu = []
 
@@ -133,15 +134,36 @@ export class ProfileComponent implements OnInit {
     )
   }
 
-  selModulo(event: any): void {
+  selRol(event: any): void {
     console.log(event)
-    this.xAPI.funcion = 'LstModulos'
+    this.xAPI.funcion = '_SYS_CRoles'
     this.xAPI.parametros = event
     this.xAPI.valores = ''
-    this.dataModulo = []
+    this.dataRol = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.dataModulo = data.Cuerpo.map(e => {
+          console.log(data)
+          this.dataRol = data.Cuerpo.map(e => {
+            e.id = e.idrol
+            e.name = e.nomb
+            return e
+          })
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+
+  selRolDetalle(event: any): void {
+    console.log(event)
+    this.xAPI.funcion = '_SYS_CRolDetalles'
+    this.xAPI.parametros = event
+    this.xAPI.valores = ''
+    this.dataRolDetalles = []
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+          this.dataRolDetalles = data.Cuerpo.map(e => {
             e.name = e.nomb
             return e
           })

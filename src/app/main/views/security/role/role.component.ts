@@ -52,6 +52,7 @@ export class RoleComponent implements OnInit {
 
   public rowDataAcc = []
   public lista = []
+  public cantidadRol = 0
 
   public estatus = undefined
 
@@ -239,25 +240,72 @@ export class RoleComponent implements OnInit {
 
 
   guardarRol(){
-    this.xAPI.funcion = ''
+    
+    this.xAPI.funcion = '_SYS_IRolDefinicion'
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.Rol)
 
-    console.log(this.xAPI)
-    // this.apiService.Ejecutar(this.xAPI).subscribe(
-    //   data => {
+    // console.log(this.xAPI)
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      data => {
+        this.insertBach(data.msj, 0)
+      },
+      error => {
 
-    //   },
-    //   error => {
-
-    //   }
-    // )
+      }
+    )
 
   }
 
 
-  insertBach(){
 
+
+
+  insertBach(idrol, posicion){
+
+    let data = {
+      "aplicacion": parseInt(this.aplicacion),
+      "rol":  idrol,
+      "modulo":  parseInt(this.lista[posicion].idmod),
+      "menu":  parseInt(this.lista[posicion].idmenu),
+      "accion": parseInt( this.lista[posicion].accid),
+      "estatus": 1
+    }
+
+    this.xAPI.funcion = '_SYS_IRolDetalles'
+    this.xAPI.parametros = ''
+    this.xAPI.valores = JSON.stringify(data)
+
+    // console.log(this.xAPI)
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      data => {
+        console.log(data)
+        console.log(posicion, this.lista.length)
+        posicion++
+        if (posicion > this.lista.length - 1) {         
+          this.utilservice.AlertMini('top-end','success', 'Finalizo con éxito', 3000)
+          this.lista = []
+          this.rowData = []
+          this.aplicacion = undefined
+          this.Rol.descripcion = ''
+          this.Rol.nombre = ''
+          this.xmodulo = ''
+          this.dataModulo = []
+          this.menu = ''
+          this.datamenu = []
+          this.xaccion = ''
+          this.rowDataAcc = []
+        }else{
+          this.insertBach(idrol, posicion)
+        }
+        
+
+      },
+      error => {
+        console.error('Data: ', error)
+
+      }
+    )
   }
 
 
