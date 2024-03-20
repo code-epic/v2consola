@@ -229,22 +229,9 @@ export class ProfileComponent implements OnInit {
    
   }
 
-  async addElement(){
+  async guardarPerfil(){
 
-    console.log(this.xaccion[0].split('|')[1])
-
-    let e = {
-      'idmod' : this.xmodulo[0].split('|')[0],
-      'modulo': this.xmodulo[0].split('|')[1],
-      'idmenu': this.menu[0].split('|')[0],
-      'menu': this.menu[0].split('|')[1],
-      'accid': this.xaccion[0].split('|')[0],
-      'accion': this.xaccion[0].split('|')[1]
-    }
-    this.lista.push(e)
-    this.rowData = this.lista
-    this.temprowData = this.rowData
-    console.log(this.rowData)
+    console.log(this.dataRolDetalles)
   }
 
 
