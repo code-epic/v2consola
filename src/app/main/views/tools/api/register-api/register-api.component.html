@@ -45,10 +45,9 @@
 
                   <div class="form-group col-md-4">
                     <label class="form-label" for="http">HTTP / Puerto</label>
-                    <ng-select [items]="http"  [(ngModel)]="xAPIDB.puertohttp"  #httpx="ngModel"
-                    [class.error]="accountDetailsForm.submitted" 
-                    id="http" name="http" required bindLabel="name" bindId="id" bindValue="name"
-                      placeholder="Seleccione Puerto HTTP">
+                    <ng-select [items]="http" [(ngModel)]="xAPIDB.puertohttp" #httpx="ngModel"
+                      [class.error]="accountDetailsForm.submitted" id="http" name="http" required bindLabel="name"
+                      bindId="id" bindValue="name" placeholder="Seleccione Puerto HTTP">
                     </ng-select>
                     <span *ngIf="accountDetailsForm.submitted && httpx.invalid" class="invalid-form">
                       <small class="form-text text-danger" *ngIf="httpx.errors.required">Este campo es
@@ -58,10 +57,9 @@
 
                   <div class="form-group col-md-4">
                     <label class="form-label" for="https">HTTPS / Puerto</label>
-                    <ng-select [items]="https" [(ngModel)]="xAPIDB.puertohttps"  #httpsx="ngModel"
-                    [class.error]="accountDetailsForm.submitted"
-                    id="https" name="https" required bindLabel="name" bindId="id" bindValue="name"
-                      placeholder="Seleccione Puerto HTTPS">
+                    <ng-select [items]="https" [(ngModel)]="xAPIDB.puertohttps" #httpsx="ngModel"
+                      [class.error]="accountDetailsForm.submitted" id="https" name="https" required bindLabel="name"
+                      bindId="id" bindValue="name" placeholder="Seleccione Puerto HTTPS">
                     </ng-select>
                     <span *ngIf="accountDetailsForm.submitted && httpsx.invalid" class="invalid-form">
                       <small class="form-text text-danger" *ngIf="httpsx.errors.required">Este campo es
@@ -72,14 +70,13 @@
 
                   <div class="form-group col-md-4">
                     <label class="form-label" for="tipo">Tipo</label>
-                    <ng-select [items]="tipo" [(ngModel)]="xAPIDB.tipo" #tipox="ngModel" 
-                    (ngModelChange)="onTipo($event)" 
-                    [class.error]="accountDetailsForm.submitted" id="tipo" name="tipo" required
-                      bindLabel="name" bindValue="id" placeholder="Seleccione Tipo"></ng-select>
-                      <span *ngIf="accountDetailsForm.submitted && tipox.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="tipox.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                    <ng-select [items]="tipo" [(ngModel)]="xAPIDB.tipo" #tipox="ngModel"
+                      (ngModelChange)="onTipo($event)" [class.error]="accountDetailsForm.submitted" id="tipo"
+                      name="tipo" required bindLabel="name" bindValue="id" placeholder="Seleccione Tipo"></ng-select>
+                    <span *ngIf="accountDetailsForm.submitted && tipox.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="tipox.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                 </div>
 
@@ -87,24 +84,22 @@
                   <div class="form-group col-md-6">
                     <label class="form-label" for="distribucion">Distribución</label>
                     <ng-select [items]="distribucion" [(ngModel)]="xAPIDB.distribucion" #distribucionx="ngModel"
-                    [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion" required
-                      bindLabel="name" bindId="id" bindValue="id"
-                      placeholder="Seleccione Distribución"></ng-select>
-                      <span *ngIf="accountDetailsForm.submitted && distribucionx.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="distribucionx.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                      [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion" required
+                      bindLabel="name" bindId="id" bindValue="id" placeholder="Seleccione Distribución"></ng-select>
+                    <span *ngIf="accountDetailsForm.submitted && distribucionx.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="distribucionx.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                   <div class="form-group col-md-6">
                     <label class="form-label" for="aplicacion">Aplicación</label>
-                    <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPIDB.aplicacion"
-                    #aplicacionx="ngModel" [class.error]="accountDetailsForm.submitted" id="distribucion" 
-                    name="distribucion" required bindLabel="name" bindValue="nombre"
-                      placeholder="Seleccione Aplicación"></ng-select>
-                      <span *ngIf="accountDetailsForm.submitted && aplicacionx.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="aplicacionx.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                    <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPIDB.aplicacion" #aplicacionx="ngModel"
+                      [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion" required
+                      bindLabel="name" bindValue="nombre" placeholder="Seleccione Aplicación"></ng-select>
+                    <span *ngIf="accountDetailsForm.submitted && aplicacionx.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="aplicacionx.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
 
                 </div>
@@ -113,12 +108,12 @@
                   <div class="form-group col-md-4">
                     <label class="form-label" for="funcion">Función</label>
                     <input required type="text" name="last-names" id="last-names" [(ngModel)]="xAPIDB.funcion"
-                    #funcionx="ngModel" [class.error]="accountDetailsForm.submitted" id="funcion" 
-                    name="funcion" required class="form-control">
-                      <span *ngIf="accountDetailsForm.submitted && funcionx.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="funcionx.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                      #funcionx="ngModel" [class.error]="accountDetailsForm.submitted" id="funcion" name="funcion"
+                      required class="form-control">
+                    <span *ngIf="accountDetailsForm.submitted && funcionx.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="funcionx.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                   <div class="form-group col-md-2">
                     <label class="form-label" for="version">Versión</label>
@@ -127,52 +122,51 @@
                   </div>
                   <div class="form-group col-md-6">
                     <label class="form-label" for="conexion">Conexión</label>
-                    <ng-select [items]="drivers" [(ngModel)]="xAPIDB.driver" #driverx="ngModel" 
-                    [class.error]="accountDetailsForm.submitted" id="id" name="id" required
-                      bindLabel="name" (ngModelChange)="selDataBase($event)"
-                      placeholder="Seleccione Conexión"></ng-select>
-                      <span *ngIf="accountDetailsForm.submitted && driverx.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="driverx.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                    <ng-select [items]="drivers" [(ngModel)]="xAPIDB.driver" #driverx="ngModel"
+                      [class.error]="accountDetailsForm.submitted" id="id" name="id" required bindLabel="name"
+                      (ngModelChange)="selDataBase($event)" placeholder="Seleccione Conexión"></ng-select>
+                    <span *ngIf="accountDetailsForm.submitted && driverx.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="driverx.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label class="form-label" for="categoria">Categoria</label>
-                    <ng-select [items]="categoria" [(ngModel)]="xAPIDB.categoria" #categoriax="ngModel" 
-                    [class.error]="accountDetailsForm.submitted" id="categoria" name="categoria" required
+                    <ng-select [items]="categoria" [(ngModel)]="xAPIDB.categoria" #categoriax="ngModel"
+                      [class.error]="accountDetailsForm.submitted" id="categoria" name="categoria" required
                       bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Categoria"></ng-select>
-                      <span *ngIf="accountDetailsForm.submitted && categoriax.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="categoriax.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                    <span *ngIf="accountDetailsForm.submitted && categoriax.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="categoriax.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                   <div class="form-group col-md-4">
                     <label class="form-label" for="funcionalidad">Funcionalidad</label>
-                    <ng-select [items]="funcionalidad" [(ngModel)]="xAPIDB.funcionalidad"
-                    #funcionalidadx="ngModel" [class.error]="accountDetailsForm.submitted" id="funcionalidad" 
-                    name="funcionalidad" required bindLabel="name" bindId="id" bindValue="name"
-                      bindLabel="name" bindValue="id" placeholder="Seleccione Funcionalidad"></ng-select>
-                      <span *ngIf="accountDetailsForm.submitted && funcionalidadx.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="funcionalidadx.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                    <ng-select [items]="funcionalidad" [(ngModel)]="xAPIDB.funcionalidad" #funcionalidadx="ngModel"
+                      [class.error]="accountDetailsForm.submitted" id="funcionalidad" name="funcionalidad" required
+                      bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Funcionalidad"></ng-select>
+                    <span *ngIf="accountDetailsForm.submitted && funcionalidadx.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="funcionalidadx.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                 </div>
 
                 <div class="row">
                   <div class="form-group col-md-12">
                     <label class="form-label" for="descripcion">Descripción</label>
-                    <textarea [(ngModel)]="xAPIDB.descripcion" rows="7" #descripcionx="ngModel" 
-                    [class.error]="accountDetailsForm.submitted" id="descripcion" name="descripcion" required
+                    <textarea [(ngModel)]="xAPIDB.descripcion" rows="7" #descripcionx="ngModel"
+                      [class.error]="accountDetailsForm.submitted" id="descripcion" name="descripcion" required
                       type="text" name="last-namew" id="last-namew" class="form-control"></textarea>
-                      <span *ngIf="accountDetailsForm.submitted && descripcionx.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="descripcionx.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                    <span *ngIf="accountDetailsForm.submitted && descripcionx.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="descripcionx.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                 </div>
 
@@ -225,9 +219,9 @@
 
                   <div class="form-group col-md-2">
                     <label class="form-label" for="criterio">Tipo de Criterio</label>
-                    <ng-select [items]="lstDml" [(ngModel)]="xdml" [disabled]="DisabledTipoDato == true" [ngModelOptions]="{standalone: true}"
-                      (ngModelChange)='onDml($event)' bindLabel="nombre" bindValue="id"
-                      placeholder="Seleccione Tipo de dato"></ng-select>
+                    <ng-select [items]="lstDml" [(ngModel)]="xdml" [disabled]="DisabledTipoDato == true"
+                      [ngModelOptions]="{standalone: true}" (ngModelChange)='onDml($event)' bindLabel="nombre"
+                      bindValue="id" placeholder="Seleccione Tipo de dato"></ng-select>
                   </div>
 
                   <div class="form-group col-md-2">
@@ -311,9 +305,8 @@
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label class="form-label" for="version">Funciones de la prueba</label>
-                    <ng-select [items]="funciones" [(ngModel)]="funcionalidad"
-                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id"
-                      placeholder="Seleccione Funciones"></ng-select>
+                    <ng-select [items]="funciones" [(ngModel)]="funcionalidad" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindId="id" placeholder="Seleccione Funciones"></ng-select>
                   </div>
 
 
@@ -349,13 +342,13 @@
                 <div class="row">
                   <div class="form-group col-md-3">
                     <label class="form-label" for="consumidores">Consumidores</label>
-                    <input type="number" [(ngModel)]="xAPIDB.consumidores"
-                    #consumidoresx="ngModel" [class.error]="socialLinkForm.submitted" id="consumidores" name="consumidores" required
+                    <input type="number" [(ngModel)]="xAPIDB.consumidores" #consumidoresx="ngModel"
+                      [class.error]="socialLinkForm.submitted" id="consumidores" name="consumidores" required
                       class="form-control" placeholder="Consumidores">
-                      <span *ngIf="socialLinkForm.submitted && consumidoresx.invalid" class="invalid-form">
-                        <small class="form-text text-danger" *ngIf="consumidoresx.errors.required">Este campo es
-                          requerido!</small>
-                      </span>
+                    <span *ngIf="socialLinkForm.submitted && consumidoresx.invalid" class="invalid-form">
+                      <small class="form-text text-danger" *ngIf="consumidoresx.errors.required">Este campo es
+                        requerido!</small>
+                    </span>
                   </div>
                   <div class="form-group col-md-3">
                     <label class="form-label" for="cache">Cache</label>
@@ -383,13 +376,13 @@
                 <div class="row">
                   <div class="form-group col-md-2">
                     <label class="form-label" for="tiempoduracion">Tiempo de Duracion</label>
-                    <input type="number" [(ngModel)]="xAPIDB.tiempoduracion"
-                    [ngModelOptions]="{standalone: true}" placeholder="Seleccione Tiempo" class="form-control">
+                    <input type="number" [(ngModel)]="xAPIDB.tiempoduracion" [ngModelOptions]="{standalone: true}"
+                      placeholder="Seleccione Tiempo" class="form-control">
                   </div>
                   <div class="form-group col-md-2">
                     <label class="form-label" for="tipoduracion">Tipo de Duración</label>
                     <ng-select [items]="duracion" [(ngModel)]="xAPIDB.tipoduracion"
-                    [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Tipo Duración"></ng-select>
                   </div>
 
@@ -432,8 +425,10 @@
                     <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                     <span class="align-middle d-sm-inline-block d-none">Atras</span>
                   </button>
-                  <button class="btn btn-success btn-submit" *ngIf="getURL == 'update-api'" (click)="UpdateAPI(xAPIDB.funcion,xAPIDB.entorno)" rippleEffect>Actualizar</button>
-                  <button class="btn btn-success btn-submit" *ngIf="getURL == 'register-api'" (click)="RegistrarAPI()" rippleEffect>Guardar</button>
+                  <button class="btn btn-success btn-submit" *ngIf="getURL == 'update-api'"
+                    (click)="UpdateAPI(xAPIDB.funcion,xAPIDB.entorno)" rippleEffect>Actualizar</button>
+                  <button class="btn btn-success btn-submit" *ngIf="getURL == 'register-api'" (click)="RegistrarAPI()"
+                    rippleEffect>Guardar</button>
                 </div>
               </form>
             </div>

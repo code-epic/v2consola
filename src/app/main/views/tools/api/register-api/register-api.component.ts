@@ -394,7 +394,6 @@ export class RegisterApiComponent implements OnInit {
     this.xAPI.funcion = "LESBDrivers";
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (datax) => {
-        console.log(datax)
         this.drivers = datax.map(e => {
           e.name = e.descripcion + ' - ' + '(' + e.basedatos + ')'
           // this.drivers.push(e)
@@ -407,13 +406,13 @@ export class RegisterApiComponent implements OnInit {
 
   RegistrarAPI() {
     this.xAPIDB.driver = this.driversID
-    this.xAPIDB.puertohttp =  parseInt(this.xAPIDB.puertohttp.toString())
+    this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString())
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
     // this.xAPIDB.distribucion = this.xAPIDB.distribucion == 'PRIVADA' ? 0 : 1
     var obj = {
       "coleccion": "apicore",
       "objeto": this.xAPIDB,
-      "donde": `{\"id\":\"${this.xAPIDB.id}\"}`,
+      "donde": `{\"funcion\":\"${this.xAPIDB.funcion}\"}`,
       "driver": "MGDBA",
       "upsert": true
     }
@@ -449,7 +448,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   async UpdateAPI(funcion: string, entorno: string) {
-    this.xAPIDB.puertohttp =  parseInt(this.xAPIDB.puertohttp.toString())
+    this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString())
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
     this.apiUpdate.entorno = entorno
     this.apiUpdate.funcion = funcion

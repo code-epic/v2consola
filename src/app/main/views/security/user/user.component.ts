@@ -218,7 +218,7 @@ export class UserComponent implements OnInit {
             link: "/home",
           },
           {
-            name: "Aplicaciones",
+            name: "Seguridad",
             isLink: false,
           },
           {
@@ -232,16 +232,16 @@ export class UserComponent implements OnInit {
   }
 
 
-  selDuracion(e){
+  selDuracion(e) {
     console.log(e)
-    if (e == 3){
+    if (e == 3) {
       this.tiempoduracion = '0'
     }
-    
+
   }
 
   selTipoAcceso(e) {
-    switch ( parseInt(e) ) {
+    switch (parseInt(e)) {
       case 1:
         this.property = true
         this.ldap = false
@@ -263,7 +263,7 @@ export class UserComponent implements OnInit {
   }
 
 
-  selPerfil(e){
+  selPerfil(e) {
 
   }
 
