@@ -33,10 +33,10 @@ export class RoleComponent implements OnInit {
   };
 
 
-  
 
 
- 
+
+
   public titleModal: string = ''
   public titleBtnModal: string = ''
 
@@ -65,12 +65,12 @@ export class RoleComponent implements OnInit {
   public menuid: string = ''
   public accionid
 
-  public Rol : IRol = {
+  public Rol: IRol = {
     nombre: '',
     descripcion: '',
     estatus: 1
   }
-  
+
   public btnMenu = false
 
   public xnombre = ''
@@ -147,17 +147,17 @@ export class RoleComponent implements OnInit {
   }
 
   selModulo(event: any): void {
-    console.log(event)
+    // console.log(event)
     this.xAPI.funcion = "LstModulos";
     this.xAPI.parametros = event;
     this.xAPI.valores = ''
     this.dataModulo = [];
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.dataModulo = data.Cuerpo.map(e => {
-            e.name = e.nomb
-            return e
-          });
+        this.dataModulo = data.Cuerpo.map(e => {
+          e.name = e.nomb
+          return e
+        });
       },
       (error) => {
         console.log(error)
@@ -184,7 +184,6 @@ export class RoleComponent implements OnInit {
 
 
   selectEventModulo(item) {
-    
     this.consultarMenu(this.xmodulo[0].split('|')[0])
   }
 
@@ -193,22 +192,21 @@ export class RoleComponent implements OnInit {
 
 
   async listarAcciones() {
-   
-    console.log(this.menu[0])
+
+    // console.log(this.menu[0])
     this.rowDataAcc = []
     this.xAPI.funcion = "OMenuAccion"
     this.xAPI.parametros = this.menu[0].split('|')[0]
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
         this.rowDataAcc = data.Cuerpo;
       },
       (error) => {
         console.log(error)
       }
     )
-   
+
   }
 
 
@@ -217,30 +215,33 @@ export class RoleComponent implements OnInit {
 
   LimpiarMenu() {
     this.estatus = undefined
-   
+
   }
 
-  async addElement(){
-
-    
-
+  async addElement(item: any) {
     let e = {
-      "idmod" : this.xmodulo[0].split('|')[0],
+      "idmod": this.xmodulo[0].split('|')[0],
       "modulo": this.xmodulo[0].split('|')[1],
       "idmenu": this.menu[0].split('|')[0],
       "menu": this.menu[0].split('|')[1],
       "accid": this.xaccion[0].split('|')[0],
       "accion": this.xaccion[0].split('|')[1]
-    }
-    this.lista.push(e)
-    this.rowData = this.lista
-    this.temprowData = this.rowData
-    console.log(this.rowData)
+    };
+    this.lista.push(e);
+    this.rowData = this.lista;
+    this.temprowData = this.rowData;
+
+    let valor = item[0].split("|")[0];
+
+    this.rowDataAcc = this.rowDataAcc.filter((element) => {
+      return element.accid !== valor;
+    });
+
   }
 
 
-  guardarRol(){
-    
+  guardarRol() {
+
     this.xAPI.funcion = '_SYS_IRolDefinicion'
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.Rol)
@@ -261,14 +262,14 @@ export class RoleComponent implements OnInit {
 
 
 
-  insertBach(idrol, posicion){
+  insertBach(idrol, posicion) {
 
     let data = {
       "aplicacion": parseInt(this.aplicacion),
-      "rol":  idrol,
-      "modulo":  parseInt(this.lista[posicion].idmod),
-      "menu":  parseInt(this.lista[posicion].idmenu),
-      "accion": parseInt( this.lista[posicion].accid),
+      "rol": idrol,
+      "modulo": parseInt(this.lista[posicion].idmod),
+      "menu": parseInt(this.lista[posicion].idmenu),
+      "accion": parseInt(this.lista[posicion].accid),
       "estatus": 1
     }
 
@@ -279,11 +280,11 @@ export class RoleComponent implements OnInit {
     // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       data => {
-        console.log(data)
-        console.log(posicion, this.lista.length)
+        // console.log(data)
+        // console.log(posicion, this.lista.length)
         posicion++
-        if (posicion > this.lista.length - 1) {         
-          this.utilservice.AlertMini('top-end','success', 'Finalizo con éxito', 3000)
+        if (posicion > this.lista.length - 1) {
+          this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
           this.lista = []
           this.rowData = []
           this.aplicacion = undefined
@@ -295,10 +296,10 @@ export class RoleComponent implements OnInit {
           this.datamenu = []
           this.xaccion = ''
           this.rowDataAcc = []
-        }else{
+        } else {
           this.insertBach(idrol, posicion)
         }
-        
+
 
       },
       error => {
@@ -312,5 +313,5 @@ export class RoleComponent implements OnInit {
 
 
 
- 
+
 }

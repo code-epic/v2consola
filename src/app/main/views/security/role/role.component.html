@@ -58,8 +58,9 @@
 
                         <div class="form-group col-md-4">
                             <label class="form-label" for="origen">Acciones</label>
-                            <select multiple class="form-control" style="height: 150px;" (dblclick)="addElement()"
-                                [(ngModel)]="xaccion" [ngModelOptions]="{standalone: true}">
+                            <select multiple class="form-control" style="height: 150px;"
+                                (dblclick)="addElement(xaccion)" [(ngModel)]="xaccion"
+                                [ngModelOptions]="{standalone: true}">
                                 <option *ngFor="let e of rowDataAcc" value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}
                                 </option>
                             </select>
@@ -69,18 +70,22 @@
                 </div>
                 <div class="col-md-12">
                     <table class="table">
-                            <thead>
-                                <tr><th>MODULO</th><th>MENU</th><th>ACCIONES</th><tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let e of rowData"> 
-                                    <td>{{e.modulo}}</td>
-                                    <td>{{e.menu}}</td>
-                                    <td>{{e.accion}}</td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                            </tfoot>
+                        <thead>
+                            <tr>
+                                <th>MODULO</th>
+                                <th>MENU</th>
+                                <th>ACCIONES</th>
+                            <tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let e of rowData">
+                                <td>{{e.modulo}}</td>
+                                <td>{{e.menu}}</td>
+                                <td>{{e.accion}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                        </tfoot>
                     </table>
                     <!-- <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
                         [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"

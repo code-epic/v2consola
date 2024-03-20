@@ -17,16 +17,14 @@
                         <div class="form-group col-md-12">
                             <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
                             <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                (ngModelChange)="selRol($event)" bindLabel="name" bindValue="id"
-                                placeholder="Seleccione Aplicación"></ng-select>
+                                [ngModelOptions]="{standalone: true}" bindLabel="name" (ngModelChange)="selRol($event)"
+                                bindLabel="name" bindValue="id" placeholder="Seleccione Aplicación"></ng-select>
                         </div>
 
                         <div class="form-group col-md-5">
                             <label class="form-label" for="descripcion">Seleccionar Rol</label>
-                            <ng-select [items]="dataRol" [(ngModel)]="rol"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                (ngModelChange)="selRolDetalle($event)" bindLabel="name" bindValue="id"
+                            <ng-select [items]="dataRol" [(ngModel)]="rol" [ngModelOptions]="{standalone: true}"
+                                bindLabel="name" (ngModelChange)="selRolDetalle($event)" bindLabel="name" bindValue="id"
                                 placeholder="Seleccione Rol"></ng-select>
                         </div>
 
@@ -45,19 +43,14 @@
                     </div>
                     <br>
 
-
-
-
-
-
-
                 </div>
 
 
                 <div class="col-md-12">
-                    <ngx-datatable [rows]="dataRolDetalles" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-                        [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox" [headerHeight]="40"
-                        [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
+                    <ngx-datatable [rows]="dataRolDetalles" [rowHeight]="58" class="bootstrap core-bootstrap"
+                        [limit]="10" [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
+                        [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption"
+                        (select)="onSelect($event)">
 
                         <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
                             [draggable]="false" [resizeable]="false">
@@ -65,11 +58,10 @@
                                 let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
-                                        id="headerChkbxRef" />
+                                        (change)="selectFn(!allRowsSelected)" id="headerChkbxRef" />
                                     <label class="custom-control-label" for="headerChkbxRef"></label>
                                 </div>
                             </ng-template>
-
                             <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
                                 let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                                 <div class="custom-control custom-checkbox">
