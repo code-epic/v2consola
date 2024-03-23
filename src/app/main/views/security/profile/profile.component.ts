@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap'
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service'
+import { IPerfil } from '@services/seguridad/rol.service'
 import { UtilService } from '@services/util/util.service'
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable'
 import JSONFormatter from 'json-formatter-js'
@@ -37,7 +38,12 @@ export class ProfileComponent implements OnInit {
 
   public basicSelectedOption: number = 10
 
-
+  public Perfil: IPerfil = {
+    nombre: '',
+    descripcion: '',
+    estatus: 1,
+    aplicacion: 0
+  }
 
 
   public rowData = []
@@ -208,9 +214,62 @@ export class ProfileComponent implements OnInit {
     this.consultarMenu(this.xmodulo[0].split('|')[0])
   }
 
+  guardarPeril(){
 
-  guardarRol() {
+    this.xAPI.funcion = '_SYS_IPerfil'
+    this.xAPI.parametros = ''
+    this.xAPI.valores = JSON.stringify(this.Perfil)
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      data => {
+        this.insertBach(data.msj, 1)
+      },
+      error => {
+        console.error('Data: ', error)
+ 
+      }
+    )
+  
+  }
+
+  insertBach(idperfil, posicion) {
     console.log(this.SelectOn)
+
+
+ 
+    // let data = {
+    //   "aplicacion": parseInt(this.aplicacion),
+    //   "rol": idperfil,
+    //   "modulo": parseInt(this.lista[posicion].idmod),
+    //   "menu": parseInt(this.lista[posicion].idmenu),
+    //   "accion": parseInt(this.lista[posicion].accid),
+    //   "estatus": 1
+    // }
+   
+
+    // this.xAPI.funcion = '_SYS_IPerfilDetalles'
+    // this.xAPI.parametros = ''
+    // this.xAPI.valores = JSON.stringify(data)
+
+    // // console.log(this.xAPI)
+    // this.apiService.Ejecutar(this.xAPI).subscribe(
+    //   data => {
+    //     // console.log(data)
+    //     // console.log(posicion, this.lista.length)
+    //     posicion++
+    //     if (posicion > this.lista.length - 1) {
+    //       this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
+    //     } else {
+    //       this.insertBach(idperfil, posicion)
+    //     }
+
+
+    //   },
+    //   error => {
+    //     console.error('Data: ', error)
+
+    //   }
+    // )
+  
   }
 
 

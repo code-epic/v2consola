@@ -32,20 +32,20 @@
             </div>
 
             <div class="form-group col-md-3" *ngIf="property">
-              <label class="form-label" for="descripcion">Login</label>
-              <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}" type="text"
+              <label class="form-label" for="login">Login</label>
+              <input style="font-size:14px;" [(ngModel)]="login" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Login" class="form-control">
             </div>
 
             <div class="form-group col-md-3" *ngIf="property">
-              <label class="form-label" for="descripcion">Clave</label>
-              <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}" type="text"
+              <label class="form-label" for="Clave">Clave</label>
+              <input style="font-size:14px;" [(ngModel)]="clave" [ngModelOptions]="{standalone: true}" type="password"
                 placeholder="Clave" class="form-control">
             </div>
             <div class="form-group col-md-3" *ngIf="property">
-              <label class="form-label" for="descripcion">Encriptamiento</label>
-              <ng-select [items]="formato" [(ngModel)]="aplicacion" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id"
+              <label class="form-label" for="encriptamiento">Encriptamiento</label>
+              <ng-select [items]="formato" [(ngModel)]="encriptamienti" [ngModelOptions]="{standalone: true}"
+                bindLabel="name" bindLabel="name" bindValue="id"
                 placeholder="Encriptamiento"></ng-select>
             </div>
      
@@ -80,12 +80,12 @@
           
             <div class="form-group col-md-4">
               <label class="form-label" for="descripcion">Correo del usuario</label>
-              <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}" type="text"
+              <input style="font-size:14px;" [(ngModel)]="correo" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Correo del usuario" class="form-control">
             </div>
             <div class="form-group col-md-6">
               <label class="form-label" for="descripcion">Descripcion general</label>
-              <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}" type="text"
+              <input style="font-size:14px;" [(ngModel)]="descripcion" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Descripcion general" class="form-control">
             </div>
           </div>
@@ -111,14 +111,14 @@
             <div class="form-group col-md-4">
               <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
               <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                bindLabel="name" (ngModelChange)="selPerfil($event)" bindLabel="name" bindValue="id"
                 placeholder="Aplicación"></ng-select>
             </div>
 
             <div class="form-group col-md-4">
               <label class="form-label" for="descripcion">Seleccionar Perfil</label>
-              <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" (ngModelChange)="selPerfil($event)" bindLabel="name" bindValue="id"
+              <ng-select [items]="lstPerfil" [(ngModel)]="perfil" [ngModelOptions]="{standalone: true}"
+                bindLabel="name" (ngModelChange)="selPerfilDetalles($event)" bindLabel="name" bindValue="id"
                 placeholder="Perfil"></ng-select>
             </div>
 
@@ -130,7 +130,7 @@
                 (input)="onFocusedOficina($event)" placeholder="Oficina"></ng-select>
             </div>
 
-            <div class="form-group col-md-5">
+            <div class="form-group col-md-4">
               <label class="form-label" for="origen">Regional</label>
               <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="Regional" [ngModelOptions]="{standalone: true}"
                 (ngModelChange)="selectEventRegional($event)" (input)='onFocusedRegional($event)' bindLabel="name"

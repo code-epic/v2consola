@@ -9,6 +9,17 @@ export interface IRol{
 }
 
 
+
+
+export interface IPerfil{
+  nombre: string,
+  descripcion: string,
+  estatus: number,
+  aplicacion: number
+}
+
+
+
 export interface Aplicacion{
   id ?: string,
   nombre: string,

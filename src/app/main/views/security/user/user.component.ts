@@ -226,8 +226,22 @@ export class UserComponent implements OnInit {
   }
 
 
-  selPerfil(e) {
-
+  async selPerfil(e) {
+    this.xAPI.funcion = "_SYS_CPerfil";
+    this.xAPI.parametros = e
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        console.log(data)
+        this.lstAplicaciones = data.Cuerpo.map(e => {
+          e.id = e.identificador
+          e.name = e.nombre + ' : ' + e.VERSION
+          return e
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
 
@@ -248,6 +262,12 @@ export class UserComponent implements OnInit {
     )
   }
 
+
+
+
+
+
+  
  
 
 

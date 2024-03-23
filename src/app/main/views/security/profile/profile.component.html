@@ -16,7 +16,7 @@
 
                         <div class="form-group col-md-12">
                             <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
+                            <ng-select [items]="lstAplicaciones" [(ngModel)]="Perfil.aplicacion"
                                 [ngModelOptions]="{standalone: true}" bindLabel="name" (ngModelChange)="selRol($event)"
                                 bindLabel="name" bindValue="id" placeholder="Seleccione Aplicación"></ng-select>
                         </div>
@@ -30,13 +30,13 @@
 
                         <div class="form-group col-md-3">
                             <label class="form-label" for="descripcion">Nombre del Perfil</label>
-                            <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}"
+                            <input style="font-size:14px;" [(ngModel)]="Perfil.nombre" [ngModelOptions]="{standalone: true}"
                                 type="text" placeholder="Ingrese Nombre del Perfil" class="form-control">
                         </div>
 
                         <div class="form-group col-md-4">
                             <label class="form-label" for="origen">Descripcion del Perfil</label>
-                            <input style="font-size:14px;" [(ngModel)]="xdescripcion"
+                            <input style="font-size:14px;" [(ngModel)]="Perfil.descripcion"
                                 [ngModelOptions]="{standalone: true}" type="text"
                                 placeholder="Breve descripcion del Perfil" class="form-control">
                         </div>
@@ -106,7 +106,7 @@
 
                 <div class="col-md-12" align="right">
                     <br>
-                    <button type="button" class="btn btn-success" (click)="guardarPerfil()">
+                    <button type="button" class="btn btn-success" (click)="guardarPeril()">
                         <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
                     </button>
                     &nbsp;&nbsp;
