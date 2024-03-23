@@ -1,80 +1,10 @@
 <div class="content-wrapper container-xxl p-0">
-  <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
-    <section id="wishlist" class="grid-view wishlist-items">
-      <ng-container *ngFor="let product of products">
 
-        <div class="card ecommerce-card">
-          <div class="item-img text-center">
-            <img class="img-fluid card-img-top" (click)='irA(product.base,product.ruta)' [src]="product.img"
-              alt="img-placeholder" />
-          </div>
-          <div class="card-body">
-            <div class="item-wrapper">
-              <div class="item-rating">
-                <div class="rating rating-sm">
-                  <div class="badge badge-success" *ngIf="product.estatus === true">Activo</div>
-                  <div class="badge badge-danger" *ngIf="product.estatus === false">Inactivo</div>
-                </div>
-              </div>
-              <div class="item-cost">
-                <h6 class="item-price">{{ product.name }}</h6>
-              </div>
-            </div>
-            <h6 class="item-name">
-            </h6>
-            <p class="card-text item-description">
-              {{ product.description }}
-            </p>
-          </div>
-        </div>
-      </ng-container>
-    </section>
-
-    <div class="card">
-
-      <section id="card-brand">
-        <div class="row">
-
-          <div class="container" align="center">
-            <hr>
-            <h1 class="card-title">INTEGRACIONES</h1>
-            <hr>
-            <div class="col-12">
-              <div class="row">
-                <div class="col-md-6 col-xl-2">
-                  <img class="media" height="64" width="64" src="assets/integraciones/mongodb.png" alt="MongoDB" />
-                </div>
-
-                <div class="col-md-6 col-xl-2">
-                  <img class="media" height="64" width="64" src="assets/integraciones/mysql.png" alt="MySql" />
-                </div>
-
-                <div class="col-md-6 col-xl-2">
-                  <img class="media" height="64" width="64" src="assets/integraciones/postgres.png" alt="PostgreSql" />
-                </div>
-
-                <div class="col-md-6 col-xl-2">
-                  <img class="media" height="64" width="64" src="assets/integraciones/oracle.png" alt="Oracle" />
-                </div>
-
-                <div class="col-md-6 col-xl-2">
-                  <img class="media" height="64" width="64" src="assets/integraciones/sqlserver.png" alt="SqlServer" />
-                </div>
-
-                <div class="col-md-6 col-xl-2">
-                  <img class="media" height="64" width="64" src="assets/integraciones/rethink.png" alt="Rethink" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-        </div>
-        <br>
-      </section>
-
+    <div>
+      <img src="assets/images/login-v2.svg" width="80%" alt="Imagen 1" class="imagen">
     </div>
+
   </div>
 
 
