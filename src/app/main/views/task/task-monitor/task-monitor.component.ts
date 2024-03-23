@@ -42,8 +42,8 @@ export class TaskMonitorComponent implements OnInit {
   ];
 
 
-  constructor(private taskService : TaskService, private msjService: WsocketsService,
-    ) { }
+  constructor(private taskService: TaskService, private msjService: WsocketsService,
+  ) { }
 
   ngOnInit(): void {
     // content header
@@ -74,24 +74,53 @@ export class TaskMonitorComponent implements OnInit {
 
   }
 
-  escucharPID(){
+  escucharPID() {
     this.msjService.lstpid$.subscribe(
       pid => {
         console.log(pid)
-        if ( !pid.estatus){
+        if (!pid.estatus) {
 
-            this.buscarElemento(pid.id)
+          this.buscarElemento(pid.id)
         }
       }
     )
 
   }
 
-  async buscarElemento(pid: string){
-   
+  async initProcess() {
+    let lstApp = []
+    await this.taskService.keys().then(
+      async lst => {
+        let cnt = lst.length;
+        for (let i = 0; i < cnt; i++) {
+          const e = lst[i];
+          this.taskService.get(e).then(
+            data => {
+
+              lstApp.push(
+                {
+                  pid: data.id.substring(0, 6),
+                  programa: data.funcion,
+                  argumento: data.nombre,
+                  usuario: data.usuario,
+                  tiempo: data.fin == undefined ? '' : data.fin.toUTCString().substring(0, 16),
+                  estatus: data.estatus
+                }
+              )
+              if (i == cnt - 1) this.insertCommitDB(lstApp)
+            }
+          )
+
+        }
+      }
+    )
+  }
+
+  async buscarElemento(pid: string) {
+
     this.rowData = (await this.rowData).map(e => {
-      if (e.pid == pid.substring(0,6)) {
-        e.tiempo = new Date().toUTCString().substring(0,16)
+      if (e.pid == pid.substring(0, 6)) {
+        e.tiempo = new Date().toUTCString().substring(0, 16)
         e.estatus = false
       }
       return e
@@ -112,36 +141,9 @@ export class TaskMonitorComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  async initProcess(){
-    let lstApp = []
-    await this.taskService.keys().then(
-      async lst => {
-        let cnt = lst.length;
-        for (let i = 0; i < cnt; i++) {
-          const e = lst[i];
-          this.taskService.get(e).then(
-            data => {
 
-              lstApp.push(
-                {
-                  pid : data.id.substring(0,6),
-                  programa : data.funcion,
-                  argumento : data.nombre,
-                  usuario : data.usuario,
-                  tiempo : data.fin==undefined?'':data.fin.toUTCString().substring(0,16),
-                  estatus : data.estatus
-                }
-              )
-              if(i == cnt-1) this.insertCommitDB(lstApp)
-            }
-          )
-          
-        }
-      }
-    )
-  }
 
-  insertCommitDB(lst){
+  insertCommitDB(lst) {
     this.rowData = lst
     this.tempData = this.rowData
   }

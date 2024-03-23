@@ -41,7 +41,7 @@ export class ApiComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @ViewChild('tableRowDetails') tableRowDetails: any;
-  
+
   @BlockUI() blockUI: NgBlockUI;
   @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
@@ -65,33 +65,33 @@ export class ApiComponent implements OnInit {
 
   public fnx
 
-  public xAPI : IAPICore = {
+  public xAPI: IAPICore = {
     funcion: '',
     parametros: '',
     relacional: false,
-    concurrencia : false,
+    concurrencia: false,
     protocolo: '',
-    ruta : '',
-    retorna : false,
-    migrar : false,
-    modulo : '',
-    valores : {},
-    coleccion : '',
-    http : 0,
-    https : 0,
-    consumidores : 0,
-    puertohttp : 0,
-    puertohttps : 0,
-    driver : '',
-    query : '',
-    metodo : '',
-    tipo : '',
-    prioridad : '',
+    ruta: '',
+    retorna: false,
+    migrar: false,
+    modulo: '',
+    valores: {},
+    coleccion: '',
+    http: 0,
+    https: 0,
+    consumidores: 0,
+    puertohttp: 0,
+    puertohttps: 0,
+    driver: '',
+    query: '',
+    metodo: '',
+    tipo: '',
+    prioridad: '',
     entorno: '',
-    logs : false
+    logs: false
   };
 
-  public xRestore : RestoreAPI = {
+  public xRestore: RestoreAPI = {
     nombre: '',
     ruta: '',
     pass: '',
@@ -109,7 +109,7 @@ export class ApiComponent implements OnInit {
 
   // Private
   public count
- 
+
   public ListaApis = []
   public tempData = [];
   public rowData = [];
@@ -119,17 +119,17 @@ export class ApiComponent implements OnInit {
   public driver = []
 
   public status = [
-    {id:true, name: 'ACTIVO'},
-    {id:false, name: 'INACTIVO'},
+    { id: true, name: 'ACTIVO' },
+    { id: false, name: 'INACTIVO' },
   ]
 
   public archivos = []
 
-  public rutaURL 
+  public rutaURL
 
   // public
   public mac
-  public data : any
+  public data: any
   public xrs = ''
   public host = ''
   public submitted = false;
@@ -142,7 +142,7 @@ export class ApiComponent implements OnInit {
   public SelectionType = SelectionType;
 
   public driversAPP
-  
+
 
   public xentorno
   resultado: any;
@@ -150,13 +150,13 @@ export class ApiComponent implements OnInit {
   xparametro: string = ''
   valores: string = ''
 
-  public llave : string
-  public hashcontrol : string
+  public llave: string
+  public hashcontrol: string
 
 
   constructor(
     private rutaActiva: ActivatedRoute,
-    private apiService : ApiService,
+    private apiService: ApiService,
     private modalService: NgbModal,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
@@ -165,22 +165,22 @@ export class ApiComponent implements OnInit {
   ) {
   }
 
-    // convenience getter for easy access to form fields
-    get f() {
-      return this.loginForm.controls;
-    }
+  // convenience getter for easy access to form fields
+  get f() {
+    return this.loginForm.controls;
+  }
 
 
   async ngOnInit() {
     this.llave = this.utilservice.GenerarUnicId();
     this.hashcontrol = btoa("ING" + this.llave);
-    
+
     // this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
-    this.driversAPP =  this.rutaActiva.snapshot.params.id
+    this.driversAPP = this.rutaActiva.snapshot.params.id
     // this.rutaURL = this.rutaActiva.snapshot.params.id
     await this.ListarApis(this.driversAPP)
 
-    
+
     this.loginForm = this._formBuilder.group({
       host: ['', [Validators.required]],
       mac: ['', [Validators.required]],
@@ -189,9 +189,9 @@ export class ApiComponent implements OnInit {
       tipo: [undefined],
       estatus: [undefined],
     });
-    
-     // content header
-     this.contentHeader = {
+
+    // content header
+    this.contentHeader = {
       headerTitle: 'Herramientas',
       actionButton: true,
       breadcrumb: {
@@ -220,7 +220,7 @@ export class ApiComponent implements OnInit {
     };
   }
 
-  async ListarApis(t : string) {
+  async ListarApis(t: string) {
 
     if (t == "") return
     this.developer = []
@@ -234,7 +234,7 @@ export class ApiComponent implements OnInit {
           this.developer.push(e)
           this.rowData = this.developer;
           this.count = this.rowData.length
-          this.tempData = this.rowData;     
+          this.tempData = this.rowData;
         })
       },
       (error) => {
@@ -242,8 +242,8 @@ export class ApiComponent implements OnInit {
       }
     );
   }
-  
-  ExportApi(){
+
+  ExportApi() {
     this.fnx = {
       'funcion': 'Fnx_ExportAPI',
       'basedatos': 'sandra-server',
@@ -253,20 +253,20 @@ export class ApiComponent implements OnInit {
     }
     this.apiService.ExecFnx(this.fnx).subscribe(
       (data) => {
-        this.utilservice.AlertMini('bottom-end','success','Backup Generado',3000)
+        this.utilservice.AlertMini('bottom-end', 'success', 'Backup Generado', 3000)
         this.apiService.DwsCdn('bck-export/apicore.zip')
       },
       (error) => {
-        this.utilservice.AlertMini('top-end','success',error,3000)
+        this.utilservice.AlertMini('top-end', 'success', error, 3000)
         console.log(error)
       })
   }
 
-  ListadoApis(){
+  ListadoApis() {
     this.pdf.ListadoDeApis(this.rowData)
   }
 
-  async ImportApi(){
+  async ImportApi() {
     const { value: file } = await Swal.fire({
       title: 'Sube el documento',
       input: 'file',
@@ -275,7 +275,7 @@ export class ApiComponent implements OnInit {
         'aria-label': 'Upload your profile picture'
       }
     })
-    
+
     if (file) {
       const reader = new FileReader()
       reader.onload = (e) => {
@@ -320,7 +320,7 @@ export class ApiComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  LimpiarForm(){
+  LimpiarForm() {
     this.loginForm = this._formBuilder.group({
       host: ['', [Validators.required]],
       mac: ['', [Validators.required]],
@@ -332,26 +332,26 @@ export class ApiComponent implements OnInit {
   }
 
 
-  async CargarLista(){
+  async CargarLista() {
     this.xAPI.funcion = "_SYS_LstComunicaciones";
     this.xAPI.parametros = ''
     this.ListaApis = []
     this.count = 0
-     await this.apiService.Ejecutar(this.xAPI).subscribe(
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.ListaApis.push(data);
-              this.rowData = data;
-              this.count = this.rowData.length
-              this.tempData = this.rowData;
+        this.ListaApis.push(data);
+        this.rowData = data;
+        this.count = this.rowData.length
+        this.tempData = this.rowData;
       },
       (error) => {
         console.log(error)
       }
-    ) 
+    )
   }
 
-  ModalEditApi(modal, data){
-    this.modalService.open(modal,{
+  ModalEditApi(modal, data) {
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -360,9 +360,9 @@ export class ApiComponent implements OnInit {
     });
   }
 
-  ModalEscaneo(modal, data){
+  ModalEscaneo(modal, data) {
     this.data = data
-    this.modalService.open(modal,{
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -414,19 +414,19 @@ export class ApiComponent implements OnInit {
         if (data.tipo == 1) {
           this.ObtenerNombreArchivo()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success','Archivo Subido Exitosamente',3000)          
+          this.utilservice.AlertMini('top-end', 'success', 'Archivo Subido Exitosamente', 3000)
         } else {
-          this.utilservice.AlertMini('top-end','error','El archivo no pudo ser subido, por favor verifica e intente de nuevo',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'El archivo no pudo ser subido, por favor verifica e intente de nuevo', 3000)
         }
       },
       (errot) => {
         console.log(errot);
-        this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+        this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
       }
     );
   }
 
-  ObtenerNombreArchivo(){
+  ObtenerNombreArchivo() {
     this.xAPI.funcion = "SYS_getFileName";
     this.xAPI.parametros = this.llave;
     this.xAPI.valores = "";
@@ -444,17 +444,17 @@ export class ApiComponent implements OnInit {
       },
       (errot) => {
         console.log(errot);
-        this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+        this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
       }
     )
   }
 
-  ejecutarFuncion(){
+  ejecutarFuncion() {
     this.xRestore.funcion = 'Fnx_RestoreAPI'
     this.apiService.ExecFnx(this.xRestore).subscribe(
       data => {
         this.ListarApis(this.driversAPP)
-        this.utilservice.AlertMini('top-end','success','Se han importado las APIS de la Base de datos XXXXX y la Coleccion XXXX',3000)          
+        this.utilservice.AlertMini('top-end', 'success', 'Se han importado las APIS de la Base de datos XXXXX y la Coleccion XXXX', 3000)
       },
       error => {
         console.log(error)
@@ -463,8 +463,8 @@ export class ApiComponent implements OnInit {
   }
 
 
-  ModalApi(modal){
-    this.modalService.open(modal,{
+  ModalApi(modal) {
+    this.modalService.open(modal, {
       centered: true,
       size: 'xl',
       backdrop: false,
@@ -473,8 +473,8 @@ export class ApiComponent implements OnInit {
     });
   }
 
-  ModalSubirArchivo(modal){
-    this.modalService.open(modal,{
+  ModalSubirArchivo(modal) {
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -484,20 +484,20 @@ export class ApiComponent implements OnInit {
   }
 
 
-  ModalPromover(data){
+  ModalPromover(data) {
     console.log(data)
   }
 
-  ModalEliminar(data){
+  ModalEliminar(data) {
     console.log(data)
   }
 
-  ModalModificar(modal){
+  ModalModificar(modal) {
     console.log(modal)
   }
 
 
-  GuardarDispositivo(){
+  GuardarDispositivo() {
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -515,10 +515,10 @@ export class ApiComponent implements OnInit {
           this.ListaApis = []
           this.CargarLista()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`,3000)
+          this.utilservice.AlertMini('top-end', 'success', `Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
           // console.log(error)
         }
       )
@@ -526,7 +526,7 @@ export class ApiComponent implements OnInit {
     }
   }
 
-  EditarDispositivo(){
+  EditarDispositivo() {
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -544,10 +544,10 @@ export class ApiComponent implements OnInit {
           this.ListaApis = []
           this.CargarLista()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido actualizada`,3000)
+          this.utilservice.AlertMini('top-end', 'success', `Tu (Comunicacion) ha sido actualizada`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
           // console.log(error)
         }
       )

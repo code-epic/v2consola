@@ -1,0 +1,79 @@
+{
+  "cedula": "1",
+  "nombre": "Investigacion",
+  "login": "investigacion",
+  "correo": "code.epic.technologies@gmail.com",
+  "clave": "393a9f8b0b9d1b751bffbe860fe18d19f0639cbae7bc42123f187cf7f5187322",
+  "sucursal": "Todas",
+  "direccion": "Principal",
+  "cargo": "Investigador",
+  "telefono": "",
+  "sistema": "Core - Sandra Server",
+  "token": "Autorizado",
+  "Perfil": {
+    "descripcion": "Investigacion"
+  },
+  "Aplicacion": [
+    {
+      "id": "ID-001",
+      "nombre": "Core Sandra Server",
+      "url": "http://localhost/consola",
+      "comentario": "Usuario Core",
+      "version": "2.0.0",
+      "autor": "Code-Epic Technologies",
+      "Rol": {
+        "descripcion": "Usuario Sistema",
+        "Menu": [
+          {
+            "url": "investigacion",
+            "js": "",
+            "icono": "lock",
+            "descripcion": "Investigación",
+            "nombre": "Investigación",
+            "accion": "",
+            "clase": "collapsible",
+            "color": "",
+            "Privilegio": [],
+            "SubMenu": [
+              {
+                "url": "investigacion/bitacora",
+                "js": "",
+                "descripcion": "Bitacora",
+                "icono": "circle",
+                "nombre": "Bitacora",
+                "accion": "",
+                "clase": "item",
+                "color": "bg-c-green",
+                "Privilegios": [
+                  {
+                    "metodo": "registrados",
+                    "descripcion": "Registrados",
+                    "accion": "Registrados()",
+                    "directivas": ""
+                  }
+                ]
+              },
+              {
+                "url": "investigacion/logs",
+                "js": "",
+                "descripcion": "Logs",
+                "icono": "circle",
+                "nombre": "Logs",
+                "accion": "",
+                "clase": "item",
+                "color": "bg-c-blue",
+                "Privilegios": [
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "firmadigital": {
+    "direccionmac": "*",
+    "direccionip": "*",
+    "tiempo": "2042-04-01T19:07:05.851Z"
+  }
+}

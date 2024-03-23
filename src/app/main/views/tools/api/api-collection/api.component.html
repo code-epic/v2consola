@@ -64,6 +64,9 @@
         </div>
         <!--/ Invoice List Header -->
 
+
+
+        <!-- <div id="tuHTML"> -->
         <ngx-datatable #tableRowDetails class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
           [headerHeight]="40" [footerHeight]="50" [rowHeight]="58" [limit]="10" [rows]="rowData" [scrollbarH]="true">
 
@@ -197,20 +200,24 @@
                       </tr>
                     </tbody>
                   </table>
+
+
+
                   <div class="code-container">
-                  <!-- <p class="card-text text-justify"> -->
+                    <!-- <p class="card-text text-justify"> -->
                     <br>
                     <code style="background-color: transparent;">
                      {{ row.query }}
                </code>
-              <!-- </p> -->
-            </div>
-                 <hr>
+                    <!-- </p> -->
+                  </div>
+                  <hr>
 
                 </div>
               </div>
             </ng-template>
           </ngx-datatable-row-detail>
+
           <ngx-datatable-column [width]="50" [resizeable]="false" [sortable]="false" [draggable]="false"
             [canAutoResize]="false">
             <ng-template let-row="row" let-expanded="expanded" ngx-datatable-cell-template>
@@ -221,6 +228,7 @@
             </ng-template>
 
           </ngx-datatable-column>
+
           <ngx-datatable-column name="Funcion" [width]="280">
             <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
               <div class="d-flex align-items-center">
@@ -244,7 +252,7 @@
                       'badge-light-info': row.entorno == 'desarrollo',
                       'badge-light-warning': row.entorno == 'produccion'
                     }">
-                    {{row.entorno | uppercase}}
+                      {{row.entorno | uppercase}}
                     </div>
                   </span>
                 </div>
@@ -263,6 +271,7 @@
               <div class="badge badge-pill badge-light-info">{{row.version}}</div>
             </ng-template>
           </ngx-datatable-column>
+
           <ngx-datatable-column name="Status" prop="estatus" [width]="5">
             <ng-template let-estatus="value" ngx-datatable-cell-template>
               <div class="badge badge-pill" [ngClass]="{
@@ -283,15 +292,17 @@
           <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
             <ng-template ngx-datatable-cell-template let-row="row">
               <div ngbDropdown container="body">
-                <button [routerLink]="'/tools/api-details/'+ row.funcion" type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                <button [routerLink]="'/tools/api-details/'+ row.funcion" type="button"
+                  class="btn icon-btn btn-sm hide-arrow" rippleEffect>
                   <span [data-feather]="'play'" [class]="'cursor-pointer'"></span>
                 </button>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-
         </ngx-datatable>
+        <!-- </div> -->
+
 
         <!--/ Invoice List Table -->
 
@@ -349,21 +360,20 @@
         <div class="form-group col-md-12">
         </div>
         <div class="form-group col-md-12">
-            <form method="post" enctype="multipart/form-data" id="forma" name="forma">
-                <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="input_container">
-                            <input (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos"
-                                accept=".zip" />
-      
-                        </div>
-                    </div>
+          <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+            <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="input_container">
+                  <input (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos" accept=".zip" />
+
                 </div>
-            </form>
+              </div>
+            </div>
+          </form>
         </div>
-      </div> 
-      
+      </div>
+
       <hr>
 
     </div>
