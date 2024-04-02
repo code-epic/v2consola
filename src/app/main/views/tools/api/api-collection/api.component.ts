@@ -1,31 +1,13 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-
 import { ApiService, IAPICore, RestoreAPI } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
-
-import { SqlFormatPipe } from '@core/pipes/sql-format.pipe';
-
-import { AES } from 'crypto-js';
-const clave = '5412892DF0D2919B04ADD29EDEFABA30E30F6D7F5A62A9B84AD46BDE23B25491';
-import { enc } from 'crypto-js';
-
-
-import JSONFormatter from 'json-formatter-js';
-
 import { PdfService } from '@services/pdf/pdf.service';
 
-import { FormGroup, FormBuilder } from '@angular/forms';
-
-import { WsocketsService } from '@services/websockets/wsockets.service';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectConfig } from '@ng-select/ng-select';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
-import { ComunicationsService } from '@services/networks/comunications.service';
-import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
-import Stepper from 'bs-stepper';
+import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { environment } from 'environments/environment';
 
@@ -153,6 +135,8 @@ export class ApiComponent implements OnInit {
   public llave: string
   public hashcontrol: string
 
+  public urlControl = ''
+
 
   constructor(
     private rutaActiva: ActivatedRoute,
@@ -174,10 +158,12 @@ export class ApiComponent implements OnInit {
   async ngOnInit() {
     this.llave = this.utilservice.GenerarUnicId();
     this.hashcontrol = btoa("ING" + this.llave);
+    this.urlControl = this.rutaActiva.snapshot.params.id
 
-    // this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
-    this.driversAPP = this.rutaActiva.snapshot.params.id
-    // this.rutaURL = this.rutaActiva.snapshot.params.id
+    let id = atob(this.urlControl).split('|')
+
+    this.driversAPP = id[0]
+    let url = id[1]
     await this.ListarApis(this.driversAPP)
 
 
@@ -203,13 +189,14 @@ export class ApiComponent implements OnInit {
             link: '/home'
           },
           {
-            name: 'Herramientas',
-            isLink: false
+            name: 'Aplicaciones',
+            isLink: true,
+            link: '/tools/applications'
           },
           {
-            name: 'API REST',
+            name: 'Api',
             isLink: true,
-            link: '/tools/api'
+            link: '/tools/api/' + url
           },
           {
             name: this.driversAPP,
@@ -228,14 +215,17 @@ export class ApiComponent implements OnInit {
     this.xAPI.parametros = t
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
+      async data => {
+        console.log(data)
         if (data == null) return
-        data.map(e => {
+
+        await data.map(e => {
+          e.descripcion = e.descripcion==undefined?'':e.descripcion
           this.developer.push(e)
-          this.rowData = this.developer;
-          this.count = this.rowData.length
-          this.tempData = this.rowData;
         })
+        this.rowData = this.developer;
+        this.count = this.rowData.length
+        this.tempData = this.rowData;
       },
       (error) => {
         console.error(error)

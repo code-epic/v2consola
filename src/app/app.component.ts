@@ -13,15 +13,12 @@ import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.s
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreLoadingScreenService } from '@core/services/loading-screen.service';
 import { CoreTranslationService } from '@core/services/translation.service';
-import jwt_decode from "jwt-decode";
+
 
 import { menu } from 'app/menu/menu';
 import { locale as menuEnglish } from 'app/menu/i18n/en';
 import { locale as menuEspanish } from 'app/menu/i18n/es';
-import { NgForm } from '@angular/forms';
-// import { locale as menuFrench } from 'app/menu/i18n/fr';
-// import { locale as menuGerman } from 'app/menu/i18n/de';
-// import { locale as menuPortuguese } from 'app/menu/i18n/pt';
+import {Md5} from 'ts-md5';
 
 
 @Component({
@@ -42,7 +39,7 @@ export class AppComponent implements OnInit, OnDestroy {
   // Private
   private _unsubscribeAll: Subject<any>;
 
-  public Token
+  public Menu
   
   /**
    * Constructor
@@ -70,7 +67,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private _coreTranslationService: CoreTranslationService,
     private _translateService: TranslateService
   ) {
-    this.token = undefined;
+    this.Menu = undefined;
     // Get the application main menu
     // this.menu = menu;
 
@@ -78,8 +75,11 @@ export class AppComponent implements OnInit, OnDestroy {
     if (token === null) {
       this.menu = menu;
     } else {
-      this.Token = jwt_decode(sessionStorage.getItem('token'))
-      this.menu = this.Token.Usuario.Aplicacion[0].Rol.Menu.map(e => {
+      this.Menu = JSON.parse(sessionStorage.getItem('menu'))
+      // let texto = Md5.hashStr(sessionStorage.getItem('menu'))
+      // console.log(texto, sessionStorage.getItem('crypt'))
+      
+      this.menu = this.Menu.map(e => {
         e.id = e.nombre.toLowerCase()
         e.type = e.clase
         e.icon = e.icono
@@ -292,6 +292,7 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
+    console.log('destroy code')
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }

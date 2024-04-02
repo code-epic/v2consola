@@ -7,8 +7,9 @@ import Swal from 'sweetalert2';
 //import { CodeEpic, Configuracion } from 'code.epic.module'
 import jwt_decode from "jwt-decode";
 import { TaskService } from '@services/apicore/task.service';
-import { ApiService } from '@services/apicore/api.service';
-import { forEach } from 'lodash';
+import { ApiService, IAPICore } from '@services/apicore/api.service';
+
+import {Md5} from 'ts-md5';
 
 export interface IUsuario {
   nombre: string,
@@ -121,20 +122,27 @@ export class LoginService {
 
   public Aplicacion: any
 
+  public xAPI : IAPICore = {
+    funcion: '',
+    parametros: ''
+  }
+
   urlGet = '';
 
   //public Epic: CodeEpic = new CodeEpic
 
   constructor(private router: Router, private http: HttpClient, private taskService: TaskService, private apiService: ApiService) {
     //environment.Url +
-    this.urlGet = environment.API;
+    this.urlGet = environment.API
+    this.Id = environment.ID
 
 
   }
 
-  async Iniciar() {
-    await this.getUserDecrypt()
-    return this.obenterAplicacion()
+  async Iniciar(itk : string) {
+    this.Token = await  this.getUserDecrypt(itk)
+    sessionStorage.setItem("token", itk);
+    this.obenterAplicacion(itk)
   }
 
   getLogin(user: string, clave: string): Observable<IToken> {
@@ -142,7 +150,8 @@ export class LoginService {
       "nombre": user,
       "clave": clave,
     };
-    var url = this.urlGet + 'wusuario/login';
+    // var url = this.urlGet + 'wusuario/login';
+    var url = this.urlGet + 'wusuario/loginV2';
     // console.info(url)
     return this.http.post<IToken>(url, usuario);
   }
@@ -243,51 +252,39 @@ export class LoginService {
     );
   }
 
-  getUserDecrypt() {
-    var e = sessionStorage.getItem("token");
-    var t = jwt_decode(sessionStorage.getItem('token'))
-    var s = e.split(".");
-    // return JSON.parse(atob(s[1]));
+  getUserDecrypt(itk: string) {
+    var t = jwt_decode(itk)
     return t;
   }
 
   //ObenterAplicacion 
-  protected obenterAplicacion() {
-    var Aplicacion = this.Token.Usuario.Aplicacion
-    Aplicacion.forEach(e => {
-      if (e.id == this.Id) {
-        this.Aplicacion = e;
+  protected obenterAplicacion(itk: string) {
+    
+
+    let cadena = this.Token.Usuario.cedula + ',' + this.Id + ',' + this.Token.Usuario.correo
+    this.xAPI.funcion = "_SYS_CUsuarioPerfil";
+    this.xAPI.parametros = cadena
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        console.log(data[0].Aplicacion[0])
+        sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu))
+        let texto = Md5.hashStr(JSON.stringify(data[0].Aplicacion[0].Rol.Menu))
+        sessionStorage.setItem("crypt", texto)
+        this.router.navigate(["home"]).then(() => {
+          window.location.reload();
+        });
+      },
+      (error) => {
+        console.error('Fallo conectando al perfil del usuario: ', error)
       }
-    });
-    return this.Aplicacion
+    )
+
+
+
+
   }
 
-  obtenerMenu(): any {
-    var i = 0
-    return this.Aplicacion.Rol.Menu.map(e => {
-      e.id = e.url
-      e.type = e.clase
-      e.title = e.descripcion
-      if (e.SubMenu != undefined) {
-        e.children = e.SubMenu.map(el => {
-          el.id = el.url.replace('/', '-')
-          el.title = el.descripcion
-          el.type = el.clase
-          el.url = el.url
-          return el
-        })
-        e.url = ''
-      }
-      return e
-    })
-    // return this.Aplicacion.Rol.Menu
-  }
 
-  obtenerSubMenu(idUrl: string): any {
-    var App = this.Aplicacion
-    var SubMenu = []
-    App.Rol.Menu.forEach(e => { if (e.url == idUrl) SubMenu = e.SubMenu });
-    return SubMenu
-  }
+
 
 }

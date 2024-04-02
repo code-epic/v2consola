@@ -98,10 +98,6 @@ export class ApplicationsComponent implements OnInit {
             link: '/home'
           },
           {
-            name: 'Herramientas',
-            isLink: false
-          },
-          {
             name: 'Aplicaciones',
             isLink: false
           }
@@ -120,7 +116,7 @@ export class ApplicationsComponent implements OnInit {
         data.Cuerpo.map((e) => {
           this.ListaAplicaciones.push(e);
         });
-        console.log(this.ListaAplicaciones)
+        // console.log(this.ListaAplicaciones)
       },
       (error) => {
         console.log(error);

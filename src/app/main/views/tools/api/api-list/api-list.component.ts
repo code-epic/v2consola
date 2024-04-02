@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ComunicationsService } from '@services/networks/comunications.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { WsocketsService } from '@services/websockets/wsockets.service';
 
 import { AES } from 'crypto-js';
@@ -27,8 +27,7 @@ export class ApiListComponent implements OnInit {
   
   xAPI: IAPICore = {
     funcion: '',
-    parametros: '',
-    valores: ''
+    parametros: ''
   };
   
   public searchText: string = '';
@@ -37,19 +36,6 @@ export class ApiListComponent implements OnInit {
   public pageBasic = 1;
 
   public drivers = []
-
-  constructor(
-    private msjService: WsocketsService,
-    private ruta: Router,
-    private comunicacionesService : ComunicationsService,
-    config: NgbModalConfig,
-    private modalService: NgbModal,
-    private apiService: ApiService,
-  ) {
-    config.backdrop = false;
-    config.keyboard = false;
-  }
-
 
   codeMOEsquemaJson: any = {
     theme: 'idea',
@@ -76,12 +62,30 @@ export class ApiListComponent implements OnInit {
     lint: true
   };
 
+  public id : string = ''
+
+
+  constructor(
+    private msjService: WsocketsService,
+    private ruta: Router,
+    private rutaActiva: ActivatedRoute,
+    private comunicacionesService : ComunicationsService,
+    config: NgbModalConfig,
+    private modalService: NgbModal,
+    private apiService: ApiService,
+  ) {
+    config.backdrop = false;
+    config.keyboard = false;
+  }
+
+
 
 
    ngOnInit() {
-    this.CargarDrivers()
-  
+    
 
+    this.id = this.rutaActiva.snapshot.params.id
+    this.CargarDrivers()
     this.contentHeader = {
       headerTitle: 'Herramientas',
       actionButton: true,
@@ -94,11 +98,12 @@ export class ApiListComponent implements OnInit {
             link: '/home'
           },
           {
-            name: 'Herramientas',
-            isLink: false
+            name: 'Aplicaciones',
+            isLink: true,
+            link: '/tools/applications'
           },
           {
-            name: 'Api Rest',
+            name: 'Api',
             isLink: false
           }
         ]
@@ -115,20 +120,22 @@ export class ApiListComponent implements OnInit {
 
    CargarDrivers(){
     this.xAPI.funcion = '_SYS_R_ListarDriver'
-    this.xAPI.parametros = ''
-    this.xAPI.valores = ''
+    this.xAPI.parametros = this.id
     this.drivers = []
-     this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        data.map(e => {
-          e.ruta = e.id
-          this.drivers.push(e)
-        });
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      async data => {
+        console.log(data)
+        this.drivers = await data
       },
       (error) => {
         console.log(error)
       }
     ) 
+  }
+
+  getUrl(id: string): string{
+    let url = id + '|' + this.id
+    return btoa(url)
   }
 
 

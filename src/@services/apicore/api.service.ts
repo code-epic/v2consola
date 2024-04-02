@@ -317,11 +317,15 @@ export class ApiService {
 
   //Ejecutar Api generales
   Ejecutar(xAPI: IAPICore): Observable<any> {
+
+    let hOpt = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+    })
+  }
     var url = this.URL + "crud" + this.hash
-    // if( xAPI.valores  != undefined ){
-    //     xAPI.valores = JSON.parse(xAPI.parametros)
-    // } 
-    return this.http.post<any>(url, xAPI, this.httpOptions)
+    return this.http.post<any>(url, xAPI, hOpt)
   }
 
   //Ejecutar Api generales

@@ -30,7 +30,7 @@ export class RoleComponent implements OnInit {
     funcion: '',
     parametros: '',
     valores: {},
-  };
+  }
 
 
 
@@ -47,6 +47,7 @@ export class RoleComponent implements OnInit {
 
 
   public rowData = []
+  public lstRoles = []
   public temprowData = []
   public countSubMenu
 
@@ -56,7 +57,8 @@ export class RoleComponent implements OnInit {
 
   public estatus = undefined
 
-  public aplicacion
+  public aplicacion : any 
+  public xaplicacion = ''
   public xmodulo
   public menu
 
@@ -75,22 +77,23 @@ export class RoleComponent implements OnInit {
 
   public xnombre = ''
   public xdescripcion = ''
+  public registrar = 'Registrar nuevo rol'
 
 
   public lstAplicaciones = []
   public dataModulo = []
   public showDiv: boolean = false
-  public datamenu = []
-
+  public datamenu = [] 
   public xaccion = ""
 
 
   @ViewChild('tableRowDetails') tableRowDetails: any;
-
-
   public ColumnMode = ColumnMode;
-
   public chkBoxSelected = [];
+  active:any = 1;
+
+  public blApp : boolean = true
+
 
   constructor(
     private apiService: ApiService,
@@ -126,6 +129,7 @@ export class RoleComponent implements OnInit {
     };
 
     this.CargarListaAplicaciones()
+    this.listarRoles()
 
   }
 
@@ -209,13 +213,23 @@ export class RoleComponent implements OnInit {
 
   }
 
-
-
-
+  listarRoles() {
+    this.xAPI.funcion = '_SYS_CRoles'
+    this.xAPI.parametros = ''
+    this.xAPI.valores = ''
+    this.lstRoles = []
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.lstRoles = data.Cuerpo
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
 
   LimpiarMenu() {
     this.estatus = undefined
-
   }
 
   async addElement(item: any) {
@@ -242,6 +256,11 @@ export class RoleComponent implements OnInit {
 
   guardarRol() {
 
+    
+    if ( this.Rol.nombre == "" || this.lista.length == 0 || this.aplicacion == undefined) {
+      this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
+      return false
+    }
     this.xAPI.funcion = '_SYS_IRolDefinicion'
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.Rol)
@@ -257,9 +276,6 @@ export class RoleComponent implements OnInit {
     )
 
   }
-
-
-
 
 
   insertBach(idrol, posicion) {
@@ -310,8 +326,48 @@ export class RoleComponent implements OnInit {
   }
 
 
+  editarRol(row){
+
+    console.log(row)
+
+    this.xAPI.funcion = '_SYS_CRolEditar'
+    this.xAPI.parametros = row.idrol
+    this.xAPI.valores = ''
+    this.rowData = []
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        let idAPP = ""
+
+        this.registrar = 'Editar rol'
+        this.rowData = data.Cuerpo.map(e => {
+          this.Rol.descripcion = e.observacion
+          this.Rol.nombre = e.rol
+          idAPP = e.idapp
+          e.idmod =  e.idmod
+          e.modulo = e.modulo
+          e.idmenu =  e.idmenu
+          e.menu = e.menu
+          e.accid = e.accid
+          e.accion = e.accion
+          return e
+        })
+        this.lista = this.rowData
+        this.blApp = false
+        this.aplicacion = this.lstAplicaciones.find(item => item.id == idAPP);
+        this.xaplicacion = this.aplicacion.name
+        this.selModulo(this.aplicacion.id)
+        this.active = 2
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
 
 
+  }
 
+  eliminarRol(){
+
+  }
 
 }

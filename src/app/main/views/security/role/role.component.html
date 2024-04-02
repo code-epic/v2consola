@@ -8,130 +8,193 @@
         <section class="invoice-list-wrapper">
             <div class="card">
 
-                <div class="col-md-12" style="margin-top: 25px;">
-
-                    <!-- Primer -->
-                    <div class="row">
-
-
-                        <div class="form-group col-md-12">
-                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
-                                placeholder="Seleccione Aplicación"></ng-select>
-                        </div>
-
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="descripcion">Nombre del Rol</label>
-                            <input style="font-size:14px;" [(ngModel)]="Rol.nombre"
-                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre del Rol"
-                                class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-8">
-                            <label class="form-label" for="origen">Descripcion del Rol</label>
-                            <input style="font-size:14px;" [(ngModel)]="Rol.descripcion"
-                                [ngModelOptions]="{standalone: true}" type="text"
-                                placeholder="Breve descripcion del Rol" class="form-control">
-                        </div>
-
-
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="origen">Modulo</label>
-                            <select multiple class="form-control" style="height: 150px;"
-                                (dblclick)="selectEventModulo($event)" [(ngModel)]="xmodulo"
-                                [ngModelOptions]="{standalone: true}">
-                                <option *ngFor="let e of dataModulo" value="{{e.id + '|' + e.name}}">{{e.name}}</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="origen">Menu</label>
-                            <select multiple class="form-control" style="height: 150px;" (dblclick)="listarAcciones()"
-                                [(ngModel)]="menu" [ngModelOptions]="{standalone: true}">
-                                <option *ngFor="let e of datamenu" value="{{e.id + '|' + e.name}}">{{e.name}}</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="origen">Acciones</label>
-                            <select multiple class="form-control" style="height: 150px;"
-                                (dblclick)="addElement(xaccion)" [(ngModel)]="xaccion"
-                                [ngModelOptions]="{standalone: true}">
-                                <option *ngFor="let e of rowDataAcc" value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="col-md-12 ">
                     <br>
-                </div>
-                <div class="col-md-12">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>MODULO</th>
-                                <th>MENU</th>
-                                <th>ACCIONES</th>
-                            <tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let e of rowData">
-                                <td>{{e.modulo}}</td>
-                                <td>{{e.menu}}</td>
-                                <td>{{e.accion}}</td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                        </tfoot>
-                    </table>
-                    <!-- <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-                        [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
-                        [limit]="basicSelectedOption">
+                    <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+                        <li [ngbNavItem]="1">
+                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Rol's</a>
+                            <ng-template ngbNavContent>
 
 
-                        <ngx-datatable-column name="MODULO" [width]="200">
-                            <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
-                                <div>
-                                    <span class="font-weight-bold">{{ modulo }} </span>
+
+                                <div class="col-md-12">
+                                    <ngx-datatable [rows]="lstRoles" [rowHeight]="58" class="bootstrap core-bootstrap"
+                                        [limit]="10" [columnMode]="ColumnMode.force" [headerHeight]="40"
+                                        [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
+
+                                        <ngx-datatable-column name="APLICACION" prop="app" [width]="10">
+                                            <ng-template let-app="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ app }} </span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="ROL" prop="rol" [width]="10">
+                                            <ng-template let-rol="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ rol}} </span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="DESCRIPCION" prop="observacion" [width]="20">
+                                            <ng-template let-observacion="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ observacion }} </span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
+                                            <ng-template let-estatus="value" ngx-datatable-cell-template>
+
+                                                <div class="badge badge-success" *ngIf="estatus==1">Activo</div>
+                                                <div class="badge badge-danger" *ngIf="estatusx==0">Inactivo</div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
+                                            <ng-template ngx-datatable-cell-template let-row="row">
+                                                <div ngbDropdown container="body">
+                                                    <button ngbDropdownToggle type="button"
+                                                        class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                                                        <span [data-feather]="'settings'"
+                                                            [class]="'cursor-pointer'"></span>
+                                                    </button>
+                                                    <div ngbDropdownMenu>
+                                                        <a (click)="editarRol(row)" ngbDropdownItem><span
+                                                                [data-feather]="'edit'" [size]="16"
+                                                                [class]="'mr-50'"></span> Editar</a>
+                                                        <a (click)="eliminarRol(row)" ngbDropdownItem><span
+                                                            [data-feather]="'trash'" [size]="16"
+                                                            [class]="'mr-50'"></span> Eliminar</a>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                    </ngx-datatable>
+
+
                                 </div>
-                            </ng-template>
 
-                        </ngx-datatable-column>
-                        <ngx-datatable-column name="MENU" [width]="200">
-                            <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
-                                <div>
-                                    <span class="font-weight-bold">{{ menu }} </span>
+                            </ng-template>
+                        </li>
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>{{registrar}}</a>
+                            <ng-template ngbNavContent>
+
+                                <div class="col-md-12" style="margin-top: 25px;">
+
+                                    <!-- Primer -->
+                                    <div class="row">
+
+
+                                        <div class="form-group col-md-12" *ngIf="blApp">
+                                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
+                                                [ngModelOptions]="{standalone: true}" bindLabel="name"
+                                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                                                placeholder="Seleccione Aplicación"></ng-select>
+                                        </div>
+
+                                        <div class="form-group col-md-12" *ngIf="!blApp">
+                                            <label class="form-label" >Aplicacion</label>
+                                            <input style="font-size:14px;" [(ngModel)]="xaplicacion"
+                                                [ngModelOptions]="{standalone: true}" type="text"
+                                                placeholder="Aplicacion" class="form-control" disabled="disabled">
+                                        </div>
+
+
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label">Nombre del Rol</label>
+                                            <input style="font-size:14px;" [(ngModel)]="Rol.nombre"
+                                                [ngModelOptions]="{standalone: true}" type="text"
+                                                placeholder="Ingrese Nombre del Rol" class="form-control">
+                                        </div>
+
+                                        <div class="form-group col-md-8">
+                                            <label class="form-label" for="origen">Descripcion del Rol</label>
+                                            <input style="font-size:14px;" [(ngModel)]="Rol.descripcion"
+                                                [ngModelOptions]="{standalone: true}" type="text"
+                                                placeholder="Breve descripcion del Rol" class="form-control">
+                                        </div>
+
+
+
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label" for="origen">Modulo</label>
+                                            <select multiple class="form-control" style="height: 150px;"
+                                                (dblclick)="selectEventModulo($event)" [(ngModel)]="xmodulo"
+                                                [ngModelOptions]="{standalone: true}">
+                                                <option *ngFor="let e of dataModulo" value="{{e.id + '|' + e.name}}">
+                                                    {{e.name}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label" for="origen">Menu</label>
+                                            <select multiple class="form-control" style="height: 150px;"
+                                                (dblclick)="listarAcciones()" [(ngModel)]="menu"
+                                                [ngModelOptions]="{standalone: true}">
+                                                <option *ngFor="let e of datamenu" value="{{e.id + '|' + e.name}}">
+                                                    {{e.name}}</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label" for="origen">Acciones</label>
+                                            <select multiple class="form-control" style="height: 150px;"
+                                                (dblclick)="addElement(xaccion)" [(ngModel)]="xaccion"
+                                                [ngModelOptions]="{standalone: true}">
+                                                <option *ngFor="let e of rowDataAcc"
+                                                    value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <br>
                                 </div>
-                            </ng-template>
+                                <div class="col-md-12">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>MODULO</th>
+                                                <th>MENU</th>
+                                                <th>ACCIONES</th>
+                                            <tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let e of rowData">
+                                                <td>{{e.modulo}}</td>
+                                                <td>{{e.menu}}</td>
+                                                <td>{{e.accion}}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        </tfoot>
+                                    </table>
 
-                        </ngx-datatable-column>
-                        <ngx-datatable-column name="ACCION" [width]="100">
-                            <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
-                                <div>
-                                    <span class="font-weight-bold">{{ accion }} </span>
                                 </div>
+                                <div class="col-md-12" align="right">
+                                    <br>
+                                    <button type="button" class="btn btn-success" (click)="guardarRol()">
+                                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                                    </button>
+                                    &nbsp;&nbsp;
+                                    <button type="button" class="btn btn-warning" (click)="Limpiar()">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
+                                    </button>
+                                </div>
+                                <br><br>
                             </ng-template>
-
-                        </ngx-datatable-column>
-
-
-                    </ngx-datatable> -->
-
+                        </li>
+                    </ul>
+                    <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
                 </div>
-                <div class="col-md-12" align="right">
-                    <br>
-                    <button type="button" class="btn btn-success" (click)="guardarRol()">
-                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
-                    </button>
-                    &nbsp;&nbsp;
-                    <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
-                    </button>
-                </div>
-                <br><br>
+
+
 
             </div>
 

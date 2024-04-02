@@ -132,19 +132,20 @@ export class ApiDetailsComponent implements OnInit {
           {
             name: 'Home',
             isLink: true,
-            link: '/'
+            link: '/home'
           },
           {
-            name: 'Herramientas',
-            isLink: false,
-          },
-          {
-            name: 'API REST',
+            name: 'Aplicaciones',
             isLink: true,
-            link: '/tools/api'
+            link: '/tools/applications'
           },
           {
-            name: 'Details',
+            name: 'Api',
+            isLink: true,
+            link: '/tools/api/' //+ url
+          },
+          {
+            name: this.rutaURL,
             isLink: false
           }
         ]

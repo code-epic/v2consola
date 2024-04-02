@@ -35,17 +35,6 @@
             "color": "",
             "Privilegio": [],
             "SubMenu": [
-              {
-                "url": "",
-                "js": "",
-                "descripcion": "Documentos Registrados",
-                "icono": "fa fa-plus-circle",
-                "nombre": "Registrados",
-                "accion": "CargarUrl('control', 'registrar')",
-                "clase": "f-left",
-                "color": "bg-c-green",
-                "Privilegios": []
-              }
             ]
           },
           {

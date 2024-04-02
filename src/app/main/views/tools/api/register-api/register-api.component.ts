@@ -19,13 +19,9 @@ export class RegisterApiComponent implements OnInit {
 
   // public
   public contentHeader: object;
-
-
   public ruta: string = environment.apiUrl + environment.API + environment.Hash
   public ListaAplicaciones
-
   public driversAPP
-
   public driversID = ''
 
   public drivers: any
@@ -344,12 +340,10 @@ export class RegisterApiComponent implements OnInit {
     this.CargarDrivers()
 
     this.CargarListaAplicaciones()
-
-
-    this.driversAPP = AES.decrypt(this.rutaActiva.snapshot.params.id, clave).toString(enc.Utf8)
     this.rutaURL = this.rutaActiva.snapshot.params.id
 
-    this.LeerAPI(this.rutaActiva.snapshot.params.id)
+    this.driversAPP = AES.decrypt(this.rutaURL, clave).toString(enc.Utf8)
+    this.LeerAPI(this.rutaURL)
 
     this.getURL = this.rutaActiva.snapshot.url[1].path
 
@@ -368,23 +362,28 @@ export class RegisterApiComponent implements OnInit {
             link: '/home'
           },
           {
-            name: 'Herramientas',
-            isLink: false
+            name: 'Aplicaciones',
+            isLink: true,
+            link: '/tools/applications'
           },
           {
-            name: 'API REST',
+            name: 'Api',
             isLink: true,
-            link: '/tools/api'
-          },
-          {
-            name: 'LISTA APIS',
-            isLink: true,
-            link: `/tools/api-list/${this.rutaURL}`
+            link: '/tools/api/'
           },
           {
             name: this.driversAPP,
             isLink: false
           },
+          // {
+          //   name: 'LISTA APIS',
+          //   isLink: true,
+          //   link: `/tools/api-list/${this.rutaURL}`
+          // },
+          // {
+          //   name: this.driversAPP,
+          //   isLink: false
+          // },
         ]
       }
     };
@@ -395,6 +394,7 @@ export class RegisterApiComponent implements OnInit {
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (datax) => {
         this.drivers = datax.map(e => {
+          e.id = 
           e.name = e.descripcion + ' - ' + '(' + e.basedatos + ')'
           // this.drivers.push(e)
           return e

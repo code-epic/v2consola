@@ -25,6 +25,19 @@
         "descripcion": "Usuario Sistema",
         "Menu": [
           {
+            "url": "/principal",
+            "js": "",
+            "icono": "home",
+            "descripcion": "home",
+            "nombre": "Principal",
+            "accion": "",
+            "clase": "item",
+            "color": "",
+            "Privilegio": [],
+            "SubMenu": [
+            ]
+          },
+          {
             "url": "security",
             "js": "",
             "icono": "lock",

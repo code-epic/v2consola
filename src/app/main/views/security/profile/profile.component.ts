@@ -33,9 +33,6 @@ export class ProfileComponent implements OnInit {
   }
 
   public SelectionType = SelectionType
-
-
-
   public basicSelectedOption: number = 10
 
   public Perfil: IPerfil = {
@@ -86,8 +83,9 @@ export class ProfileComponent implements OnInit {
   public ColumnMode = ColumnMode
 
   public chkBoxSelected = []
+  public lstPerfil = []
 
-  public SelectOn = {}
+  public SelectOn = []
 
   constructor(
     private apiService: ApiService,
@@ -121,8 +119,8 @@ export class ProfileComponent implements OnInit {
         ],
       },
     }
-
     this.CargarListaAplicaciones()
+    this.listarPerfiles()
   }
 
   async CargarListaAplicaciones() {
@@ -142,6 +140,20 @@ export class ProfileComponent implements OnInit {
     )
   }
 
+  listarPerfiles(){
+      this.xAPI.funcion = '_SYS_CPerfiles'
+      this.xAPI.parametros = ''
+      this.xAPI.valores = ''
+      this.lstPerfil = []
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.lstPerfil = data.Cuerpo
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
+    }
 
   onSelect({ selected }) {
     this.SelectOn = selected
@@ -153,7 +165,7 @@ export class ProfileComponent implements OnInit {
 
   selRol(event: any): void {
     console.log(event)
-    this.xAPI.funcion = '_SYS_CRoles'
+    this.xAPI.funcion = '_SYS_CRol'
     this.xAPI.parametros = event
     this.xAPI.valores = ''
     this.dataRol = []
@@ -162,7 +174,7 @@ export class ProfileComponent implements OnInit {
         console.log(data)
         this.dataRol = data.Cuerpo.map(e => {
           e.id = e.idrol
-          e.name = e.nomb
+          e.name = e.rol
           return e
         })
       },
@@ -214,11 +226,37 @@ export class ProfileComponent implements OnInit {
     this.consultarMenu(this.xmodulo[0].split('|')[0])
   }
 
-  guardarPeril(){
+  iniciarLista(){
+    if (this.SelectOn.length == 0 ) {
+      this.lista = this.dataRolDetalles.map(e => {
+        e.estatus = 0
+        return e
+      })
 
+    }else{
+      this.lista = this.dataRolDetalles.map( e => {
+        let estatus = this.SelectOn.find(el => {
+          return el.xaccion == e.xaccion && el.xmenu == e.xmenu
+        })
+        e.estatus = estatus!=undefined?1:0
+        return e
+      })
+    }
+  }
+
+  guardarPerfil(){
+
+    this.iniciarLista()
+    // console.log(this.lista)
+    if ( this.Perfil.nombre == "" || this.lista.length == 0 || this.Perfil.aplicacion == undefined) {
+      this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
+      return false
+    }
     this.xAPI.funcion = '_SYS_IPerfil'
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.Perfil)
+
+    console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       data => {
         this.insertBach(data.msj, 1)
@@ -232,43 +270,43 @@ export class ProfileComponent implements OnInit {
   }
 
   insertBach(idperfil, posicion) {
-    console.log(this.SelectOn)
 
 
  
-    // let data = {
-    //   "aplicacion": parseInt(this.aplicacion),
-    //   "rol": idperfil,
-    //   "modulo": parseInt(this.lista[posicion].idmod),
-    //   "menu": parseInt(this.lista[posicion].idmenu),
-    //   "accion": parseInt(this.lista[posicion].accid),
-    //   "estatus": 1
-    // }
+    let data = {
+      "aplicacion": this.Perfil.aplicacion,
+      "perfil" : idperfil,
+      "rol": this.rol,
+      "modulo": parseInt(this.lista[posicion].xmodulo),
+      "menu": parseInt(this.lista[posicion].xmenu),
+      "accion": parseInt(this.lista[posicion].xaccion),
+      "estatus": parseInt(this.lista[posicion].estatus)
+    }
    
 
-    // this.xAPI.funcion = '_SYS_IPerfilDetalles'
-    // this.xAPI.parametros = ''
-    // this.xAPI.valores = JSON.stringify(data)
+    this.xAPI.funcion = '_SYS_IPerfilDetalles'
+    this.xAPI.parametros = ''
+    this.xAPI.valores = JSON.stringify(data)
 
-    // // console.log(this.xAPI)
-    // this.apiService.Ejecutar(this.xAPI).subscribe(
-    //   data => {
-    //     // console.log(data)
-    //     // console.log(posicion, this.lista.length)
-    //     posicion++
-    //     if (posicion > this.lista.length - 1) {
-    //       this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
-    //     } else {
-    //       this.insertBach(idperfil, posicion)
-    //     }
+    // console.log(this.xAPI)
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      data => {
+        // console.log(data)
+        // console.log(posicion, this.lista.length)
+        posicion++
+        if (posicion > this.lista.length - 1) {
+          this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
+        } else {
+          this.insertBach(idperfil, posicion)
+        }
 
 
-    //   },
-    //   error => {
-    //     console.error('Data: ', error)
+      },
+      error => {
+        console.error('Data: ', error)
 
-    //   }
-    // )
+      }
+    )
   
   }
 
@@ -301,10 +339,6 @@ export class ProfileComponent implements OnInit {
 
   }
 
-  async guardarPerfil(){
-
-    console.log(this.dataRolDetalles)
-  }
 
 
 

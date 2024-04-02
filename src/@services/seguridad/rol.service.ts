@@ -2,16 +2,36 @@ import { Injectable } from '@angular/core';
 
 
 
-export interface IRol{
+export interface IUser {
+  tipoacceso: number
+  respaldo: number
+  endpoint: string
+  login: string
+  clave: string
+  encriptamiento: string
+  nombre: string
+  descripcion: string
+  estatus: number
+  vigencia: number //80 a 160 dias
+  correo: string
+  observaciones: string
+  duraciontexto: number
+  duraciontiempo: number
+  oficina: string
+  regional: string
+}
+
+export interface IRol {
   nombre: string,
   descripcion: string,
-  estatus: number
+  estatus: number,
+  Menu?: Menu[]
 }
 
 
 
 
-export interface IPerfil{
+export interface IPerfil {
   nombre: string,
   descripcion: string,
   estatus: number,
@@ -20,36 +40,18 @@ export interface IPerfil{
 
 
 
-export interface Aplicacion{
-  id ?: string,
+export interface Aplicacion {
+  id?: string,
   nombre: string,
   url: string,
   comentario: string,
   version: string,
   autor: string,
-  Rol ?: IRol
-}
-
-export interface IModulo{
-  nombre : string,
-  Menu   : Menu[]
+  Rol?: IRol
 }
 
 
-export interface SubMenu{
-  url: string,22
-  js: string,
-  icono: string,
-  descripcion: string,
-  nombre: string,
-  accion: string,
-  clase: string,
-  color: string,
-  Privilegios ?: Privilegios[]
-  //SubMenu: []
-}
-
-export interface Menu{
+export interface SubMenu {
   url: string,
   js: string,
   icono: string,
@@ -58,11 +60,24 @@ export interface Menu{
   accion: string,
   clase: string,
   color: string,
-  Privilegios ?: Privilegios[],
-  SubMenu ?: SubMenu[]
+  Privilegios?: Privilegios[]
+  //SubMenu: []
 }
 
-export interface Privilegios{
+export interface Menu {
+  url: string,
+  js: string,
+  icono: string,
+  descripcion: string,
+  nombre: string,
+  accion: string,
+  clase: string,
+  color: string,
+  Privilegios?: Privilegios[],
+  SubMenu?: SubMenu[]
+}
+
+export interface Privilegios {
   metodo: string,
   descripcion: string,
   accion: string,

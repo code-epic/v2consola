@@ -104,9 +104,6 @@ export class AuthLoginV1Component implements OnInit {
   public version = "1.0.0";
   public fecha = "";
 
-  // Lifecycle Hooks
-  // -----------------------------------------------------------------------------------------------------
-
   /**
    * On init
    */
@@ -127,16 +124,7 @@ export class AuthLoginV1Component implements OnInit {
       });
   }
 
-  /**
-   * On destroy
-   */
-  ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
-    this._unsubscribeAll.next();
-    this._unsubscribeAll.complete();
-  }
-
-  async login() {
+  login() {
     this.submitted = true;
     // stop here if form is invalid
     if (this.loginForm.invalid) {
@@ -146,15 +134,10 @@ export class AuthLoginV1Component implements OnInit {
       this.loginService
         .getLogin(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe(
-          (data) => {
-            this.itk = data;
-            sessionStorage.setItem("token", this.itk.token);
+          (itk) => {
             this.loading = false;
             this.isHidden = false;
-
-            this.router.navigate(["home"]).then(() => {
-              window.location.reload();
-            });
+            this.loginService.Iniciar(itk.token)
           },
           (error) => {
             this.loading = false;
@@ -170,13 +153,22 @@ export class AuthLoginV1Component implements OnInit {
     }
   }
 
-  public send(form: NgForm): void {
-    if (form.invalid) {
-      for (const control of Object.keys(form.controls)) {
-        form.controls[control].markAsTouched();
-      }
-      return;
-    }
-    console.debug(`Token [${this.token}] generated`);
+
+  /**
+   * On destroy
+   */
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
+
+
+  // public send(form: NgForm): void {
+  //   if (form.invalid) {
+  //     for (const control of Object.keys(form.controls)) {
+  //       form.controls[control].markAsTouched();
+  //     }
+  //     return;
+  //   }
+  // }
 }

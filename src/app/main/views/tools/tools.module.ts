@@ -47,7 +47,7 @@ const routes = [
     canActivate: [AuthGuardGuard],
   },
   {
-    path: 'tools/api',
+    path: 'tools/api/:id',
     component: ApiListComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],

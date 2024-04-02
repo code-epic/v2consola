@@ -93,7 +93,6 @@ export class ListComponent implements OnInit {
     private taskService: TaskService,
     private apiService: ApiService,
     private msjService: WsocketsService,
-    private utilservice: UtilService
   ) {}
 
   async ngOnInit() {

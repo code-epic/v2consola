@@ -13,39 +13,34 @@
 
           <div class="row">
             <div class="form-group col-md-3">
-              <label class="form-label" for="descripcion">Tipo de Acceso</label>
-              <ng-select [items]="tipoacceso" [(ngModel)]="tipoacceso" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id"
-                placeholder="Seleccione Acceso"></ng-select>
+              <label class="form-label" for="descripcion">Tipo de acceso</label>
+              <ng-select [items]="tipoacceso" [(ngModel)]="iUser.tipoacceso"  [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id"
+                placeholder="Seleccione acceso"></ng-select>
             </div>
             <div class="form-group col-md-3" *ngIf="ldap">
               <label class="form-label" for="descripcion">Resaldo en cuenta</label>
-              <ng-select [items]="respaldo" [(ngModel)]="aplicacion" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" bindLabel="name" bindValue="id"
+              <ng-select [items]="respaldo" [(ngModel)]="iUser.respaldo" bindLabel="name" bindValue="id"
                 placeholder="Respaldo en cuenta"></ng-select>
             </div>
 
             <div class="form-group col-md-6" *ngIf="ldap">
               <label class="form-label" for="descripcion">End Point</label>
-              <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}" type="text"
-                placeholder="End Point" class="form-control">
+              <input [(ngModel)]="iUser.endpoint"  type="text" placeholder="End Point" class="form-control">
             </div>
 
             <div class="form-group col-md-3" *ngIf="property">
               <label class="form-label" for="login">Login</label>
-              <input style="font-size:14px;" [(ngModel)]="login" [ngModelOptions]="{standalone: true}" type="text"
-                placeholder="Login" class="form-control">
+              <input [(ngModel)]="iUser.login"  type="text"  placeholder="Login" class="form-control">
             </div>
 
             <div class="form-group col-md-3" *ngIf="property">
               <label class="form-label" for="Clave">Clave</label>
-              <input style="font-size:14px;" [(ngModel)]="clave" [ngModelOptions]="{standalone: true}" type="password"
-                placeholder="Clave" class="form-control">
+              <input [(ngModel)]="iUser.clave"  type="password"  placeholder="Clave" class="form-control">
             </div>
             <div class="form-group col-md-3" *ngIf="property">
               <label class="form-label" for="encriptamiento">Encriptamiento</label>
-              <ng-select [items]="formato" [(ngModel)]="encriptamienti" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" bindLabel="name" bindValue="id"
+              <ng-select [items]="formato" [(ngModel)]="iUser.encriptamiento" bindLabel="name" bindValue="id"
                 placeholder="Encriptamiento"></ng-select>
             </div>
      
@@ -55,37 +50,37 @@
           <div class="row">
             <div class="form-group col-md-5">
               <label class="form-label" for="descripcion">Nombre de usuario</label>
-              <input style="font-size:14px;" [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}" type="text"
+              <input [(ngModel)]="xnombre" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Nombre del usuario" class="form-control">
             </div>
             <div class="form-group col-md-5">
               <label class="form-label" for="descripcion">Descripcion del usaurio</label>
-              <input style="font-size:14px;" [(ngModel)]="xdescripcion" [ngModelOptions]="{standalone: true}" type="text"
+              <input [(ngModel)]="xdescripcion" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Descripcion del usuario" class="form-control">
             </div>
 
             <div class="form-group col-md-2">
               <label class="form-label" for="estatus">Estatus</label>
-              <ng-select [items]="estatus" [(ngModel)]="estatus"  bindLabel="name" bindValue="id" placeholder="Estatus"></ng-select>
+              <ng-select [items]="estatus" [(ngModel)]="iUser.estatus" bindLabel="name" bindValue="id" placeholder="Estatus"></ng-select>
             </div>
           </div>
 
           <div class="row">
             <div class="form-group col-md-2">
               <label class="form-label" for="tipoduracion">Vigencia de:</label>
-              <ng-select [items]="sesion" [(ngModel)]="sesion" bindLabel="name" bindValue="id"
+              <ng-select [items]="sesion" [(ngModel)]="iUser.vigencia" bindLabel="name" bindValue="id"
                 placeholder="Vigencia en"></ng-select>
             </div>
 
           
             <div class="form-group col-md-4">
               <label class="form-label" for="descripcion">Correo del usuario</label>
-              <input style="font-size:14px;" [(ngModel)]="correo" [ngModelOptions]="{standalone: true}" type="text"
+              <input [(ngModel)]="correo" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Correo del usuario" class="form-control">
             </div>
             <div class="form-group col-md-6">
               <label class="form-label" for="descripcion">Descripcion general</label>
-              <input style="font-size:14px;" [(ngModel)]="descripcion" [ngModelOptions]="{standalone: true}" type="text"
+              <input [(ngModel)]="descripcion" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Descripcion general" class="form-control">
             </div>
           </div>
@@ -95,38 +90,20 @@
 
             <div class="form-group col-md-2">
               <label class="form-label" for="tipoduracion">Duración de sesión</label>
-              <ng-select [items]="duracion" [(ngModel)]="tipoduracion" (ngModelChange)="selDuracion($event)"
-              [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+              <ng-select [items]="duracion" [(ngModel)]="iUser.duraciontexto" (ngModelChange)="selDuracion($event)" bindLabel="name" bindValue="id"
                 placeholder="Tipo Duración"></ng-select>
             </div>
 
             <div class="form-group col-md-2">
               <label class="form-label" for="tiempoduracion">Tiempo sesión</label>
-              <input type="number" [(ngModel)]="tiempoduracion" 
+              <input type="number" [(ngModel)]="iUser.duraciontiempo" 
               [ngModelOptions]="{standalone: true}" placeholder="Tiempo" class="form-control">
             </div>
             
-
-
-            <div class="form-group col-md-4">
-              <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-              <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" (ngModelChange)="selPerfil($event)" bindLabel="name" bindValue="id"
-                placeholder="Aplicación"></ng-select>
-            </div>
-
-            <div class="form-group col-md-4">
-              <label class="form-label" for="descripcion">Seleccionar Perfil</label>
-              <ng-select [items]="lstPerfil" [(ngModel)]="perfil" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" (ngModelChange)="selPerfilDetalles($event)" bindLabel="name" bindValue="id"
-                placeholder="Perfil"></ng-select>
-            </div>
-
-
             <div class="form-group col-md-4">
               <label class="form-label" for="origen">Oficina</label>
-              <ng-select [items]="dataOficina" [name]="xOficina" [addTag]="true" [(ngModel)]="xOficina"
-                [ngModelOptions]="{standalone: true}" bindLabel="name" (ngModelChange)="selectEventOficina($event)"
+              <ng-select [items]="dataOficina" [(ngModel)]="xOficina"
+                [ngModelOptions]="{standalone: true}"  bindId="id" bindLabel="name" (ngModelChange)="selectEventOficina($event)"
                 (input)="onFocusedOficina($event)" placeholder="Oficina"></ng-select>
             </div>
 
@@ -139,80 +116,104 @@
 
           
 
+            <div class="form-group col-md-3">
+              <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+              <ng-select [items]="lstAplicacion" [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
+                bindLabel="name" (ngModelChange)="selPerfil($event)" bindLabel="name" bindValue="id"
+                placeholder="Aplicación"></ng-select>
+            </div>
+
+            <div class="form-group col-md-4">
+              <label class="form-label" for="descripcion">Seleccionar Perfil</label>
+              <ng-select [items]="lstPerfil" [(ngModel)]="xperfil" [ngModelOptions]="{standalone: true}"
+                bindLabel="name"  bindLabel="name" bindValue="id"
+                placeholder="Perfil"></ng-select>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label class="form-label" for="descripcion">Nivel de traza</label>
+              <ng-select [items]="traza" [(ngModel)]="xtraza"  [ngModelOptions]="{standalone: true}"
+               bindLabel="name" bindValue="id"  placeholder="Nivel de traza"></ng-select>
+            </div>
+
+            <div class="form-group col-md-2 d-flex align-items-end">
+
+              <label class="form-label"></label>
+              <button type="button" class="btn btn-primary" (click)="agregarAplicacion()" style="width: 100%;">
+                <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+              </button>
+            </div>
+           
+
+          
+
 
           </div>
           <data class="row">
 
             <div class="col-md-12">
-              <ngx-datatable [rows]="dataRolDetalles" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-                  [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox" [headerHeight]="40"
-                  [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
-
-                  <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
-                      [draggable]="false" [resizeable]="false">
-                      <ng-template ngx-datatable-header-template let-value="value"
-                          let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-                          <div class="custom-control custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
-                                  id="headerChkbxRef" />
-                              <label class="custom-control-label" for="headerChkbxRef"></label>
+              <table class="table bootstrap core-bootstrap" >
+                <thead>
+                    <tr>
+                        <th>APLICACION</th>
+                        <th>PERFIL</th>
+                        <th>TRAZA</th>
+                        <th>ESTATUS</th>
+                        <th>ACCION</th>
+                    <tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let e of dataUsers; let i = index">
+                        <td>{{e.aplicacion}}</td>
+                        <td>{{e.perfil}}</td>
+                        <td>{{e.traza}}</td>
+                        <td *ngIf="e.estatus==0">
+                          <div class="badge badge-danger" >Inactivo</div>
+                        </td>
+                        <td *ngIf="e.estatus==1">
+                          <div class="badge badge-success">Activo</div>
+                      </td>
+                      <td *ngIf="e.id == null">
+                        <button  (click)="quitarElemento(i)" type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                          <span [data-feather]="'trash'" [class]="'cursor-pointer'"></span>
+                        </button>
+                      </td>
+                      <td *ngIf="e.id != null">
+                        <div ngbDropdown container="body">
+                          <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                            <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                          </button>
+                          <div ngbDropdownMenu>
+                            <a (click)="verPerfil(e.idapp)" ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
+                                [class]="'mr-50'"></span> Listar </a>
+                            <a (click)="eliminarPerfil(e.idapp)" ngbDropdownItem><span [data-feather]="'shuffle'"
+                                [size]="16" [class]="'mr-50'"></span>Eliminar</a>
                           </div>
-                      </ng-template>
-
-                      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
-                          let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-                          <div class="custom-control custom-checkbox">
-                              <input type="checkbox" class="custom-control-input" [checked]="isSelected"
-                                  (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
-                              <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
-                          </div>
-                      </ng-template>
-                  </ngx-datatable-column>
-
-                  <ngx-datatable-column name="MODULO" [width]="200">
-                      <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
-                          <div>
-                              <span class="font-weight-bold">{{ modulo }} </span>
-                          </div>
-                      </ng-template>
-
-                  </ngx-datatable-column>
-                  <ngx-datatable-column name="MENU" [width]="200">
-                      <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
-                          <div>
-                              <span class="font-weight-bold">{{ menu }} </span>
-                          </div>
-                      </ng-template>
-
-                  </ngx-datatable-column>
-                  <ngx-datatable-column name="ACCION" [width]="100">
-                      <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
-                          <div>
-                              <span class="font-weight-bold">{{ accion }} </span>
-                          </div>
-                      </ng-template>
-
-                  </ngx-datatable-column>
-
-
-              </ngx-datatable>
-
+                        </div>
+                      </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                </tfoot>
+            </table>
           </div>
 
           </data> 
-
+          <br>
+          <hr>
           <data class="row">
-            <div class="form-group col-md-9"></div>
-            <div class="form-group col-md-3">
-              <br>
+            <div class="form-group col-md-8"></div>
+            <div class="form-group col-md-4">
+              <br><br>
+              
 
               <div class="col-md-12" align="right">
-                <button type="button" class="btn btn-success" (click)="MdlAccion(mdlAcciones)">
-                  <i class="fa fa-list" aria-hidden="true"></i>&nbsp;Listar
+                <button type="button" class="btn btn-success" (click)="agregarUsuario()">
+                  <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
                 </button>
                 &nbsp;
-                <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                  <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
+                <button type="button" class="btn btn-warning" (click)="cancelar()">
+                  <i class="fa fa-close" aria-hidden="true"></i>&nbsp;Cancelar
                 </button>
               </div>
 

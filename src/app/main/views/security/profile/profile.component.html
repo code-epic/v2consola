@@ -8,113 +8,198 @@
         <section class="invoice-list-wrapper">
             <div class="card">
 
-                <div class="col-md-12" style="margin-top: 25px;">
-
-                    <!-- Primer -->
-                    <div class="row">
-
-
-                        <div class="form-group col-md-12">
-                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-                            <ng-select [items]="lstAplicaciones" [(ngModel)]="Perfil.aplicacion"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name" (ngModelChange)="selRol($event)"
-                                bindLabel="name" bindValue="id" placeholder="Seleccione Aplicación"></ng-select>
-                        </div>
-
-                        <div class="form-group col-md-5">
-                            <label class="form-label" for="descripcion">Seleccionar Rol</label>
-                            <ng-select [items]="dataRol" [(ngModel)]="rol" [ngModelOptions]="{standalone: true}"
-                                bindLabel="name" (ngModelChange)="selRolDetalle($event)" bindLabel="name" bindValue="id"
-                                placeholder="Seleccione Rol"></ng-select>
-                        </div>
-
-                        <div class="form-group col-md-3">
-                            <label class="form-label" for="descripcion">Nombre del Perfil</label>
-                            <input style="font-size:14px;" [(ngModel)]="Perfil.nombre" [ngModelOptions]="{standalone: true}"
-                                type="text" placeholder="Ingrese Nombre del Perfil" class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="origen">Descripcion del Perfil</label>
-                            <input style="font-size:14px;" [(ngModel)]="Perfil.descripcion"
-                                [ngModelOptions]="{standalone: true}" type="text"
-                                placeholder="Breve descripcion del Perfil" class="form-control">
-                        </div>
-                    </div>
+                <div class="col-md-12 ">
                     <br>
+                    <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+                        <li ngbNavItem>
+                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Perfiles</a>
+                            <ng-template ngbNavContent>
 
+                            
+
+                                <div class="col-md-12">
+                                    <ngx-datatable [rows]="lstPerfil" [rowHeight]="58" class="bootstrap core-bootstrap"
+                                        [limit]="10" [columnMode]="ColumnMode.force" [headerHeight]="40"
+                                        [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
+
+                                        <ngx-datatable-column name="APLICACION" prop="aplicacion" [width]="10">
+                                            <ng-template let-aplicacion="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ aplicacion }} </span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="PERFIL" prop="perfil" [width]="10">
+                                            <ng-template let-perfil="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ perfil}} </span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="DESCRIPCION" prop="descripcion" [width]="20">
+                                            <ng-template let-descripcion="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ descripcion }} </span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
+                                            <ng-template let-estatus="value" ngx-datatable-cell-template>
+
+                                                <div class="badge badge-danger" *ngIf="estatus==0">Inactivo</div>
+                                                <div class="badge badge-success" *ngIf="estatus==1">Activo</div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
+                                            <ng-template ngx-datatable-cell-template let-row="row">
+                                                <div ngbDropdown container="body">
+                                                    <button ngbDropdownToggle type="button"
+                                                        class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                                                        <span [data-feather]="'settings'"
+                                                            [class]="'cursor-pointer'"></span>
+                                                    </button>
+                                                    <div ngbDropdownMenu>
+                                                        <a ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
+                                                                [class]="'mr-50'"></span> Editar</a>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                    </ngx-datatable>
+
+
+                                </div>
+
+                            </ng-template>
+                        </li>
+                        <li ngbNavItem>
+                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>Registrar nuevo perfil</a>
+                            <ng-template ngbNavContent>
+
+                                <div class="col-md-12" style="margin-top: 25px;">
+
+                                    <!-- Primer -->
+                                    <div class="row">
+                
+                
+                                        <div class="form-group col-md-12">
+                                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                                            <ng-select [items]="lstAplicaciones" [(ngModel)]="Perfil.aplicacion"
+                                                [ngModelOptions]="{standalone: true}" bindLabel="name" (ngModelChange)="selRol($event)"
+                                                bindLabel="name" bindValue="id" placeholder="Seleccione Aplicación"></ng-select>
+                                        </div>
+                
+                                        <div class="form-group col-md-5">
+                                            <label class="form-label" for="descripcion">Seleccionar Rol</label>
+                                            <ng-select [items]="dataRol" [(ngModel)]="rol" [ngModelOptions]="{standalone: true}"
+                                                bindLabel="name" (ngModelChange)="selRolDetalle($event)" bindLabel="name" bindValue="id"
+                                                placeholder="Seleccione Rol"></ng-select>
+                                        </div>
+                
+                                        <div class="form-group col-md-3">
+                                            <label class="form-label" for="descripcion">Nombre del Perfil</label>
+                                            <input style="font-size:14px;" [(ngModel)]="Perfil.nombre" [ngModelOptions]="{standalone: true}"
+                                                type="text" placeholder="Ingrese Nombre del Perfil" class="form-control">
+                                        </div>
+                
+                                        <div class="form-group col-md-4">
+                                            <label class="form-label" for="origen">Descripcion del Perfil</label>
+                                            <input style="font-size:14px;" [(ngModel)]="Perfil.descripcion"
+                                                [ngModelOptions]="{standalone: true}" type="text"
+                                                placeholder="Breve descripcion del Perfil" class="form-control">
+                                        </div>
+                                    </div>
+                                    <br>
+                
+                                </div>
+                
+                
+                                <div class="col-md-12">
+                                    <ngx-datatable [rows]="dataRolDetalles" [rowHeight]="58" class="bootstrap core-bootstrap"
+                                        [limit]="10" [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
+                                        [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption"
+                                        (select)="onSelect($event)">
+                
+                                        <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
+                                            [draggable]="false" [resizeable]="false">
+                                            <ng-template ngx-datatable-header-template let-value="value"
+                                                let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
+                                                        (change)="selectFn(!allRowsSelected)" id="headerChkbxRef" />
+                                                    <label class="custom-control-label" for="headerChkbxRef"></label>
+                                                </div>
+                                            </ng-template>
+                                            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
+                                                let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" [checked]="isSelected"
+                                                        (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
+                                                    <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+                
+                                        <ngx-datatable-column name="MODULO" [width]="200">
+                                            <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ modulo }} </span>
+                                                </div>
+                                            </ng-template>
+                
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="MENU" [width]="200">
+                                            <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ menu }} </span>
+                                                </div>
+                                            </ng-template>
+                
+                                        </ngx-datatable-column>
+                                        <ngx-datatable-column name="ACCION" [width]="100">
+                                            <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span class="font-weight-bold">{{ accion }} </span>
+                                                </div>
+                                            </ng-template>
+                
+                                        </ngx-datatable-column>
+                
+                
+                                    </ngx-datatable>
+                
+                                </div>
+                
+                
+                
+                                <div class="col-md-12" align="right">
+                                    <br>
+                                    <button type="button" class="btn btn-success" (click)="guardarPerfil()">
+                                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                                    </button>
+                                    &nbsp;&nbsp;
+                                    <button type="button" class="btn btn-warning" (click)="Limpiar()">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
+                                    </button>
+                                </div>
+                                <br><br>
+                            </ng-template>
+                        </li>
+                    </ul>
+                    <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
                 </div>
 
 
-                <div class="col-md-12">
-                    <ngx-datatable [rows]="dataRolDetalles" [rowHeight]="58" class="bootstrap core-bootstrap"
-                        [limit]="10" [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
-                        [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption"
-                        (select)="onSelect($event)">
-
-                        <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
-                            [draggable]="false" [resizeable]="false">
-                            <ng-template ngx-datatable-header-template let-value="value"
-                                let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
-                                        (change)="selectFn(!allRowsSelected)" id="headerChkbxRef" />
-                                    <label class="custom-control-label" for="headerChkbxRef"></label>
-                                </div>
-                            </ng-template>
-                            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
-                                let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" [checked]="isSelected"
-                                        (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
-                                    <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
-                                </div>
-                            </ng-template>
-                        </ngx-datatable-column>
-
-                        <ngx-datatable-column name="MODULO" [width]="200">
-                            <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
-                                <div>
-                                    <span class="font-weight-bold">{{ modulo }} </span>
-                                </div>
-                            </ng-template>
-
-                        </ngx-datatable-column>
-                        <ngx-datatable-column name="MENU" [width]="200">
-                            <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
-                                <div>
-                                    <span class="font-weight-bold">{{ menu }} </span>
-                                </div>
-                            </ng-template>
-
-                        </ngx-datatable-column>
-                        <ngx-datatable-column name="ACCION" [width]="100">
-                            <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
-                                <div>
-                                    <span class="font-weight-bold">{{ accion }} </span>
-                                </div>
-                            </ng-template>
-
-                        </ngx-datatable-column>
-
-
-                    </ngx-datatable>
-
-                </div>
 
 
 
-                <div class="col-md-12" align="right">
-                    <br>
-                    <button type="button" class="btn btn-success" (click)="guardarPeril()">
-                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
-                    </button>
-                    &nbsp;&nbsp;
-                    <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
-                    </button>
-                </div>
-                <br><br>
+
+               
 
 
             </div>

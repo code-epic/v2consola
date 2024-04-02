@@ -27,7 +27,7 @@
         <div class="card tarjeta ecommerce-card col-sm-12">
 
           <div class="item-img text-center efecto-img">
-            <a [routerLink]="'/tools/api-list/'+product.ruta">
+            <a [routerLink]="'/tools/api-list/'+getUrl(product.id)">
               <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mongodb.png"
                 *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
               <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mysql.png"

@@ -1,9 +1,10 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { IUser } from '@services/seguridad/rol.service';
 import { UtilService } from '@services/util/util.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-import JSONFormatter from 'json-formatter-js';
+
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
 @Component({
@@ -20,15 +21,11 @@ export class UserComponent implements OnInit {
   @BlockUI('section-block') sectionBlockUI: NgBlockUI
 
   public contentHeader: object;
-  @ViewChild('tableRowDetails') tableRowDetails: any
-
+  // @ViewChild('dataUsers') dataUsers: any
 
   public ColumnMode = ColumnMode
   public SelectionType = SelectionType
   public basicSelectedOption: number = 10
-
-  public chkBoxSelected = []
-  public dataRolDetalles = []
 
   public xAPI: IAPICore = {
     funcion: '',
@@ -36,99 +33,44 @@ export class UserComponent implements OnInit {
     valores: {},
   };
 
-  public IDefinirMenu: DefinirMenu = {
-    nombre: '',
-    url: '',
-    js: '',
-    icon: '',
-    clase: '',
-    color: '',
-    tipo: 0,
-    idmod: 0
-  }
 
-  public IAccion: AgregarAccion = {
+
+
+  public iUser : IUser = {
+    tipoacceso: 0,
+    respaldo: 0,
     endpoint: '',
-    nomb: '',
-    func: '',
-    direc: ''
+    login: '',
+    clave: '',
+    encriptamiento: '',
+    nombre: '',
+    descripcion: '',
+    estatus: 1,
+    vigencia: 180,
+    correo: '',
+    observaciones: '',
+    duraciontexto: 1,
+    duraciontiempo: 5,
+    oficina: '',
+    regional: ''
   }
-
-  public IAddModulo: AddModulo = {
-    nomb: '',
-    idapp: 0
-  }
-
-  public IAccionMenu: AccionMenu = {
-    menuid: 0,
-    accionid: 0
-  }
-
-  public IAddSubMenu: AddSubMenu = {
-    url: '',
-    js: '',
-    icon: '',
-    nomb: '',
-    clase: '',
-    color: '',
-    tipo: undefined
-  }
-
-
-
-
-  public aplicacion
-  public xoficina
-  public menu
-
-  public oficina: string = ''
-  public oficinaid: string = ''
-  public menuid: string = ''
-  public accionid
-
-  public xnombre = ''
-  public xdescripcion = ''
-
-
-  public lstAplicaciones = []
-  public dataOficina = []
-  public showDiv: boolean = false
-  public datamenu = []
-
-  public lstEstatus = [
-    { id: "1", name: 'MENU' },
-    { id: '0', name: 'SUBMENU' }
-  ]
-
-  public tipoMenu = [
-    { id: 1, name: 'MENU' },
-    { id: 0, name: 'SUBMENU' }
-  ]
-
-  public metodos = [
-    { id: 'GET', name: 'GET' },
-    { id: 'POST', name: 'POST' },
-    { id: 'PUT', name: 'PUT' },
-    { id: 'DELETE', name: 'DELETE' },
-    { id: 'OPTIONS', name: 'OPTIONS' }
-  ]
-
   public tipoacceso = [
-    { id: '1', name: 'PROPIO' },
-    { id: '2', name: 'LDAP' },
-    { id: '3', name: 'DIRECTORIO ACTIVO' },
-    { id: '4', name: 'OTRO' },
+    { id: 0, name: 'SELECCIONAR' },
+    { id: 1, name: 'LOCAL' },
+    { id: 2, name: 'LDAP' },
+    { id: 3, name: 'DIRECTORIO ACTIVO' },
+    { id: 4, name: 'OTRO' },
   ]
 
   public respaldo = [
-    { id: '1', name: 'SI' },
-    { id: '2', name: 'NO' }
+    { id: 1, name: 'SI' },
+    { id: 0, name: 'NO' }
   ]
 
 
   public estatus = [
-    { id: '1', name: 'ACTIVO' },
-    { id: '2', name: 'INACTIVO' }
+    { id: 1, name: 'ACTIVO' },
+    { id: 0, name: 'INACTIVO' }
   ]
 
   public formato = [
@@ -150,11 +92,27 @@ export class UserComponent implements OnInit {
     { id: 180, name: '180 días' }
   ]
 
+  public traza = [
+    { id: '1|BAJA', name: 'BAJA' }, //CONEXIONES
+    { id: '2|MEDIA', name: 'MEDIA' }, //CONEXION - PETIONES ACCIONES I,U,R,D
+    { id: '3|ALTA', name: 'ALTA' } //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
+  ]
 
-  public ldap = false
+
+  public ldap : boolean = false
   public activedirectory = false
   public property = false
   public tiempoduracion = '0'
+  public lstAplicacion = []
+  public lstPerfil = []
+
+  public dataUsers = []
+  public lstUsersApp = []
+  public temprowData = [] 
+
+  public xaplicacion = ''
+  public xperfil = ''
+  public xtraza = '1|BAJA'
 
   constructor(
     private apiService: ApiService,
@@ -162,10 +120,6 @@ export class UserComponent implements OnInit {
     private modalService: NgbModal,
   ) { }
 
-  customChkboxOnSelect({ selected }) {
-    this.chkBoxSelected.splice(0, this.chkBoxSelected.length);
-    this.chkBoxSelected.push(...selected);
-  }
 
 
   ngOnInit(): void {
@@ -204,7 +158,7 @@ export class UserComponent implements OnInit {
   }
 
   selTipoAcceso(e) {
-    switch (parseInt(e)) {
+    switch (e) {
       case 1:
         this.property = true
         this.ldap = false
@@ -226,23 +180,6 @@ export class UserComponent implements OnInit {
   }
 
 
-  async selPerfil(e) {
-    this.xAPI.funcion = "_SYS_CPerfil";
-    this.xAPI.parametros = e
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        console.log(data)
-        this.lstAplicaciones = data.Cuerpo.map(e => {
-          e.id = e.identificador
-          e.name = e.nombre + ' : ' + e.VERSION
-          return e
-        });
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
 
 
   async CargarListaAplicaciones() {
@@ -250,8 +187,8 @@ export class UserComponent implements OnInit {
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.lstAplicaciones = data.Cuerpo.map(e => {
-          e.id = e.identificador
+        this.lstAplicacion = data.Cuerpo.map(e => {
+          e.id = e.identificador + '|' + e.nombre 
           e.name = e.nombre + ' : ' + e.VERSION
           return e
         });
@@ -262,11 +199,65 @@ export class UserComponent implements OnInit {
     )
   }
 
+  async selPerfil(e) {
+    this.xAPI.funcion = "_SYS_CPerfilesAPP";
+    this.xAPI.parametros = e.split('|')[0].toString()
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        
+        this.lstPerfil = data.Cuerpo.map(e => {
+          e.id = e.id + '|' + e.perfil
+          e.name = e.perfil
+          return e
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+
+
+  async agregarAplicacion(){
+    if ( this.xaplicacion == "" || this.xperfil == '' || this.xtraza == undefined) {
+      this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
+      return false
+    }
+    let user = {
+      'id' : null,
+      'iduser' : 0,
+      'idapp' : this.xaplicacion.split('|')[0],
+      'aplicacion': this.xaplicacion.split('|')[1],
+      'idper' : this.xperfil.split('|')[0],
+      'perfil' : this.xperfil.split('|')[1],
+      'idtra' : this.xtraza.split('|')[0],
+      'traza' : this.xtraza.split('|')[1],
+      'estatus' : 1
+    }
+    this.lstUsersApp.push(user)
+    this.lstPerfil = []
+    this.xaplicacion = ''
+    this.xperfil = ''
+    this.dataUsers = this.lstUsersApp
+  }
+
+  quitarElemento(i) {
+    console.log(i)
+  }
+  verPerfil(){}
+  eliminarPerfil(){
+
+  }
+
+
+  agregarUsuario(){
+
+  }
 
 
 
 
-
+  cancelar(){}
   
  
 
