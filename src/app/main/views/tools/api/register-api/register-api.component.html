@@ -22,7 +22,7 @@
               <span class="bs-stepper-box">2</span>
               <span class="bs-stepper-label">
                 <span class="bs-stepper-title">Paso 2</span>
-                <span class="bs-stepper-subtitle">Tipo de Inforación<nav></nav></span>
+                <span class="bs-stepper-subtitle">Tipo de Información<nav></nav></span>
               </span>
             </button>
           </div>
@@ -83,7 +83,7 @@
                 <div class="row">
                   <div class="form-group col-md-6">
                     <label class="form-label" for="distribucion">Distribución</label>
-                    <ng-select [items]="distribucion" [(ngModel)]="xAPIDB.distribucion" #distribucionx="ngModel"
+                    <ng-select [items]="LstDistribucion" [(ngModel)]="xAPIDB.distribucion" #distribucionx="ngModel"
                       [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion" required
                       bindLabel="name" bindId="id" bindValue="id" placeholder="Seleccione Distribución"></ng-select>
                     <span *ngIf="accountDetailsForm.submitted && distribucionx.invalid" class="invalid-form">
@@ -94,7 +94,7 @@
                   <div class="form-group col-md-6">
                     <label class="form-label" for="aplicacion">Aplicación</label>
                     <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPIDB.aplicacion" #aplicacionx="ngModel"
-                      [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion" required
+                      [class.error]="accountDetailsForm.submitted" id="aplicacion" name="aplicacion" required
                       bindLabel="name" bindValue="nombre" placeholder="Seleccione Aplicación"></ng-select>
                     <span *ngIf="accountDetailsForm.submitted && aplicacionx.invalid" class="invalid-form">
                       <small class="form-text text-danger" *ngIf="aplicacionx.errors.required">Este campo es
@@ -123,8 +123,9 @@
                   <div class="form-group col-md-6">
                     <label class="form-label" for="conexion">Conexión</label>
                     <ng-select [items]="drivers" [(ngModel)]="xAPIDB.driver" #driverx="ngModel"
-                      [class.error]="accountDetailsForm.submitted" id="id" name="id" required bindLabel="name"
-                      (ngModelChange)="selDataBase($event)" placeholder="Seleccione Conexión"></ng-select>
+                      [class.error]="accountDetailsForm.submitted" id="id" name="name" required bindLabel="name"
+                      bindValue="id" (ngModelChange)="selDataBase($event)"
+                      placeholder="Seleccione Conexión"></ng-select>
                     <span *ngIf="accountDetailsForm.submitted && driverx.invalid" class="invalid-form">
                       <small class="form-text text-danger" *ngIf="driverx.errors.required">Este campo es
                         requerido!</small>
@@ -338,7 +339,6 @@
             <div id="social-links" class="content">
               <form #socialLinkForm="ngForm">
 
-
                 <div class="row">
                   <div class="form-group col-md-3">
                     <label class="form-label" for="consumidores">Consumidores</label>
@@ -404,6 +404,18 @@
                 </div>
 
                 <div class="row">
+                  <div class="form-group col-md-3">
+                    <label class="form-label" for="bitacora">Bitacora</label>
+                    <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.bitacora" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Bitacora"></ng-select>
+                  </div>
+
+                  <div class="form-group col-md-3">
+                    <label class="form-label" for="respaldo">Respaldo</label>
+                    <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.respaldo" [ngModelOptions]="{standalone: true}"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Respaldo"></ng-select>
+                  </div>
+
                   <div class="form-group col-md-3">
                     <label class="form-label" for="estatus">Estatus</label>
                     <ng-select [items]="estatus" [(ngModel)]="xAPIDB.estatus" [ngModelOptions]="{standalone: true}"

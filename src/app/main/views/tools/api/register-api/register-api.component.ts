@@ -93,7 +93,9 @@ export class RegisterApiComponent implements OnInit {
     alias: '',
     driver: undefined,
     tiempoduracion: '20',
-    tipoduracion: 0
+    tipoduracion: 0,
+    bitacora: 0,
+    respaldo: 0
   }
 
   public xAPIAux: IAPICore = {
@@ -178,10 +180,16 @@ export class RegisterApiComponent implements OnInit {
     { id: 'APLICACIONES', name: 'APLICACIONES' },
   ]
 
-  public distribucion = [
+  public LstDistribucion = [
     { id: 1, name: 'COMPARTIDA' },
     { id: 0, name: 'PRIVADA' },
   ]
+
+  public LstDecision = [
+    { id: 1, name: 'SI' },
+    { id: 0, name: 'NO' },
+  ]
+
 
 
   public funcionalidad = [
@@ -389,16 +397,16 @@ export class RegisterApiComponent implements OnInit {
     };
   }
 
-  async CargarDrivers() {
+  CargarDrivers() {
     this.xAPI.funcion = "LESBDrivers";
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (datax) => {
         this.drivers = datax.map(e => {
-          e.id = 
           e.name = e.descripcion + ' - ' + '(' + e.basedatos + ')'
           // this.drivers.push(e)
           return e
-        });
+        })
+        console.log(this.drivers)
       },
       (error) => { console.log(error) }
     )

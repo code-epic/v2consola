@@ -128,6 +128,9 @@ export interface IAPI {
   tiempoduracion: string
   tipoduracion: number
   // 
+  bitacora: number
+  respaldo: number
+  puente?: string
 }
 
 
@@ -319,11 +322,11 @@ export class ApiService {
   Ejecutar(xAPI: IAPICore): Observable<any> {
 
     let hOpt = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-    })
-  }
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.getItem('token')
+      })
+    }
     var url = this.URL + "crud" + this.hash
     return this.http.post<any>(url, xAPI, hOpt)
   }

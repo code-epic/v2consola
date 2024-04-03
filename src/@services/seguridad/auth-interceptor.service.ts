@@ -63,7 +63,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     }).then((result) => {
       if (result.isConfirmed) {
         sessionStorage.removeItem('token')
-        window.location.href = '/';
+        window.location.href = '/login';
       }
     })
   }

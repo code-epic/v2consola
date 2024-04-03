@@ -1,5 +1,5 @@
 {
-  "cedula": "1",
+  "cedula": "3",
   "nombre": "Seguridad",
   "login": "seguridad",
   "correo": "code.epic.technologies@gmail.com",
@@ -34,8 +34,7 @@
             "clase": "item",
             "color": "",
             "Privilegio": [],
-            "SubMenu": [
-            ]
+            "SubMenu": []
           },
           {
             "url": "security",
