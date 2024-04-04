@@ -272,6 +272,7 @@ export class RegisterApiComponent implements OnInit {
     { id: false, name: 'NO' },
   ]
 
+  public btnInterfaz = true
 
   public dataModulo = []
 
@@ -514,20 +515,24 @@ export class RegisterApiComponent implements OnInit {
       case 'CODIGO':
         // this.divCodigofuente = ''
         // this.divArchivosng = ''
+        this.btnInterfaz = true
         break;
       case 'ARCHIVO':
+        this.btnInterfaz = true
 
         break;
       case 'LOGICA':
         // this.divCodigofuente = ''
         // this.divArchivosng = ''
+        this.btnInterfaz = true
         break;
       case 'CONSULTA':
         // this.divConsultang = ''
         // this.clickRefresh(0)
+        this.btnInterfaz = true
         break;
       case 'INTERFAZ':
-
+        this.btnInterfaz = false
         break;
 
       default:

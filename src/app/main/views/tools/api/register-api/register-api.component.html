@@ -191,19 +191,27 @@
               <form #personalInfoForm="ngForm">
 
                 <div class="row">
-                  <div class="form-group col-md-4">
+
+                  <div class="form-group col-md-12" *ngIf="!btnInterfaz">
+                    <label class="form-label" for="metodo">Puente</label>
+                    <input type="text" [(ngModel)]="xAPIDB.puente" [ngModelOptions]="{standalone: true}"
+                      class="form-control" placeholder="Puente">
+                  </div>
+
+
+                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
                     <label class="form-label" for="metodo">Metodo</label>
                     <ng-select [items]="metodo" (ngModelChange)="onMetodo($event)" [(ngModel)]="xAPIDB.metodo"
                       [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
                       placeholder="Seleccione Metodo"></ng-select>
                   </div>
-                  <div class="form-group col-md-2">
+                  <div class="form-group col-md-2" *ngIf="btnInterfaz">
                     <label class="form-label" for="relacional">Relacional</label>
                     <ng-select [items]="relacional" [(ngModel)]="xAPIDB.relacional" [ngModelOptions]="{standalone:true}"
                       bindLabel="name" bindId="id" bindValue="id" (ngModelChange)="clickRelacional(xAPIDB.relacional)"
                       placeholder="Seleccione Relacional"></ng-select>
                   </div>
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
                     <label class="form-label" for="coleccion">Colección en caso de ser NOSQL</label>
                     <input type="text" [(ngModel)]="xAPIDB.coleccion" [disabled]="DisabledNoSql == true"
                       [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Coleccion">
@@ -211,27 +219,27 @@
                 </div>
 
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
                     <label class="form-label" for="nombretabla">Nombre de la tabla</label>
                     <ng-select [items]="dataModulo" [(ngModel)]="tabla" [ngModelOptions]="{standalone:true}"
                       bindLabel="name" (ngModelChange)='selectEventModulo($event)'
                       placeholder="Seleccione Relacional"></ng-select>
                   </div>
 
-                  <div class="form-group col-md-2">
+                  <div class="form-group col-md-2" *ngIf="btnInterfaz">
                     <label class="form-label" for="criterio">Tipo de Criterio</label>
                     <ng-select [items]="lstDml" [(ngModel)]="xdml" [disabled]="DisabledTipoDato == true"
                       [ngModelOptions]="{standalone: true}" (ngModelChange)='onDml($event)' bindLabel="nombre"
                       bindValue="id" placeholder="Seleccione Tipo de dato"></ng-select>
                   </div>
 
-                  <div class="form-group col-md-2">
+                  <div class="form-group col-md-2" *ngIf="btnInterfaz">
                     <label class="form-label" for="funcion">Valor por defecto</label>
                     <input type="text" [(ngModel)]="defecto" [ngModelOptions]="{standalone: true}" class="form-control"
                       placeholder="Valor por defecto">
                   </div>
 
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
                     <label class="form-label" for="version">Condición</label>
                     <ng-select [items]="lstcondicion" [disabled]="xcondicion == true" [(ngModel)]="condicion"
                       [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id" bindValue="name"
@@ -241,25 +249,25 @@
                 </div>
 
                 <div class="row">
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
                     <label class="form-label" for="campo">Nombre del campo</label>
                     <ng-select [items]="dataCampo" [(ngModel)]="campo" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" bindValue="name" placeholder="Seleccione Campo"></ng-select>
                   </div>
 
 
-                  <div class="form-group col-md-3">
+                  <div class="form-group col-md-3" *ngIf="btnInterfaz">
                     <label class="form-label" for="alias">Alias</label>
                     <input type="text" [(ngModel)]="alias" [ngModelOptions]="{standalone: true}" class="form-control"
                       placeholder="Alias">
                   </div>
 
-                  <div class="form-group col-md-4">
+                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
                     <label class="form-label" for="tipodatox">Tipo de dato</label>
                     <ng-select [items]="lsttipodato" [(ngModel)]="tipodato" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" bindValue="id" placeholder="Seleccione Tipo de dato"></ng-select>
                   </div>
-                  <div class="form-group col-md-1" style="margin-top: 24px;">
+                  <div class="form-group col-md-1" style="margin-top: 24px;" *ngIf="btnInterfaz">
                     <button class="btn btn-success" (click)="agregarEntrada()">+</button>
                   </div>
                 </div>
@@ -287,12 +295,12 @@
                 </div>
 
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
                     <label class="form-label" for="parametros">Parametros</label>
                     <input type="text" class="form-control" placeholder="Parametros">
                   </div>
 
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
                     <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
                     <ng-select [items]="retorn" bindLabel="descripcion" placeholder="Seleccione Valor Retorno"
                       bindId="id">
@@ -304,14 +312,14 @@
 
 
                 <div class="row">
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
                     <label class="form-label" for="version">Funciones de la prueba</label>
                     <ng-select [items]="funciones" [(ngModel)]="funcionalidad" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindId="id" placeholder="Seleccione Funciones"></ng-select>
                   </div>
 
 
-                  <div class="form-group col-md-6">
+                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
                     <label class="form-label" for="funcion">Agregar columna de la consulta</label>
                     <input type="text" [(ngModel)]="xAPIDB.consumidores" [ngModelOptions]="{standalone: true}"
                       class="form-control" placeholder="Agregar columna de la consulta">
