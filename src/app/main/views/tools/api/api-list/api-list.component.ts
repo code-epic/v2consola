@@ -37,30 +37,7 @@ export class ApiListComponent implements OnInit {
 
   public drivers = []
 
-  codeMOEsquemaJson: any = {
-    theme: 'idea',
-    mode: 'application/ld+json',
-    lineNumbers: true,
-    lineWrapping: true,
-    foldGutter: true,
-    // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lint: true,
-    autofocus: true
-  };
 
-  codeJson: any = {
-    theme: 'idea',
-    mode: 'text/typescript',
-    lineNumbers: true,
-    lineWrapping: true,
-    foldGutter: true,
-    // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lint: true
-  };
 
   public id : string = ''
 
@@ -124,7 +101,7 @@ export class ApiListComponent implements OnInit {
     this.drivers = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
-        console.log(data)
+        // console.log(data)
         this.drivers = await data
       },
       (error) => {

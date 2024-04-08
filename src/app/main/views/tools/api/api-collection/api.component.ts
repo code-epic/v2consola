@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-import { ApiService, IAPICore, RestoreAPI } from '@services/apicore/api.service';
+import { ApiService, IAPICore, ProcessID, RestoreAPI } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { PdfService } from '@services/pdf/pdf.service';
 
@@ -10,6 +10,8 @@ import { UtilService } from '@services/util/util.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { environment } from 'environments/environment';
+import { WsocketsService } from '@services/websockets/wsockets.service';
+import { TaskService } from '@services/apicore/task.service';
 
 @Component({
   selector: 'app-api',
@@ -142,6 +144,14 @@ export class ApiComponent implements OnInit {
 
   public urlControl = ''
 
+  public pID: ProcessID = {
+    id: "",
+    estatus: false,
+    mensaje: "",
+    segundos: "",
+    contenido: "",
+  };
+
 
   constructor(
     private rutaActiva: ActivatedRoute,
@@ -150,7 +160,9 @@ export class ApiComponent implements OnInit {
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
     private pdf: PdfService,
-    private router: Router
+    private taskService: TaskService,
+    private router: Router,
+    private msjService: WsocketsService,
   ) {
   }
 
@@ -221,7 +233,7 @@ export class ApiComponent implements OnInit {
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
-        console.log(data)
+        // console.log(data)
         if (data == null) return
 
         await data.map(e => {
@@ -238,24 +250,57 @@ export class ApiComponent implements OnInit {
     );
   }
 
-  ExportApi() {
+  async ExportApi() {
+ 
+    let nameFnx = 'Fnx_ExportarAPI'
     this.fnx = {
-      'funcion': 'Fnx_ExportAPI',
-      'basedatos': 'sandra-server',
+      'funcion': nameFnx,
+      'basedatos': 'code-epic',
       'user': this.IExportAPI.usuario,
-      'passw': this.IExportAPI.clave,
+      'pass': this.IExportAPI.clave,
       'driver': this.driversAPP
-    }
-    this.apiService.ExecFnx(this.fnx).subscribe(
-      (data) => {
-        this.utilservice.AlertMini('bottom-end', 'success', 'Backup Generado', 3000)
-        this.apiService.DwsCdn('bck-export/apicore.zip')
-        this.modalService.dismissAll()
-      },
-      (error) => {
-        this.utilservice.AlertMini('top-end', 'success', error, 3000)
-        console.log(error)
-      })
+    };
+    await Swal.fire({
+      title: `Va a descargar la coleccion de API `,
+      text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonText: "Cancelar",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, Descargar!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.apiService.ExecFnx(this.fnx).subscribe(
+          (data) => {
+            // console.log(data);
+            this.pID.id = data.contenido.id;
+            this.pID.estatus = true;
+            this.msjService.lstpid$.emit(this.pID);
+            this.modalService.dismissAll()
+            this.taskService
+              .set(data.contenido.id, nameFnx, 'Descargando api')
+              .then((e) => {
+                this.apiService.ConsultarPidRecursivo(
+                  data.contenido.id,
+                  'Descargando api'
+                );
+              })
+              .catch((e) => console.log(e));
+
+             
+              
+           
+          },
+          (error) => {
+            console.log(error);
+          }
+        );
+      }
+    });
+
+
+
   }
 
   ListadoApis() {

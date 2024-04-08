@@ -22,6 +22,8 @@ import { WsocketsService } from '@services/websockets/wsockets.service';
 import { TaskService } from '@services/apicore/task.service';
 import Swal from 'sweetalert2';
 import { environment } from 'environments/environment';
+import { ApiService } from '@services/apicore/api.service';
+import { UtilService } from '@services/util/util.service';
 
 @Component({
   selector: 'app-navbar',
@@ -96,7 +98,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _coreSidebarService: CoreSidebarService,
     private _mediaObserver: MediaObserver,
     public _translateService: TranslateService,
-    private loginService: LoginService
+    private loginService: LoginService, 
+    private apiService: ApiService,
+    private utilservice: UtilService,
   ) {
 
  
@@ -189,19 +193,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.msjService.lstpid$.subscribe(
       pid => {
         this.blCargando = pid.estatus
+        
         if ( !pid.estatus){
           this.taskService.update(pid.id)
+
           Swal.fire({
             title: 'Proceso Finalizado',
-            text: `Su proyecto a sido clonado exitosamente!`,
+            text: pid.contenido == "Descargando api"?`Felicitaciones`:`Su proyecto a sido clonado exitosamente!`,
             icon: 'success',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Ir al proyecto!'
+            confirmButtonText: pid.contenido == "Descargando api"?'Descargar':'Ir al proyecto!'
           }).then((result) => {
             if (result.isConfirmed) {
-              window.open(environment.Url+'/'+ pid.contenido)
+              if (pid.contenido == "Descargando api"){
+                 this.utilservice.AlertMini('bottom-end', 'success', 'Backup Generado', 3000)
+                 this.apiService.DwsCdn('bck-export/apicore.zip')
+              }else{
+                window.open(environment.Url+'/'+ pid.contenido)
+              }
+             
+            
             }
           })
         }

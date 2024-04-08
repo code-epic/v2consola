@@ -367,7 +367,7 @@ export class ApiService {
 
   DwsCdn(peticion: string) {
     let ruta = this.URL + 'dwsother/' + peticion
-    // console.log(ruta)
+    console.log(ruta)
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -377,6 +377,7 @@ export class ApiService {
     }
 
     this.http.get(ruta, httpOptions).subscribe((response: any) => {
+      console.log(response)
       const blob = new Blob([response], { type: 'application/zip' })
       const url = window.URL.createObjectURL(blob)
       window.open(url)
