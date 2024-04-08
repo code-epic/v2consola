@@ -9,12 +9,24 @@ import { UtilService } from '../util/util.service';
 
 export class PdfService {
 
-  public rowsAPIS = []
-
   ListadoDeApis(data: any) {
+    const tableData = data.map(item => [item.funcion, item.estatus ? 'ACTIVO' : 'INACTIVO', item.version, item.distribucion ? 'COMPARTIDA' : 'PRIVADA', item.metodo]);
+
     const doc = new jsPDF();
-    const pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
     const pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
+
+    // Obtener la longitud del título
+    const fontSize = 20;
+    const txt = "LISTA DE APIS";
+    const textWidth = doc.getStringUnitWidth(txt) * fontSize / doc.internal.scaleFactor;
+
+    // Calcular la posición para centrar el título
+    const x = (pageWidth - textWidth) / 2;
+    const y = 15; // Altura deseada
+
+    // Agregar el título al documento
+    doc.text(txt, x, y);
+
     doc.setProperties({
       title: "LISTA DE APIS",
       subject: "https://github.com/elpoloxrodriguez",
@@ -23,48 +35,15 @@ export class PdfService {
       creator: "SANDRA SERVER - CODE EPIC TECHNOLOGIES",
     });
 
-    // doc.addImage('assets/images/pdf/sunad.png', "PNG", 10, 10, 20, 25);
-    // doc.addImage('assets/images/pdf/fona.png', "PNG", 180, 10, 20, 25);
-    // doc.addImage(Qr, "PNG", 170, 255, 30, 30);
-
-
-
     autoTable(doc, {
-      styles: { fillColor: [128, 24, 24], halign: 'center' },
-      columnStyles: { 0: { halign: 'center', fillColor: [153, 153, 153] } }, // Cells in first column centered and green
-      margin: { top: 0 },
-      head: [['LISTA DE API-REST']],
+      head: [['FUNCION', 'ESTATUS', 'DRIVER', 'DISTRIBUCIÓN', 'METODO']],
+      body: tableData,
       startY: 20,
-    })
-    this.rowsAPIS.push(data)
-
-    console.log(this.rowsAPIS)
-
-
-    autoTable(doc, {})
-    doc.setFontSize(10);
-    doc.setFont(undefined, "");
-    autoTable(doc, {
-      head: [['FUNCION', 'DRIVER', 'METODO']],
-      body: [data[0], data[0], data[0]]
+      styles: { fillColor: [153, 153, 153], halign: 'center', overflow: "linebreak", fontSize: 9, valign: "middle" },
+      columnStyles: { 0: { halign: 'justify' } }
     });
 
-
-
-    // autoTable(doc, {
-    //   styles: { fillColor: [153, 153, 153], halign: 'center', overflow: "linebreak", fontSize: 9, valign: "middle", },
-    //   columnStyles: { 0: { halign: 'justify', } }, // Cells in first column centered and green
-    //   head: [['CONCEPTO', 'PERÍODO', 'MONTO', 'DEPÓSITO', 'FECHA']],
-    //   body: this.rowsAPIS,
-    //   startY: 30,
-    // })
-
-
-
-
     doc.save("Lista-de-Apis.pdf");
-    // doc.autoPrint();
-    // doc.output("dataurlnewwindow", { filename: 'Certificado.pdf' });
   }
 
   generarPDF(data: any) {

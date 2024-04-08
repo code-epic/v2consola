@@ -105,6 +105,11 @@ export class ApiComponent implements OnInit {
     { id: false, name: 'INACTIVO' },
   ]
 
+  public IExportAPI = {
+    usuario: '',
+    clave: ''
+  }
+
   public archivos = []
 
   public rutaURL
@@ -220,7 +225,7 @@ export class ApiComponent implements OnInit {
         if (data == null) return
 
         await data.map(e => {
-          e.descripcion = e.descripcion==undefined?'':e.descripcion
+          e.descripcion = e.descripcion == undefined ? '' : e.descripcion
           this.developer.push(e)
         })
         this.rowData = this.developer;
@@ -237,14 +242,15 @@ export class ApiComponent implements OnInit {
     this.fnx = {
       'funcion': 'Fnx_ExportAPI',
       'basedatos': 'sandra-server',
-      'user': 'elpolox',
-      'passw': 'Arrd17818665',
+      'user': this.IExportAPI.usuario,
+      'passw': this.IExportAPI.clave,
       'driver': this.driversAPP
     }
     this.apiService.ExecFnx(this.fnx).subscribe(
       (data) => {
         this.utilservice.AlertMini('bottom-end', 'success', 'Backup Generado', 3000)
         this.apiService.DwsCdn('bck-export/apicore.zip')
+        this.modalService.dismissAll()
       },
       (error) => {
         this.utilservice.AlertMini('top-end', 'success', error, 3000)
@@ -379,6 +385,8 @@ export class ApiComponent implements OnInit {
 
 
 
+
+
   ValoresMasivos() {
     let cargaMasiva = {
       codigo: this.llave,
@@ -457,6 +465,16 @@ export class ApiComponent implements OnInit {
     this.modalService.open(modal, {
       centered: true,
       size: 'xl',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  ModalExportarArchivo(modal) {
+    this.modalService.open(modal, {
+      centered: true,
+      size: 'sm',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',
