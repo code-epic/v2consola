@@ -414,7 +414,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   RegistrarAPI() {
-    this.xAPIDB.driver = this.driversID
+    // this.xAPIDB.driver = this.driversID
     this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString())
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
     // this.xAPIDB.distribucion = this.xAPIDB.distribucion == 'PRIVADA' ? 0 : 1
@@ -575,7 +575,6 @@ export class RegisterApiComponent implements OnInit {
       default:
         break;
     }
-    console.log(this.xAPIDB)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         let i = 0

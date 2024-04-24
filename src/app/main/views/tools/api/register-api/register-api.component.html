@@ -124,8 +124,7 @@
                     <label class="form-label" for="conexion">Conexión</label>
                     <ng-select [items]="drivers" [(ngModel)]="xAPIDB.driver" #driverx="ngModel"
                       [class.error]="accountDetailsForm.submitted" id="id" name="name" required bindLabel="name"
-                      bindValue="id" (ngModelChange)="selDataBase($event)"
-                      placeholder="Seleccione Conexión"></ng-select>
+                      (ngModelChange)="selDataBase($event)" placeholder="Seleccione Conexión"></ng-select>
                     <span *ngIf="accountDetailsForm.submitted && driverx.invalid" class="invalid-form">
                       <small class="form-text text-danger" *ngIf="driverx.errors.required">Este campo es
                         requerido!</small>

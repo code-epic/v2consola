@@ -22,7 +22,7 @@
       "@core": [
         "@core/"
       ],
-      "@aseets": [
+      "@assets": [
         "assets/"
       ],
       "@services": [
