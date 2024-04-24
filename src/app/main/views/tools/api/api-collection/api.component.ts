@@ -438,6 +438,7 @@ export class ApiComponent implements OnInit {
       ruta: this.hashcontrol,
       nombre: this.archivos[0].name,
       funcion: "SetPath",
+      inicio: this.utilservice.FechaActual(0),
       fin: this.utilservice.FechaActual(0),
       tipo: 'ZIP',
       sistema: 'CORE',
