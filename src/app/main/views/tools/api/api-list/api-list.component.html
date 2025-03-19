@@ -4,13 +4,30 @@
 
     <section id="ecommerce-searchbar" class="ecommerce-searchbar">
       <div class="row mt-1">
-        <div class="col-sm-12">
-          <div class="input-group input-group-merge">
-            <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
+        <!-- Search Bar -->
+        <div class="col-md-6 col-sm-12 mb-3">
+          <div class="input-group">
+            <input type="text" class="form-control search-product w-100" id="shop-search" placeholder="Buscar"
               [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" />
-            <div class="input-group-append">
-              <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
-            </div>
+          </div>
+        </div>
+    
+        <!-- Select Dropdown -->
+        <div class="col-md-6 col-sm-12 mb-3">
+          <div class="input-group">
+            <ng-select class="w-100" [items]="rowData" [(ngModel)]="selectCustomSelected" bindLabel="name" bindValue="name">
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <div style="margin: 10px 0" class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ item.funcion }}</h5> <!-- Mostrar el campo "funcion" -->
+                    <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6> <!-- Mostrar el campo "descripcion" -->
+                    <p class="card-text">
+                       {{ item.tipo }} --- {{ item.aplicacion }} 
+                    </p>
+                  </div>
+                </div>
+              </ng-template>
+            </ng-select>
           </div>
         </div>
       </div>
@@ -68,7 +85,7 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="d-flex justify-content-center">
-            <ngb-pagination [collectionSize]="(drivers | filter: searchText:'funcion').length" [(page)]="page"
+            <ngb-pagination [collectionSize]="(drivers | filter: searchText:'descripcion').length" [(page)]="page"
               [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true">
               <!-- Custom pagination icons -->
               <ng-template ngbPaginationPrevious><span [data-feather]="'chevron-left'" [class]="'font-weight-bolder'"

@@ -189,6 +189,7 @@ export class LoginService {
         //   'success'
         // )
         // this.router.navigate(['login']);
+        this.clearSession()
         this.router.navigate(["login"]).then(() => {
           this.clearSession()
           window.location.reload();

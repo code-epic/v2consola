@@ -1,4 +1,6 @@
 @import '@core/scss/base/pages/app-ecommerce.scss';
+@import '@core/scss/angular/libs/select.component.scss';
+
 
 
 .tarjeta {
@@ -28,3 +30,8 @@
     height: auto;
     /* Maintains aspect ratio */
 }
+
+.search-product {
+    width: 100%; /* Ocupa el 100% del ancho disponible */
+    max-width: 100%; /* Evita que se desborde */
+  }

@@ -38,8 +38,16 @@ export class ApiListComponent implements OnInit {
   public drivers = []
 
 
+  public selectCustomSelected = [];
+
+
 
   public id : string = ''
+
+  public developer = []
+  public rowData = []
+  public count
+  public tempData = []
 
 
   constructor(
@@ -58,9 +66,9 @@ export class ApiListComponent implements OnInit {
 
 
 
-   ngOnInit() {
+  async  ngOnInit() {
     
-
+    await this.ListarApis()
     this.id = this.rutaActiva.snapshot.params.id
     this.CargarDrivers()
     this.contentHeader = {
@@ -87,6 +95,33 @@ export class ApiListComponent implements OnInit {
       }
     };
 
+  }
+
+  async ListarApis() {
+
+    this.developer = []
+    this.xAPI.funcion = '_SYS_R_ListarApisAPP'
+    this.xAPI.parametros = 'ejercito'
+    this.xAPI.valores = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      async data => {
+        // console.log(data)
+        if (data == null) return
+
+        await data.map(e => {
+          e.descripcion = e.descripcion == undefined ? '' : e.descripcion
+          this.selectCustomSelected.push(e)
+          // console.log(e)
+        })
+        console.log(this.selectCustomSelected)
+        this.rowData = this.selectCustomSelected;
+        this.count = this.rowData.length
+        this.tempData = this.rowData;
+      },
+      (error) => {
+        console.error(error)
+      }
+    );
   }
 
 

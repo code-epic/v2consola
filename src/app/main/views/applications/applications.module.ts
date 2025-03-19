@@ -31,6 +31,7 @@ import { BlockUIModule } from 'ng-block-ui';
 import { InstallComponent } from './install/install.component';
 import { MenuComponent } from './menu/menu.component';
 import { ListComponent } from './list/list.component';
+import { TerminalComponent } from './terminal/terminal.component';
 
 
 const routes = [
@@ -52,6 +53,12 @@ const routes = [
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
+  {
+    path: 'applications/terminal',
+    component: TerminalComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  },
 ];
 
 
@@ -59,7 +66,8 @@ const routes = [
   declarations: [
     InstallComponent,
     MenuComponent,
-    ListComponent
+    ListComponent,
+    TerminalComponent
   ],
   imports: [
     RouterModule.forChild(routes),
