@@ -32,6 +32,8 @@ import { InstallComponent } from './install/install.component';
 import { MenuComponent } from './menu/menu.component';
 import { ListComponent } from './list/list.component';
 import { TerminalComponent } from './terminal/terminal.component';
+import { ConciliationComponent } from './conciliation/conciliation.component';
+import { TextMessagingComponent } from './text-messaging/text-messaging.component';
 
 
 const routes = [
@@ -59,6 +61,18 @@ const routes = [
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
+  {
+    path: 'applications/conciliation',
+    component: ConciliationComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'applications/sms',
+    component: TextMessagingComponent,
+    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  }
 ];
 
 
@@ -67,7 +81,9 @@ const routes = [
     InstallComponent,
     MenuComponent,
     ListComponent,
-    TerminalComponent
+    TerminalComponent,
+    ConciliationComponent,
+    TextMessagingComponent
   ],
   imports: [
     RouterModule.forChild(routes),

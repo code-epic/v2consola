@@ -399,6 +399,31 @@ export class ApiService {
     return this.http.post<any>(ruta, tpf, httpOptions)
   }
 
+    // Servicio para sandra_sms
+    ConsultarPidSandraSms(id: string, paquete: any): Promise<any> {
+      return new Promise((resolve, reject) => {
+        this.ExecFnxId(id).subscribe(
+          (data) => {
+            setTimeout(() => {
+              if (data.documento == 'PROCESADO') {
+                this.pID.id = id;
+                this.pID.estatus = false;
+                this.pID.contenido = paquete;
+                this.ws.pidDevice$.emit(this.pID);
+                resolve(data); // Resuelve la promesa con los datos
+              } else {
+                this.ConsultarPidSandraSms(id, paquete).then(resolve).catch(reject);
+              }
+            }, 1000);
+          },
+          (error) => {
+            // console.log(error);
+            reject(error); // Rechaza la promesa en caso de error
+          }
+        );
+      });
+    }
+
 
 
   //ListarModulos

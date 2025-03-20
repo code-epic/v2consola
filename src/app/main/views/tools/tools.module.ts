@@ -38,7 +38,6 @@ import { ApiDetailsComponent } from './api/api-details/api-details.component';
 import { RegisterApiComponent } from './api/register-api/register-api.component';
 import { SqlFormatPipe } from '@core/pipes/sql-format.pipe';
 import { ApplicationsComponent } from './applications/applications.component';
-import { ConciliationComponent } from '../conciliation/conciliation/conciliation.component';
 
 const routes = [
   {
@@ -88,12 +87,6 @@ const routes = [
     component: RegisterApiComponent,
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
-  },
-  {
-    path: 'conciliation',
-    component: ConciliationComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
-    canActivate: [AuthGuardGuard],
   }
 
 ];
@@ -108,7 +101,6 @@ const routes = [
     RegisterApiComponent,
     SqlFormatPipe,
     ApplicationsComponent,
-    ConciliationComponent
   ],
   imports: [
     RouterModule.forChild(routes),
