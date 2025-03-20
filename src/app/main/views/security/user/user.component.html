@@ -18,18 +18,18 @@
                 (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id"
                 placeholder="Seleccione acceso"></ng-select>
             </div>
-            <div class="form-group col-md-3" *ngIf="ldap">
+            <div class="form-group col-md-2" *ngIf="ldap">
               <label class="form-label" for="descripcion">Resaldo en cuenta</label>
               <ng-select [items]="respaldo" [(ngModel)]="iUser.respaldo" bindLabel="name" bindValue="id"
                 placeholder="Respaldo en cuenta"></ng-select>
             </div>
 
-            <div class="form-group col-md-6" *ngIf="ldap">
+            <div class="form-group col-md-4" *ngIf="ldap">
               <label class="form-label" for="descripcion">End Point</label>
               <input [(ngModel)]="iUser.endpoint"  type="text" placeholder="End Point" class="form-control">
             </div>
 
-            <div class="form-group col-md-3" *ngIf="property">
+            <div class="form-group col-md-3" *ngIf="property || ldap">
               <label class="form-label" for="login">Login</label>
               <input [(ngModel)]="iUser.login"  type="text"  placeholder="Login" class="form-control">
             </div>
