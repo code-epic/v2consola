@@ -29,3 +29,46 @@
     height: auto;
     /* Maintains aspect ratio */
 }
+
+
+/* search-bar.component.css */
+.ecommerce-searchbar {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+}
+
+/* Asegurar que el select, input y ng-select tengan el mismo estilo */
+select.form-control,
+input.form-control,
+ng-select.form-control {
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px; /* Asegurar que el texto tenga el mismo tamaño */
+}
+
+/* Ajustar el ícono de búsqueda */
+.input-group-text {
+  height: 40px;
+  background-color: #fff;
+  border-left: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Estilos específicos para ng-select */
+ng-select.form-control .ng-select-container {
+  height: 40px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+/* Asegurar que no haya superposición */
+.col-sm-4, .col-sm-8 {
+  padding-right: 5px;
+  padding-left: 5px;
+}

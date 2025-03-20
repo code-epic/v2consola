@@ -7,22 +7,37 @@
         <!-- Search Bar -->
         <div class="col-md-6 col-sm-12 mb-3">
           <div class="input-group">
-            <input type="text" class="form-control search-product w-100" id="shop-search" placeholder="Buscar"
-              [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" />
+            <input type="text" 
+                   class="form-control search-product w-100" 
+                   id="shop-search" 
+                   placeholder="Buscar"
+                   [(ngModel)]="searchText" 
+                   aria-label="Search..." 
+                   aria-describedby="shop-search"
+                   style="height: 40px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;" />
           </div>
         </div>
     
         <!-- Select Dropdown -->
         <div class="col-md-6 col-sm-12 mb-3">
           <div class="input-group">
-            <ng-select class="w-100" [items]="rowData" [(ngModel)]="selectCustomSelected" bindLabel="name" bindValue="name">
+            <ng-select class="w-100" 
+                       [items]="rowData" 
+                       [(ngModel)]="selectCustomSelected" 
+                       bindLabel="funcion" 
+                       bindValue="id"
+                       [searchable]="true" 
+                       placeholder="Seleccione API"
+                       [hideSelected]="false"
+                       (change)="onSelectChange($event)"
+                       style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
               <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
                 <div style="margin: 10px 0" class="card">
                   <div class="card-body">
-                    <h5 class="card-title">{{ item.funcion }}</h5> <!-- Mostrar el campo "funcion" -->
-                    <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6> <!-- Mostrar el campo "descripcion" -->
+                    <h5 class="card-title">{{ item.funcion }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6>
                     <p class="card-text">
-                       {{ item.tipo }} --- {{ item.aplicacion }} 
+                      {{ item.tipo }} --- {{ item.aplicacion }}
                     </p>
                   </div>
                 </div>
@@ -32,6 +47,7 @@
         </div>
       </div>
     </section>
+
     <br>
 
     <section id="wishlist" class="grid-view wishlist-items">
