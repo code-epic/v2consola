@@ -4,17 +4,50 @@
 
     <section id="ecommerce-searchbar" class="ecommerce-searchbar">
       <div class="row mt-1">
-        <div class="col-sm-12">
-          <div class="input-group input-group-merge">
-            <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
-              [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" />
-            <div class="input-group-append">
-              <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
-            </div>
+        <!-- Search Bar -->
+        <div class="col-md-6 col-sm-12 mb-3">
+          <div class="input-group">
+            <input type="text" 
+                   class="form-control search-product w-100" 
+                   id="shop-search" 
+                   placeholder="Buscar"
+                   [(ngModel)]="searchText" 
+                   aria-label="Search..." 
+                   aria-describedby="shop-search"
+                   style="height: 40px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;" />
+          </div>
+        </div>
+    
+        <!-- Select Dropdown -->
+        <div class="col-md-6 col-sm-12 mb-3">
+          <div class="input-group">
+            <ng-select class="w-100" 
+                       [items]="rowData" 
+                       [(ngModel)]="selectCustomSelected" 
+                       bindLabel="funcion" 
+                       bindValue="id"
+                       [searchable]="true" 
+                       placeholder="Seleccione API"
+                       [hideSelected]="false"
+                       (change)="onSelectChange($event)"
+                       style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
+              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                <div style="margin: 10px 0" class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ item.funcion }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6>
+                    <p class="card-text">
+                      {{ item.tipo }} --- {{ item.aplicacion }}
+                    </p>
+                  </div>
+                </div>
+              </ng-template>
+            </ng-select>
           </div>
         </div>
       </div>
     </section>
+
     <br>
 
     <section id="wishlist" class="grid-view wishlist-items">
@@ -68,7 +101,7 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="d-flex justify-content-center">
-            <ngb-pagination [collectionSize]="(drivers | filter: searchText:'funcion').length" [(page)]="page"
+            <ngb-pagination [collectionSize]="(drivers | filter: searchText:'descripcion').length" [(page)]="page"
               [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true">
               <!-- Custom pagination icons -->
               <ng-template ngbPaginationPrevious><span [data-feather]="'chevron-left'" [class]="'font-weight-bolder'"

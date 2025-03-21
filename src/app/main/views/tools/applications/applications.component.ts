@@ -19,6 +19,12 @@ import { enc } from 'crypto-js';
 })
 export class ApplicationsComponent implements OnInit {
 
+  searchType: string = 'conexiones'; // Valor inicial del select
+  searchText: string = ''; // Para el input de búsqueda normal
+  selectCustomSelected = []; // Para el ng-select
+
+
+
   public contentHeader: object;
 
   closeResult: string = ''
@@ -34,12 +40,16 @@ export class ApplicationsComponent implements OnInit {
     valores: ''
   };
 
-  public searchText: string = '';
   public page = 1;
   public pageSize = 12;
   public pageBasic = 1;
 
   public drivers = []
+
+  public developer = []
+  public rowData = []
+  public tempData = []
+
 
   constructor(
     private msjService: WsocketsService,
@@ -81,9 +91,10 @@ export class ApplicationsComponent implements OnInit {
 
 
 
-  ngOnInit() {
+  async ngOnInit() {
     // this.CargarDrivers()
-    this.CargarListaAplicaciones()
+    await this.ListarApis() 
+    await this.CargarListaAplicaciones()
 
 
     this.contentHeader = {
@@ -106,6 +117,43 @@ export class ApplicationsComponent implements OnInit {
     };
 
   }
+
+
+  // Método para manejar el cambio en el ng-select
+  onSelectChange(event: any) {
+    console.log('Selección cambiada:', event);
+  }
+
+
+  async ListarApis() {
+
+    this.developer = []
+    this.xAPI.funcion = '_SYS_R_ListarTodasApis'
+    this.xAPI.parametros = ''
+    this.xAPI.valores = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      async data => {
+        // console.log(data)
+        if (data == null) return
+
+        await data.map(e => {
+          e.descripcion = e.descripcion == undefined ? '' : e.descripcion
+          this.selectCustomSelected.push(e)
+        })
+        this.rowData = this.selectCustomSelected;
+        this.tempData = this.rowData;
+      },
+      (error) => {
+        console.error(error)
+      }
+    );
+  }
+
+  LinkRuta(event) {
+    const url = "tools/api-details/" + event.funcion
+    this.ruta.navigate([url]);
+  }
+
 
   async CargarListaAplicaciones() {
     this.xAPI.funcion = "_SYS_LstAplicaciones";

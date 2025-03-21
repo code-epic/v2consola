@@ -2,7 +2,7 @@
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
     <div class="content-body">
 
-        <section id="ecommerce-searchbar" class="ecommerce-searchbar">
+        <!-- <section id="ecommerce-searchbar" class="ecommerce-searchbar">
             <div class="row mt-1">
                 <div class="col-sm-12">
                     <div class="input-group input-group-merge">
@@ -14,7 +14,57 @@
                     </div>
                 </div>
             </div>
-        </section>
+        </section> -->
+
+        <section id="ecommerce-searchbar" class="ecommerce-searchbar">
+            <div class="row mt-1">
+              <!-- Select para elegir el tipo de búsqueda -->
+              <div class="col-sm-3">
+                <select class="form-control" [(ngModel)]="searchType" style="height: 40px;">
+                  <option value="conexiones">Buscar por Conexiones</option>
+                  <option value="api">Buscar por API</option>
+                </select>
+              </div>
+          
+              <!-- Input de búsqueda normal (para conexiones) -->
+              <div class="col-sm-9" *ngIf="searchType === 'conexiones'">
+                <div class="input-group input-group-merge">
+                  <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
+                         [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" style="height: 40px;" />
+                  <div class="input-group-append">
+                    <span class="input-group-text" style="height: 40px;"><i data-feather="search" class="text-muted"></i></span>
+                  </div>
+                </div>
+              </div>
+          
+              <!-- ng-select (para API) -->
+              <div class="col-sm-9" *ngIf="searchType === 'api'">
+                <ng-select 
+                           [items]="rowData"
+                           [(ngModel)]="selectCustomSelected"
+                           bindLabel="funcion"
+                           bindValue="id"
+                           [searchable]="true"
+                           placeholder="Seleccione API"
+                           [hideSelected]="false"
+                           (change)="LinkRuta($event)"
+                           style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
+                  <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                    <div style="margin: 10px 0" class="card">
+                      <div class="card-body">
+                        <h5 class="card-title">{{ item.funcion }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6>
+                        <p class="card-text">
+                          {{ item.tipo }} --- {{ item.aplicacion }}
+                        </p>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+              </div>
+            </div>
+          </section>
+
         <br>
 
         <section id="wishlist" class="grid-view wishlist-items">

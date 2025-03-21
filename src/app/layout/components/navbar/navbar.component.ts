@@ -223,6 +223,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     )
 
 
+    this.msjService.pidDevice$.subscribe(
+      pid => {
+        this.blCargando = pid.estatus
+        if ( !pid.estatus){
+          this.taskService.update(pid.id)
+        }
+      }
+    )
+
+
     this.token = jwt_decode(sessionStorage.getItem('token'));
     this.usuario = this.token.Usuario.usuario
     this.tipo = this.token.Usuario.nombre

@@ -88,6 +88,7 @@ const routes = [
     // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   }
+
 ];
 
 @NgModule({
@@ -99,7 +100,7 @@ const routes = [
     ApiDetailsComponent,
     RegisterApiComponent,
     SqlFormatPipe,
-    ApplicationsComponent
+    ApplicationsComponent,
   ],
   imports: [
     RouterModule.forChild(routes),

@@ -1,4 +1,6 @@
 @import '@core/scss/base/pages/app-ecommerce.scss';
+@import '@core/scss/angular/libs/select.component.scss';
+
 
 
 .tarjeta {
@@ -28,3 +30,33 @@
     height: auto;
     /* Maintains aspect ratio */
 }
+
+.search-product {
+    width: 100%; /* Ocupa el 100% del ancho disponible */
+    max-width: 100%; /* Evita que se desborde */
+  }
+
+
+
+  /* Ajustar el contenedor del ng-select */
+.ng-select {
+    display: flex;
+    align-items: center; /* Alinear verticalmente */
+  }
+  
+  /* Ajustar el placeholder */
+/* Ajustar el placeholder del ng-select */
+.ng-placeholder {
+    line-height: 40px; /* Asegura que el texto esté centrado verticalmente */
+    padding-left: 12px; /* Asegura que el padding izquierdo sea el mismo que el input */
+    color: #6c757d; /* Color del placeholder (gris) */
+  }
+
+  /* Estilo común para el input y el ng-select */
+.input-style {
+    height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+  }
