@@ -1,101 +1,54 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
-import { ApiService, IAPICore } from '@services/apicore/api.service';
-import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { ComunicationsService } from '@services/networks/comunications.service';
-import { Router } from '@angular/router';
-import { WsocketsService } from '@services/websockets/wsockets.service';
-
-import { AES } from 'crypto-js';
-const clave = '5412892DF0D2919B04ADD29EDEFABA30E30F6D7F5A62A9B84AD46BDE23B25491';
-import { enc } from 'crypto-js';
-
+import { Component, OnInit, ViewEncapsulation, ViewChild } from "@angular/core";
+import { ApiService, IAPICore } from "@services/apicore/api.service";
+import { NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
+import { Router } from "@angular/router";
 
 @Component({
-  selector: 'app-applications',
-  templateUrl: './applications.component.html',
-  styleUrls: ['./applications.component.scss'],
+  selector: "app-applications",
+  templateUrl: "./applications.component.html",
+  styleUrls: ["./applications.component.scss"],
   encapsulation: ViewEncapsulation.None,
-  host: { class: 'ecommerce-application' }
+  host: { class: "ecommerce-application" },
 })
 export class ApplicationsComponent implements OnInit {
-
-  searchType: string = 'conexiones'; // Valor inicial del select
+  searchType: string = "conexiones"; // Valor inicial del select
   searchText: string = ''; // Para el input de búsqueda normal
   selectCustomSelected = []; // Para el ng-select
 
-
-
   public contentHeader: object;
-
-  closeResult: string = ''
-
-  codeTypeJs = ''
-
-  public ListaAplicaciones = []
-
+  closeResult: string = '';
+  codeTypeJs = '';
+  public ListaAplicaciones = [];
 
   xAPI: IAPICore = {
     funcion: '',
     parametros: '',
-    valores: ''
+    valores: '',
   };
 
   public page = 1;
   public pageSize = 12;
   public pageBasic = 1;
 
-  public drivers = []
-
-  public developer = []
-  public rowData = []
-  public tempData = []
-
+  public drivers = [];
+  public developer = [];
+  public rowData = [];
+  public tempData = [];
 
   constructor(
-    private msjService: WsocketsService,
     private ruta: Router,
-    private comunicacionesService: ComunicationsService,
     config: NgbModalConfig,
-    private modalService: NgbModal,
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {
     config.backdrop = false;
     config.keyboard = false;
   }
 
 
-  codeMOEsquemaJson: any = {
-    theme: 'idea',
-    mode: 'application/ld+json',
-    lineNumbers: true,
-    lineWrapping: true,
-    foldGutter: true,
-    // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lint: true,
-    autofocus: true
-  };
-
-  codeJson: any = {
-    theme: 'idea',
-    mode: 'text/typescript',
-    lineNumbers: true,
-    lineWrapping: true,
-    foldGutter: true,
-    // gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lint: true
-  };
-
-
-
   async ngOnInit() {
     // this.CargarDrivers()
-    await this.ListarApis() 
-    await this.CargarListaAplicaciones()
-
+    await this.ListarApis();
+    await this.CargarListaAplicaciones();
 
     this.contentHeader = {
       headerTitle: 'Herramientas',
@@ -106,64 +59,60 @@ export class ApplicationsComponent implements OnInit {
           {
             name: 'Home',
             isLink: true,
-            link: '/home'
+            link: '/home',
           },
           {
             name: 'Aplicaciones',
-            isLink: false
-          }
-        ]
-      }
+            isLink: false,
+          },
+        ],
+      },
     };
-
   }
 
 
-  // Método para manejar el cambio en el ng-select
   onSelectChange(event: any) {
-    console.log('Selección cambiada:', event);
+    // console.log('Selección cambiada:', event)
   }
-
 
   async ListarApis() {
-
-    this.developer = []
-    this.xAPI.funcion = '_SYS_R_ListarTodasApis'
-    this.xAPI.parametros = ''
-    this.xAPI.valores = ''
+    this.developer = [];
+    this.xAPI.funcion = "_SYS_R_ListarTodasApis";
+    this.xAPI.parametros = '';
+    this.xAPI.valores = '';
     await this.apiService.Ejecutar(this.xAPI).subscribe(
-      async data => {
-        if (data == null) return
+      async (data) => {
+        if (data == null) return;
 
-        await data.map(e => {
-          e.descripcion = e.descripcion == undefined ? '' : e.descripcion
-          this.selectCustomSelected.push(e)
-        })
+        await data.map((e) => {
+          e.descripcion = e.descripcion == undefined ? '' : e.descripcion;
+          this.selectCustomSelected.push(e);
+        });
         this.rowData = this.selectCustomSelected;
         this.tempData = this.rowData;
       },
       (error) => {
-        console.error(error)
+        console.error(error);
       }
-    );
+    )
   }
 
-  LinkRuta(event) {
-    const url = "tools/applications/api-details/" + event.funcion
-    this.ruta.navigate([url]);
-  }
 
+  LinkRuta(e) {
+    let url = btoa(e.driver + "|" + e.aplicacion);
+    let surl = "tools/applications/api-details/" + e.funcion + "/" + url;
+    this.ruta.navigate([surl]);
+  }
 
   async CargarListaAplicaciones() {
     this.xAPI.funcion = "_SYS_LstAplicaciones";
-    this.xAPI.parametros = "";
+    this.xAPI.parametros = '';
     this.ListaAplicaciones = [];
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.Cuerpo.map((e) => {
           this.ListaAplicaciones.push(e);
         });
-        // console.log(this.ListaAplicaciones)
       },
       (error) => {
         console.log(error);
@@ -171,30 +120,26 @@ export class ApplicationsComponent implements OnInit {
     );
   }
 
-
   irA(base: string, ruta: string) {
-    this.ruta.navigate([base, ruta])
+    this.ruta.navigate([base, ruta]);
   }
 
-
   CargarDrivers() {
-    this.xAPI.funcion = '_SYS_R_ListarDriver'
-    this.xAPI.parametros = ''
-    this.xAPI.valores = ''
-    this.drivers = []
+    this.xAPI.funcion = "_SYS_R_ListarDriver";
+    this.xAPI.parametros = '';
+    this.xAPI.valores = '';
+    this.drivers = [];
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.map(e => {
-          e.ruta = e.id
-          this.drivers.push(e)
+        data.map((e) => {
+          e.ruta = e.id;
+          this.drivers.push(e);
         });
       },
       (error) => {
-        console.log(error)
+        console.log(error);
       }
-    )
+    );
   }
 
-
 }
-

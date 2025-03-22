@@ -72,13 +72,13 @@ export class ApiListComponent implements OnInit {
     
     this.id = this.rutaActiva.snapshot.params.id
     this.urlControl = this.rutaActiva.snapshot.params.ruta
+    
     let url = ''
 
     if (this.urlControl != undefined){
       let valor = atob(this.urlControl).split('|')
       this.driversAPP = valor[0]
       this.url = valor[1]
-      console.log(valor)
       url = '/' + this.id + '/' + this.url
     }
 
@@ -162,6 +162,7 @@ export class ApiListComponent implements OnInit {
   }
 
   getUrl(id: string): string{
+    // console.log(id, this.id)
     let url = id + '|' + this.id
     return btoa(url)
   }
