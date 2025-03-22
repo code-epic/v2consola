@@ -133,7 +133,6 @@ export class ApplicationsComponent implements OnInit {
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
-        // console.log(data)
         if (data == null) return
 
         await data.map(e => {
@@ -150,7 +149,7 @@ export class ApplicationsComponent implements OnInit {
   }
 
   LinkRuta(event) {
-    const url = "tools/api-details/" + event.funcion
+    const url = "tools/applications/api-details/" + event.funcion
     this.ruta.navigate([url]);
   }
 

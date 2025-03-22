@@ -21,7 +21,7 @@ export class RegisterApiComponent implements OnInit {
   public contentHeader: object;
   public ruta: string = environment.apiUrl + environment.API + environment.Hash
   public ListaAplicaciones
-  public driversAPP
+  
   public driversID = ''
 
   public drivers: any
@@ -307,7 +307,11 @@ export class RegisterApiComponent implements OnInit {
     "$where": []
   }
 
-  public rutaURL
+  public rutaURL = ''
+  public urlControl = ''
+  public driversAPP = ''
+  public url = ''
+
 
 
   Dml: any = [
@@ -326,19 +330,12 @@ export class RegisterApiComponent implements OnInit {
 
   private horizontalWizardStepper: Stepper;
 
-  /**
-   * Horizontal Wizard Stepper Next
-   *
-   * @param data
-   */
   horizontalWizardStepperNext(data) {
     if (data.form.valid === true) {
       this.horizontalWizardStepper.next();
     }
   }
-  /**
-   * Horizontal Wizard Stepper Previous
-   */
+
   horizontalWizardStepperPrevious() {
     this.horizontalWizardStepper.previous();
   }
@@ -350,15 +347,29 @@ export class RegisterApiComponent implements OnInit {
 
     this.CargarListaAplicaciones()
     this.rutaURL = this.rutaActiva.snapshot.params.id
+    this.urlControl = this.rutaActiva.snapshot.params.ruta
+    let url = ''
 
-    this.driversAPP = AES.decrypt(this.rutaURL, clave).toString(enc.Utf8)
+    if (this.urlControl != undefined){
+      let valor = atob(this.urlControl).split('|')
+      this.driversAPP = valor[0]
+      this.url = valor[1]
+      url = '/'  + this.url
+    }
+
+
+    
     this.LeerAPI(this.rutaURL)
 
-    this.getURL = this.rutaActiva.snapshot.url[1].path
-
+    this.getURL = this.rutaActiva.snapshot.url[2].path
+    let funcion = this.rutaActiva.snapshot.url[3].path
+    
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
 
-    // content header
+    
+
+
+
     this.contentHeader = {
       headerTitle: 'Herramientas',
       actionButton: true,
@@ -378,24 +389,27 @@ export class RegisterApiComponent implements OnInit {
           {
             name: 'Api',
             isLink: true,
-            link: '/tools/api/'
+            link: '/tools/applications/' + this.url
           },
           {
-            name: this.driversAPP,
+            name: 'Detalle',
+            isLink: true,
+            link: '/tools/applications/api-list/' + this.urlControl
+          },
+          {
+            name: funcion,
+            isLink: funcion!='Registrar'?true:false,
+            link: '/tools/applications/api-details/' + funcion + '/' + this.urlControl,
+          },
+          {
+            name: 'Control',
             isLink: false
           },
-          // {
-          //   name: 'LISTA APIS',
-          //   isLink: true,
-          //   link: `/tools/api-list/${this.rutaURL}`
-          // },
-          // {
-          //   name: this.driversAPP,
-          //   isLink: false
-          // },
+        
         ]
       }
-    };
+    }
+
   }
 
   CargarDrivers() {
@@ -417,7 +431,6 @@ export class RegisterApiComponent implements OnInit {
     // this.xAPIDB.driver = this.driversID
     this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString())
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString())
-    // this.xAPIDB.distribucion = this.xAPIDB.distribucion == 'PRIVADA' ? 0 : 1
     var obj = {
       "coleccion": "apicore",
       "objeto": this.xAPIDB,
@@ -426,10 +439,9 @@ export class RegisterApiComponent implements OnInit {
       "upsert": true
     }
 
-    // console.log(this.xAPIDB)
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
-        this.router.navigate([`tools/api-list/${this.rutaURL}`]);
+        this.router.navigate([`tools/applications/api-list/${this.urlControl}`]);
         this.utilservice.AlertMini('top-end', 'success', `Tu (API) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
       }, (error) => {
         this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar API', 3000)
@@ -472,7 +484,7 @@ export class RegisterApiComponent implements OnInit {
     this.xAPI = {}
     await this.apiService.Guardar(jsonG, sApi).subscribe(
       (data) => {
-        this.router.navigate([`tools/api-list/${this.rutaURL}`]);
+        this.router.navigate([`tools/applications/api-details/${this.rutaURL}/${this.urlControl}`]);
         this.utilservice.AlertMini('top-end', 'success', `Tu (API) ha sido actualizada`, 3000)
       },
       (errot) => {

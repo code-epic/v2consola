@@ -161,7 +161,6 @@ export class ApiComponent implements OnInit {
     private utilservice: UtilService,
     private pdf: PdfService,
     private taskService: TaskService,
-    private router: Router,
     private msjService: WsocketsService,
   ) {
   }
@@ -176,7 +175,6 @@ export class ApiComponent implements OnInit {
     this.llave = this.utilservice.GenerarUnicId();
     this.hashcontrol = btoa("ING" + this.llave);
     this.urlControl = this.rutaActiva.snapshot.params.id
-
     let id = atob(this.urlControl).split('|')
 
     this.driversAPP = id[0]
@@ -213,10 +211,10 @@ export class ApiComponent implements OnInit {
           {
             name: 'Api',
             isLink: true,
-            link: '/tools/api/' + url
+            link: '/tools/applications/' + url
           },
           {
-            name: this.driversAPP,
+            name: 'Detalle',
             isLink: false
           },
         ]

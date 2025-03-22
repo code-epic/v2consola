@@ -1,24 +1,13 @@
 <div class="content-wrapper container-xxl p-0">
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
     <div class="content-body">
-      <!-- app e-commerce details start -->
       <section class="app-ecommerce-details">
         <div class="card">
-          <!-- Product Details starts -->
           <div class="card-body">
             <div class="row my-2">
-              <!-- <div class="col-12 col-md-5 d-flex align-items-center justify-content-center mb-2 mb-md-0">
-                <div class="d-flex align-items-center justify-content-center">
-                  <img src="../../../../../../assets/images/logo/logo.png" width="250px" height="250px" class="img-fluid" alt="product image" />
-                </div>
-              </div> -->
               <div class="col-12 col-md-12">
                 <h4><strong>{{ xAPI.funcion }}</strong></h4>
-                <!-- <span class="card-text item-company">
-                    <label class="card-text">Hash - {{xAPI.hash}}</label>
-                    </span> -->
                 <div class="ecommerce-details-price d-flex flex-wrap mt-1"></div>
-                <!-- <label class="card-text">Hash - {{xAPI.id}}</label><br> -->
                 <label class="card-text">Estatus - 
                   <div class="badge badge-pill" [ngClass]="{
                     'badge-light-success': xAPI.estatus == true,
@@ -58,79 +47,15 @@
                         <button type="button" class="btn btn-primary" (click)="promover('calidad', xAPI.funcion, 'promover')" *ngIf="xAPI.entorno == 'desarrollo'"  rippleEffect>Promover</button>
                         <button type="button" class="btn btn-danger" *ngIf="xAPI.entorno != 'desarrollo'" (click)="promover('desarrollo', xAPI.funcion, 'reversar')"  rippleEffect>Reversar a Desarrollo</button>&nbsp;
                         <button type="button" class="btn btn-info" *ngIf="xAPI.entorno == 'calidad'" (click)="promover('produccion', xAPI.funcion, 'instalar')"  rippleEffect>Instalar</button>&nbsp;
-                        <button [routerLink]="'/tools/api-list/' + xAPI.driver" class="btn btn-dark"  rippleEffect>Regresar</button>&nbsp;
-                        <button type="button" class="btn btn-warning" *ngIf="xAPI.entorno != 'produccion'" [routerLink]="'/tools/update-api/'+xAPI.funcion"  rippleEffect>Modificar</button>&nbsp;
+                        <button [routerLink]="'/tools/applications/api-list/' + xAPI.driver + '/' + rutaURL" class="btn btn-dark"  rippleEffect>Regresar</button>&nbsp;
+                        <button type="button" class="btn btn-warning" *ngIf="xAPI.entorno != 'produccion'" [routerLink]="'/tools/applications/update-api/'+xAPI.funcion+ '/' + urlControl"  rippleEffect>Modificar</button>&nbsp;
                         <button type="button" class="btn btn-info" (click)="ModalProbar(ModalProbarApi,xAPI)" *ngIf="xAPI.entorno != 'produccion'" rippleEffect>{{xAPI.entorno == 'calidad' ? 'Probar Versión' : 'Probar'}}</button>&nbsp;
                       </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- Product Details ends -->
-
-                 <!-- Item features starts -->
-        <!-- <div class="item-features">
-            <div class="row text-center">
-              <div class="col-12 col-md-4 mb-4 mb-md-0">
-                <div class="w-75 mx-auto">
-                  <i data-feather="award"></i>
-                  <h4 class="mt-2 mb-1">100% Original</h4>
-                  <p class="card-text">Chocolate bar candy canes ice cream toffee. Croissant pie cookie halvah.</p>
-                </div>
-              </div>
-              <div class="col-12 col-md-4 mb-4 mb-md-0">
-                <div class="w-75 mx-auto">
-                  <i data-feather="clock"></i>
-                  <h4 class="mt-2 mb-1">10 Day Replacement</h4>
-                  <p class="card-text">Marshmallow biscuit donut dragée fruitcake. Jujubes wafer cupcake.</p>
-                </div>
-              </div>
-              <div class="col-12 col-md-4 mb-4 mb-md-0">
-                <div class="w-75 mx-auto">
-                  <i data-feather="shield"></i>
-                  <h4 class="mt-2 mb-1">1 Year Warranty</h4>
-                  <p class="card-text">Cotton candy gingerbread cake I love sugar plum I love sweet croissant.</p>
-                </div>
-              </div>
-            </div>
-          </div> -->
-          <!-- Item features ends -->
-  
-          <!-- Related Products starts -->
-          <!-- <div class="card-body">
-            <div class="mt-4 mb-2 text-center">
-              <h4>Related Products</h4>
-              <p class="card-text">People also search for this items</p>
-            </div>
-            <div class="swiper-responsive-breakpoints swiper-container px-4 py-2" >
-              <div class="swiper-wrapper mb-2">
-                <div class="swiper-slide" *ngFor="let relatedProduct of productxx">
-                  <a href="javascript:void(0)">
-                    <div class="item-heading">
-                      <h5 class="text-truncate mb-0">{{ relatedProduct.name }}</h5>
-                      <small class="text-body">by {{ relatedProduct.brand }}</small>
-                    </div>
-                    <div class="img-container mx-auto py-75">
-                      <img [src]="relatedProduct.image" class="img-fluid" alt="image" />
-                    </div>
-                    <div class="item-meta">
-                      <div class="rating rating-sm">
-                        <ngb-rating [rate]="relatedProduct.rating" [readonly]="true" [max]="5" class="outline-none">
-                          <ng-template let-fill="fill" let-index="index"
-                            ><span class="fa fa-star-o mr-25" [class.fa-star]="fill === 100"></span
-                          ></ng-template>
-                        </ngb-rating>
-                      </div>
-                      <p class="card-text text-primary mb-0">${{ relatedProduct.price }}</p>
-                    </div>
-                  </a>
-                </div>
-              </div>
-              <div class="swiper-button-next"></div>
-              <div class="swiper-button-prev"></div>
-            </div>
-          </div> -->
-          <!-- Related Products ends -->
+        
   
         </div>
       </section>

@@ -2,31 +2,14 @@
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
     <div class="content-body">
 
-        <!-- <section id="ecommerce-searchbar" class="ecommerce-searchbar">
-            <div class="row mt-1">
-                <div class="col-sm-12">
-                    <div class="input-group input-group-merge">
-                        <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
-                            [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" />
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section> -->
-
         <section id="ecommerce-searchbar" class="ecommerce-searchbar">
             <div class="row mt-1">
-              <!-- Select para elegir el tipo de búsqueda -->
               <div class="col-sm-3">
                 <select class="form-control" [(ngModel)]="searchType" style="height: 40px;">
                   <option value="conexiones">Buscar por Conexiones</option>
                   <option value="api">Buscar por API</option>
                 </select>
               </div>
-          
-              <!-- Input de búsqueda normal (para conexiones) -->
               <div class="col-sm-9" *ngIf="searchType === 'conexiones'">
                 <div class="input-group input-group-merge">
                   <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
@@ -36,8 +19,6 @@
                   </div>
                 </div>
               </div>
-          
-              <!-- ng-select (para API) -->
               <div class="col-sm-9" *ngIf="searchType === 'api'">
                 <ng-select 
                            [items]="rowData"
@@ -70,12 +51,8 @@
         <section id="wishlist" class="grid-view wishlist-items">
             <ng-container
                 *ngFor="let product of ListaAplicaciones  | filter: searchText:'nombre'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
-
-
-                <!-- Ecommerce Item -->
-
                 <div class="card ecommerce-card col-sm-12 tarjeta">
-                    <a [routerLink]="'/tools/api/' + product.nombre">
+                    <a [routerLink]="'/tools/applications/' + product.nombre">
 
                         <div class="item-img text-center efecto-img">
                             <img class="img-fluid" width="100px" height="100px" src="assets/images/logo/logo.png"

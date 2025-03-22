@@ -49,15 +49,16 @@ export class ApiListComponent implements OnInit {
   public developer = []
   public count
   public tempData = []
+  public hashcontrol: string
 
+  public urlControl = ''
+  public driversAPP
+  public url = ''
 
   constructor(
-    private msjService: WsocketsService,
     private ruta: Router,
     private rutaActiva: ActivatedRoute,
-    private comunicacionesService : ComunicationsService,
-    config: NgbModalConfig,
-    private modalService: NgbModal,
+    private config: NgbModalConfig,
     private apiService: ApiService,
   ) {
     config.backdrop = false;
@@ -68,8 +69,21 @@ export class ApiListComponent implements OnInit {
 
 
   async  ngOnInit() {
-  
+    
     this.id = this.rutaActiva.snapshot.params.id
+    this.urlControl = this.rutaActiva.snapshot.params.ruta
+    let url = ''
+
+    if (this.urlControl != undefined){
+      let valor = atob(this.urlControl).split('|')
+      this.driversAPP = valor[0]
+      this.url = valor[1]
+      console.log(valor)
+      url = '/' + this.id + '/' + this.url
+    }
+
+    
+    
     await this.ListarApis()
     await this.CargarDrivers()
     this.contentHeader = {
@@ -86,7 +100,7 @@ export class ApiListComponent implements OnInit {
           {
             name: 'Aplicaciones',
             isLink: true,
-            link: '/tools/applications'+this.id
+            link: '/tools/applications'+url
           },
           {
             name: 'Api',
@@ -106,14 +120,11 @@ export class ApiListComponent implements OnInit {
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
-        if (data == null) return
-
+        if (data.msj != undefined) return
         await data.map(e => {
           e.descripcion = e.descripcion == undefined ? '' : e.descripcion
           this.selectCustomSelected.push(e)
-          // console.log(e)
         })
-        // console.log(this.selectCustomSelected)
         this.rowData = this.selectCustomSelected;
         this.count = this.rowData.length
         this.tempData = this.rowData;

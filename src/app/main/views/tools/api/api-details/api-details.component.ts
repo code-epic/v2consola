@@ -62,7 +62,9 @@ export class ApiDetailsComponent implements OnInit {
   valores: string = ''
 
   public data
-
+  public urlControl = ''
+  public driversAPP
+  public url = ''
 
   public UpdateAPI = {}
 
@@ -77,49 +79,30 @@ export class ApiDetailsComponent implements OnInit {
       'entorno': ''
     }
 
-  /**
-   * Constructor
-   *
-   */
+
   constructor(
     private rutaActiva: ActivatedRoute,
     private apiService: ApiService,
     private modalService: NgbModal,
-    private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
 
   ) { }
 
-  // Public Methods
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * Toggle Wishlist
-   *
-   * @param product
-   */
-  toggleWishlist(product) {
-
-  }
-
-  /**
-   * Add To Cart
-   *
-   * @param product
-   */
-  addToCart(product) {
-
-  }
-
-  // Lifecycle Hooks
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * On init
-   */
+ 
   async ngOnInit() {
 
     this.rutaURL = this.rutaActiva.snapshot.params.id
+    this.urlControl = this.rutaActiva.snapshot.params.ruta
+    let url = ''
+
+    if (this.urlControl != undefined){
+      let valor = atob(this.urlControl).split('|')
+      this.driversAPP = valor[0]
+      this.url = valor[1]
+      url = '/'  + this.url
+      console.log(valor)
+    }
+
 
     await this.ConsultarAPI(this.rutaURL)
     // content header
@@ -142,7 +125,12 @@ export class ApiDetailsComponent implements OnInit {
           {
             name: 'Api',
             isLink: true,
-            link: '/tools/api/' // +  this.rutaURL
+            link: '/tools/applications' + url
+          },
+          {
+            name: 'Detalle',
+            isLink: true,
+            link: '/tools/applications/api-list/' + this.urlControl
           },
           {
             name: this.rutaURL,
