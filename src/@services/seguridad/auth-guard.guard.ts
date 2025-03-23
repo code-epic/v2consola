@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { LoginService } from './login.service';
 import jwt_decode from "jwt-decode";
 
-import {Md5} from 'ts-md5';
+import { Md5 } from 'ts-md5';
 import { UtilService } from '@services/util/util.service';
 import Swal from 'sweetalert2';
 
@@ -15,7 +15,7 @@ export class AuthGuardGuard implements CanActivate {
 
   public token
 
-  constructor(private router: Router,  private util: UtilService, private loginService: LoginService) { }
+  constructor(private router: Router, private util: UtilService, private loginService: LoginService) { }
 
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -26,23 +26,23 @@ export class AuthGuardGuard implements CanActivate {
     const IDAPP = this.token.Usuario.Aplicacion[0].id
 
     if (sessionStorage.getItem("token") !== undefined && IDAPP == 'ID-001') {
-      let menu = JSON.parse(sessionStorage.getItem('menu')) 
+      let menu = JSON.parse(sessionStorage.getItem('menu'))
       let texto = Md5.hashStr(sessionStorage.getItem('menu'))
       let validar = sessionStorage.getItem('crypt')
-      if(texto == validar ){
+      if (texto == validar) {
         let valor = false
         if (state.url == '/home') return true
         menu.forEach(e => {
           e.SubMenu.forEach(xe => {
-             if (state.url.indexOf(xe.url) == 1 ) return valor=true
+            if (state.url.indexOf(xe.url) == 1) return valor = true
           });
         })
-        if(!valor)this.msj()
+        if (!valor) this.msj()
         return valor
-      }else{
+      } else {
         return false
       }
-     
+
     } else {
       this.router.navigate(['/home']);
       return false;
@@ -55,11 +55,11 @@ export class AuthGuardGuard implements CanActivate {
 
   authConecting(): Promise<boolean> {
     return new Promise<boolean>((resolv, reject) => {
- 
+
     })
   }
 
-  msj(){
+  msj() {
     Swal.fire({
       title: 'Área restringida',
       text: 'No poseé autorización',
