@@ -208,7 +208,7 @@ export class ListComponent implements OnInit {
     let nameFnx = "Fnx_GitLog";
     this.fnx = {
       funcion: nameFnx,
-      repositorio: app.repositorio,
+      repositorio: app.nombre,
     };
     await this.apiService.ExecFnx(this.fnx).subscribe(
       (data) => {
