@@ -67,7 +67,11 @@ export class ListComponent implements OnInit {
     contenido: "",
   };
 
+  public msj:string = "Cargardo!!! por favor espere..."
+
   // Private
+
+  public xrs:string = ""
 
   public urlEnvironment = environment;
 
@@ -93,7 +97,8 @@ export class ListComponent implements OnInit {
     private taskService: TaskService,
     private apiService: ApiService,
     private msjService: WsocketsService,
-  ) {}
+    private modalService: NgbModal,
+  ) { }
 
   async ngOnInit() {
     await this.CargarListaAplicaciones();
@@ -124,6 +129,17 @@ export class ListComponent implements OnInit {
         ],
       },
     };
+  }
+
+  async ModalExePlay(modal: any, data: any) {
+    await this.verLogs(data)
+    this.modalService.open(modal, {
+      centered: true,
+      size: 'lg',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
   }
 
   async Clonar(app: any) {
@@ -186,15 +202,42 @@ export class ListComponent implements OnInit {
   }
 
 
+
+  async verLogs(app: any) {
+    this.xrs = this.msj
+    let nameFnx = "Fnx_GitLog";
+    this.fnx = {
+      funcion: nameFnx,
+      repositorio: app.nombre,
+    };
+    await this.apiService.ExecFnx(this.fnx).subscribe(
+      (data) => {
+        setTimeout(() => {
+          this.apiService.ExecFnxId(data.contenido.id).subscribe(
+            (data) => {
+              console.log(data.rs)
+              this.xrs = data.rs
+            },
+            (error) => {
+              console.log(error)
+            }
+          )
+        }, 3000);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+
   async Pull(app: any) {
     let nameFnx = "Fnx_Actualizar";
     this.fnx = {
       funcion: nameFnx,
       repositorio: app.repositorio,
     };
-    
-    
-   
+
     await Swal.fire({
       title: `Va a actualizar el proyecto <br> ${app.repositorio} `,
       text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
