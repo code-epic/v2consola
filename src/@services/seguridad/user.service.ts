@@ -1,33 +1,179 @@
-import { Injectable } from "@angular/core";
-
-
-export interface Users{
-  tipo: string,
-  login: string,
-  password: string,
-  format: string,
-  name: string,
-  description: string,
-  observation: string,
-  email: string, 
-  backup: string,
-  valid: string,
-  endpoint: string,
-  system: string,
-  token_duration: string,
-  session_duartion: string,
-  type_session: string, // horas minutos segundos
-  oficina: string,
-  regional: string,
-  estatus: string
+import { Injectable } from "@angular/core"
+// usuario.model.ts
+export interface SPrivilegio {
+  metodo: string;
+  descripcion: string;
+  accion: string;
+  directivas: string;
 }
 
+export interface SSubMenu {
+  url: string;
+  js: string;
+  descripcion: string;
+  icono: string;
+  nombre: string;
+  accion: string;
+  clase: string;
+  color: string;
+  Privilegios: SPrivilegio[];
+  SubMenu: SSubMenu[];
+}
 
+export interface SMenu {
+  url: string;
+  js: string;
+  icono: string;
+  descripcion: string;
+  nombre: string;
+  accion: string;
+  clase: string;
+  color: string;
+  Privilegio: SPrivilegio[];
+  SubMenu: SSubMenu[];
+}
 
-@Injectable({
-  providedIn: 'root'
-})
-export class UserService {
+export interface SRol {
+  descripcion: string;
+  Menu: SMenu[];
+}
 
-  constructor() { }
+export interface SAplicacion {
+  id: string;
+  nombre: string;
+  url: string;
+  comentario: string;
+  version: string;
+  autor: string;
+  Rol: SRol;
+}
+
+export interface Perfil {
+  descripcion: string;
+}
+
+export interface Firmadigital {
+  vigencia: number, //dias
+  duracion: number, //segundos
+  direccionmac: string;
+  direccionip: string;
+  tiempo: string;
+  nivel: number; //entero 0 BAJA, 1 MEDIA, 2 ALTA
+}
+
+export interface Usuario {
+  cedula: string;
+  nombre: string;
+  login: string;
+  correo: string;
+  clave: string;
+  sucursal: string; //equivale a la oficina
+  direccion: string; //regional
+  cargo: string;
+  telefono: string;
+  sistema: string;
+  token: string;
+  Perfil: Perfil;
+  Aplicacion: SAplicacion[];
+  firmadigital: Firmadigital;
+}
+
+@Injectable({ providedIn: 'root' })
+
+export class UserService implements Usuario {
+
+  cedula = '';
+  nombre = '';
+  login = '';
+  correo = '';
+  clave = '';
+  sucursal = '';
+  direccion = '';
+  cargo = '';
+  telefono = '';
+  sistema = '';
+  token = '';
+  Perfil: Perfil = { descripcion: '' };
+  Aplicacion: SAplicacion[] = [];
+  firmadigital: Firmadigital = {
+    duracion: 0,
+    direccionmac: '*',
+    direccionip: '*',
+    tiempo: new Date().toISOString(),
+    vigencia: 0,
+    nivel: 0
+  };
+
+  iniciarObjeto(): void {
+    this.cedula = '';
+    this.nombre = '';
+    this.login = '';
+    this.correo = '';
+    this.clave = '';
+    this.sucursal = '';
+    this.direccion = '';
+    this.cargo = '';
+    this.telefono = '';
+    this.sistema = '';
+    this.token = '';
+    this.Perfil = { descripcion: '' };
+    this.Aplicacion = [];
+    this.firmadigital = {
+      duracion: 0,
+      direccionmac: '*',
+      direccionip: '*',
+      tiempo: new Date().toISOString(),
+      vigencia: 0,
+      nivel: 0
+    };
+  }
+
+  limpiarObjeto(): void {
+    this.iniciarObjeto();
+  }
+
+  validarCampos(): string[] {
+    const errores: string[] = [];
+    const regex = {
+      cedula: /^[0-9]+$/,
+      nombre: /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s\-']+$/,
+      login: /^[a-zA-Z0-9_\-]+$/,
+      correo: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      telefono: /^\+?[0-9\s\-()]+$/
+    };
+
+    if (!regex.cedula.test(this.cedula)) {
+      errores.push('La cédula solo puede contener números');
+    }
+
+    if (!regex.nombre.test(this.nombre)) {
+      errores.push('El nombre contiene caracteres no permitidos');
+    }
+
+    if (!regex.login.test(this.login)) {
+      errores.push('El login solo puede contener letras, números y guiones');
+    }
+
+    if (!regex.correo.test(this.correo)) {
+      errores.push('El correo electrónico no es válido');
+    }
+
+    if (!regex.telefono.test(this.telefono)) {
+      errores.push('El teléfono contiene caracteres no válidos');
+    }
+
+    return errores;
+  }
+
+  // Método para crear instancia desde JSON
+  static fromJSON(json: any): UserService {
+    const usuario = new UserService();
+    Object.assign(usuario, json);
+    return usuario;
+  }
+
+  // Método para convertir a JSON
+  toJSON(): Usuario {
+    return { ...this };
+  }
 }

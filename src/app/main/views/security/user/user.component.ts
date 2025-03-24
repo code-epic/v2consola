@@ -1,9 +1,12 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
+
 import { IUser } from '@services/seguridad/rol.service';
+import { SAplicacion, SMenu, SRol, UserService, Usuario } from '@services/seguridad/user.service';
 import { UtilService } from '@services/util/util.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+
 
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 
@@ -33,6 +36,7 @@ export class UserComponent implements OnInit {
     valores: {},
   };
 
+  public userJson: Usuario
 
 
 
@@ -54,6 +58,8 @@ export class UserComponent implements OnInit {
     oficina: '',
     regional: ''
   }
+
+
   public tipoacceso = [
     { id: 0, name: 'SELECCIONAR' },
     { id: 1, name: 'LOCAL' },
@@ -98,6 +104,36 @@ export class UserComponent implements OnInit {
     { id: '3|ALTA', name: 'ALTA' } //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
   ]
 
+  public Rol: SRol = {
+    descripcion: '',
+    Menu: []
+  }
+
+  public Menu: SMenu = {
+    url: '',
+    js: '',
+    icono: '',
+    descripcion: '',
+    nombre: '',
+    accion: '',
+    clase: '',
+    color: '',
+    Privilegio: [],
+    SubMenu: []
+  }
+
+  public Aplicacion: SAplicacion = {
+    id: '',
+    nombre: '',
+    url: '',
+    comentario: '',
+    version: '',
+    autor: '',
+    Rol: {
+      descripcion: '',
+      Menu: []
+    },
+  }
 
   public ldap : boolean = false
   public activedirectory = false
@@ -117,8 +153,18 @@ export class UserComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
-    private modalService: NgbModal,
-  ) { }
+    private userService: UserService,
+  ) { 
+
+    this.userService.iniciarObjeto()
+    
+    this.Rol.descripcion = 'Descripcion general'
+    this.Rol.Menu.push(this.Menu)
+
+    this.Aplicacion.Rol = this.Rol
+    userService.Aplicacion.push(this.Aplicacion)
+    console.log(userService.toJSON())
+  }
 
 
 
@@ -179,9 +225,6 @@ export class UserComponent implements OnInit {
     }
   }
 
-
-
-
   async CargarListaAplicaciones() {
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.parametros = ''
@@ -199,17 +242,22 @@ export class UserComponent implements OnInit {
     )
   }
 
-  async selPerfil(e) {
+
+  selPerfil(e) {
+    let codPerfil = e.split('|')[0].toString()
+    this.obtenerAplicacion(e)
+    this.obetnerModulos(codPerfil)
+
     this.xAPI.funcion = "_SYS_CPerfilesAPP";
-    this.xAPI.parametros = e.split('|')[0].toString()
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
+    this.xAPI.parametros = codPerfil
+    this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        
         this.lstPerfil = data.Cuerpo.map(e => {
           e.id = e.id + '|' + e.perfil
           e.name = e.perfil
           return e
-        });
+        })
+        console.log(this.lstPerfil)
       },
       (error) => {
         console.log(error)
@@ -218,7 +266,50 @@ export class UserComponent implements OnInit {
   }
 
 
-  async agregarAplicacion(){
+  //OBTENER LA LISTA DE LOS MENU Y ACCIONES DESDE EL PERFIL
+  obetnerModulos(idPerfil){
+    this.xAPI.funcion = "_SYS_CModulosAPP";
+    this.xAPI.parametros = idPerfil
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        data.Cuerpo.forEach(e => {
+        console.log(e)
+         if(e.menu_acciones != undefined){
+          let menu = JSON.parse(e.menu_acciones)
+          if( menu.acciones != undefined){
+            menu.acciones.forEach(el => {
+              console.log(e.Modulo, menu.nombre, el)
+            });
+          }
+         }
+        })
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+
+  obtenerAplicacion(id){
+    this.lstAplicacion.forEach(e => {
+      if(e.id = id){
+        this.Aplicacion.autor = e.creador
+        this.Aplicacion.id = e.id
+        this.Aplicacion.nombre = e.nombre
+        this.Aplicacion.version = e.VERSION
+        this.Aplicacion.url = e.repositorio
+      }
+    })
+  }
+
+  agregarMenus(){
+    console.log(this.lstAplicacion)
+
+  }
+
+  agregarAplicacion(){
+    this.agregarMenus()
+
     if ( this.xaplicacion == "" || this.xperfil == '' || this.xtraza == undefined) {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
       return false
@@ -244,7 +335,9 @@ export class UserComponent implements OnInit {
   quitarElemento(i) {
     console.log(i)
   }
+
   verPerfil(){}
+
   eliminarPerfil(){
 
   }
