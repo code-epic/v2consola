@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, ElementRef, Renderer2 } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ElementRef, Renderer2, HostListener, ApplicationRef, ViewEncapsulation } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 
@@ -20,13 +20,22 @@ import { locale as menuEnglish } from 'app/menu/i18n/en';
 import { locale as menuEspanish } from 'app/menu/i18n/es';
 import {Md5} from 'ts-md5';
 
+import { environment } from '../environments/environment';
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
+  encapsulation: ViewEncapsulation.None 
 })
 export class AppComponent implements OnInit, OnDestroy {
+
+
+  devToolsOpened = false;
+  private checkInterval: any;
+  showContent = true;
+
 
   token: string|undefined;
 
@@ -55,6 +64,9 @@ export class AppComponent implements OnInit, OnDestroy {
    * @param {CoreTranslationService} _coreTranslationService
    * @param {TranslateService} _translateService
    */
+
+  private overlayElement: HTMLElement;
+
   constructor(
     @Inject(DOCUMENT) private document: any,
     private _title: Title,
@@ -65,8 +77,27 @@ export class AppComponent implements OnInit, OnDestroy {
     private _coreLoadingScreenService: CoreLoadingScreenService,
     private _coreMenuService: CoreMenuService,
     private _coreTranslationService: CoreTranslationService,
-    private _translateService: TranslateService
+    private _translateService: TranslateService,
+    private appRef: ApplicationRef,
+    private renderer: Renderer2
   ) {
+
+
+        // Crear el overlay de protección
+        this.overlayElement = this.renderer.createElement('div');
+        this.renderer.addClass(this.overlayElement, 'devtools-overlay');
+        this.renderer.setStyle(this.overlayElement, 'display', 'none');
+        this.renderer.appendChild(document.body, this.overlayElement);
+        this.setupProtection();
+    
+
+
+    // Detectar cuando las herramientas ya estaban abiertas al cargar la página
+    if (window.outerWidth - window.innerWidth > 160 || 
+      window.outerHeight - window.innerHeight > 160) {
+    this.handleDevToolsOpened();
+    }
+
     this.Menu = undefined;
     // Get the application main menu
     // this.menu = menu;
@@ -128,6 +159,13 @@ export class AppComponent implements OnInit, OnDestroy {
     // Set the private defaultsx
     this._unsubscribeAll = new Subject();
   }
+
+
+  @HostListener('contextmenu', ['$event'])
+  onRightClick(event: MouseEvent): void {
+    event.preventDefault();
+  }
+
 
   // Lifecycle hooks
   // -----------------------------------------------------------------------------------------------------
@@ -287,11 +325,89 @@ export class AppComponent implements OnInit, OnDestroy {
     this._title.setTitle(this.coreConfig.app.appTitle);
   }
 
+
+  // INICIA LA FUNCION DE BLOQUEO DE PANTALLA CUANDO DE USE HERRAMIENTAS DE DESARROLLADOR
+
+
+  private setupProtection(): void {
+    // Solo activar protección en producción
+    if (environment.production) {
+    // Configurar detección inicial
+    this.checkDevTools();
+
+    // Verificar periódicamente
+    this.checkInterval = setInterval(() => this.checkDevTools(), 1000);
+
+    // Detectar atajos de teclado
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F12' || e.keyCode === 123 || 
+          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || 
+          (e.ctrlKey && e.key === 'U')) {
+        e.preventDefault();
+        this.handleDevToolsOpened();
+      }
+    });
+  }
+  }
+
+  private checkDevTools(): void {
+    const widthThreshold = window.outerWidth - window.innerWidth > 160;
+    const heightThreshold = window.outerHeight - window.innerHeight > 160;
+    
+    if (widthThreshold || heightThreshold) {
+      this.handleDevToolsOpened();
+    } else {
+      this.handleDevToolsClosed();
+    }
+  }
+
+  private handleDevToolsOpened(): void {
+    if (!this.devToolsOpened) {
+      this.devToolsOpened = true;
+      this.showContent = false;
+      this.disableInteractions();
+      this.appRef.tick(); // Forzar actualización de la vista
+    }
+  }
+
+  private handleDevToolsClosed(): void {
+    if (this.devToolsOpened) {
+      this.devToolsOpened = false;
+      this.showContent = true;
+      this.enableInteractions();
+      this.appRef.tick(); // Forzar actualización de la vista
+    }
+  }
+
+
+  private disableInteractions(): void {
+    // Deshabilitar eventos
+    document.addEventListener('keydown', this.preventEvent, true);
+    document.addEventListener('click', this.preventEvent, true);
+    document.addEventListener('contextmenu', this.preventEvent, true);
+  }
+
+  private enableInteractions(): void {
+    // Habilitar eventos nuevamente
+    document.removeEventListener('keydown', this.preventEvent, true);
+    document.removeEventListener('click', this.preventEvent, true);
+    document.removeEventListener('contextmenu', this.preventEvent, true);
+  }
+
+  private preventEvent(e: Event): void {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+  }
+
+  // TERMINA LA FUNCION DE BLOQUEO DE PANTALLA CUANDO DE USE HERRAMIENTAS DE DESARROLLADOR
+
   /**
    * On destroy
    */
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
+    clearInterval(this.checkInterval);
     console.log('destroy code')
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
@@ -308,6 +424,8 @@ export class AppComponent implements OnInit, OnDestroy {
   toggleSidebar(key): void {
     this._coreSidebarService.getSidebarRegistry(key).toggleOpen();
   }
+
+
 
 
 }
