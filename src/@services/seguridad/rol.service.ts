@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 
 
 export interface IUser {
+  cedula: string
   tipoacceso: number
   respaldo: number
   endpoint: string

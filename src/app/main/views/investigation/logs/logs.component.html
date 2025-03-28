@@ -1,0 +1,112 @@
+<div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <!-- Invoice List -->
+    <section class="invoice-list-wrapper">
+      <div class="card">
+        <div class="col-md-12" style="margin-top: 25px;">
+          <div class="row justify-content-center"> <!-- Centramos la fila -->
+
+            <div class="col-md-12 col-12"> <!-- Select ocupa 6 columnas -->
+              <fieldset class="form-group mb-0">
+                <ng-select [items]="lstLogs" bindLabel="name" bindId="id" bindValue="name" (change)="onLogTypeChange($event)"  placeholder="Seleccione Log"></ng-select>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <br>
+
+        <div class="card">
+          <div class="col-md-12" style="margin-top: 25px;">
+            <!-- <div style="width:100%; height:400px; overflow: scroll;"> -->
+                <!-- <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
+                  [ngModelOptions]="{standalone: true}" [(ngModel)]="xrs" value="{{xrs}}"></textarea> -->
+
+
+
+
+                  <div class="log-viewer-container">
+                    <!-- Log Sistema -->
+                    <app-query-log *ngIf="selectedLogType === 3" 
+                    [rawLogs]="queryLogs">
+                  </app-query-log>
+                  
+                  <!-- Log Query -->
+                  <app-system-log *ngIf="selectedLogType === 1" 
+                  [rawLogs]="systemLogs">
+                    </app-system-log>
+
+                    <!-- Log Cache -->
+                    <app-cache-log *ngIf="selectedLogType === 2" 
+                  [rawLogs]="systemLogs">
+                    </app-cache-log>
+                    
+                    <!-- Puedes agregar más viewers según necesites -->
+                  </div>
+
+
+
+
+
+
+
+
+              <!-- </div> -->
+
+            <!-- log-viewer.component.html -->
+            <!-- <div class="log-container">
+              <div *ngFor="let log of reversedLogs" class="log-entry">
+                <div class="log-header">
+                  <span class="log-date">{{log.date}}</span>
+                  <span class="log-type" [ngClass]="{'warning': log.type === 'WARNING', 'error': log.type === 'ERROR'}">
+                    {{log.type}}
+                  </span>
+                  <span class="log-file">{{log.file}}</span>
+                </div>
+
+                <div *ngIf="log.id" class="log-id">
+                  <span class="label">ID:</span> {{log.id}}
+                </div>
+
+                <div class="log-query">
+                  <div class="query-label">QUERY:</div>
+                  <pre class="sql-query">{{log.query}}</pre>
+                </div>
+
+                <div *ngIf="log.error" class="log-error">
+                  <span class="label">ERROR:</span> {{log.error}}
+                </div>
+
+                <div class="log-divider"></div>
+              </div>
+            </div> -->
+
+
+
+            <!-- query-log-viewer.component.html -->
+            <!-- <div class="query-log-container">
+              <div *ngFor="let log of reversedQueryLogs" class="query-log-entry" [ngClass]="'alert-' + getErrorType(log.message)">
+                <div class="query-log-header">
+                  <span class="query-log-date">{{log.date}}</span>
+                  <span class="query-log-type alert">{{log.type}}</span>
+                  <span class="query-log-file">{{log.file}}</span>
+                </div>
+                
+                <div class="query-log-message">
+                  <span *ngIf="log.errorCode" class="error-code">{{log.errorCode}}:</span>
+                  {{log.message}}
+                </div>
+                
+                <div class="query-log-divider"></div>
+              </div>
+            </div> -->
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</div>

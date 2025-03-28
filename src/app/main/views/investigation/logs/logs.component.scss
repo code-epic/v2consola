@@ -1,0 +1,17 @@
+/* logs.component.css */
+.logs-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 20px;
+  gap: 20px;
+}
+
+.log-selector {
+  width: 300px;
+}
+
+.log-viewer-container {
+  flex: 1;
+  min-height: 0; /* Para que el contenedor no se expanda indefinidamente */
+}

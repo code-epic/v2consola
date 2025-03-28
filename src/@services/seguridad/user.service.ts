@@ -5,6 +5,8 @@ export interface SPrivilegio {
   descripcion: string;
   accion: string;
   directivas: string;
+  endpoint: string;
+  funcion: string;
 }
 
 export interface SSubMenu {
@@ -50,6 +52,7 @@ export interface SAplicacion {
 
 export interface Perfil {
   descripcion: string;
+  traza: string;
 }
 
 export interface Firmadigital {
@@ -66,7 +69,9 @@ export interface Usuario {
   nombre: string;
   login: string;
   correo: string;
+  estatus: number;
   clave: string;
+  endpoint: string;
   sucursal: string; //equivale a la oficina
   direccion: string; //regional
   cargo: string;
@@ -93,7 +98,9 @@ export class UserService implements Usuario {
   telefono = '';
   sistema = '';
   token = '';
-  Perfil: Perfil = { descripcion: '' };
+  endpoint = '';
+  estatus = 1;
+  Perfil: Perfil = { descripcion: '', traza : '' };
   Aplicacion: SAplicacion[] = [];
   firmadigital: Firmadigital = {
     duracion: 0,
@@ -114,9 +121,11 @@ export class UserService implements Usuario {
     this.direccion = '';
     this.cargo = '';
     this.telefono = '';
+    this.endpoint = '';
     this.sistema = '';
     this.token = '';
-    this.Perfil = { descripcion: '' };
+    this.estatus = 1;
+    this.Perfil = { descripcion: '', traza : '' };
     this.Aplicacion = [];
     this.firmadigital = {
       duracion: 0,

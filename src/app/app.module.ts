@@ -33,15 +33,16 @@ import { OptionsModule } from './main/views/options/options.module';
 import { SecurityModule } from './main/views/security/security.module';
 import { ToolsModule } from './main/views/tools/tools.module';
 import { ApplicationsModule } from './main/views/applications/applications.module';
+import { TaskModule } from './main/views/task/task.module';
+import { InvestigationModule } from './main/views/investigation/investigation.module';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+
 
 // Recaptcha V3
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 import { environment } from 'environments/environment';
 import { BlockUIModule } from 'ng-block-ui';
 import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
-import { TaskMonitorComponent } from './main/views/task/task-monitor/task-monitor.component';
-import { TaskModule } from './main/views/task/task.module';
-import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 
 
 //  Recaptcha V2
@@ -109,6 +110,7 @@ const appRoutes: Routes = [
     SecurityModule,
     ToolsModule,
     TaskModule,
+    InvestigationModule,
     NgSelectModule,
     
   ],

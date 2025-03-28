@@ -1,0 +1,49 @@
+<div class="log-container">
+  <div class="log-header">
+    <h2>Registros del sistema</h2>
+    
+    <div class="log-controls">
+      <button class="refresh-btn" (click)="verLogs()" [disabled]="isLoading">
+        <i class="refresh-icon" [class.spin]="isLoading"><i data-feather="refresh-ccw"></i></i>
+        {{isLoading ? 'Refrescando...' : 'Refrescar Registros'}}
+      </button>
+      
+      <div class="search-box">
+        <input type="text" 
+               [(ngModel)]="searchText" 
+               (ngModelChange)="onSearchChange($event)"
+               placeholder="Buscar Logs..."
+               [disabled]="isLoading">
+              <i  class="search-icon"><i data-feather="search"></i></i>
+      </div>
+      
+      <div class="type-filter">
+        <label>Filtrar:</label>
+        <select [(ngModel)]="selectedType" (change)="onTypeChange(selectedType)" [disabled]="isLoading">
+          <option *ngFor="let type of logTypes" [value]="type">{{type}}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de carga -->
+  <div *ngIf="isLoading" class="loading-message">
+    <div class="spinner"></div>
+    <p>Leyendo Registros del Sistema, por favor espere...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="log-list">
+    <div *ngFor="let log of filteredLogs" class="log-entry" [class]="log.type.toLowerCase()">
+      <div class="log-header-line">
+        <span class="log-type">{{log.type}}</span>
+        <span class="log-date">{{log.date}}</span>
+        <span class="log-file">{{log.file}}</span>
+      </div>
+      <div class="log-message">{{log.message}}</div>
+    </div>
+    
+    <div *ngIf="filteredLogs.length === 0 && !isLoading" class="no-logs">
+      No se encontraron registros que coincidan con tus criterios.
+    </div>
+  </div>
+</div>

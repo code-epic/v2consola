@@ -1,29 +1,42 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core"
+import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap"
+import { ApiService, IAPICore } from "@services/apicore/api.service"
 
-import { IUser } from '@services/seguridad/rol.service';
-import { SAplicacion, SMenu, SRol, UserService, Usuario } from '@services/seguridad/user.service';
-import { UtilService } from '@services/util/util.service';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { Aplicacion, IUser } from "@services/seguridad/rol.service"
+import {
+  Firmadigital,
+  Perfil,
+  SAplicacion,
+  SMenu,
+  SPrivilegio,
+  SRol,
+  UserService,
+  Usuario,
+} from "@services/seguridad/user.service"
+import { UtilService } from "@services/util/util.service"
+import {
+  ColumnMode,
+  DatatableComponent,
+  SelectionType,
+} from "@swimlane/ngx-datatable"
 
-
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { BlockUI, NgBlockUI } from "ng-block-ui"
+import { Observable } from "rxjs"
+import { runInContext } from "vm"
 
 @Component({
-  selector: 'app-user',
-  templateUrl: './user.component.html',
-  styleUrls: ['./user.component.scss'],
+  selector: "app-user",
+  templateUrl: "./user.component.html",
+  styleUrls: ["./user.component.scss"],
   encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+  providers: [NgbModalConfig, NgbModal],
 })
 export class UserComponent implements OnInit {
-
   @ViewChild(DatatableComponent) table: DatatableComponent
   @BlockUI() blockUI: NgBlockUI
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI
+  @BlockUI("section-block") sectionBlockUI: NgBlockUI
 
-  public contentHeader: object;
+  public contentHeader: object
   // @ViewChild('dataUsers') dataUsers: any
 
   public ColumnMode = ColumnMode
@@ -31,142 +44,165 @@ export class UserComponent implements OnInit {
   public basicSelectedOption: number = 10
 
   public xAPI: IAPICore = {
-    funcion: '',
-    parametros: '',
+    funcion: "",
+    parametros: "",
     valores: {},
-  };
-
-  public userJson: Usuario
-
-
-
-  public iUser : IUser = {
-    tipoacceso: 0,
-    respaldo: 0,
-    endpoint: '',
-    login: '',
-    clave: '',
-    encriptamiento: '',
-    nombre: '',
-    descripcion: '',
-    estatus: 1,
-    vigencia: 180,
-    correo: '',
-    observaciones: '',
-    duraciontexto: 1,
-    duraciontiempo: 5,
-    oficina: '',
-    regional: ''
   }
 
+  public Perfil: Perfil = {
+    descripcion: "",
+    traza: "",
+  }
+  public usuario: Usuario = {
+    cedula: "",
+    nombre: "",
+    login: "",
+    correo: "",
+    clave: "",
+    sucursal: "",
+    direccion: "",
+    cargo: "",
+    telefono: "",
+    sistema: "",
+    token: "",
+    estatus: 1,
+    Perfil: this.Perfil,
+    Aplicacion: [],
+    firmadigital: undefined,
+    endpoint: "",
+  }
+
+  public iUser: IUser = {
+    cedula: '',
+    tipoacceso: 0,
+    respaldo: 0,
+    endpoint: "",
+    login: "",
+    clave: "",
+    encriptamiento: "",
+    nombre: "",
+    descripcion: "",
+    estatus: 1,
+    vigencia: 180,
+    correo: "",
+    observaciones: "",
+    duraciontexto: 1,
+    duraciontiempo: 5,
+    oficina: "",
+    regional: "",
+  }
 
   public tipoacceso = [
-    { id: 0, name: 'SELECCIONAR' },
-    { id: 1, name: 'LOCAL' },
-    { id: 2, name: 'LDAP' },
-    { id: 3, name: 'DIRECTORIO ACTIVO' },
-    { id: 4, name: 'OTRO' },
+    { id: 0, name: "SELECCIONAR" },
+    { id: 1, name: "LOCAL" },
+    { id: 2, name: "LDAP" },
+    { id: 3, name: "DIRECTORIO ACTIVO" },
+    { id: 4, name: "OTRO" },
   ]
 
   public respaldo = [
-    { id: 1, name: 'SI' },
-    { id: 0, name: 'NO' }
+    { id: 1, name: "SI" },
+    { id: 0, name: "NO" },
   ]
 
-
   public estatus = [
-    { id: 1, name: 'ACTIVO' },
-    { id: 0, name: 'INACTIVO' }
+    { id: 1, name: "ACTIVO" },
+    { id: 0, name: "INACTIVO" },
   ]
 
   public formato = [
-    { id: '1', name: 'SHA256' },
-    { id: '2', name: 'MD5' }
+    { id: "1", name: "SHA256" },
+    { id: "2", name: "MD5" },
   ]
 
   public duracion = [
-    { id: 0, name: 'Segundos' },
-    { id: 1, name: 'Minutos' },
-    { id: 2, name: 'Horas' },
-    { id: 3, name: 'Ninguno' }
+    { id: 1, name: "Segundos" },
+    { id: 60, name: "Minutos" },
+    { id: 3600, name: "Horas" },
   ]
 
   public sesion = [
-    { id: 30, name: '30 días' },
-    { id: 60, name: '60 días' },
-    { id: 90, name: '90 días' },
-    { id: 180, name: '180 días' }
+    { id: 30, name: "30 días" },
+    { id: 60, name: "60 días" },
+    { id: 90, name: "90 días" },
+    { id: 180, name: "180 días" },
   ]
 
   public traza = [
-    { id: '1|BAJA', name: 'BAJA' }, //CONEXIONES
-    { id: '2|MEDIA', name: 'MEDIA' }, //CONEXION - PETIONES ACCIONES I,U,R,D
-    { id: '3|ALTA', name: 'ALTA' } //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
+    { id: "1|BAJA", name: "BAJA" }, //CONEXIONES
+    { id: "2|MEDIA", name: "MEDIA" }, //CONEXION - PETIONES ACCIONES I,U,R,D
+    { id: "3|ALTA", name: "ALTA" }, //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
   ]
 
   public Rol: SRol = {
-    descripcion: '',
-    Menu: []
+    descripcion: "",
+    Menu: [],
   }
 
   public Menu: SMenu = {
-    url: '',
-    js: '',
-    icono: '',
-    descripcion: '',
-    nombre: '',
-    accion: '',
-    clase: '',
-    color: '',
+    url: "",
+    js: "",
+    icono: "",
+    descripcion: "",
+    nombre: "",
+    accion: "",
+    clase: "",
+    color: "",
     Privilegio: [],
-    SubMenu: []
+    SubMenu: [],
   }
 
   public Aplicacion: SAplicacion = {
-    id: '',
-    nombre: '',
-    url: '',
-    comentario: '',
-    version: '',
-    autor: '',
+    id: "",
+    nombre: "",
+    url: "",
+    comentario: "",
+    version: "",
+    autor: "",
     Rol: {
-      descripcion: '',
-      Menu: []
+      descripcion: "",
+      Menu: [],
     },
   }
 
-  public ldap : boolean = false
+  public ldap: boolean = false
   public activedirectory = false
   public property = false
-  public tiempoduracion = '0'
+  public tiempoduracion = "0"
   public lstAplicacion = []
+  public Privilegios: SPrivilegio = {
+    metodo: "",
+    descripcion: "",
+    accion: "",
+    directivas: "",
+    endpoint: "",
+    funcion: "",
+  }
+
   public lstPerfil = []
 
   public dataUsers = []
   public lstUsersApp = []
-  public temprowData = [] 
+  public temprowData = []
 
-  public xaplicacion = ''
-  public xperfil = ''
-  public xtraza = '1|BAJA'
+  public xaplicacion = ""
+  public xperfil = ""
+  public xtraza = "1|BAJA"
 
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
-    private userService: UserService,
-  ) { 
-
+    private userService: UserService
+  ) {
     this.userService.iniciarObjeto()
-    
-    this.Rol.descripcion = 'Descripcion general'
-    this.Rol.Menu.push(this.Menu)
 
-    this.Aplicacion.Rol = this.Rol
-    userService.Aplicacion.push(this.Aplicacion)
-    console.log(userService.toJSON())
+    // this.Rol.descripcion = "Descripcion general"
+    // this.Rol.Menu.push(this.Menu)
+
+    // this.Aplicacion.Rol = this.Rol
+    // userService.Aplicacion.push(this.Aplicacion)
+    // console.log(userService.toJSON())
   }
-
-
 
   ngOnInit(): void {
     this.contentHeader = {
@@ -190,17 +226,15 @@ export class UserComponent implements OnInit {
           },
         ],
       },
-    };
+    }
     this.CargarListaAplicaciones()
   }
-
 
   selDuracion(e) {
     console.log(e)
     if (e == 3) {
-      this.tiempoduracion = '0'
+      this.tiempoduracion = "0"
     }
-
   }
 
   selTipoAcceso(e) {
@@ -208,81 +242,106 @@ export class UserComponent implements OnInit {
       case 1:
         this.property = true
         this.ldap = false
-        break;
+        break
       case 2:
         this.property = false
         this.ldap = true
-        break;
+        break
       case 3:
         this.property = false
         this.ldap = true
-        break;
+        break
       default:
         this.property = false
         this.ldap = false
         this.activedirectory = false
-        break;
+        break
     }
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
-    this.xAPI.parametros = ''
+    this.xAPI.funcion = "_SYS_LstAplicaciones"
+    this.xAPI.parametros = ""
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.lstAplicacion = data.Cuerpo.map(e => {
-          e.id = e.identificador + '|' + e.nombre 
-          e.name = e.nombre + ' : ' + e.VERSION
+        this.lstAplicacion = data.Cuerpo.map((e) => {
+          e.id = e.identificador + "|" + e.nombre
+          e.name = e.nombre + " : " + e.VERSION
           return e
-        });
+        })
       },
       (error) => {
         console.log(error)
       }
     )
   }
-
 
   selPerfil(e) {
-    let codPerfil = e.split('|')[0].toString()
-    this.obtenerAplicacion(e)
-    this.obetnerModulos(codPerfil)
-
-    this.xAPI.funcion = "_SYS_CPerfilesAPP";
-    this.xAPI.parametros = codPerfil
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        this.lstPerfil = data.Cuerpo.map(e => {
-          e.id = e.id + '|' + e.perfil
-          e.name = e.perfil
-          return e
-        })
-        console.log(this.lstPerfil)
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
+    try {
+      let codPerfil = e.split("|")[0].toString()
+      //this.obtenerAplicacion(e)
+      // this.obetnerModulos(codPerfil, e)
+      this.xAPI.funcion = "_SYS_CPerfilesAPP"
+      this.xAPI.parametros = codPerfil
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.lstPerfil = data.Cuerpo.map((e) => {
+            e.id = e.id + "|" + e.perfil
+            e.name = e.perfil
+            return e
+          })
+          // console.log(this.lstPerfil)
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
+    } catch (error) {
+      console.error("Errores varios: ", error)
+    }
   }
-
 
   //OBTENER LA LISTA DE LOS MENU Y ACCIONES DESDE EL PERFIL
-  obetnerModulos(idPerfil){
-    this.xAPI.funcion = "_SYS_CModulosAPP";
-    this.xAPI.parametros = idPerfil
-    this.apiService.Ejecutar(this.xAPI).subscribe(
+  async obetnerModulos(idapp, aplicacion, idper, perfil, traza) {
+    // let idapp = this.xaplicacion.split("|")[0].toString()
+    // let idper = this.xperfil.split("|")[0].toString()
+    this.xAPI.funcion = "_SYS_CModulosAPP"
+    this.xAPI.parametros = `${idapp},${idper}`
+
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.Cuerpo.forEach(e => {
-        console.log(e)
-         if(e.menu_acciones != undefined){
-          let menu = JSON.parse(e.menu_acciones)
-          if( menu.acciones != undefined){
-            menu.acciones.forEach(el => {
-              console.log(e.Modulo, menu.nombre, el)
-            });
+        let lstMenu = []
+        data.Cuerpo.forEach((e) => {
+          if (e.menu_acciones != undefined) {
+            let menu = JSON.parse(e.menu_acciones)
+            if (menu.acciones != undefined) {
+              let lstPriv = []
+              menu.acciones.forEach((obj) => {
+                let Privilegios = {
+                  accion: obj.accion,
+                  directivas: obj.directiva,
+                  funcion: obj.funcion,
+                  endpoint: obj.endpoint,
+                }
+                lstPriv.push(Privilegios)
+              })
+              let Menu = {
+                url: menu.url,
+                icono: menu.icono,
+                color: menu.color,
+                nombre: menu.nombre,
+                js: menu.js,
+                clase: menu.clase,
+                SubMenu: {},
+                Privilegio: lstPriv,
+              }
+              lstMenu.push(Menu)
+            }
           }
-         }
         })
+        // console.log(lstMenu)
+        this.obtenerAplicacion(idapp, aplicacion, lstMenu, perfil, traza)
+        // return lstMenu
       },
       (error) => {
         console.log(error)
@@ -290,79 +349,111 @@ export class UserComponent implements OnInit {
     )
   }
 
-  obtenerAplicacion(id){
-    this.lstAplicacion.forEach(e => {
-      if(e.id = id){
-        this.Aplicacion.autor = e.creador
-        this.Aplicacion.id = e.id
-        this.Aplicacion.nombre = e.nombre
-        this.Aplicacion.version = e.VERSION
-        this.Aplicacion.url = e.repositorio
+  async obtenerAplicacion(id, aplicacion, Menu: any, perfil : '', traza) {
+    let lstApp = []
+    this.lstAplicacion.forEach(async (e) => {
+      if ((e.id = id)) {
+        // let lstrol: any = []
+        let rol: SRol = {
+          descripcion: "XX-00",
+          Menu: Menu,
+        }
+        // lstrol.push(rol)
+        let apps: SAplicacion = {
+          autor: e.creador,
+          id: e.id,
+          nombre: e.nombre,
+          version: e.VERSION,
+          url: e.repositorio,
+          comentario: "",
+          Rol: rol,
+        }
+        this.Aplicacion = apps
+        // let lstApp = []
+        lstApp.push(this.Aplicacion)
+        this.usuario.Perfil.descripcion = perfil
+        this.usuario.Perfil.traza = perfil
+        this.usuario.cedula = this.iUser.cedula
+        this.usuario.login = this.iUser.login
+        this.usuario.nombre = this.iUser.nombre
+        this.usuario.correo = this.iUser.correo
+        this.usuario.endpoint = this.iUser.endpoint
+        this.usuario.clave = await this.utilservice.generateSHA256Hash(
+          this.iUser.clave
+        )
+        //  console.log(this.iUser.vigencia)
+        let firma: Firmadigital = {
+          vigencia: this.iUser.vigencia,
+          duracion: this.iUser.duraciontiempo * this.iUser.duraciontexto,
+          direccionmac: "",
+          direccionip: "",
+          tiempo: "",
+          nivel: 0,
+        }
+        this.usuario.firmadigital = firma
+        this.usuario.sistema = aplicacion //this.xaplicacion.split("|")[1].toString()
+        this.usuario.Aplicacion = lstApp
       }
     })
+
+    console.log(this.usuario)
   }
 
-  agregarMenus(){
-    console.log(this.lstAplicacion)
+  async agregarAplicacion() {
 
-  }
-
-  agregarAplicacion(){
-    this.agregarMenus()
-
-    if ( this.xaplicacion == "" || this.xperfil == '' || this.xtraza == undefined) {
-      this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
+    
+    if (
+      this.xaplicacion == "" ||
+      this.xperfil == "" ||
+      this.xtraza == undefined
+    ) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "error",
+        "Debe verificar los campos",
+        3000
+      )
       return false
     }
+    
+
+    // control de datos en seguimientos
+    //cat log/query.log
+    
+
     let user = {
-      'id' : null,
-      'iduser' : 0,
-      'idapp' : this.xaplicacion.split('|')[0],
-      'aplicacion': this.xaplicacion.split('|')[1],
-      'idper' : this.xperfil.split('|')[0],
-      'perfil' : this.xperfil.split('|')[1],
-      'idtra' : this.xtraza.split('|')[0],
-      'traza' : this.xtraza.split('|')[1],
-      'estatus' : 1
-    }
+      id: null,
+      iduser: 0, 
+      idapp: this.xaplicacion.split("|")[0],
+      aplicacion: this.xaplicacion.split("|")[1],
+      idper: this.xperfil.split("|")[0],
+      perfil: this.xperfil.split("|")[1],
+      idtra: this.xtraza.split("|")[0],
+      traza: this.xtraza.split("|")[1],
+      estatus: 1,
+    };
     this.lstUsersApp.push(user)
     this.lstPerfil = []
     this.xaplicacion = ''
     this.xperfil = ''
-    this.dataUsers = this.lstUsersApp
+    this.dataUsers = this.lstUsersApp;
+    
   }
 
   quitarElemento(i) {
     console.log(i)
   }
 
-  verPerfil(){}
+  verPerfil() {}
 
-  eliminarPerfil(){
+  eliminarPerfil() {}
 
+  agregarUsuario() {
+    this.lstUsersApp.forEach(e => {
+      this.obetnerModulos(e.idapp, e.aplicacion, e.idper, e.perfil, e.traza)
+    });
+    
   }
 
-
-  agregarUsuario(){
-
-  }
-
-
-
-
-  cancelar(){}
-  
- 
-
-
-
-
-  
-
-
-
-
-
-
-
+  cancelar() {} 
 }
