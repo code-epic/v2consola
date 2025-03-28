@@ -35,12 +35,12 @@ import { CacheLogComponent } from './cache-log/cache-log.component';
 
 const routes = [
   {
-    path: 'application/logs',
+    path: 'investigation/logs',
     component: LogsComponent,
     canActivate: [AuthGuardGuard],
   },
   {
-    path: 'application/binnacle',
+    path: 'investigation/binnacle',
     component: BinnacleComponent,
     canActivate: [AuthGuardGuard],
   },
