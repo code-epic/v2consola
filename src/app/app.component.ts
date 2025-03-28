@@ -2,7 +2,6 @@ import { Component, Inject, OnDestroy, OnInit, ElementRef, Renderer2, HostListen
 import { DOCUMENT } from '@angular/common';
 import { Title } from '@angular/platform-browser';
 
-
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,14 +13,12 @@ import { CoreConfigService } from '@core/services/config.service';
 import { CoreLoadingScreenService } from '@core/services/loading-screen.service';
 import { CoreTranslationService } from '@core/services/translation.service';
 
-
 import { menu } from 'app/menu/menu';
 import { locale as menuEnglish } from 'app/menu/i18n/en';
 import { locale as menuEspanish } from 'app/menu/i18n/es';
 import {Md5} from 'ts-md5';
 
 import { environment } from '../environments/environment';
-
 
 @Component({
   selector: 'app-root',
@@ -30,41 +27,20 @@ import { environment } from '../environments/environment';
   encapsulation: ViewEncapsulation.None 
 })
 export class AppComponent implements OnInit, OnDestroy {
-
-
   devToolsOpened = false;
   private checkInterval: any;
   showContent = true;
-
+  private disableRightClick = false; // Variable para controlar el bloqueo del clic derecho
 
   token: string|undefined;
-
   coreConfig: any;
   menu: any;
   defaultLanguage: 'es'; // This language will be used as a fallback when a translation isn't found in the current language
   appLanguage: 'es'; // Set application default language i.e fr
 
-
   // Private
   private _unsubscribeAll: Subject<any>;
-
-  public Menu
-  
-  /**
-   * Constructor
-   *
-   * @param {DOCUMENT} document
-   * @param {Title} _title
-   * @param {Renderer2} _renderer
-   * @param {ElementRef} _elementRef
-   * @param {CoreConfigService} _coreConfigService
-   * @param {CoreSidebarService} _coreSidebarService
-   * @param {CoreLoadingScreenService} _coreLoadingScreenService
-   * @param {CoreMenuService} _coreMenuService
-   * @param {CoreTranslationService} _coreTranslationService
-   * @param {TranslateService} _translateService
-   */
-
+  public Menu;
   private overlayElement: HTMLElement;
 
   constructor(
@@ -81,35 +57,31 @@ export class AppComponent implements OnInit, OnDestroy {
     private appRef: ApplicationRef,
     private renderer: Renderer2
   ) {
+    // Crear el overlay de protección
+    this.overlayElement = this.renderer.createElement('div');
+    this.renderer.addClass(this.overlayElement, 'devtools-overlay');
+    this.renderer.setStyle(this.overlayElement, 'display', 'none');
+    this.renderer.appendChild(document.body, this.overlayElement);
 
-
-        // Crear el overlay de protección
-        this.overlayElement = this.renderer.createElement('div');
-        this.renderer.addClass(this.overlayElement, 'devtools-overlay');
-        this.renderer.setStyle(this.overlayElement, 'display', 'none');
-        this.renderer.appendChild(document.body, this.overlayElement);
-        this.setupProtection();
+    // Configurar protección solo en producción
+    if (environment.production) {
+      this.disableRightClick = true; // Activar bloqueo de clic derecho
+      this.setupProtection();
     
-
-
-    // Detectar cuando las herramientas ya estaban abiertas al cargar la página
-    if (window.outerWidth - window.innerWidth > 160 || 
-      window.outerHeight - window.innerHeight > 160) {
-    this.handleDevToolsOpened();
+      // Detectar cuando las herramientas ya estaban abiertas al cargar la página
+      if (window.outerWidth - window.innerWidth > 160 || 
+        window.outerHeight - window.innerHeight > 160) {
+        this.handleDevToolsOpened();
+      }
     }
 
     this.Menu = undefined;
     // Get the application main menu
-    // this.menu = menu;
-
     var token = sessionStorage.getItem('token');
     if (token === null) {
       this.menu = menu;
     } else {
       this.Menu = JSON.parse(sessionStorage.getItem('menu'))
-      // let texto = Md5.hashStr(sessionStorage.getItem('menu'))
-      // console.log(texto, sessionStorage.getItem('crypt'))
-      
       this.menu = this.Menu.map(e => {
         e.id = e.nombre.toLowerCase()
         e.type = e.clase
@@ -118,7 +90,7 @@ export class AppComponent implements OnInit, OnDestroy {
         e.title = e.nombre
         if(e.SubMenu != undefined ) {
           e.children = e.SubMenu.map(el => {
-            el.id =    el.nombre.toLowerCase()
+            el.id = el.nombre.toLowerCase()
             el.title = el.descripcion
             el.type = el.clase
             el.icon = el.icono
@@ -128,17 +100,15 @@ export class AppComponent implements OnInit, OnDestroy {
             case 'item':
               e.url = e.descripcion
               break;
-              case 'collapsible':
-                e.url = ''
-                break;
-          
+            case 'collapsible':
+              e.url = ''
+              break;
             default:
               break;
           }
         }
         return e
-      }
-      );
+      });
     }
 
     // Register the menu to the menu service
@@ -156,16 +126,16 @@ export class AppComponent implements OnInit, OnDestroy {
     // Set the translations for the menu
     this._coreTranslationService.translate(menuEnglish, menuEspanish);
 
-    // Set the private defaultsx
+    // Set the private defaults
     this._unsubscribeAll = new Subject();
   }
 
-
   @HostListener('contextmenu', ['$event'])
   onRightClick(event: MouseEvent): void {
-    event.preventDefault();
+    if (this.disableRightClick) {
+      event.preventDefault();
+    }
   }
-
 
   // Lifecycle hooks
   // -----------------------------------------------------------------------------------------------------
@@ -182,44 +152,14 @@ export class AppComponent implements OnInit, OnDestroy {
       this.coreConfig = config;
 
       // Set application default language.
-
-      // Change application language? Read the ngxTranslate Fix
-
-      // ? Use app-config.ts file to set default language
       const appLanguage = this.coreConfig.app.appLanguage || 'es';
       this._translateService.use(appLanguage);
 
-      // ? OR
-      // ? User the current browser lang if available, if undefined use 'en'
-      // const browserLang = this._translateService.getBrowserLang();
-      // this._translateService.use(browserLang.match(/en|fr|de|pt/) ? browserLang : 'en');
-
-      /**
-       * ! Fix : ngxTranslate
-       * ----------------------------------------------------------------------------------------------------
-       */
-
-      /**
-       *
-       * Using different language than the default ('en') one i.e French?
-       * In this case, you may find the issue where application is not properly translated when your app is initialized.
-       *
-       * It's due to ngxTranslate module and below is a fix for that.
-       * Eventually we will move to the multi language implementation over to the Angular's core language service.
-       *
-       **/
-
-      // Set the default language to 'en' and then back to 'fr'.
-
+      // Fix for ngxTranslate
       setTimeout(() => {
         this._translateService.setDefaultLang('es');
         this._translateService.setDefaultLang(appLanguage);
       });
-
-      /**
-       * !Fix: ngxTranslate
-       * ----------------------------------------------------------------------------------------------------
-       */
 
       // Layout
       //--------
@@ -325,13 +265,7 @@ export class AppComponent implements OnInit, OnDestroy {
     this._title.setTitle(this.coreConfig.app.appTitle);
   }
 
-
-  // INICIA LA FUNCION DE BLOQUEO DE PANTALLA CUANDO DE USE HERRAMIENTAS DE DESARROLLADOR
-
-
   private setupProtection(): void {
-    // Solo activar protección en producción
-    if (environment.production) {
     // Configurar detección inicial
     this.checkDevTools();
 
@@ -347,7 +281,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.handleDevToolsOpened();
       }
     });
-  }
   }
 
   private checkDevTools(): void {
@@ -379,7 +312,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-
   private disableInteractions(): void {
     // Deshabilitar eventos
     document.addEventListener('keydown', this.preventEvent, true);
@@ -399,8 +331,6 @@ export class AppComponent implements OnInit, OnDestroy {
     e.stopPropagation();
     e.stopImmediatePropagation();
   }
-
-  // TERMINA LA FUNCION DE BLOQUEO DE PANTALLA CUANDO DE USE HERRAMIENTAS DE DESARROLLADOR
 
   /**
    * On destroy
@@ -424,8 +354,4 @@ export class AppComponent implements OnInit, OnDestroy {
   toggleSidebar(key): void {
     this._coreSidebarService.getSidebarRegistry(key).toggleOpen();
   }
-
-
-
-
 }

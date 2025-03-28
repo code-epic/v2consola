@@ -20,12 +20,6 @@
 
         <div class="card">
           <div class="col-md-12" style="margin-top: 25px;">
-            <!-- <div style="width:100%; height:400px; overflow: scroll;"> -->
-                <!-- <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
-                  [ngModelOptions]="{standalone: true}" [(ngModel)]="xrs" value="{{xrs}}"></textarea> -->
-
-
-
 
                   <div class="log-viewer-container">
                     <!-- Log Sistema -->
@@ -43,65 +37,8 @@
                   [rawLogs]="systemLogs">
                     </app-cache-log>
                     
-                    <!-- Puedes agregar más viewers según necesites -->
                   </div>
 
-
-
-
-
-
-
-
-              <!-- </div> -->
-
-            <!-- log-viewer.component.html -->
-            <!-- <div class="log-container">
-              <div *ngFor="let log of reversedLogs" class="log-entry">
-                <div class="log-header">
-                  <span class="log-date">{{log.date}}</span>
-                  <span class="log-type" [ngClass]="{'warning': log.type === 'WARNING', 'error': log.type === 'ERROR'}">
-                    {{log.type}}
-                  </span>
-                  <span class="log-file">{{log.file}}</span>
-                </div>
-
-                <div *ngIf="log.id" class="log-id">
-                  <span class="label">ID:</span> {{log.id}}
-                </div>
-
-                <div class="log-query">
-                  <div class="query-label">QUERY:</div>
-                  <pre class="sql-query">{{log.query}}</pre>
-                </div>
-
-                <div *ngIf="log.error" class="log-error">
-                  <span class="label">ERROR:</span> {{log.error}}
-                </div>
-
-                <div class="log-divider"></div>
-              </div>
-            </div> -->
-
-
-
-            <!-- query-log-viewer.component.html -->
-            <!-- <div class="query-log-container">
-              <div *ngFor="let log of reversedQueryLogs" class="query-log-entry" [ngClass]="'alert-' + getErrorType(log.message)">
-                <div class="query-log-header">
-                  <span class="query-log-date">{{log.date}}</span>
-                  <span class="query-log-type alert">{{log.type}}</span>
-                  <span class="query-log-file">{{log.file}}</span>
-                </div>
-                
-                <div class="query-log-message">
-                  <span *ngIf="log.errorCode" class="error-code">{{log.errorCode}}:</span>
-                  {{log.message}}
-                </div>
-                
-                <div class="query-log-divider"></div>
-              </div>
-            </div> -->
 
           </div>
         </div>
