@@ -40,8 +40,8 @@
                         </div>
 
                         <div class="col-md-12" align="right">
-                            <button type="button" class="btn btn-success" (click)="procesar()">
-                                <i class="fa fa-arrow-up" aria-hidden="true"></i> &nbsp; Procesar
+                            <button type="button" *ngIf="!showDiv" class="btn btn-success" (click)="procesar()">
+                                <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Consultar
                             </button>
                             &nbsp;
                             <button type="button" class="btn btn-warning" (click)="Limpiar()">
@@ -342,7 +342,7 @@
                             tabindex="1" autofocus />
                     </div>
 
-                    <div class="col-md-4 col-4 mb-1">
+                    <div class="col-md-2 col-2 mb-1">
                         <label class="form-label">Clase</label>
                         <input type="text" class="form-control" [(ngModel)]="IAccion.clase"
                             [ngModelOptions]="{standalone: true}" placeholder="Clase" 

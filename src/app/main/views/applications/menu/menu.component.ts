@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { UtilService } from '@services/util/util.service';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-import JSONFormatter from 'json-formatter-js';
+import {  DatatableComponent } from '@swimlane/ngx-datatable';
 
 
 @Component({
@@ -38,7 +37,10 @@ export class MenuComponent implements OnInit {
     endpoint: '',
     nomb: '',
     func: '',
-    direc: ''
+    direc: '',
+    color: '',
+    clase: '',
+    icono: ''
   }
 
   public IAddModulo: AddModulo = {
@@ -213,6 +215,7 @@ export class MenuComponent implements OnInit {
 
   selectEventMenu(item) {
     // console.log(item)
+    this.showDiv = false
     this.menu = item
     this.menuid = item.id
     this.IDefinirMenu.nombre = item.name
@@ -269,7 +272,6 @@ export class MenuComponent implements OnInit {
 
   async listarAcciones(item: any) {
     if (item > 0) {
-      // this.showDiv = true
       this.rowDataAcc = []
       this.xAPI.funcion = "OMenuAccion"
       this.xAPI.parametros = item
@@ -279,32 +281,40 @@ export class MenuComponent implements OnInit {
           var i = 0
           this.lista = []
           if (data.Cuerpo != undefined) {
-            this.btnMenu = true
+            
+            data.Cuerpo.map(e => {
+              if (i == 0) {
+                this.btnMenu = true
+                this.IDefinirMenu.id = e.id
+                this.IDefinirMenu.nombre = e.nomb
+                this.IDefinirMenu.url = e.url
+                this.IDefinirMenu.js = e.js
+                this.IDefinirMenu.clase = e.clase
+                this.IDefinirMenu.icon = e.icon
+                this.IDefinirMenu.color = e.color
+                this.IDefinirMenu.tipo = e.type
+              }
+              if (e.endpoint != undefined) {
+                this.lista.push(e)
+              }
+            })
+            this.rowDataAcc = this.lista;
           }
-          data.Cuerpo.map(e => {
-            if (i == 0) {
-              this.IDefinirMenu.id = e.id
-              this.IDefinirMenu.nombre = e.nomb
-              this.IDefinirMenu.url = e.url
-              this.IDefinirMenu.js = e.js
-              this.IDefinirMenu.clase = e.clase
-              this.IDefinirMenu.icon = e.icon
-              this.IDefinirMenu.color = e.color
-              this.IDefinirMenu.tipo = e.type
-            }
-            if (e.endpoint != undefined) {
-              this.lista.push(e)
-            }
-          });
+          
   
-          this.rowDataAcc = this.lista;
+          
         },
         (error) => {
           console.log(error)
         }
       )
-       } else {
-      this.utilservice.AlertMini('top-end', 'warning', 'Debe Seleccionar Aplicacion - Modulo - Menu', 3000)
+    } else {
+      this.utilservice.AlertMini('top-end', 'warning', 'No se encontro el menu', 3000)
+      let mnu = this.IDefinirMenu.nombre
+      this.LimpiarMenu()
+      this.menu = undefined
+      this.IDefinirMenu.nombre = mnu
+      this.rowDataAcc = []
     }
   }
 
@@ -317,20 +327,8 @@ export class MenuComponent implements OnInit {
       (data) => {
         var i = 0
         var lista = []
-        console.log(data)
         data.Cuerpo.map(e => {
-          // if (i == 0) {
-          //   this.IDefinirMenu.nombre = e.nomb
-          //   this.IDefinirMenu.url = e.url
-          //   this.IDefinirMenu.js = e.js
-          //   this.IDefinirMenu.clase = e.clase
-          //   this.IDefinirMenu.icon = e.icon
-          //   this.IDefinirMenu.color = e.color
-          //   this.IDefinirMenu.tipo = e.type
-          // }
-          // if (e.endpoint != undefined) {
             lista.push(e)
-          // }
         });
         this.ListarowSubMenu = lista;
       },
@@ -350,7 +348,6 @@ export class MenuComponent implements OnInit {
         if (data.tipo == 1) {
           this.LimpiarMenu()
           this.utilservice.AlertMini('top-end', 'success', 'Menu Registrado Exitosamente!', 3000)
-          // this.menuid = this.xAPI.funcion == "AgregarMenu" ? data.msj : this.menuid
         } else {
           this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
         }
@@ -366,9 +363,11 @@ export class MenuComponent implements OnInit {
     this.IDefinirMenu.idmod = this.xmodulo.id
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.IDefinirMenu)
-    this.xAPI.funcion = "ActualizarMenu";
+    this.xAPI.funcion = "_SYS_ActualizarMenu";
+    console.log(this.IDefinirMenu)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         if (data.tipo == 1) {
           this.LimpiarMenu()
           this.utilservice.AlertMini('top-end', 'success', 'Menu Actualizado Exitosamente!', 3000)
@@ -402,7 +401,10 @@ export class MenuComponent implements OnInit {
       endpoint: '',
       nomb: '',
       func: '',
-      direc: ''
+      direc: '',
+      color: '',
+      clase: '',
+      icono: ''
     }
   }
 

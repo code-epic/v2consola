@@ -191,13 +191,6 @@ export class UserComponent implements OnInit {
     private userService: UserService
   ) {
     this.userService.iniciarObjeto()
-
-    // this.Rol.descripcion = "Descripcion general"
-    // this.Rol.Menu.push(this.Menu)
-
-    // this.Aplicacion.Rol = this.Rol
-    // userService.Aplicacion.push(this.Aplicacion)
-    // console.log(userService.toJSON())
   }
 
   ngOnInit(): void {
@@ -467,5 +460,5 @@ export class UserComponent implements OnInit {
     )
   }
 
-  cancelar() {}
-}
+  cancelar() {}}
+  
