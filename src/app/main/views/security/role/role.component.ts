@@ -193,7 +193,24 @@ export class RoleComponent implements OnInit {
 
 
 
+  addMenuList(){
+    this.datamenu.forEach(e => {
+      let dt = {
+        "idmod": this.xmodulo[0].split('|')[0],
+        "modulo": this.xmodulo[0].split('|')[1],
+        "idmenu": e.id,
+        "menu": e.nomb,
+        "accid": '',
+        "accion": ''
+      };
+      this.lista.push(dt)
+      this.rowData = this.lista
+      this.temprowData = this.rowData
+    })
 
+    this.datamenu = []
+
+  }
 
   async listarAcciones() {
 
@@ -204,7 +221,25 @@ export class RoleComponent implements OnInit {
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.rowDataAcc = data.Cuerpo;
+        console.log(data)
+        if(data.Cuerpo.length > 0 ){
+          this.rowDataAcc = data.Cuerpo;
+        }else{
+          let e = {
+            "idmod": this.xmodulo[0].split('|')[0],
+            "modulo": this.xmodulo[0].split('|')[1],
+            "idmenu": this.menu[0].split('|')[0],
+            "menu": this.menu[0].split('|')[1],
+            "accid": '',
+            "accion": ''
+          };
+          this.lista.push(e);
+          this.rowData = this.lista;
+          this.temprowData = this.rowData;
+      
+          
+        }
+        
       },
       (error) => {
         console.log(error)
