@@ -331,28 +331,46 @@
                     <div class="col-md-4 col-12 mb-1">
                         <label for="login-host" class="form-label">Nombre</label>
                         <input type="text" class="form-control" [(ngModel)]="IAccion.nomb"
-                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" aria-describedby="login-host"
+                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" 
                             tabindex="1" autofocus />
                     </div>
 
-                    <div class="col-md-4 col-12 mb-1">
+                    <div class="col-md-4 col-4 mb-1">
                         <label for="login-host" class="form-label">Función</label>
                         <input type="text" class="form-control" [(ngModel)]="IAccion.func"
-                            [ngModelOptions]="{standalone: true}" placeholder="Función" aria-describedby="login-host"
+                            [ngModelOptions]="{standalone: true}" placeholder="Función" 
                             tabindex="1" autofocus />
                     </div>
 
-                    <div class="col-md-12 col-12 mb-1">
-                        <label for="login-host" class="form-label">EndPoint</label>
+                    <div class="col-md-4 col-4 mb-1">
+                        <label class="form-label">Clase</label>
+                        <input type="text" class="form-control" [(ngModel)]="IAccion.clase"
+                            [ngModelOptions]="{standalone: true}" placeholder="Clase" 
+                            tabindex="1" autofocus />
+                    </div>
+                    <div class="col-md-2 col-2 mb-1">
+                        <label class="form-label">Icono</label>
+                        <input type="text" class="form-control" [(ngModel)]="IAccion.icono"
+                            [ngModelOptions]="{standalone: true}" placeholder="Clase" 
+                            tabindex="1" autofocus />
+                    </div>
+                    <div class="col-md-2 col-2 mb-1">
+                        <label class="form-label">Color</label>
+                        <input type="text" class="form-control" [(ngModel)]="IAccion.color"
+                            [ngModelOptions]="{standalone: true}" placeholder="Clase" 
+                            tabindex="1" autofocus />
+                    </div>
+                    <div class="col-md-6 col-6 mb-1">
+                        <label class="form-label">EndPoint</label>
                         <input type="text" [(ngModel)]="IAccion.endpoint" [ngModelOptions]="{standalone: true}"
-                            class="form-control" placeholder="EndPoint" aria-describedby="login-host" tabindex="1"
+                            class="form-control" placeholder="EndPoint"  tabindex="1"
                             autofocus />
                     </div>
 
                     <div class="col-md-12 col-12 mb-1">
                         <label for="login-host" class="form-label">Directiva</label>
                         <textarea type="text" row="5" [(ngModel)]="IAccion.direc" [ngModelOptions]="{standalone: true}"
-                            class="form-control" placeholder="Directiva" aria-describedby="login-host" tabindex="1"
+                            class="form-control" placeholder="Directiva"  tabindex="1"
                             autofocus></textarea>
                     </div>
 
@@ -391,28 +409,28 @@
                     <div class="col-md-6 col-12 mb-1">
                         <label for="login-host" class="form-label">Nombre</label>
                         <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.nomb"
-                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" aria-describedby="login-host"
+                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" 
                             tabindex="1" autofocus />
                     </div>
 
                     <div class="col-md-6 col-12 mb-1">
                         <label for="login-host" class="form-label">Dirección URL</label>
                         <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.url"
-                            [ngModelOptions]="{standalone: true}" placeholder="Dirección URL" aria-describedby="login-host"
+                            [ngModelOptions]="{standalone: true}" placeholder="Dirección URL" 
                             tabindex="1" autofocus />
                     </div>
 
                     <div class="col-md-5 col-12 mb-1">
                         <label for="login-host" class="form-label">Codigo JavaScript</label>
                         <input type="text" [(ngModel)]="IAddSubMenu.js" [ngModelOptions]="{standalone: true}"
-                            class="form-control" placeholder="Codigo JavaScript" aria-describedby="login-host" tabindex="1"
+                            class="form-control" placeholder="Codigo JavaScript"  tabindex="1"
                             autofocus />
                     </div>
 
                     <div class="col-md-4 col-12 mb-1">
                         <label for="login-host" class="form-label">Clase Css</label>
                         <input type="text" [(ngModel)]="IAddSubMenu.clase" [ngModelOptions]="{standalone: true}"
-                            class="form-control" placeholder="Clase Css" aria-describedby="login-host" tabindex="1"
+                            class="form-control" placeholder="Clase Css"  tabindex="1"
                             autofocus />
                     </div>
 

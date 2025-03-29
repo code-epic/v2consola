@@ -6,6 +6,7 @@ import { UtilService } from '@services/util/util.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import JSONFormatter from 'json-formatter-js';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+import { windowWhen } from 'rxjs/operators';
 
 
 

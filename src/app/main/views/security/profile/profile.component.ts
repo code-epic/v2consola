@@ -76,6 +76,7 @@ export class ProfileComponent implements OnInit {
 
   public xaccion = ''
   public rol = undefined
+  public registrar = 'Registrar nuevo perfil'
 
   @ViewChild('tableRowDetails') tableRowDetails: any
 
@@ -86,6 +87,10 @@ export class ProfileComponent implements OnInit {
   public lstPerfil = []
 
   public SelectOn = []
+
+  public blApp : boolean = true
+
+  active:any = 1;
 
   constructor(
     private apiService: ApiService,
@@ -171,7 +176,7 @@ export class ProfileComponent implements OnInit {
     this.dataRol = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        // console.log(data)
         this.dataRol = data.Cuerpo.map(e => {
           e.id = e.idrol
           e.name = e.rol
@@ -296,6 +301,9 @@ export class ProfileComponent implements OnInit {
         posicion++
         if (posicion > this.lista.length - 1) {
           this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
+          this.dataRolDetalles = []
+          this.Perfil.nombre = ''
+          this.Perfil.descripcion = ''
         } else {
           this.insertBach(idperfil, posicion)
         }
@@ -313,14 +321,14 @@ export class ProfileComponent implements OnInit {
 
   async listarAcciones() {
 
-    console.log(this.menu[0])
+    // console.log(this.menu[0])
     this.rowDataAcc = []
     this.xAPI.funcion = 'OMenuAccion'
     this.xAPI.parametros = this.menu[0].split('|')[0]
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        // console.log(data)
         this.rowDataAcc = data.Cuerpo
       },
       (error) => {
@@ -339,10 +347,48 @@ export class ProfileComponent implements OnInit {
 
   }
 
+  editarRol(row){
+    console.log(row)
 
+    this.xAPI.funcion = '_SYS_CPerfil'
+    this.xAPI.parametros = row.id
+    this.xAPI.valores = ''
+    this.dataRolDetalles = []
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        console.log(data)
+        let idAPP = ""
 
+        this.registrar = 'Editar Perfil'
+        this.dataRolDetalles = data.Cuerpo.map(e => {
+          this.Perfil.descripcion = e.observacion
+          this.Perfil.nombre = e.rol
+          idAPP = e.idapp
+          e.idmod =  e.idmod
+          e.modulo = e.modulo
+          e.idmenu =  e.idmenu
+          e.menu = e.menu
+          e.accid = e.accid
+          e.accion = e.accion
+          return e
+        })
+        this.lista = this.dataRolDetalles
+        this.blApp = false
+        console.log(idAPP)
+        this.Perfil.aplicacion = this.lstAplicaciones.find(item => item.id == idAPP).name 
+        console.log(this.lstAplicaciones, this.Perfil.aplicacion)
+        // this.Perfil.aplicacion = this.aplicacion.name
+        // this.selRol(this.aplicacion.id)
+        this.active = 2
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
 
+  }   
 
+  
 
 
 }

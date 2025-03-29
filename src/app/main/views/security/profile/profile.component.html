@@ -10,8 +10,8 @@
 
                 <div class="col-md-12 ">
                     <br>
-                    <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
-                        <li ngbNavItem>
+                    <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+                        <li [ngbNavItem]="1">
                             <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Perfiles</a>
                             <ng-template ngbNavContent>
 
@@ -63,8 +63,9 @@
                                                             [class]="'cursor-pointer'"></span>
                                                     </button>
                                                     <div ngbDropdownMenu>
-                                                        <a ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
-                                                                [class]="'mr-50'"></span> Editar</a>
+                                                        <a (click)="editarRol(row)" ngbDropdownItem><span
+                                                            [data-feather]="'edit'" [size]="16"
+                                                            [class]="'mr-50'"></span> Editar</a>
                                                     </div>
                                                 </div>
                                             </ng-template>
@@ -77,8 +78,8 @@
 
                             </ng-template>
                         </li>
-                        <li ngbNavItem>
-                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>Registrar nuevo perfil</a>
+                        <li [ngbNavItem]="2">
+                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>{{registrar}}</a>
                             <ng-template ngbNavContent>
 
                                 <div class="col-md-12" style="margin-top: 25px;">
@@ -87,12 +88,31 @@
                                     <div class="row">
                 
                 
-                                        <div class="form-group col-md-12">
+                                        <!-- <div class="form-group col-md-12">
                                             <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
                                             <ng-select [items]="lstAplicaciones" [(ngModel)]="Perfil.aplicacion"
                                                 [ngModelOptions]="{standalone: true}" bindLabel="name" (ngModelChange)="selRol($event)"
                                                 bindLabel="name" bindValue="id" placeholder="Seleccione Aplicación"></ng-select>
+                                        </div> -->
+
+
+
+                                        <div class="form-group col-md-12" *ngIf="blApp">
+                                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                                            <ng-select [items]="lstAplicaciones" [(ngModel)]="Perfil.aplicacion"
+                                                [ngModelOptions]="{standalone: true}" bindLabel="name"
+                                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
+                                                placeholder="Seleccione Aplicación"></ng-select>
                                         </div>
+
+                                        <div class="form-group col-md-12" *ngIf="!blApp">
+                                            <label class="form-label" >Aplicacion</label>
+                                            <input style="font-size:14px;" [(ngModel)]="xaplicacion"
+                                                [ngModelOptions]="{standalone: true}" type="text"
+                                                placeholder="Aplicacion" class="form-control" disabled="disabled">
+                                        </div>
+
+
                 
                                         <div class="form-group col-md-5">
                                             <label class="form-label" for="descripcion">Seleccionar Rol</label>
