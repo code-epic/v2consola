@@ -343,8 +343,10 @@ export class MenuComponent implements OnInit {
     this.xAPI.funcion = "AgregarMenu";
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.IDefinirMenu)
+    console.log(this.IDefinirMenu)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         if (data.tipo == 1) {
           this.LimpiarMenu()
           this.utilservice.AlertMini('top-end', 'success', 'Menu Registrado Exitosamente!', 3000)

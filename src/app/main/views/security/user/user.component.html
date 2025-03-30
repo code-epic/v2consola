@@ -59,7 +59,7 @@
                 placeholder="Nombre del usuario" class="form-control">
             </div>
             <div class="form-group col-md-4">
-              <label class="form-label" for="descripcion">Descripcion del usaurio</label>
+              <label class="form-label" for="descripcion">Descripcion / Cargo</label>
               <input [(ngModel)]="iUser.descripcion" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Descripcion del usuario" class="form-control">
             </div>
@@ -79,12 +79,12 @@
 
           
             <div class="form-group col-md-4">
-              <label class="form-label" for="descripcion">Correo del usuario</label>
-              <input [(ngModel)]="correo" [ngModelOptions]="{standalone: true}" type="text"
+              <label class="form-label" >Correo del usuario</label>
+              <input [(ngModel)]="iUser.correo" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Correo del usuario" class="form-control">
             </div>
             <div class="form-group col-md-6">
-              <label class="form-label" for="descripcion">Descripcion general</label>
+              <label class="form-label" >Descripcion general</label>
               <input [(ngModel)]="descripcion" [ngModelOptions]="{standalone: true}" type="text"
                 placeholder="Descripcion general" class="form-control">
             </div>
@@ -145,7 +145,7 @@
 
               <label class="form-label"></label>
               <button type="button" class="btn btn-primary" (click)="agregarAplicacion()" style="width: 100%;">
-                <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Asociar
               </button>
             </div>
            
@@ -213,13 +213,13 @@
               
 
               <div class="col-md-12" align="right">
-                <button type="button" class="btn btn-success" (click)="agregarUsuario()">
-                  <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                <button type="button" [disabled]="dataUsers.length==0?'disabled':''" class="btn btn-success" (click)="agregarUsuario()">
+                  Registrar
                 </button>
                 &nbsp;
-                <button type="button" class="btn btn-warning" (click)="cancelar()">
-                  <i class="fa fa-close" aria-hidden="true"></i>&nbsp;Cancelar
-                </button>
+                <!-- <button type="button" class="btn btn-warning" (click)="cancelar()">
+                  Cancelar
+                </button> -->
               </div>
 
             </div>

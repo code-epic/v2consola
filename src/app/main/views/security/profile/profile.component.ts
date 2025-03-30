@@ -251,8 +251,7 @@ export class ProfileComponent implements OnInit {
 
   guardarPerfil(){
 
-    this.iniciarLista()
-    // console.log(this.lista)
+    this.iniciarLista() 
     if ( this.Perfil.nombre == "" || this.lista.length == 0 || this.Perfil.aplicacion == undefined) {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
       return false
@@ -297,16 +296,19 @@ export class ProfileComponent implements OnInit {
     this.apiService.Ejecutar(this.xAPI).subscribe(
       data => {
         // console.log(data)
-        // console.log(posicion, this.lista.length)
-        posicion++
+        console.log(posicion, this.lista.length)
+       
         if (posicion > this.lista.length - 1) {
           this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
           this.dataRolDetalles = []
           this.Perfil.nombre = ''
           this.Perfil.descripcion = ''
         } else {
+          posicion++
           this.insertBach(idperfil, posicion)
+          
         }
+
 
 
       },

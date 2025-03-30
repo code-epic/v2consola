@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core"
 // usuario.model.ts
-export interface SPrivilegio {
+export interface SPrivilegios {
   metodo: string;
   descripcion: string;
   accion: string;
@@ -18,7 +18,7 @@ export interface SSubMenu {
   accion: string;
   clase: string;
   color: string;
-  Privilegios: SPrivilegio[];
+  Privilegios: SPrivilegios[];
   SubMenu: SSubMenu[];
 }
 
@@ -31,7 +31,7 @@ export interface SMenu {
   accion: string;
   clase: string;
   color: string;
-  Privilegio: SPrivilegio[];
+  Privilegios: SPrivilegios[];
   SubMenu: SSubMenu[];
 }
 
