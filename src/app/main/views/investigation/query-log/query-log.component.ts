@@ -33,6 +33,7 @@ export class QueryLogComponent {
     await this.verLogs();
   }
 
+
   async verLogs() {
     this.isLoading = true;
     let nameFnx = "Fnx_QueryLog";
@@ -45,7 +46,7 @@ export class QueryLogComponent {
             (data) => {
               this.rawLogs = data.rs;
               this.parseLogs();
-              this.filterLogs();
+              this.filterLogs(); // Esto mantiene todos los registros filtrados
               this.isLoading = false;
             },
             (error) => {
@@ -60,7 +61,7 @@ export class QueryLogComponent {
         this.isLoading = false;
       }
     );
-  }
+}
 
   parseLogs() {
     if (!this.rawLogs) return;
