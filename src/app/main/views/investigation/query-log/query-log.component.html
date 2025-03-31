@@ -1,55 +1,61 @@
 <div class="log-container">
-    <div class="log-header">
-      <h2>Registros de consultas</h2>
+  <div class="log-header">
+    <h2>Registros de consultas</h2>
+    
+    <div class="log-controls">
+      <button class="refresh-btn" (click)="verLogs()" [disabled]="isLoading">
+        <i class="refresh-icon" [class.spin]="isLoading"><i data-feather="refresh-ccw"></i></i>
+        {{isLoading ? 'Refrescando...' : 'Refrescar Registros'}}
+      </button>
       
-      <div class="log-controls">
-        <button class="refresh-btn" (click)="verLogs()" [disabled]="isLoading">
-          <i class="refresh-icon" [class.spin]="isLoading"><i data-feather="refresh-ccw"></i></i>
-          {{isLoading ? 'Refrescando...' : 'Refrescar Registros'}}
-        </button>
-        
-        <div class="search-box">
-          <input type="text" 
-                 [(ngModel)]="searchText" 
-                 (ngModelChange)="onSearchChange($event)"
-                 placeholder="Buscar Consultas..."
-                 [disabled]="isLoading">
-          <i class="search-icon"><i data-feather="search"></i></i>
-        </div>
-        
-        <div class="type-filter">
-          <label>Filtrar:</label>
-          <select [(ngModel)]="selectedType" (change)="onTypeChange(selectedType)" [disabled]="isLoading">
-            <option *ngFor="let type of logTypes" [value]="type">{{type}}</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Mensaje de carga -->
-    <div *ngIf="isLoading" class="loading-message">
-      <div class="spinner"></div>
-      <p>Leyendo Consultas del Sistema, por favor espere...</p>
-    </div>
-  
-    <div *ngIf="!isLoading" class="log-list">
-      <div *ngFor="let log of filteredLogs" class="log-entry" [class]="log.type.toLowerCase()">
-        <br>
-        <div class="log-header-line">
-          <span class="log-type">{{log.type}}</span>
-          <span class="log-date">{{log.date}}</span>
-          <span class="log-file">{{log.file}}:{{log.line}}</span>
-        </div>
-        
-        <div *ngIf="log.error" class="log-error">
-          <strong>Error:</strong> {{log.error}}
-        </div>
-        
-        <pre class="log-query">{{log.query}}</pre>
+      <div class="search-box">
+        <input type="text" 
+               [(ngModel)]="searchText" 
+               (ngModelChange)="onSearchChange($event)"
+               placeholder="Buscar Consultas..."
+               [disabled]="isLoading">
+        <i class="search-icon"><i data-feather="search"></i></i>
       </div>
       
-      <div *ngIf="filteredLogs.length === 0 && !isLoading" class="no-logs">
-        No se encontraron registros de consultas que coincidan con sus criterios.
+      <div class="type-filter">
+        <label>Filtrar:</label>
+        <select [(ngModel)]="selectedType" (change)="onTypeChange(selectedType)" [disabled]="isLoading">
+          <option *ngFor="let type of logTypes" [value]="type">{{type}}</option>
+        </select>
       </div>
     </div>
   </div>
+
+  <div *ngIf="isLoading" class="loading-message">
+    <div class="spinner"></div>
+    <p>Leyendo Consultas del Sistema, por favor espere...</p>
+  </div>
+
+  <div *ngIf="!isLoading" class="log-list">
+    <div *ngFor="let log of filteredLogs.slice().reverse()" class="log-entry" [class]="log.type.toLowerCase()">
+      <div class="log-header-line">
+        <span class="log-type">{{log.type}}</span>
+        <span class="log-date">{{log.date}}</span>
+        <span class="log-file">{{log.file}}:{{log.line}}</span>
+      </div>
+      
+      <div *ngIf="log.error" class="log-error">
+        <strong>Error:</strong> {{log.error}}
+      </div>
+      
+      <div class="sql-container">
+        <div class="sql-content" [class.expanded]="log.showFullQuery">
+          <pre>{{log.showFullQuery ? log.query : log.shortQuery}}</pre>
+        </div>
+        <button class="toggle-sql-btn" (click)="toggleQuery(log)">
+          {{log.showFullQuery ? 'Ocultar SQL' : 'Mostrar SQL completo'}}
+          <i class="icon" [class]="log.showFullQuery ? 'icon-chevron-up' : 'icon-chevron-down'"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div *ngIf="filteredLogs.length === 0 && !isLoading" class="no-logs">
+      No se encontraron registros de consultas que coincidan con sus criterios.
+    </div>
+  </div>
+</div>
