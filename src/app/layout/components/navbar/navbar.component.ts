@@ -6,14 +6,10 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TranslateService } from '@ngx-translate/core';
 
-import { AuthenticationService } from 'app/auth/service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMediaService } from '@core/services/media.service';
 import jwt_decode from "jwt-decode";
-
-
-import { User } from 'app/auth/models';
 
 import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
@@ -39,7 +35,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public currentSkin: string;
   public prevSkin: string;
 
-  public currentUser: User;
 
   public token
   public usuario
@@ -81,7 +76,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * Constructor
    *
    * @param {Router} _router
-   * @param {AuthenticationService} _authenticationService
    * @param {CoreConfigService} _coreConfigService
    * @param {CoreSidebarService} _coreSidebarService
    * @param {CoreMediaService} _coreMediaService
@@ -92,7 +86,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private msjService: WsocketsService,
     private taskService: TaskService,
     private _router: Router,
-    private _authenticationService: AuthenticationService,
     private _coreConfigService: CoreConfigService,
     private _coreMediaService: CoreMediaService,
     private _coreSidebarService: CoreSidebarService,
@@ -105,7 +98,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
  
 
-    this._authenticationService.currentUser.subscribe(x => (this.currentUser = x));
 
     this.languageOptions = {
       en: {
@@ -237,7 +229,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.usuario = this.token.Usuario.usuario
     this.tipo = this.token.Usuario.nombre
     // get the currentUser details from localStorage
-    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
     // Subscribe to the config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {

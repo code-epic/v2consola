@@ -7,14 +7,12 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { CoreMenuItem } from '@core/types';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
 
-import { User } from 'app/auth/models';
 
 @Component({
   selector: '[core-menu-vertical-collapsible]',
   templateUrl: './collapsible.component.html'
 })
 export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
-  currentUser: User;
 
   @Input()
   item: CoreMenuItem;
@@ -64,9 +62,6 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
       });
 
     // Subscribe to the current menu changes
-    this._coreMenuService.onMenuChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-      this.currentUser = this._coreMenuService.currentUser;
-    });
 
     // Listen for collapsing of any menu item
     this._coreMenuService.onItemCollapsed.pipe(takeUntil(this._unsubscribeAll)).subscribe(clickedItem => {

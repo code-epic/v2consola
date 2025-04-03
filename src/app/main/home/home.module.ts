@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
-import { AuthGuard } from 'app/auth/helpers';
 
 
 import { CoreCommonModule } from '@core/common.module';
@@ -17,15 +16,13 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-// import { ApiComponent } from '../views/tools/api/api.component';
-// import { MiscellaneousModule } from '../miscellaneous/miscellaneous.module';
 
 
 const routes = [
   {
     path: 'home',
     component: HomeComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
+    // canActivate: [AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   }
 ];

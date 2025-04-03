@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
-import { AuthGuard } from 'app/auth/helpers';
 
 import { CoreCommonModule } from '@core/common.module';
 
@@ -34,13 +33,11 @@ const routes = [
   {
     path: 'networks/communications',
     component: CommunicationsComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'networks/connections',
     component: ConnectionsComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
 ];

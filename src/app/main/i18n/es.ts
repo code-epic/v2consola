@@ -1,8 +1,8 @@
 export const locale = {
-  lang: 'fr',
+  lang: 'es',
   data: {
     SAMPLE: {
-      AWESOME: 'Créer génial 🙌'
+      AWESOME: 'Create Awesome 🙌'
     }
   }
 }

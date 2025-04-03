@@ -1,11 +1,22 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ApiService, IAPICore } from '@services/apicore/api.service';
-import { IUser } from '@services/seguridad/rol.service';
-import { UtilService } from '@services/util/util.service';
+import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
+import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
+
+
+import { WsocketsService } from '@services/websockets/wsockets.service';
+import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectConfig } from '@ng-select/ng-select';
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UtilService } from '@services/util/util.service';
+import { ComunicationsService } from '@services/networks/comunications.service';
+import { ConexionesService } from '@services/networks/connections.service';
+import { LoginService } from '@services/seguridad/login.service';
+import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
+import { IFunciones } from '@services/tools/functions.service';
+import Swal from 'sweetalert2';
 
 
 @Component({
@@ -17,55 +28,360 @@ import { BlockUI, NgBlockUI } from 'ng-block-ui';
 })
 export class BinnacleComponent implements OnInit {
 
-  @BlockUI() blockUI: NgBlockUI
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI
+  @ViewChild(DatatableComponent) table: DatatableComponent;
+  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
-  public contentHeader: object;
-  // @ViewChild('dataUsers') dataUsers: any
-
-  public ColumnMode = ColumnMode
-  public SelectionType = SelectionType
-  public basicSelectedOption: number = 10
-
-  public xAPI: IAPICore = {
-    funcion: '',
-    parametros: '',
-    valores: {},
+  public codeMirrorOptions: any = {
+    theme: 'material',
+    mode: 'text/x-sh',
+    lineNumbers: true,
+    lineWrapping: true,
+    foldGutter: true,
+    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    lint: true,
+    indentUnit: 2,
+    tabSize: 2,
+    indentWithTabs: true
   };
 
 
+  public xAPI : IAPICore = {
+    funcion: '',
+    parametros: '',
+    relacional: false,
+    concurrencia : false,
+    protocolo: '',
+    ruta : '',
+    retorna : false,
+    migrar : false,
+    modulo : '',
+    valores : {},
+    coleccion : '',
+    http : 0,
+    https : 0,
+    consumidores : 0,
+    puertohttp : 0,
+    puertohttps : 0,
+    driver : '',
+    query : '',
+    metodo : '',
+    tipo : '',
+    prioridad : '',
+    entorno: '',
+    logs : false
+  };
+
+
+  public existe: boolean = false
+  public fecha = new Date().toISOString()
+  public Fnx: IFunciones = {
+    id: '',
+    tipo: 'S',
+    nombre: '',
+    version: '0.0.1',
+    lenguaje: 'S',
+    categoria: 'S',
+    retorno: 'S',
+    codigo: '',
+    descripcion: '',
+    parametros: '',
+    fecha: this.fecha,
+    tiempo: '',
+    estatus: 0
+  }
+  public FnxAux: IFunciones = {
+    id: '',
+    tipo: 'S',
+    nombre: '',
+    version: '0.0.1',
+    lenguaje: 'S',
+    categoria: 'S',
+    retorno: 'S',
+    codigo: '',
+    descripcion: '',
+    parametros: '',
+    fecha: this.fecha,
+    tiempo: '',
+    estatus: 0
+  }
+
+  public divTiempo: boolean = false
+
+  // Private
+  public lbd = 'Base de Datos'
+  public count
+  public isReload = false;
+
+  public showBaseDatos = false
+  public showPuente = false
+  private _unsubscribeAll: Subject<any>;
+ 
+  public ListaFunciones = []
+  public tempData = [];
+  public rowData = [];
+
+  public driver = undefined
+  public drivers = []
+  public hosts = []
+
+  public obj;
+
+  public btnCategoria
+
+  // public
+  public mac
+  public data : any
+  public xrs = ''
+  public host = ''
+  public submitted = false;
+  public loginForm: UntypedFormGroup;
+  public contentHeader: object;
+  public selected = [];
+  public kitchenSinkRows: any;
+  public basicSelectedOption: number = 10;
+  public ColumnMode = ColumnMode;
+  public SelectionType = SelectionType;
+
+  public ListaAplicaciones
+
   constructor(
-    private apiService: ApiService,
-    private utilservice: UtilService,
+    private interceptor : AuthInterceptorService,
+    private loginService: LoginService,
+    private comunicacionesService : ComunicationsService,
+    private apiService : ApiService,
     private modalService: NgbModal,
-  ) { }
+    private conexionesService : ConexionesService,
+    private msjService : WsocketsService,
+    private config: NgSelectConfig,
+    private _formBuilder: UntypedFormBuilder,
+    private utilservice: UtilService,
+  ) {
+  }
+
+    // convenience getter for easy access to form fields
+    get f() {
+      return this.loginForm.controls;
+    }
 
 
+  async ngOnInit() {
+    await this.CargarListaFunciones()
+    this.CargarListaAplicaciones()
 
-  ngOnInit(): void {
-    this.contentHeader = {
-      headerTitle: "Bitacora",
+
+    this.loginForm = this._formBuilder.group({
+      id: [this.utilservice.GenerarUnicId(), [Validators.required]],
+      tipo: [undefined,[Validators.required]],
+      nombre: [''],
+      version: [this.Fnx.version,[Validators.required]],
+      estatus: [undefined, [Validators.required]],
+      lenguaje: [undefined, [Validators.required]],
+      categoria: [undefined,[Validators.required]],
+      retorno: [undefined,[Validators.required]],
+      descripcion: ['',[Validators.required]],
+      codigo: ['',[Validators.required]],
+      tiempo: [''],
+      fecha: [this.Fnx.fecha],
+    });
+
+    
+     // content header
+     this.contentHeader = {
+      headerTitle: 'Investigación',
       actionButton: true,
       breadcrumb: {
-        type: "",
+        type: '',
         links: [
           {
-            name: "Home",
+            name: 'Home',
             isLink: true,
-            link: "/home",
+            link: '/home'
           },
           {
-            name: "Investigación",
-            isLink: false,
+            name: 'Investigación',
+            isLink: false
           },
           {
-            name: "Bitacora",
-            isLink: false,
-          },
-        ],
-      },
+            name: 'Bitacora',
+            isLink: false
+          }
+        ]
+      }
     };
   }
 
+
+  validarVersion() {
+    let version = this.Fnx.version.split('.')
+    let mayor = parseInt(version[0])
+    let menor = parseInt(version[1])
+    let menor_aux = parseInt(version[2])
+    const _fnx = this.Fnx
+    const _aux = this.FnxAux
+    if (_fnx.retorno != _aux.retorno || _fnx.lenguaje != _aux.lenguaje || _fnx.nombre != _aux.nombre) {
+      mayor = parseInt(version[0]) + 1
+    }
+    if (_fnx.tipo != _aux.tipo || _fnx.categoria != _aux.categoria) {
+      menor = parseInt(version[1]) + 1
+    }
+    if (_fnx.descripcion != _aux.descripcion || _fnx.codigo != _aux.codigo) {
+      menor_aux = parseInt(version[2]) + 1
+    }
+    return mayor + '.' + menor + '.' + menor_aux
+  }
+
+
+  cambiarModo(): string {
+    var idioma = 'text/x-idn'
+    switch (this.loginForm.value.lenguaje) {
+      case "GO":
+        idioma = 'text/x-go'
+        break;
+      case "PHP":
+        idioma = 'text/x-php'
+        break;
+      case "SHELL":
+        idioma = 'text/x-sh'
+        break;
+      case "BASH":
+        idioma = 'text/x-sh'
+        break;
+      case "PYTHON":
+        idioma = 'text/x-python'
+        break;
+      case "RUST":
+        idioma = 'text/x-rustsrc'
+        break;
+      case "RDN":
+        idioma = 'text/x-idn'
+        break;
+    }
+    this.codeMirrorOptions.mode = idioma
+    console.log('edicion')
+    return idioma
+  }
+
+  filterUpdate(event: any) {
+    const val = event.target.value.toLowerCase();
+    // filter our data
+    const temp = this.tempData.filter(function (d) {
+      return d.nombre.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+    // update the rows
+    this.rowData = temp;
+    this.count = this.rowData.length
+    // Whenever the filter changes, always go back to the first page
+    this.table.offset = 0;
+  }
+
+  filterStatus(event: any) {
+    const val = event.id ? event.id : '';
+    // filter our data
+    const temp = this.tempData.filter(function (d) {
+      return d.estatus.indexOf(val) !== -1 || !val;
+    });    
+    // update the rows
+    this.rowData = temp;
+    this.count = this.rowData.length
+    // Whenever the filter changes, always go back to the first page
+    this.table.offset = 0;
+  }
+
+  LimpiarForm(){
+    this.loginForm = this._formBuilder.group({
+      id: ['', [Validators.required]],
+      tipo: [undefined,[Validators.required]],
+      nombre: ['',[Validators.required]],
+      version: ['0.0.1',[Validators.required]],
+      estatus: [undefined, [Validators.required]],
+      lenguaje: [undefined, [Validators.required]],
+      categoria: [undefined,[Validators.required]],
+      retorno: [undefined,[Validators.required]],
+      descripcion: ['',[Validators.required]],
+      codigo: ['',[Validators.required]],
+      tiempo: [''],
+      fecha: [this.Fnx.fecha],
+    });
+  }
+
+  async CargarListaFunciones(){
+    this.xAPI.funcion = "SSB_LFunciones";
+    this.xAPI.parametros = ''
+    this.xAPI.valores = ''
+    this.ListaFunciones = []
+    this.count = 0
+     await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        // console.log(data)
+        data.map(e => {
+          this.ListaFunciones.push(e);
+        });
+        this.rowData = this.ListaFunciones;
+        this.count = this.rowData.length
+        this.tempData = this.rowData;
+      },
+      (error) => {
+        console.log(error)
+      }
+    ) 
+  }
+
+
+  ModalEdit(modal, data){
+    console.log("Iniciando proceso...")
+    this.existe = false
+    this.btnCategoria = data.categoria
+    this.loginForm = this._formBuilder.group({
+      id: [data.id, [Validators.required]],
+      tipo: [data.tipo,[Validators.required]],
+      nombre: [data.nombre],
+      version: [data.version,[Validators.required]],
+      estatus: [data.estatus, [Validators.required]],
+      lenguaje: [data.lenguaje, [Validators.required]],
+      categoria: [data.categoria,[Validators.required]],
+      retorno: [data.retorno,[Validators.required]],
+      descripcion: [data.descripcion,[Validators.required]],
+      codigo: [data.codigo,[Validators.required]],
+      tiempo: [data.tiempo],
+      fecha: [this.loginForm.value.fecha],
+    });
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'xl',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+
+  ModalAdd(modal){
+    this.modalService.open(modal,{
+      centered: true,
+      size: 'xl',
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal',
+    });
+  }
+
+  async CargarListaAplicaciones() {
+    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI.parametros = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.ListaAplicaciones = data.Cuerpo.map(e => {
+          e.name = e.nombre+' : '+e.VERSION
+          return e
+        });
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
 
 }
