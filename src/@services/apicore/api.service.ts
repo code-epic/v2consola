@@ -360,7 +360,6 @@ export class ApiService {
 
   DwsCdn(peticion: string) {
     let ruta = this.URL + "dwsother/" + peticion;
-    console.log(ruta);
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",

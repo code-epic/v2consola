@@ -201,7 +201,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
             if (result.isConfirmed) {
               if (pid.contenido == "Descargando api"){
                  this.utilservice.AlertMini('bottom-end', 'success', 'Backup Generado', 3000)
-                 this.apiService.DwsCdn('bck-export/apicore.zip')
+                 this.apiService.DwsCdn('bck-export/' + environment.driver.API_CORE_ZIP)
               }else{
                 window.open(environment.Url+'/'+ pid.contenido)
               }

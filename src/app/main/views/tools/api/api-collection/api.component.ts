@@ -256,7 +256,8 @@ export class ApiComponent implements OnInit {
       'basedatos': 'code-epic',
       'user': this.IExportAPI.usuario,
       'pass': this.IExportAPI.clave,
-      'driver': this.driversAPP
+      'driver': this.driversAPP,
+      'file_name' : environment.driver.API_CORE_ZIP
     };
     await Swal.fire({
       title: `Va a descargar la coleccion de API `,
@@ -328,6 +329,9 @@ export class ApiComponent implements OnInit {
     }
   }
 
+
+
+  
 
   rowDetailsToggleExpand(row) {
     this.tableRowDetails.rowDetail.toggleExpandRow(row);
@@ -412,18 +416,23 @@ export class ApiComponent implements OnInit {
 
 
   fileSelected(e) {
-    this.archivos = e.target.files;
+    this.archivos.push(e.target.files[0])
   }
 
-  async SubirArchivo() {
-    var frm = new FormData(document.forms.namedItem("forma"));
+  async SubirArchivo(e) {
+    this.hashcontrol = btoa( environment.driver.API_CORE_ZIP )
+    var frm = new FormData(document.forms.namedItem("forma"))
     try {
-      await this.apiService.EnviarArchivos(frm).subscribe((data) => {
-        this.ValoresMasivos();
-      });
+      await this.apiService.EnviarArchivos(frm).subscribe(
+        (data) => {
+         this.ValoresMasivos()
+         this.modalService.dismissAll('Close')
+        }
+      )
     } catch (error) {
-      console.error(error);
+      console.error(error)
     }
+
   }
 
 
@@ -445,7 +454,7 @@ export class ApiComponent implements OnInit {
       estatus: 0,
       usuario: environment.Hash,
     };
-    this.xAPI.funcion = "_SYS_ISetPath";
+    this.xAPI.funcion = environment.functions.INSERT_FILE_PATH;
     this.xAPI.parametros = "";
     this.xAPI.valores = JSON.stringify(cargaMasiva);
 
@@ -469,7 +478,7 @@ export class ApiComponent implements OnInit {
   }
 
   ObtenerNombreArchivo() {
-    this.xAPI.funcion = "SYS_getFileName";
+    this.xAPI.funcion = environment.functions.GET_FILE_NAME;
     this.xAPI.parametros = this.llave;
     this.xAPI.valores = "";
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -477,9 +486,9 @@ export class ApiComponent implements OnInit {
         if (data.Cuerpo.length > 0) {
           this.xRestore.nombre = data.Cuerpo[0].nomb
           this.xRestore.ruta = data.Cuerpo[0].ruta
-          this.xRestore.pass = 'Arrd17818665'
-          this.xRestore.user = 'elpolox'
-          this.xRestore.basedatos = 'sandra-server'
+          this.xRestore.pass = ''
+          this.xRestore.user = ''
+          this.xRestore.basedatos = ''
           this.xRestore.coleccion = 'apicore'
           this.ejecutarFuncion()
         }

@@ -3,6 +3,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { UtilService } from '@services/util/util.service';
 import {  DatatableComponent } from '@swimlane/ngx-datatable';
+import { environment } from 'environments/environment';
 
 
 @Component({
@@ -365,7 +366,7 @@ export class MenuComponent implements OnInit {
     this.IDefinirMenu.idmod = this.xmodulo.id
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.IDefinirMenu)
-    this.xAPI.funcion = "_SYS_ActualizarMenu";
+    this.xAPI.funcion = environment.functions.ACTUALIAZAR_MENU;
     console.log(this.IDefinirMenu)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {

@@ -379,7 +379,7 @@
               <div class="col-md-12">
                 <label>Cargar Archivo .zip</label>
                 <div class="input_container">
-                  <input (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos" accept=".zip" />
+                  <input (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos" accept=".zip, .gz" />
                 </div>
               </div>
             </div>
@@ -416,7 +416,7 @@
         </div>
         <div class="form-group col-md-12">
           <form method="post" enctype="multipart/form-data" id="forma" name="forma">
-            <input type="hidden" name="identificador" value="{{hashcontrol}}" readonly="readonly">
+            
             <div class="row">
 
               <div class="col-md-12">
