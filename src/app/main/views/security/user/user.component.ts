@@ -218,7 +218,8 @@ export class UserComponent implements OnInit {
         ],
       },
     };
-    this.CargarListaAplicaciones();
+    this.CargarListaAplicaciones()
+    this.CargarGrupo()
   }
 
   selDuracion(e) {
@@ -248,6 +249,19 @@ export class UserComponent implements OnInit {
         this.activedirectory = false;
         break;
     }
+  }
+
+  async CargarGrupo() {
+    this.xAPI.funcion = "_SYS_CBitacoraGrupo";
+    this.xAPI.parametros = "";
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+       console.log(data)
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
   }
 
   async CargarListaAplicaciones() {
