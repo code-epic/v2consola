@@ -183,16 +183,8 @@ export class LoginService {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        // Swal.fire(
-        //   'Hasta la próxima!',
-        //   'Te esperamos',
-        //   'success'
-        // )
-        // this.router.navigate(['login']);
-        this.clearSession()
         this.router.navigate(["login"]).then(() => {
           this.clearSession()
-          window.location.reload();
         });
 
       }
@@ -209,7 +201,7 @@ export class LoginService {
           this.taskService.get(e).then(
             data => {
               if (data.estatus) lstApp.push(data)
-              if (i == cnt - 1) this.inserCommitDB(lstApp)
+              if (i == cnt - 1) this.insertCommitDB(lstApp)
             }
           )
 
@@ -222,7 +214,7 @@ export class LoginService {
 
 
 
-  inserCommitDB(lst) {
+  insertCommitDB(lst) {
     let idUser = "panel"
 
     let obj = {
@@ -231,8 +223,8 @@ export class LoginService {
       "fecha": new Date()
     }
     let cl = {
-      'coleccion': 'user-task',
-      'driver': 'MGDBA',
+      'coleccion': environment.colecciones.USER_TASK,
+      'driver': environment.driver.PRINCIPAL,
       'objeto': obj,
       'donde': '{\"usuario\":\"' + idUser + '\"}',
       'upsert': true
@@ -240,14 +232,10 @@ export class LoginService {
 
     this.apiService.ExecColeccion(cl).subscribe(
       x => {
-        this.taskService.clear().then(
-          xdata => {
-
-          }
-        )
+        this.taskService.clear()
       },
       e => {
-        console.error(e)
+        this.taskService.clear()
       }
 
     );

@@ -82,7 +82,8 @@ export class ApiComponent implements OnInit {
     basedatos: '',
     coleccion: '',
     funcion: '',
-    user: ''
+    user: '',
+    file_name: ''
   }
 
   public searchValue = ''
@@ -173,7 +174,7 @@ export class ApiComponent implements OnInit {
 
   async ngOnInit() {
     this.llave = this.utilservice.GenerarUnicId();
-    this.hashcontrol = btoa("ING" + this.llave);
+    this.hashcontrol = btoa("XING" + this.llave);
     this.urlControl = this.rutaActiva.snapshot.params.id
     let id = atob(this.urlControl).split('|')
 
@@ -257,7 +258,7 @@ export class ApiComponent implements OnInit {
       'user': this.IExportAPI.usuario,
       'pass': this.IExportAPI.clave,
       'driver': this.driversAPP,
-      'file_name' : environment.driver.API_CORE_ZIP
+      'file_name' : environment.driver.API_CORE_NAME
     };
     await Swal.fire({
       title: `Va a descargar la coleccion de API `,
@@ -306,28 +307,28 @@ export class ApiComponent implements OnInit {
     this.pdf.ListadoDeApis(this.rowData)
   }
 
-  async ImportApi() {
-    const { value: file } = await Swal.fire({
-      title: 'Sube el documento',
-      input: 'file',
-      inputAttributes: {
-        'accept': 'application/zip',
-        'aria-label': 'Upload your profile picture'
-      }
-    })
+  // async ImportApi() {
+  //   const { value: file } = await Swal.fire({
+  //     title: 'Sube el documento',
+  //     input: 'file',
+  //     inputAttributes: {
+  //       'accept': 'application/zip',
+  //       'aria-label': 'Upload your profile picture'
+  //     }
+  //   })
 
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        // Swal.fire({
-        //   title: 'Your uploaded picture',
-        //   imageUrl: e.target.result,
-        //   imageAlt: 'The uploaded picture'
-        // })
-      }
-      reader.readAsDataURL(file)
-    }
-  }
+  //   if (file) {
+  //     const reader = new FileReader()
+  //     reader.onload = (e) => {
+  //       // Swal.fire({
+  //       //   title: 'Your uploaded picture',
+  //       //   imageUrl: e.target.result,
+  //       //   imageAlt: 'The uploaded picture'
+  //       // })
+  //     }
+  //     reader.readAsDataURL(file)
+  //   }
+  // }
 
 
 
@@ -376,7 +377,7 @@ export class ApiComponent implements OnInit {
 
 
   async CargarLista() {
-    this.xAPI.funcion = "_SYS_LstComunicaciones";
+    this.xAPI.funcion = environment.functions.LISTAR_COMUNICACIONES;
     this.xAPI.parametros = ''
     this.ListaApis = []
     this.count = 0
@@ -420,13 +421,13 @@ export class ApiComponent implements OnInit {
   }
 
   async SubirArchivo(e) {
-    this.hashcontrol = btoa( environment.driver.API_CORE_ZIP )
+    console.log(document.getElementById('identificador') )
     var frm = new FormData(document.forms.namedItem("forma"))
     try {
       await this.apiService.EnviarArchivos(frm).subscribe(
         (data) => {
          this.ValoresMasivos()
-         this.modalService.dismissAll('Close')
+         
         }
       )
     } catch (error) {
@@ -454,16 +455,17 @@ export class ApiComponent implements OnInit {
       estatus: 0,
       usuario: environment.Hash,
     };
+
+
     this.xAPI.funcion = environment.functions.INSERT_FILE_PATH;
     this.xAPI.parametros = "";
     this.xAPI.valores = JSON.stringify(cargaMasiva);
-
-    document.forms.namedItem("forma").reset();
-
+    
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
           this.ObtenerNombreArchivo()
+          document.forms.namedItem("forma").reset();
           this.modalService.dismissAll('Close')
           this.utilservice.AlertMini('top-end', 'success', 'Archivo Subido Exitosamente', 3000)
         } else {
@@ -478,7 +480,7 @@ export class ApiComponent implements OnInit {
   }
 
   ObtenerNombreArchivo() {
-    this.xAPI.funcion = environment.functions.GET_FILE_NAME;
+    this.xAPI.funcion = environment.functions.OBTENER_NOMBRE_ARCHIVO;
     this.xAPI.parametros = this.llave;
     this.xAPI.valores = "";
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -488,8 +490,9 @@ export class ApiComponent implements OnInit {
           this.xRestore.ruta = data.Cuerpo[0].ruta
           this.xRestore.pass = ''
           this.xRestore.user = ''
-          this.xRestore.basedatos = ''
-          this.xRestore.coleccion = 'apicore'
+          this.xRestore.file_name = environment.driver.API_CORE_NAME
+          this.xRestore.basedatos = environment.driver.DATA_BASE
+          this.xRestore.coleccion = environment.driver.API_CORE_NAME
           this.ejecutarFuncion()
         }
       },
@@ -501,16 +504,40 @@ export class ApiComponent implements OnInit {
   }
 
   ejecutarFuncion() {
+    let nameFnx = 'Restaurar API'
     this.xRestore.funcion = 'Fnx_RestoreAPI'
     this.apiService.ExecFnx(this.xRestore).subscribe(
-      data => {
-        this.ListarApis(this.driversAPP)
-        this.utilservice.AlertMini('top-end', 'success', 'Se han importado las APIS de la Base de datos XXXXX y la Coleccion XXXX', 3000)
+      (data) => {
+        // console.log(data);
+        this.pID.id = data.contenido.id;
+        this.pID.estatus = true;
+        this.msjService.lstpid$.emit(this.pID);
+        this.modalService.dismissAll()
+        this.taskService
+          .set(data.contenido.id, nameFnx, 'Restaurando api')
+          .then((e) => {
+            this.apiService.ConsultarPidRecursivo(
+              data.contenido.id,
+              'Restaurando api'
+            );
+          })
+          .catch((e) => console.log(e));
+       
       },
-      error => {
-        console.log(error)
+      (error) => {
+        console.log(error);
       }
-    )
+    );
+    // this.apiService.ExecFnx(this.xRestore).subscribe(
+    //   data => {
+        
+    //     this.ListarApis(this.driversAPP)
+    //     this.utilservice.AlertMini('top-end', 'success', 'Se han importado las APIS de la Base de datos XXXXX y la Coleccion XXXX', 3000)
+    //   },
+    //   error => {
+    //     console.log(error)
+    //   }
+    // )
   }
 
 

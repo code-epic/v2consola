@@ -17,16 +17,20 @@ export const environment = {
   fecha: '2023-03-21 22:08:00',
   driver: {
     PRINCIPAL : 'MGDBA',
-    API_CORE_ZIP: "apicore.json.gz"
+    DATA_BASE : "code-epic",
+    API_CORE_NAME: "apicore",
+    API_CORE_ZIP: "apicore.zip"
   },
   colecciones: {
-    WUSUARIO : 'wusuario'
+    WUSUARIO : 'wusuario',
+    USER_TASK : 'user-task'
   },
   functions: {
     MILITAR: 'EJB_CMilitar',
     ACTUALIAZAR_MENU : "_SYS_ActualizarMenu",
-    GET_FILE_NAME: "_SYS_getFileName",
-    INSERT_FILE_PATH : "_SYS_ISetPath"
+    OBTENER_NOMBRE_ARCHIVO: "_SYS_getFileName",
+    INSERT_FILE_PATH : "_SYS_ISetPath",
+    LISTAR_COMUNICACIONES : '_SYS_LstComunicaciones'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',

@@ -16,6 +16,7 @@ export interface RestoreAPI {
   basedatos: string;
   coleccion: string;
   funcion: string;
+  file_name: string;
 }
 
 export interface IAPICore {

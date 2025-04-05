@@ -1,4 +1,11 @@
-import { Component, OnDestroy, OnInit, HostBinding, HostListener, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  HostBinding,
+  HostListener,
+  ViewEncapsulation,
+} from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 
 import * as _ from 'lodash';
@@ -9,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMediaService } from '@core/services/media.service';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 
 import { coreConfig } from 'app/app-config';
 import { Router } from '@angular/router';
@@ -25,7 +32,7 @@ import { UtilService } from '@services/util/util.service';
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   public horizontalMenu: boolean;
@@ -35,11 +42,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public currentSkin: string;
   public prevSkin: string;
 
-
-  public token
-  public usuario
-  public tipo
-  public blCargando = false
+  public token;
+  public usuario;
+  public tipo;
+  public blCargando = false;
 
   public languageOptions: any;
   public navigation: any;
@@ -55,7 +61,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @HostListener('window:scroll', [])
   onWindowScroll() {
     if (
-      (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop > 100) &&
+      (window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop > 100) &&
       this.coreConfig.layout.navbar.type == 'navbar-static-top' &&
       this.coreConfig.layout.type == 'horizontal'
     ) {
@@ -91,23 +99,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _coreSidebarService: CoreSidebarService,
     private _mediaObserver: MediaObserver,
     public _translateService: TranslateService,
-    private loginService: LoginService, 
+    private loginService: LoginService,
     private apiService: ApiService,
-    private utilservice: UtilService,
+    private utilservice: UtilService
   ) {
-
- 
-
-
     this.languageOptions = {
       en: {
         title: 'English',
-        flag: 'us'
+        flag: 'us',
       },
       es: {
         title: 'Espanish',
-        flag: 'es'
-      }
+        flag: 'es',
+      },
     };
 
     // Set the private defaults
@@ -138,7 +142,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Use the selected language id for translations
     this._translateService.use(language);
 
-    this._coreConfigService.setConfig({ app: { appLanguage: language } }, { emitEvent: true });
+    this._coreConfigService.setConfig(
+      { app: { appLanguage: language } },
+      { emitEvent: true }
+    );
   }
 
   /**
@@ -149,7 +156,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._coreConfigService
       .getConfig()
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(config => {
+      .subscribe((config) => {
         this.currentSkin = config.layout.skin;
       });
 
@@ -163,7 +170,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
       );
     } else {
       localStorage.setItem('prevSkin', this.currentSkin);
-      this._coreConfigService.setConfig({ layout: { skin: 'dark' } }, { emitEvent: true });
+      this._coreConfigService.setConfig(
+        { layout: { skin: 'dark' } },
+        { emitEvent: true }
+      );
     }
   }
 
@@ -171,7 +181,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * Logout method
    */
   logout() {
-    this.loginService.logout()
+    this.loginService.logout();
   }
 
   // Lifecycle Hooks
@@ -181,89 +191,64 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+    this.msjService.lstpid$.subscribe((pid) => {
+      this.blCargando = pid.estatus;
 
-    this.msjService.lstpid$.subscribe(
-      pid => {
-        this.blCargando = pid.estatus
+      if (!pid.estatus) {
+        this.taskService.update(pid.id)
+        this.ok('Sandra Server', pid)
+      }
+    });
+
+    this.msjService.pidDevice$.subscribe((pid) => {
+      this.blCargando = pid.estatus;
+      if (!pid.estatus) {
+        this.taskService.update(pid.id)
         
-        if ( !pid.estatus){
-          this.taskService.update(pid.id)
-
-          Swal.fire({
-            title: 'Proceso Finalizado',
-            text: pid.contenido == "Descargando api"?`Felicitaciones`:`Su proyecto a sido clonado exitosamente!`,
-            icon: 'success',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: pid.contenido == "Descargando api"?'Descargar':'Ir al proyecto!'
-          }).then((result) => {
-            if (result.isConfirmed) {
-              if (pid.contenido == "Descargando api"){
-                 this.utilservice.AlertMini('bottom-end', 'success', 'Backup Generado', 3000)
-                 this.apiService.DwsCdn('bck-export/' + environment.driver.API_CORE_ZIP)
-              }else{
-                window.open(environment.Url+'/'+ pid.contenido)
-              }
-             
-            
-            }
-          })
-        }
       }
-      
-    )
-
-
-    this.msjService.pidDevice$.subscribe(
-      pid => {
-        this.blCargando = pid.estatus
-        if ( !pid.estatus){
-          this.taskService.update(pid.id)
-        }
-      }
-    )
-
+    });
 
     this.token = jwt_decode(sessionStorage.getItem('token'));
-    this.usuario = this.token.Usuario.usuario
-    this.tipo = this.token.Usuario.nombre
+    this.usuario = this.token.Usuario.usuario;
+    this.tipo = this.token.Usuario.nombre;
     // get the currentUser details from localStorage
 
     // Subscribe to the config changes
-    this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
-      this.coreConfig = config;
-      this.horizontalMenu = config.layout.type === 'horizontal';
-      this.hiddenMenu = config.layout.menu.hidden === true;
-      this.currentSkin = config.layout.skin;
-      // Fix: for vertical layout if default navbar fixed-top than set isFixed = true
-      if (this.coreConfig.layout.type === 'vertical') {
-        setTimeout(() => {
-          if (this.coreConfig.layout.navbar.type === 'fixed-top') {
-            this.isFixed = true;
-          }
-        }, 0);
-      }
-    });
-    
-    
+    this._coreConfigService.config
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((config) => {
+        this.coreConfig = config;
+        this.horizontalMenu = config.layout.type === 'horizontal';
+        this.hiddenMenu = config.layout.menu.hidden === true;
+        this.currentSkin = config.layout.skin;
+        // Fix: for vertical layout if default navbar fixed-top than set isFixed = true
+        if (this.coreConfig.layout.type === 'vertical') {
+          setTimeout(() => {
+            if (this.coreConfig.layout.navbar.type === 'fixed-top') {
+              this.isFixed = true;
+            }
+          }, 0);
+        }
+      });
 
     // Horizontal Layout Only: Add class fixed-top to navbar below large screen
     if (this.coreConfig.layout.type == 'horizontal') {
       // On every media(screen) change
-      this._coreMediaService.onMediaUpdate.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-        const isFixedTop = this._mediaObserver.isActive('bs-gt-xl');
-        if (isFixedTop) {
-          this.isFixed = false;
-        } else {
-          this.isFixed = true;
-        }
-      });
+      this._coreMediaService.onMediaUpdate
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe(() => {
+          const isFixedTop = this._mediaObserver.isActive('bs-gt-xl');
+          if (isFixedTop) {
+            this.isFixed = false;
+          } else {
+            this.isFixed = true;
+          }
+        });
     }
 
     // Set the selected language from default languageOptions
     this.selectedLanguage = _.find(this.languageOptions, {
-      id: this._translateService.currentLang
+      id: this._translateService.currentLang,
     });
   }
 
@@ -274,5 +259,64 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
+  }
+
+  ok(titulo: string, PID: any) {
+    let contenido = '';
+    let textoBoton = '';
+    let bCancel = true
+    switch (PID.contenido) {
+      case 'Descargando api':
+        contenido = `Proceso finalizado`;
+        textoBoton = 'Descargar';
+        break;
+      case 'Restaurando api':
+        contenido = `Proceso finalizado, las API's se han restaurado`;
+        textoBoton = 'Ok';
+        bCancel = false
+        break;
+      default:
+        contenido = `Su proyecto a sido clonado exitosamente!`;
+        textoBoton = 'Ir al proyecto!';
+        break;
+    }
+
+    Swal.fire({
+      title: titulo,
+      text: contenido,
+      icon: 'success',
+      showCancelButton: bCancel,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: textoBoton,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        switch (PID.contenido) {
+          case 'Descargando api':
+            this.utilservice.AlertMini('bottom-end',
+              'success',
+              'Backup Generado',
+              3000
+            );
+            this.apiService.DwsCdn(
+              'bck-export/' + environment.driver.API_CORE_ZIP
+            )
+            break;
+          case 'Restaurando api':
+            this.utilservice.AlertMini('bottom-end',
+              'success',
+              'Restarucion exitosa',
+              3000
+            );
+            break;
+          default:
+            window.open(environment.Url + '/' + PID.contenido)
+            break;
+        }
+
+
+      
+      }
+    });
   }
 }
