@@ -5,33 +5,33 @@ import {
   HostBinding,
   HostListener,
   ViewEncapsulation,
-} from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
+} from "@angular/core";
+import { MediaObserver } from "@angular/flex-layout";
 
-import * as _ from 'lodash';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
+import * as _ from "lodash";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { TranslateService } from "@ngx-translate/core";
 
-import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
-import { CoreConfigService } from '@core/services/config.service';
-import { CoreMediaService } from '@core/services/media.service';
-import jwt_decode from 'jwt-decode';
+import { CoreSidebarService } from "@core/components/core-sidebar/core-sidebar.service";
+import { CoreConfigService } from "@core/services/config.service";
+import { CoreMediaService } from "@core/services/media.service";
+import jwt_decode from "jwt-decode";
 
-import { coreConfig } from 'app/app-config';
-import { Router } from '@angular/router';
-import { LoginService } from '@services/seguridad/login.service';
-import { WsocketsService } from '@services/websockets/wsockets.service';
-import { TaskService } from '@services/apicore/task.service';
-import Swal from 'sweetalert2';
-import { environment } from 'environments/environment';
-import { ApiService } from '@services/apicore/api.service';
-import { UtilService } from '@services/util/util.service';
+import { coreConfig } from "app/app-config";
+import { Router } from "@angular/router";
+import { LoginService } from "@services/seguridad/login.service";
+import { WsocketsService } from "@services/websockets/wsockets.service";
+import { TaskService } from "@services/apicore/task.service";
+import Swal from "sweetalert2";
+import { environment } from "environments/environment";
+import { ApiService } from "@services/apicore/api.service";
+import { UtilService } from "@services/util/util.service";
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss'],
+  selector: "app-navbar",
+  templateUrl: "./navbar.component.html",
+  styleUrls: ["./navbar.component.scss"],
   encapsulation: ViewEncapsulation.None,
 })
 export class NavbarComponent implements OnInit, OnDestroy {
@@ -51,21 +51,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public navigation: any;
   public selectedLanguage: any;
 
-  @HostBinding('class.fixed-top')
+  @HostBinding("class.fixed-top")
   public isFixed = false;
 
-  @HostBinding('class.navbar-static-style-on-scroll')
+  @HostBinding("class.navbar-static-style-on-scroll")
   public windowScrolled = false;
 
   // Add .navbar-static-style-on-scroll on scroll using HostListener & HostBinding
-  @HostListener('window:scroll', [])
+  @HostListener("window:scroll", [])
   onWindowScroll() {
     if (
       (window.pageYOffset ||
         document.documentElement.scrollTop ||
         document.body.scrollTop > 100) &&
-      this.coreConfig.layout.navbar.type == 'navbar-static-top' &&
-      this.coreConfig.layout.type == 'horizontal'
+      this.coreConfig.layout.navbar.type == "navbar-static-top" &&
+      this.coreConfig.layout.type == "horizontal"
     ) {
       this.windowScrolled = true;
     } else if (
@@ -105,12 +105,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ) {
     this.languageOptions = {
       en: {
-        title: 'English',
-        flag: 'us',
+        title: "English",
+        flag: "us",
       },
       es: {
-        title: 'Espanish',
-        flag: 'es',
+        title: "Espanish",
+        flag: "es",
       },
     };
 
@@ -161,17 +161,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
       });
 
     // Toggle Dark skin with prevSkin skin
-    this.prevSkin = localStorage.getItem('prevSkin');
+    this.prevSkin = localStorage.getItem("prevSkin");
 
-    if (this.currentSkin === 'dark') {
+    if (this.currentSkin === "dark") {
       this._coreConfigService.setConfig(
-        { layout: { skin: this.prevSkin ? this.prevSkin : 'default' } },
+        { layout: { skin: this.prevSkin ? this.prevSkin : "default" } },
         { emitEvent: true }
       );
     } else {
-      localStorage.setItem('prevSkin', this.currentSkin);
+      localStorage.setItem("prevSkin", this.currentSkin);
       this._coreConfigService.setConfig(
-        { layout: { skin: 'dark' } },
+        { layout: { skin: "dark" } },
         { emitEvent: true }
       );
     }
@@ -195,20 +195,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.blCargando = pid.estatus;
 
       if (!pid.estatus) {
-        this.taskService.update(pid.id)
-        this.ok('Sandra Server', pid)
+        this.taskService.update(pid.id);
+        this.ok("Sandra Server", pid);
       }
     });
 
     this.msjService.pidDevice$.subscribe((pid) => {
       this.blCargando = pid.estatus;
       if (!pid.estatus) {
-        this.taskService.update(pid.id)
-        
+        this.taskService.update(pid.id);
       }
     });
 
-    this.token = jwt_decode(sessionStorage.getItem('token'));
+    this.token = jwt_decode(sessionStorage.getItem("token"));
     this.usuario = this.token.Usuario.usuario;
     this.tipo = this.token.Usuario.nombre;
     // get the currentUser details from localStorage
@@ -218,13 +217,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((config) => {
         this.coreConfig = config;
-        this.horizontalMenu = config.layout.type === 'horizontal';
+        this.horizontalMenu = config.layout.type === "horizontal";
         this.hiddenMenu = config.layout.menu.hidden === true;
         this.currentSkin = config.layout.skin;
         // Fix: for vertical layout if default navbar fixed-top than set isFixed = true
-        if (this.coreConfig.layout.type === 'vertical') {
+        if (this.coreConfig.layout.type === "vertical") {
           setTimeout(() => {
-            if (this.coreConfig.layout.navbar.type === 'fixed-top') {
+            if (this.coreConfig.layout.navbar.type === "fixed-top") {
               this.isFixed = true;
             }
           }, 0);
@@ -232,12 +231,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
       });
 
     // Horizontal Layout Only: Add class fixed-top to navbar below large screen
-    if (this.coreConfig.layout.type == 'horizontal') {
+    if (this.coreConfig.layout.type == "horizontal") {
       // On every media(screen) change
       this._coreMediaService.onMediaUpdate
         .pipe(takeUntil(this._unsubscribeAll))
         .subscribe(() => {
-          const isFixedTop = this._mediaObserver.isActive('bs-gt-xl');
+          const isFixedTop = this._mediaObserver.isActive("bs-gt-xl");
           if (isFixedTop) {
             this.isFixed = false;
           } else {
@@ -262,60 +261,88 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   ok(titulo: string, PID: any) {
-    let contenido = '';
-    let textoBoton = '';
-    let bCancel = true
+    let contenido = "";
+    let textoBoton = "";
+    let bCancel = true;
     switch (PID.contenido) {
-      case 'Descargando api':
+      case "Descargando api":
         contenido = `Proceso finalizado`;
-        textoBoton = 'Descargar';
+        textoBoton = "Descargar";
         break;
-      case 'Restaurando api':
+      case "Descargando funciones":
+        contenido = `Proceso finalizado`;
+        textoBoton = "Descargar";
+        break;
+
+      case "Restaurando api":
         contenido = `Proceso finalizado, las API's se han restaurado`;
-        textoBoton = 'Ok';
-        bCancel = false
+        textoBoton = "Ok";
+        bCancel = false;
+        break;
+      case "Restaurando funciones":
+        contenido = `Proceso finalizado, las Funciones se han restaurado`;
+        textoBoton = "Ok";
+        bCancel = false;
         break;
       default:
         contenido = `Su proyecto a sido clonado exitosamente!`;
-        textoBoton = 'Ir al proyecto!';
+        textoBoton = "Ir al proyecto!";
         break;
     }
 
     Swal.fire({
       title: titulo,
       text: contenido,
-      icon: 'success',
+      icon: "success",
       showCancelButton: bCancel,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
       confirmButtonText: textoBoton,
     }).then((result) => {
       if (result.isConfirmed) {
         switch (PID.contenido) {
-          case 'Descargando api':
-            this.utilservice.AlertMini('bottom-end',
-              'success',
-              'Backup Generado',
+          case "Descargando api":
+            this.utilservice.AlertMini(
+              "bottom-end",
+              "success",
+              "APIs Generadas",
               3000
             );
             this.apiService.DwsCdn(
-              'bck-export/' + environment.driver.API_CORE_ZIP
-            )
+              "bck-export/" + environment.driver.API_CORE_ZIP
+            );
             break;
-          case 'Restaurando api':
-            this.utilservice.AlertMini('bottom-end',
-              'success',
-              'Restarucion exitosa',
+          case "Descargando funciones":
+            this.utilservice.AlertMini(
+              "bottom-end",
+              "success",
+              "Funciones Generadas",
+              3000
+            );
+            this.apiService.DwsCdn(
+              "bck-export/" + environment.driver.SYS_FUNCION_ZIP
+            );
+            break;
+          case "Restaurando api":
+            this.utilservice.AlertMini(
+              "bottom-end",
+              "success",
+              "Restauracion exitosa",
+              3000
+            );
+            break;
+          case "Restaurando funciones":
+            this.utilservice.AlertMini(
+              "bottom-end",
+              "success",
+              "Restauracion exitosa",
               3000
             );
             break;
           default:
-            window.open(environment.Url + '/' + PID.contenido)
+            window.open(environment.Url + "/" + PID.contenido);
             break;
         }
-
-
-      
       }
     });
   }

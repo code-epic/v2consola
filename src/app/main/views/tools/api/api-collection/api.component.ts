@@ -251,14 +251,14 @@ export class ApiComponent implements OnInit {
 
   async ExportApi() {
  
-    let nameFnx = 'Fnx_ExportarAPI'
+    let nameFnx = environment.functions.EXPORTAR_API
     this.fnx = {
       'funcion': nameFnx,
       'basedatos': 'code-epic',
       'user': this.IExportAPI.usuario,
       'pass': this.IExportAPI.clave,
       'driver': this.driversAPP,
-      'file_name' : environment.driver.API_CORE_NAME
+      'file_name' : environment.colecciones.API_CORE_NAME
     };
     await Swal.fire({
       title: `Va a descargar la coleccion de API `,
@@ -273,7 +273,6 @@ export class ApiComponent implements OnInit {
       if (result.isConfirmed) {
         this.apiService.ExecFnx(this.fnx).subscribe(
           (data) => {
-            // console.log(data);
             this.pID.id = data.contenido.id;
             this.pID.estatus = true;
             this.msjService.lstpid$.emit(this.pID);
@@ -487,12 +486,12 @@ export class ApiComponent implements OnInit {
       (data) => {
         if (data.Cuerpo.length > 0) {
           this.xRestore.nombre = data.Cuerpo[0].nomb
-          this.xRestore.ruta = data.Cuerpo[0].ruta
-          this.xRestore.pass = ''
-          this.xRestore.user = ''
-          this.xRestore.file_name = environment.driver.API_CORE_NAME
+          this.xRestore.ruta = data.Cuerpo[0].rutaActiva
+          this.xRestore.pass = this.IExportAPI.clave
+          this.xRestore.user = this.IExportAPI.usuario
+          this.xRestore.file_name = environment.colecciones.API_CORE_NAME
           this.xRestore.basedatos = environment.driver.DATA_BASE
-          this.xRestore.coleccion = environment.driver.API_CORE_NAME
+          this.xRestore.coleccion = environment.colecciones.API_CORE_NAME
           this.ejecutarFuncion()
         }
       },
@@ -505,7 +504,7 @@ export class ApiComponent implements OnInit {
 
   ejecutarFuncion() {
     let nameFnx = 'Restaurar API'
-    this.xRestore.funcion = 'Fnx_RestoreAPI'
+    this.xRestore.funcion = environment.functions.RESTAURAR_API
     this.apiService.ExecFnx(this.xRestore).subscribe(
       (data) => {
         // console.log(data);
