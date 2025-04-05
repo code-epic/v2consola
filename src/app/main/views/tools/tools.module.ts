@@ -8,7 +8,7 @@ import { ContentHeaderModule } from 'app/layout/components/content-header/conten
 import { CoreCardModule } from '@core/components/core-card/core-card.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 import { CoreDirectivesModule } from '@core/directives/directives';
@@ -98,7 +98,8 @@ const routes = [
     CoreSidebarModule,
     CoreCommonModule,
     CardSnippetModule,
-    CodemirrorModule
+    CodemirrorModule,
+    NgbPaginationModule
   ],
 })
 export class ToolsModule { }

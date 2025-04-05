@@ -29,6 +29,7 @@ import { BinnacleComponent } from './binnacle/binnacle.component';
 import { SystemLogComponent } from './system-log/system-log.component';
 import { QueryLogComponent } from './query-log/query-log.component';
 import { CacheLogComponent } from './cache-log/cache-log.component';
+import { BinnacleApplicationsComponent } from './binnacle-applications/binnacle-applications.component';
 
 
 
@@ -43,10 +44,15 @@ const routes = [
     component: BinnacleComponent,
     canActivate: [AuthGuardGuard],
   },
+  {
+    path: 'investigation/binnacle/:id',
+    component: BinnacleApplicationsComponent,
+    canActivate: [AuthGuardGuard],
+  },
 ];
 
 @NgModule({
-  declarations: [LogsComponent, BinnacleComponent, SystemLogComponent, QueryLogComponent, CacheLogComponent],
+  declarations: [LogsComponent, BinnacleComponent, SystemLogComponent, QueryLogComponent, CacheLogComponent, BinnacleApplicationsComponent],
   imports: [
     RouterModule.forChild(routes),
     CommonModule,

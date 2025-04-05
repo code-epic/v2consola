@@ -13,6 +13,7 @@ import { CoreDirectivesModule } from '@core/directives/directives';
 import { CoreSidebarModule } from '@core/components/core-sidebar/core-sidebar.module';
 
 import { CoreThemeCustomizerComponent } from '@core/components/theme-customizer/theme-customizer.component';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
   suppressScrollX: true,
@@ -28,7 +29,8 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FlexLayoutModule,
     PerfectScrollbarModule,
     CoreDirectivesModule,
-    CoreSidebarModule
+    CoreSidebarModule,
+    NgbNavModule
   ],
   providers: [
     {

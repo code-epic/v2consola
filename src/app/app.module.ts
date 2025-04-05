@@ -112,7 +112,6 @@ const appRoutes: Routes = [
     TaskModule,
     InvestigationModule,
     NgSelectModule,
-    
   ],
   providers: [
     {

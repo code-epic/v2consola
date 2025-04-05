@@ -32,7 +32,7 @@ export class ApiListComponent implements OnInit {
   
   public searchText: string = '';
   public page = 1;
-  public pageSize = 12;
+  public pageSize = 8;
   public pageBasic = 1;
 
   public drivers = []

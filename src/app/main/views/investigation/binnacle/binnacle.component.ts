@@ -1,165 +1,49 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { Subject } from 'rxjs';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
-
-import { ApiService, IAPICore } from '@services/apicore/api.service';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
-
-
-import { WsocketsService } from '@services/websockets/wsockets.service';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectConfig } from '@ng-select/ng-select';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { UtilService } from '@services/util/util.service';
-import { ComunicationsService } from '@services/networks/comunications.service';
-import { ConexionesService } from '@services/networks/connections.service';
-import { LoginService } from '@services/seguridad/login.service';
-import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
-import { IFunciones } from '@services/tools/functions.service';
-import Swal from 'sweetalert2';
-
+import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { ApiService, IAPICore } from "@services/apicore/api.service";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-binnacle',
   templateUrl: './binnacle.component.html',
   styleUrls: ['./binnacle.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    encapsulation: ViewEncapsulation.None,
+    host: { class: "ecommerce-application" },
 })
 export class BinnacleComponent implements OnInit {
 
-  @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
+  searchType: string = "conexiones"; // Valor inicial del select
+  searchText: string = ''; // Para el input de búsqueda normal
+  selectCustomSelected = []; // Para el ng-select
 
-  public codeMirrorOptions: any = {
-    theme: 'material',
-    mode: 'text/x-sh',
-    lineNumbers: true,
-    lineWrapping: true,
-    foldGutter: true,
-    gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    lint: true,
-    indentUnit: 2,
-    tabSize: 2,
-    indentWithTabs: true
-  };
+  public contentHeader: object;
 
+  public ListarBitacora = [];
 
-  public xAPI : IAPICore = {
+  xAPI: IAPICore = {
     funcion: '',
     parametros: '',
-    relacional: false,
-    concurrencia : false,
-    protocolo: '',
-    ruta : '',
-    retorna : false,
-    migrar : false,
-    modulo : '',
-    valores : {},
-    coleccion : '',
-    http : 0,
-    https : 0,
-    consumidores : 0,
-    puertohttp : 0,
-    puertohttps : 0,
-    driver : '',
-    query : '',
-    metodo : '',
-    tipo : '',
-    prioridad : '',
-    entorno: '',
-    logs : false
+    valores: '',
   };
 
+  public page = 1;
+  public pageSize = 8;
+  public pageBasic = 1;
 
-  public existe: boolean = false
-  public fecha = new Date().toISOString()
-  public Fnx: IFunciones = {
-    id: '',
-    tipo: 'S',
-    nombre: '',
-    version: '0.0.1',
-    lenguaje: 'S',
-    categoria: 'S',
-    retorno: 'S',
-    codigo: '',
-    descripcion: '',
-    parametros: '',
-    fecha: this.fecha,
-    tiempo: '',
-    estatus: 0
-  }
-  public FnxAux: IFunciones = {
-    id: '',
-    tipo: 'S',
-    nombre: '',
-    version: '0.0.1',
-    lenguaje: 'S',
-    categoria: 'S',
-    retorno: 'S',
-    codigo: '',
-    descripcion: '',
-    parametros: '',
-    fecha: this.fecha,
-    tiempo: '',
-    estatus: 0
-  }
-
-  public divTiempo: boolean = false
-
-  // Private
-  public lbd = 'Base de Datos'
-  public count
-  public isReload = false;
-
-  public showBaseDatos = false
-  public showPuente = false
-  private _unsubscribeAll: Subject<any>;
- 
-  public ListarBitacora = []
-  public tempData = [];
+  public developer = [];
   public rowData = [];
-
-
-  public obj;
-
-  public btnCategoria
-
-  // public
-  public loginForm: UntypedFormGroup;
-  public contentHeader: object;
-  public selected = [];
-  public kitchenSinkRows: any;
-  public basicSelectedOption: number = 10;
-  public ColumnMode = ColumnMode;
-  public SelectionType = SelectionType;
-
-  public ListaAplicaciones
+  public tempData = [];
 
   constructor(
-    private interceptor : AuthInterceptorService,
-    private loginService: LoginService,
-    private comunicacionesService : ComunicationsService,
-    private apiService : ApiService,
-    private modalService: NgbModal,
-    private conexionesService : ConexionesService,
-    private msjService : WsocketsService,
-    private config: NgSelectConfig,
-    private _formBuilder: UntypedFormBuilder,
-    private utilservice: UtilService,
-  ) {
-  }
+    private ruta: Router,
+    private apiService: ApiService
+  ) {}
 
 
   async ngOnInit() {
+
     await this.CargarBitacora()
 
-    
-     // content header
-     this.contentHeader = {
+    this.contentHeader = {
       headerTitle: 'Investigación',
       actionButton: true,
       breadcrumb: {
@@ -168,165 +52,37 @@ export class BinnacleComponent implements OnInit {
           {
             name: 'Home',
             isLink: true,
-            link: '/home'
-          },
-          {
-            name: 'Investigación',
-            isLink: false
+            link: '/home',
           },
           {
             name: 'Bitacora',
-            isLink: false
-          }
-        ]
-      }
+            isLink: false,
+          },
+        ],
+      },
     };
   }
 
-
-  validarVersion() {
-    let version = this.Fnx.version.split('.')
-    let mayor = parseInt(version[0])
-    let menor = parseInt(version[1])
-    let menor_aux = parseInt(version[2])
-    const _fnx = this.Fnx
-    const _aux = this.FnxAux
-    if (_fnx.retorno != _aux.retorno || _fnx.lenguaje != _aux.lenguaje || _fnx.nombre != _aux.nombre) {
-      mayor = parseInt(version[0]) + 1
-    }
-    if (_fnx.tipo != _aux.tipo || _fnx.categoria != _aux.categoria) {
-      menor = parseInt(version[1]) + 1
-    }
-    if (_fnx.descripcion != _aux.descripcion || _fnx.codigo != _aux.codigo) {
-      menor_aux = parseInt(version[2]) + 1
-    }
-    return mayor + '.' + menor + '.' + menor_aux
+  irA(base: string, data: string) {
+    const datoCodificado = btoa(JSON.stringify(data));
+    this.ruta.navigate([base + '/' + datoCodificado]);
   }
 
-
-  cambiarModo(): string {
-    var idioma = 'text/x-idn'
-    switch (this.loginForm.value.lenguaje) {
-      case "GO":
-        idioma = 'text/x-go'
-        break;
-      case "PHP":
-        idioma = 'text/x-php'
-        break;
-      case "SHELL":
-        idioma = 'text/x-sh'
-        break;
-      case "BASH":
-        idioma = 'text/x-sh'
-        break;
-      case "PYTHON":
-        idioma = 'text/x-python'
-        break;
-      case "RUST":
-        idioma = 'text/x-rustsrc'
-        break;
-      case "RDN":
-        idioma = 'text/x-idn'
-        break;
-    }
-    this.codeMirrorOptions.mode = idioma
-    console.log('edicion')
-    return idioma
-  }
-
-  filterUpdate(event: any) {
-    const val = event.target.value.toLowerCase();
-    // filter our data
-    const temp = this.tempData.filter(function (d) {
-      return d.nombre.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
-  }
-
-  filterStatus(event: any) {
-    const val = event.id ? event.id : '';
-    // filter our data
-    const temp = this.tempData.filter(function (d) {
-      return d.estatus.indexOf(val) !== -1 || !val;
-    });    
-    // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
-  }
-
-  LimpiarForm(){
-    this.loginForm = this._formBuilder.group({
-      id: ['', [Validators.required]],
-      tipo: [undefined,[Validators.required]],
-      nombre: ['',[Validators.required]],
-      version: ['0.0.1',[Validators.required]],
-      estatus: [undefined, [Validators.required]],
-      lenguaje: [undefined, [Validators.required]],
-      categoria: [undefined,[Validators.required]],
-      retorno: [undefined,[Validators.required]],
-      descripcion: ['',[Validators.required]],
-      codigo: ['',[Validators.required]],
-      tiempo: [''],
-      fecha: [this.Fnx.fecha],
-    });
-  }
-
-
-  ModalEdit(modal, data){
-    console.log("Iniciando proceso...")
-    this.existe = false
-    this.btnCategoria = data.categoria
-    this.loginForm = this._formBuilder.group({
-      id: [data.id, [Validators.required]],
-      tipo: [data.tipo,[Validators.required]],
-      nombre: [data.nombre],
-      version: [data.version,[Validators.required]],
-      estatus: [data.estatus, [Validators.required]],
-      lenguaje: [data.lenguaje, [Validators.required]],
-      categoria: [data.categoria,[Validators.required]],
-      retorno: [data.retorno,[Validators.required]],
-      descripcion: [data.descripcion,[Validators.required]],
-      codigo: [data.codigo,[Validators.required]],
-      tiempo: [data.tiempo],
-      fecha: [this.loginForm.value.fecha],
-    });
-    this.modalService.open(modal,{
-      centered: true,
-      size: 'xl',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
-  }
-
-
-  ModalAdd(modal){
-    this.modalService.open(modal,{
-      centered: true,
-      size: 'xl',
-      backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
-    });
+  deleteItem(event: any, data: any) {
+    console.log(data);
   }
 
   async CargarBitacora() {
     this.xAPI.funcion = "_SYS_CBitacoraGrupo";
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-       console.log(data)
-       data.map(e => {
-        this.ListarBitacora.push(e)
-       });
-       this.rowData = this.ListarBitacora
-       this.tempData = this.rowData
+      async (data) => {
+        if (data == null) return;
+        await data.map((e) => {
+          this.ListarBitacora.push(e);
+        });
+        this.rowData = this.ListarBitacora;
+        this.tempData = this.rowData;
       },
       (error) => {
         console.log(error)
