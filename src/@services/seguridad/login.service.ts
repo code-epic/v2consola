@@ -183,9 +183,9 @@ export class LoginService {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.router.navigate(["login"]).then(() => {
-          this.clearSession()
-        });
+        this.router.navigate(["login"])
+        this.clearSession()
+       
 
       }
     })

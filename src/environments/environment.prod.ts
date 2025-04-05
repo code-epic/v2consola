@@ -33,7 +33,9 @@ export const environment = {
     LISTAR_FUNCIONES : '_SYS_LFunciones',
     EXPORTAR_API : 'Fnx_ExportarAPI',
     EXPORTAR_FUNCIONES : 'Fnx_ExportarFunciones',
-    LISTAR_APLICACIONES: '_SYS_LstAplicaciones'
+    LISTAR_APLICACIONES: '_SYS_LstAplicaciones',
+    RESTAURAR_API: 'Fnx_RestaurarAPI',
+    RESTAURAR_FUNCIONES: 'Fnx_RestaurarFunciones'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',

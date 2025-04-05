@@ -369,11 +369,11 @@ export class UserComponent implements OnInit {
     // lstrol.push(rol)
     let xapps: SAplicacion = {
       autor: apps.creador,
-      id: apps.id,
+      id: 'ID-001',
       nombre: apps.nombre,
       version: apps.version,
       url: apps.repositorio,
-      comentario: "",
+      comentario: "Generado por sistema",
       Rol: rol,
     };
     this.Aplicacion = xapps;
