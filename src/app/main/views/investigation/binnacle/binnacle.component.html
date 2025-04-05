@@ -60,7 +60,7 @@
             </ng-template>
           </ngx-datatable-column> -->
 
-          <ngx-datatable-column name="DRIVER" [width]="150">
+          <ngx-datatable-column name="APP" [width]="250">
             <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
               <div class="d-flex align-items-center">
                 <div *ngIf="row.length > 0; else customAvatar">
@@ -72,14 +72,14 @@
                       'bg-light-success': row.estatus == true,
                       'bg-light-danger': row.estatus == false
                     }">
-                    <div class="avatar-content">{{ row.nombre.toUpperCase() | initials }}</div>
+                    <div class="avatar-content">{{ row.aplicacion.toUpperCase() | initials }}</div>
                   </div>
                 </ng-template>
                 <div class="cell-line-height">
-                  <span class="font-weight-bold d-block"><strong>{{ row.nombre }}</strong></span>
+                  <span class="font-weight-bold d-block"><strong>{{ row.aplicacion }}</strong></span>
                   <span class="text-muted font-small-2">
                     <!-- <div class="badge badge-glow badge-dark"> -->
-                    <strong>V {{ row.version | uppercase }}</strong> 
+                    <strong>V {{ row.version ? row.version : '0.0.0' | uppercase }}</strong> 
                   <!-- </div> -->
                 </span>
                 </div>
@@ -87,22 +87,12 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="Lenguaje"  [width]="50">
+          <ngx-datatable-column name="TOTAL FUNCIONES"  [width]="50">
             <ng-template let-row="row" ngx-datatable-cell-template>
               <div>
                 <span class="font-weight-bold">
-                  <div class="badge badge-glow" [ngClass]="{
-                    'badge-success': row.lenguaje == 'PHP',
-                    'badge-warning': row.lenguaje == 'PYTHON',
-                    'badge-primary': row.lenguaje == 'RUST',
-                    'badge-secondary': row.lenguaje == 'BASH',
-                    'badge-info': row.lenguaje == 'SHELL',
-                    'badge-primary': row.lenguaje == 'NJS',
-                    'badge-danger': row.lenguaje == 'GO',
-                    'badge-danger': row.lenguaje == 'C++',
-                    'badge-warning': row.lenguaje == 'RDN'
-                  }">
-                  {{ row.lenguaje}}
+                  <div class="badge badge-glow badge-success">
+                  {{ row.totalFunciones}}
                 </div>
                  </span>
               </div>
@@ -111,16 +101,7 @@
 
 
 
-          <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [width]="500">
-            <ng-template let-descripcion="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">{{ descripcion.slice(0,100) }} ... </span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-
-          <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
+          <ngx-datatable-column name="ACCIÓN" [width]="10" [sortable]="false">
             <ng-template ngx-datatable-cell-template let-row="row">
               <div ngbDropdown container="body">
                 <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>

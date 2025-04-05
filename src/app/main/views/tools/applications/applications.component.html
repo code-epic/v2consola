@@ -49,41 +49,29 @@
         <br>
 
         <section id="wishlist" class="grid-view wishlist-items">
-            <ng-container
-                *ngFor="let product of ListaAplicaciones  | filter: searchText:'nombre'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
-                <div class="card ecommerce-card col-sm-12 tarjeta">
-                    <a [routerLink]="'/tools/applications/' + product.nombre">
-
-                        <div class="item-img text-center efecto-img">
-                            <img class="img-fluid" width="100px" height="100px" src="assets/images/logo/logo.png"
-                                alt="img-placeholder" />
-                        </div>
-
-                        <div class="card-body">
-
-                            <div class="item-wrapper">
-                                <div class="item-rating">
-                                    <div class="rating rating-sm">
-                                        <div class="badge badge-success" *ngIf="product.status === '1'">Activo</div>
-                                        <div class="badge badge-danger" *ngIf="product.status === '0'">Inactivo</div>
-                                    </div>
-                                </div>
-                                <div class="item-cost">
-                                    <h6 class="item-price">
-                                        {{ product.nombre | uppercase }}
-                                    </h6>
-                                </div>
-                            </div>
-                            <p class="card-text item-description">
-                                <strong>{{ product.basedatos }}</strong> - {{ product.fecha }}
-                            </p>
-                        </div>
-
-                    </a>
-
+          <div *ngFor="let product of ListaAplicaciones | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize"
+               class="card ecommerce-card tarjeta">
+            <a [routerLink]="'/tools/applications/' + product.nombre">
+              <div class="item-img text-center efecto-img">
+                <img class="img-fluid" src="assets/images/logo/logo.png" alt="img-placeholder" />
+              </div>
+              <div class="card-body">
+                <div class="item-wrapper">
+                  <div class="item-rating">
+                    <div class="badge" [ngClass]="{'badge-success': product.status === '1', 'badge-danger': product.status === '0'}">
+                      {{ product.status === '1' ? 'Activo' : 'Inactivo' }}
+                    </div>
+                  </div>
+                  <div class="item-cost">
+                    <h6 class="item-price">{{ product.nombre | uppercase }}</h6>
+                  </div>
                 </div>
-                <!--/ Ecommerce Item -->
-            </ng-container>
+                <p class="card-text item-description">
+                  <strong>{{ product.basedatos }}</strong> - {{ product.fecha }}
+                </p>
+              </div>
+            </a>
+          </div>
         </section>
 
         <br><br>

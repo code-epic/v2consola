@@ -119,24 +119,16 @@ export class BinnacleComponent implements OnInit {
   public showPuente = false
   private _unsubscribeAll: Subject<any>;
  
-  public ListaFunciones = []
+  public ListarBitacora = []
   public tempData = [];
   public rowData = [];
 
-  public driver = undefined
-  public drivers = []
-  public hosts = []
 
   public obj;
 
   public btnCategoria
 
   // public
-  public mac
-  public data : any
-  public xrs = ''
-  public host = ''
-  public submitted = false;
   public loginForm: UntypedFormGroup;
   public contentHeader: object;
   public selected = [];
@@ -161,31 +153,9 @@ export class BinnacleComponent implements OnInit {
   ) {
   }
 
-    // convenience getter for easy access to form fields
-    get f() {
-      return this.loginForm.controls;
-    }
-
 
   async ngOnInit() {
-    await this.CargarListaFunciones()
-    this.CargarListaAplicaciones()
-
-
-    this.loginForm = this._formBuilder.group({
-      id: [this.utilservice.GenerarUnicId(), [Validators.required]],
-      tipo: [undefined,[Validators.required]],
-      nombre: [''],
-      version: [this.Fnx.version,[Validators.required]],
-      estatus: [undefined, [Validators.required]],
-      lenguaje: [undefined, [Validators.required]],
-      categoria: [undefined,[Validators.required]],
-      retorno: [undefined,[Validators.required]],
-      descripcion: ['',[Validators.required]],
-      codigo: ['',[Validators.required]],
-      tiempo: [''],
-      fecha: [this.Fnx.fecha],
-    });
+    await this.CargarBitacora()
 
     
      // content header
@@ -307,28 +277,6 @@ export class BinnacleComponent implements OnInit {
     });
   }
 
-  async CargarListaFunciones(){
-    this.xAPI.funcion = "SSB_LFunciones";
-    this.xAPI.parametros = ''
-    this.xAPI.valores = ''
-    this.ListaFunciones = []
-    this.count = 0
-     await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        // console.log(data)
-        data.map(e => {
-          this.ListaFunciones.push(e);
-        });
-        this.rowData = this.ListaFunciones;
-        this.count = this.rowData.length
-        this.tempData = this.rowData;
-      },
-      (error) => {
-        console.log(error)
-      }
-    ) 
-  }
-
 
   ModalEdit(modal, data){
     console.log("Iniciando proceso...")
@@ -368,15 +316,17 @@ export class BinnacleComponent implements OnInit {
     });
   }
 
-  async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
+  async CargarBitacora() {
+    this.xAPI.funcion = "_SYS_CBitacoraGrupo";
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.ListaAplicaciones = data.Cuerpo.map(e => {
-          e.name = e.nombre+' : '+e.VERSION
-          return e
-        });
+       console.log(data)
+       data.map(e => {
+        this.ListarBitacora.push(e)
+       });
+       this.rowData = this.ListarBitacora
+       this.tempData = this.rowData
       },
       (error) => {
         console.log(error)
