@@ -51,8 +51,7 @@
                     [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
                     [limit]="basicSelectedOption">
 
-                    <!-- 
-                    <ngx-datatable-column name="DRIVER" [width]="100">
+                    <ngx-datatable-column name="Usuario" [width]="100">
                         <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                             <div class="d-flex align-items-center">
                                 <div *ngIf="row.length > 0; else customAvatar">
@@ -70,35 +69,34 @@
                                 <div class="cell-line-height">
                                     <span class="font-weight-bold d-block text-nowrap font-medium-1">{{ row.nombre
                                         }}</span>
-                                    <span class="text-muted font-small-2"> {{ row.fecha | date:"dd-MM-yyyy" }}</span>
+                                    <span class="text-muted font-small-2"> {{ row.login  }} | {{ row.cargo  }}</span>
                                 </div>
                             </div>
                         </ng-template>
                     </ngx-datatable-column>
 
-                    <ngx-datatable-column name="Sistema" [width]="150">
+
+                    <ngx-datatable-column name="Correo" [width]="150">
                         <ng-template let-row="row" ngx-datatable-cell-template>
                             <div>
-                                <span class="font-weight-bold"> {{ row.sistema | uppercase }} <strong> | </strong>
-                                    <div class="badge badge-glow badge-dark">{{ row.VERSION | uppercase }} </div>
-                                </span>
+                                <span class="font-weight-bold"> {{ row.correo }} </span>
                             </div>
                         </ng-template>
                     </ngx-datatable-column>
 
 
 
-                    <ngx-datatable-column name="Lenguaje" prop="lenguaje" [width]="150">
-                        <ng-template let-lenguaje="value" ngx-datatable-cell-template>
+                    <ngx-datatable-column name="Sistema"  [width]="150">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
                             <div>
-                                <span class="font-weight-bold">{{ lenguaje }} </span>
+                                <span class="font-weight-bold">{{ row.sistema }} </span>
                             </div>
                         </ng-template>
-                    </ngx-datatable-column> -->
+                    </ngx-datatable-column> 
 
 
 
-                    <!-- <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
+                    <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
                         <ng-template ngx-datatable-cell-template let-row="row">
                             <div ngbDropdown container="body">
                                 <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow"
@@ -106,20 +104,12 @@
                                     <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                                 </button>
                                 <div ngbDropdownMenu>
-                                    <a [href]="urlEnvironment.Url+'/'+row.nombre" target="_blank"
-                                        *ngIf="row.status == '1'" ngbDropdownItem><span [data-feather]="'aperture'"
-                                            [size]="16" [class]="'mr-50'"></span>
-                                        Proyecto</a>
-                                    <a (click)="Clonar(row)" *ngIf="row.status == '0'" ngbDropdownItem><span
-                                            [data-feather]="'download-cloud'" [size]="16"
-                                            [class]="'mr-50'"></span>Clonar</a>
-                                    <a (click)="Pull(row)" *ngIf="row.status == '1'" ngbDropdownItem><span
-                                            [data-feather]="'git-pull-request'" [size]="16"
-                                            [class]="'mr-50'"></span>Actualizar</a>
+                                    <a (click)="EliminarUser(row)" ngbDropdownItem><span [data-feather]="'trash'"
+                                        [size]="16" [class]="'mr-50'"></span>Eliminar</a>
                                 </div>
                             </div>
                         </ng-template>
-                    </ngx-datatable-column> -->
+                    </ngx-datatable-column>
 
                 </ngx-datatable>
                 <!--/ Invoice List Table -->
