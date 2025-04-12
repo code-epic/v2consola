@@ -54,7 +54,7 @@ const routes = [
   {
     path: 'applications/terminal',
     component: TerminalComponent,
-    canActivate: [AuthGuardGuard],
+    // canActivate: [AuthGuardGuard],
   },
   {
     path: 'applications/conciliation',

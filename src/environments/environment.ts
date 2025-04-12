@@ -9,8 +9,8 @@ export const environment = {
   API: '/v1/api/',
   ID: 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  version: 'Development 1.0.1-ecac7af',
-  fecha: '2023-03-21 22:08:00',
+  version: 'Broglie 1.0.1-1b419f3',
+  fecha: '2025-04-12 05:08:00',
   BD : 'code-epic',
   driver: {
     PRINCIPAL : 'MGDBA',

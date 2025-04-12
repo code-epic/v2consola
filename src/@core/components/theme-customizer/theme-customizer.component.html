@@ -41,27 +41,69 @@
     <li ngbNavItem>
       <a ngbNavLink><span [data-feather]="'settings'"></span></a>
       <ng-template ngbNavContent>
-        <p>
-          Muffin cupcake candy chocolate cake gummi bears fruitcake donut dessert pie. Wafer toffee bonbon
-          dragée. Jujubes cotton candy gummies chupa chups. Sweet fruitcake cheesecake biscuit cotton candy.
-          Cookie powder marshmallow donut. Candy cookie sweet roll bear claw sweet roll. Cake tiramisu
-          cotton candy gingerbread cheesecake toffee cake. Cookie liquorice dessert candy canes jelly. Sweet
-          chocolate muffin fruitcake gummies jujubes pie lollipop. Brownie marshmallow caramels gingerbread
-          jelly beans chocolate bar oat cake wafer. Chocolate bar danish icing sweet apple pie jelly-o
-          carrot cake cookie cake.
-        </p>
+
+        <app-system-info></app-system-info>
+
       </ng-template>
     </li>
     <li ngbNavItem>
       <a ngbNavLink><span [data-feather]="'award'"></span></a>
       <ng-template ngbNavContent>
-        <p>
-          Chocolate croissant cupcake croissant jelly donut. Cheesecake toffee apple pie chocolate bar
-          biscuit tart croissant. Lemon drops danish cookie. Oat cake macaroon icing tart lollipop cookie
-          sweet bear claw. Carrot cake dragée chocolate. Lemon drops ice cream wafer gummies dragée.
-          Chocolate bar liquorice cheesecake cookie chupa chups marshmallow oat cake biscuit. Dessert toffee
-          fruitcake ice cream powder tootsie roll cake.
-        </p>
+
+        <div class="certificate-upload-container">
+          <h2>Subir Certificados SSL</h2>
+          <form #certificateForm="ngForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+              <label for="certificateName">Nombre del Certificado:</label>
+              <input type="text" id="certificateName" name="certificateName" 
+                     [(ngModel)]="certificateData.name" required 
+                     class="form-control" placeholder="Ej: mi-sitio-web">
+              <small class="text-muted">Asigne un nombre descriptivo al certificado</small>
+            </div>
+        
+            <div class="form-group">
+              <label for="publicCertificate">Certificado Público (CRT/PEM):</label>
+              <input type="file" id="publicCertificate" name="publicCertificate" 
+                     (change)="onFileSelected($event, 'publicCert')" accept=".crt,.pem,.cer" required
+                     class="form-control-file">
+              <small class="text-muted">Seleccione el archivo del certificado público (.crt, .pem)</small>
+            </div>
+        
+            <div class="form-group">
+              <label for="privateKey">Clave Privada (KEY):</label>
+              <input type="file" id="privateKey" name="privateKey" 
+                     (change)="onFileSelected($event, 'privateKey')" accept=".key,.pem" required
+                     class="form-control-file">
+              <small class="text-muted">Seleccione el archivo de la clave privada (.key)</small>
+            </div>
+        
+            <div class="form-group">
+              <label for="password">Contraseña (opcional):</label>
+              <input type="password" id="password" name="password" 
+                     [(ngModel)]="certificateData.password"
+                     class="form-control" placeholder="Si el certificado está protegido por contraseña">
+            </div>
+        
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="!certificateForm.valid || uploading">
+                <span *ngIf="!uploading">Subir Certificado</span>
+                <span *ngIf="uploading">
+                  <i class="fa fa-spinner fa-spin"></i> Procesando...
+                </span>
+              </button>
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancelar</button>
+            </div>
+        
+            <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+              {{ errorMessage }}
+            </div>
+        
+            <div *ngIf="successMessage" class="alert alert-success mt-3">
+              {{ successMessage }}
+            </div>
+          </form>
+        </div>
+
       </ng-template>
     </li>
   </ul>

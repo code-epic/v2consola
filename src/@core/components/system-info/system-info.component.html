@@ -1,0 +1,117 @@
+<!-- src/app/components/system-info/system-info.component.html -->
+<div *ngIf="!isLoading && systemInfo; else loadingTmpl" class="system-info-container">
+  <div class="card">
+    <!-- <h2>Información del sistema</h2> -->
+    
+    <!-- Sección System -->
+    <div class="info-section">
+      <h3>General</h3>
+      <div class="info-grid">
+        <div><strong>Nombre de host:</strong> {{systemInfo.system?.hostname || 'N/A'}}</div>
+        <div><strong>Sistema operativo:</strong> {{systemInfo.system?.os || 'N/A'}}</div>
+        <div><strong>Kernel:</strong> {{systemInfo.system?.kernel || 'N/A'}}</div>
+        <div><strong>Arquitectura:</strong> {{systemInfo.system?.architecture || 'N/A'}}</div>
+        <div><strong>Actividad:</strong> {{systemInfo.system?.uptime || 'N/A'}}</div>
+        <div><strong>Tiempo:</strong> {{(systemInfo.timestamp | date:'medium') || 'N/A'}}</div>
+      </div>
+    </div>
+
+    <!-- Sección CPU -->
+    <div class="info-section">
+      <h3>CPU</h3>
+      <div class="info-grid">
+        <div><strong>Modelo:</strong> {{systemInfo.cpu?.model || 'N/A'}}</div>
+        <div><strong>Núcleos:</strong> {{systemInfo.cpu?.cores || 'N/A'}}</div>
+        <div><strong>Hilos:</strong> {{systemInfo.cpu?.threads || 'N/A'}}</div>
+        <div><strong>Promedio de carga:</strong> {{systemInfo.cpu?.load_average || 'N/A'}}</div>
+      </div>
+    </div>
+
+    <!-- Sección Memory -->
+    <div class="info-section">
+      <h3>Memoria</h3>
+      <div class="info-grid">
+        <div><strong>Total:</strong> {{systemInfo.memory?.total || 'N/A'}}</div>
+        <div><strong>Usado:</strong> {{systemInfo.memory?.used || 'N/A'}}</div>
+        <div><strong>Libre:</strong> {{systemInfo.memory?.free || 'N/A'}}</div>
+        <div><strong>Total de intercambio:</strong> {{systemInfo.memory?.swap_total || 'N/A'}}</div>
+        <div><strong>Intercambio usado:</strong> {{systemInfo.memory?.swap_used || 'N/A'}}</div>
+        <div><strong>Intercambio Libre:</strong> {{systemInfo.memory?.swap_free || 'N/A'}}</div>
+      </div>
+    </div>
+
+    <!-- Sección Disks -->
+    <div class="info-section">
+      <h3>Discos</h3>
+      <div class="disks-grid">
+        <!-- Primera línea de encabezados -->
+        <div class="disk-header-row">
+          <div class="disk-header-cell">Archivos</div>
+          <div class="disk-header-cell">Tamaño</div>
+          <div class="disk-header-cell">Usado</div>
+          <div class="disk-header-cell">Disponible</div>
+        </div>
+        
+        <!-- Segunda línea de encabezados -->
+        <div class="disk-header-row">
+          <div class="disk-header-cell colspan-3">Usado</div>
+          <div class="disk-header-cell">Montado</div>
+        </div>
+        
+        <!-- Filas de datos -->
+        <div class="disk-data" *ngFor="let disk of systemInfo.disks || []">
+          <!-- Primera línea de datos -->
+          <div class="disk-data-row">
+            <div class="disk-data-cell">{{disk.filesystem || 'N/A'}}</div>
+            <div class="disk-data-cell">{{disk.size || 'N/A'}}</div>
+            <div class="disk-data-cell">{{disk.used || 'N/A'}}</div>
+            <div class="disk-data-cell">{{disk.avail || 'N/A'}}</div>
+          </div>
+          
+          <!-- Segunda línea de datos -->
+          <div class="disk-data-row">
+            <div class="disk-data-cell colspan-3">
+              <div class="progress-bar">
+                <div class="progress" [style.width.%]="getDiskUsagePercentage(disk['use%'])"></div>
+                <span>{{disk['use%'] || '0%'}}</span>
+              </div>
+            </div>
+            <div class="disk-data-cell">{{disk.mounted || 'N/A'}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección Network -->
+    <div class="info-section">
+      <h3>Red</h3>
+      <div class="info-grid">
+        <div><strong>Dirección IP:</strong> {{systemInfo.network?.ip_address || 'N/A'}}</div>
+        <div><strong>Interfaces:</strong> {{systemInfo.network?.interfaces || 'N/A'}}</div>
+      </div>
+    </div>
+
+    <!-- Sección Processes & Users -->
+    <div class="info-section">
+      <h3>Procesos & Usuarios</h3>
+      <div class="info-grid">
+        <div><strong>Procesos totales:</strong> {{systemInfo.processes?.total || 0}}</div>
+        <div><strong>Procesos en ejecución:</strong> {{systemInfo.processes?.running || 0}}</div>
+        <div><strong>Usuarios conectados:</strong> {{systemInfo.users?.logged_in || 0}}</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingTmpl>
+  <div class="loading-spinner">
+    <mat-spinner></mat-spinner>
+    <p>Cargando información del sistema...</p>
+  </div>
+</ng-template>
+
+<ng-template #errorTmpl>
+  <div class="error-message">
+    No se pudo cargar la información del sistema. Inténtelo de nuevo más tarde.
+  </div>
+</ng-template>

@@ -31,7 +31,7 @@ const routes = [
   {
     path: 'task/task-monitor',
     component: TaskMonitorComponent,
-    canActivate: [AuthGuardGuard],
+    // canActivate: [AuthGuardGuard],
   }
 ];
 

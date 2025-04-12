@@ -20,19 +20,30 @@ import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-dat
 })
 export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
 
-   @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild(DatatableComponent) table: DatatableComponent;
 
-    public searchValue = ''
-    public contentHeader: object;
-    public count
-    public ListaComunicaciones = []
-    public basicSelectedOption: number = 10;
-    public ColumnMode = ColumnMode;
-    public tempData = [];
-    public rowData = [];
+  public searchValue = ''
+  public contentHeader: object;
+  public count
+  public ListaComunicaciones = []
+  public basicSelectedOption: number = 10;
+  public ColumnMode = ColumnMode;
+  public tempData = [];
+  public rowData = [];
 
+  public lstApp
 
-    public lstApp
+  certificateData = {
+    name: '',
+    publicCert: null as File | null,
+    privateKey: null as File | null,
+    password: ''
+  };
+
+  uploading = false;
+  errorMessage = '';
+  successMessage = '';
+
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -48,7 +59,7 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
     private _formBuilder: UntypedFormBuilder,
     private _coreConfigService: CoreConfigService,
     private _coreSidebarService: CoreSidebarService,
-    private taskService: TaskService, 
+    private taskService: TaskService,
     private msjService: WsocketsService
   ) {
     // Set the private defaults
@@ -79,7 +90,7 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
   // -----------------------------------------------------------------------------------------------------
 
   async escucharPID() {
-   await  this.msjService.lstpid$.subscribe(
+    await this.msjService.lstpid$.subscribe(
       pid => {
         // console.log(pid)
         if (!pid.estatus) {
@@ -92,7 +103,7 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
   }
 
   async initProcess() {
-     this.lstApp = []
+    this.lstApp = []
     await this.taskService.keys().then(
       async lst => {
         let cnt = lst.length;
@@ -150,6 +161,63 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
   insertCommitDB(lst) {
     this.rowData = lst
     this.tempData = this.rowData
+  }
+
+  onFileSelected(event: Event, fileType: 'publicCert' | 'privateKey') {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.certificateData[fileType] = input.files[0];
+    }
+  }
+
+  onSubmit() {
+    if (!this.certificateData.publicCert || !this.certificateData.privateKey) {
+      this.errorMessage = 'Por favor, seleccione ambos archivos';
+      return;
+    }
+
+    this.uploading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    // Aquí iría la lógica para subir los archivos al servidor
+    // Ejemplo:
+    /*
+    this.certificateService.uploadCertificate(
+      this.certificateData.name,
+      this.certificateData.publicCert,
+      this.certificateData.privateKey,
+      this.certificateData.password
+    ).subscribe({
+      next: (response) => {
+        this.uploading = false;
+        this.successMessage = 'Certificado subido correctamente';
+        this.resetForm();
+      },
+      error: (err) => {
+        this.uploading = false;
+        this.errorMessage = 'Error al subir el certificado: ' + err.message;
+      }
+    });
+    */
+
+    // Simulación de subida (eliminar en implementación real)
+    setTimeout(() => {
+      this.uploading = false;
+      this.successMessage = 'Simulación: Certificado subido correctamente';
+      console.log('Datos del certificado:', this.certificateData);
+    }, 1500);
+  }
+
+  resetForm() {
+    this.certificateData = {
+      name: '',
+      publicCert: null,
+      privateKey: null,
+      password: ''
+    };
+    this.errorMessage = '';
+    this.successMessage = '';
   }
 
   /**
