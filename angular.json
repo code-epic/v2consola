@@ -107,7 +107,13 @@
                 }
               ],
               "baseHref": "/",
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                }
+              },
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
@@ -122,9 +128,11 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "100kb"
+                  "maximumWarning": "100kb",
+                  "maximumError": "150kb"
                 }
-              ]
+              ],
+              "aot": true
             },
             "hmr": {
               "budgets": [
