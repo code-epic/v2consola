@@ -25,7 +25,6 @@ export const environment = {
     SYS_FNX_NAME: "sys-function"
   },
   functions: {
-    MILITAR: 'EJB_CMilitar',
     ACTUALIAZAR_MENU : "_SYS_ActualizarMenu",
     OBTENER_NOMBRE_ARCHIVO: "_SYS_getFileName",
     INSERT_FILE_PATH : "_SYS_ISetPath",
@@ -34,6 +33,17 @@ export const environment = {
     EXPORTAR_API : 'Fnx_ExportarAPI',
     EXPORTAR_FUNCIONES : 'Fnx_ExportarFunciones',
     LISTAR_APLICACIONES: '_SYS_LstAplicaciones',
+    LISTAR_PERFILES: '_SYS_CPerfiles',
+    LISTAR_PERFIL_MENUS: '_SYS_CPerfil',
+    LISTAR_PERFIL_APP: '_SYS_CPerfilesAPP',
+    LISTAR_MENU_APP: '_SYS_CModulosAPP',
+    INSERTAR_PERFIL: '_SYS_IPerfil',
+    ELIMINAR_PERFIL: '_SYS_DPerfil',
+    INSERTAR_PERFIL_DETALLE: '_SYS_IPerfilDetalles',
+    LISTAR_ROLES: '_SYS_CRol',
+    LISTAR_ROLES_DETALLES: '_SYS_CRolDetalles',
+    LISTAR_MENUS: 'LstMenus',
+    LISTAR_MENU_ACCIONES: 'OMenuAccion',
     RESTAURAR_API: 'Fnx_RestaurarAPI',
     RESTAURAR_FUNCIONES: 'Fnx_RestaurarFunciones'
   },

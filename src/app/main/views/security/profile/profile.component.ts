@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core" 
-import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap" 
-import { ApiService, IAPICore } from "@services/apicore/api.service"  
+import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core"
+import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap"
+import { ApiService, IAPICore } from "@services/apicore/api.service"
 import { IPerfil } from "@services/seguridad/rol.service"
 import { UtilService } from "@services/util/util.service"
 import {
@@ -8,7 +8,9 @@ import {
   DatatableComponent,
   SelectionType,
 } from "@swimlane/ngx-datatable"
+import { environment } from "environments/environment"
 import { BlockUI, NgBlockUI } from "ng-block-ui"
+import Swal from "sweetalert2"
 
 @Component({
   selector: "app-profile",
@@ -20,7 +22,7 @@ import { BlockUI, NgBlockUI } from "ng-block-ui"
 export class ProfileComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent
   @BlockUI() blockUI: NgBlockUI
-  @BlockUI("section-block") sectionBlockUI: NgBlockUI    
+  @BlockUI("section-block") sectionBlockUI: NgBlockUI
 
   public contentHeader: object
 
@@ -86,7 +88,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.contentHeader = {
@@ -116,7 +118,7 @@ export class ProfileComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones"
+    this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -133,7 +135,7 @@ export class ProfileComponent implements OnInit {
   }
 
   listarPerfiles() {
-    this.xAPI.funcion = "_SYS_CPerfiles"
+    this.xAPI.funcion = environment.functions.LISTAR_PERFILES
     this.xAPI.parametros = ''
     this.xAPI.valores = ''
     this.lstPerfil = []
@@ -147,13 +149,23 @@ export class ProfileComponent implements OnInit {
     )
   }
 
+  selTab(e){
+    if (this.active == 2){
+      this.blApp = true
+      this.dataRolDetalles = []
+      this.Perfil.descripcion = ''
+      this.Perfil.nombre = ''
+    }else{
+      this.registrar = "Registrar nuevo perfil"
+    }
+  }
+  
   onSelect({ selected }) {
     this.SelectOn = selected
   }
 
   selRol(event: any): void {
-    console.log(event)
-    this.xAPI.funcion = "_SYS_CRol"
+    this.xAPI.funcion = environment.functions.LISTAR_ROLES
     this.xAPI.parametros = event
     this.xAPI.valores = ''
     this.dataRol = []
@@ -174,7 +186,7 @@ export class ProfileComponent implements OnInit {
 
   selRolDetalle(event: any): void {
     console.log(event)
-    this.xAPI.funcion = "_SYS_CRolDetalles"
+    this.xAPI.funcion = environment.functions.LISTAR_ROLES_DETALLES
     this.xAPI.parametros = event
     this.xAPI.valores = ''
     this.dataRolDetalles = []
@@ -192,7 +204,7 @@ export class ProfileComponent implements OnInit {
   }
 
   consultarMenu(acc: string) {
-    this.xAPI.funcion = "LstMenus"
+    this.xAPI.funcion = environment.functions.LISTAR_MENUS
     this.xAPI.parametros = acc
     this.datamenu = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -223,14 +235,14 @@ export class ProfileComponent implements OnInit {
         let estatus = this.SelectOn.find((el) => {
           return el.xaccion == e.xaccion && el.xmenu == e.xmenu
         })
-        e.estatus = estatus != undefined ? 1 : 0  
-        return e  
-      })  
+        e.estatus = estatus != undefined ? 1 : 0
+        return e
+      })
     }
   }
 
   guardarPerfil() {
-    this.iniciarLista() 
+    this.iniciarLista()
     if (
       this.Perfil.nombre == "" ||
       this.lista.length == 0 ||
@@ -241,22 +253,22 @@ export class ProfileComponent implements OnInit {
         "error",
         "Debe verificar los campos",
         3000
-      ) 
-      return false  
+      )
+      return false
     }
-    this.xAPI.funcion = "_SYS_IPerfil"  
+    this.xAPI.funcion = environment.functions.INSERTAR_PERFIL
     this.xAPI.parametros = ''
-    this.xAPI.valores = JSON.stringify(this.Perfil) 
+    this.xAPI.valores = JSON.stringify(this.Perfil)
 
-    console.log(this.xAPI)  
+    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.insertBach(data.msj, 1)  
+        this.insertBach(data.msj, 0)
       },
       (error) => {
-        console.error("Data: ", error)  
+        console.error("Data: ", error)
       }
-    ) 
+    )
   }
 
   insertBach(idperfil, posicion) {
@@ -268,86 +280,124 @@ export class ProfileComponent implements OnInit {
       menu: parseInt(this.lista[posicion].xmenu),
       accion: parseInt(this.lista[posicion].xaccion),
       estatus: parseInt(this.lista[posicion].estatus),
-    } 
-
-    this.xAPI.funcion = "_SYS_IPerfilDetalles"  
+    }
+    console.log(posicion, this.lista.length, data)
+    this.xAPI.funcion = environment.functions.INSERTAR_PERFIL_DETALLE
     this.xAPI.parametros = ''
-    this.xAPI.valores = JSON.stringify(data)  
+    this.xAPI.valores = JSON.stringify(data)
+
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(posicion, this.lista.length)  
+        console.log(posicion, this.lista.length)
 
-        if (posicion > this.lista.length - 1) {
+        if ( this.lista.length -1 < posicion) {
           this.utilservice.AlertMini(
             "top-end",
             "success",
             "Finalizo con éxito",
             3000
-          ) 
-          this.dataRolDetalles = [] 
+          )
+          this.dataRolDetalles = []
           this.Perfil.nombre = ''
           this.Perfil.descripcion = ''
+          this.listarPerfiles()
         } else {
-          posicion++  
-          this.insertBach(idperfil, posicion) 
+          posicion++
+          this.insertBach(idperfil, posicion)
         }
       },
       (error) => {
-        console.error("Data: ", error)  
+        console.error("Data: ", error)
       }
-    ) 
+    )
   }
 
   async listarAcciones() {
-    this.rowDataAcc = []  
-    this.xAPI.funcion = "OMenuAccion" 
-    this.xAPI.parametros = this.menu[0].split("|")[0] 
+    this.rowDataAcc = []
+    this.xAPI.funcion = environment.functions.LISTAR_MENU_ACCIONES
+    this.xAPI.parametros = this.menu[0].split("|")[0]
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.rowDataAcc = data.Cuerpo 
+        this.rowDataAcc = data.Cuerpo
       },
       (error) => {
-        console.log(error)  
+        console.log(error)
       }
-    ) 
+    )
   }
 
   LimpiarMenu() {
-    this.estatus = undefined  
+    this.estatus = undefined
   }
 
   editarRol(row) {
-    this.xAPI.funcion = "_SYS_CPerfil"  
-    this.xAPI.parametros = row.id 
+    this.xAPI.funcion = environment.functions.LISTAR_PERFIL_MENUS
+    this.xAPI.parametros = row.id
     this.xAPI.valores = ''
-    this.dataRolDetalles = [] 
+    this.dataRolDetalles = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         let idAPP = ''
-        this.registrar = "Editar Perfil"  
+        this.registrar = "Editar Perfil"
         this.dataRolDetalles = data.Cuerpo.map((e) => {
-          this.Perfil.descripcion = e.observacion 
-          this.Perfil.nombre = e.rol  
-          idAPP = e.idapp 
-          e.idmod = e.idmod 
-          e.modulo = e.modulo 
-          e.idmenu = e.idmenu 
-          e.menu = e.menu 
-          e.accid = e.accid 
-          e.accion = e.accion 
-          return e  
-        })  
-        this.lista = this.dataRolDetalles 
-        this.blApp = false  
+          this.Perfil.descripcion = e.observacion
+          this.Perfil.nombre = e.rol
+          idAPP = e.idapp
+          e.idmod = e.idmod
+          e.modulo = e.modulo
+          e.idmenu = e.idmenu
+          e.menu = e.menu
+          e.accid = e.accid
+          e.accion = e.accion
+          return e
+        })
+        this.lista = this.dataRolDetalles
+        this.blApp = false
         this.Perfil.aplicacion = this.lstAplicaciones.find(
           (item) => item.id == idAPP
-        ).name  
-        this.active = 2 
+        ).name
+        this.active = 2
       },
       (error) => {
-        console.log(error)  
+        console.log(error)
       }
-    ) 
+    )
+  }
+
+
+  eliminarRol(row) {
+    Swal.fire({
+      title: "Alerta",
+      text: "¿Está seguro que desea eliminar perfil?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#C81D11",
+      confirmButtonText: "Si, Aceptar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.ok(row.id);
+      }
+    });
+  }
+
+
+  ok(id: string) {
+    this.xAPI.funcion = environment.functions.ELIMINAR_PERFIL
+    this.xAPI.parametros = id
+    this.xAPI.valores = ''
+    this.dataRolDetalles = []
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      data => {
+        this.listarPerfiles()
+        this.active = 1
+      },
+      err => {
+
+      }
+    )
   }
 }

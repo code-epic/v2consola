@@ -107,14 +107,15 @@
             
             <div class="form-group col-md-4">
               <label class="form-label" for="origen">Oficina</label>
-              <ng-select [items]="dataOficina" [(ngModel)]="xOficina"
-                [ngModelOptions]="{standalone: true}"  bindId="id" bindLabel="name" (ngModelChange)="selectEventOficina($event)"
+              <ng-select [items]="dataOficina" [(ngModel)]="xoficina"
+                [ngModelOptions]="{standalone: true}"  bindId="id" bindLabel="name" 
                 (input)="onFocusedOficina($event)" placeholder="Oficina"></ng-select>
             </div>
 
             <div class="form-group col-md-4">
               <label class="form-label" for="origen">Regional</label>
-              <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="Regional" [ngModelOptions]="{standalone: true}"
+              <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="xregional" 
+              [ngModelOptions]="{standalone: true}"
                 (ngModelChange)="selectEventRegional($event)" (input)='onFocusedRegional($event)' bindLabel="name"
                 placeholder="Regional"></ng-select>
             </div>

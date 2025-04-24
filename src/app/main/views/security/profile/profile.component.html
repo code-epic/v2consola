@@ -10,8 +10,9 @@
 
                 <div class="col-md-12 ">
                     <br>
-                    <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
-                        <li [ngbNavItem]="1">
+                    <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
+                     class="nav-tabs justify-content-center">
+                        <li [ngbNavItem]="1" >
                             <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Perfiles</a>
                             <ng-template ngbNavContent>
 
@@ -66,6 +67,10 @@
                                                         <a (click)="editarRol(row)" ngbDropdownItem><span
                                                             [data-feather]="'edit'" [size]="16"
                                                             [class]="'mr-50'"></span> Editar</a>
+
+                                                        <a (click)="eliminarRol(row)" ngbDropdownItem><span
+                                                            [data-feather]="'trash'" [size]="16"
+                                                            [class]="'mr-50'"></span> Eliminar</a>
                                                     </div>
                                                 </div>
                                             </ng-template>
