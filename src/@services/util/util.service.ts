@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
+import { Sha256Service } from './sha256';
 
 
 @Injectable({
@@ -9,7 +10,7 @@ export class UtilService {
 
 
   //
-  constructor() {
+  constructor(private sha256: Sha256Service) {
 
   }
 
@@ -117,12 +118,15 @@ export class UtilService {
   }
 
   async generateSHA256Hash(input: string): Promise<string> {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(input);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-    return hashHex;
+    // const encoder = new TextEncoder();
+    // const data = encoder.encode(input);
+    // const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    // const hashArray = Array.from(new Uint8Array(hashBuffer));
+    // const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
+    // return hashHex;
+
+    return //SHA256.hash('texto').then(hash => console.log(hash));
+
   }
 
 

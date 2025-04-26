@@ -26,7 +26,10 @@
 
             <div class="form-group col-md-4" *ngIf="ldap">
               <label class="form-label" for="descripcion">End Point</label>
-              <input [(ngModel)]="iUser.endpoint"  type="text" placeholder="End Point" class="form-control">
+              <input *ngIf="bEndPoint" [(ngModel)]="iUser.endpoint"  type="text" placeholder="End Point" class="form-control">
+              <ng-select *ngIf="!bEndPoint"  [items]="lstEndPoint" [(ngModel)]="iUser.endpoint" [ngModelOptions]="{standalone: true}"
+                bindLabel="name" bindLabel="name" bindValue="id" (ngModelChange)="selEndPoint($event)"
+                placeholder="EndPoint"></ng-select>
             </div>
 
             <div class="form-group col-md-3" *ngIf="property || ldap">

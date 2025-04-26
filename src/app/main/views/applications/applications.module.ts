@@ -25,10 +25,6 @@ import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
 import { BlockUIModule } from 'ng-block-ui';
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 25736f7 (Modulo de Aplicaciones - Instalar)
 
 import { InstallComponent } from './install/install.component';
 import { MenuComponent } from './menu/menu.component';
@@ -99,26 +95,5 @@ const routes = [
     CoreSidebarModule,
     CoreCommonModule
   ],
-<<<<<<< HEAD
-=======
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    ContentHeaderModule,
-    TranslateModule,
-    FormsModule,
-    CoreCardModule,
-    ReactiveFormsModule,
-    NgxDatatableModule,
-    NgbModule,
-    NgSelectModule,
-    Ng2FlatpickrModule,
-    CoreDirectivesModule,
-    BlockUIModule,
-    CorePipesModule,
-    CoreSidebarModule,
-    CoreCommonModule
-  ],
->>>>>>> 25736f7 (Modulo de Aplicaciones - Instalar)
 })
 export class ApplicationsModule { }

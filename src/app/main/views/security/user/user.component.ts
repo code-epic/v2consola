@@ -13,6 +13,7 @@ import {
   UserService,
   Usuario,
 } from '@services/seguridad/user.service'
+import { Sha256Service } from '@services/util/sha256'
 import { UtilService } from '@services/util/util.service'
 import {
   ColumnMode,
@@ -94,9 +95,7 @@ export class UserComponent implements OnInit {
   public tipoacceso = [
     { id: 0, name: 'SELECCIONAR' },
     { id: 1, name: 'LOCAL' },
-    { id: 2, name: 'LDAP' },
     { id: 3, name: 'DIRECTORIO ACTIVO' },
-    { id: 4, name: 'OTRO' },
   ]
 
   public respaldo = [
@@ -188,6 +187,7 @@ export class UserComponent implements OnInit {
   }
 
   public lstPerfil = []
+  public lstEndPoint = []
   public dataUsers = []
   public lstUsersApp = []
   public temprowData = []
@@ -199,12 +199,16 @@ export class UserComponent implements OnInit {
   public xoficina = 'TODAS'
   public xregional = 'TODAS'
 
+  public bEndPoint = false
+
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
-    private userService: UserService
+    private userService: UserService,
+    private sha256: Sha256Service
   ) {
     this.userService.iniciarObjeto()
+    this.CargarListaEndPoint()
   }
 
   ngOnInit(): void {
@@ -276,6 +280,45 @@ export class UserComponent implements OnInit {
     )
   }
 
+
+  async CargarListaEndPoint() {
+    this.lstEndPoint = []
+    this.xAPI.funcion = environment.functions.LISTAR_ENDPOINT
+    this.xAPI.parametros = ''
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data != undefined && data != null) {
+          let ends = data[0].usuariosValidos
+          ends.forEach(e => {
+            this.lstEndPoint.push(
+              { name: e.endpoint, id: e.endpoint }
+            )
+          })
+
+          this.lstEndPoint.push(
+            { name: "Crear Nuevo", id: "CN" }
+          )
+
+
+
+        } else {
+          this.bEndPoint = true
+          this.iUser.endpoint = ''
+        }
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+
+  selEndPoint(e) {
+    if (this.iUser.endpoint == 'CN') {
+      this.bEndPoint = true
+      this.iUser.endpoint = ''
+    }
+  }
+
   async CargarListaAplicaciones() {
     this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES
     this.xAPI.parametros = ''
@@ -294,6 +337,7 @@ export class UserComponent implements OnInit {
   }
 
   selPerfil(e) {
+    // console.log(this.iUser)
     try {
       let codPerfil = e.split('|')[0].toString()
       //this.obtenerAplicacion(e)
@@ -322,10 +366,12 @@ export class UserComponent implements OnInit {
   async obetnerModulos(apps) {
     this.xAPI.funcion = environment.functions.LISTAR_MENU_APP
     this.xAPI.parametros = `${apps.idapp},${apps.idper}`
-
+    this.xAPI.valores = ''
+    console.log(this.xAPI)
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         let lstMenu = []
+        console.log('menu: ', data)
         data.Cuerpo.forEach((e) => {
           if (e.menu_acciones != undefined) {
             let menu = JSON.parse(e.menu_acciones)
@@ -360,6 +406,7 @@ export class UserComponent implements OnInit {
             }
           }
         })
+
         this.obtenerAplicacion(apps, lstMenu)
         console.log(lstMenu)
         // return lstMenu
@@ -400,10 +447,18 @@ export class UserComponent implements OnInit {
     this.usuario.endpoint = this.iUser.endpoint
     this.usuario.sucursal = this.xoficina
     this.usuario.direccion = this.xregional
-    this.usuario.clave = await this.utilservice.generateSHA256Hash(
-      this.iUser.clave
-    )
-    //  console.log(this.iUser.vigencia)
+    // this.usuario.clave = await this.utilservice.generateSHA256Hash(
+    //   this.iUser.clave
+    // )
+    console.log('Entrando en clave',this.iUser.clave )
+    if (this.iUser.clave != '') {
+      await this.sha256.hash(this.iUser.clave).then(hash => {
+        console.log(hash)
+        this.usuario.clave = hash
+      })
+    }
+
+    console.log(this.iUser, 'Imprimiendo Usuario')
     let firma: Firmadigital = {
       vigencia: this.iUser.vigencia,
       duracion: this.iUser.duraciontiempo * this.iUser.duraciontexto,
@@ -416,7 +471,7 @@ export class UserComponent implements OnInit {
     this.usuario.sistema = apps.aplicacion  //this.xaplicacion.split('|')[1].toString()
     this.usuario.Aplicacion = lstApp
 
-    // console.log(this.usuario)
+    console.log(this.usuario)
   }
 
   async agregarAplicacion() {
@@ -470,6 +525,7 @@ export class UserComponent implements OnInit {
   eliminarPerfil() { }
 
   async agregarUsuario() {
+
     await this.lstUsersApp.forEach(async (e) => {
       await this.obetnerModulos(e)
     })

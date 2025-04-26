@@ -33,6 +33,7 @@ export const environment = {
     EXPORTAR_API : 'Fnx_ExportarAPI',
     EXPORTAR_FUNCIONES : 'Fnx_ExportarFunciones',
     LISTAR_APLICACIONES: '_SYS_LstAplicaciones',
+    LISTAR_ENDPOINT: '_SYS_CEndPointUsers',
     LISTAR_PERFILES: '_SYS_CPerfiles',
     LISTAR_PERFIL_MENUS: '_SYS_CPerfil',
     LISTAR_PERFIL_APP: '_SYS_CPerfilesAPP',

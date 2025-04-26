@@ -82,6 +82,8 @@ export class ProfileComponent implements OnInit {
   public lstPerfil = []
   public SelectOn = []
   public blApp: boolean = true
+  public xaplicacion = ''
+  public xrol = ''
 
   active: any = 1
 
@@ -149,17 +151,17 @@ export class ProfileComponent implements OnInit {
     )
   }
 
-  selTab(e){
-    if (this.active == 2){
+  selTab(e) {
+    if (this.active == 2) {
       this.blApp = true
       this.dataRolDetalles = []
       this.Perfil.descripcion = ''
       this.Perfil.nombre = ''
-    }else{
+    } else {
       this.registrar = "Registrar nuevo perfil"
     }
   }
-  
+
   onSelect({ selected }) {
     this.SelectOn = selected
   }
@@ -290,7 +292,7 @@ export class ProfileComponent implements OnInit {
       (data) => {
         console.log(posicion, this.lista.length)
 
-        if ( this.lista.length -1 < posicion) {
+        if (this.lista.length - 1 < posicion) {
           this.utilservice.AlertMini(
             "top-end",
             "success",
@@ -344,6 +346,8 @@ export class ProfileComponent implements OnInit {
         this.dataRolDetalles = data.Cuerpo.map((e) => {
           this.Perfil.descripcion = e.observacion
           this.Perfil.nombre = e.rol
+          this.xaplicacion = e.app
+          this.xrol = e.rol
           idAPP = e.idapp
           e.idmod = e.idmod
           e.modulo = e.modulo

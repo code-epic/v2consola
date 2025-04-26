@@ -112,8 +112,14 @@
                                         </div>
 
 
+                                        <div class="form-group col-md-5" *ngIf="!blApp">
+                                            <label class="form-label" >Rol</label>
+                                            <input style="font-size:14px;" [(ngModel)]="xrol"
+                                                [ngModelOptions]="{standalone: true}" type="text"
+                                                placeholder="Rol" class="form-control" disabled="disabled">
+                                        </div>
                 
-                                        <div class="form-group col-md-5">
+                                        <div class="form-group col-md-5" *ngIf="blApp">
                                             <label class="form-label" for="descripcion">Seleccionar Rol</label>
                                             <ng-select [items]="dataRol" [(ngModel)]="rol" [ngModelOptions]="{standalone: true}"
                                                  (ngModelChange)="selRolDetalle($event)" bindLabel="name" bindValue="id"

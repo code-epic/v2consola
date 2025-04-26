@@ -65,8 +65,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Configurar protección solo en producción
     if (environment.production) {
-      this.disableRightClick = true; // Activar bloqueo de clic derecho
-      this.setupProtection();
+      // this.disableRightClick = true; // Activar bloqueo de clic derecho
+      // this.setupProtection();
     
       // Detectar cuando las herramientas ya estaban abiertas al cargar la página
       if (window.outerWidth - window.innerWidth > 160 || 
