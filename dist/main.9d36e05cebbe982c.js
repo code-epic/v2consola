@@ -15306,9 +15306,11 @@ class LoginService {
   }
   //ObenterAplicacion 
   obenterAplicacion(itk) {
-    let cadena = this.Token.Usuario.cedula + ',' + this.Id + ',' + this.Token.Usuario.correo;
+    console.log(this.Token.Usuario);
+    let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo;
     this.xAPI.funcion = "_SYS_CUsuarioPerfil";
     this.xAPI.parametros = cadena;
+    console.log(this.xAPI);
     this.apiService.Ejecutar(this.xAPI).subscribe(data => {
       console.log(data[0].Aplicacion[0]);
       sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
@@ -28952,26 +28954,243 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "UpdateComponent": () => (/* binding */ UpdateComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ 36895);
+/* harmony import */ var app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! app/layout/components/content-header/content-header.component */ 4810);
 
+
+
+function UpdateComponent_div_64_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 38)(1, "button", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function UpdateComponent_div_64_Template_button_click_1_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r3);
+      const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r2.startUpdate());
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "svg", 40);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "path", 41);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](4, " Iniciar Actualizaci\u00F3n ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+  }
+}
+function UpdateComponent_div_65_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 42)(1, "div", 43);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](2, "svg", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "path", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](5, "Actualizaci\u00F3n en progreso...");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "div", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](7, "div", 47);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](8, "div", 48)(9, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](10);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](11, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](13, "div", 49);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](14, "svg", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](15, "path", 50);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](16, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](17, "No cierre esta ventana ni apague su equipo durante el proceso");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()();
+  }
+  if (rf & 2) {
+    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵstyleProp"]("width", ctx_r1.progressValue, "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"]("Progreso: ", ctx_r1.progressValue, "%");
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"]("Tiempo restante: ", ctx_r1.estimatedTime, " minutos");
+  }
+}
 class UpdateComponent {
   constructor() {}
-  ngOnInit() {}
+  contentHeader;
+  isUpdating = false;
+  progressValue = 0;
+  estimatedTime = 15;
+  ngOnInit() {
+    this.contentHeader = {
+      headerTitle: 'Opciones de Actualización',
+      actionButton: true,
+      breadcrumb: {
+        type: '',
+        links: [{
+          name: 'Home',
+          isLink: true,
+          link: '/home'
+        }, {
+          name: 'Opciones',
+          isLink: false
+        }, {
+          name: 'Actualizar Sistema',
+          isLink: false
+        }]
+      }
+    };
+  }
+  startUpdate() {
+    this.isUpdating = true;
+    this.progressValue = 0;
+    this.estimatedTime = 15;
+    const interval = setInterval(() => {
+      this.progressValue += 1;
+      this.estimatedTime = Math.max(0, Math.floor((100 - this.progressValue) * 15 / 100));
+      if (this.progressValue >= 100) {
+        clearInterval(interval);
+        setTimeout(() => {
+          this.isUpdating = false;
+          // Aquí podrías agregar lógica para cuando termine la actualización
+        }, 1000);
+      }
+    }, 300);
+  }
   static ɵfac = function UpdateComponent_Factory(t) {
     return new (t || UpdateComponent)();
   };
-  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({
+  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
     type: UpdateComponent,
     selectors: [["app-update"]],
-    decls: 2,
-    vars: 0,
+    decls: 76,
+    vars: 3,
+    consts: [[1, "content-wrapper", "container-xxl", "p-0"], [1, "content-body"], [3, "contentHeader"], [1, "invoice-list-wrapper"], [1, "card"], [1, "update-card"], [1, "update-illustration"], ["viewBox", "0 0 500 400", 1, "system-illustration"], ["fill", "#e3f2fd", "d", "M100,350 L400,350 L400,150 L100,150 Z"], ["fill", "#bbdefb", "d", "M120,330 L380,330 L380,170 L120,170 Z"], ["cx", "250", "cy", "250", "r", "40", "fill", "#64b5f6"], ["fill", "#2196f3", "d", "M230,230 L270,230 L270,270 L230,270 Z"], ["fill", "#1976d2", "d", "M150,200 L350,200 L350,180 L150,180 Z"], ["fill", "#0d47a1", "d", "M150,300 L350,300 L350,280 L150,280 Z"], ["fill", "#42a5f5", "d", "M200,100 L300,100 L300,80 L200,80 Z"], [1, "update-message"], ["viewBox", "0 0 24 24", 1, "icon", "groups-icon"], ["fill", "currentColor", "d", "M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M20.5,20V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20H20.5Z"], [1, "message-content"], ["viewBox", "0 0 24 24", 1, "icon", "update-icon"], ["fill", "currentColor", "d", "M21,10.12H14.22L16.96,7.3C14.23,4.6 9.81,4.5 7.08,7.2C4.35,9.91 4.35,14.28 7.08,17C9.81,19.7 14.23,19.7 16.96,17C18.32,15.65 19,14.08 19,12.1H21C21,14.08 20.12,16.65 18.36,18.39C14.85,21.87 9.15,21.87 5.64,18.39C2.14,14.92 2.11,9.28 5.62,5.81C9.13,2.34 14.76,2.34 18.27,5.81L21,3V10.12M12.5,8V12.25L16,14.33L15.28,15.54L11,13V8H12.5Z"], [1, "update-details"], [1, "detail-item"], ["viewBox", "0 0 24 24", 1, "icon"], ["fill", "currentColor", "d", "M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.33L16.25,15.54L11,13V7H12.5Z"], ["fill", "currentColor", "d", "M15,3H9V1H15V3M19,13H21V11H19V13M19,21V19H21V21H19M19,9H21V7H19V9M15,19H17V17H15V19M19,17H21V15H19V17M13,21H11V19H13V21M7,5H17A2,2 0 0,1 19,7V17A2,2 0 0,1 17,19H7A2,2 0 0,1 5,17V7A2,2 0 0,1 7,5M7,15H9V13H7V15M7,11H9V9H7V11M7,7H9V5H7V7M11,15H13V13H11V15M11,11H13V9H11V11M11,7H13V5H11V7M17,15H19V13H17V15M17,11H19V9H17V11M17,7H19V5H17V7M9,21H7V19H9V21M13,5H11V3H13V5M5,15H3V13H5V15M5,11H3V9H5V11M5,7H3V5H5V7M5,19H3V17H5V19M5,23H3V21H5V23M11,17H13V15H11V17Z"], ["fill", "currentColor", "d", "M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z"], ["viewBox", "0 0 24 24", 1, "icon", "info-icon"], ["fill", "currentColor", "d", "M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z"], [1, "recommendations"], ["viewBox", "0 0 24 24", 1, "bullet-icon"], ["fill", "currentColor", "d", "M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"], ["class", "update-action", 4, "ngIf"], ["class", "progress-container", 4, "ngIf"], [1, "update-footer"], [1, "signature"], [1, "contact-support"], ["fill", "currentColor", "d", "M12,3C7.46,3 3.34,4.78 0.29,7.67C0.11,7.85 0,8.1 0,8.38C0,8.66 0.11,8.91 0.29,9.09L2.77,11.57C2.95,11.75 3.2,11.86 3.5,11.86C3.75,11.86 4,11.75 4.18,11.58C4.97,10.84 5.87,10.22 6.84,9.73C7.17,9.57 7.4,9.23 7.4,8.83V5.73C8.85,5.25 10.39,5 12,5C13.59,5 15.14,5.25 16.59,5.72V8.82C16.59,9.21 16.82,9.56 17.15,9.72C18.13,10.21 19,10.84 19.82,11.57C20,11.75 20.25,11.85 20.5,11.85C20.8,11.85 21.05,11.74 21.23,11.56L23.71,9.08C23.89,8.9 24,8.65 24,8.37C24,8.09 23.88,7.85 23.7,7.67C20.65,4.78 16.53,3 12,3M9,7V10C9,10 3,15 3,18V22H21V18C21,15 15,10 15,10V7H13V9H11V7H9M12,12A4,4 0 0,1 16,16A4,4 0 0,1 12,20A4,4 0 0,1 8,16A4,4 0 0,1 12,12Z"], [1, "update-action"], [1, "update-button", 3, "click"], ["viewBox", "0 0 24 24", 1, "button-icon"], ["fill", "currentColor", "d", "M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z"], [1, "progress-container"], [1, "progress-info"], ["viewBox", "0 0 24 24", 1, "icon", "spin-icon"], ["fill", "currentColor", "d", "M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"], [1, "progress-bar"], [1, "progress-fill"], [1, "progress-stats"], [1, "update-tips"], ["fill", "currentColor", "d", "M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M11,17H13V11H11V17M12,9A1,1 0 0,1 13,10A1,1 0 0,1 12,11A1,1 0 0,1 11,10A1,1 0 0,1 12,9Z"]],
     template: function UpdateComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "p");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1, "update works!");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "app-content-header", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "section", 3)(4, "div", 4)(5, "div", 5)(6, "div", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "svg", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](8, "path", 8)(9, "path", 9)(10, "circle", 10)(11, "path", 11)(12, "path", 12)(13, "path", 13)(14, "path", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](15, "div", 15)(16, "h2");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](17, "svg", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](18, "path", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](19, " Estimado Usuario, ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](20, "div", 18)(21, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](22, "svg", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](23, "path", 20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](24, " Estamos implementando mejoras significativas en nuestra plataforma para ofrecerle un servicio m\u00E1s r\u00E1pido, seguro y con nuevas funcionalidades. ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](25, "div", 21)(26, "div", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](27, "svg", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](28, "path", 24);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](29, "span")(30, "strong");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](31, "Horario:");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](32, " 11:00 AM - 11:15 AM");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](33, "div", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](34, "svg", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](35, "path", 25);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](36, "span")(37, "strong");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](38, "Duraci\u00F3n estimada:");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](39, " 15 minutos");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](40, "div", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](41, "svg", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](42, "path", 26);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](43, "span")(44, "strong");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](45, "Nota:");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](46, " Todos los servicios estar\u00E1n temporalmente inaccesibles");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](47, "p");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](48, "svg", 27);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](49, "path", 28);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](50, " Hemos programado esta actualizaci\u00F3n en un horario de bajo impacto operativo. Para minimizar inconvenientes, recomendamos: ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](51, "ul", 29)(52, "li");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](53, "svg", 30);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](54, "path", 31);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](55, " Guardar todo su trabajo antes del proceso ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](56, "li");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](57, "svg", 30);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](58, "path", 31);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](59, " Evitar realizar transacciones cr\u00EDticas durante este per\u00EDodo ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](60, "li");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](61, "svg", 30);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](62, "path", 31);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](63, " Cerrar sesi\u00F3n de todos los sistemas antes de la actualizaci\u00F3n ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](64, UpdateComponent_div_64_Template, 5, 0, "div", 32);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](65, UpdateComponent_div_65_Template, 18, 4, "div", 33);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](66, "div", 34)(67, "p", 35);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](68, "Atentamente,");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](69, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](70, "El Equipo de Tecnolog\u00EDa");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](71, "div", 36);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](72, "svg", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](73, "path", 37);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](74, "span");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](75, "Para consultas: soporte@code-epic.com | Tel: +58 412 260-2101");
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()()()()()()()();
       }
-    }
+      if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("contentHeader", ctx.contentHeader);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](62);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", !ctx.isUpdating);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx.isUpdating);
+      }
+    },
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_2__.NgIf, app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_0__.ContentHeaderComponent],
+    styles: [".update-header[_ngcontent-%COMP%] {\n  background-color: #2c3e50;\n  color: white;\n  padding: 1rem 2rem;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);\n}\n\n.header-content[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n}\n\n.header-icon[_ngcontent-%COMP%] {\n  width: 2.5rem;\n  height: 2.5rem;\n  fill: #42a5f5;\n}\n\n.breadcrumb[_ngcontent-%COMP%] {\n  font-size: 0.85rem;\n  opacity: 0.8;\n  margin-top: 0.5rem;\n  color: #bbdefb;\n}\n\n.update-main-content[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  padding: 2rem;\n  overflow-y: auto;\n  background-color: #e3f2fd;\n}\n\n.update-card[_ngcontent-%COMP%] {\n  background-color: white;\n  border-radius: 10px;\n  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);\n  width: 100%;\n  max-width: 1200px;\n  display: flex;\n  overflow: hidden;\n  min-height: 600px;\n}\n\n.update-illustration[_ngcontent-%COMP%] {\n  flex: 1;\n  background-color: #f0f7ff;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  padding: 2rem;\n}\n\n.system-illustration[_ngcontent-%COMP%] {\n  width: 100%;\n  max-width: 400px;\n}\n\n.update-message[_ngcontent-%COMP%] {\n  flex: 1.5;\n  padding: 2.5rem;\n  position: relative;\n}\n\n.update-message[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #2c3e50;\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  margin-bottom: 1.5rem;\n  font-size: 1.8rem;\n}\n\n.icon[_ngcontent-%COMP%] {\n  width: 1.5rem;\n  height: 1.5rem;\n  fill: #2c3e50;\n  margin-right: 0.5rem;\n}\n\n.groups-icon[_ngcontent-%COMP%] {\n  fill: #1976d2;\n}\n\n.update-icon[_ngcontent-%COMP%] {\n  fill: #388e3c;\n}\n\n.info-icon[_ngcontent-%COMP%] {\n  fill: #0288d1;\n}\n\n.message-content[_ngcontent-%COMP%] {\n  margin-bottom: 2rem;\n}\n\n.update-details[_ngcontent-%COMP%] {\n  background-color: #f8f9fa;\n  border-left: 4px solid #3498db;\n  padding: 1rem;\n  margin: 1.5rem 0;\n  border-radius: 0 4px 4px 0;\n}\n\n.detail-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  margin: 0.5rem 0;\n}\n\n.detail-item[_ngcontent-%COMP%]   .icon[_ngcontent-%COMP%] {\n  fill: #5c6bc0;\n}\n\n.recommendations[_ngcontent-%COMP%] {\n  list-style: none;\n  padding-left: 0;\n  margin: 1.5rem 0;\n}\n\n.recommendations[_ngcontent-%COMP%]   li[_ngcontent-%COMP%] {\n  margin: 0.8rem 0;\n  display: flex;\n  align-items: center;\n}\n\n.bullet-icon[_ngcontent-%COMP%] {\n  width: 1.2rem;\n  height: 1.2rem;\n  fill: #388e3c;\n  margin-right: 0.8rem;\n}\n\n.update-action[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  margin: 2rem 0;\n}\n\n.update-button[_ngcontent-%COMP%] {\n  padding: 0.8rem 2.5rem;\n  font-size: 1.1rem;\n  display: flex;\n  align-items: center;\n  gap: 0.8rem;\n  background-color: #1976d2;\n  color: white;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  transition: background-color 0.3s;\n}\n\n.update-button[_ngcontent-%COMP%]:hover {\n  background-color: #1565c0;\n}\n\n.button-icon[_ngcontent-%COMP%] {\n  width: 1.2rem;\n  height: 1.2rem;\n  fill: white;\n}\n\n.progress-container[_ngcontent-%COMP%] {\n  margin: 2rem 0;\n}\n\n.progress-info[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  margin-bottom: 0.5rem;\n  color: #1976d2;\n  font-weight: 500;\n}\n\n.spin-icon[_ngcontent-%COMP%] {\n  animation: spin 1s linear infinite;\n}\n\n@keyframes spin {\n  from {\n    transform: rotate(0deg);\n  }\n  to {\n    transform: rotate(360deg);\n  }\n}\n\n.progress-bar[_ngcontent-%COMP%] {\n  width: 100%;\n  height: 8px;\n  background-color: #e0e0e0;\n  border-radius: 4px;\n  overflow: hidden;\n}\n\n.progress-fill[_ngcontent-%COMP%] {\n  height: 100%;\n  background-color: #1976d2;\n  transition: width 0.3s ease;\n}\n\n.progress-stats[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  margin-top: 0.5rem;\n  font-size: 0.9rem;\n  color: #7f8c8d;\n}\n\n.update-tips[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  margin-top: 1rem;\n  padding: 0.8rem;\n  background-color: #fff8e1;\n  border-radius: 4px;\n  color: #ff8f00;\n}\n\n.update-tips[_ngcontent-%COMP%]   .icon[_ngcontent-%COMP%] {\n  fill: #ff8f00;\n}\n\n.update-footer[_ngcontent-%COMP%] {\n  margin-top: 2rem;\n  border-top: 1px solid #eee;\n  padding-top: 1.5rem;\n}\n\n.signature[_ngcontent-%COMP%] {\n  font-style: italic;\n  margin-bottom: 1rem;\n  color: #555;\n}\n\n.contact-support[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n  font-size: 0.9rem;\n  color: #7f8c8d;\n}\n\n.contact-support[_ngcontent-%COMP%]   .icon[_ngcontent-%COMP%] {\n  fill: #7f8c8d;\n}\n\n\n\n@media (max-width: 768px) {\n  .update-card[_ngcontent-%COMP%] {\n    flex-direction: column;\n    width: 95%;\n  }\n  .update-illustration[_ngcontent-%COMP%] {\n    padding: 1rem;\n  }\n  .update-message[_ngcontent-%COMP%] {\n    padding: 1.5rem;\n  }\n}"]
   });
 }
 
@@ -41248,7 +41467,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Fri May 02 2025 10:42:44 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Fri May 02 2025 12:37:19 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

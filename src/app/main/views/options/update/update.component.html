@@ -1,1 +1,147 @@
-<p>update works!</p>
+<div class="content-wrapper container-xxl p-0">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+        <!-- Invoice List -->
+        <section class="invoice-list-wrapper">
+            <div class="card">
+
+
+
+
+                    <div class="update-card">
+                        <div class="update-illustration">
+                            <svg viewBox="0 0 500 400" class="system-illustration">
+                                <path fill="#e3f2fd" d="M100,350 L400,350 L400,150 L100,150 Z" />
+                                <path fill="#bbdefb" d="M120,330 L380,330 L380,170 L120,170 Z" />
+                                <circle cx="250" cy="250" r="40" fill="#64b5f6" />
+                                <path fill="#2196f3" d="M230,230 L270,230 L270,270 L230,270 Z" />
+                                <path fill="#1976d2" d="M150,200 L350,200 L350,180 L150,180 Z" />
+                                <path fill="#0d47a1" d="M150,300 L350,300 L350,280 L150,280 Z" />
+                                <path fill="#42a5f5" d="M200,100 L300,100 L300,80 L200,80 Z" />
+                            </svg>
+                        </div>
+
+                        <div class="update-message">
+                            <h2>
+                                <svg class="icon groups-icon" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M20.5,20V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20H20.5Z" />
+                                </svg>
+                                Estimado Usuario,
+                            </h2>
+                            <div class="message-content">
+                                <p>
+                                    <svg class="icon update-icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                            d="M21,10.12H14.22L16.96,7.3C14.23,4.6 9.81,4.5 7.08,7.2C4.35,9.91 4.35,14.28 7.08,17C9.81,19.7 14.23,19.7 16.96,17C18.32,15.65 19,14.08 19,12.1H21C21,14.08 20.12,16.65 18.36,18.39C14.85,21.87 9.15,21.87 5.64,18.39C2.14,14.92 2.11,9.28 5.62,5.81C9.13,2.34 14.76,2.34 18.27,5.81L21,3V10.12M12.5,8V12.25L16,14.33L15.28,15.54L11,13V8H12.5Z" />
+                                    </svg>
+                                    Estamos implementando mejoras significativas en nuestra plataforma para ofrecerle un
+                                    servicio más rápido, seguro y con nuevas funcionalidades.
+                                </p>
+
+                                <div class="update-details">
+                                    <div class="detail-item">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22C6.47,22 2,17.5 2,12A10,10 0 0,1 12,2M12.5,7V12.25L17,14.33L16.25,15.54L11,13V7H12.5Z" />
+                                        </svg>
+                                        <span><strong>Horario:</strong> 11:00 AM - 11:15 AM</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M15,3H9V1H15V3M19,13H21V11H19V13M19,21V19H21V21H19M19,9H21V7H19V9M15,19H17V17H15V19M19,17H21V15H19V17M13,21H11V19H13V21M7,5H17A2,2 0 0,1 19,7V17A2,2 0 0,1 17,19H7A2,2 0 0,1 5,17V7A2,2 0 0,1 7,5M7,15H9V13H7V15M7,11H9V9H7V11M7,7H9V5H7V7M11,15H13V13H11V15M11,11H13V9H11V11M11,7H13V5H11V7M17,15H19V13H17V15M17,11H19V9H17V11M17,7H19V5H17V7M9,21H7V19H9V21M13,5H11V3H13V5M5,15H3V13H5V15M5,11H3V9H5V11M5,7H3V5H5V7M5,19H3V17H5V19M5,23H3V21H5V23M11,17H13V15H11V17Z" />
+                                        </svg>
+                                        <span><strong>Duración estimada:</strong> 15 minutos</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <svg class="icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z" />
+                                        </svg>
+                                        <span><strong>Nota:</strong> Todos los servicios estarán temporalmente
+                                            inaccesibles</span>
+                                    </div>
+                                </div>
+
+                                <p>
+                                    <svg class="icon info-icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                            d="M11,9H13V7H11M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M11,17H13V11H11V17Z" />
+                                    </svg>
+                                    Hemos programado esta actualización en un horario de bajo impacto operativo. Para
+                                    minimizar inconvenientes, recomendamos:
+                                </p>
+                                <ul class="recommendations">
+                                    <li>
+                                        <svg class="bullet-icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                                        </svg>
+                                        Guardar todo su trabajo antes del proceso
+                                    </li>
+                                    <li>
+                                        <svg class="bullet-icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                                        </svg>
+                                        Evitar realizar transacciones críticas durante este período
+                                    </li>
+                                    <li>
+                                        <svg class="bullet-icon" viewBox="0 0 24 24">
+                                            <path fill="currentColor"
+                                                d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z" />
+                                        </svg>
+                                        Cerrar sesión de todos los sistemas antes de la actualización
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div class="update-action" *ngIf="!isUpdating">
+                                <button class="update-button" (click)="startUpdate()">
+                                    <svg class="button-icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z" />
+                                    </svg>
+                                    Iniciar Actualización
+                                </button>
+                            </div>
+
+                            <div class="progress-container" *ngIf="isUpdating">
+                                <div class="progress-info">
+                                    <svg class="icon spin-icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor" d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+                                    </svg>
+                                    <span>Actualización en progreso...</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" [style.width.%]="progressValue"></div>
+                                </div>
+                                <div class="progress-stats">
+                                    <span>Progreso: {{progressValue}}%</span>
+                                    <span>Tiempo restante: {{estimatedTime}} minutos</span>
+                                </div>
+                                <div class="update-tips">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                            d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M11,17H13V11H11V17M12,9A1,1 0 0,1 13,10A1,1 0 0,1 12,11A1,1 0 0,1 11,10A1,1 0 0,1 12,9Z" />
+                                    </svg>
+                                    <span>No cierre esta ventana ni apague su equipo durante el proceso</span>
+                                </div>
+                            </div>
+
+                            <div class="update-footer">
+                                <p class="signature">Atentamente,<br>El Equipo de Tecnología</p>
+                                <div class="contact-support">
+                                    <svg class="icon" viewBox="0 0 24 24">
+                                        <path fill="currentColor"
+                                            d="M12,3C7.46,3 3.34,4.78 0.29,7.67C0.11,7.85 0,8.1 0,8.38C0,8.66 0.11,8.91 0.29,9.09L2.77,11.57C2.95,11.75 3.2,11.86 3.5,11.86C3.75,11.86 4,11.75 4.18,11.58C4.97,10.84 5.87,10.22 6.84,9.73C7.17,9.57 7.4,9.23 7.4,8.83V5.73C8.85,5.25 10.39,5 12,5C13.59,5 15.14,5.25 16.59,5.72V8.82C16.59,9.21 16.82,9.56 17.15,9.72C18.13,10.21 19,10.84 19.82,11.57C20,11.75 20.25,11.85 20.5,11.85C20.8,11.85 21.05,11.74 21.23,11.56L23.71,9.08C23.89,8.9 24,8.65 24,8.37C24,8.09 23.88,7.85 23.7,7.67C20.65,4.78 16.53,3 12,3M9,7V10C9,10 3,15 3,18V22H21V18C21,15 15,10 15,10V7H13V9H11V7H9M12,12A4,4 0 0,1 16,16A4,4 0 0,1 12,20A4,4 0 0,1 8,16A4,4 0 0,1 12,12Z" />
+                                    </svg>
+                                    <span>Para consultas: soporte@code-epic.com | Tel: +58 412 260-2101</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
