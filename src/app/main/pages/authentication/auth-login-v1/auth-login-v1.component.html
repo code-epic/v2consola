@@ -88,7 +88,11 @@
           </a>
         </div>
         <div class="divider my-2">
-          <p class="card-text text-center"><small>{{version}} <br> {{fecha}}</small></p>
+          <p class="card-text text-center"><small>
+            {{ '©' }} {{ coreConfig.app.appName }} {{ getCurrentDate() | date:'yyyy' }} - Todos los derechos reservados
+            <br>
+            Build: {{ fechaX  }}
+          </small></p>
         </div>
       </div>
     </div>
