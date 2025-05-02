@@ -249,10 +249,11 @@ export class LoginService {
   //ObenterAplicacion 
   protected obenterAplicacion(itk: string) {
     
-
-    let cadena = this.Token.Usuario.cedula + ',' + this.Id + ',' + this.Token.Usuario.correo
+    console.log(this.Token.Usuario)
+    let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo
     this.xAPI.funcion = "_SYS_CUsuarioPerfil";
     this.xAPI.parametros = cadena
+    console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         console.log(data[0].Aplicacion[0])
