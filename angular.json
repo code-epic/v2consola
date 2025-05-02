@@ -20,6 +20,7 @@
             "allowedCommonJsDependencies": [
               "hammerjs",
               "node-waves",
+              "moment",
               "app/main/ui/icons/feather/feather.component",
               "@angularclass/hmr",
               "ngx-quill",
@@ -27,6 +28,7 @@
               "codemirror",
               "validator",
               "chartjs",
+              "feather-icons",
               "lodash",
               "uuid",
               "nouislider",

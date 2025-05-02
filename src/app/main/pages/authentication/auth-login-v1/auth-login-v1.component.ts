@@ -31,6 +31,9 @@ import { TaskService } from "@services/apicore/task.service";
 export class AuthLoginV1Component implements OnInit {
   token: string | undefined;
   //  Public
+  public fechafinal
+  public fechaX
+  public build
   public coreConfig: any;
   public loginForm: UntypedFormGroup;
   public submitted = false;
@@ -108,8 +111,13 @@ export class AuthLoginV1Component implements OnInit {
    * On init
    */
   ngOnInit(): void {
+    this.getCurrentDate()
+    this.fechafinal = environment.buildDateTime
+    this.fechaX = this.utilservice.FechaMoment(environment.buildDateTime)
+    this.build = this.utilservice.FechaMomentL(environment.buildDateTime).replace(/\//g, '.')
+
     this.version = environment.version;
-    this.fecha = environment.fecha;
+    // this.fecha = environment.fecha;
 
     this.loginForm = this._formBuilder.group({
       email: ["", [Validators.required]],
@@ -122,6 +130,10 @@ export class AuthLoginV1Component implements OnInit {
       .subscribe((config) => {
         this.coreConfig = config;
       });
+  }
+
+  getCurrentDate(): string {
+    return new Date().toLocaleDateString(); // or format as you prefer
   }
 
   login() {

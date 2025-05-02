@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
 import { Sha256Service } from './sha256';
+import moment from 'moment';
 
 
 @Injectable({
@@ -52,6 +53,35 @@ export class UtilService {
   }
 
 
+  FechaMomentActual(){
+    moment.locale('es')
+    var fech = moment().format('DD MMMM YYYY  hh:mm:ss a')
+    return fech
+  }
+
+  FechaMoment(fecha: any) {
+    moment.locale('es')
+    var fech = moment(fecha).format('LLLL')
+    return fech
+  }
+
+  FechaMomentLL(fecha: any) {
+    moment.locale('es')
+    var fech = moment(fecha).format('LL')
+    return fech
+  }
+
+  FechaMomentL(fecha: any) {
+    moment.locale('es')
+    var fech = moment(fecha).format('L')
+    return fech
+  }
+
+  FechaMomentLLL(fecha: any) {
+    moment.locale('es')
+    var fech = moment(fecha).format('L')
+    return fech
+  }
 
 
   Semillero(id: string): string {
