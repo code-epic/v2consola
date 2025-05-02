@@ -41248,7 +41248,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Fri May 02 2025 09:14:58 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Fri May 02 2025 10:42:44 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

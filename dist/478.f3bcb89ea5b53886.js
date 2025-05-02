@@ -701,7 +701,7 @@ class AuthLoginV1Component {
     this.fechafinal = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime;
     this.fechaX = this.utilservice.FechaMoment(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime);
     this.build = this.utilservice.FechaMomentL(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime).replace(/\//g, '.');
-    // this.version = environment.version;
+    this.version = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.version;
     // this.fecha = environment.fecha;
     this.loginForm = this._formBuilder.group({
       email: ["", [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required]],
@@ -746,8 +746,8 @@ class AuthLoginV1Component {
   static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵdefineComponent"]({
     type: AuthLoginV1Component,
     selectors: [["app-auth-login-v1"]],
-    decls: 66,
-    vars: 23,
+    decls: 68,
+    vars: 24,
     consts: [[1, "login__heading", "auth-wrapper", "auth-v1", "px-2"], [1, "auth-inner", "py-2"], [1, "card", "mb-0"], [1, "card-body"], ["href", "javascript:void(0);", 1, "brand-logo"], ["alt", "brand-logo", "height", "30", 3, "src"], [1, "brand-text", "text-primary", "ml-1"], [1, "card", "mb-1", "text-center"], [1, "auth-login-form", "mt-2", 3, "formGroup", "ngSubmit"], [1, "form-group"], ["for", "login-email", 1, "form-label"], ["type", "text", "formControlName", "email", "placeholder", "Usuario", "aria-describedby", "login-email", "tabindex", "1", "autofocus", "", 1, "form-control", 3, "ngClass"], ["class", "invalid-feedback", 4, "ngIf"], [1, "d-flex", "justify-content-between"], ["for", "login-password"], ["routerLink", "/authentication/forgot-password-v1"], [1, "input-group", "input-group-merge", "form-password-toggle"], ["formControlName", "password", "tabindex", "2", "placeholder", "\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7", "aria-describedby", "login-password", 1, "form-control", "form-control-merge", 3, "type", "ngClass"], [1, "input-group-append"], [1, "input-group-text", "cursor-pointer"], [1, "feather", "font-small-4", 3, "ngClass", "click"], ["class", "invalid-feedback", 3, "ngClass", 4, "ngIf"], [1, "custom-control", "custom-checkbox"], ["type", "checkbox", "id", "remember-me", "tabindex", "3", 1, "custom-control-input"], ["for", "remember-me", 1, "custom-control-label"], ["tabindex", "4", "rippleEffect", "", 1, "btn", "btn-primary", "btn-block"], [1, "login"], [1, "login__heading"], [1, "login__circuit-mask"], [1, "text-center", "mt-2"], ["routerLink", "/authentication/register-v1"], [1, "divider", "my-2"], [1, "divider-text"], [1, "auth-footer-btn", "d-flex", "justify-content-center"], ["href", "javascript:void(0)", 1, "btn", "btn-facebook"], ["data-feather", "facebook"], ["href", "javascript:void(0)", 1, "btn", "btn-twitter", "white"], ["data-feather", "twitter"], ["href", "javascript:void(0)", 1, "btn", "btn-google"], ["data-feather", "mail"], ["href", "javascript:void(0)", 1, "btn", "btn-github"], ["data-feather", "github"], [1, "card-text", "text-center"], [1, "invalid-feedback"], [4, "ngIf"], [1, "invalid-feedback", 3, "ngClass"]],
     template: function AuthLoginV1Component_Template(rf, ctx) {
       if (rf & 1) {
@@ -821,8 +821,10 @@ class AuthLoginV1Component {
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpipe"](62, "date");
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](63, "br");
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtext"](64);
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](65, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtext"](66);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](65, "app-asistente-virtual");
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelement"](67, "app-asistente-virtual");
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵelementEnd"]()();
       }
       if (rf & 2) {
@@ -833,18 +835,20 @@ class AuthLoginV1Component {
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("formGroup", ctx.loginForm);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction1"](16, _c1, ctx.submitted && ctx.f.email.errors));
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction1"](17, _c1, ctx.submitted && ctx.f.email.errors));
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", ctx.submitted && ctx.f.email.errors);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("type", ctx.passwordTextType ? "text" : "password")("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction1"](18, _c2, ctx.submitted && ctx.f.password.errors));
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("type", ctx.passwordTextType ? "text" : "password")("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction1"](19, _c2, ctx.submitted && ctx.f.password.errors));
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction2"](20, _c3, ctx.passwordTextType, !ctx.passwordTextType));
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpureFunction2"](21, _c3, ctx.passwordTextType, !ctx.passwordTextType));
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵproperty"]("ngIf", ctx.submitted && ctx.f.password.errors);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](32);
-        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtextInterpolate3"](" ", "\u00A9", " ", ctx.coreConfig.app.appName, " ", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpipeBind2"](62, 13, ctx.getCurrentDate(), "yyyy"), " - Todos los derechos reservados ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtextInterpolate3"](" ", "\u00A9", " ", ctx.coreConfig.app.appName, " ", _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵpipeBind2"](62, 14, ctx.getCurrentDate(), "yyyy"), " - Todos los derechos reservados ");
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtextInterpolate1"](" ", ctx.version, " ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_8__["ɵɵtextInterpolate1"](" Build: ", ctx.fechaX, " ");
       }
     },

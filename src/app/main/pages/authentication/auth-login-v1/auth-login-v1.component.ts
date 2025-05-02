@@ -116,7 +116,7 @@ export class AuthLoginV1Component implements OnInit {
     this.fechaX = this.utilservice.FechaMoment(environment.buildDateTime)
     this.build = this.utilservice.FechaMomentL(environment.buildDateTime).replace(/\//g, '.')
 
-    // this.version = environment.version;
+    this.version = environment.version;
     // this.fecha = environment.fecha;
 
     this.loginForm = this._formBuilder.group({
