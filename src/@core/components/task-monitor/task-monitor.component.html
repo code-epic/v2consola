@@ -1,0 +1,28 @@
+<div class="table-responsive" style="max-height: 100%; overflow: auto;">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Programa</th>
+        <th scope="col">Estatus</th>
+        <th scope="col">Argumento</th>
+        <!-- <th scope="col">Tiempo</th> -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngIf="!rowData || rowData.length === 0">
+        <td colspan="4" class="text-center">No hay procesos en segundo plano</td>
+      </tr>
+      <tr *ngFor="let row of rowData; let i = index">
+        <td>{{ row.pid }}</td>
+        <td>{{ row.programa }}</td>
+        <td>
+          <div *ngIf="!row.estatus" class="badge badge-glow badge-success">Completado</div>
+          <div *ngIf="row.estatus" class="badge badge-glow badge-warning">En Proceso</div>
+        </td>
+        <td>{{ row.argumento }}</td>
+        <!-- <td>{{ row.tiempo }}</td> -->
+      </tr>
+    </tbody>
+  </table>
+</div>

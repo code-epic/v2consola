@@ -352,12 +352,40 @@ export class ApiService {
             this.ConsultarPidRecursivo(id, paquete);
           }
         }, 10000);
+        console.log(data);
       },
       (error) => {
         console.log(error);
       }
     );
   }
+
+
+  ConsultarPidScan(id: string, paquete: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.ExecFnxId(id).subscribe(
+        (data) => {
+          setTimeout(() => {
+            if (data.documento == 'PROCESADO') {
+              this.pID.id = id;
+              this.pID.estatus = false;
+              this.pID.contenido = paquete;
+              this.ws.pidScan$.emit(this.pID);
+              console.log(data)
+              resolve(data); // Resuelve la promesa con los datos
+            } else {
+              this.ConsultarPidScan(id, paquete).then(resolve).catch(reject);
+            }
+          }, 1000);
+        },
+        (error) => {
+          // console.log(error);
+          reject(error); // Rechaza la promesa en caso de error
+        }
+      );
+    });
+  }
+
 
   DwsCdn(peticion: string) {
     let ruta = this.URL + "dwsother/" + peticion;

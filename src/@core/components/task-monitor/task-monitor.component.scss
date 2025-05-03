@@ -1,0 +1,28 @@
+/* Contenedor con scroll */
+.table-responsive {
+    max-height: 100%;  /* Altura máxima antes de aparecer el scroll vertical */
+    overflow: auto;     /* Habilita scroll vertical y horizontal si es necesario */
+    
+    /* Estilo opcional para el scroll (funciona en Chrome/Edge/Safari) */
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
+  }
+  
+  /* Fija el encabezado al hacer scroll vertical (opcional) */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  thead {
+    position: sticky;
+    top: 0;
+    background: white;  /* Fondo para que el texto no se superponga */
+    z-index: 10;       /* Asegura que el encabezado esté por encima */
+  }

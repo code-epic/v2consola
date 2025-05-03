@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { webSocket } from "rxjs/webSocket";
 
 @Injectable({
@@ -14,6 +14,7 @@ export class WsocketsService {
   pid$: any
   lstpid$ = new EventEmitter<any>();
   pidDevice$ = new EventEmitter<any>();
+  pidScan$ = new EventEmitter<any>();
   estatusText$ = new EventEmitter<string>();
   estatusText: string = ''
   constructor() { 

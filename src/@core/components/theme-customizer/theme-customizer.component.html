@@ -14,28 +14,7 @@
     <li ngbNavItem>
       <a ngbNavLink><span [data-feather]="'monitor'"></span></a>
       <ng-template ngbNavContent>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Programa</th>
-              <th scope="col">Estatus</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngIf="!rowData || rowData.length === 0">
-              <td colspan="4" class="text-center">No hay datos</td>
-            </tr>
-            <tr *ngFor="let row of rowData; let i = index">
-              <th scope="row">{{ i + 1 }}</th>
-              <td>{{ row.programa }}</td>
-              <td>
-                <div *ngIf="!row.estatus" class="badge badge-glow badge-success">Completado</div>
-                <div *ngIf="row.estatus" class="badge badge-glow badge-warning">En Proceso</div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <app-task-monitor></app-task-monitor>
       </ng-template>
     </li>
     <li ngbNavItem>

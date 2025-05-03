@@ -24,14 +24,6 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
 
   public searchValue = ''
   public contentHeader: object;
-  public count
-  public ListaComunicaciones = []
-  public basicSelectedOption: number = 10;
-  public ColumnMode = ColumnMode;
-  public tempData = [];
-  public rowData = [];
-
-  public lstApp
 
   certificateData = {
     name: '',
@@ -73,8 +65,6 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
    * On init
    */
   async ngOnInit() {
-    await this.initProcess()
-    await this.escucharPID()
   }
 
   /**
@@ -89,79 +79,6 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
   //  Private methods
   // -----------------------------------------------------------------------------------------------------
 
-  async escucharPID() {
-    await this.msjService.lstpid$.subscribe(
-      pid => {
-        // console.log(pid)
-        if (!pid.estatus) {
-
-          this.buscarElemento(pid.id)
-        }
-      }
-    )
-
-  }
-
-  async initProcess() {
-    this.lstApp = []
-    await this.taskService.keys().then(
-      async lst => {
-        let cnt = lst.length;
-        for (let i = 0; i < cnt; i++) {
-          const e = lst[i];
-          this.taskService.get(e).then(
-            data => {
-
-              this.lstApp.push(
-                {
-                  pid: data.id.substring(0, 6),
-                  programa: data.funcion,
-                  argumento: data.nombre,
-                  usuario: data.usuario,
-                  tiempo: data.fin == undefined ? '' : data.fin.toUTCString().substring(0, 16),
-                  estatus: data.estatus
-                }
-              )
-              // console.log(this.lstApp)
-              if (i == cnt - 1) this.insertCommitDB(this.lstApp)
-            }
-          )
-
-        }
-      }
-    )
-  }
-
-  async buscarElemento(pid: string) {
-
-    this.rowData = (await this.rowData).map(e => {
-      if (e.pid == pid.substring(0, 6)) {
-        e.tiempo = new Date().toUTCString().substring(0, 16)
-        e.estatus = false
-      }
-      return e
-    })
-    console.log(this.rowData)
-    this.tempData = this.rowData
-  }
-
-  filterUpdate(event: any) {
-    const val = event.target.value.toLowerCase();
-    // filter our data
-    const temp = this.tempData.filter(function (d) {
-      return d.descripcion.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
-  }
-
-  insertCommitDB(lst) {
-    this.rowData = lst
-    this.tempData = this.rowData
-  }
 
   onFileSelected(event: Event, fileType: 'publicCert' | 'privateKey') {
     const input = event.target as HTMLInputElement;

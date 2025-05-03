@@ -13,6 +13,7 @@ import { NgSelectConfig } from '@ng-select/ng-select';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
+import JSONFormatter from 'json-formatter-js';
 
 
 @Component({
@@ -87,6 +88,8 @@ export class CommunicationsComponent implements OnInit {
   ]
 
   public btnShow = false
+
+  public btnShowScan = true
 
   // public
   public mac
@@ -259,37 +262,111 @@ export class CommunicationsComponent implements OnInit {
     });
   }
 
-  async Nmap(){
-    this.btnShow = false
+  async Nmap() {
+    this.xrs = 'Escaneando red, por favor Espere...';
+    this.btnShow = false;
     this.fnx = {
       'funcion': 'Fnx_NMap',
       'ip': this.hostIP
+    };
+  
+    try {
+      // Esperamos a que se complete la ejecución
+      const data = await this.apiService.ExecFnx(this.fnx).toPromise();
+      
+      this.utilservice.AlertMini('top-end', 'success', 'Realizando Escaneo Nmap', 3000);
+      
+      // Esperamos a que se complete la consulta del PID
+      const resultadoScan = await this.apiService.ConsultarPidScan(data.contenido.id, this.fnx);
+      
+      // Aquí puedes procesar el resultado del scan
+      // console.log('Resultado del escaneo:', resultadoScan);
+      this.xrs =  resultadoScan.rs || 'No se encontraron resultados';
+      this.btnShow = true; // Restablecer el botón cuando termine (éxito o error)
+      
+    } catch (error) {
+      this.xrs = 'Error al escanear la red';
+      this.btnShow = true; // Restablecer el botón en caso de error
+      this.utilservice.AlertMini('top-end', 'error', 'Error al generar Nmap', 3000);
+      // console.error('Error en Nmap:', error);
+    } finally {
+      this.btnShow = true; // Restablecer el botón cuando termine (éxito o error)
     }
-    await this.apiService.ExecFnx(this.fnx).subscribe(
-      (data) => {
-        this.utilservice.AlertMini('top-end','success','Realizando Escaneo Nmap',3000)
-        this.apiService.ConsultarPidRecursivo(data.contenido.id, this.fnx)
-      },
-      (error) => {
-        this.utilservice.AlertMini('top-end','error','Error al generar Nmap',3000)
-      }
-    )
   }
 
-
-  async ScanRedMac(){
-    await this.comunicacionesService.ScanMac(this.host).subscribe(
-      (data)=>{ 
-        this.mac = data.msj
-      },
-      (error)=>{
-        this.utilservice.AlertMini('top-end','error','Error al escanear red',3000)
-        console.error(error)
-      }
-    )
-    
+  async ScanRed() {
+    this.xrs = 'Escaneando red, por favor Espere...';
+    this.btnShow = false;
+    this.fnx = {
+      'funcion': 'Fnx_ScanRed',
+    };
+  
+    try {
+      // Convertimos el Observable a Promesa usando firstValueFrom (RxJS 7+)
+      const data = await this.apiService.ExecFnx(this.fnx).toPromise();
+      
+      this.utilservice.AlertMini('top-end', 'success', 'Realizando Escaneo de Red', 3000);
+      
+      // Esperamos el resultado del escaneo
+      const scanResult = await this.apiService.ConsultarPidScan(data.contenido.id, this.fnx);
+      
+      // Actualizamos la UI con el resultado
+      this.xrs = scanResult.rs || 'Escaneo completado';
+      // console.log(scanResult);
+      
+    } catch (error) {
+      console.error('Error en ScanRed:', error);
+      this.utilservice.AlertMini('top-end', 'error', 'Error al generar Escaneo de Red', 3000);
+    } finally {
+      this.btnShow = true; // Siempre restauramos el botón
+    }
   }
 
+  async ScanRedMac() {
+    this.btnShowScan = false;
+    this.fnx = {
+      'funcion': 'Fnx_NMapAuto',
+      'ip': this.loginForm.value.host
+    };
+  
+    try {
+      const data = await this.apiService.ExecFnx(this.fnx).toPromise();
+      this.utilservice.AlertMini('top-end', 'success', 'Realizando Escaneo Nmap', 3000);
+      
+      const resultadoScan = await this.apiService.ConsultarPidScan(data.contenido.id, this.fnx);
+      // console.log('Resultado completo:', resultadoScan); // Para depuración
+      
+      // Verifica si resultadoScan.rs existe y es un string
+      if (resultadoScan?.rs) {
+        const parsedData = JSON.parse(resultadoScan.rs);
+        // console.log('Datos parseados:', parsedData); // Para depuración
+        
+        if (parsedData.active_connection) {
+          this.loginForm.patchValue({
+            host: parsedData.active_connection.ip,
+            mac: parsedData.active_connection.mac
+          });
+          // console.log('Formulario actualizado:', this.loginForm.value);
+        } else {
+          throw new Error('El formato de active_connection no es válido');
+        }
+      } else {
+        throw new Error('No se encontraron datos en resultadoScan.rs');
+      }
+
+      this.btnShowScan = true;
+      
+    } catch (error) {
+      this.btnShowScan = false;
+      this.utilservice.AlertMini('top-end', 'error', 'Error al generar Nmap', 3000);
+      console.error('Error completo:', error);
+      
+      if (error instanceof Error) {
+        console.error('Mensaje de error:', error.message);
+        console.error('Stack trace:', error.stack);
+      }
+    }
+  }
 
   ModalAdd(modal){
     this.modalService.open(modal,{

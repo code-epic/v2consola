@@ -153,7 +153,8 @@
 
           <div class="col-md-4 col-12 mb-1">
             <label for="login-host" class="form-label">Dirección Host/IP</label>&nbsp;
-            <div class="badge badge-info" (click)="ScanRedMac()">Escanear</div>
+            <div class="badge badge-warning" (click)="ScanRedMac()" *ngIf="btnShowScan">Escanear</div>
+            <div class="badge badge-danger" *ngIf="!btnShowScan">Buscando</div>
             <input type="text" formControlName="host" class="form-control" placeholder="Dirección Host/IP"
               aria-describedby="login-host" tabindex="1" autofocus
               [ngClass]="{ 'is-invalid': submitted && f.host.errors }" />
