@@ -34178,14 +34178,12 @@ class ProfileComponent {
       accion: parseInt(this.lista[posicion].xaccion),
       estatus: parseInt(this.lista[posicion].estatus)
     };
-    console.log(posicion, this.lista.length, data);
+    console.log(data);
     this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.INSERTAR_PERFIL_DETALLE;
     this.xAPI.parametros = '';
     this.xAPI.valores = JSON.stringify(data);
     this.apiService.Ejecutar(this.xAPI).subscribe(data => {
-      console.log(posicion, this.lista.length);
-
-      if (this.lista.length - 1 < posicion) {
+      if (posicion >= this.lista.filter(item => item.estatus === 1).length - 1) {
         this.utilservice.AlertMini("top-end", "success", "Finalizo con éxito", 3000);
         this.dataRolDetalles = [];
         this.Perfil.nombre = '';
@@ -34996,6 +34994,32 @@ class RoleComponent {
   }
 
   addMenuList() {
+    this.menu.forEach(e => {
+      let i = 0;
+      let id = e.split('|')[0];
+      this.datamenu.forEach(x => {
+        i++;
+
+        if (parseInt(x.id) == id) {
+          let dt = {
+            "idmod": e.split('|')[0],
+            "modulo": e.split('|')[1],
+            "idmenu": x.id,
+            "menu": x.nomb,
+            "accid": '',
+            "accion": ''
+          };
+          this.lista.push(dt);
+          this.rowData = this.lista;
+          this.temprowData = this.rowData;
+        }
+      });
+      console.log(i);
+      this.datamenu.splice(i, 1);
+    });
+  }
+
+  addMenuXXX() {
     this.datamenu.forEach(e => {
       let dt = {
         "idmod": this.xmodulo[0].split('|')[0],
@@ -46658,7 +46682,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Tue May 06 2025 14:49:51 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Tue May 06 2025 18:57:24 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

@@ -274,6 +274,7 @@ export class ProfileComponent implements OnInit {
   }
 
   insertBach(idperfil, posicion) {
+   
     let data = {
       aplicacion: this.Perfil.aplicacion,
       perfil: idperfil,
@@ -283,16 +284,15 @@ export class ProfileComponent implements OnInit {
       accion: parseInt(this.lista[posicion].xaccion),
       estatus: parseInt(this.lista[posicion].estatus),
     }
-    console.log(posicion, this.lista.length, data)
+    console.log(data)
     this.xAPI.funcion = environment.functions.INSERTAR_PERFIL_DETALLE
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(data)
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(posicion, this.lista.length)
 
-        if (this.lista.length - 1 < posicion) {
+        if ( posicion >= this.lista.filter((item) => item.estatus === 1).length - 1  ) {
           this.utilservice.AlertMini(
             "top-end",
             "success",

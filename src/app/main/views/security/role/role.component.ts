@@ -193,8 +193,38 @@ export class RoleComponent implements OnInit {
   }
 
 
-
   addMenuList(){
+    this.menu.forEach(e => {
+      let i = 0
+      let id = e.split('|')[0]
+      
+      this.datamenu.forEach(x => {
+        i++
+        if(parseInt(x.id) == id){
+          let dt = {
+            "idmod": e.split('|')[0],
+            "modulo": e.split('|')[1],
+            "idmenu": x.id,
+            "menu": x.nomb,
+            "accid": '',
+            "accion": ''
+          };
+          this.lista.push(dt)
+          this.rowData = this.lista
+          this.temprowData = this.rowData
+        }
+        
+      })
+      console.log(i)
+      this.datamenu.splice(i, 1)
+     
+    })
+
+
+
+  }
+
+  addMenuXXX(){
     this.datamenu.forEach(e => {
       let dt = {
         "idmod": this.xmodulo[0].split('|')[0],
