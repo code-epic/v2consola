@@ -93,7 +93,9 @@ export class InstallComponent implements OnInit {
     tipo: undefined,
     usuario: '',
     creador: '',
-    version: '0.0.1'
+    version: '0.0.1',
+    proyecto: '',
+    rama: ''
   }
 
   public xAPI: IAPICore = {
@@ -362,4 +364,11 @@ export class InstallComponent implements OnInit {
     )
   }
 
+
+
+
 }
+
+
+
+

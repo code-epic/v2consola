@@ -17,6 +17,8 @@ export interface SSB_IAplicacion {
   creador?: string
   version?: string
   llave ?: string
+  proyecto : string
+  rama : string
 }
 
 /**

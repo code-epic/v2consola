@@ -339,8 +339,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
               3000
             );
             break;
+          case "Fusionando proyecto":
+            this.utilservice.AlertMini(
+              "bottom-end",
+              "success",
+              "Fusion exitosa",
+              3000
+            );
+            break;
           default:
-            window.open(environment.Url + "/" + PID.contenido);
+            let dir = PID.contenido.split('|')
+            window.open(`https://${dir[0]}/${dir[1]}`);
             break;
         }
       }
