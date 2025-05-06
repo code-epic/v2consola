@@ -38471,7 +38471,7 @@ class ApiComponent {
     this.apiService.Ejecutar(this.xAPI).subscribe(data => {
       if (data.Cuerpo.length > 0) {
         this.xRestore.nombre = data.Cuerpo[0].nomb;
-        this.xRestore.ruta = data.Cuerpo[0].rutaActiva;
+        this.xRestore.ruta = data.Cuerpo[0].ruta;
         this.xRestore.pass = this.IExportAPI.clave;
         this.xRestore.user = this.IExportAPI.usuario;
         this.xRestore.file_name = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.colecciones.API_CORE_NAME;
@@ -46658,7 +46658,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Tue May 06 2025 10:39:24 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Tue May 06 2025 14:24:02 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

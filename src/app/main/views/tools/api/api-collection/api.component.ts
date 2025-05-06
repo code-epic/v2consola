@@ -486,7 +486,7 @@ export class ApiComponent implements OnInit {
       (data) => {
         if (data.Cuerpo.length > 0) {
           this.xRestore.nombre = data.Cuerpo[0].nomb
-          this.xRestore.ruta = data.Cuerpo[0].rutaActiva
+          this.xRestore.ruta = data.Cuerpo[0].ruta
           this.xRestore.pass = this.IExportAPI.clave
           this.xRestore.user = this.IExportAPI.usuario
           this.xRestore.file_name = environment.colecciones.API_CORE_NAME
