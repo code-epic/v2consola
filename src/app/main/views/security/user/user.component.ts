@@ -235,7 +235,8 @@ export class UserComponent implements OnInit {
       },
     }
     this.CargarListaAplicaciones()
-    this.CargarGrupo()
+    // this.CargarGrupo()
+    this.iUser.encriptamiento = '1'
   }
 
   selDuracion(e) {
@@ -267,18 +268,18 @@ export class UserComponent implements OnInit {
     }
   }
 
-  async CargarGrupo() {
-    this.xAPI.funcion = '_SYS_CBitacoraGrupo'
-    this.xAPI.parametros = ''
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        console.log(data)
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
+  // async CargarGrupo() {
+  //   this.xAPI.funcion = '_SYS_CBitacoraGrupo'
+  //   this.xAPI.parametros = ''
+  //   await this.apiService.Ejecutar(this.xAPI).subscribe(
+  //     (data) => {
+  //       console.log(data)
+  //     },
+  //     (error) => {
+  //       console.log(error)
+  //     }
+  //   )
+  // }
 
 
   async CargarListaEndPoint() {
@@ -453,7 +454,7 @@ export class UserComponent implements OnInit {
     console.log('Entrando en clave',this.iUser.clave )
     if (this.iUser.clave != '') {
       await this.sha256.hash(this.iUser.clave).then(hash => {
-        console.log(hash)
+        // console.log(this.usuario.clave, '::', this.iUser.clave, hash)
         this.usuario.clave = hash
       })
     }
@@ -554,20 +555,15 @@ export class UserComponent implements OnInit {
       driver: 'MGDBA',
       upsert: true,
     }
-    // console.log(fnx) 
+
+    console.log(this.usuario)
     this.apiService.ExecColeccion(fnx).subscribe(
       (data) => {
         console.log(data)
         this.lstPerfil = []
         this.xaplicacion = ''
         this.xperfil = ''
-        this.utilservice.AlertMini(
-          'top-end',
-          'success',
-          `Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`,
-          3000
-        )
-        this.limpiar()
+        this.finalizando()
       },
       (error) => {
         this.utilservice.AlertMini(
@@ -576,9 +572,24 @@ export class UserComponent implements OnInit {
           'Error al Guardadar los Datos',
           3000
         )
-        // console.log(error)
       }
     )
+  }
+
+  finalizando(){
+    Swal.fire({
+      title: 'Registrado',
+      text: 'Tu usuario ha sido registrado codigo:',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#C81D11',
+      confirmButtonText: 'Aceptar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.limpiar()
+      }
+    })
   }
   cancelar() { }
 

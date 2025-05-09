@@ -277,7 +277,7 @@ export class ListComponent implements OnInit {
     };
 
     await Swal.fire({
-      title: `Va a actualizar el proyecto <br> ${app.repositorio} `,
+      title: `Va a actualizar el proyecto <br> ${app.proyecto} `,
       text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
       icon: "warning",
       showCancelButton: true,
@@ -292,12 +292,13 @@ export class ListComponent implements OnInit {
             this.pID.id = data.contenido.id;
             this.pID.estatus = true;
             this.msjService.lstpid$.emit(this.pID);
+            let proyecto = `${app.origen}|${app.proyecto}`
             this.taskService
-              .set(data.contenido.id, nameFnx, app.repositorio)
+              .set(data.contenido.id, nameFnx, proyecto)
               .then((e) => {
                 this.apiService.ConsultarPidRecursivo(
                   data.contenido.id,
-                  app.repositorio
+                  proyecto
                 );
               })
               .catch((e) => console.log(e));

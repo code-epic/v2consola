@@ -17846,29 +17846,71 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 94650);
 
+ // @Injectable({
+//   providedIn: 'root'
+// })
+// export class Sha256Service {
+//     constructor() { }
+//     private readonly K = [
+//       0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
+//       0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+//       // ... (resto de las constantes K)
+//     ];
+//     public async hash(message: string): Promise<string> {
+//       // Preprocesamiento del mensaje
+//       const msgBuffer = new TextEncoder().encode(message);
+//       const msgBits = Array.from(msgBuffer)
+//         .map(b => b.toString(2).padStart(8, '0'))
+//         .join('');
+//       const len = msgBits.length;
+//       const totalLen = len + 1 + 64 - ((len + 1) % 64);
+//       // Añadir padding
+//       const paddedMsg = msgBits + '1' + '0'.repeat(totalLen - len - 1) 
+//         + len.toString(2).padStart(64, '0');
+//       // Procesar en bloques de 512 bits
+//       const blocks = [];
+//       for (let i = 0; i < paddedMsg.length; i += 512) {
+//         blocks.push(paddedMsg.substr(i, 512));
+//       }
+//       // Inicializar variables de hash
+//       let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a;
+//       let h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+//       // Procesar cada bloque
+//       for (const block of blocks) {
+//         // ... (implementación completa del algoritmo)
+//       }
+//       // Combinar los hashes
+//       const hashArray = [h0, h1, h2, h3, h4, h5, h6, h7];
+//       const hashHex = hashArray.map(h => h.toString(16).padStart(8, '0')).join('');
+//       return hashHex;
+//     }
+//   }
+// Uso:
+//   SHA256.hash('texto').then(hash => console.log(hash));
 
 class Sha256Service {
-  constructor() {}
+  K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174, 0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967, 0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070, 0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
 
-  K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5 // ... (resto de las constantes K)
-  ];
+  rightRotate(value, shift) {
+    return value >>> shift | value << 32 - shift;
+  }
 
   hash(message) {
+    var _this = this;
+
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      // Preprocesamiento del mensaje
+      // Convertir mensaje a buffer UTF-8
       const msgBuffer = new TextEncoder().encode(message);
-      const msgBits = Array.from(msgBuffer).map(b => b.toString(2).padStart(8, '0')).join('');
-      const len = msgBits.length;
-      const totalLen = len + 1 + 64 - (len + 1) % 64; // Añadir padding
+      const len = msgBuffer.length * 8; // Añadir padding (1 + ceros + longitud de 64 bits)
 
-      const paddedMsg = msgBits + '1' + '0'.repeat(totalLen - len - 1) + len.toString(2).padStart(64, '0'); // Procesar en bloques de 512 bits
+      const totalLen = Math.ceil((len + 1 + 64) / 512) * 512;
+      const padded = new Uint8Array(totalLen / 8);
+      padded.set(msgBuffer);
+      padded[msgBuffer.length] = 0x80; // Bit '1' del padding
+      // Escribir longitud en bits al final (big-endian)
 
-      const blocks = [];
-
-      for (let i = 0; i < paddedMsg.length; i += 512) {
-        blocks.push(paddedMsg.substr(i, 512));
-      } // Inicializar variables de hash
-
+      const lenView = new DataView(padded.buffer);
+      lenView.setUint32(padded.length - 4, len); // Inicializar variables de hash
 
       let h0 = 0x6a09e667,
           h1 = 0xbb67ae85,
@@ -17877,15 +17919,62 @@ class Sha256Service {
       let h4 = 0x510e527f,
           h5 = 0x9b05688c,
           h6 = 0x1f83d9ab,
-          h7 = 0x5be0cd19; // Procesar cada bloque
+          h7 = 0x5be0cd19; // Procesar cada bloque de 512 bits (64 bytes)
 
-      for (const block of blocks) {// ... (implementación completa del algoritmo)
+      for (let i = 0; i < padded.length; i += 64) {
+        const block = padded.slice(i, i + 64);
+        const words = new Array(64); // Dividir bloque en 16 palabras de 32 bits (big-endian)
+
+        const view = new DataView(block.buffer);
+
+        for (let j = 0; j < 16; j++) {
+          words[j] = view.getUint32(j * 4);
+        } // Extender a 64 palabras
+
+
+        for (let j = 16; j < 64; j++) {
+          const s0 = _this.rightRotate(words[j - 15], 7) ^ _this.rightRotate(words[j - 15], 18) ^ words[j - 15] >>> 3;
+          const s1 = _this.rightRotate(words[j - 2], 17) ^ _this.rightRotate(words[j - 2], 19) ^ words[j - 2] >>> 10;
+          words[j] = words[j - 16] + s0 + words[j - 7] + s1 >>> 0;
+        } // Inicializar variables de trabajo
+
+
+        let [a, b, c, d, e, f, g, h] = [h0, h1, h2, h3, h4, h5, h6, h7]; // Compresión
+
+        for (let j = 0; j < 64; j++) {
+          const S1 = _this.rightRotate(e, 6) ^ _this.rightRotate(e, 11) ^ _this.rightRotate(e, 25);
+
+          const ch = e & f ^ ~e & g;
+          const temp1 = h + S1 + ch + _this.K[j] + words[j] >>> 0;
+
+          const S0 = _this.rightRotate(a, 2) ^ _this.rightRotate(a, 13) ^ _this.rightRotate(a, 22);
+
+          const maj = a & b ^ a & c ^ b & c;
+          const temp2 = S0 + maj >>> 0;
+          h = g;
+          g = f;
+          f = e;
+          e = d + temp1 >>> 0;
+          d = c;
+          c = b;
+          b = a;
+          a = temp1 + temp2 >>> 0;
+        } // Actualizar hash
+
+
+        h0 = h0 + a >>> 0;
+        h1 = h1 + b >>> 0;
+        h2 = h2 + c >>> 0;
+        h3 = h3 + d >>> 0;
+        h4 = h4 + e >>> 0;
+        h5 = h5 + f >>> 0;
+        h6 = h6 + g >>> 0;
+        h7 = h7 + h >>> 0;
       } // Combinar los hashes
 
 
       const hashArray = [h0, h1, h2, h3, h4, h5, h6, h7];
-      const hashHex = hashArray.map(h => h.toString(16).padStart(8, '0')).join('');
-      return hashHex;
+      return hashArray.map(h => h.toString(16).padStart(8, '0')).join('');
     })();
   }
 
@@ -25694,7 +25783,7 @@ class ListComponent {
         ramas: ramas
       };
       yield sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-        title: `Va a actualizar el proyecto <br> ${app.repositorio} `,
+        title: `Va a actualizar el proyecto <br> ${app.proyecto} `,
         text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
         icon: "warning",
         showCancelButton: true,
@@ -25710,8 +25799,10 @@ class ListComponent {
 
             _this6.msjService.lstpid$.emit(_this6.pID);
 
-            _this6.taskService.set(data.contenido.id, nameFnx, app.repositorio).then(e => {
-              _this6.apiService.ConsultarPidRecursivo(data.contenido.id, app.repositorio);
+            let proyecto = `${app.origen}|${app.proyecto}`;
+
+            _this6.taskService.set(data.contenido.id, nameFnx, proyecto).then(e => {
+              _this6.apiService.ConsultarPidRecursivo(data.contenido.id, proyecto);
             }).catch(e => console.log(e));
           }, error => {
             console.log(error);
@@ -34133,12 +34224,14 @@ class ProfileComponent {
   }
 
   iniciarLista() {
+    // console.log(this.dataRolDetalles)
     if (this.SelectOn.length == 0) {
       this.lista = this.dataRolDetalles.map(e => {
         e.estatus = 0;
         return e;
       });
     } else {
+      // console.log(this.SelectOn)
       this.lista = this.dataRolDetalles.map(e => {
         let estatus = this.SelectOn.find(el => {
           return el.xaccion == e.xaccion && el.xmenu == e.xmenu;
@@ -34160,8 +34253,11 @@ class ProfileComponent {
     this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.INSERTAR_PERFIL;
     this.xAPI.parametros = '';
     this.xAPI.valores = JSON.stringify(this.Perfil); // console.log(this.xAPI)
+    // 
+    // this.insertBach('Testing', 0)
 
     this.apiService.Ejecutar(this.xAPI).subscribe(data => {
+      this.lista = this.lista.filter(e => e.estatus == 1);
       this.insertBach(data.msj, 0);
     }, error => {
       console.error("Data: ", error);
@@ -34169,33 +34265,35 @@ class ProfileComponent {
   }
 
   insertBach(idperfil, posicion) {
-    let data = {
-      aplicacion: this.Perfil.aplicacion,
-      perfil: idperfil,
-      rol: this.rol,
-      modulo: parseInt(this.lista[posicion].xmodulo),
-      menu: parseInt(this.lista[posicion].xmenu),
-      accion: parseInt(this.lista[posicion].xaccion),
-      estatus: parseInt(this.lista[posicion].estatus)
-    };
-    console.log(data);
-    this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.INSERTAR_PERFIL_DETALLE;
-    this.xAPI.parametros = '';
-    this.xAPI.valores = JSON.stringify(data);
-    this.apiService.Ejecutar(this.xAPI).subscribe(data => {
-      if (posicion >= this.lista.filter(item => item.estatus === 1).length - 1) {
-        this.utilservice.AlertMini("top-end", "success", "Finalizo con éxito", 3000);
-        this.dataRolDetalles = [];
-        this.Perfil.nombre = '';
-        this.Perfil.descripcion = '';
-        this.listarPerfiles();
-      } else {
+    if (posicion >= this.lista.length) {
+      this.utilservice.AlertMini("top-end", "success", "Finalizo con éxito", 3000);
+      this.dataRolDetalles = [];
+      this.Perfil.nombre = '';
+      this.Perfil.descripcion = '';
+      this.listarPerfiles();
+    } else {
+      let data = {
+        aplicacion: this.Perfil.aplicacion,
+        perfil: idperfil,
+        rol: this.rol,
+        modulo: parseInt(this.lista[posicion].xmodulo),
+        menu: parseInt(this.lista[posicion].xmenu),
+        accion: parseInt(this.lista[posicion].xaccion),
+        estatus: 1
+      }; // posicion++
+      // console.log(data)
+      // this.insertBach(idperfil, posicion)
+
+      this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.INSERTAR_PERFIL_DETALLE;
+      this.xAPI.parametros = '';
+      this.xAPI.valores = JSON.stringify(data);
+      this.apiService.Ejecutar(this.xAPI).subscribe(data => {
         posicion++;
         this.insertBach(idperfil, posicion);
-      }
-    }, error => {
-      console.error("Data: ", error);
-    });
+      }, error => {
+        console.error("Data: ", error);
+      });
+    }
   }
 
   listarAcciones() {
@@ -34311,7 +34409,7 @@ class ProfileComponent {
       }
     },
     dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_11__.NgIf, app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_5__.ContentHeaderComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_12__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_12__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_12__.NgModel, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_9__.DatatableComponent, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_9__.DataTableColumnDirective, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_9__.DataTableColumnHeaderDirective, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_9__.DataTableColumnCellDirective, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbDropdown, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbDropdownToggle, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbDropdownMenu, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbDropdownItem, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbNavContent, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbNav, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbNavItem, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbNavLink, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_10__.NgbNavOutlet, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_13__.NgSelectComponent, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_6__.RippleEffectDirective, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_7__.FeatherIconDirective, ng_block_ui__WEBPACK_IMPORTED_MODULE_14__["ɵf"]],
-    styles: ["input {\n  font-size: 14px;\n}"],
+    styles: ["input {\n  font-size: 14px;\n}\n\nbutton {\n  height: 38px;\n}"],
     encapsulation: 2
   });
 }
@@ -34528,10 +34626,10 @@ function RoleComponent_div_0_ng_template_18_div_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r26 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 55)(1, "label", 56);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 56)(1, "label", 57);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](2, "Seleccionar Aplicaci\u00F3n");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](3, "ng-select", 57);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](3, "ng-select", 58);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("ngModelChange", function RoleComponent_div_0_ng_template_18_div_2_Template_ng_select_ngModelChange_3_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r26);
       const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](3);
@@ -34555,10 +34653,10 @@ function RoleComponent_div_0_ng_template_18_div_3_Template(rf, ctx) {
   if (rf & 1) {
     const _r29 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 55)(1, "label", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "div", 56)(1, "label", 35);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](2, "Aplicacion");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](3, "input", 58);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](3, "input", 59);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("ngModelChange", function RoleComponent_div_0_ng_template_18_div_3_Template_input_ngModelChange_3_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r29);
       const ctx_r28 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](3);
@@ -34576,7 +34674,7 @@ function RoleComponent_div_0_ng_template_18_div_3_Template(rf, ctx) {
 
 function RoleComponent_div_0_ng_template_18_option_16_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "option", 59);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "option", 60);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
   }
@@ -34591,7 +34689,7 @@ function RoleComponent_div_0_ng_template_18_option_16_Template(rf, ctx) {
 
 function RoleComponent_div_0_ng_template_18_option_21_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "option", 59);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "option", 60);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
   }
@@ -34606,7 +34704,7 @@ function RoleComponent_div_0_ng_template_18_option_21_Template(rf, ctx) {
 
 function RoleComponent_div_0_ng_template_18_option_26_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "option", 59);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](0, "option", 60);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
   }
@@ -34688,15 +34786,19 @@ function RoleComponent_div_0_ng_template_18_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](17, "div", 34)(18, "label", 38);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](19, "Menu");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](20, "select", 40);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("dblclick", function RoleComponent_div_0_ng_template_18_Template_select_dblclick_20_listener() {
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](20, "select", 42);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function RoleComponent_div_0_ng_template_18_Template_select_click_20_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
       const ctx_r39 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r39.listarAcciones());
-    })("ngModelChange", function RoleComponent_div_0_ng_template_18_Template_select_ngModelChange_20_listener($event) {
+      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r39.bmenus = true);
+    })("dblclick", function RoleComponent_div_0_ng_template_18_Template_select_dblclick_20_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
       const ctx_r40 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r40.menu = $event);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r40.listarAcciones());
+    })("ngModelChange", function RoleComponent_div_0_ng_template_18_Template_select_ngModelChange_20_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
+      const ctx_r41 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r41.menu = $event);
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](21, RoleComponent_div_0_ng_template_18_option_21_Template, 2, 2, "option", 41);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
@@ -34706,37 +34808,32 @@ function RoleComponent_div_0_ng_template_18_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](25, "select", 40);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("dblclick", function RoleComponent_div_0_ng_template_18_Template_select_dblclick_25_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
-      const ctx_r41 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r41.addElement(ctx_r41.xaccion));
+      const ctx_r42 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r42.addElement(ctx_r42.xaccion));
     })("ngModelChange", function RoleComponent_div_0_ng_template_18_Template_select_ngModelChange_25_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
-      const ctx_r42 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r42.xaccion = $event);
+      const ctx_r43 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r43.xaccion = $event);
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](26, RoleComponent_div_0_ng_template_18_option_26_Template, 2, 2, "option", 41);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](27, "div", 42);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](28, "div", 43)(29, "button", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](27, "div", 43);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](28, "div", 44)(29, "button", 45);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function RoleComponent_div_0_ng_template_18_Template_button_click_29_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
-      const ctx_r43 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r43.addMenuList());
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](30, "i", 45);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](31, "\u00A0Agregar Menu ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](32, "div", 46)(33, "button", 47);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function RoleComponent_div_0_ng_template_18_Template_button_click_33_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
       const ctx_r44 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
       return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r44.addMenuList());
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](34, "i", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](30, "i", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](31, "\u00A0Agregar Menu ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](32, "div", 47)(33, "button", 48);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](34, "i", 46);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](35, "\u00A0Agregar Acciones ");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()()();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](36, "br");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](37, "div", 6)(38, "table", 48)(39, "thead")(40, "tr")(41, "th");
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](37, "div", 6)(38, "table", 49)(39, "thead")(40, "tr")(41, "th");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](42, "MODULO");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](43, "th");
@@ -34748,29 +34845,29 @@ function RoleComponent_div_0_ng_template_18_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](47, "tr");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](48, "tbody");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](49, RoleComponent_div_0_ng_template_18_tr_49_Template, 7, 3, "tr", 49);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](49, RoleComponent_div_0_ng_template_18_tr_49_Template, 7, 3, "tr", 50);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](50, "tfoot");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](51, "div", 50);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](51, "div", 51);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](52, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](53, "button", 51);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](53, "button", 52);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function RoleComponent_div_0_ng_template_18_Template_button_click_53_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
       const ctx_r45 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
       return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r45.guardarRol());
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](54, "i", 52);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](54, "i", 53);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](55, "\u00A0Agregar ");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](56, " \u00A0\u00A0 ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](57, "button", 53);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](57, "button", 54);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵlistener"]("click", function RoleComponent_div_0_ng_template_18_Template_button_click_57_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r35);
       const ctx_r46 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"](2);
       return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r46.Limpiar());
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](58, "i", 54);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](58, "i", 55);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](59, "\u00A0Limpiar ");
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](60, "br")(61, "br");
@@ -34783,22 +34880,24 @@ function RoleComponent_div_0_ng_template_18_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngIf", !ctx_r3.blApp);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.Rol.nombre)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](17, _c1));
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.Rol.nombre)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](18, _c1));
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.Rol.descripcion)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](18, _c1));
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.Rol.descripcion)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](19, _c1));
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.xmodulo)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](19, _c1));
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.xmodulo)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](20, _c1));
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngForOf", ctx_r3.dataModulo);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.menu)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](20, _c1));
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.menu)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](21, _c1));
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngForOf", ctx_r3.datamenu);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.xaccion)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](21, _c1));
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngModel", ctx_r3.xaccion)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵpureFunction0"](22, _c1));
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngForOf", ctx_r3.rowDataAcc);
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("disabled", !ctx_r3.bmenus);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("disabled", !ctx_r3.acciones);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵadvance"](16);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵproperty"]("ngForOf", ctx_r3.rowData);
@@ -34818,6 +34917,10 @@ function RoleComponent_div_0_Template(rf, ctx) {
       _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r48);
       const ctx_r47 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
       return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r47.active = $event);
+    })("click", function RoleComponent_div_0_Template_ul_click_7_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵrestoreView"](_r48);
+      const ctx_r49 = _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵresetView"](ctx_r49.selTab($event));
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementStart"](9, "li", 9)(10, "a", 10);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](11, "span", 11);
@@ -34829,7 +34932,7 @@ function RoleComponent_div_0_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](16, "span", 11);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtext"](17);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](18, RoleComponent_div_0_ng_template_18_Template, 62, 22, "ng-template", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](18, RoleComponent_div_0_ng_template_18_Template, 62, 23, "ng-template", 12);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()();
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelement"](19, "div", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵelementEnd"]()()()()();
@@ -34911,6 +35014,8 @@ class RoleComponent {
   chkBoxSelected = [];
   active = 1;
   blApp = true;
+  bmenus = false;
+  acciones = false;
 
   constructor(apiService, utilservice, modalService) {
     this.apiService = apiService;
@@ -34959,6 +35064,19 @@ class RoleComponent {
     })();
   }
 
+  selTab(e) {
+    console.log(e);
+
+    if (this.active == 2) {
+      this.blApp = true;
+      this.rowData = [];
+      this.Rol.descripcion = '';
+      this.Rol.nombre = '';
+    } else {
+      this.registrar = "Registrar nuevo rol";
+    }
+  }
+
   selModulo(event) {
     // console.log(event)
     this.xAPI.funcion = "LstModulos";
@@ -34994,53 +35112,40 @@ class RoleComponent {
   }
 
   addMenuList() {
-    this.menu.forEach(e => {
-      let i = 0;
-      let id = e.split('|')[0];
-      this.datamenu.forEach(x => {
-        i++;
+    if (this.menu.length > 0) {
+      let idmodulo = this.xmodulo[0].split('|')[0];
+      let descripcion_modulo = this.xmodulo[0].split('|')[1];
+      this.menu.forEach(e => {
+        let i = 0;
+        let eliminar = 0;
+        let id = e.split('|')[0];
+        this.datamenu.forEach(x => {
+          if (parseInt(x.id) == id) {
+            let dt = {
+              "idmod": idmodulo,
+              "modulo": descripcion_modulo,
+              "idmenu": x.id,
+              "menu": x.nomb,
+              "accid": '',
+              "accion": ''
+            };
+            this.lista.push(dt);
+            this.rowData = this.lista;
+            this.temprowData = this.rowData;
+            eliminar = i;
+          }
 
-        if (parseInt(x.id) == id) {
-          let dt = {
-            "idmod": e.split('|')[0],
-            "modulo": e.split('|')[1],
-            "idmenu": x.id,
-            "menu": x.nomb,
-            "accid": '',
-            "accion": ''
-          };
-          this.lista.push(dt);
-          this.rowData = this.lista;
-          this.temprowData = this.rowData;
-        }
+          i++;
+        });
+        this.datamenu.splice(eliminar, 1);
       });
-      console.log(i);
-      this.datamenu.splice(i, 1);
-    });
-  }
-
-  addMenuXXX() {
-    this.datamenu.forEach(e => {
-      let dt = {
-        "idmod": this.xmodulo[0].split('|')[0],
-        "modulo": this.xmodulo[0].split('|')[1],
-        "idmenu": e.id,
-        "menu": e.nomb,
-        "accid": '',
-        "accion": ''
-      };
-      this.lista.push(dt);
-      this.rowData = this.lista;
-      this.temprowData = this.rowData;
-    });
-    this.datamenu = [];
+    }
   }
 
   listarAcciones() {
     var _this2 = this;
 
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      // console.log(this.menu[0])
       _this2.rowDataAcc = [];
       _this2.xAPI.funcion = "OMenuAccion";
       _this2.xAPI.parametros = _this2.menu[0].split('|')[0];
@@ -35115,7 +35220,8 @@ class RoleComponent {
     if (this.Rol.nombre == "" || this.lista.length == 0 || this.aplicacion == undefined) {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000);
       return false;
-    }
+    } // console.log(this.lista)
+
 
     this.xAPI.funcion = '_SYS_IRolDefinicion';
     this.xAPI.parametros = '';
@@ -35137,11 +35243,8 @@ class RoleComponent {
     };
     this.xAPI.funcion = '_SYS_IRolDetalles';
     this.xAPI.parametros = '';
-    this.xAPI.valores = JSON.stringify(data); // console.log(this.xAPI)
-
+    this.xAPI.valores = JSON.stringify(data);
     this.apiService.Ejecutar(this.xAPI).subscribe(data => {
-      // console.log(data)
-      // console.log(posicion, this.lista.length)
       posicion++;
 
       if (posicion > this.lista.length - 1) {
@@ -35157,6 +35260,8 @@ class RoleComponent {
         this.datamenu = [];
         this.xaccion = '';
         this.rowDataAcc = [];
+        this.listarRoles();
+        this.active = 1;
       } else {
         this.insertBach(idrol, posicion);
       }
@@ -35166,13 +35271,14 @@ class RoleComponent {
   }
 
   editarRol(row) {
-    console.log(row);
+    // console.log(row)
     this.xAPI.funcion = '_SYS_CRolEditar';
     this.xAPI.parametros = row.idrol;
     this.xAPI.valores = '';
     this.rowData = [];
     this.apiService.Ejecutar(this.xAPI).subscribe(data => {
       let idAPP = "";
+      console.log(data);
       this.registrar = 'Editar rol';
       this.rowData = data.Cuerpo.map(e => {
         this.Rol.descripcion = e.observacion;
@@ -35221,7 +35327,7 @@ class RoleComponent {
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵProvidersFeature"]([_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbModalConfig, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbModal])],
     decls: 1,
     vars: 1,
-    consts: [["class", "content-wrapper container-xxl p-0", 4, "blockUI"], [1, "content-wrapper", "container-xxl", "p-0"], [1, "content-body"], [3, "contentHeader"], [1, "invoice-list-wrapper"], [1, "card"], [1, "col-md-12"], ["ngbNav", "", 1, "nav-tabs", "justify-content-center", 3, "activeId", "activeIdChange"], ["navWithIcons", "ngbNav"], [3, "ngbNavItem"], ["ngbNavLink", ""], [3, "data-feather"], ["ngbNavContent", ""], [1, "mt-2", 3, "ngbNavOutlet"], [1, "bootstrap", "core-bootstrap", 3, "rows", "rowHeight", "limit", "columnMode", "headerHeight", "footerHeight", "scrollbarH"], ["name", "APLICACION", "prop", "app", 3, "width"], ["ngx-datatable-cell-template", ""], ["name", "ROL", "prop", "rol", 3, "width"], ["name", "DESCRIPCION", "prop", "observacion", 3, "width"], ["name", "ESTATUS", "prop", "estatus", 3, "width"], ["name", "ACCI\u00D3N", 3, "width", "sortable"], [1, "font-weight-bold"], ["class", "badge badge-success", 4, "ngIf"], ["class", "badge badge-danger", 4, "ngIf"], [1, "badge", "badge-success"], [1, "badge", "badge-danger"], ["ngbDropdown", "", "container", "body"], ["ngbDropdownToggle", "", "type", "button", "rippleEffect", "", 1, "btn", "icon-btn", "btn-sm", "hide-arrow"], ["ngbDropdownMenu", ""], ["ngbDropdownItem", "", 3, "click"], [3, "data-feather", "size"], [1, "col-md-12", 2, "margin-top", "25px"], [1, "row"], ["class", "form-group col-md-12", 4, "ngIf"], [1, "form-group", "col-md-4"], [1, "form-label"], ["type", "text", "placeholder", "Ingrese Nombre del Rol", 1, "form-control", 2, "font-size", "14px", 3, "ngModel", "ngModelOptions", "ngModelChange"], [1, "form-group", "col-md-8"], ["for", "origen", 1, "form-label"], ["type", "text", "placeholder", "Breve descripcion del Rol", 1, "form-control", 2, "font-size", "14px", 3, "ngModel", "ngModelOptions", "ngModelChange"], ["multiple", "", 1, "form-control", 2, "height", "150px", 3, "ngModel", "ngModelOptions", "dblclick", "ngModelChange"], [3, "value", 4, "ngFor", "ngForOf"], [1, "col-md-4"], ["align", "right", 1, "form-group", "col-md-4"], ["type", "button", 1, "btn", "btn-primary", 3, "click"], ["aria-hidden", "true", 1, "fa", "fa-arrow-down"], ["align", "right", 1, "col-md-4"], ["type", "button", 1, "btn", "btn-primary", 3, "disabled", "click"], [1, "table"], [4, "ngFor", "ngForOf"], ["align", "right", 1, "col-md-12"], ["type", "button", 1, "btn", "btn-success", 3, "click"], ["aria-hidden", "true", 1, "fa", "fa-save"], ["type", "button", 1, "btn", "btn-warning", 3, "click"], ["aria-hidden", "true", 1, "fa", "fa-trash"], [1, "form-group", "col-md-12"], ["for", "descripcion", 1, "form-label"], ["bindLabel", "name", "bindLabel", "name", "bindValue", "id", "placeholder", "Seleccione Aplicaci\u00F3n", 3, "items", "ngModel", "ngModelOptions", "ngModelChange"], ["type", "text", "placeholder", "Aplicacion", "disabled", "disabled", 1, "form-control", 2, "font-size", "14px", 3, "ngModel", "ngModelOptions", "ngModelChange"], [3, "value"]],
+    consts: [["class", "content-wrapper container-xxl p-0", 4, "blockUI"], [1, "content-wrapper", "container-xxl", "p-0"], [1, "content-body"], [3, "contentHeader"], [1, "invoice-list-wrapper"], [1, "card"], [1, "col-md-12"], ["ngbNav", "", 1, "nav-tabs", "justify-content-center", 3, "activeId", "activeIdChange", "click"], ["navWithIcons", "ngbNav"], [3, "ngbNavItem"], ["ngbNavLink", ""], [3, "data-feather"], ["ngbNavContent", ""], [1, "mt-2", 3, "ngbNavOutlet"], [1, "bootstrap", "core-bootstrap", 3, "rows", "rowHeight", "limit", "columnMode", "headerHeight", "footerHeight", "scrollbarH"], ["name", "APLICACION", "prop", "app", 3, "width"], ["ngx-datatable-cell-template", ""], ["name", "ROL", "prop", "rol", 3, "width"], ["name", "DESCRIPCION", "prop", "observacion", 3, "width"], ["name", "ESTATUS", "prop", "estatus", 3, "width"], ["name", "ACCI\u00D3N", 3, "width", "sortable"], [1, "font-weight-bold"], ["class", "badge badge-success", 4, "ngIf"], ["class", "badge badge-danger", 4, "ngIf"], [1, "badge", "badge-success"], [1, "badge", "badge-danger"], ["ngbDropdown", "", "container", "body"], ["ngbDropdownToggle", "", "type", "button", "rippleEffect", "", 1, "btn", "icon-btn", "btn-sm", "hide-arrow"], ["ngbDropdownMenu", ""], ["ngbDropdownItem", "", 3, "click"], [3, "data-feather", "size"], [1, "col-md-12", 2, "margin-top", "25px"], [1, "row"], ["class", "form-group col-md-12", 4, "ngIf"], [1, "form-group", "col-md-4"], [1, "form-label"], ["type", "text", "placeholder", "Ingrese Nombre del Rol", 1, "form-control", 2, "font-size", "14px", 3, "ngModel", "ngModelOptions", "ngModelChange"], [1, "form-group", "col-md-8"], ["for", "origen", 1, "form-label"], ["type", "text", "placeholder", "Breve descripcion del Rol", 1, "form-control", 2, "font-size", "14px", 3, "ngModel", "ngModelOptions", "ngModelChange"], ["multiple", "", 1, "form-control", 2, "height", "150px", 3, "ngModel", "ngModelOptions", "dblclick", "ngModelChange"], [3, "value", 4, "ngFor", "ngForOf"], ["multiple", "", 1, "form-control", 2, "height", "150px", 3, "ngModel", "ngModelOptions", "click", "dblclick", "ngModelChange"], [1, "col-md-4"], ["align", "right", 1, "form-group", "col-md-4"], ["type", "button", 1, "btn", "btn-primary", 3, "disabled", "click"], ["aria-hidden", "true", 1, "fa", "fa-arrow-down"], ["align", "right", 1, "col-md-4"], ["type", "button", 1, "btn", "btn-primary", 3, "disabled"], [1, "table"], [4, "ngFor", "ngForOf"], ["align", "right", 1, "col-md-12"], ["type", "button", 1, "btn", "btn-success", 3, "click"], ["aria-hidden", "true", 1, "fa", "fa-save"], ["type", "button", 1, "btn", "btn-warning", 3, "click"], ["aria-hidden", "true", 1, "fa", "fa-trash"], [1, "form-group", "col-md-12"], ["for", "descripcion", 1, "form-label"], ["bindLabel", "name", "bindLabel", "name", "bindValue", "id", "placeholder", "Seleccione Aplicaci\u00F3n", 3, "items", "ngModel", "ngModelOptions", "ngModelChange"], ["type", "text", "placeholder", "Aplicacion", "disabled", "disabled", 1, "form-control", 2, "font-size", "14px", 3, "ngModel", "ngModelOptions", "ngModelChange"], [3, "value"]],
     template: function RoleComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵtemplate"](0, RoleComponent_div_0_Template, 20, 8, "div", 0);
@@ -35232,6 +35338,7 @@ class RoleComponent {
       }
     },
     dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_9__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_9__.NgIf, app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_3__.ContentHeaderComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgSelectOption, _angular_forms__WEBPACK_IMPORTED_MODULE_10__["ɵNgSelectMultipleOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.SelectMultipleControlValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgModel, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_7__.DatatableComponent, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_7__.DataTableColumnDirective, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_7__.DataTableColumnCellDirective, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbDropdown, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbDropdownToggle, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbDropdownMenu, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbDropdownItem, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbNavContent, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbNav, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbNavItem, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbNavLink, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbNavOutlet, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_11__.NgSelectComponent, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_4__.RippleEffectDirective, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_5__.FeatherIconDirective, ng_block_ui__WEBPACK_IMPORTED_MODULE_12__["ɵf"]],
+    styles: ["button {\n  height: 38px;\n}"],
     encapsulation: 2
   });
 }
@@ -36555,8 +36662,9 @@ class UserComponent {
         }]
       }
     };
-    this.CargarListaAplicaciones();
-    this.CargarGrupo();
+    this.CargarListaAplicaciones(); // this.CargarGrupo()
+
+    this.iUser.encriptamiento = '1';
   }
 
   selDuracion(e) {
@@ -36590,46 +36698,44 @@ class UserComponent {
         this.activedirectory = false;
         break;
     }
-  }
+  } // async CargarGrupo() {
+  //   this.xAPI.funcion = '_SYS_CBitacoraGrupo'
+  //   this.xAPI.parametros = ''
+  //   await this.apiService.Ejecutar(this.xAPI).subscribe(
+  //     (data) => {
+  //       console.log(data)
+  //     },
+  //     (error) => {
+  //       console.log(error)
+  //     }
+  //   )
+  // }
 
-  CargarGrupo() {
+
+  CargarListaEndPoint() {
     var _this = this;
 
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this.xAPI.funcion = '_SYS_CBitacoraGrupo';
+      _this.lstEndPoint = [];
+      _this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_ENDPOINT;
       _this.xAPI.parametros = '';
       yield _this.apiService.Ejecutar(_this.xAPI).subscribe(data => {
-        console.log(data);
-      }, error => {
-        console.log(error);
-      });
-    })();
-  }
-
-  CargarListaEndPoint() {
-    var _this2 = this;
-
-    return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this2.lstEndPoint = [];
-      _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_ENDPOINT;
-      _this2.xAPI.parametros = '';
-      yield _this2.apiService.Ejecutar(_this2.xAPI).subscribe(data => {
         if (data != undefined && data != null) {
           let ends = data[0].usuariosValidos;
           ends.forEach(e => {
-            _this2.lstEndPoint.push({
+            _this.lstEndPoint.push({
               name: e.endpoint,
               id: e.endpoint
             });
           });
 
-          _this2.lstEndPoint.push({
+          _this.lstEndPoint.push({
             name: "Crear Nuevo",
             id: "CN"
           });
         } else {
-          _this2.bEndPoint = true;
-          _this2.iUser.endpoint = '';
+          _this.bEndPoint = true;
+          _this.iUser.endpoint = '';
         }
       }, error => {
         console.log(error);
@@ -36645,13 +36751,13 @@ class UserComponent {
   }
 
   CargarListaAplicaciones() {
-    var _this3 = this;
+    var _this2 = this;
 
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_APLICACIONES;
-      _this3.xAPI.parametros = '';
-      yield _this3.apiService.Ejecutar(_this3.xAPI).subscribe(data => {
-        _this3.lstAplicacion = data.Cuerpo.map(e => {
+      _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_APLICACIONES;
+      _this2.xAPI.parametros = '';
+      yield _this2.apiService.Ejecutar(_this2.xAPI).subscribe(data => {
+        _this2.lstAplicacion = data.Cuerpo.map(e => {
           e.id = e.identificador + '|' + e.nombre;
           e.name = e.nombre + ' : ' + e.VERSION;
           return e;
@@ -36686,14 +36792,14 @@ class UserComponent {
 
 
   obetnerModulos(apps) {
-    var _this4 = this;
+    var _this3 = this;
 
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      _this4.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_MENU_APP;
-      _this4.xAPI.parametros = `${apps.idapp},${apps.idper}`;
-      _this4.xAPI.valores = '';
-      console.log(_this4.xAPI);
-      yield _this4.apiService.Ejecutar(_this4.xAPI).subscribe(data => {
+      _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_MENU_APP;
+      _this3.xAPI.parametros = `${apps.idapp},${apps.idper}`;
+      _this3.xAPI.valores = '';
+      console.log(_this3.xAPI);
+      yield _this3.apiService.Ejecutar(_this3.xAPI).subscribe(data => {
         let lstMenu = [];
         console.log('menu: ', data);
         data.Cuerpo.forEach(e => {
@@ -36732,7 +36838,7 @@ class UserComponent {
           }
         });
 
-        _this4.obtenerAplicacion(apps, lstMenu);
+        _this3.obtenerAplicacion(apps, lstMenu);
 
         console.log(lstMenu); // return lstMenu
       }, error => {
@@ -36742,13 +36848,13 @@ class UserComponent {
   }
 
   obtenerAplicacion(apps, Menu) {
-    var _this5 = this;
+    var _this4 = this;
 
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let lstApp = []; // let lstrol: any = []
 
       let rol = {
-        descripcion: _this5.xperfil.split('|')[2],
+        descripcion: _this4.xperfil.split('|')[2],
         Menu: Menu
       }; // lstrol.push(rol)
 
@@ -36761,70 +36867,70 @@ class UserComponent {
         comentario: 'Generado por sistema',
         Rol: rol
       };
-      _this5.Aplicacion = xapps;
-      lstApp.push(_this5.Aplicacion);
-      _this5.usuario.Perfil.descripcion = apps.perfil;
-      _this5.usuario.Perfil.traza = apps.traza;
-      _this5.usuario.cedula = _this5.iUser.cedula;
-      _this5.usuario.login = _this5.iUser.login;
-      _this5.usuario.nombre = _this5.iUser.nombre;
-      _this5.usuario.correo = _this5.iUser.correo;
-      _this5.usuario.cargo = _this5.iUser.descripcion;
-      _this5.usuario.endpoint = _this5.iUser.endpoint;
-      _this5.usuario.sucursal = _this5.xoficina;
-      _this5.usuario.direccion = _this5.xregional; // this.usuario.clave = await this.utilservice.generateSHA256Hash(
+      _this4.Aplicacion = xapps;
+      lstApp.push(_this4.Aplicacion);
+      _this4.usuario.Perfil.descripcion = apps.perfil;
+      _this4.usuario.Perfil.traza = apps.traza;
+      _this4.usuario.cedula = _this4.iUser.cedula;
+      _this4.usuario.login = _this4.iUser.login;
+      _this4.usuario.nombre = _this4.iUser.nombre;
+      _this4.usuario.correo = _this4.iUser.correo;
+      _this4.usuario.cargo = _this4.iUser.descripcion;
+      _this4.usuario.endpoint = _this4.iUser.endpoint;
+      _this4.usuario.sucursal = _this4.xoficina;
+      _this4.usuario.direccion = _this4.xregional; // this.usuario.clave = await this.utilservice.generateSHA256Hash(
       //   this.iUser.clave
       // )
 
-      console.log('Entrando en clave', _this5.iUser.clave);
+      console.log('Entrando en clave', _this4.iUser.clave);
 
-      if (_this5.iUser.clave != '') {
-        yield _this5.sha256.hash(_this5.iUser.clave).then(hash => {
-          console.log(hash);
-          _this5.usuario.clave = hash;
+      if (_this4.iUser.clave != '') {
+        yield _this4.sha256.hash(_this4.iUser.clave).then(hash => {
+          // console.log(this.usuario.clave, '::', this.iUser.clave, hash)
+          _this4.usuario.clave = hash;
         });
       }
 
-      console.log(_this5.iUser, 'Imprimiendo Usuario');
+      console.log(_this4.iUser, 'Imprimiendo Usuario');
       let firma = {
-        vigencia: _this5.iUser.vigencia,
-        duracion: _this5.iUser.duraciontiempo * _this5.iUser.duraciontexto,
+        vigencia: _this4.iUser.vigencia,
+        duracion: _this4.iUser.duraciontiempo * _this4.iUser.duraciontexto,
         direccionmac: '',
         direccionip: '',
         tiempo: new Date().toISOString(),
         nivel: parseInt(apps.idtra)
       };
-      _this5.usuario.firmadigital = firma;
-      _this5.usuario.sistema = apps.aplicacion; //this.xaplicacion.split('|')[1].toString()
+      _this4.usuario.firmadigital = firma;
+      _this4.usuario.sistema = apps.aplicacion; //this.xaplicacion.split('|')[1].toString()
 
-      _this5.usuario.Aplicacion = lstApp;
-      console.log(_this5.usuario);
+      _this4.usuario.Aplicacion = lstApp;
+      console.log(_this4.usuario);
     })();
   }
 
   agregarAplicacion() {
-    var _this6 = this;
+    var _this5 = this;
 
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let app = {};
 
-      if (_this6.xaplicacion == '' || _this6.xperfil == '' || _this6.xtraza == undefined) {
-        _this6.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000);
+      if (_this5.xaplicacion == '' || _this5.xperfil == '' || _this5.xtraza == undefined) {
+        _this5.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000);
 
         return false;
       }
 
-      _this6.lstAplicacion.forEach(e => {
-        if (e.id == _this6.xaplicacion) {
+      _this5.lstAplicacion.forEach(e => {
+        if (e.id == _this5.xaplicacion) {
           app = {
             id: e.id,
             iduser: 0,
-            idapp: _this6.xaplicacion.split('|')[0],
-            aplicacion: _this6.xaplicacion.split('|')[1],
-            idper: _this6.xperfil.split('|')[0],
-            perfil: _this6.xperfil.split('|')[1],
-            idtra: _this6.xtraza.split('|')[0],
-            traza: _this6.xtraza.split('|')[1],
+            idapp: _this5.xaplicacion.split('|')[0],
+            aplicacion: _this5.xaplicacion.split('|')[1],
+            idper: _this5.xperfil.split('|')[0],
+            perfil: _this5.xperfil.split('|')[1],
+            idtra: _this5.xtraza.split('|')[0],
+            traza: _this5.xtraza.split('|')[1],
             estatus: 1,
             repositorio: e.repositorio,
             version: e.VERSION,
@@ -36835,10 +36941,10 @@ class UserComponent {
         }
       });
 
-      _this6.lstUsersApp.push(app); // console.log(this.lstUsersApp)
+      _this5.lstUsersApp.push(app); // console.log(this.lstUsersApp)
 
 
-      _this6.dataUsers = _this6.lstUsersApp;
+      _this5.dataUsers = _this5.lstUsersApp;
     })();
   }
 
@@ -36851,12 +36957,12 @@ class UserComponent {
   eliminarPerfil() {}
 
   agregarUsuario() {
-    var _this7 = this;
+    var _this6 = this;
 
     return (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
-      yield _this7.lstUsersApp.forEach( /*#__PURE__*/function () {
+      yield _this6.lstUsersApp.forEach( /*#__PURE__*/function () {
         var _ref = (0,_Users_macbook_dev_angular_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (e) {
-          yield _this7.obetnerModulos(e);
+          yield _this6.obetnerModulos(e);
         });
 
         return function (_x) {
@@ -36874,7 +36980,7 @@ class UserComponent {
         cancelButtonText: 'Cancelar'
       }).then(result => {
         if (result.isConfirmed) {
-          _this7.ok();
+          _this6.ok();
         }
       });
     })();
@@ -36887,17 +36993,32 @@ class UserComponent {
       donde: `{"cedula":"${this.usuario.cedula}"}`,
       driver: 'MGDBA',
       upsert: true
-    }; // console.log(fnx) 
-
+    };
+    console.log(this.usuario);
     this.apiService.ExecColeccion(fnx).subscribe(data => {
       console.log(data);
       this.lstPerfil = [];
       this.xaplicacion = '';
       this.xperfil = '';
-      this.utilservice.AlertMini('top-end', 'success', `Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`, 3000);
-      this.limpiar();
+      this.finalizando();
     }, error => {
-      this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000); // console.log(error)
+      this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000);
+    });
+  }
+
+  finalizando() {
+    sweetalert2__WEBPACK_IMPORTED_MODULE_2___default().fire({
+      title: 'Registrado',
+      text: 'Tu usuario ha sido registrado codigo:',
+      icon: 'info',
+      showCancelButton: false,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#C81D11',
+      confirmButtonText: 'Aceptar'
+    }).then(result => {
+      if (result.isConfirmed) {
+        this.limpiar();
+      }
     });
   }
 
@@ -36959,6 +37080,7 @@ class UserComponent {
       }
     },
     dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_13__.NgIf, app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_7__.ContentHeaderComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_14__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_14__.NumberValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_14__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_14__.NgModel, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdown, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdownToggle, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdownMenu, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdownItem, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_15__.NgSelectComponent, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_8__.RippleEffectDirective, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_9__.FeatherIconDirective, ng_block_ui__WEBPACK_IMPORTED_MODULE_16__["ɵf"]],
+    styles: ["button {\n  height: 38px;\n}"],
     encapsulation: 2
   });
 }
@@ -46682,7 +46804,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'ID-001',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Tue May 06 2025 18:57:24 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Fri May 09 2025 08:57:08 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

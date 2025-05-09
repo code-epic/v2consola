@@ -10,7 +10,8 @@
 
                 <div class="col-md-12 ">
                     <br>
-                    <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+                    <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
+                        class="nav-tabs justify-content-center">
                         <li [ngbNavItem]="1">
                             <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Rol's</a>
                             <ng-template ngbNavContent>
@@ -67,8 +68,8 @@
                                                                 [data-feather]="'edit'" [size]="16"
                                                                 [class]="'mr-50'"></span> Editar</a>
                                                         <a (click)="eliminarRol(row)" ngbDropdownItem><span
-                                                            [data-feather]="'trash'" [size]="16"
-                                                            [class]="'mr-50'"></span> Eliminar</a>
+                                                                [data-feather]="'trash'" [size]="16"
+                                                                [class]="'mr-50'"></span> Eliminar</a>
                                                     </div>
                                                 </div>
                                             </ng-template>
@@ -100,7 +101,7 @@
                                         </div>
 
                                         <div class="form-group col-md-12" *ngIf="!blApp">
-                                            <label class="form-label" >Aplicacion</label>
+                                            <label class="form-label">Aplicacion</label>
                                             <input style="font-size:14px;" [(ngModel)]="xaplicacion"
                                                 [ngModelOptions]="{standalone: true}" type="text"
                                                 placeholder="Aplicacion" class="form-control" disabled="disabled">
@@ -126,6 +127,7 @@
                                         <div class="form-group col-md-4">
                                             <label class="form-label" for="origen">Modulo</label>
                                             <select multiple class="form-control" style="height: 150px;"
+                                            
                                                 (dblclick)="selectEventModulo($event)" [(ngModel)]="xmodulo"
                                                 [ngModelOptions]="{standalone: true}">
                                                 <option *ngFor="let e of dataModulo" value="{{e.id + '|' + e.name}}">
@@ -136,6 +138,7 @@
                                         <div class="form-group col-md-4">
                                             <label class="form-label" for="origen">Menu</label>
                                             <select multiple class="form-control" style="height: 150px;"
+                                                (click)="this.bmenus = true"
                                                 (dblclick)="listarAcciones()" [(ngModel)]="menu"
                                                 [ngModelOptions]="{standalone: true}">
                                                 <option *ngFor="let e of datamenu" value="{{e.id + '|' + e.name}}">
@@ -156,12 +159,12 @@
 
                                         <div class="col-md-4"></div>
                                         <div class="form-group col-md-4" align="right">
-                                            <button type="button" class="btn btn-primary" (click)="addMenuList()">
-                                                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar Menu
+                                            <button type="button" class="btn btn-primary" [disabled]="!bmenus" (click)="addMenuList()">
+                                                <i class="fa fa-arrow-down"  aria-hidden="true"></i>&nbsp;Agregar Menu
                                             </button>
                                         </div>
-                                        <div class="col-md-4"  align="right">
-                                            <button type="button" [disabled]="!acciones" class="btn btn-primary" (click)="addMenuList()">
+                                        <div class="col-md-4" align="right">
+                                            <button type="button" [disabled]="!acciones" class="btn btn-primary">
                                                 <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar Acciones
                                             </button>
                                         </div>

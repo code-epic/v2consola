@@ -58,7 +58,7 @@ export class RoleComponent implements OnInit {
 
   public estatus = undefined
 
-  public aplicacion : any 
+  public aplicacion: any
   public xaplicacion = ''
   public xmodulo
   public menu
@@ -84,16 +84,19 @@ export class RoleComponent implements OnInit {
   public lstAplicaciones = []
   public dataModulo = []
   public showDiv: boolean = false
-  public datamenu = [] 
+  public datamenu = []
   public xaccion = ""
 
 
   @ViewChild('tableRowDetails') tableRowDetails: any;
   public ColumnMode = ColumnMode;
   public chkBoxSelected = [];
-  active:any = 1;
 
-  public blApp : boolean = true
+  active: any = 1
+
+  public blApp: boolean = true
+  public bmenus : boolean = false
+  public acciones: boolean = false
 
 
   constructor(
@@ -151,6 +154,18 @@ export class RoleComponent implements OnInit {
     )
   }
 
+  selTab(e) {
+    console.log(e)
+    if (this.active == 2) {
+      this.blApp = true
+      this.rowData = []
+      this.Rol.descripcion = ''
+      this.Rol.nombre = ''
+    } else {
+      this.registrar = "Registrar nuevo rol"
+    }
+  }
+
   selModulo(event: any): void {
     // console.log(event)
     this.xAPI.funcion = "LstModulos";
@@ -189,63 +204,54 @@ export class RoleComponent implements OnInit {
 
 
   selectEventModulo(item) {
+    
     this.consultarMenu(this.xmodulo[0].split('|')[0])
+    
   }
 
 
-  addMenuList(){
-    this.menu.forEach(e => {
-      let i = 0
-      let id = e.split('|')[0]
-      
-      this.datamenu.forEach(x => {
-        i++
-        if(parseInt(x.id) == id){
-          let dt = {
-            "idmod": e.split('|')[0],
-            "modulo": e.split('|')[1],
-            "idmenu": x.id,
-            "menu": x.nomb,
-            "accid": '',
-            "accion": ''
-          };
-          this.lista.push(dt)
-          this.rowData = this.lista
-          this.temprowData = this.rowData
-        }
+  addMenuList() {
+   
+    if (this.menu.length > 0) {
+      let idmodulo =  this.xmodulo[0].split('|')[0]
+      let descripcion_modulo = this.xmodulo[0].split('|')[1]
+      this.menu.forEach(e => {
         
+        let i = 0
+        let eliminar = 0
+        let id = e.split('|')[0]
+
+        this.datamenu.forEach(x => {
+
+          if (parseInt(x.id) == id) {
+            let dt = {
+              "idmod": idmodulo,
+              "modulo": descripcion_modulo,
+              "idmenu": x.id,
+              "menu": x.nomb,
+              "accid": '',
+              "accion": ''
+            };
+            this.lista.push(dt)
+            this.rowData = this.lista
+            this.temprowData = this.rowData
+            eliminar = i
+          }
+          i++
+
+        })
+
+        this.datamenu.splice(eliminar, 1)
+
       })
-      console.log(i)
-      this.datamenu.splice(i, 1)
-     
-    })
-
+    }
 
 
   }
 
-  addMenuXXX(){
-    this.datamenu.forEach(e => {
-      let dt = {
-        "idmod": this.xmodulo[0].split('|')[0],
-        "modulo": this.xmodulo[0].split('|')[1],
-        "idmenu": e.id,
-        "menu": e.nomb,
-        "accid": '',
-        "accion": ''
-      };
-      this.lista.push(dt)
-      this.rowData = this.lista
-      this.temprowData = this.rowData
-    })
 
-    this.datamenu = []
-
-  }
 
   async listarAcciones() {
-
-    // console.log(this.menu[0])
     this.rowDataAcc = []
     this.xAPI.funcion = "OMenuAccion"
     this.xAPI.parametros = this.menu[0].split('|')[0]
@@ -253,9 +259,9 @@ export class RoleComponent implements OnInit {
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         console.log(data)
-        if(data.Cuerpo.length > 0 ){
+        if (data.Cuerpo.length > 0) {
           this.rowDataAcc = data.Cuerpo;
-        }else{
+        } else {
           let e = {
             "idmod": this.xmodulo[0].split('|')[0],
             "modulo": this.xmodulo[0].split('|')[1],
@@ -267,10 +273,10 @@ export class RoleComponent implements OnInit {
           this.lista.push(e);
           this.rowData = this.lista;
           this.temprowData = this.rowData;
-      
-          
+
+
         }
-        
+
       },
       (error) => {
         console.log(error)
@@ -322,11 +328,12 @@ export class RoleComponent implements OnInit {
 
   guardarRol() {
 
-    
-    if ( this.Rol.nombre == "" || this.lista.length == 0 || this.aplicacion == undefined) {
+
+    if (this.Rol.nombre == "" || this.lista.length == 0 || this.aplicacion == undefined) {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
       return false
     }
+    // console.log(this.lista)
     this.xAPI.funcion = '_SYS_IRolDefinicion'
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.Rol)
@@ -359,11 +366,8 @@ export class RoleComponent implements OnInit {
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(data)
 
-    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       data => {
-        // console.log(data)
-        // console.log(posicion, this.lista.length)
         posicion++
         if (posicion > this.lista.length - 1) {
           this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
@@ -378,6 +382,8 @@ export class RoleComponent implements OnInit {
           this.datamenu = []
           this.xaccion = ''
           this.rowDataAcc = []
+          this.listarRoles()
+          this.active = 1
         } else {
           this.insertBach(idrol, posicion)
         }
@@ -392,31 +398,33 @@ export class RoleComponent implements OnInit {
   }
 
 
-  editarRol(row){
+  editarRol(row) {
 
-    console.log(row)
+    // console.log(row)
 
     this.xAPI.funcion = '_SYS_CRolEditar'
     this.xAPI.parametros = row.idrol
     this.xAPI.valores = ''
     this.rowData = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
+      data => {
         let idAPP = ""
+        console.log(data)
 
         this.registrar = 'Editar rol'
         this.rowData = data.Cuerpo.map(e => {
           this.Rol.descripcion = e.observacion
           this.Rol.nombre = e.rol
           idAPP = e.idapp
-          e.idmod =  e.idmod
+          e.idmod = e.idmod
           e.modulo = e.modulo
-          e.idmenu =  e.idmenu
+          e.idmenu = e.idmenu
           e.menu = e.menu
           e.accid = e.accid
           e.accion = e.accion
           return e
         })
+
         this.lista = this.rowData
         this.blApp = false
         this.aplicacion = this.lstAplicaciones.find(item => item.id == idAPP);
@@ -432,7 +440,7 @@ export class RoleComponent implements OnInit {
 
   }
 
-  eliminarRol(){
+  eliminarRol() {
 
   }
 

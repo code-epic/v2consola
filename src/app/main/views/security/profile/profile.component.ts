@@ -227,12 +227,16 @@ export class ProfileComponent implements OnInit {
   }
 
   iniciarLista() {
+    // console.log(this.dataRolDetalles)
     if (this.SelectOn.length == 0) {
       this.lista = this.dataRolDetalles.map((e) => {
         e.estatus = 0
         return e
       })
     } else {
+
+      // console.log(this.SelectOn)
+
       this.lista = this.dataRolDetalles.map((e) => {
         let estatus = this.SelectOn.find((el) => {
           return el.xaccion == e.xaccion && el.xmenu == e.xmenu
@@ -240,11 +244,13 @@ export class ProfileComponent implements OnInit {
         e.estatus = estatus != undefined ? 1 : 0
         return e
       })
+      
     }
   }
 
   guardarPerfil() {
     this.iniciarLista()
+    
     if (
       this.Perfil.nombre == "" ||
       this.lista.length == 0 ||
@@ -263,8 +269,11 @@ export class ProfileComponent implements OnInit {
     this.xAPI.valores = JSON.stringify(this.Perfil)
 
     // console.log(this.xAPI)
+    // 
+    // this.insertBach('Testing', 0)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        this.lista = this.lista.filter(e => e.estatus==1)
         this.insertBach(data.msj, 0)
       },
       (error) => {
@@ -274,44 +283,46 @@ export class ProfileComponent implements OnInit {
   }
 
   insertBach(idperfil, posicion) {
-   
-    let data = {
-      aplicacion: this.Perfil.aplicacion,
-      perfil: idperfil,
-      rol: this.rol,
-      modulo: parseInt(this.lista[posicion].xmodulo),
-      menu: parseInt(this.lista[posicion].xmenu),
-      accion: parseInt(this.lista[posicion].xaccion),
-      estatus: parseInt(this.lista[posicion].estatus),
-    }
-    console.log(data)
-    this.xAPI.funcion = environment.functions.INSERTAR_PERFIL_DETALLE
-    this.xAPI.parametros = ''
-    this.xAPI.valores = JSON.stringify(data)
+    if ( posicion >= this.lista.length  ) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "success",
+        "Finalizo con éxito",
+        3000
+      )
+      this.dataRolDetalles = []
+      this.Perfil.nombre = ''
+      this.Perfil.descripcion = ''
+      this.listarPerfiles()
+    }else{
 
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-
-        if ( posicion >= this.lista.filter((item) => item.estatus === 1).length - 1  ) {
-          this.utilservice.AlertMini(
-            "top-end",
-            "success",
-            "Finalizo con éxito",
-            3000
-          )
-          this.dataRolDetalles = []
-          this.Perfil.nombre = ''
-          this.Perfil.descripcion = ''
-          this.listarPerfiles()
-        } else {
-          posicion++
-          this.insertBach(idperfil, posicion)
-        }
-      },
-      (error) => {
-        console.error("Data: ", error)
+      let data = {
+        aplicacion: this.Perfil.aplicacion,
+        perfil: idperfil,
+        rol: this.rol,
+        modulo: parseInt(this.lista[posicion].xmodulo),
+        menu: parseInt(this.lista[posicion].xmenu),
+        accion: parseInt(this.lista[posicion].xaccion),
+        estatus: 1,
       }
-    )
+
+      // posicion++
+      // console.log(data)
+      // this.insertBach(idperfil, posicion)
+      this.xAPI.funcion = environment.functions.INSERTAR_PERFIL_DETALLE
+      this.xAPI.parametros = ''
+      this.xAPI.valores = JSON.stringify(data)
+
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+            posicion++
+            this.insertBach(idperfil, posicion)
+        },
+        (error) => {
+          console.error("Data: ", error)
+        }
+      )
+    }
   }
 
   async listarAcciones() {
