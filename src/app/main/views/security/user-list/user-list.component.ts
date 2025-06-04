@@ -3,6 +3,7 @@ import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ColumnMode, DatatableComponent, SelectionType, } from "@swimlane/ngx-datatable";
 import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { PdfService } from '@services/pdf/pdf.service';
 
 @Component({
   selector: 'app-user-list',
@@ -56,7 +57,8 @@ export class UserListComponent implements OnInit {
 
 
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private pdf: PdfService,
   ) { }
 
   async ngOnInit() {
@@ -119,6 +121,10 @@ export class UserListComponent implements OnInit {
 
   EliminarUser(event: any){
     console.log(event)
+  }
+
+    ListadoUsers() {
+    this.pdf.ListadoDeUsers(this.rowData)
   }
 
 }
