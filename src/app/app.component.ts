@@ -69,10 +69,10 @@ export class AppComponent implements OnInit, OnDestroy {
       // this.setupProtection();
     
       // Detectar cuando las herramientas ya estaban abiertas al cargar la página
-      if (window.outerWidth - window.innerWidth > 160 || 
-        window.outerHeight - window.innerHeight > 160) {
-        this.handleDevToolsOpened();
-      }
+      // if (window.outerWidth - window.innerWidth > 160 || 
+      //   window.outerHeight - window.innerHeight > 160) {
+      //   this.handleDevToolsOpened();
+      // }
     }
 
     this.Menu = undefined;

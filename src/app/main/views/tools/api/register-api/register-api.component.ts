@@ -88,6 +88,7 @@ export class RegisterApiComponent implements OnInit {
     cache: 0,
     logs: false,
     concurrencia: false,
+    inclusionjwt: false,
     retorna: false,
     prioridad: "0",
     entorno: "desarrollo",
@@ -214,6 +215,7 @@ export class RegisterApiComponent implements OnInit {
     { id: false, name: "NO" },
   ];
 
+
   public concurrente = [
     { id: true, name: "SI" },
     { id: false, name: "NO" },
@@ -223,6 +225,12 @@ export class RegisterApiComponent implements OnInit {
     { id: true, name: "SI" },
     { id: false, name: "NO" },
   ];
+  
+  public inclusionjwt = [
+    { id: true, name: "SI" },
+    { id: false, name: "NO" },
+  ];
+
 
   public retorn = [
     { id: 1, name: "BOOL", descripcion: "LOGICO" },
@@ -441,6 +449,8 @@ export class RegisterApiComponent implements OnInit {
       upsert: true,
     };
 
+    
+
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
         this.router.navigate([
@@ -499,6 +509,8 @@ export class RegisterApiComponent implements OnInit {
     };
     let sApi = "crud";
     this.xAPI = {};
+    // console.log(jsonG)
+    // console.log(this.xAPIDB)
     await this.apiService.Guardar(jsonG, sApi).subscribe(
       (data) => {
         this.router.navigate([

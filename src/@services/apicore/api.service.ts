@@ -118,6 +118,7 @@ export interface IAPI {
   logs: boolean;
   concurrencia: boolean;
   retorna: boolean;
+  inclusionjwt: boolean;
   // tiempo de duracion
   //  tipo de duracion
   prioridad: string;
@@ -132,6 +133,7 @@ export interface IAPI {
   bitacora: number;
   respaldo: number;
   puente?: string;
+  
 }
 
 export interface WkfEstatus {

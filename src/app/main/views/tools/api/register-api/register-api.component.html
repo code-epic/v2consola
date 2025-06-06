@@ -408,6 +408,7 @@
                     <ng-select [items]="waf" [(ngModel)]="xAPIDB.accion" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindValue="id" placeholder="Seleccione Aplicar Waf"></ng-select>
                   </div>
+                  
                 </div>
 
                 <div class="row">
@@ -427,6 +428,13 @@
                     <label class="form-label" for="estatus">Estatus</label>
                     <ng-select [items]="estatus" [(ngModel)]="xAPIDB.estatus" [ngModelOptions]="{standalone: true}"
                       bindLabel="name" bindValue="id" placeholder="Seleccione Estatus"></ng-select>
+                  </div>
+                  
+                  <div class="form-group col-md-3">
+                    <label class="form-label" for="inclusionjwt">Inclusion JWT</label>
+                    <ng-select [items]="inclusionjwt" [(ngModel)]="xAPIDB.inclusionjwt"
+                      [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Inclusion JWT"></ng-select>
                   </div>
                 </div>
 
