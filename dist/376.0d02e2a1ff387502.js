@@ -15,25 +15,25 @@ function deepFreeze(obj) {
     obj.add = obj.clear = obj.delete = function () {
       throw new Error('set is read-only');
     };
-  }
+  } // Freeze self
 
-  // Freeze self
+
   Object.freeze(obj);
   Object.getOwnPropertyNames(obj).forEach(function (name) {
-    var prop = obj[name];
+    var prop = obj[name]; // Freeze prop if it is an object
 
-    // Freeze prop if it is an object
     if (typeof prop == 'object' && !Object.isFrozen(prop)) {
       deepFreeze(prop);
     }
   });
   return obj;
 }
+
 var deepFreezeEs6 = deepFreeze;
 var _default = deepFreeze;
 deepFreezeEs6.default = _default;
-
 /** @implements CallbackResponse */
+
 class Response {
   /**
    * @param {CompiledMode} mode
@@ -44,19 +44,21 @@ class Response {
     this.data = mode.data;
     this.isMatchIgnored = false;
   }
+
   ignoreMatch() {
     this.isMatchIgnored = true;
   }
-}
 
+}
 /**
  * @param {string} value
  * @returns {string}
  */
+
+
 function escapeHTML(value) {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
 }
-
 /**
  * performs a shallow merge of multiple objects into one
  *
@@ -65,20 +67,26 @@ function escapeHTML(value) {
  * @param {Record<string,any>[]} objects
  * @returns {T} a single new object
  */
+
+
 function inherit(original, ...objects) {
   /** @type Record<string,any> */
   const result = Object.create(null);
+
   for (const key in original) {
     result[key] = original[key];
   }
+
   objects.forEach(function (obj) {
     for (const key in obj) {
       result[key] = obj[key];
     }
   });
-  return /** @type {T} */result;
+  return (
+    /** @type {T} */
+    result
+  );
 }
-
 /**
  * @typedef {object} Renderer
  * @property {(text: string) => void} addText
@@ -88,20 +96,24 @@ function inherit(original, ...objects) {
  */
 
 /** @typedef {{kind?: string, sublanguage?: boolean}} Node */
+
 /** @typedef {{walk: (r: Renderer) => void}} Tree */
+
 /** */
 
-const SPAN_CLOSE = '</span>';
 
+const SPAN_CLOSE = '</span>';
 /**
  * Determines if a node needs to be wrapped in <span>
  *
  * @param {Node} node */
+
 const emitsWrappingTags = node => {
   return !!node.kind;
 };
-
 /** @type {Renderer} */
+
+
 class HTMLRenderer {
   /**
    * Creates a new HTMLRenderer
@@ -114,58 +126,67 @@ class HTMLRenderer {
     this.classPrefix = options.classPrefix;
     parseTree.walk(this);
   }
-
   /**
    * Adds texts to the output stream
    *
    * @param {string} text */
+
+
   addText(text) {
     this.buffer += escapeHTML(text);
   }
-
   /**
    * Adds a node open to the output stream (if needed)
    *
    * @param {Node} node */
+
+
   openNode(node) {
     if (!emitsWrappingTags(node)) return;
     let className = node.kind;
+
     if (!node.sublanguage) {
       className = `${this.classPrefix}${className}`;
     }
+
     this.span(className);
   }
-
   /**
    * Adds a node close to the output stream (if needed)
    *
    * @param {Node} node */
+
+
   closeNode(node) {
     if (!emitsWrappingTags(node)) return;
     this.buffer += SPAN_CLOSE;
   }
-
   /**
    * returns the accumulated buffer
   */
+
+
   value() {
     return this.buffer;
-  }
-
-  // helpers
+  } // helpers
 
   /**
    * Builds a span element
    *
    * @param {string} className */
+
+
   span(className) {
     this.buffer += `<span class="${className}">`;
   }
-}
 
+}
 /** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} | string} Node */
+
 /** @typedef {{kind?: string, sublanguage?: boolean, children: Node[]} } DataNode */
+
 /**  */
+
 
 class TokenTree {
   constructor() {
@@ -175,19 +196,23 @@ class TokenTree {
     };
     this.stack = [this.rootNode];
   }
+
   get top() {
     return this.stack[this.stack.length - 1];
   }
+
   get root() {
     return this.rootNode;
   }
-
   /** @param {Node} node */
+
+
   add(node) {
     this.top.children.push(node);
   }
-
   /** @param {string} kind */
+
+
   openNode(kind) {
     /** @type Node */
     const node = {
@@ -197,35 +222,40 @@ class TokenTree {
     this.add(node);
     this.stack.push(node);
   }
+
   closeNode() {
     if (this.stack.length > 1) {
       return this.stack.pop();
-    }
-    // eslint-disable-next-line no-undefined
+    } // eslint-disable-next-line no-undefined
+
+
     return undefined;
   }
+
   closeAllNodes() {
     while (this.closeNode());
   }
+
   toJSON() {
     return JSON.stringify(this.rootNode, null, 4);
   }
-
   /**
    * @typedef { import("./html_renderer").Renderer } Renderer
    * @param {Renderer} builder
    */
+
+
   walk(builder) {
     // this does not
-    return this.constructor._walk(builder, this.rootNode);
-    // this works
+    return this.constructor._walk(builder, this.rootNode); // this works
     // return TokenTree._walk(builder, this.rootNode);
   }
-
   /**
    * @param {Renderer} builder
    * @param {Node} node
    */
+
+
   static _walk(builder, node) {
     if (typeof node === "string") {
       builder.addText(node);
@@ -234,15 +264,18 @@ class TokenTree {
       node.children.forEach(child => this._walk(builder, child));
       builder.closeNode(node);
     }
+
     return builder;
   }
-
   /**
    * @param {Node} node
    */
+
+
   static _collapse(node) {
     if (typeof node === "string") return;
     if (!node.children) return;
+
     if (node.children.every(el => typeof el === "string")) {
       // node.text = node.children.join("");
       // delete node.children;
@@ -253,8 +286,8 @@ class TokenTree {
       });
     }
   }
-}
 
+}
 /**
   Currently this is all private API, but this is the minimal API necessary
   that an Emitter must implement to fully support the parser.
@@ -275,6 +308,8 @@ class TokenTree {
 /**
  * @implements {Emitter}
  */
+
+
 class TokenTreeEmitter extends TokenTree {
   /**
    * @param {*} options
@@ -283,34 +318,39 @@ class TokenTreeEmitter extends TokenTree {
     super();
     this.options = options;
   }
-
   /**
    * @param {string} text
    * @param {string} kind
    */
+
+
   addKeyword(text, kind) {
     if (text === "") {
       return;
     }
+
     this.openNode(kind);
     this.addText(text);
     this.closeNode();
   }
-
   /**
    * @param {string} text
    */
+
+
   addText(text) {
     if (text === "") {
       return;
     }
+
     this.add(text);
   }
-
   /**
    * @param {Emitter & {root: DataNode}} emitter
    * @param {string} name
    */
+
+
   addSublanguage(emitter, name) {
     /** @type DataNode */
     const node = emitter.root;
@@ -318,42 +358,47 @@ class TokenTreeEmitter extends TokenTree {
     node.sublanguage = true;
     this.add(node);
   }
+
   toHTML() {
     const renderer = new HTMLRenderer(this, this.options);
     return renderer.value();
   }
+
   finalize() {
     return true;
   }
-}
 
+}
 /**
  * @param {string} value
  * @returns {RegExp}
  * */
+
+
 function escape(value) {
   return new RegExp(value.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&'), 'm');
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function source(re) {
   if (!re) return null;
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -361,48 +406,52 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /**
  * @param {RegExp} re
  * @returns {number}
  */
+
+
 function countMatchGroups(re) {
   return new RegExp(re.toString() + '|').exec('').length - 1;
 }
-
 /**
  * Does lexeme start with a regular expression match at the beginning
  * @param {RegExp} re
  * @param {string} lexeme
  */
+
+
 function startsWith(re, lexeme) {
   const match = re && re.exec(lexeme);
   return match && match.index === 0;
-}
-
-// BACKREF_RE matches an open parenthesis or backreference. To avoid
+} // BACKREF_RE matches an open parenthesis or backreference. To avoid
 // an incorrect parse, it additionally matches the following:
 // - [...] elements, where the meaning of parentheses and escapes change
 // - other escape sequences, so we do not misparse escape sequences as
 //   interesting elements
 // - non-matching or lookahead parentheses, which do not capture. These
 //   follow the '(' with a '?'.
-const BACKREF_RE = /\[(?:[^\\\]]|\\.)*\]|\(\??|\\([1-9][0-9]*)|\\./;
 
-// join logically computes regexps.join(separator), but fixes the
+
+const BACKREF_RE = /\[(?:[^\\\]]|\\.)*\]|\(\??|\\([1-9][0-9]*)|\\./; // join logically computes regexps.join(separator), but fixes the
 // backreferences so they continue to match.
 // it also places each individual regular expression into it's own
 // match group, keeping track of the sequencing of those match groups
 // is currently an exercise for the caller. :-)
+
 /**
  * @param {(string | RegExp)[]} regexps
  * @param {string} separator
  * @returns {string}
  */
+
 function join(regexps, separator = "|") {
   let numCaptures = 0;
   return regexps.map(regex => {
@@ -410,58 +459,69 @@ function join(regexps, separator = "|") {
     const offset = numCaptures;
     let re = source(regex);
     let out = '';
+
     while (re.length > 0) {
       const match = BACKREF_RE.exec(re);
+
       if (!match) {
         out += re;
         break;
       }
+
       out += re.substring(0, match.index);
       re = re.substring(match.index + match[0].length);
+
       if (match[0][0] === '\\' && match[1]) {
         // Adjust the backreference.
         out += '\\' + String(Number(match[1]) + offset);
       } else {
         out += match[0];
+
         if (match[0] === '(') {
           numCaptures++;
         }
       }
     }
+
     return out;
   }).map(re => `(${re})`).join(separator);
-}
+} // Common regexps
 
-// Common regexps
+
 const MATCH_NOTHING_RE = /\b\B/;
 const IDENT_RE = '[a-zA-Z]\\w*';
 const UNDERSCORE_IDENT_RE = '[a-zA-Z_]\\w*';
 const NUMBER_RE = '\\b\\d+(\\.\\d+)?';
 const C_NUMBER_RE = '(-?)(\\b0[xX][a-fA-F0-9]+|(\\b\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)'; // 0x..., 0..., decimal, float
-const BINARY_NUMBER_RE = '\\b(0b[01]+)'; // 0b...
-const RE_STARTERS_RE = '!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~';
 
+const BINARY_NUMBER_RE = '\\b(0b[01]+)'; // 0b...
+
+const RE_STARTERS_RE = '!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|-|-=|/=|/|:|;|<<|<<=|<=|<|===|==|=|>>>=|>>=|>=|>>>|>>|>|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~';
 /**
 * @param { Partial<Mode> & {binary?: string | RegExp} } opts
 */
+
 const SHEBANG = (opts = {}) => {
   const beginShebang = /^#![ ]*\//;
+
   if (opts.binary) {
     opts.begin = concat(beginShebang, /.*\b/, opts.binary, /\b.*/);
   }
+
   return inherit({
     className: 'meta',
     begin: beginShebang,
     end: /$/,
     relevance: 0,
+
     /** @type {ModeCallback} */
     "on:begin": (m, resp) => {
       if (m.index !== 0) resp.ignoreMatch();
     }
   }, opts);
-};
+}; // Common modes
 
-// Common modes
+
 const BACKSLASH_ESCAPE = {
   begin: '\\\\[\\s\\S]',
   relevance: 0
@@ -491,6 +551,7 @@ const PHRASAL_WORDS_MODE = {
  * @param {Mode | {}} [modeOptions]
  * @returns {Partial<Mode>}
  */
+
 const COMMENT = function (begin, end, modeOptions = {}) {
   const mode = inherit({
     className: 'comment',
@@ -506,6 +567,7 @@ const COMMENT = function (begin, end, modeOptions = {}) {
   });
   return mode;
 };
+
 const C_LINE_COMMENT_MODE = COMMENT('//', '$');
 const C_BLOCK_COMMENT_MODE = COMMENT('/\\*', '\\*/');
 const HASH_COMMENT_MODE = COMMENT('#', '$');
@@ -565,7 +627,6 @@ const METHOD_GUARD = {
   begin: '\\.\\s*' + UNDERSCORE_IDENT_RE,
   relevance: 0
 };
-
 /**
  * Adds end same as begin mechanics to a mode
  *
@@ -573,18 +634,21 @@ const METHOD_GUARD = {
  * group is what is used for comparison
  * @param {Partial<Mode>} mode
  */
+
 const END_SAME_AS_BEGIN = function (mode) {
   return Object.assign(mode, {
     /** @type {ModeCallback} */
     'on:begin': (m, resp) => {
       resp.data._beginMatch = m[1];
     },
+
     /** @type {ModeCallback} */
     'on:end': (m, resp) => {
       if (resp.data._beginMatch !== m[1]) resp.ignoreMatch();
     }
   });
 };
+
 var MODES = /*#__PURE__*/Object.freeze({
   __proto__: null,
   MATCH_NOTHING_RE: MATCH_NOTHING_RE,
@@ -612,23 +676,18 @@ var MODES = /*#__PURE__*/Object.freeze({
   UNDERSCORE_TITLE_MODE: UNDERSCORE_TITLE_MODE,
   METHOD_GUARD: METHOD_GUARD,
   END_SAME_AS_BEGIN: END_SAME_AS_BEGIN
-});
-
-// Grammar extensions / plugins
+}); // Grammar extensions / plugins
 // See: https://github.com/highlightjs/highlight.js/issues/2833
-
 // Grammar extensions allow "syntactic sugar" to be added to the grammar modes
 // without requiring any underlying changes to the compiler internals.
-
 // `compileMatch` being the perfect small example of now allowing a grammar
 // author to write `match` when they desire to match a single expression rather
 // than being forced to use `begin`.  The extension then just moves `match` into
 // `begin` when it runs.  Ie, no features have been added, but we've just made
 // the experience of writing (and reading grammars) a little bit nicer.
-
 // ------
-
 // TODO: We need negative look-behind support to do this properly
+
 /**
  * Skip a match if it has a preceding dot
  *
@@ -638,87 +697,88 @@ var MODES = /*#__PURE__*/Object.freeze({
  * @param {RegExpMatchArray} match
  * @param {CallbackResponse} response
  */
+
 function skipIfhasPrecedingDot(match, response) {
   const before = match.input[match.index - 1];
+
   if (before === ".") {
     response.ignoreMatch();
   }
 }
-
 /**
  * `beginKeywords` syntactic sugar
  * @type {CompilerExt}
  */
+
+
 function beginKeywords(mode, parent) {
   if (!parent) return;
-  if (!mode.beginKeywords) return;
-
-  // for languages with keywords that include non-word characters checking for
+  if (!mode.beginKeywords) return; // for languages with keywords that include non-word characters checking for
   // a word boundary is not sufficient, so instead we check for a word boundary
   // or whitespace - this does no harm in any case since our keyword engine
   // doesn't allow spaces in keywords anyways and we still check for the boundary
   // first
+
   mode.begin = '\\b(' + mode.beginKeywords.split(' ').join('|') + ')(?!\\.)(?=\\b|\\s)';
   mode.__beforeBegin = skipIfhasPrecedingDot;
   mode.keywords = mode.keywords || mode.beginKeywords;
-  delete mode.beginKeywords;
-
-  // prevents double relevance, the keywords themselves provide
+  delete mode.beginKeywords; // prevents double relevance, the keywords themselves provide
   // relevance, the mode doesn't need to double it
   // eslint-disable-next-line no-undefined
+
   if (mode.relevance === undefined) mode.relevance = 0;
 }
-
 /**
  * Allow `illegal` to contain an array of illegal values
  * @type {CompilerExt}
  */
+
+
 function compileIllegal(mode, _parent) {
   if (!Array.isArray(mode.illegal)) return;
   mode.illegal = either(...mode.illegal);
 }
-
 /**
  * `match` to match a single expression for readability
  * @type {CompilerExt}
  */
+
+
 function compileMatch(mode, _parent) {
   if (!mode.match) return;
   if (mode.begin || mode.end) throw new Error("begin & end are not supported with match");
   mode.begin = mode.match;
   delete mode.match;
 }
-
 /**
  * provides the default 1 relevance to all modes
  * @type {CompilerExt}
  */
+
+
 function compileRelevance(mode, _parent) {
   // eslint-disable-next-line no-undefined
   if (mode.relevance === undefined) mode.relevance = 1;
-}
+} // keywords that should have no default relevance value
 
-// keywords that should have no default relevance value
-const COMMON_KEYWORDS = ['of', 'and', 'for', 'in', 'not', 'or', 'if', 'then', 'parent',
-// common variable name
-'list',
-// common variable name
+
+const COMMON_KEYWORDS = ['of', 'and', 'for', 'in', 'not', 'or', 'if', 'then', 'parent', // common variable name
+'list', // common variable name
 'value' // common variable name
 ];
 const DEFAULT_KEYWORD_CLASSNAME = "keyword";
-
 /**
  * Given raw keywords from a language definition, compile them.
  *
  * @param {string | Record<string,string|string[]> | Array<string>} rawKeywords
  * @param {boolean} caseInsensitive
  */
+
 function compileKeywords(rawKeywords, caseInsensitive, className = DEFAULT_KEYWORD_CLASSNAME) {
   /** @type KeywordDict */
-  const compiledKeywords = {};
-
-  // input can be a string of keywords, an array of keywords, or a object with
+  const compiledKeywords = {}; // input can be a string of keywords, an array of keywords, or a object with
   // named keys representing className (which can then point to a string or array)
+
   if (typeof rawKeywords === 'string') {
     compileList(className, rawKeywords.split(" "));
   } else if (Array.isArray(rawKeywords)) {
@@ -729,9 +789,8 @@ function compileKeywords(rawKeywords, caseInsensitive, className = DEFAULT_KEYWO
       Object.assign(compiledKeywords, compileKeywords(rawKeywords[className], caseInsensitive, className));
     });
   }
-  return compiledKeywords;
 
-  // ---
+  return compiledKeywords; // ---
 
   /**
    * Compiles an individual list of keywords
@@ -741,17 +800,18 @@ function compileKeywords(rawKeywords, caseInsensitive, className = DEFAULT_KEYWO
    * @param {string} className
    * @param {Array<string>} keywordList
    */
+
   function compileList(className, keywordList) {
     if (caseInsensitive) {
       keywordList = keywordList.map(x => x.toLowerCase());
     }
+
     keywordList.forEach(function (keyword) {
       const pair = keyword.split('|');
       compiledKeywords[pair[0]] = [className, scoreForKeyword(pair[0], pair[1])];
     });
   }
 }
-
 /**
  * Returns the proper score for a given keyword
  *
@@ -760,24 +820,26 @@ function compileKeywords(rawKeywords, caseInsensitive, className = DEFAULT_KEYWO
  * @param {string} keyword
  * @param {string} [providedScore]
  */
+
+
 function scoreForKeyword(keyword, providedScore) {
   // manual scores always win over common keywords
   // so you can force a score of 1 if you really insist
   if (providedScore) {
     return Number(providedScore);
   }
+
   return commonKeyword(keyword) ? 0 : 1;
 }
-
 /**
  * Determines if a given keyword is common or not
  *
  * @param {string} keyword */
+
+
 function commonKeyword(keyword) {
   return COMMON_KEYWORDS.includes(keyword.toLowerCase());
-}
-
-// compilation
+} // compilation
 
 /**
  * Compiles a language definition result
@@ -788,6 +850,8 @@ function commonKeyword(keyword) {
  * @param {{plugins: HLJSPlugin[]}} opts
  * @returns {CompiledLanguage}
  */
+
+
 function compileLanguage(language, {
   plugins
 }) {
@@ -800,7 +864,6 @@ function compileLanguage(language, {
   function langRe(value, global) {
     return new RegExp(source(value), 'm' + (language.case_insensitive ? 'i' : '') + (global ? 'g' : ''));
   }
-
   /**
     Stores multiple regular expressions and allows you to quickly search for
     them all in a string simultaneously - returning the first match.  It does
@@ -813,53 +876,59 @@ function compileLanguage(language, {
     This is how we keep track of which mode matched, and what type of rule
     (`illegal`, `begin`, end, etc).
   */
+
+
   class MultiRegex {
     constructor() {
-      this.matchIndexes = {};
-      // @ts-ignore
+      this.matchIndexes = {}; // @ts-ignore
+
       this.regexes = [];
       this.matchAt = 1;
       this.position = 0;
-    }
+    } // @ts-ignore
 
-    // @ts-ignore
+
     addRule(re, opts) {
-      opts.position = this.position++;
-      // @ts-ignore
+      opts.position = this.position++; // @ts-ignore
+
       this.matchIndexes[this.matchAt] = opts;
       this.regexes.push([opts, re]);
       this.matchAt += countMatchGroups(re) + 1;
     }
+
     compile() {
       if (this.regexes.length === 0) {
         // avoids the need to check length every time exec is called
         // @ts-ignore
         this.exec = () => null;
       }
+
       const terminators = this.regexes.map(el => el[1]);
       this.matcherRe = langRe(join(terminators), true);
       this.lastIndex = 0;
     }
-
     /** @param {string} s */
+
+
     exec(s) {
       this.matcherRe.lastIndex = this.lastIndex;
       const match = this.matcherRe.exec(s);
+
       if (!match) {
         return null;
-      }
+      } // eslint-disable-next-line no-undefined
 
-      // eslint-disable-next-line no-undefined
-      const i = match.findIndex((el, i) => i > 0 && el !== undefined);
-      // @ts-ignore
-      const matchData = this.matchIndexes[i];
-      // trim off any earlier non-relevant match groups (ie, the other regex
+
+      const i = match.findIndex((el, i) => i > 0 && el !== undefined); // @ts-ignore
+
+      const matchData = this.matchIndexes[i]; // trim off any earlier non-relevant match groups (ie, the other regex
       // match groups that make up the multi-matcher)
+
       match.splice(0, i);
       return Object.assign(match, matchData);
     }
-  }
 
+  }
   /*
     Created to solve the key deficiently with MultiRegex - there is no way to
     test for multiple matches at a single location.  Why would we need to do
@@ -883,18 +952,20 @@ function compileLanguage(language, {
     set to 3.  If the end is reached startAt will return to 0.
      MOST of the time the parser will be setting startAt manually to 0.
   */
+
+
   class ResumableMultiRegex {
     constructor() {
       // @ts-ignore
-      this.rules = [];
-      // @ts-ignore
+      this.rules = []; // @ts-ignore
+
       this.multiRegexes = [];
       this.count = 0;
       this.lastIndex = 0;
       this.regexIndex = 0;
-    }
+    } // @ts-ignore
 
-    // @ts-ignore
+
     getMatcher(index) {
       if (this.multiRegexes[index]) return this.multiRegexes[index];
       const matcher = new MultiRegex();
@@ -903,48 +974,44 @@ function compileLanguage(language, {
       this.multiRegexes[index] = matcher;
       return matcher;
     }
+
     resumingScanAtSamePosition() {
       return this.regexIndex !== 0;
     }
+
     considerAll() {
       this.regexIndex = 0;
-    }
+    } // @ts-ignore
 
-    // @ts-ignore
+
     addRule(re, opts) {
       this.rules.push([re, opts]);
       if (opts.type === "begin") this.count++;
     }
-
     /** @param {string} s */
+
+
     exec(s) {
       const m = this.getMatcher(this.regexIndex);
       m.lastIndex = this.lastIndex;
-      let result = m.exec(s);
-
-      // The following is because we have no easy way to say "resume scanning at the
+      let result = m.exec(s); // The following is because we have no easy way to say "resume scanning at the
       // existing position but also skip the current rule ONLY". What happens is
       // all prior rules are also skipped which can result in matching the wrong
       // thing. Example of matching "booger":
-
       // our matcher is [string, "booger", number]
       //
       // ....booger....
-
       // if "booger" is ignored then we'd really need a regex to scan from the
       // SAME position for only: [string, number] but ignoring "booger" (if it
       // was the first match), a simple resume would scan ahead who knows how
       // far looking only for "number", ignoring potential string matches (or
       // future "booger" matches that might be valid.)
-
       // So what we do: We execute two matchers, one resuming at the same
       // position, but the second full matcher starting at the position after:
-
       //     /--- resume first regex match here (for [number])
       //     |/---- full match here for [string, "booger", number]
       //     vv
       // ....booger....
-
       // Which ever results in a match first is then used. So this 3-4 step
       // process essentially allows us to say "match at this position, excluding
       // a prior rule that was ignored".
@@ -953,6 +1020,7 @@ function compileLanguage(language, {
       // 2. Resume matching for [number]
       // 3. Match at index + 1 for [string, "booger", number]
       // 4. If #2 and #3 result in matches, which came first?
+
       if (this.resumingScanAtSamePosition()) {
         if (result && result.index === this.lastIndex) ;else {
           // use the second matcher result
@@ -961,17 +1029,20 @@ function compileLanguage(language, {
           result = m2.exec(s);
         }
       }
+
       if (result) {
         this.regexIndex += result.position + 1;
+
         if (this.regexIndex === this.count) {
           // wrap-around to considering all matches again
           this.considerAll();
         }
       }
+
       return result;
     }
-  }
 
+  }
   /**
    * Given a mode, builds a huge ResumableMultiRegex that can be used to walk
    * the content and find matches.
@@ -979,25 +1050,29 @@ function compileLanguage(language, {
    * @param {CompiledMode} mode
    * @returns {ResumableMultiRegex}
    */
+
+
   function buildModeRegex(mode) {
     const mm = new ResumableMultiRegex();
     mode.contains.forEach(term => mm.addRule(term.begin, {
       rule: term,
       type: "begin"
     }));
+
     if (mode.terminatorEnd) {
       mm.addRule(mode.terminatorEnd, {
         type: "end"
       });
     }
+
     if (mode.illegal) {
       mm.addRule(mode.illegal, {
         type: "illegal"
       });
     }
+
     return mm;
   }
-
   /** skip vs abort vs ignore
    *
    * @skip   - The mode is still entered and exited normally (and contains rules apply),
@@ -1037,42 +1112,45 @@ function compileLanguage(language, {
    * @param {CompiledMode | null} [parent]
    * @returns {CompiledMode | never}
    */
+
+
   function compileMode(mode, parent) {
-    const cmode = /** @type CompiledMode */mode;
+    const cmode =
+    /** @type CompiledMode */
+    mode;
     if (mode.isCompiled) return cmode;
-    [
-    // do this early so compiler extensions generally don't have to worry about
+    [// do this early so compiler extensions generally don't have to worry about
     // the distinction between match/begin
     compileMatch].forEach(ext => ext(mode, parent));
-    language.compilerExtensions.forEach(ext => ext(mode, parent));
+    language.compilerExtensions.forEach(ext => ext(mode, parent)); // __beforeBegin is considered private API, internal use only
 
-    // __beforeBegin is considered private API, internal use only
     mode.__beforeBegin = null;
-    [beginKeywords,
-    // do this later so compiler extensions that come earlier have access to the
+    [beginKeywords, // do this later so compiler extensions that come earlier have access to the
     // raw array if they wanted to perhaps manipulate it, etc.
-    compileIllegal,
-    // default to 1 relevance if not specified
+    compileIllegal, // default to 1 relevance if not specified
     compileRelevance].forEach(ext => ext(mode, parent));
     mode.isCompiled = true;
     let keywordPattern = null;
+
     if (typeof mode.keywords === "object") {
       keywordPattern = mode.keywords.$pattern;
       delete mode.keywords.$pattern;
     }
+
     if (mode.keywords) {
       mode.keywords = compileKeywords(mode.keywords, language.case_insensitive);
-    }
+    } // both are not allowed
 
-    // both are not allowed
+
     if (mode.lexemes && keywordPattern) {
       throw new Error("ERR: Prefer `keywords.$pattern` to `mode.lexemes`, BOTH are not allowed. (see mode reference) ");
-    }
-
-    // `mode.lexemes` was the old standard before we added and now recommend
+    } // `mode.lexemes` was the old standard before we added and now recommend
     // using `keywords.$pattern` to pass the keyword pattern
+
+
     keywordPattern = keywordPattern || mode.lexemes || /\w+/;
     cmode.keywordPatternRe = langRe(keywordPattern, true);
+
     if (parent) {
       if (!mode.begin) mode.begin = /\B|\b/;
       cmode.beginRe = langRe(mode.begin);
@@ -1080,36 +1158,45 @@ function compileLanguage(language, {
       if (!mode.end && !mode.endsWithParent) mode.end = /\B|\b/;
       if (mode.end) cmode.endRe = langRe(mode.end);
       cmode.terminatorEnd = source(mode.end) || '';
+
       if (mode.endsWithParent && parent.terminatorEnd) {
         cmode.terminatorEnd += (mode.end ? '|' : '') + parent.terminatorEnd;
       }
     }
-    if (mode.illegal) cmode.illegalRe = langRe( /** @type {RegExp | string} */mode.illegal);
+
+    if (mode.illegal) cmode.illegalRe = langRe(
+    /** @type {RegExp | string} */
+    mode.illegal);
     if (!mode.contains) mode.contains = [];
     mode.contains = [].concat(...mode.contains.map(function (c) {
       return expandOrCloneMode(c === 'self' ? mode : c);
     }));
     mode.contains.forEach(function (c) {
-      compileMode( /** @type Mode */c, cmode);
+      compileMode(
+      /** @type Mode */
+      c, cmode);
     });
+
     if (mode.starts) {
       compileMode(mode.starts, parent);
     }
+
     cmode.matcher = buildModeRegex(cmode);
     return cmode;
   }
-  if (!language.compilerExtensions) language.compilerExtensions = [];
 
-  // self is not valid at the top-level
+  if (!language.compilerExtensions) language.compilerExtensions = []; // self is not valid at the top-level
+
   if (language.contains && language.contains.includes('self')) {
     throw new Error("ERR: contains `self` is not supported at the top-level of a language.  See documentation.");
-  }
+  } // we need a null object, which inherit will guarantee
 
-  // we need a null object, which inherit will guarantee
+
   language.classNameAliases = inherit(language.classNameAliases || {});
-  return compileMode( /** @type Mode */language);
+  return compileMode(
+  /** @type Mode */
+  language);
 }
-
 /**
  * Determines if a mode has a dependency on it's parent or not
  *
@@ -1121,11 +1208,12 @@ function compileLanguage(language, {
  * @param {Mode | null} mode
  * @returns {boolean} - is there a dependency on the parent?
  * */
+
+
 function dependencyOnParent(mode) {
   if (!mode) return false;
   return mode.endsWithParent || dependencyOnParent(mode.starts);
 }
-
 /**
  * Expands a mode or clones it if necessary
  *
@@ -1136,6 +1224,8 @@ function dependencyOnParent(mode) {
  * @param {Mode} mode
  * @returns {Mode | Mode[]}
  * */
+
+
 function expandOrCloneMode(mode) {
   if (mode.variants && !mode.cachedVariants) {
     mode.cachedVariants = mode.variants.map(function (variant) {
@@ -1143,38 +1233,39 @@ function expandOrCloneMode(mode) {
         variants: null
       }, variant);
     });
-  }
-
-  // EXPAND
+  } // EXPAND
   // if we have variants then essentially "replace" the mode with the variants
   // this happens in compileMode, where this function is called from
+
+
   if (mode.cachedVariants) {
     return mode.cachedVariants;
-  }
-
-  // CLONE
+  } // CLONE
   // if we have dependencies on parents then we need a unique
   // instance of ourselves, so we can be reused with many
   // different parents without issue
+
+
   if (dependencyOnParent(mode)) {
     return inherit(mode, {
       starts: mode.starts ? inherit(mode.starts) : null
     });
   }
+
   if (Object.isFrozen(mode)) {
     return inherit(mode);
-  }
+  } // no special dependency issues, just return ourselves
 
-  // no special dependency issues, just return ourselves
+
   return mode;
 }
-var version = "10.7.3";
 
-// @ts-nocheck
+var version = "10.7.3"; // @ts-nocheck
 
 function hasValueOrEmptyAttribute(value) {
   return Boolean(value || value === "");
 }
+
 function BuildVuePlugin(hljs) {
   const Component = {
     props: ["language", "code", "autodetect"],
@@ -1189,6 +1280,7 @@ function BuildVuePlugin(hljs) {
         if (this.unknownLanguage) return "";
         return "hljs " + this.detectedLanguage;
       },
+
       highlighted() {
         // no idea what language to use, return raw code
         if (!this.autoDetect && !hljs.getLanguage(this.language)) {
@@ -1196,7 +1288,9 @@ function BuildVuePlugin(hljs) {
           this.unknownLanguage = true;
           return escapeHTML(this.code);
         }
+
         let result = {};
+
         if (this.autoDetect) {
           result = hljs.highlightAuto(this.code);
           this.detectedLanguage = result.language;
@@ -1204,15 +1298,20 @@ function BuildVuePlugin(hljs) {
           result = hljs.highlight(this.language, this.code, this.ignoreIllegals);
           this.detectedLanguage = this.language;
         }
+
         return result.value;
       },
+
       autoDetect() {
         return !this.language || hasValueOrEmptyAttribute(this.autodetect);
       },
+
       ignoreIllegals() {
         return true;
       }
+
     },
+
     // this avoids needing to use a whole Vue compilation pipeline just
     // to build Highlight.js
     render(createElement) {
@@ -1222,23 +1321,26 @@ function BuildVuePlugin(hljs) {
           innerHTML: this.highlighted
         }
       })]);
-    }
-    // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`
+    } // template: `<pre><code :class="className" v-html="highlighted"></code></pre>`
+
+
   };
   const VuePlugin = {
     install(Vue) {
       Vue.component('highlightjs', Component);
     }
+
   };
   return {
     Component,
     VuePlugin
   };
 }
-
 /* plugin itself */
 
 /** @type {HLJSPlugin} */
+
+
 const mergeHTMLPlugin = {
   "after:highlightElement": ({
     el,
@@ -1252,7 +1354,6 @@ const mergeHTMLPlugin = {
     result.value = mergeStreams(originalStream, nodeStream(resultNode), text);
   }
 };
-
 /* Stream merging support functions */
 
 /**
@@ -1265,16 +1366,19 @@ const mergeHTMLPlugin = {
 /**
  * @param {Node} node
  */
+
 function tag(node) {
   return node.nodeName.toLowerCase();
 }
-
 /**
  * @param {Node} node
  */
+
+
 function nodeStream(node) {
   /** @type Event[] */
   const result = [];
+
   (function _nodeStream(node, offset) {
     for (let child = node.firstChild; child; child = child.nextSibling) {
       if (child.nodeType === 3) {
@@ -1285,10 +1389,10 @@ function nodeStream(node) {
           offset: offset,
           node: child
         });
-        offset = _nodeStream(child, offset);
-        // Prevent void elements from having an end tag that would actually
+        offset = _nodeStream(child, offset); // Prevent void elements from having an end tag that would actually
         // double them in the output. There are more void elements in HTML
         // but we list only those realistically expected in code display.
+
         if (!tag(child).match(/br|hr|img|input/)) {
           result.push({
             event: 'stop',
@@ -1298,28 +1402,32 @@ function nodeStream(node) {
         }
       }
     }
+
     return offset;
   })(node, 0);
+
   return result;
 }
-
 /**
  * @param {any} original - the original stream
  * @param {any} highlighted - stream of the highlighted source
  * @param {string} value - the original source itself
  */
+
+
 function mergeStreams(original, highlighted, value) {
   let processed = 0;
   let result = '';
   const nodeStack = [];
+
   function selectStream() {
     if (!original.length || !highlighted.length) {
       return original.length ? original : highlighted;
     }
+
     if (original[0].offset !== highlighted[0].offset) {
       return original[0].offset < highlighted[0].offset ? original : highlighted;
     }
-
     /*
     To avoid starting the stream just before it should stop the order is
     ensured that original always starts first and closes last:
@@ -1333,38 +1441,46 @@ function mergeStreams(original, highlighted, value) {
       return highlighted;
      ... which is collapsed to:
     */
+
+
     return highlighted[0].event === 'start' ? original : highlighted;
   }
-
   /**
    * @param {Node} node
    */
+
+
   function open(node) {
     /** @param {Attr} attr */
     function attributeString(attr) {
       return ' ' + attr.nodeName + '="' + escapeHTML(attr.value) + '"';
-    }
-    // @ts-ignore
+    } // @ts-ignore
+
+
     result += '<' + tag(node) + [].map.call(node.attributes, attributeString).join('') + '>';
   }
-
   /**
    * @param {Node} node
    */
+
+
   function close(node) {
     result += '</' + tag(node) + '>';
   }
-
   /**
    * @param {Event} event
    */
+
+
   function render(event) {
     (event.event === 'start' ? open : close)(event.node);
   }
+
   while (original.length || highlighted.length) {
     let stream = selectStream();
     result += escapeHTML(value.substring(processed, stream[0].offset));
     processed = stream[0].offset;
+
     if (stream === original) {
       /*
       On any opening or closing tag of the original markup we first close
@@ -1373,10 +1489,12 @@ function mergeStreams(original, highlighted, value) {
       reopen all the tags on the highlighted stack.
       */
       nodeStack.reverse().forEach(close);
+
       do {
         render(stream.splice(0, 1)[0]);
         stream = selectStream();
       } while (stream === original && stream.length && stream[0].offset === processed);
+
       nodeStack.reverse().forEach(open);
     } else {
       if (stream[0].event === 'start') {
@@ -1384,12 +1502,13 @@ function mergeStreams(original, highlighted, value) {
       } else {
         nodeStack.pop();
       }
+
       render(stream.splice(0, 1)[0]);
     }
   }
+
   return result + escapeHTML(value.substr(processed));
 }
-
 /*
 
 For the reasoning behind this please see:
@@ -1400,70 +1519,77 @@ https://github.com/highlightjs/highlight.js/issues/2880#issuecomment-747275419
 /**
  * @type {Record<string, boolean>}
  */
-const seenDeprecations = {};
 
+
+const seenDeprecations = {};
 /**
  * @param {string} message
  */
+
 const error = message => {
   console.error(message);
 };
-
 /**
  * @param {string} message
  * @param {any} args
  */
+
+
 const warn = (message, ...args) => {
   console.log(`WARN: ${message}`, ...args);
 };
-
 /**
  * @param {string} version
  * @param {string} message
  */
+
+
 const deprecated = (version, message) => {
   if (seenDeprecations[`${version}/${message}`]) return;
   console.log(`Deprecated as of ${version}. ${message}`);
   seenDeprecations[`${version}/${message}`] = true;
 };
-
 /*
 Syntax highlighting with language autodetection.
 https://highlightjs.org/
 */
 
+
 const escape$1 = escapeHTML;
 const inherit$1 = inherit;
 const NO_MATCH = Symbol("nomatch");
-
 /**
  * @param {any} hljs - object that is extended (legacy)
  * @returns {HLJSApi}
  */
+
 const HLJS = function (hljs) {
   // Global internal variables used within the highlight.js library.
+
   /** @type {Record<string, Language>} */
   const languages = Object.create(null);
   /** @type {Record<string, string>} */
+
   const aliases = Object.create(null);
   /** @type {HLJSPlugin[]} */
-  const plugins = [];
 
-  // safe/production mode - swallows more errors, tries to keep running
+  const plugins = []; // safe/production mode - swallows more errors, tries to keep running
   // even if a single syntax or parse hits a fatal error
+
   let SAFE_MODE = true;
   const fixMarkupRe = /(^(<[^>]+>|\t|)+|\n)/gm;
   const LANGUAGE_NOT_FOUND = "Could not find the language '{}', did you forget to load/include a language module?";
   /** @type {Language} */
+
   const PLAINTEXT_LANGUAGE = {
     disableAutodetect: true,
     name: 'Plain text',
     contains: []
-  };
-
-  // Global options used when within external APIs. This is modified when
+  }; // Global options used when within external APIs. This is modified when
   // calling the `hljs.configure` function.
+
   /** @type HLJSOptions */
+
   let options = {
     noHighlightRe: /^(no-?highlight)$/i,
     languageDetectRe: /\blang(?:uage)?-([\w-]+)\b/i,
@@ -1475,37 +1601,40 @@ const HLJS = function (hljs) {
     // https://github.com/highlightjs/highlight.js/issues/1086
     __emitter: TokenTreeEmitter
   };
-
   /* Utility functions */
 
   /**
    * Tests a language name to see if highlighting should be skipped
    * @param {string} languageName
    */
+
   function shouldNotHighlight(languageName) {
     return options.noHighlightRe.test(languageName);
   }
-
   /**
    * @param {HighlightedHTMLElement} block - the HTML element to determine language for
    */
+
+
   function blockLanguage(block) {
     let classes = block.className + ' ';
-    classes += block.parentNode ? block.parentNode.className : '';
+    classes += block.parentNode ? block.parentNode.className : ''; // language-* takes precedence over non-prefixed class names.
 
-    // language-* takes precedence over non-prefixed class names.
     const match = options.languageDetectRe.exec(classes);
+
     if (match) {
       const language = getLanguage(match[1]);
+
       if (!language) {
         warn(LANGUAGE_NOT_FOUND.replace("{}", match[1]));
         warn("Falling back to no-highlight mode for this block.", block);
       }
+
       return language ? match[1] : 'no-highlight';
     }
+
     return classes.split(/\s+/).find(_class => shouldNotHighlight(_class) || getLanguage(_class));
   }
-
   /**
    * Core highlighting function.
    *
@@ -1528,15 +1657,18 @@ const HLJS = function (hljs) {
    * @property {CompiledMode} top - top of the current mode stack
    * @property {boolean} illegal - indicates whether any illegal matches were found
   */
+
+
   function highlight(codeOrlanguageName, optionsOrCode, ignoreIllegals, continuation) {
     let code = "";
     let languageName = "";
+
     if (typeof optionsOrCode === "object") {
       code = codeOrlanguageName;
       ignoreIllegals = optionsOrCode.ignoreIllegals;
-      languageName = optionsOrCode.language;
-      // continuation not supported at all via the new API
+      languageName = optionsOrCode.language; // continuation not supported at all via the new API
       // eslint-disable-next-line no-undefined
+
       continuation = undefined;
     } else {
       // old API
@@ -1545,25 +1677,24 @@ const HLJS = function (hljs) {
       languageName = codeOrlanguageName;
       code = optionsOrCode;
     }
-
     /** @type {BeforeHighlightContext} */
+
+
     const context = {
       code,
       language: languageName
-    };
-    // the plugin can change the desired language or the code to be highlighted
+    }; // the plugin can change the desired language or the code to be highlighted
     // just be changing the object it was passed
-    fire("before:highlight", context);
 
-    // a before plugin can usurp the result completely by providing it's own
+    fire("before:highlight", context); // a before plugin can usurp the result completely by providing it's own
     // in which case we don't even need to call highlight
+
     const result = context.result ? context.result : _highlight(context.language, context.code, ignoreIllegals, continuation);
-    result.code = context.code;
-    // the plugin can change anything in result to suite it
+    result.code = context.code; // the plugin can change anything in result to suite it
+
     fire("after:highlight", result);
     return result;
   }
-
   /**
    * private highlight that's used internally and does not fire callbacks
    *
@@ -1573,6 +1704,8 @@ const HLJS = function (hljs) {
    * @param {CompiledMode?} [continuation] - current continuation mode, if any
    * @returns {HighlightResult} - result of the highlight operation
   */
+
+
   function _highlight(languageName, codeToHighlight, ignoreIllegals, continuation) {
     /**
      * Return keyword data if a match is a keyword
@@ -1584,23 +1717,28 @@ const HLJS = function (hljs) {
       const matchText = language.case_insensitive ? match[0].toLowerCase() : match[0];
       return Object.prototype.hasOwnProperty.call(mode.keywords, matchText) && mode.keywords[matchText];
     }
+
     function processKeywords() {
       if (!top.keywords) {
         emitter.addText(modeBuffer);
         return;
       }
+
       let lastIndex = 0;
       top.keywordPatternRe.lastIndex = 0;
       let match = top.keywordPatternRe.exec(modeBuffer);
       let buf = "";
+
       while (match) {
         buf += modeBuffer.substring(lastIndex, match.index);
         const data = keywordData(top, match);
+
         if (data) {
           const [kind, keywordRelevance] = data;
           emitter.addText(buf);
           buf = "";
           relevance += keywordRelevance;
+
           if (kind.startsWith("_")) {
             // _ implied for relevance only, do not highlight
             // by applying a class name
@@ -1612,52 +1750,65 @@ const HLJS = function (hljs) {
         } else {
           buf += match[0];
         }
+
         lastIndex = top.keywordPatternRe.lastIndex;
         match = top.keywordPatternRe.exec(modeBuffer);
       }
+
       buf += modeBuffer.substr(lastIndex);
       emitter.addText(buf);
     }
+
     function processSubLanguage() {
       if (modeBuffer === "") return;
       /** @type HighlightResult */
+
       let result = null;
+
       if (typeof top.subLanguage === 'string') {
         if (!languages[top.subLanguage]) {
           emitter.addText(modeBuffer);
           return;
         }
+
         result = _highlight(top.subLanguage, modeBuffer, true, continuations[top.subLanguage]);
-        continuations[top.subLanguage] = /** @type {CompiledMode} */result.top;
+        continuations[top.subLanguage] =
+        /** @type {CompiledMode} */
+        result.top;
       } else {
         result = highlightAuto(modeBuffer, top.subLanguage.length ? top.subLanguage : null);
-      }
-
-      // Counting embedded language score towards the host language may be disabled
+      } // Counting embedded language score towards the host language may be disabled
       // with zeroing the containing mode relevance. Use case in point is Markdown that
       // allows XML everywhere and makes every XML snippet to have a much larger Markdown
       // score.
+
+
       if (top.relevance > 0) {
         relevance += result.relevance;
       }
+
       emitter.addSublanguage(result.emitter, result.language);
     }
+
     function processBuffer() {
       if (top.subLanguage != null) {
         processSubLanguage();
       } else {
         processKeywords();
       }
+
       modeBuffer = '';
     }
-
     /**
      * @param {Mode} mode - new mode to start
      */
+
+
     function startNewMode(mode) {
       if (mode.className) {
         emitter.openNode(language.classNameAliases[mode.className] || mode.className);
       }
+
       top = Object.create(mode, {
         parent: {
           value: top
@@ -1665,40 +1816,46 @@ const HLJS = function (hljs) {
       });
       return top;
     }
-
     /**
      * @param {CompiledMode } mode - the mode to potentially end
      * @param {RegExpMatchArray} match - the latest match
      * @param {string} matchPlusRemainder - match plus remainder of content
      * @returns {CompiledMode | void} - the next mode, or if void continue on in current mode
      */
+
+
     function endOfMode(mode, match, matchPlusRemainder) {
       let matched = startsWith(mode.endRe, matchPlusRemainder);
+
       if (matched) {
         if (mode["on:end"]) {
           const resp = new Response(mode);
           mode["on:end"](match, resp);
           if (resp.isMatchIgnored) matched = false;
         }
+
         if (matched) {
           while (mode.endsParent && mode.parent) {
             mode = mode.parent;
           }
+
           return mode;
         }
-      }
-      // even if on:end fires an `ignore` it's still possible
+      } // even if on:end fires an `ignore` it's still possible
       // that we might trigger the end node because of a parent mode
+
+
       if (mode.endsWithParent) {
         return endOfMode(mode.parent, match, matchPlusRemainder);
       }
     }
-
     /**
      * Handle matching but then ignoring a sequence of text
      *
      * @param {string} lexeme - string containing full match text
      */
+
+
     function doIgnore(lexeme) {
       if (top.matcher.regexIndex === 0) {
         // no more regexs to potentially match here, so we move the cursor forward one
@@ -1712,123 +1869,147 @@ const HLJS = function (hljs) {
         return 0;
       }
     }
-
     /**
      * Handle the start of a new potential mode match
      *
      * @param {EnhancedMatch} match - the current match
      * @returns {number} how far to advance the parse cursor
      */
+
+
     function doBeginMatch(match) {
       const lexeme = match[0];
       const newMode = match.rule;
-      const resp = new Response(newMode);
-      // first internal before callbacks, then the public ones
+      const resp = new Response(newMode); // first internal before callbacks, then the public ones
+
       const beforeCallbacks = [newMode.__beforeBegin, newMode["on:begin"]];
+
       for (const cb of beforeCallbacks) {
         if (!cb) continue;
         cb(match, resp);
         if (resp.isMatchIgnored) return doIgnore(lexeme);
       }
+
       if (newMode && newMode.endSameAsBegin) {
         newMode.endRe = escape(lexeme);
       }
+
       if (newMode.skip) {
         modeBuffer += lexeme;
       } else {
         if (newMode.excludeBegin) {
           modeBuffer += lexeme;
         }
+
         processBuffer();
+
         if (!newMode.returnBegin && !newMode.excludeBegin) {
           modeBuffer = lexeme;
         }
       }
-      startNewMode(newMode);
-      // if (mode["after:begin"]) {
+
+      startNewMode(newMode); // if (mode["after:begin"]) {
       //   let resp = new Response(mode);
       //   mode["after:begin"](match, resp);
       // }
+
       return newMode.returnBegin ? 0 : lexeme.length;
     }
-
     /**
      * Handle the potential end of mode
      *
      * @param {RegExpMatchArray} match - the current match
      */
+
+
     function doEndMatch(match) {
       const lexeme = match[0];
       const matchPlusRemainder = codeToHighlight.substr(match.index);
       const endMode = endOfMode(top, match, matchPlusRemainder);
+
       if (!endMode) {
         return NO_MATCH;
       }
+
       const origin = top;
+
       if (origin.skip) {
         modeBuffer += lexeme;
       } else {
         if (!(origin.returnEnd || origin.excludeEnd)) {
           modeBuffer += lexeme;
         }
+
         processBuffer();
+
         if (origin.excludeEnd) {
           modeBuffer = lexeme;
         }
       }
+
       do {
         if (top.className) {
           emitter.closeNode();
         }
+
         if (!top.skip && !top.subLanguage) {
           relevance += top.relevance;
         }
+
         top = top.parent;
       } while (top !== endMode.parent);
+
       if (endMode.starts) {
         if (endMode.endSameAsBegin) {
           endMode.starts.endRe = endMode.endRe;
         }
+
         startNewMode(endMode.starts);
       }
+
       return origin.returnEnd ? 0 : lexeme.length;
     }
+
     function processContinuations() {
       const list = [];
+
       for (let current = top; current !== language; current = current.parent) {
         if (current.className) {
           list.unshift(current.className);
         }
       }
+
       list.forEach(item => emitter.openNode(item));
     }
-
     /** @type {{type?: MatchType, index?: number, rule?: Mode}}} */
-    let lastMatch = {};
 
+
+    let lastMatch = {};
     /**
      *  Process an individual match
      *
      * @param {string} textBeforeMatch - text preceeding the match (since the last match)
      * @param {EnhancedMatch} [match] - the match itself
      */
-    function processLexeme(textBeforeMatch, match) {
-      const lexeme = match && match[0];
 
-      // add non-matched text to the current mode buffer
+    function processLexeme(textBeforeMatch, match) {
+      const lexeme = match && match[0]; // add non-matched text to the current mode buffer
+
       modeBuffer += textBeforeMatch;
+
       if (lexeme == null) {
         processBuffer();
         return 0;
-      }
-
-      // we've found a 0 width match and we're stuck, so we need to advance
+      } // we've found a 0 width match and we're stuck, so we need to advance
       // this happens when we have badly behaved rules that have optional matchers to the degree that
       // sometimes they can end up matching nothing at all
       // Ref: https://github.com/highlightjs/highlight.js/issues/2140
+
+
       if (lastMatch.type === "begin" && match.type === "end" && lastMatch.index === match.index && lexeme === "") {
         // spit the "skipped" character that our regex choked on back into the output sequence
         modeBuffer += codeToHighlight.slice(match.index, match.index + 1);
+
         if (!SAFE_MODE) {
           /** @type {AnnotatedError} */
           const err = new Error('0 width match regex');
@@ -1836,41 +2017,45 @@ const HLJS = function (hljs) {
           err.badRule = lastMatch.rule;
           throw err;
         }
+
         return 1;
       }
+
       lastMatch = match;
+
       if (match.type === "begin") {
         return doBeginMatch(match);
       } else if (match.type === "illegal" && !ignoreIllegals) {
         // illegal match, we do not continue processing
+
         /** @type {AnnotatedError} */
         const err = new Error('Illegal lexeme "' + lexeme + '" for mode "' + (top.className || '<unnamed>') + '"');
         err.mode = top;
         throw err;
       } else if (match.type === "end") {
         const processed = doEndMatch(match);
+
         if (processed !== NO_MATCH) {
           return processed;
         }
-      }
-
-      // edge case for when illegal matches $ (end of line) which is technically
+      } // edge case for when illegal matches $ (end of line) which is technically
       // a 0 width match but not a begin/end match so it's not caught by the
       // first handler (when ignoreIllegals is true)
+
+
       if (match.type === "illegal" && lexeme === "") {
         // advance so we aren't stuck in an infinite loop
         return 1;
-      }
-
-      // infinite loops are BAD, this is a last ditch catch all. if we have a
+      } // infinite loops are BAD, this is a last ditch catch all. if we have a
       // decent number of iterations yet our index (cursor position in our
       // parsing) still 3x behind our index then something is very wrong
       // so we bail
+
+
       if (iterations > 100000 && iterations > match.index * 3) {
         const err = new Error('potential infinite loop, way more iterations than matches');
         throw err;
       }
-
       /*
       Why might be find ourselves here?  Only one occasion now.  An end match that was
       triggered but could not be completed.  When might this happen?  When an `endSameasBegin`
@@ -1882,22 +2067,29 @@ const HLJS = function (hljs) {
        This causes no real harm other than stopping a few times too many.
       */
 
+
       modeBuffer += lexeme;
       return lexeme.length;
     }
+
     const language = getLanguage(languageName);
+
     if (!language) {
       error(LANGUAGE_NOT_FOUND.replace("{}", languageName));
       throw new Error('Unknown language: "' + languageName + '"');
     }
+
     const md = compileLanguage(language, {
       plugins
     });
     let result = '';
     /** @type {CompiledMode} */
+
     let top = continuation || md;
     /** @type Record<string,CompiledMode> */
+
     const continuations = {}; // keep continuations for sub-languages
+
     const emitter = new options.__emitter(options);
     processContinuations();
     let modeBuffer = '';
@@ -1905,10 +2097,13 @@ const HLJS = function (hljs) {
     let index = 0;
     let iterations = 0;
     let resumeScanAtSamePosition = false;
+
     try {
       top.matcher.considerAll();
+
       for (;;) {
         iterations++;
+
         if (resumeScanAtSamePosition) {
           // only regexes not matched previously will now be
           // considered for a potential match
@@ -1916,15 +2111,16 @@ const HLJS = function (hljs) {
         } else {
           top.matcher.considerAll();
         }
+
         top.matcher.lastIndex = index;
-        const match = top.matcher.exec(codeToHighlight);
-        // console.log("match", match[0], match.rule && match.rule.begin)
+        const match = top.matcher.exec(codeToHighlight); // console.log("match", match[0], match.rule && match.rule.begin)
 
         if (!match) break;
         const beforeMatch = codeToHighlight.substring(index, match.index);
         const processedCount = processLexeme(beforeMatch, match);
         index = match.index + processedCount;
       }
+
       processLexeme(codeToHighlight.substr(index));
       emitter.closeAllNodes();
       emitter.finalize();
@@ -1968,7 +2164,6 @@ const HLJS = function (hljs) {
       }
     }
   }
-
   /**
    * returns a valid highlight result, without actually doing any actual work,
    * auto highlight starts with this and it's possible for small snippets that
@@ -1976,6 +2171,8 @@ const HLJS = function (hljs) {
    * @param {string} code
    * @returns {HighlightResult}
    */
+
+
   function justTextHighlightResult(code) {
     const result = {
       relevance: 0,
@@ -1987,7 +2184,6 @@ const HLJS = function (hljs) {
     result.emitter.addText(code);
     return result;
   }
-
   /**
   Highlighting with language detection. Accepts a string with the code to
   highlight. Returns an object with the following properties:
@@ -2000,6 +2196,8 @@ const HLJS = function (hljs) {
     @param {Array<string>} [languageSubset]
     @returns {AutoHighlightResult}
   */
+
+
   function highlightAuto(code, languageSubset) {
     languageSubset = languageSubset || options.languages || Object.keys(languages);
     const plaintext = justTextHighlightResult(code);
@@ -2008,32 +2206,30 @@ const HLJS = function (hljs) {
 
     const sorted = results.sort((a, b) => {
       // sort base on relevance
-      if (a.relevance !== b.relevance) return b.relevance - a.relevance;
-
-      // always award the tie to the base language
+      if (a.relevance !== b.relevance) return b.relevance - a.relevance; // always award the tie to the base language
       // ie if C++ and Arduino are tied, it's more likely to be C++
+
       if (a.language && b.language) {
         if (getLanguage(a.language).supersetOf === b.language) {
           return 1;
         } else if (getLanguage(b.language).supersetOf === a.language) {
           return -1;
         }
-      }
-
-      // otherwise say they are equal, which has the effect of sorting on
+      } // otherwise say they are equal, which has the effect of sorting on
       // relevance while preserving the original ordering - which is how ties
       // have historically been settled, ie the language that comes first always
       // wins in the case of a tie
+
+
       return 0;
     });
     const [best, secondBest] = sorted;
-
     /** @type {AutoHighlightResult} */
+
     const result = best;
     result.second_best = secondBest;
     return result;
   }
-
   /**
   Post-processing of the highlighted markup:
    - replace TABs with something more useful
@@ -2041,20 +2237,23 @@ const HLJS = function (hljs) {
      @param {string} html
     @returns {string}
   */
+
+
   function fixMarkup(html) {
     if (!(options.tabReplace || options.useBR)) {
       return html;
     }
+
     return html.replace(fixMarkupRe, match => {
       if (match === '\n') {
         return options.useBR ? '<br>' : match;
       } else if (options.tabReplace) {
         return match.replace(/\t/g, options.tabReplace);
       }
+
       return match;
     });
   }
-
   /**
    * Builds new class name for block given the language name
    *
@@ -2062,13 +2261,16 @@ const HLJS = function (hljs) {
    * @param {string} [currentLang]
    * @param {string} [resultLang]
    */
+
+
   function updateClassName(element, currentLang, resultLang) {
     const language = currentLang ? aliases[currentLang] : resultLang;
     element.classList.add("hljs");
     if (language) element.classList.add(language);
   }
-
   /** @type {HLJSPlugin} */
+
+
   const brPlugin = {
     "before:highlightElement": ({
       el
@@ -2087,6 +2289,7 @@ const HLJS = function (hljs) {
   };
   const TAB_REPLACE_RE = /^(<[^>]+>|\t)+/gm;
   /** @type {HLJSPlugin} */
+
   const tabReplacePlugin = {
     "after:highlightElement": ({
       result
@@ -2096,20 +2299,19 @@ const HLJS = function (hljs) {
       }
     }
   };
-
   /**
    * Applies highlighting to a DOM node containing code. Accepts a DOM node and
    * two optional parameters for fixMarkup.
    *
    * @param {HighlightedHTMLElement} element - the HTML element to highlight
   */
+
   function highlightElement(element) {
     /** @type HTMLElement */
     let node = null;
     const language = blockLanguage(element);
-    if (shouldNotHighlight(language)) return;
+    if (shouldNotHighlight(language)) return; // support for v10 API
 
-    // support for v10 API
     fire("before:highlightElement", {
       el: element,
       language: language
@@ -2119,9 +2321,8 @@ const HLJS = function (hljs) {
     const result = language ? highlight(text, {
       language,
       ignoreIllegals: true
-    }) : highlightAuto(text);
+    }) : highlightAuto(text); // support for v10 API
 
-    // support for v10 API
     fire("after:highlightElement", {
       el: element,
       result,
@@ -2135,6 +2336,7 @@ const HLJS = function (hljs) {
       re: result.relevance,
       relavance: result.relevance
     };
+
     if (result.second_best) {
       element.second_best = {
         language: result.second_best.language,
@@ -2144,120 +2346,133 @@ const HLJS = function (hljs) {
       };
     }
   }
-
   /**
    * Updates highlight.js global options with the passed options
    *
    * @param {Partial<HLJSOptions>} userOptions
    */
+
+
   function configure(userOptions) {
     if (userOptions.useBR) {
       deprecated("10.3.0", "'useBR' will be removed entirely in v11.0");
       deprecated("10.3.0", "Please see https://github.com/highlightjs/highlight.js/issues/2559");
     }
+
     options = inherit$1(options, userOptions);
   }
-
   /**
    * Highlights to all <pre><code> blocks on a page
    *
    * @type {Function & {called?: boolean}}
    */
   // TODO: remove v12, deprecated
+
+
   const initHighlighting = () => {
     if (initHighlighting.called) return;
     initHighlighting.called = true;
     deprecated("10.6.0", "initHighlighting() is deprecated.  Use highlightAll() instead.");
     const blocks = document.querySelectorAll('pre code');
     blocks.forEach(highlightElement);
-  };
-
-  // Higlights all when DOMContentLoaded fires
+  }; // Higlights all when DOMContentLoaded fires
   // TODO: remove v12, deprecated
+
+
   function initHighlightingOnLoad() {
     deprecated("10.6.0", "initHighlightingOnLoad() is deprecated.  Use highlightAll() instead.");
     wantsHighlight = true;
   }
-  let wantsHighlight = false;
 
+  let wantsHighlight = false;
   /**
    * auto-highlights all pre>code elements on the page
    */
+
   function highlightAll() {
     // if we are called too early in the loading process
     if (document.readyState === "loading") {
       wantsHighlight = true;
       return;
     }
+
     const blocks = document.querySelectorAll('pre code');
     blocks.forEach(highlightElement);
   }
+
   function boot() {
     // if a highlight was requested before DOM was loaded, do now
     if (wantsHighlight) highlightAll();
-  }
+  } // make sure we are in the browser environment
 
-  // make sure we are in the browser environment
+
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('DOMContentLoaded', boot, false);
   }
-
   /**
    * Register a language grammar module
    *
    * @param {string} languageName
    * @param {LanguageFn} languageDefinition
    */
+
+
   function registerLanguage(languageName, languageDefinition) {
     let lang = null;
+
     try {
       lang = languageDefinition(hljs);
     } catch (error$1) {
-      error("Language definition for '{}' could not be registered.".replace("{}", languageName));
-      // hard or soft error
+      error("Language definition for '{}' could not be registered.".replace("{}", languageName)); // hard or soft error
+
       if (!SAFE_MODE) {
         throw error$1;
       } else {
         error(error$1);
-      }
-      // languages that have serious errors are replaced with essentially a
+      } // languages that have serious errors are replaced with essentially a
       // "plaintext" stand-in so that the code blocks will still get normal
       // css classes applied to them - and one bad language won't break the
       // entire highlighter
+
+
       lang = PLAINTEXT_LANGUAGE;
-    }
-    // give it a temporary name if it doesn't have one in the meta-data
+    } // give it a temporary name if it doesn't have one in the meta-data
+
+
     if (!lang.name) lang.name = languageName;
     languages[languageName] = lang;
     lang.rawDefinition = languageDefinition.bind(null, hljs);
+
     if (lang.aliases) {
       registerAliases(lang.aliases, {
         languageName
       });
     }
   }
-
   /**
    * Remove a language grammar module
    *
    * @param {string} languageName
    */
+
+
   function unregisterLanguage(languageName) {
     delete languages[languageName];
+
     for (const alias of Object.keys(aliases)) {
       if (aliases[alias] === languageName) {
         delete aliases[alias];
       }
     }
   }
-
   /**
    * @returns {string[]} List of language internal names
    */
+
+
   function listLanguages() {
     return Object.keys(languages);
   }
-
   /**
     intended usage: When one language truly requires another
      Unlike `getLanguage`, this will throw when the requested language
@@ -2265,56 +2480,65 @@ const HLJS = function (hljs) {
      @param {string} name - name of the language to fetch/require
     @returns {Language | never}
   */
+
+
   function requireLanguage(name) {
     deprecated("10.4.0", "requireLanguage will be removed entirely in v11.");
     deprecated("10.4.0", "Please see https://github.com/highlightjs/highlight.js/pull/2844");
     const lang = getLanguage(name);
+
     if (lang) {
       return lang;
     }
+
     const err = new Error('The \'{}\' language is required, but not loaded.'.replace('{}', name));
     throw err;
   }
-
   /**
    * @param {string} name - name of the language to retrieve
    * @returns {Language | undefined}
    */
+
+
   function getLanguage(name) {
     name = (name || '').toLowerCase();
     return languages[name] || languages[aliases[name]];
   }
-
   /**
    *
    * @param {string|string[]} aliasList - single alias or list of aliases
    * @param {{languageName: string}} opts
    */
+
+
   function registerAliases(aliasList, {
     languageName
   }) {
     if (typeof aliasList === 'string') {
       aliasList = [aliasList];
     }
+
     aliasList.forEach(alias => {
       aliases[alias.toLowerCase()] = languageName;
     });
   }
-
   /**
    * Determines if a given language has auto-detection enabled
    * @param {string} name - name of the language
    */
+
+
   function autoDetection(name) {
     const lang = getLanguage(name);
     return lang && !lang.disableAutodetect;
   }
-
   /**
    * Upgrades the old highlightBlock plugins to the new
    * highlightElement API
    * @param {HLJSPlugin} plugin
    */
+
+
   function upgradePluginAPI(plugin) {
     // TODO: remove with v12
     if (plugin["before:highlightBlock"] && !plugin["before:highlightElement"]) {
@@ -2324,6 +2548,7 @@ const HLJS = function (hljs) {
         }, data));
       };
     }
+
     if (plugin["after:highlightBlock"] && !plugin["after:highlightElement"]) {
       plugin["after:highlightElement"] = data => {
         plugin["after:highlightBlock"](Object.assign({
@@ -2332,20 +2557,22 @@ const HLJS = function (hljs) {
       };
     }
   }
-
   /**
    * @param {HLJSPlugin} plugin
    */
+
+
   function addPlugin(plugin) {
     upgradePluginAPI(plugin);
     plugins.push(plugin);
   }
-
   /**
    *
    * @param {PluginEvent} event
    * @param {any} args
    */
+
+
   function fire(event, args) {
     const cb = event;
     plugins.forEach(function (plugin) {
@@ -2354,29 +2581,32 @@ const HLJS = function (hljs) {
       }
     });
   }
-
   /**
   Note: fixMarkup is deprecated and will be removed entirely in v11
    @param {string} arg
   @returns {string}
   */
+
+
   function deprecateFixMarkup(arg) {
     deprecated("10.2.0", "fixMarkup will be removed entirely in v11.0");
     deprecated("10.2.0", "Please see https://github.com/highlightjs/highlight.js/issues/2534");
     return fixMarkup(arg);
   }
-
   /**
    *
    * @param {HighlightedHTMLElement} el
    */
+
+
   function deprecateHighlightBlock(el) {
     deprecated("10.7.0", "highlightBlock will be removed entirely in v12.0");
     deprecated("10.7.0", "Please use highlightElement now.");
     return highlightElement(el);
   }
-
   /* Interface definition */
+
+
   Object.assign(hljs, {
     highlight,
     highlightAuto,
@@ -2400,32 +2630,36 @@ const HLJS = function (hljs) {
     // plugins for frameworks
     vuePlugin: BuildVuePlugin(hljs).VuePlugin
   });
+
   hljs.debugMode = function () {
     SAFE_MODE = false;
   };
+
   hljs.safeMode = function () {
     SAFE_MODE = true;
   };
+
   hljs.versionString = version;
+
   for (const key in MODES) {
     // @ts-ignore
     if (typeof MODES[key] === "object") {
       // @ts-ignore
       deepFreezeEs6(MODES[key]);
     }
-  }
+  } // merge all the modes/regexs into our main object
 
-  // merge all the modes/regexs into our main object
-  Object.assign(hljs, MODES);
 
-  // built-in plugins, likely to be moved out of core in the future
+  Object.assign(hljs, MODES); // built-in plugins, likely to be moved out of core in the future
+
   hljs.addPlugin(brPlugin); // slated to be removed in v11
+
   hljs.addPlugin(mergeHTMLPlugin);
   hljs.addPlugin(tabReplacePlugin);
   return hljs;
-};
+}; // export an "instance" of the highlighter
 
-// export an "instance" of the highlighter
+
 var highlight = HLJS({});
 module.exports = highlight;
 
@@ -2438,6 +2672,7 @@ module.exports = highlight;
 /***/ ((module, __unused_webpack_exports, __webpack_require__) => {
 
 var hljs = __webpack_require__(/*! ./core */ 15241);
+
 hljs.registerLanguage('1c', __webpack_require__(/*! ./languages/1c */ 41444));
 hljs.registerLanguage('abnf', __webpack_require__(/*! ./languages/abnf */ 32163));
 hljs.registerLanguage('accesslog', __webpack_require__(/*! ./languages/accesslog */ 65641));
@@ -2645,131 +2880,90 @@ Author: Stanislav Belov <stbelov@gmail.com>
 Description: built-in language 1C:Enterprise (v7, v8)
 Category: enterprise
 */
-
 function _1c(hljs) {
   // общий паттерн для определения идентификаторов
-  var UNDERSCORE_IDENT_RE = '[A-Za-zА-Яа-яёЁ_][A-Za-zА-Яа-яёЁ_0-9]+';
+  var UNDERSCORE_IDENT_RE = '[A-Za-zА-Яа-яёЁ_][A-Za-zА-Яа-яёЁ_0-9]+'; // v7 уникальные ключевые слова, отсутствующие в v8 ==> keyword
 
-  // v7 уникальные ключевые слова, отсутствующие в v8 ==> keyword
-  var v7_keywords = 'далее ';
+  var v7_keywords = 'далее '; // v8 ключевые слова ==> keyword
 
-  // v8 ключевые слова ==> keyword
-  var v8_keywords = 'возврат вызватьисключение выполнить для если и из или иначе иначеесли исключение каждого конецесли ' + 'конецпопытки конеццикла не новый перейти перем по пока попытка прервать продолжить тогда цикл экспорт ';
+  var v8_keywords = 'возврат вызватьисключение выполнить для если и из или иначе иначеесли исключение каждого конецесли ' + 'конецпопытки конеццикла не новый перейти перем по пока попытка прервать продолжить тогда цикл экспорт '; // keyword : ключевые слова
 
-  // keyword : ключевые слова
-  var KEYWORD = v7_keywords + v8_keywords;
+  var KEYWORD = v7_keywords + v8_keywords; // v7 уникальные директивы, отсутствующие в v8 ==> meta-keyword
 
-  // v7 уникальные директивы, отсутствующие в v8 ==> meta-keyword
-  var v7_meta_keywords = 'загрузитьизфайла ';
+  var v7_meta_keywords = 'загрузитьизфайла '; // v8 ключевые слова в инструкциях препроцессора, директивах компиляции, аннотациях ==> meta-keyword
 
-  // v8 ключевые слова в инструкциях препроцессора, директивах компиляции, аннотациях ==> meta-keyword
-  var v8_meta_keywords = 'вебклиент вместо внешнеесоединение клиент конецобласти мобильноеприложениеклиент мобильноеприложениесервер ' + 'наклиенте наклиентенасервере наклиентенасерверебезконтекста насервере насерверебезконтекста область перед ' + 'после сервер толстыйклиентобычноеприложение толстыйклиентуправляемоеприложение тонкийклиент ';
+  var v8_meta_keywords = 'вебклиент вместо внешнеесоединение клиент конецобласти мобильноеприложениеклиент мобильноеприложениесервер ' + 'наклиенте наклиентенасервере наклиентенасерверебезконтекста насервере насерверебезконтекста область перед ' + 'после сервер толстыйклиентобычноеприложение толстыйклиентуправляемоеприложение тонкийклиент '; // meta-keyword : ключевые слова в инструкциях препроцессора, директивах компиляции, аннотациях
 
-  // meta-keyword : ключевые слова в инструкциях препроцессора, директивах компиляции, аннотациях
-  var METAKEYWORD = v7_meta_keywords + v8_meta_keywords;
+  var METAKEYWORD = v7_meta_keywords + v8_meta_keywords; // v7 системные константы ==> built_in
 
-  // v7 системные константы ==> built_in
-  var v7_system_constants = 'разделительстраниц разделительстрок символтабуляции ';
+  var v7_system_constants = 'разделительстраниц разделительстрок символтабуляции '; // v7 уникальные методы глобального контекста, отсутствующие в v8 ==> built_in
 
-  // v7 уникальные методы глобального контекста, отсутствующие в v8 ==> built_in
-  var v7_global_context_methods = 'ansitooem oemtoansi ввестивидсубконто ввестиперечисление ввестипериод ввестиплансчетов выбранныйплансчетов ' + 'датагод датамесяц датачисло заголовоксистемы значениевстроку значениеизстроки каталогиб каталогпользователя ' + 'кодсимв конгода конецпериодаби конецрассчитанногопериодаби конецстандартногоинтервала конквартала конмесяца ' + 'коннедели лог лог10 максимальноеколичествосубконто названиеинтерфейса названиенабораправ назначитьвид ' + 'назначитьсчет найтиссылки началопериодаби началостандартногоинтервала начгода начквартала начмесяца ' + 'начнедели номерднягода номерднянедели номернеделигода обработкаожидания основнойжурналрасчетов ' + 'основнойплансчетов основнойязык очиститьокносообщений периодстр получитьвремята получитьдатута ' + 'получитьдокументта получитьзначенияотбора получитьпозициюта получитьпустоезначение получитьта ' + 'префиксавтонумерации пропись пустоезначение разм разобратьпозициюдокумента рассчитатьрегистрына ' + 'рассчитатьрегистрыпо симв создатьобъект статусвозврата стрколичествострок сформироватьпозициюдокумента ' + 'счетпокоду текущеевремя типзначения типзначениястр установитьтана установитьтапо фиксшаблон шаблон ';
+  var v7_global_context_methods = 'ansitooem oemtoansi ввестивидсубконто ввестиперечисление ввестипериод ввестиплансчетов выбранныйплансчетов ' + 'датагод датамесяц датачисло заголовоксистемы значениевстроку значениеизстроки каталогиб каталогпользователя ' + 'кодсимв конгода конецпериодаби конецрассчитанногопериодаби конецстандартногоинтервала конквартала конмесяца ' + 'коннедели лог лог10 максимальноеколичествосубконто названиеинтерфейса названиенабораправ назначитьвид ' + 'назначитьсчет найтиссылки началопериодаби началостандартногоинтервала начгода начквартала начмесяца ' + 'начнедели номерднягода номерднянедели номернеделигода обработкаожидания основнойжурналрасчетов ' + 'основнойплансчетов основнойязык очиститьокносообщений периодстр получитьвремята получитьдатута ' + 'получитьдокументта получитьзначенияотбора получитьпозициюта получитьпустоезначение получитьта ' + 'префиксавтонумерации пропись пустоезначение разм разобратьпозициюдокумента рассчитатьрегистрына ' + 'рассчитатьрегистрыпо симв создатьобъект статусвозврата стрколичествострок сформироватьпозициюдокумента ' + 'счетпокоду текущеевремя типзначения типзначениястр установитьтана установитьтапо фиксшаблон шаблон '; // v8 методы глобального контекста ==> built_in
 
-  // v8 методы глобального контекста ==> built_in
-  var v8_global_context_methods = 'acos asin atan base64значение base64строка cos exp log log10 pow sin sqrt tan xmlзначение xmlстрока ' + 'xmlтип xmlтипзнч активноеокно безопасныйрежим безопасныйрежимразделенияданных булево ввестидату ввестизначение ' + 'ввестистроку ввестичисло возможностьчтенияxml вопрос восстановитьзначение врег выгрузитьжурналрегистрации ' + 'выполнитьобработкуоповещения выполнитьпроверкуправдоступа вычислить год данныеформывзначение дата день деньгода ' + 'деньнедели добавитьмесяц заблокироватьданныедляредактирования заблокироватьработупользователя завершитьработусистемы ' + 'загрузитьвнешнююкомпоненту закрытьсправку записатьjson записатьxml записатьдатуjson записьжурналарегистрации ' + 'заполнитьзначениясвойств запроситьразрешениепользователя запуститьприложение запуститьсистему зафиксироватьтранзакцию ' + 'значениевданныеформы значениевстрокувнутр значениевфайл значениезаполнено значениеизстрокивнутр значениеизфайла ' + 'изxmlтипа импортмоделиxdto имякомпьютера имяпользователя инициализироватьпредопределенныеданные информацияобошибке ' + 'каталогбиблиотекимобильногоустройства каталогвременныхфайлов каталогдокументов каталогпрограммы кодироватьстроку ' + 'кодлокализацииинформационнойбазы кодсимвола командасистемы конецгода конецдня конецквартала конецмесяца конецминуты ' + 'конецнедели конецчаса конфигурациябазыданныхизмененадинамически конфигурацияизменена копироватьданныеформы ' + 'копироватьфайл краткоепредставлениеошибки лев макс местноевремя месяц мин минута монопольныйрежим найти ' + 'найтинедопустимыесимволыxml найтиокнопонавигационнойссылке найтипомеченныенаудаление найтипоссылкам найтифайлы ' + 'началогода началодня началоквартала началомесяца началоминуты началонедели началочаса начатьзапросразрешенияпользователя ' + 'начатьзапускприложения начатькопированиефайла начатьперемещениефайла начатьподключениевнешнейкомпоненты ' + 'начатьподключениерасширенияработыскриптографией начатьподключениерасширенияработысфайлами начатьпоискфайлов ' + 'начатьполучениекаталогавременныхфайлов начатьполучениекаталогадокументов начатьполучениерабочегокаталогаданныхпользователя ' + 'начатьполучениефайлов начатьпомещениефайла начатьпомещениефайлов начатьсозданиедвоичныхданныхизфайла начатьсозданиекаталога ' + 'начатьтранзакцию начатьудалениефайлов начатьустановкувнешнейкомпоненты начатьустановкурасширенияработыскриптографией ' + 'начатьустановкурасширенияработысфайлами неделягода необходимостьзавершениясоединения номерсеансаинформационнойбазы ' + 'номерсоединенияинформационнойбазы нрег нстр обновитьинтерфейс обновитьнумерациюобъектов обновитьповторноиспользуемыезначения ' + 'обработкапрерыванияпользователя объединитьфайлы окр описаниеошибки оповестить оповеститьобизменении ' + 'отключитьобработчикзапросанастроекклиенталицензирования отключитьобработчикожидания отключитьобработчикоповещения ' + 'открытьзначение открытьиндекссправки открытьсодержаниесправки открытьсправку открытьформу открытьформумодально ' + 'отменитьтранзакцию очиститьжурналрегистрации очиститьнастройкипользователя очиститьсообщения параметрыдоступа ' + 'перейтипонавигационнойссылке переместитьфайл подключитьвнешнююкомпоненту ' + 'подключитьобработчикзапросанастроекклиенталицензирования подключитьобработчикожидания подключитьобработчикоповещения ' + 'подключитьрасширениеработыскриптографией подключитьрасширениеработысфайлами подробноепредставлениеошибки ' + 'показатьвводдаты показатьвводзначения показатьвводстроки показатьвводчисла показатьвопрос показатьзначение ' + 'показатьинформациюобошибке показатьнакарте показатьоповещениепользователя показатьпредупреждение полноеимяпользователя ' + 'получитьcomобъект получитьxmlтип получитьадреспоместоположению получитьблокировкусеансов получитьвремязавершенияспящегосеанса ' + 'получитьвремязасыпанияпассивногосеанса получитьвремяожиданияблокировкиданных получитьданныевыбора ' + 'получитьдополнительныйпараметрклиенталицензирования получитьдопустимыекодылокализации получитьдопустимыечасовыепояса ' + 'получитьзаголовокклиентскогоприложения получитьзаголовоксистемы получитьзначенияотборажурналарегистрации ' + 'получитьидентификаторконфигурации получитьизвременногохранилища получитьимявременногофайла ' + 'получитьимяклиенталицензирования получитьинформациюэкрановклиента получитьиспользованиежурналарегистрации ' + 'получитьиспользованиесобытияжурналарегистрации получитькраткийзаголовокприложения получитьмакетоформления ' + 'получитьмаскувсефайлы получитьмаскувсефайлыклиента получитьмаскувсефайлысервера получитьместоположениепоадресу ' + 'получитьминимальнуюдлинупаролейпользователей получитьнавигационнуюссылку получитьнавигационнуюссылкуинформационнойбазы ' + 'получитьобновлениеконфигурациибазыданных получитьобновлениепредопределенныхданныхинформационнойбазы получитьобщиймакет ' + 'получитьобщуюформу получитьокна получитьоперативнуюотметкувремени получитьотключениебезопасногорежима ' + 'получитьпараметрыфункциональныхопцийинтерфейса получитьполноеимяпредопределенногозначения ' + 'получитьпредставлениянавигационныхссылок получитьпроверкусложностипаролейпользователей получитьразделительпути ' + 'получитьразделительпутиклиента получитьразделительпутисервера получитьсеансыинформационнойбазы ' + 'получитьскоростьклиентскогосоединения получитьсоединенияинформационнойбазы получитьсообщенияпользователю ' + 'получитьсоответствиеобъектаиформы получитьсоставстандартногоинтерфейсаodata получитьструктурухранениябазыданных ' + 'получитьтекущийсеансинформационнойбазы получитьфайл получитьфайлы получитьформу получитьфункциональнуюопцию ' + 'получитьфункциональнуюопциюинтерфейса получитьчасовойпоясинформационнойбазы пользователиос поместитьвовременноехранилище ' + 'поместитьфайл поместитьфайлы прав праводоступа предопределенноезначение представлениекодалокализации представлениепериода ' + 'представлениеправа представлениеприложения представлениесобытияжурналарегистрации представлениечасовогопояса предупреждение ' + 'прекратитьработусистемы привилегированныйрежим продолжитьвызов прочитатьjson прочитатьxml прочитатьдатуjson пустаястрока ' + 'рабочийкаталогданныхпользователя разблокироватьданныедляредактирования разделитьфайл разорватьсоединениесвнешнимисточникомданных ' + 'раскодироватьстроку рольдоступна секунда сигнал символ скопироватьжурналрегистрации смещениелетнеговремени ' + 'смещениестандартноговремени соединитьбуферыдвоичныхданных создатькаталог создатьфабрикуxdto сокрл сокрлп сокрп сообщить ' + 'состояние сохранитьзначение сохранитьнастройкипользователя сред стрдлина стрзаканчиваетсяна стрзаменить стрнайти стрначинаетсяс ' + 'строка строкасоединенияинформационнойбазы стрполучитьстроку стрразделить стрсоединить стрсравнить стрчисловхождений ' + 'стрчислострок стршаблон текущаядата текущаядатасеанса текущаяуниверсальнаядата текущаяуниверсальнаядатавмиллисекундах ' + 'текущийвариантинтерфейсаклиентскогоприложения текущийвариантосновногошрифтаклиентскогоприложения текущийкодлокализации ' + 'текущийрежимзапуска текущийязык текущийязыксистемы тип типзнч транзакцияактивна трег удалитьданныеинформационнойбазы ' + 'удалитьизвременногохранилища удалитьобъекты удалитьфайлы универсальноевремя установитьбезопасныйрежим ' + 'установитьбезопасныйрежимразделенияданных установитьблокировкусеансов установитьвнешнююкомпоненту ' + 'установитьвремязавершенияспящегосеанса установитьвремязасыпанияпассивногосеанса установитьвремяожиданияблокировкиданных ' + 'установитьзаголовокклиентскогоприложения установитьзаголовоксистемы установитьиспользованиежурналарегистрации ' + 'установитьиспользованиесобытияжурналарегистрации установитькраткийзаголовокприложения ' + 'установитьминимальнуюдлинупаролейпользователей установитьмонопольныйрежим установитьнастройкиклиенталицензирования ' + 'установитьобновлениепредопределенныхданныхинформационнойбазы установитьотключениебезопасногорежима ' + 'установитьпараметрыфункциональныхопцийинтерфейса установитьпривилегированныйрежим ' + 'установитьпроверкусложностипаролейпользователей установитьрасширениеработыскриптографией ' + 'установитьрасширениеработысфайлами установитьсоединениесвнешнимисточникомданных установитьсоответствиеобъектаиформы ' + 'установитьсоставстандартногоинтерфейсаodata установитьчасовойпоясинформационнойбазы установитьчасовойпояссеанса ' + 'формат цел час часовойпояс часовойпояссеанса число числопрописью этоадресвременногохранилища ';
+  var v8_global_context_methods = 'acos asin atan base64значение base64строка cos exp log log10 pow sin sqrt tan xmlзначение xmlстрока ' + 'xmlтип xmlтипзнч активноеокно безопасныйрежим безопасныйрежимразделенияданных булево ввестидату ввестизначение ' + 'ввестистроку ввестичисло возможностьчтенияxml вопрос восстановитьзначение врег выгрузитьжурналрегистрации ' + 'выполнитьобработкуоповещения выполнитьпроверкуправдоступа вычислить год данныеформывзначение дата день деньгода ' + 'деньнедели добавитьмесяц заблокироватьданныедляредактирования заблокироватьработупользователя завершитьработусистемы ' + 'загрузитьвнешнююкомпоненту закрытьсправку записатьjson записатьxml записатьдатуjson записьжурналарегистрации ' + 'заполнитьзначениясвойств запроситьразрешениепользователя запуститьприложение запуститьсистему зафиксироватьтранзакцию ' + 'значениевданныеформы значениевстрокувнутр значениевфайл значениезаполнено значениеизстрокивнутр значениеизфайла ' + 'изxmlтипа импортмоделиxdto имякомпьютера имяпользователя инициализироватьпредопределенныеданные информацияобошибке ' + 'каталогбиблиотекимобильногоустройства каталогвременныхфайлов каталогдокументов каталогпрограммы кодироватьстроку ' + 'кодлокализацииинформационнойбазы кодсимвола командасистемы конецгода конецдня конецквартала конецмесяца конецминуты ' + 'конецнедели конецчаса конфигурациябазыданныхизмененадинамически конфигурацияизменена копироватьданныеформы ' + 'копироватьфайл краткоепредставлениеошибки лев макс местноевремя месяц мин минута монопольныйрежим найти ' + 'найтинедопустимыесимволыxml найтиокнопонавигационнойссылке найтипомеченныенаудаление найтипоссылкам найтифайлы ' + 'началогода началодня началоквартала началомесяца началоминуты началонедели началочаса начатьзапросразрешенияпользователя ' + 'начатьзапускприложения начатькопированиефайла начатьперемещениефайла начатьподключениевнешнейкомпоненты ' + 'начатьподключениерасширенияработыскриптографией начатьподключениерасширенияработысфайлами начатьпоискфайлов ' + 'начатьполучениекаталогавременныхфайлов начатьполучениекаталогадокументов начатьполучениерабочегокаталогаданныхпользователя ' + 'начатьполучениефайлов начатьпомещениефайла начатьпомещениефайлов начатьсозданиедвоичныхданныхизфайла начатьсозданиекаталога ' + 'начатьтранзакцию начатьудалениефайлов начатьустановкувнешнейкомпоненты начатьустановкурасширенияработыскриптографией ' + 'начатьустановкурасширенияработысфайлами неделягода необходимостьзавершениясоединения номерсеансаинформационнойбазы ' + 'номерсоединенияинформационнойбазы нрег нстр обновитьинтерфейс обновитьнумерациюобъектов обновитьповторноиспользуемыезначения ' + 'обработкапрерыванияпользователя объединитьфайлы окр описаниеошибки оповестить оповеститьобизменении ' + 'отключитьобработчикзапросанастроекклиенталицензирования отключитьобработчикожидания отключитьобработчикоповещения ' + 'открытьзначение открытьиндекссправки открытьсодержаниесправки открытьсправку открытьформу открытьформумодально ' + 'отменитьтранзакцию очиститьжурналрегистрации очиститьнастройкипользователя очиститьсообщения параметрыдоступа ' + 'перейтипонавигационнойссылке переместитьфайл подключитьвнешнююкомпоненту ' + 'подключитьобработчикзапросанастроекклиенталицензирования подключитьобработчикожидания подключитьобработчикоповещения ' + 'подключитьрасширениеработыскриптографией подключитьрасширениеработысфайлами подробноепредставлениеошибки ' + 'показатьвводдаты показатьвводзначения показатьвводстроки показатьвводчисла показатьвопрос показатьзначение ' + 'показатьинформациюобошибке показатьнакарте показатьоповещениепользователя показатьпредупреждение полноеимяпользователя ' + 'получитьcomобъект получитьxmlтип получитьадреспоместоположению получитьблокировкусеансов получитьвремязавершенияспящегосеанса ' + 'получитьвремязасыпанияпассивногосеанса получитьвремяожиданияблокировкиданных получитьданныевыбора ' + 'получитьдополнительныйпараметрклиенталицензирования получитьдопустимыекодылокализации получитьдопустимыечасовыепояса ' + 'получитьзаголовокклиентскогоприложения получитьзаголовоксистемы получитьзначенияотборажурналарегистрации ' + 'получитьидентификаторконфигурации получитьизвременногохранилища получитьимявременногофайла ' + 'получитьимяклиенталицензирования получитьинформациюэкрановклиента получитьиспользованиежурналарегистрации ' + 'получитьиспользованиесобытияжурналарегистрации получитькраткийзаголовокприложения получитьмакетоформления ' + 'получитьмаскувсефайлы получитьмаскувсефайлыклиента получитьмаскувсефайлысервера получитьместоположениепоадресу ' + 'получитьминимальнуюдлинупаролейпользователей получитьнавигационнуюссылку получитьнавигационнуюссылкуинформационнойбазы ' + 'получитьобновлениеконфигурациибазыданных получитьобновлениепредопределенныхданныхинформационнойбазы получитьобщиймакет ' + 'получитьобщуюформу получитьокна получитьоперативнуюотметкувремени получитьотключениебезопасногорежима ' + 'получитьпараметрыфункциональныхопцийинтерфейса получитьполноеимяпредопределенногозначения ' + 'получитьпредставлениянавигационныхссылок получитьпроверкусложностипаролейпользователей получитьразделительпути ' + 'получитьразделительпутиклиента получитьразделительпутисервера получитьсеансыинформационнойбазы ' + 'получитьскоростьклиентскогосоединения получитьсоединенияинформационнойбазы получитьсообщенияпользователю ' + 'получитьсоответствиеобъектаиформы получитьсоставстандартногоинтерфейсаodata получитьструктурухранениябазыданных ' + 'получитьтекущийсеансинформационнойбазы получитьфайл получитьфайлы получитьформу получитьфункциональнуюопцию ' + 'получитьфункциональнуюопциюинтерфейса получитьчасовойпоясинформационнойбазы пользователиос поместитьвовременноехранилище ' + 'поместитьфайл поместитьфайлы прав праводоступа предопределенноезначение представлениекодалокализации представлениепериода ' + 'представлениеправа представлениеприложения представлениесобытияжурналарегистрации представлениечасовогопояса предупреждение ' + 'прекратитьработусистемы привилегированныйрежим продолжитьвызов прочитатьjson прочитатьxml прочитатьдатуjson пустаястрока ' + 'рабочийкаталогданныхпользователя разблокироватьданныедляредактирования разделитьфайл разорватьсоединениесвнешнимисточникомданных ' + 'раскодироватьстроку рольдоступна секунда сигнал символ скопироватьжурналрегистрации смещениелетнеговремени ' + 'смещениестандартноговремени соединитьбуферыдвоичныхданных создатькаталог создатьфабрикуxdto сокрл сокрлп сокрп сообщить ' + 'состояние сохранитьзначение сохранитьнастройкипользователя сред стрдлина стрзаканчиваетсяна стрзаменить стрнайти стрначинаетсяс ' + 'строка строкасоединенияинформационнойбазы стрполучитьстроку стрразделить стрсоединить стрсравнить стрчисловхождений ' + 'стрчислострок стршаблон текущаядата текущаядатасеанса текущаяуниверсальнаядата текущаяуниверсальнаядатавмиллисекундах ' + 'текущийвариантинтерфейсаклиентскогоприложения текущийвариантосновногошрифтаклиентскогоприложения текущийкодлокализации ' + 'текущийрежимзапуска текущийязык текущийязыксистемы тип типзнч транзакцияактивна трег удалитьданныеинформационнойбазы ' + 'удалитьизвременногохранилища удалитьобъекты удалитьфайлы универсальноевремя установитьбезопасныйрежим ' + 'установитьбезопасныйрежимразделенияданных установитьблокировкусеансов установитьвнешнююкомпоненту ' + 'установитьвремязавершенияспящегосеанса установитьвремязасыпанияпассивногосеанса установитьвремяожиданияблокировкиданных ' + 'установитьзаголовокклиентскогоприложения установитьзаголовоксистемы установитьиспользованиежурналарегистрации ' + 'установитьиспользованиесобытияжурналарегистрации установитькраткийзаголовокприложения ' + 'установитьминимальнуюдлинупаролейпользователей установитьмонопольныйрежим установитьнастройкиклиенталицензирования ' + 'установитьобновлениепредопределенныхданныхинформационнойбазы установитьотключениебезопасногорежима ' + 'установитьпараметрыфункциональныхопцийинтерфейса установитьпривилегированныйрежим ' + 'установитьпроверкусложностипаролейпользователей установитьрасширениеработыскриптографией ' + 'установитьрасширениеработысфайлами установитьсоединениесвнешнимисточникомданных установитьсоответствиеобъектаиформы ' + 'установитьсоставстандартногоинтерфейсаodata установитьчасовойпоясинформационнойбазы установитьчасовойпояссеанса ' + 'формат цел час часовойпояс часовойпояссеанса число числопрописью этоадресвременногохранилища '; // v8 свойства глобального контекста ==> built_in
 
-  // v8 свойства глобального контекста ==> built_in
-  var v8_global_context_property = 'wsссылки библиотекакартинок библиотекамакетовоформлениякомпоновкиданных библиотекастилей бизнеспроцессы ' + 'внешниеисточникиданных внешниеобработки внешниеотчеты встроенныепокупки главныйинтерфейс главныйстиль ' + 'документы доставляемыеуведомления журналыдокументов задачи информацияобинтернетсоединении использованиерабочейдаты ' + 'историяработыпользователя константы критерииотбора метаданные обработки отображениерекламы отправкадоставляемыхуведомлений ' + 'отчеты панельзадачос параметрзапуска параметрысеанса перечисления планывидоврасчета планывидовхарактеристик ' + 'планыобмена планысчетов полнотекстовыйпоиск пользователиинформационнойбазы последовательности проверкавстроенныхпокупок ' + 'рабочаядата расширенияконфигурации регистрыбухгалтерии регистрынакопления регистрырасчета регистрысведений ' + 'регламентныезадания сериализаторxdto справочники средствагеопозиционирования средствакриптографии средствамультимедиа ' + 'средстваотображениярекламы средствапочты средствателефонии фабрикаxdto файловыепотоки фоновыезадания хранилищанастроек ' + 'хранилищевариантовотчетов хранилищенастроекданныхформ хранилищеобщихнастроек хранилищепользовательскихнастроекдинамическихсписков ' + 'хранилищепользовательскихнастроекотчетов хранилищесистемныхнастроек ';
+  var v8_global_context_property = 'wsссылки библиотекакартинок библиотекамакетовоформлениякомпоновкиданных библиотекастилей бизнеспроцессы ' + 'внешниеисточникиданных внешниеобработки внешниеотчеты встроенныепокупки главныйинтерфейс главныйстиль ' + 'документы доставляемыеуведомления журналыдокументов задачи информацияобинтернетсоединении использованиерабочейдаты ' + 'историяработыпользователя константы критерииотбора метаданные обработки отображениерекламы отправкадоставляемыхуведомлений ' + 'отчеты панельзадачос параметрзапуска параметрысеанса перечисления планывидоврасчета планывидовхарактеристик ' + 'планыобмена планысчетов полнотекстовыйпоиск пользователиинформационнойбазы последовательности проверкавстроенныхпокупок ' + 'рабочаядата расширенияконфигурации регистрыбухгалтерии регистрынакопления регистрырасчета регистрысведений ' + 'регламентныезадания сериализаторxdto справочники средствагеопозиционирования средствакриптографии средствамультимедиа ' + 'средстваотображениярекламы средствапочты средствателефонии фабрикаxdto файловыепотоки фоновыезадания хранилищанастроек ' + 'хранилищевариантовотчетов хранилищенастроекданныхформ хранилищеобщихнастроек хранилищепользовательскихнастроекдинамическихсписков ' + 'хранилищепользовательскихнастроекотчетов хранилищесистемныхнастроек '; // built_in : встроенные или библиотечные объекты (константы, классы, функции)
 
-  // built_in : встроенные или библиотечные объекты (константы, классы, функции)
-  var BUILTIN = v7_system_constants + v7_global_context_methods + v8_global_context_methods + v8_global_context_property;
+  var BUILTIN = v7_system_constants + v7_global_context_methods + v8_global_context_methods + v8_global_context_property; // v8 системные наборы значений ==> class
 
-  // v8 системные наборы значений ==> class
-  var v8_system_sets_of_values = 'webцвета windowsцвета windowsшрифты библиотекакартинок рамкистиля символы цветастиля шрифтыстиля ';
+  var v8_system_sets_of_values = 'webцвета windowsцвета windowsшрифты библиотекакартинок рамкистиля символы цветастиля шрифтыстиля '; // v8 системные перечисления - интерфейсные ==> class
 
-  // v8 системные перечисления - интерфейсные ==> class
-  var v8_system_enums_interface = 'автоматическоесохранениеданныхформывнастройках автонумерациявформе автораздвижениесерий ' + 'анимациядиаграммы вариантвыравниванияэлементовизаголовков вариантуправлениявысотойтаблицы ' + 'вертикальнаяпрокруткаформы вертикальноеположение вертикальноеположениеэлемента видгруппыформы ' + 'виддекорацииформы виддополненияэлементаформы видизмененияданных видкнопкиформы видпереключателя ' + 'видподписейкдиаграмме видполяформы видфлажка влияниеразмеранапузырекдиаграммы горизонтальноеположение ' + 'горизонтальноеположениеэлемента группировкаколонок группировкаподчиненныхэлементовформы ' + 'группыиэлементы действиеперетаскивания дополнительныйрежимотображения допустимыедействияперетаскивания ' + 'интервалмеждуэлементамиформы использованиевывода использованиеполосыпрокрутки ' + 'используемоезначениеточкибиржевойдиаграммы историявыборапривводе источникзначенийоситочекдиаграммы ' + 'источникзначенияразмерапузырькадиаграммы категориягруппыкоманд максимумсерий начальноеотображениедерева ' + 'начальноеотображениесписка обновлениетекстаредактирования ориентациядендрограммы ориентациядиаграммы ' + 'ориентацияметокдиаграммы ориентацияметоксводнойдиаграммы ориентацияэлементаформы отображениевдиаграмме ' + 'отображениевлегендедиаграммы отображениегруппыкнопок отображениезаголовкашкалыдиаграммы ' + 'отображениезначенийсводнойдиаграммы отображениезначенияизмерительнойдиаграммы ' + 'отображениеинтерваладиаграммыганта отображениекнопки отображениекнопкивыбора отображениеобсужденийформы ' + 'отображениеобычнойгруппы отображениеотрицательныхзначенийпузырьковойдиаграммы отображениепанелипоиска ' + 'отображениеподсказки отображениепредупрежденияприредактировании отображениеразметкиполосырегулирования ' + 'отображениестраницформы отображениетаблицы отображениетекстазначениядиаграммыганта ' + 'отображениеуправленияобычнойгруппы отображениефигурыкнопки палитрацветовдиаграммы поведениеобычнойгруппы ' + 'поддержкамасштабадендрограммы поддержкамасштабадиаграммыганта поддержкамасштабасводнойдиаграммы ' + 'поисквтаблицепривводе положениезаголовкаэлементаформы положениекартинкикнопкиформы ' + 'положениекартинкиэлементаграфическойсхемы положениекоманднойпанелиформы положениекоманднойпанелиэлементаформы ' + 'положениеопорнойточкиотрисовки положениеподписейкдиаграмме положениеподписейшкалызначенийизмерительнойдиаграммы ' + 'положениесостоянияпросмотра положениестрокипоиска положениетекстасоединительнойлинии положениеуправленияпоиском ' + 'положениешкалывремени порядокотображенияточекгоризонтальнойгистограммы порядоксерийвлегендедиаграммы ' + 'размеркартинки расположениезаголовкашкалыдиаграммы растягиваниеповертикалидиаграммыганта ' + 'режимавтоотображениясостояния режимвводастроктаблицы режимвыборанезаполненного режимвыделениядаты ' + 'режимвыделениястрокитаблицы режимвыделениятаблицы режимизмененияразмера режимизменениясвязанногозначения ' + 'режимиспользованиядиалогапечати режимиспользованияпараметракоманды режиммасштабированияпросмотра ' + 'режимосновногоокнаклиентскогоприложения режимоткрытияокнаформы режимотображениявыделения ' + 'режимотображениягеографическойсхемы режимотображениязначенийсерии режимотрисовкисеткиграфическойсхемы ' + 'режимполупрозрачностидиаграммы режимпробеловдиаграммы режимразмещениянастранице режимредактированияколонки ' + 'режимсглаживаниядиаграммы режимсглаживанияиндикатора режимсписказадач сквозноевыравнивание ' + 'сохранениеданныхформывнастройках способзаполнениятекстазаголовкашкалыдиаграммы ' + 'способопределенияограничивающегозначениядиаграммы стандартнаягруппакоманд стандартноеоформление ' + 'статусоповещенияпользователя стильстрелки типаппроксимациилиниитрендадиаграммы типдиаграммы ' + 'типединицышкалывремени типимпортасерийслоягеографическойсхемы типлиниигеографическойсхемы типлиниидиаграммы ' + 'типмаркерагеографическойсхемы типмаркерадиаграммы типобластиоформления ' + 'типорганизацииисточникаданныхгеографическойсхемы типотображениясериислоягеографическойсхемы ' + 'типотображенияточечногообъектагеографическойсхемы типотображенияшкалыэлементалегендыгеографическойсхемы ' + 'типпоискаобъектовгеографическойсхемы типпроекциигеографическойсхемы типразмещенияизмерений ' + 'типразмещенияреквизитовизмерений типрамкиэлементауправления типсводнойдиаграммы ' + 'типсвязидиаграммыганта типсоединениязначенийпосериямдиаграммы типсоединенияточекдиаграммы ' + 'типсоединительнойлинии типстороныэлементаграфическойсхемы типформыотчета типшкалырадарнойдиаграммы ' + 'факторлиниитрендадиаграммы фигуракнопки фигурыграфическойсхемы фиксациявтаблице форматдняшкалывремени ' + 'форматкартинки ширинаподчиненныхэлементовформы ';
+  var v8_system_enums_interface = 'автоматическоесохранениеданныхформывнастройках автонумерациявформе автораздвижениесерий ' + 'анимациядиаграммы вариантвыравниванияэлементовизаголовков вариантуправлениявысотойтаблицы ' + 'вертикальнаяпрокруткаформы вертикальноеположение вертикальноеположениеэлемента видгруппыформы ' + 'виддекорацииформы виддополненияэлементаформы видизмененияданных видкнопкиформы видпереключателя ' + 'видподписейкдиаграмме видполяформы видфлажка влияниеразмеранапузырекдиаграммы горизонтальноеположение ' + 'горизонтальноеположениеэлемента группировкаколонок группировкаподчиненныхэлементовформы ' + 'группыиэлементы действиеперетаскивания дополнительныйрежимотображения допустимыедействияперетаскивания ' + 'интервалмеждуэлементамиформы использованиевывода использованиеполосыпрокрутки ' + 'используемоезначениеточкибиржевойдиаграммы историявыборапривводе источникзначенийоситочекдиаграммы ' + 'источникзначенияразмерапузырькадиаграммы категориягруппыкоманд максимумсерий начальноеотображениедерева ' + 'начальноеотображениесписка обновлениетекстаредактирования ориентациядендрограммы ориентациядиаграммы ' + 'ориентацияметокдиаграммы ориентацияметоксводнойдиаграммы ориентацияэлементаформы отображениевдиаграмме ' + 'отображениевлегендедиаграммы отображениегруппыкнопок отображениезаголовкашкалыдиаграммы ' + 'отображениезначенийсводнойдиаграммы отображениезначенияизмерительнойдиаграммы ' + 'отображениеинтерваладиаграммыганта отображениекнопки отображениекнопкивыбора отображениеобсужденийформы ' + 'отображениеобычнойгруппы отображениеотрицательныхзначенийпузырьковойдиаграммы отображениепанелипоиска ' + 'отображениеподсказки отображениепредупрежденияприредактировании отображениеразметкиполосырегулирования ' + 'отображениестраницформы отображениетаблицы отображениетекстазначениядиаграммыганта ' + 'отображениеуправленияобычнойгруппы отображениефигурыкнопки палитрацветовдиаграммы поведениеобычнойгруппы ' + 'поддержкамасштабадендрограммы поддержкамасштабадиаграммыганта поддержкамасштабасводнойдиаграммы ' + 'поисквтаблицепривводе положениезаголовкаэлементаформы положениекартинкикнопкиформы ' + 'положениекартинкиэлементаграфическойсхемы положениекоманднойпанелиформы положениекоманднойпанелиэлементаформы ' + 'положениеопорнойточкиотрисовки положениеподписейкдиаграмме положениеподписейшкалызначенийизмерительнойдиаграммы ' + 'положениесостоянияпросмотра положениестрокипоиска положениетекстасоединительнойлинии положениеуправленияпоиском ' + 'положениешкалывремени порядокотображенияточекгоризонтальнойгистограммы порядоксерийвлегендедиаграммы ' + 'размеркартинки расположениезаголовкашкалыдиаграммы растягиваниеповертикалидиаграммыганта ' + 'режимавтоотображениясостояния режимвводастроктаблицы режимвыборанезаполненного режимвыделениядаты ' + 'режимвыделениястрокитаблицы режимвыделениятаблицы режимизмененияразмера режимизменениясвязанногозначения ' + 'режимиспользованиядиалогапечати режимиспользованияпараметракоманды режиммасштабированияпросмотра ' + 'режимосновногоокнаклиентскогоприложения режимоткрытияокнаформы режимотображениявыделения ' + 'режимотображениягеографическойсхемы режимотображениязначенийсерии режимотрисовкисеткиграфическойсхемы ' + 'режимполупрозрачностидиаграммы режимпробеловдиаграммы режимразмещениянастранице режимредактированияколонки ' + 'режимсглаживаниядиаграммы режимсглаживанияиндикатора режимсписказадач сквозноевыравнивание ' + 'сохранениеданныхформывнастройках способзаполнениятекстазаголовкашкалыдиаграммы ' + 'способопределенияограничивающегозначениядиаграммы стандартнаягруппакоманд стандартноеоформление ' + 'статусоповещенияпользователя стильстрелки типаппроксимациилиниитрендадиаграммы типдиаграммы ' + 'типединицышкалывремени типимпортасерийслоягеографическойсхемы типлиниигеографическойсхемы типлиниидиаграммы ' + 'типмаркерагеографическойсхемы типмаркерадиаграммы типобластиоформления ' + 'типорганизацииисточникаданныхгеографическойсхемы типотображениясериислоягеографическойсхемы ' + 'типотображенияточечногообъектагеографическойсхемы типотображенияшкалыэлементалегендыгеографическойсхемы ' + 'типпоискаобъектовгеографическойсхемы типпроекциигеографическойсхемы типразмещенияизмерений ' + 'типразмещенияреквизитовизмерений типрамкиэлементауправления типсводнойдиаграммы ' + 'типсвязидиаграммыганта типсоединениязначенийпосериямдиаграммы типсоединенияточекдиаграммы ' + 'типсоединительнойлинии типстороныэлементаграфическойсхемы типформыотчета типшкалырадарнойдиаграммы ' + 'факторлиниитрендадиаграммы фигуракнопки фигурыграфическойсхемы фиксациявтаблице форматдняшкалывремени ' + 'форматкартинки ширинаподчиненныхэлементовформы '; // v8 системные перечисления - свойства прикладных объектов ==> class
 
-  // v8 системные перечисления - свойства прикладных объектов ==> class
-  var v8_system_enums_objects_properties = 'виддвижениябухгалтерии виддвижениянакопления видпериодарегистрарасчета видсчета видточкимаршрутабизнеспроцесса ' + 'использованиеагрегатарегистранакопления использованиегруппиэлементов использованиережимапроведения ' + 'использованиесреза периодичностьагрегатарегистранакопления режимавтовремя режимзаписидокумента режимпроведениядокумента ';
+  var v8_system_enums_objects_properties = 'виддвижениябухгалтерии виддвижениянакопления видпериодарегистрарасчета видсчета видточкимаршрутабизнеспроцесса ' + 'использованиеагрегатарегистранакопления использованиегруппиэлементов использованиережимапроведения ' + 'использованиесреза периодичностьагрегатарегистранакопления режимавтовремя режимзаписидокумента режимпроведениядокумента '; // v8 системные перечисления - планы обмена ==> class
 
-  // v8 системные перечисления - планы обмена ==> class
-  var v8_system_enums_exchange_plans = 'авторегистрацияизменений допустимыйномерсообщения отправкаэлементаданных получениеэлементаданных ';
+  var v8_system_enums_exchange_plans = 'авторегистрацияизменений допустимыйномерсообщения отправкаэлементаданных получениеэлементаданных '; // v8 системные перечисления - табличный документ ==> class
 
-  // v8 системные перечисления - табличный документ ==> class
-  var v8_system_enums_tabular_document = 'использованиерасшифровкитабличногодокумента ориентациястраницы положениеитоговколоноксводнойтаблицы ' + 'положениеитоговстроксводнойтаблицы положениетекстаотносительнокартинки расположениезаголовкагруппировкитабличногодокумента ' + 'способчтениязначенийтабличногодокумента типдвустороннейпечати типзаполненияобластитабличногодокумента ' + 'типкурсоровтабличногодокумента типлиниирисункатабличногодокумента типлинииячейкитабличногодокумента ' + 'типнаправленияпереходатабличногодокумента типотображениявыделениятабличногодокумента типотображениялинийсводнойтаблицы ' + 'типразмещениятекстатабличногодокумента типрисункатабличногодокумента типсмещениятабличногодокумента ' + 'типузоратабличногодокумента типфайлатабличногодокумента точностьпечати чередованиерасположениястраниц ';
+  var v8_system_enums_tabular_document = 'использованиерасшифровкитабличногодокумента ориентациястраницы положениеитоговколоноксводнойтаблицы ' + 'положениеитоговстроксводнойтаблицы положениетекстаотносительнокартинки расположениезаголовкагруппировкитабличногодокумента ' + 'способчтениязначенийтабличногодокумента типдвустороннейпечати типзаполненияобластитабличногодокумента ' + 'типкурсоровтабличногодокумента типлиниирисункатабличногодокумента типлинииячейкитабличногодокумента ' + 'типнаправленияпереходатабличногодокумента типотображениявыделениятабличногодокумента типотображениялинийсводнойтаблицы ' + 'типразмещениятекстатабличногодокумента типрисункатабличногодокумента типсмещениятабличногодокумента ' + 'типузоратабличногодокумента типфайлатабличногодокумента точностьпечати чередованиерасположениястраниц '; // v8 системные перечисления - планировщик ==> class
 
-  // v8 системные перечисления - планировщик ==> class
-  var v8_system_enums_sheduler = 'отображениевремениэлементовпланировщика ';
+  var v8_system_enums_sheduler = 'отображениевремениэлементовпланировщика '; // v8 системные перечисления - форматированный документ ==> class
 
-  // v8 системные перечисления - форматированный документ ==> class
-  var v8_system_enums_formatted_document = 'типфайлаформатированногодокумента ';
+  var v8_system_enums_formatted_document = 'типфайлаформатированногодокумента '; // v8 системные перечисления - запрос ==> class
 
-  // v8 системные перечисления - запрос ==> class
-  var v8_system_enums_query = 'обходрезультатазапроса типзаписизапроса ';
+  var v8_system_enums_query = 'обходрезультатазапроса типзаписизапроса '; // v8 системные перечисления - построитель отчета ==> class
 
-  // v8 системные перечисления - построитель отчета ==> class
-  var v8_system_enums_report_builder = 'видзаполнениярасшифровкипостроителяотчета типдобавленияпредставлений типизмеренияпостроителяотчета типразмещенияитогов ';
+  var v8_system_enums_report_builder = 'видзаполнениярасшифровкипостроителяотчета типдобавленияпредставлений типизмеренияпостроителяотчета типразмещенияитогов '; // v8 системные перечисления - работа с файлами ==> class
 
-  // v8 системные перечисления - работа с файлами ==> class
-  var v8_system_enums_files = 'доступкфайлу режимдиалогавыборафайла режимоткрытияфайла ';
+  var v8_system_enums_files = 'доступкфайлу режимдиалогавыборафайла режимоткрытияфайла '; // v8 системные перечисления - построитель запроса ==> class
 
-  // v8 системные перечисления - построитель запроса ==> class
-  var v8_system_enums_query_builder = 'типизмеренияпостроителязапроса ';
+  var v8_system_enums_query_builder = 'типизмеренияпостроителязапроса '; // v8 системные перечисления - анализ данных ==> class
 
-  // v8 системные перечисления - анализ данных ==> class
-  var v8_system_enums_data_analysis = 'видданныханализа методкластеризации типединицыинтервалавременианализаданных типзаполнениятаблицырезультатаанализаданных ' + 'типиспользованиячисловыхзначенийанализаданных типисточникаданныхпоискаассоциаций типколонкианализаданныхдереворешений ' + 'типколонкианализаданныхкластеризация типколонкианализаданныхобщаястатистика типколонкианализаданныхпоискассоциаций ' + 'типколонкианализаданныхпоискпоследовательностей типколонкимоделипрогноза типмерырасстоянияанализаданных ' + 'типотсеченияправилассоциации типполяанализаданных типстандартизациианализаданных типупорядочиванияправилассоциациианализаданных ' + 'типупорядочиванияшаблоновпоследовательностейанализаданных типупрощениядереварешений ';
+  var v8_system_enums_data_analysis = 'видданныханализа методкластеризации типединицыинтервалавременианализаданных типзаполнениятаблицырезультатаанализаданных ' + 'типиспользованиячисловыхзначенийанализаданных типисточникаданныхпоискаассоциаций типколонкианализаданныхдереворешений ' + 'типколонкианализаданныхкластеризация типколонкианализаданныхобщаястатистика типколонкианализаданныхпоискассоциаций ' + 'типколонкианализаданныхпоискпоследовательностей типколонкимоделипрогноза типмерырасстоянияанализаданных ' + 'типотсеченияправилассоциации типполяанализаданных типстандартизациианализаданных типупорядочиванияправилассоциациианализаданных ' + 'типупорядочиванияшаблоновпоследовательностейанализаданных типупрощениядереварешений '; // v8 системные перечисления - xml, json, xs, dom, xdto, web-сервисы ==> class
 
-  // v8 системные перечисления - xml, json, xs, dom, xdto, web-сервисы ==> class
-  var v8_system_enums_xml_json_xs_dom_xdto_ws = 'wsнаправлениепараметра вариантxpathxs вариантзаписидатыjson вариантпростоготипаxs видгруппымоделиxs видфасетаxdto ' + 'действиепостроителяdom завершенностьпростоготипаxs завершенностьсоставноготипаxs завершенностьсхемыxs запрещенныеподстановкиxs ' + 'исключениягруппподстановкиxs категорияиспользованияатрибутаxs категорияограниченияидентичностиxs категорияограниченияпространствименxs ' + 'методнаследованияxs модельсодержимогоxs назначениетипаxml недопустимыеподстановкиxs обработкапробельныхсимволовxs обработкасодержимогоxs ' + 'ограничениезначенияxs параметрыотбораузловdom переносстрокjson позициявдокументеdom пробельныесимволыxml типатрибутаxml типзначенияjson ' + 'типканоническогоxml типкомпонентыxs типпроверкиxml типрезультатаdomxpath типузлаdom типузлаxml формаxml формапредставленияxs ' + 'форматдатыjson экранированиесимволовjson ';
+  var v8_system_enums_xml_json_xs_dom_xdto_ws = 'wsнаправлениепараметра вариантxpathxs вариантзаписидатыjson вариантпростоготипаxs видгруппымоделиxs видфасетаxdto ' + 'действиепостроителяdom завершенностьпростоготипаxs завершенностьсоставноготипаxs завершенностьсхемыxs запрещенныеподстановкиxs ' + 'исключениягруппподстановкиxs категорияиспользованияатрибутаxs категорияограниченияидентичностиxs категорияограниченияпространствименxs ' + 'методнаследованияxs модельсодержимогоxs назначениетипаxml недопустимыеподстановкиxs обработкапробельныхсимволовxs обработкасодержимогоxs ' + 'ограничениезначенияxs параметрыотбораузловdom переносстрокjson позициявдокументеdom пробельныесимволыxml типатрибутаxml типзначенияjson ' + 'типканоническогоxml типкомпонентыxs типпроверкиxml типрезультатаdomxpath типузлаdom типузлаxml формаxml формапредставленияxs ' + 'форматдатыjson экранированиесимволовjson '; // v8 системные перечисления - система компоновки данных ==> class
 
-  // v8 системные перечисления - система компоновки данных ==> class
-  var v8_system_enums_data_composition_system = 'видсравнениякомпоновкиданных действиеобработкирасшифровкикомпоновкиданных направлениесортировкикомпоновкиданных ' + 'расположениевложенныхэлементоврезультатакомпоновкиданных расположениеитоговкомпоновкиданных расположениегруппировкикомпоновкиданных ' + 'расположениеполейгруппировкикомпоновкиданных расположениеполякомпоновкиданных расположениереквизитовкомпоновкиданных ' + 'расположениересурсовкомпоновкиданных типбухгалтерскогоостаткакомпоновкиданных типвыводатекстакомпоновкиданных ' + 'типгруппировкикомпоновкиданных типгруппыэлементовотборакомпоновкиданных типдополненияпериодакомпоновкиданных ' + 'типзаголовкаполейкомпоновкиданных типмакетагруппировкикомпоновкиданных типмакетаобластикомпоновкиданных типостаткакомпоновкиданных ' + 'типпериодакомпоновкиданных типразмещениятекстакомпоновкиданных типсвязинаборовданныхкомпоновкиданных типэлементарезультатакомпоновкиданных ' + 'расположениелегендыдиаграммыкомпоновкиданных типпримененияотборакомпоновкиданных режимотображенияэлементанастройкикомпоновкиданных ' + 'режимотображениянастроеккомпоновкиданных состояниеэлементанастройкикомпоновкиданных способвосстановлениянастроеккомпоновкиданных ' + 'режимкомпоновкирезультата использованиепараметракомпоновкиданных автопозицияресурсовкомпоновкиданных ' + 'вариантиспользованиягруппировкикомпоновкиданных расположениересурсоввдиаграммекомпоновкиданных фиксациякомпоновкиданных ' + 'использованиеусловногооформлениякомпоновкиданных ';
+  var v8_system_enums_data_composition_system = 'видсравнениякомпоновкиданных действиеобработкирасшифровкикомпоновкиданных направлениесортировкикомпоновкиданных ' + 'расположениевложенныхэлементоврезультатакомпоновкиданных расположениеитоговкомпоновкиданных расположениегруппировкикомпоновкиданных ' + 'расположениеполейгруппировкикомпоновкиданных расположениеполякомпоновкиданных расположениереквизитовкомпоновкиданных ' + 'расположениересурсовкомпоновкиданных типбухгалтерскогоостаткакомпоновкиданных типвыводатекстакомпоновкиданных ' + 'типгруппировкикомпоновкиданных типгруппыэлементовотборакомпоновкиданных типдополненияпериодакомпоновкиданных ' + 'типзаголовкаполейкомпоновкиданных типмакетагруппировкикомпоновкиданных типмакетаобластикомпоновкиданных типостаткакомпоновкиданных ' + 'типпериодакомпоновкиданных типразмещениятекстакомпоновкиданных типсвязинаборовданныхкомпоновкиданных типэлементарезультатакомпоновкиданных ' + 'расположениелегендыдиаграммыкомпоновкиданных типпримененияотборакомпоновкиданных режимотображенияэлементанастройкикомпоновкиданных ' + 'режимотображениянастроеккомпоновкиданных состояниеэлементанастройкикомпоновкиданных способвосстановлениянастроеккомпоновкиданных ' + 'режимкомпоновкирезультата использованиепараметракомпоновкиданных автопозицияресурсовкомпоновкиданных ' + 'вариантиспользованиягруппировкикомпоновкиданных расположениересурсоввдиаграммекомпоновкиданных фиксациякомпоновкиданных ' + 'использованиеусловногооформлениякомпоновкиданных '; // v8 системные перечисления - почта ==> class
 
-  // v8 системные перечисления - почта ==> class
-  var v8_system_enums_email = 'важностьинтернетпочтовогосообщения обработкатекстаинтернетпочтовогосообщения способкодированияинтернетпочтовоговложения ' + 'способкодированиянеasciiсимволовинтернетпочтовогосообщения типтекстапочтовогосообщения протоколинтернетпочты ' + 'статусразборапочтовогосообщения ';
+  var v8_system_enums_email = 'важностьинтернетпочтовогосообщения обработкатекстаинтернетпочтовогосообщения способкодированияинтернетпочтовоговложения ' + 'способкодированиянеasciiсимволовинтернетпочтовогосообщения типтекстапочтовогосообщения протоколинтернетпочты ' + 'статусразборапочтовогосообщения '; // v8 системные перечисления - журнал регистрации ==> class
 
-  // v8 системные перечисления - журнал регистрации ==> class
-  var v8_system_enums_logbook = 'режимтранзакциизаписижурналарегистрации статустранзакциизаписижурналарегистрации уровеньжурналарегистрации ';
+  var v8_system_enums_logbook = 'режимтранзакциизаписижурналарегистрации статустранзакциизаписижурналарегистрации уровеньжурналарегистрации '; // v8 системные перечисления - криптография ==> class
 
-  // v8 системные перечисления - криптография ==> class
-  var v8_system_enums_cryptography = 'расположениехранилищасертификатовкриптографии режимвключениясертификатовкриптографии режимпроверкисертификатакриптографии ' + 'типхранилищасертификатовкриптографии ';
+  var v8_system_enums_cryptography = 'расположениехранилищасертификатовкриптографии режимвключениясертификатовкриптографии режимпроверкисертификатакриптографии ' + 'типхранилищасертификатовкриптографии '; // v8 системные перечисления - ZIP ==> class
 
-  // v8 системные перечисления - ZIP ==> class
-  var v8_system_enums_zip = 'кодировкаименфайловвzipфайле методсжатияzip методшифрованияzip режимвосстановленияпутейфайловzip режимобработкиподкаталоговzip ' + 'режимсохраненияпутейzip уровеньсжатияzip ';
-
-  // v8 системные перечисления -
+  var v8_system_enums_zip = 'кодировкаименфайловвzipфайле методсжатияzip методшифрованияzip режимвосстановленияпутейфайловzip режимобработкиподкаталоговzip ' + 'режимсохраненияпутейzip уровеньсжатияzip '; // v8 системные перечисления -
   // Блокировка данных, Фоновые задания, Автоматизированное тестирование,
   // Доставляемые уведомления, Встроенные покупки, Интернет, Работа с двоичными данными ==> class
-  var v8_system_enums_other = 'звуковоеоповещение направлениепереходакстроке позициявпотоке порядокбайтов режимблокировкиданных режимуправленияблокировкойданных ' + 'сервисвстроенныхпокупок состояниефоновогозадания типподписчикадоставляемыхуведомлений уровеньиспользованиязащищенногосоединенияftp ';
 
-  // v8 системные перечисления - схема запроса ==> class
-  var v8_system_enums_request_schema = 'направлениепорядкасхемызапроса типдополненияпериодамисхемызапроса типконтрольнойточкисхемызапроса типобъединениясхемызапроса ' + 'типпараметрадоступнойтаблицысхемызапроса типсоединениясхемызапроса ';
+  var v8_system_enums_other = 'звуковоеоповещение направлениепереходакстроке позициявпотоке порядокбайтов режимблокировкиданных режимуправленияблокировкойданных ' + 'сервисвстроенныхпокупок состояниефоновогозадания типподписчикадоставляемыхуведомлений уровеньиспользованиязащищенногосоединенияftp '; // v8 системные перечисления - схема запроса ==> class
 
-  // v8 системные перечисления - свойства объектов метаданных ==> class
-  var v8_system_enums_properties_of_metadata_objects = 'httpметод автоиспользованиеобщегореквизита автопрефиксномеразадачи вариантвстроенногоязыка видиерархии видрегистранакопления ' + 'видтаблицывнешнегоисточникаданных записьдвиженийприпроведении заполнениепоследовательностей индексирование ' + 'использованиебазыпланавидоврасчета использованиебыстроговыбора использованиеобщегореквизита использованиеподчинения ' + 'использованиеполнотекстовогопоиска использованиеразделяемыхданныхобщегореквизита использованиереквизита ' + 'назначениеиспользованияприложения назначениерасширенияконфигурации направлениепередачи обновлениепредопределенныхданных ' + 'оперативноепроведение основноепредставлениевидарасчета основноепредставлениевидахарактеристики основноепредставлениезадачи ' + 'основноепредставлениепланаобмена основноепредставлениесправочника основноепредставлениесчета перемещениеграницыприпроведении ' + 'периодичностьномерабизнеспроцесса периодичностьномерадокумента периодичностьрегистрарасчета периодичностьрегистрасведений ' + 'повторноеиспользованиевозвращаемыхзначений полнотекстовыйпоискпривводепостроке принадлежностьобъекта проведение ' + 'разделениеаутентификацииобщегореквизита разделениеданныхобщегореквизита разделениерасширенийконфигурацииобщегореквизита ' + 'режимавтонумерацииобъектов режимзаписирегистра режимиспользованиямодальности ' + 'режимиспользованиясинхронныхвызововрасширенийплатформыивнешнихкомпонент режимповторногоиспользованиясеансов ' + 'режимполученияданныхвыборапривводепостроке режимсовместимости режимсовместимостиинтерфейса ' + 'режимуправленияблокировкойданныхпоумолчанию сериикодовпланавидовхарактеристик сериикодовпланасчетов ' + 'сериикодовсправочника созданиепривводе способвыбора способпоискастрокипривводепостроке способредактирования ' + 'типданныхтаблицывнешнегоисточникаданных типкодапланавидоврасчета типкодасправочника типмакета типномерабизнеспроцесса ' + 'типномерадокумента типномеразадачи типформы удалениедвижений ';
+  var v8_system_enums_request_schema = 'направлениепорядкасхемызапроса типдополненияпериодамисхемызапроса типконтрольнойточкисхемызапроса типобъединениясхемызапроса ' + 'типпараметрадоступнойтаблицысхемызапроса типсоединениясхемызапроса '; // v8 системные перечисления - свойства объектов метаданных ==> class
 
-  // v8 системные перечисления - разные ==> class
-  var v8_system_enums_differents = 'важностьпроблемыприменениярасширенияконфигурации вариантинтерфейсаклиентскогоприложения вариантмасштабаформклиентскогоприложения ' + 'вариантосновногошрифтаклиентскогоприложения вариантстандартногопериода вариантстандартнойдатыначала видграницы видкартинки ' + 'видотображенияполнотекстовогопоиска видрамки видсравнения видцвета видчисловогозначения видшрифта допустимаядлина допустимыйзнак ' + 'использованиеbyteordermark использованиеметаданныхполнотекстовогопоиска источникрасширенийконфигурации клавиша кодвозвратадиалога ' + 'кодировкаxbase кодировкатекста направлениепоиска направлениесортировки обновлениепредопределенныхданных обновлениеприизмененииданных ' + 'отображениепанелиразделов проверказаполнения режимдиалогавопрос режимзапускаклиентскогоприложения режимокругления режимоткрытияформприложения ' + 'режимполнотекстовогопоиска скоростьклиентскогосоединения состояниевнешнегоисточникаданных состояниеобновленияконфигурациибазыданных ' + 'способвыборасертификатаwindows способкодированиястроки статуссообщения типвнешнейкомпоненты типплатформы типповеденияклавишиenter ' + 'типэлементаинформацииовыполненииобновленияконфигурациибазыданных уровеньизоляциитранзакций хешфункция частидаты';
+  var v8_system_enums_properties_of_metadata_objects = 'httpметод автоиспользованиеобщегореквизита автопрефиксномеразадачи вариантвстроенногоязыка видиерархии видрегистранакопления ' + 'видтаблицывнешнегоисточникаданных записьдвиженийприпроведении заполнениепоследовательностей индексирование ' + 'использованиебазыпланавидоврасчета использованиебыстроговыбора использованиеобщегореквизита использованиеподчинения ' + 'использованиеполнотекстовогопоиска использованиеразделяемыхданныхобщегореквизита использованиереквизита ' + 'назначениеиспользованияприложения назначениерасширенияконфигурации направлениепередачи обновлениепредопределенныхданных ' + 'оперативноепроведение основноепредставлениевидарасчета основноепредставлениевидахарактеристики основноепредставлениезадачи ' + 'основноепредставлениепланаобмена основноепредставлениесправочника основноепредставлениесчета перемещениеграницыприпроведении ' + 'периодичностьномерабизнеспроцесса периодичностьномерадокумента периодичностьрегистрарасчета периодичностьрегистрасведений ' + 'повторноеиспользованиевозвращаемыхзначений полнотекстовыйпоискпривводепостроке принадлежностьобъекта проведение ' + 'разделениеаутентификацииобщегореквизита разделениеданныхобщегореквизита разделениерасширенийконфигурацииобщегореквизита ' + 'режимавтонумерацииобъектов режимзаписирегистра режимиспользованиямодальности ' + 'режимиспользованиясинхронныхвызововрасширенийплатформыивнешнихкомпонент режимповторногоиспользованиясеансов ' + 'режимполученияданныхвыборапривводепостроке режимсовместимости режимсовместимостиинтерфейса ' + 'режимуправленияблокировкойданныхпоумолчанию сериикодовпланавидовхарактеристик сериикодовпланасчетов ' + 'сериикодовсправочника созданиепривводе способвыбора способпоискастрокипривводепостроке способредактирования ' + 'типданныхтаблицывнешнегоисточникаданных типкодапланавидоврасчета типкодасправочника типмакета типномерабизнеспроцесса ' + 'типномерадокумента типномеразадачи типформы удалениедвижений '; // v8 системные перечисления - разные ==> class
 
-  // class: встроенные наборы значений, системные перечисления (содержат дочерние значения, обращения к которым через разыменование)
-  var CLASS = v8_system_sets_of_values + v8_system_enums_interface + v8_system_enums_objects_properties + v8_system_enums_exchange_plans + v8_system_enums_tabular_document + v8_system_enums_sheduler + v8_system_enums_formatted_document + v8_system_enums_query + v8_system_enums_report_builder + v8_system_enums_files + v8_system_enums_query_builder + v8_system_enums_data_analysis + v8_system_enums_xml_json_xs_dom_xdto_ws + v8_system_enums_data_composition_system + v8_system_enums_email + v8_system_enums_logbook + v8_system_enums_cryptography + v8_system_enums_zip + v8_system_enums_other + v8_system_enums_request_schema + v8_system_enums_properties_of_metadata_objects + v8_system_enums_differents;
+  var v8_system_enums_differents = 'важностьпроблемыприменениярасширенияконфигурации вариантинтерфейсаклиентскогоприложения вариантмасштабаформклиентскогоприложения ' + 'вариантосновногошрифтаклиентскогоприложения вариантстандартногопериода вариантстандартнойдатыначала видграницы видкартинки ' + 'видотображенияполнотекстовогопоиска видрамки видсравнения видцвета видчисловогозначения видшрифта допустимаядлина допустимыйзнак ' + 'использованиеbyteordermark использованиеметаданныхполнотекстовогопоиска источникрасширенийконфигурации клавиша кодвозвратадиалога ' + 'кодировкаxbase кодировкатекста направлениепоиска направлениесортировки обновлениепредопределенныхданных обновлениеприизмененииданных ' + 'отображениепанелиразделов проверказаполнения режимдиалогавопрос режимзапускаклиентскогоприложения режимокругления режимоткрытияформприложения ' + 'режимполнотекстовогопоиска скоростьклиентскогосоединения состояниевнешнегоисточникаданных состояниеобновленияконфигурациибазыданных ' + 'способвыборасертификатаwindows способкодированиястроки статуссообщения типвнешнейкомпоненты типплатформы типповеденияклавишиenter ' + 'типэлементаинформацииовыполненииобновленияконфигурациибазыданных уровеньизоляциитранзакций хешфункция частидаты'; // class: встроенные наборы значений, системные перечисления (содержат дочерние значения, обращения к которым через разыменование)
 
-  // v8 общие объекты (у объектов есть конструктор, экземпляры создаются методом НОВЫЙ) ==> type
-  var v8_shared_object = 'comобъект ftpсоединение httpзапрос httpсервисответ httpсоединение wsопределения wsпрокси xbase анализданных аннотацияxs ' + 'блокировкаданных буфердвоичныхданных включениеxs выражениекомпоновкиданных генераторслучайныхчисел географическаясхема ' + 'географическиекоординаты графическаясхема группамоделиxs данныерасшифровкикомпоновкиданных двоичныеданные дендрограмма ' + 'диаграмма диаграммаганта диалогвыборафайла диалогвыборацвета диалогвыборашрифта диалограсписаниярегламентногозадания ' + 'диалогредактированиястандартногопериода диапазон документdom документhtml документацияxs доставляемоеуведомление ' + 'записьdom записьfastinfoset записьhtml записьjson записьxml записьzipфайла записьданных записьтекста записьузловdom ' + 'запрос защищенноесоединениеopenssl значенияполейрасшифровкикомпоновкиданных извлечениетекста импортxs интернетпочта ' + 'интернетпочтовоесообщение интернетпочтовыйпрофиль интернетпрокси интернетсоединение информациядляприложенияxs ' + 'использованиеатрибутаxs использованиесобытияжурналарегистрации источникдоступныхнастроеккомпоновкиданных ' + 'итераторузловdom картинка квалификаторыдаты квалификаторыдвоичныхданных квалификаторыстроки квалификаторычисла ' + 'компоновщикмакетакомпоновкиданных компоновщикнастроеккомпоновкиданных конструктормакетаоформлениякомпоновкиданных ' + 'конструкторнастроеккомпоновкиданных конструкторформатнойстроки линия макеткомпоновкиданных макетобластикомпоновкиданных ' + 'макетоформлениякомпоновкиданных маскаxs менеджеркриптографии наборсхемxml настройкикомпоновкиданных настройкисериализацииjson ' + 'обработкакартинок обработкарасшифровкикомпоновкиданных обходдереваdom объявлениеатрибутаxs объявлениенотацииxs ' + 'объявлениеэлементаxs описаниеиспользованиясобытиядоступжурналарегистрации ' + 'описаниеиспользованиясобытияотказвдоступежурналарегистрации описаниеобработкирасшифровкикомпоновкиданных ' + 'описаниепередаваемогофайла описаниетипов определениегруппыатрибутовxs определениегруппымоделиxs ' + 'определениеограниченияидентичностиxs определениепростоготипаxs определениесоставноготипаxs определениетипадокументаdom ' + 'определенияxpathxs отборкомпоновкиданных пакетотображаемыхдокументов параметрвыбора параметркомпоновкиданных ' + 'параметрызаписиjson параметрызаписиxml параметрычтенияxml переопределениеxs планировщик полеанализаданных ' + 'полекомпоновкиданных построительdom построительзапроса построительотчета построительотчетаанализаданных ' + 'построительсхемxml поток потоквпамяти почта почтовоесообщение преобразованиеxsl преобразованиекканоническомуxml ' + 'процессорвыводарезультатакомпоновкиданныхвколлекциюзначений процессорвыводарезультатакомпоновкиданныхвтабличныйдокумент ' + 'процессоркомпоновкиданных разыменовательпространствименdom рамка расписаниерегламентногозадания расширенноеимяxml ' + 'результатчтенияданных своднаядиаграмма связьпараметравыбора связьпотипу связьпотипукомпоновкиданных сериализаторxdto ' + 'сертификатклиентаwindows сертификатклиентафайл сертификаткриптографии сертификатыудостоверяющихцентровwindows ' + 'сертификатыудостоверяющихцентровфайл сжатиеданных системнаяинформация сообщениепользователю сочетаниеклавиш ' + 'сравнениезначений стандартнаядатаначала стандартныйпериод схемаxml схемакомпоновкиданных табличныйдокумент ' + 'текстовыйдокумент тестируемоеприложение типданныхxml уникальныйидентификатор фабрикаxdto файл файловыйпоток ' + 'фасетдлиныxs фасетколичестваразрядовдробнойчастиxs фасетмаксимальноговключающегозначенияxs ' + 'фасетмаксимальногоисключающегозначенияxs фасетмаксимальнойдлиныxs фасетминимальноговключающегозначенияxs ' + 'фасетминимальногоисключающегозначенияxs фасетминимальнойдлиныxs фасетобразцаxs фасетобщегоколичестваразрядовxs ' + 'фасетперечисленияxs фасетпробельныхсимволовxs фильтрузловdom форматированнаястрока форматированныйдокумент ' + 'фрагментxs хешированиеданных хранилищезначения цвет чтениеfastinfoset чтениеhtml чтениеjson чтениеxml чтениеzipфайла ' + 'чтениеданных чтениетекста чтениеузловdom шрифт элементрезультатакомпоновкиданных ';
+  var CLASS = v8_system_sets_of_values + v8_system_enums_interface + v8_system_enums_objects_properties + v8_system_enums_exchange_plans + v8_system_enums_tabular_document + v8_system_enums_sheduler + v8_system_enums_formatted_document + v8_system_enums_query + v8_system_enums_report_builder + v8_system_enums_files + v8_system_enums_query_builder + v8_system_enums_data_analysis + v8_system_enums_xml_json_xs_dom_xdto_ws + v8_system_enums_data_composition_system + v8_system_enums_email + v8_system_enums_logbook + v8_system_enums_cryptography + v8_system_enums_zip + v8_system_enums_other + v8_system_enums_request_schema + v8_system_enums_properties_of_metadata_objects + v8_system_enums_differents; // v8 общие объекты (у объектов есть конструктор, экземпляры создаются методом НОВЫЙ) ==> type
 
-  // v8 универсальные коллекции значений ==> type
-  var v8_universal_collection = 'comsafearray деревозначений массив соответствие списокзначений структура таблицазначений фиксированнаяструктура ' + 'фиксированноесоответствие фиксированныймассив ';
+  var v8_shared_object = 'comобъект ftpсоединение httpзапрос httpсервисответ httpсоединение wsопределения wsпрокси xbase анализданных аннотацияxs ' + 'блокировкаданных буфердвоичныхданных включениеxs выражениекомпоновкиданных генераторслучайныхчисел географическаясхема ' + 'географическиекоординаты графическаясхема группамоделиxs данныерасшифровкикомпоновкиданных двоичныеданные дендрограмма ' + 'диаграмма диаграммаганта диалогвыборафайла диалогвыборацвета диалогвыборашрифта диалограсписаниярегламентногозадания ' + 'диалогредактированиястандартногопериода диапазон документdom документhtml документацияxs доставляемоеуведомление ' + 'записьdom записьfastinfoset записьhtml записьjson записьxml записьzipфайла записьданных записьтекста записьузловdom ' + 'запрос защищенноесоединениеopenssl значенияполейрасшифровкикомпоновкиданных извлечениетекста импортxs интернетпочта ' + 'интернетпочтовоесообщение интернетпочтовыйпрофиль интернетпрокси интернетсоединение информациядляприложенияxs ' + 'использованиеатрибутаxs использованиесобытияжурналарегистрации источникдоступныхнастроеккомпоновкиданных ' + 'итераторузловdom картинка квалификаторыдаты квалификаторыдвоичныхданных квалификаторыстроки квалификаторычисла ' + 'компоновщикмакетакомпоновкиданных компоновщикнастроеккомпоновкиданных конструктормакетаоформлениякомпоновкиданных ' + 'конструкторнастроеккомпоновкиданных конструкторформатнойстроки линия макеткомпоновкиданных макетобластикомпоновкиданных ' + 'макетоформлениякомпоновкиданных маскаxs менеджеркриптографии наборсхемxml настройкикомпоновкиданных настройкисериализацииjson ' + 'обработкакартинок обработкарасшифровкикомпоновкиданных обходдереваdom объявлениеатрибутаxs объявлениенотацииxs ' + 'объявлениеэлементаxs описаниеиспользованиясобытиядоступжурналарегистрации ' + 'описаниеиспользованиясобытияотказвдоступежурналарегистрации описаниеобработкирасшифровкикомпоновкиданных ' + 'описаниепередаваемогофайла описаниетипов определениегруппыатрибутовxs определениегруппымоделиxs ' + 'определениеограниченияидентичностиxs определениепростоготипаxs определениесоставноготипаxs определениетипадокументаdom ' + 'определенияxpathxs отборкомпоновкиданных пакетотображаемыхдокументов параметрвыбора параметркомпоновкиданных ' + 'параметрызаписиjson параметрызаписиxml параметрычтенияxml переопределениеxs планировщик полеанализаданных ' + 'полекомпоновкиданных построительdom построительзапроса построительотчета построительотчетаанализаданных ' + 'построительсхемxml поток потоквпамяти почта почтовоесообщение преобразованиеxsl преобразованиекканоническомуxml ' + 'процессорвыводарезультатакомпоновкиданныхвколлекциюзначений процессорвыводарезультатакомпоновкиданныхвтабличныйдокумент ' + 'процессоркомпоновкиданных разыменовательпространствименdom рамка расписаниерегламентногозадания расширенноеимяxml ' + 'результатчтенияданных своднаядиаграмма связьпараметравыбора связьпотипу связьпотипукомпоновкиданных сериализаторxdto ' + 'сертификатклиентаwindows сертификатклиентафайл сертификаткриптографии сертификатыудостоверяющихцентровwindows ' + 'сертификатыудостоверяющихцентровфайл сжатиеданных системнаяинформация сообщениепользователю сочетаниеклавиш ' + 'сравнениезначений стандартнаядатаначала стандартныйпериод схемаxml схемакомпоновкиданных табличныйдокумент ' + 'текстовыйдокумент тестируемоеприложение типданныхxml уникальныйидентификатор фабрикаxdto файл файловыйпоток ' + 'фасетдлиныxs фасетколичестваразрядовдробнойчастиxs фасетмаксимальноговключающегозначенияxs ' + 'фасетмаксимальногоисключающегозначенияxs фасетмаксимальнойдлиныxs фасетминимальноговключающегозначенияxs ' + 'фасетминимальногоисключающегозначенияxs фасетминимальнойдлиныxs фасетобразцаxs фасетобщегоколичестваразрядовxs ' + 'фасетперечисленияxs фасетпробельныхсимволовxs фильтрузловdom форматированнаястрока форматированныйдокумент ' + 'фрагментxs хешированиеданных хранилищезначения цвет чтениеfastinfoset чтениеhtml чтениеjson чтениеxml чтениеzipфайла ' + 'чтениеданных чтениетекста чтениеузловdom шрифт элементрезультатакомпоновкиданных '; // v8 универсальные коллекции значений ==> type
 
-  // type : встроенные типы
-  var TYPE = v8_shared_object + v8_universal_collection;
+  var v8_universal_collection = 'comsafearray деревозначений массив соответствие списокзначений структура таблицазначений фиксированнаяструктура ' + 'фиксированноесоответствие фиксированныймассив '; // type : встроенные типы
 
-  // literal : примитивные типы
-  var LITERAL = 'null истина ложь неопределено';
+  var TYPE = v8_shared_object + v8_universal_collection; // literal : примитивные типы
 
-  // number : числа
-  var NUMBERS = hljs.inherit(hljs.NUMBER_MODE);
+  var LITERAL = 'null истина ложь неопределено'; // number : числа
 
-  // string : строки
+  var NUMBERS = hljs.inherit(hljs.NUMBER_MODE); // string : строки
+
   var STRINGS = {
     className: 'string',
     begin: '"|\\|',
@@ -2777,9 +2971,8 @@ function _1c(hljs) {
     contains: [{
       begin: '""'
     }]
-  };
+  }; // number : даты
 
-  // number : даты
   var DATE = {
     begin: "'",
     end: "'",
@@ -2789,12 +2982,10 @@ function _1c(hljs) {
       className: 'number',
       begin: '\\d{4}([\\.\\\\/:-]?\\d{2}){0,5}'
     }]
-  };
+  }; // comment : комментарии
 
-  // comment : комментарии
-  var COMMENTS = hljs.inherit(hljs.C_LINE_COMMENT_MODE);
+  var COMMENTS = hljs.inherit(hljs.C_LINE_COMMENT_MODE); // meta : инструкции препроцессора, директивы компиляции
 
-  // meta : инструкции препроцессора, директивы компиляции
   var META = {
     className: 'meta',
     begin: '#|&',
@@ -2804,17 +2995,15 @@ function _1c(hljs) {
       'meta-keyword': KEYWORD + METAKEYWORD
     },
     contains: [COMMENTS]
-  };
+  }; // symbol : метка goto
 
-  // symbol : метка goto
   var SYMBOL = {
     className: 'symbol',
     begin: '~',
     end: ';|:',
     excludeEnd: true
-  };
+  }; // function : объявление процедур и функций
 
-  // function : объявление процедур и функций
   var FUNCTION = {
     className: 'function',
     variants: [{
@@ -2860,6 +3049,7 @@ function _1c(hljs) {
     contains: [META, FUNCTION, COMMENTS, SYMBOL, NUMBERS, STRINGS, DATE]
   };
 }
+
 module.exports = _1c;
 
 /***/ }),
@@ -2884,16 +3074,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Augmented Backus-Naur Form
 Author: Alex McKibben <alex@nullscope.net>
@@ -2902,6 +3092,8 @@ Audit: 2020
 */
 
 /** @type LanguageFn */
+
+
 function abnf(hljs) {
   const regexes = {
     ruleDeclaration: /^[a-zA-Z][a-zA-Z0-9-]*/,
@@ -2936,6 +3128,7 @@ function abnf(hljs) {
     contains: [ruleDeclarationMode, commentMode, terminalBinaryMode, terminalDecimalMode, terminalHexadecimalMode, caseSensitivityIndicatorMode, hljs.QUOTE_STRING_MODE, hljs.NUMBER_MODE]
   };
 }
+
 module.exports = abnf;
 
 /***/ }),
@@ -2960,16 +3153,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -2977,11 +3170,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
  Language: Apache Access Log
  Author: Oleg Efimov <efimovov@gmail.com>
@@ -2991,25 +3185,24 @@ function either(...args) {
  */
 
 /** @type LanguageFn */
+
+
 function accesslog(_hljs) {
   // https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
   const HTTP_VERBS = ["GET", "POST", "HEAD", "PUT", "DELETE", "CONNECT", "OPTIONS", "PATCH", "TRACE"];
   return {
     name: 'Apache Access Log',
-    contains: [
-    // IP
+    contains: [// IP
     {
       className: 'number',
       begin: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d{1,5})?\b/,
       relevance: 5
-    },
-    // Other numbers
+    }, // Other numbers
     {
       className: 'number',
       begin: /\b\d+\b/,
       relevance: 0
-    },
-    // Requests
+    }, // Requests
     {
       className: 'string',
       begin: concat(/"/, either(...HTTP_VERBS)),
@@ -3021,8 +3214,7 @@ function accesslog(_hljs) {
         begin: /HTTP\/[12]\.\d'/,
         relevance: 5
       }]
-    },
-    // Dates
+    }, // Dates
     {
       className: 'string',
       // dates must have a certain length, this prevents matching
@@ -3037,16 +3229,14 @@ function accesslog(_hljs) {
       end: /\]/,
       illegal: /\n/,
       relevance: 0
-    },
-    // User agent / relevance boost
+    }, // User agent / relevance boost
     {
       className: 'string',
       begin: /"Mozilla\/\d\.\d \(/,
       end: /"/,
       illegal: /\n/,
       relevance: 3
-    },
-    // Strings
+    }, // Strings
     {
       className: 'string',
       begin: /"/,
@@ -3056,6 +3246,7 @@ function accesslog(_hljs) {
     }]
   };
 }
+
 module.exports = accesslog;
 
 /***/ }),
@@ -3080,16 +3271,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: ActionScript
 Author: Alexander Myadzel <myadzel@gmail.com>
@@ -3098,6 +3289,8 @@ Audit: 2020
 */
 
 /** @type LanguageFn */
+
+
 function actionscript(hljs) {
   const IDENT_RE = /[a-zA-Z_$][a-zA-Z0-9_$]*/;
   const IDENT_FUNC_RETURN_TYPE_RE = /([*]|[a-zA-Z_$][a-zA-Z0-9_$]*)/;
@@ -3152,6 +3345,7 @@ function actionscript(hljs) {
     illegal: /#/
   };
 }
+
 module.exports = actionscript;
 
 /***/ }),
@@ -3170,7 +3364,6 @@ Description: Ada is a general-purpose programming language that has great suppor
              The first version appeared in the 80s, but it's still actively developed today with
              the newest standard being Ada2012.
 */
-
 // We try to support full Ada2012
 //
 // We highlight all appearances of types, keywords, literals (string, char, number, bool)
@@ -3185,29 +3378,23 @@ Description: Ada is a general-purpose programming language that has great suppor
 function ada(hljs) {
   // Regular expression for Ada numeric literals.
   // stolen form the VHDL highlighter
-
   // Decimal literal:
   const INTEGER_RE = '\\d(_|\\d)*';
   const EXPONENT_RE = '[eE][-+]?' + INTEGER_RE;
-  const DECIMAL_LITERAL_RE = INTEGER_RE + '(\\.' + INTEGER_RE + ')?' + '(' + EXPONENT_RE + ')?';
+  const DECIMAL_LITERAL_RE = INTEGER_RE + '(\\.' + INTEGER_RE + ')?' + '(' + EXPONENT_RE + ')?'; // Based literal:
 
-  // Based literal:
   const BASED_INTEGER_RE = '\\w+';
   const BASED_LITERAL_RE = INTEGER_RE + '#' + BASED_INTEGER_RE + '(\\.' + BASED_INTEGER_RE + ')?' + '#' + '(' + EXPONENT_RE + ')?';
-  const NUMBER_RE = '\\b(' + BASED_LITERAL_RE + '|' + DECIMAL_LITERAL_RE + ')';
+  const NUMBER_RE = '\\b(' + BASED_LITERAL_RE + '|' + DECIMAL_LITERAL_RE + ')'; // Identifier regex
 
-  // Identifier regex
-  const ID_REGEX = '[A-Za-z](_?[A-Za-z0-9.])*';
+  const ID_REGEX = '[A-Za-z](_?[A-Za-z0-9.])*'; // bad chars, only allowed in literals
 
-  // bad chars, only allowed in literals
-  const BAD_CHARS = `[]\\{\\}%#'"`;
+  const BAD_CHARS = `[]\\{\\}%#'"`; // Ada doesn't have block comments, only line comments
 
-  // Ada doesn't have block comments, only line comments
-  const COMMENTS = hljs.COMMENT('--', '$');
-
-  // variable declarations of the form
+  const COMMENTS = hljs.COMMENT('--', '$'); // variable declarations of the form
   // Foo : Bar := Baz;
   // where only Bar will be highlighted
+
   const VAR_DECLS = {
     // TODO: These spaces are not required by the Ada syntax
     // however, I have yet to see handwritten Ada code where
@@ -3240,8 +3427,7 @@ function ada(hljs) {
       keyword: 'abort else new return abs elsif not reverse abstract end ' + 'accept entry select access exception of separate aliased exit or some ' + 'all others subtype and for out synchronized array function overriding ' + 'at tagged generic package task begin goto pragma terminate ' + 'body private then if procedure type case in protected constant interface ' + 'is raise use declare range delay limited record when delta loop rem while ' + 'digits renames with do mod requeue xor',
       literal: 'True False'
     },
-    contains: [COMMENTS,
-    // strings "foobar"
+    contains: [COMMENTS, // strings "foobar"
     {
       className: 'string',
       begin: /"/,
@@ -3250,8 +3436,7 @@ function ada(hljs) {
         begin: /""/,
         relevance: 0
       }]
-    },
-    // characters ''
+    }, // characters ''
     {
       // character literals always contain one char
       className: 'string',
@@ -3291,8 +3476,7 @@ function ada(hljs) {
         excludeBegin: true,
         excludeEnd: true,
         illegal: BAD_CHARS
-      },
-      // 'self'
+      }, // 'self'
       // // parameter types
       VAR_DECLS, {
         // return type
@@ -3315,11 +3499,8 @@ function ada(hljs) {
       keywords: 'type',
       excludeBegin: true,
       illegal: BAD_CHARS
-    },
-    // see comment above the definition
-    VAR_DECLS
-
-    // no markup
+    }, // see comment above the definition
+    VAR_DECLS // no markup
     // relevance boosters for small snippets
     // {begin: '\\s*=>\\s*'},
     // {begin: '\\s*:=\\s*'},
@@ -3327,6 +3508,7 @@ function ada(hljs) {
     ]
   };
 }
+
 module.exports = ada;
 
 /***/ }),
@@ -3376,8 +3558,7 @@ function angelscript(hljs) {
       illegal: '\\n',
       contains: [hljs.BACKSLASH_ESCAPE],
       relevance: 0
-    },
-    // """heredoc strings"""
+    }, // """heredoc strings"""
     {
       className: 'string',
       begin: '"""',
@@ -3390,11 +3571,8 @@ function angelscript(hljs) {
       illegal: '\\n',
       contains: [hljs.BACKSLASH_ESCAPE],
       relevance: 0
-    }, hljs.C_LINE_COMMENT_MODE,
-    // single-line comments
-    hljs.C_BLOCK_COMMENT_MODE,
-    // comment blocks
-
+    }, hljs.C_LINE_COMMENT_MODE, // single-line comments
+    hljs.C_BLOCK_COMMENT_MODE, // comment blocks
     {
       // metadata
       className: 'string',
@@ -3427,11 +3605,8 @@ function angelscript(hljs) {
           }]
         }]
       }]
-    }, builtInTypeMode,
-    // built-in types
-    objectHandleMode,
-    // object handles
-
+    }, builtInTypeMode, // built-in types
+    objectHandleMode, // object handles
     {
       // literals
       className: 'literal',
@@ -3444,6 +3619,7 @@ function angelscript(hljs) {
     }]
   };
 }
+
 module.exports = angelscript;
 
 /***/ }),
@@ -3490,8 +3666,7 @@ function apache(hljs) {
       className: 'section',
       begin: /<\/?/,
       end: />/,
-      contains: [IP_ADDRESS, PORT_NUMBER,
-      // low relevance prevents us from claming XML/HTML where this rule would
+      contains: [IP_ADDRESS, PORT_NUMBER, // low relevance prevents us from claming XML/HTML where this rule would
       // match strings inside of XML tags
       hljs.inherit(hljs.QUOTE_STRING_MODE, {
         relevance: 0
@@ -3526,6 +3701,7 @@ function apache(hljs) {
     illegal: /\S/
   };
 }
+
 module.exports = apache;
 
 /***/ }),
@@ -3550,16 +3726,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -3567,11 +3743,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: AppleScript
 Authors: Nathan Grigg <nathan@nathanamy.org>, Dr. Drang <drdrang@gmail.com>
@@ -3581,6 +3758,8 @@ Audit: 2020
 */
 
 /** @type LanguageFn */
+
+
 function applescript(hljs) {
   const STRING = hljs.inherit(hljs.QUOTE_STRING_MODE, {
     illegal: null
@@ -3593,8 +3772,7 @@ function applescript(hljs) {
   };
   const COMMENT_MODE_1 = hljs.COMMENT(/--/, /$/);
   const COMMENT_MODE_2 = hljs.COMMENT(/\(\*/, /\*\)/, {
-    contains: ['self',
-    // allow nesting
+    contains: ['self', // allow nesting
     COMMENT_MODE_1]
   });
   const COMMENTS = [COMMENT_MODE_1, COMMENT_MODE_2, hljs.HASH_COMMENT_MODE];
@@ -3628,6 +3806,7 @@ function applescript(hljs) {
     illegal: /\/\/|->|=>|\[\[/
   };
 }
+
 module.exports = applescript;
 
 /***/ }),
@@ -3675,6 +3854,7 @@ function arcade(hljs) {
     end: '\\}',
     keywords: KEYWORDS,
     contains: [] // defined later
+
   };
   const TEMPLATE_STRING = {
     className: 'string',
@@ -3749,6 +3929,7 @@ function arcade(hljs) {
     illegal: /#(?!!)/
   };
 }
+
 module.exports = arcade;
 
 /***/ }),
@@ -3773,32 +3954,34 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: C++
 Category: common, system
@@ -3806,6 +3989,8 @@ Website: https://isocpp.org
 */
 
 /** @type LanguageFn */
+
+
 function cPlusPlus(hljs) {
   // added for historic reasons because `hljs.C_LINE_COMMENT_MODE` does
   // not include such support nor can we be sure all the grammars depending
@@ -3822,10 +4007,9 @@ function cPlusPlus(hljs) {
   const CPP_PRIMITIVE_TYPES = {
     className: 'keyword',
     begin: '\\b[a-z\\d_]*_t\\b'
-  };
-
-  // https://en.cppreference.com/w/cpp/language/escape
+  }; // https://en.cppreference.com/w/cpp/language/escape
   // \\ \x \xFF \u2837 \u00323747 \374
+
   const CHARACTER_ESCAPES = '\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4,8}|[0-7]{3}|\\S)';
   const STRINGS = {
     className: 'string',
@@ -3933,14 +4117,12 @@ function cPlusPlus(hljs) {
       returnBegin: true,
       contains: [TITLE_MODE],
       relevance: 0
-    },
-    // needed because we do not have look-behind on the below rule
+    }, // needed because we do not have look-behind on the below rule
     // to prevent it from grabbing the final : in a :: pair
     {
       begin: /::/,
       relevance: 0
-    },
-    // initializers
+    }, // initializers
     {
       begin: /:/,
       endsWithParent: true,
@@ -3951,8 +4133,7 @@ function cPlusPlus(hljs) {
       end: /\)/,
       keywords: CPP_KEYWORDS,
       relevance: 0,
-      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES,
-      // Count matching parentheses.
+      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES, // Count matching parentheses.
       {
         begin: /\(/,
         end: /\)/,
@@ -3994,7 +4175,6 @@ function cPlusPlus(hljs) {
     }
   };
 }
-
 /*
 Language: Arduino
 Author: Stefania Mellai <s.mellai@arduino.cc>
@@ -4003,6 +4183,8 @@ Website: https://www.arduino.cc
 */
 
 /** @type LanguageFn */
+
+
 function arduino(hljs) {
   const ARDUINO_KW = {
     keyword: 'boolean byte word String',
@@ -4011,7 +4193,9 @@ function arduino(hljs) {
     literal: 'DIGITAL_MESSAGE FIRMATA_STRING ANALOG_MESSAGE ' + 'REPORT_DIGITAL REPORT_ANALOG INPUT_PULLUP ' + 'SET_PIN_MODE INTERNAL2V56 SYSTEM_RESET LED_BUILTIN ' + 'INTERNAL1V1 SYSEX_START INTERNAL EXTERNAL ' + 'DEFAULT OUTPUT INPUT HIGH LOW'
   };
   const ARDUINO = cPlusPlus(hljs);
-  const kws = /** @type {Record<string,any>} */ARDUINO.keywords;
+  const kws =
+  /** @type {Record<string,any>} */
+  ARDUINO.keywords;
   kws.keyword += ' ' + ARDUINO_KW.keyword;
   kws.literal += ' ' + ARDUINO_KW.literal;
   kws.built_in += ' ' + ARDUINO_KW.built_in;
@@ -4021,6 +4205,7 @@ function arduino(hljs) {
   ARDUINO.supersetOf = "cpp";
   return ARDUINO;
 }
+
 module.exports = arduino;
 
 /***/ }),
@@ -4041,7 +4226,6 @@ Category: assembler
 /** @type LanguageFn */
 function armasm(hljs) {
   // local labels: %?[FB]?[AT]?\d{1,2}\w+
-
   const COMMENT = {
     variants: [hljs.COMMENT('^[ \\t]*(?=#)', '$', {
       relevance: 0,
@@ -4056,38 +4240,26 @@ function armasm(hljs) {
     aliases: ['arm'],
     keywords: {
       $pattern: '\\.?' + hljs.IDENT_RE,
-      meta:
-      // GNU preprocs
-      '.2byte .4byte .align .ascii .asciz .balign .byte .code .data .else .end .endif .endm .endr .equ .err .exitm .extern .global .hword .if .ifdef .ifndef .include .irp .long .macro .rept .req .section .set .skip .space .text .word .arm .thumb .code16 .code32 .force_thumb .thumb_func .ltorg ' +
-      // ARM directives
+      meta: // GNU preprocs
+      '.2byte .4byte .align .ascii .asciz .balign .byte .code .data .else .end .endif .endm .endr .equ .err .exitm .extern .global .hword .if .ifdef .ifndef .include .irp .long .macro .rept .req .section .set .skip .space .text .word .arm .thumb .code16 .code32 .force_thumb .thumb_func .ltorg ' + // ARM directives
       'ALIAS ALIGN ARM AREA ASSERT ATTR CN CODE CODE16 CODE32 COMMON CP DATA DCB DCD DCDU DCDO DCFD DCFDU DCI DCQ DCQU DCW DCWU DN ELIF ELSE END ENDFUNC ENDIF ENDP ENTRY EQU EXPORT EXPORTAS EXTERN FIELD FILL FUNCTION GBLA GBLL GBLS GET GLOBAL IF IMPORT INCBIN INCLUDE INFO KEEP LCLA LCLL LCLS LTORG MACRO MAP MEND MEXIT NOFP OPT PRESERVE8 PROC QN READONLY RELOC REQUIRE REQUIRE8 RLIST FN ROUT SETA SETL SETS SN SPACE SUBT THUMB THUMBX TTL WHILE WEND ',
-      built_in: 'r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 ' +
-      // standard registers
-      'pc lr sp ip sl sb fp ' +
-      // typical regs plus backward compatibility
-      'a1 a2 a3 a4 v1 v2 v3 v4 v5 v6 v7 v8 f0 f1 f2 f3 f4 f5 f6 f7 ' +
-      // more regs and fp
-      'p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 ' +
-      // coprocessor regs
-      'c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 ' +
-      // more coproc
-      'q0 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 ' +
-      // advanced SIMD NEON regs
-
+      built_in: 'r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 ' + // standard registers
+      'pc lr sp ip sl sb fp ' + // typical regs plus backward compatibility
+      'a1 a2 a3 a4 v1 v2 v3 v4 v5 v6 v7 v8 f0 f1 f2 f3 f4 f5 f6 f7 ' + // more regs and fp
+      'p0 p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15 ' + // coprocessor regs
+      'c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 ' + // more coproc
+      'q0 q1 q2 q3 q4 q5 q6 q7 q8 q9 q10 q11 q12 q13 q14 q15 ' + // advanced SIMD NEON regs
       // program status registers
-      'cpsr_c cpsr_x cpsr_s cpsr_f cpsr_cx cpsr_cxs cpsr_xs cpsr_xsf cpsr_sf cpsr_cxsf ' + 'spsr_c spsr_x spsr_s spsr_f spsr_cx spsr_cxs spsr_xs spsr_xsf spsr_sf spsr_cxsf ' +
-      // NEON and VFP registers
+      'cpsr_c cpsr_x cpsr_s cpsr_f cpsr_cx cpsr_cxs cpsr_xs cpsr_xsf cpsr_sf cpsr_cxsf ' + 'spsr_c spsr_x spsr_s spsr_f spsr_cx spsr_cxs spsr_xs spsr_xsf spsr_sf spsr_cxsf ' + // NEON and VFP registers
       's0 s1 s2 s3 s4 s5 s6 s7 s8 s9 s10 s11 s12 s13 s14 s15 ' + 's16 s17 s18 s19 s20 s21 s22 s23 s24 s25 s26 s27 s28 s29 s30 s31 ' + 'd0 d1 d2 d3 d4 d5 d6 d7 d8 d9 d10 d11 d12 d13 d14 d15 ' + 'd16 d17 d18 d19 d20 d21 d22 d23 d24 d25 d26 d27 d28 d29 d30 d31 ' + '{PC} {VAR} {TRUE} {FALSE} {OPT} {CONFIG} {ENDIAN} {CODESIZE} {CPU} {FPU} {ARCHITECTURE} {PCSTOREOFFSET} {ARMASM_VERSION} {INTER} {ROPI} {RWPI} {SWST} {NOSWST} . @'
     },
     contains: [{
       className: 'keyword',
-      begin: '\\b(' +
-      // mnemonics
-      'adc|' + '(qd?|sh?|u[qh]?)?add(8|16)?|usada?8|(q|sh?|u[qh]?)?(as|sa)x|' + 'and|adrl?|sbc|rs[bc]|asr|b[lx]?|blx|bxj|cbn?z|tb[bh]|bic|' + 'bfc|bfi|[su]bfx|bkpt|cdp2?|clz|clrex|cmp|cmn|cpsi[ed]|cps|' + 'setend|dbg|dmb|dsb|eor|isb|it[te]{0,3}|lsl|lsr|ror|rrx|' + 'ldm(([id][ab])|f[ds])?|ldr((s|ex)?[bhd])?|movt?|mvn|mra|mar|' + 'mul|[us]mull|smul[bwt][bt]|smu[as]d|smmul|smmla|' + 'mla|umlaal|smlal?([wbt][bt]|d)|mls|smlsl?[ds]|smc|svc|sev|' + 'mia([bt]{2}|ph)?|mrr?c2?|mcrr2?|mrs|msr|orr|orn|pkh(tb|bt)|rbit|' + 'rev(16|sh)?|sel|[su]sat(16)?|nop|pop|push|rfe([id][ab])?|' + 'stm([id][ab])?|str(ex)?[bhd]?|(qd?)?sub|(sh?|q|u[qh]?)?sub(8|16)|' + '[su]xt(a?h|a?b(16)?)|srs([id][ab])?|swpb?|swi|smi|tst|teq|' + 'wfe|wfi|yield' + ')' + '(eq|ne|cs|cc|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al|hs|lo)?' +
-      // condition codes
-      '[sptrx]?' +
-      // legal postfixes
+      begin: '\\b(' + // mnemonics
+      'adc|' + '(qd?|sh?|u[qh]?)?add(8|16)?|usada?8|(q|sh?|u[qh]?)?(as|sa)x|' + 'and|adrl?|sbc|rs[bc]|asr|b[lx]?|blx|bxj|cbn?z|tb[bh]|bic|' + 'bfc|bfi|[su]bfx|bkpt|cdp2?|clz|clrex|cmp|cmn|cpsi[ed]|cps|' + 'setend|dbg|dmb|dsb|eor|isb|it[te]{0,3}|lsl|lsr|ror|rrx|' + 'ldm(([id][ab])|f[ds])?|ldr((s|ex)?[bhd])?|movt?|mvn|mra|mar|' + 'mul|[us]mull|smul[bwt][bt]|smu[as]d|smmul|smmla|' + 'mla|umlaal|smlal?([wbt][bt]|d)|mls|smlsl?[ds]|smc|svc|sev|' + 'mia([bt]{2}|ph)?|mrr?c2?|mcrr2?|mrs|msr|orr|orn|pkh(tb|bt)|rbit|' + 'rev(16|sh)?|sel|[su]sat(16)?|nop|pop|push|rfe([id][ab])?|' + 'stm([id][ab])?|str(ex)?[bhd]?|(qd?)?sub|(sh?|q|u[qh]?)?sub(8|16)|' + '[su]xt(a?h|a?b(16)?)|srs([id][ab])?|swpb?|swi|smi|tst|teq|' + 'wfe|wfi|yield' + ')' + '(eq|ne|cs|cc|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al|hs|lo)?' + // condition codes
+      '[sptrx]?' + // legal postfixes
       '(?=\\s)' // followed by space
+
     }, COMMENT, hljs.QUOTE_STRING_MODE, {
       className: 'string',
       begin: '\'',
@@ -4131,6 +4303,7 @@ function armasm(hljs) {
     }]
   };
 }
+
 module.exports = armasm;
 
 /***/ }),
@@ -4155,16 +4328,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: AsciiDoc
 Requires: xml.js
@@ -4175,17 +4348,17 @@ Category: markup
 */
 
 /** @type LanguageFn */
+
+
 function asciidoc(hljs) {
   const HORIZONTAL_RULE = {
     begin: '^\'{3,}[ \\t]*$',
     relevance: 10
   };
-  const ESCAPED_FORMATTING = [
-  // escaped constrained formatting marks (i.e., \* \_ or \`)
+  const ESCAPED_FORMATTING = [// escaped constrained formatting marks (i.e., \* \_ or \`)
   {
     begin: /\\[*_`]/
-  },
-  // escaped unconstrained formatting marks (i.e., \\** \\__ or \\``)
+  }, // escaped unconstrained formatting marks (i.e., \\** \\__ or \\``)
   // must ignore until the next formatting marks
   // this rule might not be 100% compliant with Asciidoctor 2.0 but we are entering undefined behavior territory...
   {
@@ -4194,61 +4367,51 @@ function asciidoc(hljs) {
     begin: /\\\\_{2}[^\n]*_{2}/
   }, {
     begin: /\\\\`{2}[^\n]*`{2}/
-  },
-  // guard: constrained formatting mark may not be preceded by ":", ";" or
+  }, // guard: constrained formatting mark may not be preceded by ":", ";" or
   // "}". match these so the constrained rule doesn't see them
   {
     begin: /[:;}][*_`](?![*_`])/
   }];
-  const STRONG = [
-  // inline unconstrained strong (single line)
+  const STRONG = [// inline unconstrained strong (single line)
   {
     className: 'strong',
     begin: /\*{2}([^\n]+?)\*{2}/
-  },
-  // inline unconstrained strong (multi-line)
+  }, // inline unconstrained strong (multi-line)
   {
     className: 'strong',
     begin: concat(/\*\*/, /((\*(?!\*)|\\[^\n]|[^*\n\\])+\n)+/, /(\*(?!\*)|\\[^\n]|[^*\n\\])*/, /\*\*/),
     relevance: 0
-  },
-  // inline constrained strong (single line)
+  }, // inline constrained strong (single line)
   {
     className: 'strong',
     // must not precede or follow a word character
     begin: /\B\*(\S|\S[^\n]*?\S)\*(?!\w)/
-  },
-  // inline constrained strong (multi-line)
+  }, // inline constrained strong (multi-line)
   {
     className: 'strong',
     // must not precede or follow a word character
     begin: /\*[^\s]([^\n]+\n)+([^\n]+)\*/
   }];
-  const EMPHASIS = [
-  // inline unconstrained emphasis (single line)
+  const EMPHASIS = [// inline unconstrained emphasis (single line)
   {
     className: 'emphasis',
     begin: /_{2}([^\n]+?)_{2}/
-  },
-  // inline unconstrained emphasis (multi-line)
+  }, // inline unconstrained emphasis (multi-line)
   {
     className: 'emphasis',
     begin: concat(/__/, /((_(?!_)|\\[^\n]|[^_\n\\])+\n)+/, /(_(?!_)|\\[^\n]|[^_\n\\])*/, /__/),
     relevance: 0
-  },
-  // inline constrained emphasis (single line)
+  }, // inline constrained emphasis (single line)
   {
     className: 'emphasis',
     // must not precede or follow a word character
     begin: /\b_(\S|\S[^\n]*?\S)_(?!\w)/
-  },
-  // inline constrained emphasis (multi-line)
+  }, // inline constrained emphasis (multi-line)
   {
     className: 'emphasis',
     // must not precede or follow a word character
     begin: /_[^\s]([^\n]+\n)+([^\n]+)_/
-  },
-  // inline constrained emphasis using single quote (legacy)
+  }, // inline constrained emphasis using single quote (legacy)
   {
     className: 'emphasis',
     // must not follow a word character or be followed by a single quote or space
@@ -4273,31 +4436,25 @@ function asciidoc(hljs) {
   return {
     name: 'AsciiDoc',
     aliases: ['adoc'],
-    contains: [
-    // block comment
-    hljs.COMMENT('^/{4,}\\n', '\\n/{4,}$',
-    // can also be done as...
+    contains: [// block comment
+    hljs.COMMENT('^/{4,}\\n', '\\n/{4,}$', // can also be done as...
     // '^/{4,}$',
     // '^/{4,}$',
     {
       relevance: 10
-    }),
-    // line comment
+    }), // line comment
     hljs.COMMENT('^//', '$', {
       relevance: 0
-    }),
-    // title
+    }), // title
     {
       className: 'title',
       begin: '^\\.\\w.*$'
-    },
-    // example, admonition & sidebar blocks
+    }, // example, admonition & sidebar blocks
     {
       begin: '^[=\\*]{4,}\\n',
       end: '\\n^[=\\*]{4,}$',
       relevance: 10
-    },
-    // headings
+    }, // headings
     {
       className: 'section',
       relevance: 10,
@@ -4306,36 +4463,31 @@ function asciidoc(hljs) {
       }, {
         begin: '^[^\\[\\]\\n]+?\\n[=\\-~\\^\\+]{2,}$'
       }]
-    },
-    // document attributes
+    }, // document attributes
     {
       className: 'meta',
       begin: '^:.+?:',
       end: '\\s',
       excludeEnd: true,
       relevance: 10
-    },
-    // block attributes
+    }, // block attributes
     {
       className: 'meta',
       begin: '^\\[.+?\\]$',
       relevance: 0
-    },
-    // quoteblocks
+    }, // quoteblocks
     {
       className: 'quote',
       begin: '^_{4,}\\n',
       end: '\\n_{4,}$',
       relevance: 10
-    },
-    // listing and literal blocks
+    }, // listing and literal blocks
     {
       className: 'code',
       begin: '^[\\-\\.]{4,}\\n',
       end: '\\n[\\-\\.]{4,}$',
       relevance: 10
-    },
-    // passthrough blocks
+    }, // passthrough blocks
     {
       begin: '^\\+{4,}\\n',
       end: '\\n\\+{4,}$',
@@ -4346,8 +4498,7 @@ function asciidoc(hljs) {
         relevance: 0
       }],
       relevance: 10
-    }, BULLET_LIST, ADMONITION, ...ESCAPED_FORMATTING, ...STRONG, ...EMPHASIS,
-    // inline smart quotes
+    }, BULLET_LIST, ADMONITION, ...ESCAPED_FORMATTING, ...STRONG, ...EMPHASIS, // inline smart quotes
     {
       className: 'string',
       variants: [{
@@ -4355,27 +4506,23 @@ function asciidoc(hljs) {
       }, {
         begin: "`.+?'"
       }]
-    },
-    // inline unconstrained emphasis
+    }, // inline unconstrained emphasis
     {
       className: 'code',
       begin: /`{2}/,
       end: /(\n{2}|`{2})/
-    },
-    // inline code snippets (TODO should get same treatment as strong and emphasis)
+    }, // inline code snippets (TODO should get same treatment as strong and emphasis)
     {
       className: 'code',
       begin: '(`.+?`|\\+.+?\\+)',
       relevance: 0
-    },
-    // indented literal block
+    }, // indented literal block
     {
       className: 'code',
       begin: '^[ \\t]',
       end: '$',
       relevance: 0
-    }, HORIZONTAL_RULE,
-    // images and links
+    }, HORIZONTAL_RULE, // images and links
     {
       begin: '(link:)?(http|https|ftp|file|irc|image:?):\\S+?\\[[^[]*?\\]',
       returnBegin: true,
@@ -4399,6 +4546,7 @@ function asciidoc(hljs) {
     }]
   };
 }
+
 module.exports = asciidoc;
 
 /***/ }),
@@ -4423,16 +4571,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: AspectJ
 Author: Hakan Ozler <ozler.hakan@gmail.com>
@@ -4442,6 +4590,8 @@ Audit: 2020
 */
 
 /** @type LanguageFn */
+
+
 function aspectj(hljs) {
   const KEYWORDS = 'false synchronized int abstract float private char boolean static null if const ' + 'for true while long throw strictfp finally protected import native final return void ' + 'enum else extends implements break transient new catch instanceof byte super volatile case ' + 'assert short package default double public try this switch continue throws privileged ' + 'aspectOf adviceexecution proceed cflowbelow cflow initialization preinitialization ' + 'staticinitialization withincode target within execution getWithinTypeName handler ' + 'thisJoinPoint thisJoinPointStaticPart thisEnclosingJoinPointStaticPart declare parents ' + 'warning error soft precedence thisAspectInstance';
   const SHORTKEYS = 'get set args call';
@@ -4540,6 +4690,7 @@ function aspectj(hljs) {
     }]
   };
 }
+
 module.exports = aspectj;
 
 /***/ }),
@@ -4587,8 +4738,8 @@ function autohotkey(hljs) {
       begin: '%[a-zA-Z0-9#_$@]+%'
     }, {
       className: 'built_in',
-      begin: '^\\s*\\w+\\s*(,|%)'
-      // I don't really know if this is totally relevant
+      begin: '^\\s*\\w+\\s*(,|%)' // I don't really know if this is totally relevant
+
     }, {
       // symbol would be most accurate however is highlighted just like
       // built_in and that makes up a lot of AutoHotkey code meaning that it
@@ -4616,6 +4767,7 @@ function autohotkey(hljs) {
     }]
   };
 }
+
 module.exports = autohotkey;
 
 /***/ }),
@@ -4739,6 +4891,7 @@ function autoit(hljs) {
     contains: [COMMENT, VARIABLE, STRING, NUMBER, PREPROCESSOR, CONSTANT, FUNCTION]
   };
 }
+
 module.exports = autoit;
 
 /***/ }),
@@ -4763,22 +4916,24 @@ function avrasm(hljs) {
     case_insensitive: true,
     keywords: {
       $pattern: '\\.?' + hljs.IDENT_RE,
-      keyword: /* mnemonic */
+      keyword:
+      /* mnemonic */
       'adc add adiw and andi asr bclr bld brbc brbs brcc brcs break breq brge brhc brhs ' + 'brid brie brlo brlt brmi brne brpl brsh brtc brts brvc brvs bset bst call cbi cbr ' + 'clc clh cli cln clr cls clt clv clz com cp cpc cpi cpse dec eicall eijmp elpm eor ' + 'fmul fmuls fmulsu icall ijmp in inc jmp ld ldd ldi lds lpm lsl lsr mov movw mul ' + 'muls mulsu neg nop or ori out pop push rcall ret reti rjmp rol ror sbc sbr sbrc sbrs ' + 'sec seh sbi sbci sbic sbis sbiw sei sen ser ses set sev sez sleep spm st std sts sub ' + 'subi swap tst wdr',
-      built_in: /* general purpose registers */
-      'r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 r16 r17 r18 r19 r20 r21 r22 ' + 'r23 r24 r25 r26 r27 r28 r29 r30 r31 x|0 xh xl y|0 yh yl z|0 zh zl ' + /* IO Registers (ATMega128) */
+      built_in:
+      /* general purpose registers */
+      'r0 r1 r2 r3 r4 r5 r6 r7 r8 r9 r10 r11 r12 r13 r14 r15 r16 r17 r18 r19 r20 r21 r22 ' + 'r23 r24 r25 r26 r27 r28 r29 r30 r31 x|0 xh xl y|0 yh yl z|0 zh zl ' +
+      /* IO Registers (ATMega128) */
       'ucsr1c udr1 ucsr1a ucsr1b ubrr1l ubrr1h ucsr0c ubrr0h tccr3c tccr3a tccr3b tcnt3h ' + 'tcnt3l ocr3ah ocr3al ocr3bh ocr3bl ocr3ch ocr3cl icr3h icr3l etimsk etifr tccr1c ' + 'ocr1ch ocr1cl twcr twdr twar twsr twbr osccal xmcra xmcrb eicra spmcsr spmcr portg ' + 'ddrg ping portf ddrf sreg sph spl xdiv rampz eicrb eimsk gimsk gicr eifr gifr timsk ' + 'tifr mcucr mcucsr tccr0 tcnt0 ocr0 assr tccr1a tccr1b tcnt1h tcnt1l ocr1ah ocr1al ' + 'ocr1bh ocr1bl icr1h icr1l tccr2 tcnt2 ocr2 ocdr wdtcr sfior eearh eearl eedr eecr ' + 'porta ddra pina portb ddrb pinb portc ddrc pinc portd ddrd pind spdr spsr spcr udr0 ' + 'ucsr0a ucsr0b ubrr0l acsr admux adcsr adch adcl porte ddre pine pinf',
       meta: '.byte .cseg .db .def .device .dseg .dw .endmacro .equ .eseg .exit .include .list ' + '.listmac .macro .nolist .org .set'
     },
     contains: [hljs.C_BLOCK_COMMENT_MODE, hljs.COMMENT(';', '$', {
       relevance: 0
-    }), hljs.C_NUMBER_MODE,
-    // 0x..., decimal, float
-    hljs.BINARY_NUMBER_MODE,
-    // 0b...
+    }), hljs.C_NUMBER_MODE, // 0x..., decimal, float
+    hljs.BINARY_NUMBER_MODE, // 0b...
     {
       className: 'number',
       begin: '\\b(\\$[a-zA-Z0-9]+|0o[0-7]+)' // $..., 0o...
+
     }, hljs.QUOTE_STRING_MODE, {
       className: 'string',
       begin: '\'',
@@ -4798,6 +4953,7 @@ function avrasm(hljs) {
     }]
   };
 }
+
 module.exports = avrasm;
 
 /***/ }),
@@ -4861,6 +5017,7 @@ function awk(hljs) {
     contains: [VARIABLE, STRING, hljs.REGEXP_MODE, hljs.HASH_COMMENT_MODE, hljs.NUMBER_MODE]
   };
 }
+
 module.exports = awk;
 
 /***/ }),
@@ -4909,6 +5066,7 @@ function axapta(hljs) {
     }]
   };
 }
+
 module.exports = axapta;
 
 /***/ }),
@@ -4933,16 +5091,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Bash
 Author: vah <vahtenberg@gmail.com>
@@ -4952,6 +5110,8 @@ Category: common
 */
 
 /** @type LanguageFn */
+
+
 function bash(hljs) {
   const VAR = {};
   const BRACED_VAR = {
@@ -4966,8 +5126,7 @@ function bash(hljs) {
   Object.assign(VAR, {
     className: 'variable',
     variants: [{
-      begin: concat(/\$[\w\d#@][\w\d_]*/,
-      // negative look-ahead tries to avoid matching patterns that are not
+      begin: concat(/\$[\w\d#@][\w\d_]*/, // negative look-ahead tries to avoid matching patterns that are not
       // Perl at all like $ident$, @ident@, etc.
       `(?![\\w\\d])(?![$])`)
     }, BRACED_VAR]
@@ -5033,24 +5192,19 @@ function bash(hljs) {
       $pattern: /\b[a-z._-]+\b/,
       keyword: 'if then else elif fi for while in do done case esac function',
       literal: 'true false',
-      built_in:
-      // Shell built-ins
+      built_in: // Shell built-ins
       // http://www.gnu.org/software/bash/manual/html_node/Shell-Builtin-Commands.html
-      'break cd continue eval exec exit export getopts hash pwd readonly return shift test times ' + 'trap umask unset ' +
-      // Bash built-ins
-      'alias bind builtin caller command declare echo enable help let local logout mapfile printf ' + 'read readarray source type typeset ulimit unalias ' +
-      // Shell modifiers
-      'set shopt ' +
-      // Zsh built-ins
+      'break cd continue eval exec exit export getopts hash pwd readonly return shift test times ' + 'trap umask unset ' + // Bash built-ins
+      'alias bind builtin caller command declare echo enable help let local logout mapfile printf ' + 'read readarray source type typeset ulimit unalias ' + // Shell modifiers
+      'set shopt ' + // Zsh built-ins
       'autoload bg bindkey bye cap chdir clone comparguments compcall compctl compdescribe compfiles ' + 'compgroups compquote comptags comptry compvalues dirs disable disown echotc echoti emulate ' + 'fc fg float functions getcap getln history integer jobs kill limit log noglob popd print ' + 'pushd pushln rehash sched setcap setopt stat suspend ttyctl unfunction unhash unlimit ' + 'unsetopt vared wait whence where which zcompile zformat zftp zle zmodload zparseopts zprof ' + 'zpty zregexparse zsocket zstyle ztcp'
     },
-    contains: [KNOWN_SHEBANG,
-    // to catch known shells and boost relevancy
-    hljs.SHEBANG(),
-    // to catch unknown shells but still highlight the shebang
+    contains: [KNOWN_SHEBANG, // to catch known shells and boost relevancy
+    hljs.SHEBANG(), // to catch unknown shells but still highlight the shebang
     FUNCTION, ARITHMETIC, hljs.HASH_COMMENT_MODE, HERE_DOC, QUOTE_STRING, ESCAPED_QUOTE, APOS_STRING, VAR]
   };
 }
+
 module.exports = bash;
 
 /***/ }),
@@ -5104,6 +5258,7 @@ function basic(hljs) {
     }]
   };
 }
+
 module.exports = basic;
 
 /***/ }),
@@ -5124,26 +5279,24 @@ Author: Oleg Efimov <efimovov@gmail.com>
 function bnf(hljs) {
   return {
     name: 'Backus–Naur Form',
-    contains: [
-    // Attribute
+    contains: [// Attribute
     {
       className: 'attribute',
       begin: /</,
       end: />/
-    },
-    // Specific
+    }, // Specific
     {
       begin: /::=/,
       end: /$/,
       contains: [{
         begin: /</,
         end: />/
-      },
-      // Common
+      }, // Common
       hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE]
     }]
   };
 }
+
 module.exports = bnf;
 
 /***/ }),
@@ -5188,6 +5341,7 @@ function brainfuck(hljs) {
     }, LITERAL]
   };
 }
+
 module.exports = brainfuck;
 
 /***/ }),
@@ -5212,32 +5366,34 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: C++
 Category: common, system
@@ -5245,6 +5401,8 @@ Website: https://isocpp.org
 */
 
 /** @type LanguageFn */
+
+
 function cPlusPlus(hljs) {
   // added for historic reasons because `hljs.C_LINE_COMMENT_MODE` does
   // not include such support nor can we be sure all the grammars depending
@@ -5261,10 +5419,9 @@ function cPlusPlus(hljs) {
   const CPP_PRIMITIVE_TYPES = {
     className: 'keyword',
     begin: '\\b[a-z\\d_]*_t\\b'
-  };
-
-  // https://en.cppreference.com/w/cpp/language/escape
+  }; // https://en.cppreference.com/w/cpp/language/escape
   // \\ \x \xFF \u2837 \u00323747 \374
+
   const CHARACTER_ESCAPES = '\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4,8}|[0-7]{3}|\\S)';
   const STRINGS = {
     className: 'string',
@@ -5372,14 +5529,12 @@ function cPlusPlus(hljs) {
       returnBegin: true,
       contains: [TITLE_MODE],
       relevance: 0
-    },
-    // needed because we do not have look-behind on the below rule
+    }, // needed because we do not have look-behind on the below rule
     // to prevent it from grabbing the final : in a :: pair
     {
       begin: /::/,
       relevance: 0
-    },
-    // initializers
+    }, // initializers
     {
       begin: /:/,
       endsWithParent: true,
@@ -5390,8 +5545,7 @@ function cPlusPlus(hljs) {
       end: /\)/,
       keywords: CPP_KEYWORDS,
       relevance: 0,
-      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES,
-      // Count matching parentheses.
+      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES, // Count matching parentheses.
       {
         begin: /\(/,
         end: /\)/,
@@ -5433,7 +5587,6 @@ function cPlusPlus(hljs) {
     }
   };
 }
-
 /*
 Language: C-like (deprecated, use C and C++ instead)
 Author: Ivan Sagalaev <maniac@softwaremaniacs.org>
@@ -5441,21 +5594,22 @@ Contributors: Evgeny Stepanischev <imbolk@gmail.com>, Zaven Muradyan <megalivoit
 */
 
 /** @type LanguageFn */
+
+
 function cLike(hljs) {
   const lang = cPlusPlus(hljs);
   const C_ALIASES = ["c", "h"];
   const CPP_ALIASES = ['cc', 'c++', 'h++', 'hpp', 'hh', 'hxx', 'cxx'];
   lang.disableAutodetect = true;
-  lang.aliases = [];
-  // support users only loading c-like (legacy)
-  if (!hljs.getLanguage("c")) lang.aliases.push(...C_ALIASES);
-  if (!hljs.getLanguage("cpp")) lang.aliases.push(...CPP_ALIASES);
+  lang.aliases = []; // support users only loading c-like (legacy)
 
-  // if c and cpp are loaded after then they will reclaim these
+  if (!hljs.getLanguage("c")) lang.aliases.push(...C_ALIASES);
+  if (!hljs.getLanguage("cpp")) lang.aliases.push(...CPP_ALIASES); // if c and cpp are loaded after then they will reclaim these
   // aliases for themselves
 
   return lang;
 }
+
 module.exports = cLike;
 
 /***/ }),
@@ -5480,24 +5634,25 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: C
 Category: common, system
@@ -5505,6 +5660,8 @@ Website: https://en.wikipedia.org/wiki/C_(programming_language)
 */
 
 /** @type LanguageFn */
+
+
 function c(hljs) {
   // added for historic reasons because `hljs.C_LINE_COMMENT_MODE` does
   // not include such support nor can we be sure all the grammars depending
@@ -5521,10 +5678,9 @@ function c(hljs) {
   const CPP_PRIMITIVE_TYPES = {
     className: 'keyword',
     begin: '\\b[a-z\\d_]*_t\\b'
-  };
-
-  // https://en.cppreference.com/w/cpp/language/escape
+  }; // https://en.cppreference.com/w/cpp/language/escape
   // \\ \x \xFF \u2837 \u00323747 \374
+
   const CHARACTER_ESCAPES = '\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4,8}|[0-7]{3}|\\S)';
   const STRINGS = {
     className: 'string',
@@ -5630,8 +5786,7 @@ function c(hljs) {
       end: /\)/,
       keywords: CPP_KEYWORDS,
       relevance: 0,
-      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES,
-      // Count matching parentheses.
+      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES, // Count matching parentheses.
       {
         begin: /\(/,
         end: /\)/,
@@ -5673,6 +5828,7 @@ function c(hljs) {
     }
   };
 }
+
 module.exports = c;
 
 /***/ }),
@@ -5752,6 +5908,7 @@ function cal(hljs) {
     contains: [STRING, CHAR_STRING, DATE, DBL_QUOTED_VARIABLE, hljs.NUMBER_MODE, OBJECT, PROCEDURE]
   };
 }
+
 module.exports = cal;
 
 /***/ }),
@@ -5797,6 +5954,7 @@ function capnproto(hljs) {
           endsWithParent: true,
           excludeEnd: true
         } // hack: eating everything after the first title
+
       })]
     }, {
       className: 'class',
@@ -5808,10 +5966,12 @@ function capnproto(hljs) {
           endsWithParent: true,
           excludeEnd: true
         } // hack: eating everything after the first title
+
       })]
     }]
   };
 }
+
 module.exports = capnproto;
 
 /***/ }),
@@ -5831,10 +5991,10 @@ Website: https://ceylon-lang.org
 /** @type LanguageFn */
 function ceylon(hljs) {
   // 2.3. Identifiers and keywords
-  const KEYWORDS = 'assembly module package import alias class interface object given value ' + 'assign void function new of extends satisfies abstracts in out return ' + 'break continue throw assert dynamic if else switch case for while try ' + 'catch finally then let this outer super is exists nonempty';
-  // 7.4.1 Declaration Modifiers
-  const DECLARATION_MODIFIERS = 'shared abstract formal default actual variable late native deprecated ' + 'final sealed annotation suppressWarnings small';
-  // 7.4.2 Documentation
+  const KEYWORDS = 'assembly module package import alias class interface object given value ' + 'assign void function new of extends satisfies abstracts in out return ' + 'break continue throw assert dynamic if else switch case for while try ' + 'catch finally then let this outer super is exists nonempty'; // 7.4.1 Declaration Modifiers
+
+  const DECLARATION_MODIFIERS = 'shared abstract formal default actual variable late native deprecated ' + 'final sealed annotation suppressWarnings small'; // 7.4.2 Documentation
+
   const DOCUMENTATION = 'doc by license see throws tagged';
   const SUBST = {
     className: 'subst',
@@ -5885,6 +6045,7 @@ function ceylon(hljs) {
     }].concat(EXPRESSIONS)
   };
 }
+
 module.exports = ceylon;
 
 /***/ }),
@@ -5918,6 +6079,7 @@ function clean(hljs) {
     }]
   };
 }
+
 module.exports = clean;
 
 /***/ }),
@@ -5951,6 +6113,7 @@ function clojureRepl(hljs) {
     }]
   };
 }
+
 module.exports = clojureRepl;
 
 /***/ }),
@@ -5976,8 +6139,7 @@ function clojure(hljs) {
   const globals = 'def defonce defprotocol defstruct defmulti defmethod defn- defn defmacro deftype defrecord';
   const keywords = {
     $pattern: SYMBOL_RE,
-    'builtin-name':
-    // Clojure keywords
+    'builtin-name': // Clojure keywords
     globals + ' ' + 'cond apply if-not if-let if not not= =|0 <|0 >|0 <=|0 >=|0 ==|0 +|0 /|0 *|0 -|0 rem ' + 'quot neg? pos? delay? symbol? keyword? true? false? integer? empty? coll? list? ' + 'set? ifn? fn? associative? sequential? sorted? counted? reversible? number? decimal? ' + 'class? distinct? isa? float? rational? reduced? ratio? odd? even? char? seq? vector? ' + 'string? map? nil? contains? zero? instance? not-every? not-any? libspec? -> ->> .. . ' + 'inc compare do dotimes mapcat take remove take-while drop letfn drop-last take-last ' + 'drop-while while intern condp case reduced cycle split-at split-with repeat replicate ' + 'iterate range merge zipmap declare line-seq sort comparator sort-by dorun doall nthnext ' + 'nthrest partition eval doseq await await-for let agent atom send send-off release-pending-sends ' + 'add-watch mapv filterv remove-watch agent-error restart-agent set-error-handler error-handler ' + 'set-error-mode! error-mode shutdown-agents quote var fn loop recur throw try monitor-enter ' + 'monitor-exit macroexpand macroexpand-1 for dosync and or ' + 'when when-not when-let comp juxt partial sequence memoize constantly complement identity assert ' + 'peek pop doto proxy first rest cons cast coll last butlast ' + 'sigs reify second ffirst fnext nfirst nnext meta with-meta ns in-ns create-ns import ' + 'refer keys select-keys vals key val rseq name namespace promise into transient persistent! conj! ' + 'assoc! dissoc! pop! disj! use class type num float double short byte boolean bigint biginteger ' + 'bigdec print-method print-dup throw-if printf format load compile get-in update-in pr pr-on newline ' + 'flush read slurp read-line subvec with-open memfn time re-find re-groups rand-int rand mod locking ' + 'assert-valid-fdecl alias resolve ref deref refset swap! reset! set-validator! compare-and-set! alter-meta! ' + 'reset-meta! commute get-validator alter ref-set ref-history-count ref-min-history ref-max-history ensure sync io! ' + 'new next conj set! to-array future future-call into-array aset gen-class reduce map filter find empty ' + 'hash-map hash-set sorted-map sorted-map-by sorted-set sorted-set-by vec vector seq flatten reverse assoc dissoc list ' + 'disj get union difference intersection extend extend-type extend-protocol int nth delay count concat chunk chunk-buffer ' + 'chunk-append chunk-first chunk-rest max min dec unchecked-inc-int unchecked-inc unchecked-dec-inc unchecked-dec unchecked-negate ' + 'unchecked-add-int unchecked-add unchecked-subtract-int unchecked-subtract chunk-next chunk-cons chunked-seq? prn vary-meta ' + 'lazy-seq spread list* str find-keyword keyword symbol gensym force rationalize'
   };
   const SIMPLE_NUMBER_RE = '[-+]?\\d+(\\.\\d+)?';
@@ -6053,6 +6215,7 @@ function clojure(hljs) {
     contains: [LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
   };
 }
+
 module.exports = clojure;
 
 /***/ }),
@@ -6077,16 +6240,11 @@ function cmake(hljs) {
     aliases: ['cmake.in'],
     case_insensitive: true,
     keywords: {
-      keyword:
-      // scripting commands
-      'break cmake_host_system_information cmake_minimum_required cmake_parse_arguments ' + 'cmake_policy configure_file continue elseif else endforeach endfunction endif endmacro ' + 'endwhile execute_process file find_file find_library find_package find_path ' + 'find_program foreach function get_cmake_property get_directory_property ' + 'get_filename_component get_property if include include_guard list macro ' + 'mark_as_advanced math message option return separate_arguments ' + 'set_directory_properties set_property set site_name string unset variable_watch while ' +
-      // project commands
-      'add_compile_definitions add_compile_options add_custom_command add_custom_target ' + 'add_definitions add_dependencies add_executable add_library add_link_options ' + 'add_subdirectory add_test aux_source_directory build_command create_test_sourcelist ' + 'define_property enable_language enable_testing export fltk_wrap_ui ' + 'get_source_file_property get_target_property get_test_property include_directories ' + 'include_external_msproject include_regular_expression install link_directories ' + 'link_libraries load_cache project qt_wrap_cpp qt_wrap_ui remove_definitions ' + 'set_source_files_properties set_target_properties set_tests_properties source_group ' + 'target_compile_definitions target_compile_features target_compile_options ' + 'target_include_directories target_link_directories target_link_libraries ' + 'target_link_options target_sources try_compile try_run ' +
-      // CTest commands
-      'ctest_build ctest_configure ctest_coverage ctest_empty_binary_directory ctest_memcheck ' + 'ctest_read_custom_files ctest_run_script ctest_sleep ctest_start ctest_submit ' + 'ctest_test ctest_update ctest_upload ' +
-      // deprecated commands
-      'build_name exec_program export_library_dependencies install_files install_programs ' + 'install_targets load_command make_directory output_required_files remove ' + 'subdir_depends subdirs use_mangled_mesa utility_source variable_requires write_file ' + 'qt5_use_modules qt5_use_package qt5_wrap_cpp ' +
-      // core keywords
+      keyword: // scripting commands
+      'break cmake_host_system_information cmake_minimum_required cmake_parse_arguments ' + 'cmake_policy configure_file continue elseif else endforeach endfunction endif endmacro ' + 'endwhile execute_process file find_file find_library find_package find_path ' + 'find_program foreach function get_cmake_property get_directory_property ' + 'get_filename_component get_property if include include_guard list macro ' + 'mark_as_advanced math message option return separate_arguments ' + 'set_directory_properties set_property set site_name string unset variable_watch while ' + // project commands
+      'add_compile_definitions add_compile_options add_custom_command add_custom_target ' + 'add_definitions add_dependencies add_executable add_library add_link_options ' + 'add_subdirectory add_test aux_source_directory build_command create_test_sourcelist ' + 'define_property enable_language enable_testing export fltk_wrap_ui ' + 'get_source_file_property get_target_property get_test_property include_directories ' + 'include_external_msproject include_regular_expression install link_directories ' + 'link_libraries load_cache project qt_wrap_cpp qt_wrap_ui remove_definitions ' + 'set_source_files_properties set_target_properties set_tests_properties source_group ' + 'target_compile_definitions target_compile_features target_compile_options ' + 'target_include_directories target_link_directories target_link_libraries ' + 'target_link_options target_sources try_compile try_run ' + // CTest commands
+      'ctest_build ctest_configure ctest_coverage ctest_empty_binary_directory ctest_memcheck ' + 'ctest_read_custom_files ctest_run_script ctest_sleep ctest_start ctest_submit ' + 'ctest_test ctest_update ctest_upload ' + // deprecated commands
+      'build_name exec_program export_library_dependencies install_files install_programs ' + 'install_targets load_command make_directory output_required_files remove ' + 'subdir_depends subdirs use_mangled_mesa utility_source variable_requires write_file ' + 'qt5_use_modules qt5_use_package qt5_wrap_cpp ' + // core keywords
       'on off true false and or not command policy target test exists is_newer_than ' + 'is_directory is_symlink is_absolute matches less greater equal less_equal ' + 'greater_equal strless strgreater strequal strless_equal strgreater_equal version_less ' + 'version_greater version_equal version_less_equal version_greater_equal in_list defined'
     },
     contains: [{
@@ -6096,6 +6254,7 @@ function cmake(hljs) {
     }, hljs.HASH_COMMENT_MODE, hljs.QUOTE_STRING_MODE, hljs.NUMBER_MODE]
   };
 }
+
 module.exports = cmake;
 
 /***/ }),
@@ -6106,10 +6265,8 @@ module.exports = cmake;
   \*****************************************************************/
 /***/ ((module) => {
 
-const KEYWORDS = ["as",
-// for exports
-"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class",
-// JS handles these with a special rule
+const KEYWORDS = ["as", // for exports
+"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class", // JS handles these with a special rule
 // "get",
 // "set",
 "debugger", "async", "await", "static", "import", "from", "export", "extends"];
@@ -6120,7 +6277,6 @@ const BUILT_IN_GLOBALS = ["setInterval", "setTimeout", "clearInterval", "clearTi
 const BUILT_IN_VARIABLES = ["arguments", "this", "super", "console", "window", "document", "localStorage", "module", "global" // Node.js
 ];
 const BUILT_INS = [].concat(BUILT_IN_GLOBALS, BUILT_IN_VARIABLES, TYPES, ERROR_TYPES);
-
 /*
 Language: CoffeeScript
 Author: Dmytrii Nagirniak <dnagir@gmail.com>
@@ -6131,12 +6287,15 @@ Website: https://coffeescript.org
 */
 
 /** @type LanguageFn */
+
 function coffeescript(hljs) {
   const COFFEE_BUILT_INS = ['npm', 'print'];
   const COFFEE_LITERALS = ['yes', 'no', 'on', 'off'];
   const COFFEE_KEYWORDS = ['then', 'unless', 'until', 'loop', 'by', 'when', 'and', 'or', 'is', 'isnt', 'not'];
   const NOT_VALID_KEYWORDS = ["var", "const", "let", "function", "static"];
+
   const excluding = list => kw => !list.includes(kw);
+
   const KEYWORDS$1 = {
     keyword: KEYWORDS.concat(COFFEE_KEYWORDS).filter(excluding(NOT_VALID_KEYWORDS)),
     literal: LITERALS.concat(COFFEE_LITERALS),
@@ -6154,8 +6313,7 @@ function coffeescript(hljs) {
       end: '(\\s*/)?',
       relevance: 0
     }
-  }),
-  // a number tries to eat the following slash to prevent treating it as a regexp
+  }), // a number tries to eat the following slash to prevent treating it as a regexp
   {
     className: 'string',
     variants: [{
@@ -6191,6 +6349,7 @@ function coffeescript(hljs) {
     }]
   }, {
     begin: '@' + JS_IDENT_RE // relevance booster
+
   }, {
     subLanguage: 'javascript',
     excludeBegin: true,
@@ -6212,6 +6371,7 @@ function coffeescript(hljs) {
     className: 'params',
     begin: '\\([^\\(]',
     returnBegin: true,
+
     /* We need another contained nameless mode to not have every nested
     pair of parens to be called "params" */
     contains: [{
@@ -6263,6 +6423,7 @@ function coffeescript(hljs) {
     }])
   };
 }
+
 module.exports = coffeescript;
 
 /***/ }),
@@ -6299,6 +6460,7 @@ function coq(hljs) {
     }]
   };
 }
+
 module.exports = coq;
 
 /***/ }),
@@ -6335,11 +6497,8 @@ function cos(hljs) {
     begin: "\\b(\\d+(\\.\\d*)?|\\.\\d+)",
     relevance: 0
   };
-  const COS_KEYWORDS = 'property parameter class classmethod clientmethod extends as break ' + 'catch close continue do d|0 else elseif for goto halt hang h|0 if job ' + 'j|0 kill k|0 lock l|0 merge new open quit q|0 read r|0 return set s|0 ' + 'tcommit throw trollback try tstart use view while write w|0 xecute x|0 ' + 'zkill znspace zn ztrap zwrite zw zzdump zzwrite print zbreak zinsert ' + 'zload zprint zremove zsave zzprint mv mvcall mvcrt mvdim mvprint zquit ' + 'zsync ascii';
-
-  // registered function - no need in them due to all functions are highlighted,
+  const COS_KEYWORDS = 'property parameter class classmethod clientmethod extends as break ' + 'catch close continue do d|0 else elseif for goto halt hang h|0 if job ' + 'j|0 kill k|0 lock l|0 merge new open quit q|0 read r|0 return set s|0 ' + 'tcommit throw trollback try tstart use view while write w|0 xecute x|0 ' + 'zkill znspace zn ztrap zwrite zw zzdump zzwrite print zbreak zinsert ' + 'zload zprint zremove zsave zzprint mv mvcall mvcrt mvdim mvprint zquit ' + 'zsync ascii'; // registered function - no need in them due to all functions are highlighted,
   // but I'll just leave this here.
-
   // "$bit", "$bitcount",
   // "$bitfind", "$bitlogic", "$case", "$char", "$classmethod", "$classname",
   // "$compile", "$data", "$decimal", "$double", "$extract", "$factor",
@@ -6404,8 +6563,7 @@ function cos(hljs) {
       // Some control constructions: do ##class(Package.ClassName).Method(), ##super()
       className: "keyword",
       begin: /##class|##super|#define|#dim/
-    },
-    // sub-languages: are not fully supported by hljs by 11/15/2015
+    }, // sub-languages: are not fully supported by hljs by 11/15/2015
     // left for the future implementation.
     {
       begin: /&sql\(/,
@@ -6427,6 +6585,7 @@ function cos(hljs) {
     }]
   };
 }
+
 module.exports = cos;
 
 /***/ }),
@@ -6451,32 +6610,34 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: C++
 Category: common, system
@@ -6484,6 +6645,8 @@ Website: https://isocpp.org
 */
 
 /** @type LanguageFn */
+
+
 function cpp(hljs) {
   // added for historic reasons because `hljs.C_LINE_COMMENT_MODE` does
   // not include such support nor can we be sure all the grammars depending
@@ -6500,10 +6663,9 @@ function cpp(hljs) {
   const CPP_PRIMITIVE_TYPES = {
     className: 'keyword',
     begin: '\\b[a-z\\d_]*_t\\b'
-  };
-
-  // https://en.cppreference.com/w/cpp/language/escape
+  }; // https://en.cppreference.com/w/cpp/language/escape
   // \\ \x \xFF \u2837 \u00323747 \374
+
   const CHARACTER_ESCAPES = '\\\\(x[0-9A-Fa-f]{2}|u[0-9A-Fa-f]{4,8}|[0-7]{3}|\\S)';
   const STRINGS = {
     className: 'string',
@@ -6611,14 +6773,12 @@ function cpp(hljs) {
       returnBegin: true,
       contains: [TITLE_MODE],
       relevance: 0
-    },
-    // needed because we do not have look-behind on the below rule
+    }, // needed because we do not have look-behind on the below rule
     // to prevent it from grabbing the final : in a :: pair
     {
       begin: /::/,
       relevance: 0
-    },
-    // initializers
+    }, // initializers
     {
       begin: /:/,
       endsWithParent: true,
@@ -6629,8 +6789,7 @@ function cpp(hljs) {
       end: /\)/,
       keywords: CPP_KEYWORDS,
       relevance: 0,
-      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES,
-      // Count matching parentheses.
+      contains: [C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRINGS, NUMBERS, CPP_PRIMITIVE_TYPES, // Count matching parentheses.
       {
         begin: /\(/,
         end: /\)/,
@@ -6672,6 +6831,7 @@ function cpp(hljs) {
     }
   };
 }
+
 module.exports = cpp;
 
 /***/ }),
@@ -6762,6 +6922,7 @@ function crmsh(hljs) {
     }]
   };
 }
+
 module.exports = crmsh;
 
 /***/ }),
@@ -6807,6 +6968,7 @@ function crystal(hljs) {
     }],
     keywords: CRYSTAL_KEYWORDS
   };
+
   function recursiveParen(begin, end) {
     const contains = [{
       begin: begin,
@@ -6815,6 +6977,7 @@ function crystal(hljs) {
     contains[0].contains = contains;
     return contains;
   }
+
   const STRING = {
     className: 'string',
     contains: [hljs.BACKSLASH_ESCAPE, SUBST],
@@ -7008,6 +7171,7 @@ function crystal(hljs) {
     contains: CRYSTAL_DEFAULT_CONTAINS
   };
 }
+
 module.exports = crystal;
 
 /***/ }),
@@ -7196,8 +7360,7 @@ function csharp(hljs) {
       end: /\s*[{;=]/,
       excludeEnd: true,
       keywords: KEYWORDS,
-      contains: [
-      // prevents these from being highlighted `title`
+      contains: [// prevents these from being highlighted `title`
       {
         beginKeywords: FUNCTION_MODIFIERS.join(" "),
         relevance: 0
@@ -7219,6 +7382,7 @@ function csharp(hljs) {
     }, AT_IDENTIFIER]
   };
 }
+
 module.exports = csharp;
 
 /***/ }),
@@ -7259,6 +7423,7 @@ function csp(hljs) {
     }]
   };
 }
+
 module.exports = csp;
 
 /***/ }),
@@ -7288,50 +7453,32 @@ const MODES = hljs => {
     }
   };
 };
+
 const TAGS = ['a', 'abbr', 'address', 'article', 'aside', 'audio', 'b', 'blockquote', 'body', 'button', 'canvas', 'caption', 'cite', 'code', 'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'mark', 'menu', 'nav', 'object', 'ol', 'p', 'q', 'quote', 'samp', 'section', 'span', 'strong', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'ul', 'var', 'video'];
-const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width',
-// TODO: find a better solution?
-'min-width', 'max-width', 'min-height', 'max-height'];
+const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width', // TODO: find a better solution?
+'min-width', 'max-width', 'min-height', 'max-height']; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
-const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir',
-// dir()
-'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has',
-// has()
-'host',
-// host or host()
-'host-context',
-// host-context()
-'hover', 'indeterminate', 'in-range', 'invalid', 'is',
-// is()
-'lang',
-// lang()
-'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not',
-// not()
-'nth-child',
-// nth-child()
-'nth-col',
-// nth-col()
-'nth-last-child',
-// nth-last-child()
-'nth-last-col',
-// nth-last-col()
-'nth-last-of-type',
-//nth-last-of-type()
-'nth-of-type',
-//nth-of-type()
+const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir', // dir()
+'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has', // has()
+'host', // host or host()
+'host-context', // host-context()
+'hover', 'indeterminate', 'in-range', 'invalid', 'is', // is()
+'lang', // lang()
+'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not', // not()
+'nth-child', // nth-child()
+'nth-col', // nth-col()
+'nth-last-child', // nth-last-child()
+'nth-last-col', // nth-last-col()
+'nth-last-of-type', //nth-last-of-type()
+'nth-of-type', //nth-of-type()
 'only-child', 'only-of-type', 'optional', 'out-of-range', 'past', 'placeholder-shown', 'read-only', 'read-write', 'required', 'right', 'root', 'scope', 'target', 'target-within', 'user-invalid', 'valid', 'visited', 'where' // where()
-];
+]; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 const PSEUDO_ELEMENTS = ['after', 'backdrop', 'before', 'cue', 'cue-region', 'first-letter', 'first-line', 'grammar-error', 'marker', 'part', 'placeholder', 'selection', 'slotted', 'spelling-error'];
-const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src',
-// @font-face
-'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index'
-// reverse makes sure longer attributes `font-weight` are matched fully
+const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src', // @font-face
+'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index' // reverse makes sure longer attributes `font-weight` are matched fully
 // instead of getting false positives on say `font`
 ].reverse();
-
 /**
  * @param {string} value
  * @returns {RegExp}
@@ -7341,29 +7488,31 @@ const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', '
  * @param {RegExp | string } re
  * @returns {string}
  */
+
 function source(re) {
   if (!re) return null;
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: CSS
 Category: common, css
@@ -7371,6 +7520,8 @@ Website: https://developer.mozilla.org/en-US/docs/Web/CSS
 */
 
 /** @type LanguageFn */
+
+
 function css(hljs) {
   const modes = MODES(hljs);
   const FUNCTION_DISPATCH = {
@@ -7382,6 +7533,7 @@ function css(hljs) {
   };
   const AT_MODIFIERS = "and or not only";
   const AT_PROPERTY_RE = /@-?\w[\w]*(-\w+)*/; // @-webkit-keyframes
+
   const IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   const STRINGS = [hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE];
   return {
@@ -7396,8 +7548,7 @@ function css(hljs) {
       // don't have a great class for this?
       keyframePosition: "selector-tag"
     },
-    contains: [hljs.C_BLOCK_COMMENT_MODE, VENDOR_PREFIX,
-    // to recognize keyframe 40% etc which are outside the scope of our
+    contains: [hljs.C_BLOCK_COMMENT_MODE, VENDOR_PREFIX, // to recognize keyframe 40% etc which are outside the scope of our
     // attribute value mode
     hljs.CSS_NUMBER_MODE, {
       className: 'selector-id',
@@ -7414,8 +7565,7 @@ function css(hljs) {
       }, {
         begin: '::(' + PSEUDO_ELEMENTS.join('|') + ')'
       }]
-    },
-    // we may actually need this (12/2020)
+    }, // we may actually need this (12/2020)
     // { // pseudo-selector params
     //   begin: /\(/,
     //   end: /\)/,
@@ -7424,13 +7574,11 @@ function css(hljs) {
     {
       className: 'attribute',
       begin: '\\b(' + ATTRIBUTES.join('|') + ')\\b'
-    },
-    // attribute values
+    }, // attribute values
     {
       begin: ':',
       end: '[;}]',
-      contains: [modes.HEXCOLOR, modes.IMPORTANT, hljs.CSS_NUMBER_MODE, ...STRINGS,
-      // needed to highlight these as strings and to avoid issues with
+      contains: [modes.HEXCOLOR, modes.IMPORTANT, hljs.CSS_NUMBER_MODE, ...STRINGS, // needed to highlight these as strings and to avoid issues with
       // illegal characters that might be inside urls that would tigger the
       // languages illegal stack
       {
@@ -7480,6 +7628,7 @@ function css(hljs) {
     }]
   };
 }
+
 module.exports = css;
 
 /***/ }),
@@ -7528,12 +7677,12 @@ function d(hljs) {
     built_in: 'bool cdouble cent cfloat char creal dchar delegate double dstring float function ' + 'idouble ifloat ireal long real short string ubyte ucent uint ulong ushort wchar ' + 'wstring',
     literal: 'false null true'
   };
-
   /**
    * Number literal regexps
    *
    * @type {String}
    */
+
   const decimal_integer_re = '(0|[1-9][\\d_]*)';
   const decimal_integer_nosus_re = '(0|[1-9][\\d_]*|\\d[\\d_]*|[\\d_]+?\\d)';
   const binary_integer_re = '0[bB][01_]+';
@@ -7544,22 +7693,17 @@ function d(hljs) {
   const hexadecimal_float_re = '(0[xX](' + hexadecimal_digits_re + '\\.' + hexadecimal_digits_re + '|' + '\\.?' + hexadecimal_digits_re + ')[pP][+-]?' + decimal_integer_nosus_re + ')';
   const integer_re = '(' + decimal_integer_re + '|' + binary_integer_re + '|' + hexadecimal_integer_re + ')';
   const float_re = '(' + hexadecimal_float_re + '|' + decimal_float_re + ')';
-
   /**
    * Escape sequence supported in D string and character literals
    *
    * @type {String}
    */
-  const escape_sequence_re = '\\\\(' + '[\'"\\?\\\\abfnrtv]|' +
-  // common escapes
-  'u[\\dA-Fa-f]{4}|' +
-  // four hex digit unicode codepoint
-  '[0-7]{1,3}|' +
-  // one to three octal digit ascii char code
-  'x[\\dA-Fa-f]{2}|' +
-  // two hex digit ascii char code
-  'U[\\dA-Fa-f]{8}' +
-  // eight hex digit unicode codepoint
+
+  const escape_sequence_re = '\\\\(' + '[\'"\\?\\\\abfnrtv]|' + // common escapes
+  'u[\\dA-Fa-f]{4}|' + // four hex digit unicode codepoint
+  '[0-7]{1,3}|' + // one to three octal digit ascii char code
+  'x[\\dA-Fa-f]{2}|' + // two hex digit ascii char code
+  'U[\\dA-Fa-f]{8}' + // eight hex digit unicode codepoint
   ')|' + '&[a-zA-Z\\d]{2,};'; // named character entity
 
   /**
@@ -7567,140 +7711,141 @@ function d(hljs) {
    *
    * @type {Object}
    */
+
   const D_INTEGER_MODE = {
     className: 'number',
     begin: '\\b' + integer_re + '(L|u|U|Lu|LU|uL|UL)?',
     relevance: 0
   };
-
   /**
    * [D_FLOAT_MODE description]
    * @type {Object}
    */
+
   const D_FLOAT_MODE = {
     className: 'number',
     begin: '\\b(' + float_re + '([fF]|L|i|[fF]i|Li)?|' + integer_re + '(i|[fF]i|Li)' + ')',
     relevance: 0
   };
-
   /**
    * D character literal
    *
    * @type {Object}
    */
+
   const D_CHARACTER_MODE = {
     className: 'string',
     begin: '\'(' + escape_sequence_re + '|.)',
     end: '\'',
     illegal: '.'
   };
-
   /**
    * D string escape sequence
    *
    * @type {Object}
    */
+
   const D_ESCAPE_SEQUENCE = {
     begin: escape_sequence_re,
     relevance: 0
   };
-
   /**
    * D double quoted string literal
    *
    * @type {Object}
    */
+
   const D_STRING_MODE = {
     className: 'string',
     begin: '"',
     contains: [D_ESCAPE_SEQUENCE],
     end: '"[cwd]?'
   };
-
   /**
    * D wysiwyg and delimited string literals
    *
    * @type {Object}
    */
+
   const D_WYSIWYG_DELIMITED_STRING_MODE = {
     className: 'string',
     begin: '[rq]"',
     end: '"[cwd]?',
     relevance: 5
   };
-
   /**
    * D alternate wysiwyg string literal
    *
    * @type {Object}
    */
+
   const D_ALTERNATE_WYSIWYG_STRING_MODE = {
     className: 'string',
     begin: '`',
     end: '`[cwd]?'
   };
-
   /**
    * D hexadecimal string literal
    *
    * @type {Object}
    */
+
   const D_HEX_STRING_MODE = {
     className: 'string',
     begin: 'x"[\\da-fA-F\\s\\n\\r]*"[cwd]?',
     relevance: 10
   };
-
   /**
    * D delimited string literal
    *
    * @type {Object}
    */
+
   const D_TOKEN_STRING_MODE = {
     className: 'string',
     begin: 'q"\\{',
     end: '\\}"'
   };
-
   /**
    * Hashbang support
    *
    * @type {Object}
    */
+
   const D_HASHBANG_MODE = {
     className: 'meta',
     begin: '^#!',
     end: '$',
     relevance: 5
   };
-
   /**
    * D special token sequence
    *
    * @type {Object}
    */
+
   const D_SPECIAL_TOKEN_SEQUENCE_MODE = {
     className: 'meta',
     begin: '#(line)',
     end: '$',
     relevance: 5
   };
-
   /**
    * D attributes
    *
    * @type {Object}
    */
+
   const D_ATTRIBUTE_MODE = {
     className: 'keyword',
     begin: '@[a-zA-Z_][a-zA-Z_\\d]*'
   };
-
   /**
    * D nesting comment
    *
    * @type {Object}
    */
+
   const D_NESTING_COMMENT_MODE = hljs.COMMENT('\\/\\+', '\\+\\/', {
     contains: ['self'],
     relevance: 10
@@ -7711,6 +7856,7 @@ function d(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, D_NESTING_COMMENT_MODE, D_HEX_STRING_MODE, D_STRING_MODE, D_WYSIWYG_DELIMITED_STRING_MODE, D_ALTERNATE_WYSIWYG_STRING_MODE, D_TOKEN_STRING_MODE, D_FLOAT_MODE, D_INTEGER_MODE, D_CHARACTER_MODE, D_HASHBANG_MODE, D_SPECIAL_TOKEN_SEQUENCE_MODE, D_ATTRIBUTE_MODE]
   };
 }
+
 module.exports = d;
 
 /***/ }),
@@ -7783,18 +7929,14 @@ function dart(hljs) {
     }]
   };
   BRACED_SUBST.contains = [hljs.C_NUMBER_MODE, STRING];
-  const BUILT_IN_TYPES = [
-  // dart:core
-  'Comparable', 'DateTime', 'Duration', 'Function', 'Iterable', 'Iterator', 'List', 'Map', 'Match', 'Object', 'Pattern', 'RegExp', 'Set', 'Stopwatch', 'String', 'StringBuffer', 'StringSink', 'Symbol', 'Type', 'Uri', 'bool', 'double', 'int', 'num',
-  // dart:html
+  const BUILT_IN_TYPES = [// dart:core
+  'Comparable', 'DateTime', 'Duration', 'Function', 'Iterable', 'Iterator', 'List', 'Map', 'Match', 'Object', 'Pattern', 'RegExp', 'Set', 'Stopwatch', 'String', 'StringBuffer', 'StringSink', 'Symbol', 'Type', 'Uri', 'bool', 'double', 'int', 'num', // dart:html
   'Element', 'ElementList'];
   const NULLABLE_BUILT_IN_TYPES = BUILT_IN_TYPES.map(e => `${e}?`);
   const KEYWORDS = {
     keyword: 'abstract as assert async await break case catch class const continue covariant default deferred do ' + 'dynamic else enum export extends extension external factory false final finally for Function get hide if ' + 'implements import in inferface is late library mixin new null on operator part required rethrow return set ' + 'show static super switch sync this throw true try typedef var void while with yield',
-    built_in: BUILT_IN_TYPES.concat(NULLABLE_BUILT_IN_TYPES).concat([
-    // dart:core
-    'Never', 'Null', 'dynamic', 'print',
-    // dart:html
+    built_in: BUILT_IN_TYPES.concat(NULLABLE_BUILT_IN_TYPES).concat([// dart:core
+    'Never', 'Null', 'dynamic', 'print', // dart:html
     'document', 'querySelector', 'querySelectorAll', 'window']),
     $pattern: /[A-Za-z][A-Za-z0-9_]*\??/
   };
@@ -7824,9 +7966,11 @@ function dart(hljs) {
       begin: '@[A-Za-z]+'
     }, {
       begin: '=>' // No markup, just a relevance booster
+
     }]
   };
 }
+
 module.exports = dart;
 
 /***/ }),
@@ -7914,6 +8058,7 @@ function delphi(hljs) {
     contains: [STRING, CHAR_STRING, hljs.NUMBER_MODE, NUMBER, CLASS, FUNCTION, DIRECTIVE].concat(COMMENT_MODES)
   };
 }
+
 module.exports = delphi;
 
 /***/ }),
@@ -7988,6 +8133,7 @@ function diff(hljs) {
     }]
   };
 }
+
 module.exports = diff;
 
 /***/ }),
@@ -8047,6 +8193,7 @@ function django(hljs) {
     }]
   };
 }
+
 module.exports = django;
 
 /***/ }),
@@ -8077,13 +8224,11 @@ function dns(hljs) {
     }), {
       className: 'meta',
       begin: /^\$(TTL|GENERATE|INCLUDE|ORIGIN)\b/
-    },
-    // IPv6
+    }, // IPv6
     {
       className: 'number',
       begin: '((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))\\b'
-    },
-    // IPv4
+    }, // IPv4
     {
       className: 'number',
       begin: '((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\b'
@@ -8092,6 +8237,7 @@ function dns(hljs) {
     })]
   };
 }
+
 module.exports = dns;
 
 /***/ }),
@@ -8128,6 +8274,7 @@ function dockerfile(hljs) {
     illegal: '</'
   };
 }
+
 module.exports = dockerfile;
 
 /***/ }),
@@ -8162,8 +8309,7 @@ function dos(hljs) {
     illegal: /\/\*/,
     keywords: {
       keyword: 'if else goto for in do call exit not exist errorlevel defined ' + 'equ neq lss leq gtr geq',
-      built_in: 'prn nul lpt3 lpt2 lpt1 con com4 com3 com2 com1 aux ' + 'shift cd dir echo setlocal endlocal set pause copy ' + 'append assoc at attrib break cacls cd chcp chdir chkdsk chkntfs cls cmd color ' + 'comp compact convert date dir diskcomp diskcopy doskey erase fs ' + 'find findstr format ftype graftabl help keyb label md mkdir mode more move path ' + 'pause print popd pushd promt rd recover rem rename replace restore rmdir shift ' + 'sort start subst time title tree type ver verify vol ' +
-      // winutils
+      built_in: 'prn nul lpt3 lpt2 lpt1 con com4 com3 com2 com1 aux ' + 'shift cd dir echo setlocal endlocal set pause copy ' + 'append assoc at attrib break cacls cd chcp chdir chkdsk chkntfs cls cmd color ' + 'comp compact convert date dir diskcomp diskcopy doskey erase fs ' + 'find findstr format ftype graftabl help keyb label md mkdir mode more move path ' + 'pause print popd pushd promt rd recover rem rename replace restore rmdir shift ' + 'sort start subst time title tree type ver verify vol ' + // winutils
       'ping net ipconfig taskkill xcopy ren del'
     },
     contains: [{
@@ -8183,6 +8329,7 @@ function dos(hljs) {
     }, COMMENT]
   };
 }
+
 module.exports = dos;
 
 /***/ }),
@@ -8247,6 +8394,7 @@ function dsconfig(hljs) {
     }, QUOTED_PROPERTY, APOS_PROPERTY, UNQUOTED_PROPERTY, VALUELESS_PROPERTY, hljs.HASH_COMMENT_MODE]
   };
 }
+
 module.exports = dsconfig;
 
 /***/ }),
@@ -8357,6 +8505,7 @@ function dts(hljs) {
     }]
   };
 }
+
 module.exports = dts;
 
 /***/ }),
@@ -8407,6 +8556,7 @@ function dust(hljs) {
     }]
   };
 }
+
 module.exports = dust;
 
 /***/ }),
@@ -8452,6 +8602,7 @@ function ebnf(hljs) {
     contains: [commentMode, nonTerminalMode, ruleBodyMode]
   };
 }
+
 module.exports = ebnf;
 
 /***/ }),
@@ -8567,18 +8718,22 @@ function elixir(hljs) {
       begin: /~S"""/,
       end: /"""/,
       contains: [] // override default
+
     }, {
       begin: /~S"/,
       end: /"/,
       contains: [] // override default
+
     }, {
       begin: /~S'''/,
       end: /'''/,
       contains: [] // override default
+
     }, {
       begin: /~S'/,
       end: /'/,
       contains: [] // override default
+
     }, {
       begin: /'/,
       end: /'/
@@ -8650,6 +8805,7 @@ function elixir(hljs) {
     contains: ELIXIR_DEFAULT_CONTAINS
   };
 }
+
 module.exports = elixir;
 
 /***/ }),
@@ -8703,9 +8859,7 @@ function elm(hljs) {
   return {
     name: 'Elm',
     keywords: 'let in if then else case of where module import exposing ' + 'type alias as infix infixl infixr port effect command subscription',
-    contains: [
-    // Top-level constructions.
-
+    contains: [// Top-level constructions.
     {
       beginKeywords: 'port effect module',
       end: 'exposing',
@@ -8732,9 +8886,7 @@ function elm(hljs) {
       end: '$',
       keywords: 'port',
       contains: [COMMENT]
-    },
-    // Literals and names.
-
+    }, // Literals and names.
     CHARACTER, hljs.QUOTE_STRING_MODE, hljs.C_NUMBER_MODE, CONSTRUCTOR, hljs.inherit(hljs.TITLE_MODE, {
       begin: '^[_a-z][\\w\']*'
     }), COMMENT, {
@@ -8744,6 +8896,7 @@ function elm(hljs) {
     illegal: /;/
   };
 }
+
 module.exports = elm;
 
 /***/ }),
@@ -8778,6 +8931,7 @@ function erb(hljs) {
     }]
   };
 }
+
 module.exports = erb;
 
 /***/ }),
@@ -8802,16 +8956,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Erlang REPL
 Author: Sergey Ignatov <sergey@ignatov.spb.su>
@@ -8820,6 +8974,8 @@ Category: functional
 */
 
 /** @type LanguageFn */
+
+
 function erlangRepl(hljs) {
   return {
     name: 'Erlang REPL',
@@ -8836,8 +8992,7 @@ function erlangRepl(hljs) {
       begin: '\\b(\\d+(_\\d+)*#[a-fA-F0-9]+(_[a-fA-F0-9]+)*|\\d+(_\\d+)*(\\.\\d+(_\\d+)*)?([eE][-+]?\\d+)?)',
       relevance: 0
     }, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE, {
-      begin: concat(/\?(::)?/, /([A-Z]\w*)/,
-      // at least one identifier
+      begin: concat(/\?(::)?/, /([A-Z]\w*)/, // at least one identifier
       /((::)[A-Z]\w*)*/ // perhaps more
       )
     }, {
@@ -8855,6 +9010,7 @@ function erlangRepl(hljs) {
     }]
   };
 }
+
 module.exports = erlangRepl;
 
 /***/ }),
@@ -8903,15 +9059,15 @@ function erlang(hljs) {
       end: '\\)',
       endsWithParent: true,
       returnEnd: true,
-      relevance: 0
-      // "contains" defined later
+      relevance: 0 // "contains" defined later
+
     }]
   };
   const TUPLE = {
     begin: /\{/,
     end: /\}/,
-    relevance: 0
-    // "contains" defined later
+    relevance: 0 // "contains" defined later
+
   };
   const VAR1 = {
     begin: '\\b_([A-Z][A-Za-z0-9_]*)?',
@@ -8931,8 +9087,8 @@ function erlang(hljs) {
     }, {
       begin: /\{/,
       end: /\}/,
-      relevance: 0
-      // "contains" defined later
+      relevance: 0 // "contains" defined later
+
     }]
   };
   const BLOCK_STATEMENTS = {
@@ -8990,6 +9146,7 @@ function erlang(hljs) {
     ]
   };
 }
+
 module.exports = erlang;
 
 /***/ }),
@@ -9024,9 +9181,11 @@ function excel(hljs) {
       end: /[^=]/,
       returnEnd: true,
       illegal: /=/,
+
       /* only allow single equal sign at front of line */
       relevance: 10
-    }, /* technically, there can be more than 2 letters in column names, but this prevents conflict with some keywords */
+    },
+    /* technically, there can be more than 2 letters in column names, but this prevents conflict with some keywords */
     {
       /* matches a reference to a single cell */
       className: 'symbol',
@@ -9043,7 +9202,8 @@ function excel(hljs) {
       className: 'number',
       begin: hljs.NUMBER_RE + '(%)?',
       relevance: 0
-    }, /* Excel formula comments are done by putting the comment in a function call to N() */
+    },
+    /* Excel formula comments are done by putting the comment in a function call to N() */
     hljs.COMMENT(/\bN\(/, /\)/, {
       excludeBegin: true,
       excludeEnd: true,
@@ -9051,6 +9211,7 @@ function excel(hljs) {
     })]
   };
 }
+
 module.exports = excel;
 
 /***/ }),
@@ -9093,6 +9254,7 @@ function fix(hljs) {
     case_insensitive: true
   };
 }
+
 module.exports = fix;
 
 /***/ }),
@@ -9144,6 +9306,7 @@ function flix(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, CHAR, STRING, METHOD, hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = flix;
 
 /***/ }),
@@ -9168,16 +9331,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Fortran
 Author: Anthony Scemama <scemama@irsamc.ups-tlse.fr>
@@ -9186,6 +9349,8 @@ Category: scientific
 */
 
 /** @type LanguageFn */
+
+
 function fortran(hljs) {
   const PARAMS = {
     className: 'params',
@@ -9195,16 +9360,14 @@ function fortran(hljs) {
   const COMMENT = {
     variants: [hljs.COMMENT('!', '$', {
       relevance: 0
-    }),
-    // allow FORTRAN 77 style comments
+    }), // allow FORTRAN 77 style comments
     hljs.COMMENT('^C[ ]', '$', {
       relevance: 0
     }), hljs.COMMENT('^C$', '$', {
       relevance: 0
     })]
-  };
+  }; // regex in both fortran and irpf90 should match
 
-  // regex in both fortran and irpf90 should match
   const OPTIONAL_NUMBER_SUFFIX = /(_[a-z_\d]+)?/;
   const OPTIONAL_NUMBER_EXP = /([de][+-]?\d+)?/;
   const NUMBER = {
@@ -9240,8 +9403,7 @@ function fortran(hljs) {
     aliases: ['f90', 'f95'],
     keywords: KEYWORDS,
     illegal: /\/\*/,
-    contains: [STRING, FUNCTION_DEF,
-    // allow `C = value` for assignments so they aren't misdetected
+    contains: [STRING, FUNCTION_DEF, // allow `C = value` for assignments so they aren't misdetected
     // as Fortran 77 style comments
     {
       begin: /^C\s*=(?!=)/,
@@ -9249,6 +9411,7 @@ function fortran(hljs) {
     }, COMMENT, NUMBER]
   };
 }
+
 module.exports = fortran;
 
 /***/ }),
@@ -9318,6 +9481,7 @@ function fsharp(hljs) {
     }), hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = fsharp;
 
 /***/ }),
@@ -9342,25 +9506,28 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function anyNumberOfTimes(re) {
   return concat('(', re, ')*');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /** @type LanguageFn */
+
+
 function gams(hljs) {
   const KEYWORDS = {
     keyword: 'abort acronym acronyms alias all and assign binary card diag display ' + 'else eq file files for free ge gt if integer le loop lt maximizing ' + 'minimizing model models ne negative no not option options or ord ' + 'positive prod put putpage puttl repeat sameas semicont semiint smax ' + 'smin solve sos1 sos2 sum system table then until using while xor yes',
@@ -9411,8 +9578,7 @@ function gams(hljs) {
     contains: [QSTR, ASSIGNMENT, {
       className: 'comment',
       // one comment word, then possibly more
-      begin: concat(COMMENT_WORD,
-      // [ ] because \s would be too broad (matching newlines)
+      begin: concat(COMMENT_WORD, // [ ] because \s would be too broad (matching newlines)
       anyNumberOfTimes(concat(/[ ]+/, COMMENT_WORD))),
       relevance: 0
     }]
@@ -9431,8 +9597,7 @@ function gams(hljs) {
         className: 'meta-keyword',
         begin: '^\\$[a-z0-9]+'
       }]
-    }, hljs.COMMENT('^\\*', '$'), hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE,
-    // Declarations
+    }, hljs.COMMENT('^\\*', '$'), hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE, // Declarations
     {
       beginKeywords: 'set sets parameter parameters variable variables ' + 'scalar scalars equation equations',
       end: ';',
@@ -9447,11 +9612,9 @@ function gams(hljs) {
         beginKeywords: 'table',
         end: '$',
         contains: [DESCTEXT]
-      }, hljs.COMMENT('^\\*', '$'), hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE, hljs.C_NUMBER_MODE
-      // Table does not contain DESCTEXT or ASSIGNMENT
+      }, hljs.COMMENT('^\\*', '$'), hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE, hljs.C_NUMBER_MODE // Table does not contain DESCTEXT or ASSIGNMENT
       ]
-    },
-    // Function definitions
+    }, // Function definitions
     {
       className: 'function',
       begin: /^[a-z][a-z0-9_,\-+' ()$]+\.{2}/,
@@ -9464,6 +9627,7 @@ function gams(hljs) {
     }, hljs.C_NUMBER_MODE, SYMBOLS]
   };
 }
+
 module.exports = gams;
 
 /***/ }),
@@ -9521,9 +9685,8 @@ function gauss(hljs) {
       begin: hljs.UNDERSCORE_IDENT_RE,
       relevance: 0
     }]
-  };
+  }; // only for definitions
 
-  // only for definitions
   const PARSE_PARAMS = [{
     className: 'params',
     begin: /\(/,
@@ -9543,6 +9706,7 @@ function gauss(hljs) {
     begin: hljs.UNDERSCORE_IDENT_RE,
     relevance: 0
   };
+
   const DEFINITION = function (beginKeywords, end, inherits) {
     const mode = hljs.inherit({
       className: "function",
@@ -9557,6 +9721,7 @@ function gauss(hljs) {
     mode.contains.push(AT_COMMENT_MODE);
     return mode;
   };
+
   const BUILT_IN_REF = {
     // these are explicitly named internal function calls
     className: 'built_in',
@@ -9624,6 +9789,7 @@ function gauss(hljs) {
     }, FUNCTION_REF, STRUCT_TYPE]
   };
 }
+
 module.exports = gauss;
 
 /***/ }),
@@ -9640,7 +9806,6 @@ module.exports = gauss;
  Description: G-code syntax highlighter for Fanuc and other common CNC machine tool controls.
  Website: https://www.sis.se/api/document/preview/911952/
  */
-
 function gcode(hljs) {
   const GCODE_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
   const GCODE_CLOSE_RE = '%';
@@ -9698,6 +9863,7 @@ function gcode(hljs) {
     }, GCODE_START].concat(GCODE_CODE)
   };
 }
+
 module.exports = gcode;
 
 /***/ }),
@@ -9714,7 +9880,6 @@ module.exports = gcode;
  Description: Gherkin is the format for cucumber specifications. It is a domain specific language which helps you to describe business behavior without the need to go into detail of implementation.
  Website: https://cucumber.io/docs/gherkin/
  */
-
 function gherkin(hljs) {
   return {
     name: 'Gherkin',
@@ -9745,6 +9910,7 @@ function gherkin(hljs) {
     }, hljs.QUOTE_STRING_MODE]
   };
 }
+
 module.exports = gherkin;
 
 /***/ }),
@@ -9762,23 +9928,17 @@ Author: Sergey Tikhomirov <sergey@tikhomirov.io>
 Website: https://en.wikipedia.org/wiki/OpenGL_Shading_Language
 Category: graphics
 */
-
 function glsl(hljs) {
   return {
     name: 'GLSL',
     keywords: {
-      keyword:
-      // Statements
-      'break continue discard do else for if return while switch case default ' +
-      // Qualifiers
+      keyword: // Statements
+      'break continue discard do else for if return while switch case default ' + // Qualifiers
       'attribute binding buffer ccw centroid centroid varying coherent column_major const cw ' + 'depth_any depth_greater depth_less depth_unchanged early_fragment_tests equal_spacing ' + 'flat fractional_even_spacing fractional_odd_spacing highp in index inout invariant ' + 'invocations isolines layout line_strip lines lines_adjacency local_size_x local_size_y ' + 'local_size_z location lowp max_vertices mediump noperspective offset origin_upper_left ' + 'out packed patch pixel_center_integer point_mode points precise precision quads r11f_g11f_b10f ' + 'r16 r16_snorm r16f r16i r16ui r32f r32i r32ui r8 r8_snorm r8i r8ui readonly restrict ' + 'rg16 rg16_snorm rg16f rg16i rg16ui rg32f rg32i rg32ui rg8 rg8_snorm rg8i rg8ui rgb10_a2 ' + 'rgb10_a2ui rgba16 rgba16_snorm rgba16f rgba16i rgba16ui rgba32f rgba32i rgba32ui rgba8 ' + 'rgba8_snorm rgba8i rgba8ui row_major sample shared smooth std140 std430 stream triangle_strip ' + 'triangles triangles_adjacency uniform varying vertices volatile writeonly',
       type: 'atomic_uint bool bvec2 bvec3 bvec4 dmat2 dmat2x2 dmat2x3 dmat2x4 dmat3 dmat3x2 dmat3x3 ' + 'dmat3x4 dmat4 dmat4x2 dmat4x3 dmat4x4 double dvec2 dvec3 dvec4 float iimage1D iimage1DArray ' + 'iimage2D iimage2DArray iimage2DMS iimage2DMSArray iimage2DRect iimage3D iimageBuffer ' + 'iimageCube iimageCubeArray image1D image1DArray image2D image2DArray image2DMS image2DMSArray ' + 'image2DRect image3D imageBuffer imageCube imageCubeArray int isampler1D isampler1DArray ' + 'isampler2D isampler2DArray isampler2DMS isampler2DMSArray isampler2DRect isampler3D ' + 'isamplerBuffer isamplerCube isamplerCubeArray ivec2 ivec3 ivec4 mat2 mat2x2 mat2x3 ' + 'mat2x4 mat3 mat3x2 mat3x3 mat3x4 mat4 mat4x2 mat4x3 mat4x4 sampler1D sampler1DArray ' + 'sampler1DArrayShadow sampler1DShadow sampler2D sampler2DArray sampler2DArrayShadow ' + 'sampler2DMS sampler2DMSArray sampler2DRect sampler2DRectShadow sampler2DShadow sampler3D ' + 'samplerBuffer samplerCube samplerCubeArray samplerCubeArrayShadow samplerCubeShadow ' + 'image1D uimage1DArray uimage2D uimage2DArray uimage2DMS uimage2DMSArray uimage2DRect ' + 'uimage3D uimageBuffer uimageCube uimageCubeArray uint usampler1D usampler1DArray ' + 'usampler2D usampler2DArray usampler2DMS usampler2DMSArray usampler2DRect usampler3D ' + 'samplerBuffer usamplerCube usamplerCubeArray uvec2 uvec3 uvec4 vec2 vec3 vec4 void',
-      built_in:
-      // Constants
-      'gl_MaxAtomicCounterBindings gl_MaxAtomicCounterBufferSize gl_MaxClipDistances gl_MaxClipPlanes ' + 'gl_MaxCombinedAtomicCounterBuffers gl_MaxCombinedAtomicCounters gl_MaxCombinedImageUniforms ' + 'gl_MaxCombinedImageUnitsAndFragmentOutputs gl_MaxCombinedTextureImageUnits gl_MaxComputeAtomicCounterBuffers ' + 'gl_MaxComputeAtomicCounters gl_MaxComputeImageUniforms gl_MaxComputeTextureImageUnits ' + 'gl_MaxComputeUniformComponents gl_MaxComputeWorkGroupCount gl_MaxComputeWorkGroupSize ' + 'gl_MaxDrawBuffers gl_MaxFragmentAtomicCounterBuffers gl_MaxFragmentAtomicCounters ' + 'gl_MaxFragmentImageUniforms gl_MaxFragmentInputComponents gl_MaxFragmentInputVectors ' + 'gl_MaxFragmentUniformComponents gl_MaxFragmentUniformVectors gl_MaxGeometryAtomicCounterBuffers ' + 'gl_MaxGeometryAtomicCounters gl_MaxGeometryImageUniforms gl_MaxGeometryInputComponents ' + 'gl_MaxGeometryOutputComponents gl_MaxGeometryOutputVertices gl_MaxGeometryTextureImageUnits ' + 'gl_MaxGeometryTotalOutputComponents gl_MaxGeometryUniformComponents gl_MaxGeometryVaryingComponents ' + 'gl_MaxImageSamples gl_MaxImageUnits gl_MaxLights gl_MaxPatchVertices gl_MaxProgramTexelOffset ' + 'gl_MaxTessControlAtomicCounterBuffers gl_MaxTessControlAtomicCounters gl_MaxTessControlImageUniforms ' + 'gl_MaxTessControlInputComponents gl_MaxTessControlOutputComponents gl_MaxTessControlTextureImageUnits ' + 'gl_MaxTessControlTotalOutputComponents gl_MaxTessControlUniformComponents ' + 'gl_MaxTessEvaluationAtomicCounterBuffers gl_MaxTessEvaluationAtomicCounters ' + 'gl_MaxTessEvaluationImageUniforms gl_MaxTessEvaluationInputComponents gl_MaxTessEvaluationOutputComponents ' + 'gl_MaxTessEvaluationTextureImageUnits gl_MaxTessEvaluationUniformComponents ' + 'gl_MaxTessGenLevel gl_MaxTessPatchComponents gl_MaxTextureCoords gl_MaxTextureImageUnits ' + 'gl_MaxTextureUnits gl_MaxVaryingComponents gl_MaxVaryingFloats gl_MaxVaryingVectors ' + 'gl_MaxVertexAtomicCounterBuffers gl_MaxVertexAtomicCounters gl_MaxVertexAttribs gl_MaxVertexImageUniforms ' + 'gl_MaxVertexOutputComponents gl_MaxVertexOutputVectors gl_MaxVertexTextureImageUnits ' + 'gl_MaxVertexUniformComponents gl_MaxVertexUniformVectors gl_MaxViewports gl_MinProgramTexelOffset ' +
-      // Variables
-      'gl_BackColor gl_BackLightModelProduct gl_BackLightProduct gl_BackMaterial ' + 'gl_BackSecondaryColor gl_ClipDistance gl_ClipPlane gl_ClipVertex gl_Color ' + 'gl_DepthRange gl_EyePlaneQ gl_EyePlaneR gl_EyePlaneS gl_EyePlaneT gl_Fog gl_FogCoord ' + 'gl_FogFragCoord gl_FragColor gl_FragCoord gl_FragData gl_FragDepth gl_FrontColor ' + 'gl_FrontFacing gl_FrontLightModelProduct gl_FrontLightProduct gl_FrontMaterial ' + 'gl_FrontSecondaryColor gl_GlobalInvocationID gl_InstanceID gl_InvocationID gl_Layer gl_LightModel ' + 'gl_LightSource gl_LocalInvocationID gl_LocalInvocationIndex gl_ModelViewMatrix ' + 'gl_ModelViewMatrixInverse gl_ModelViewMatrixInverseTranspose gl_ModelViewMatrixTranspose ' + 'gl_ModelViewProjectionMatrix gl_ModelViewProjectionMatrixInverse gl_ModelViewProjectionMatrixInverseTranspose ' + 'gl_ModelViewProjectionMatrixTranspose gl_MultiTexCoord0 gl_MultiTexCoord1 gl_MultiTexCoord2 ' + 'gl_MultiTexCoord3 gl_MultiTexCoord4 gl_MultiTexCoord5 gl_MultiTexCoord6 gl_MultiTexCoord7 ' + 'gl_Normal gl_NormalMatrix gl_NormalScale gl_NumSamples gl_NumWorkGroups gl_ObjectPlaneQ ' + 'gl_ObjectPlaneR gl_ObjectPlaneS gl_ObjectPlaneT gl_PatchVerticesIn gl_Point gl_PointCoord ' + 'gl_PointSize gl_Position gl_PrimitiveID gl_PrimitiveIDIn gl_ProjectionMatrix gl_ProjectionMatrixInverse ' + 'gl_ProjectionMatrixInverseTranspose gl_ProjectionMatrixTranspose gl_SampleID gl_SampleMask ' + 'gl_SampleMaskIn gl_SamplePosition gl_SecondaryColor gl_TessCoord gl_TessLevelInner gl_TessLevelOuter ' + 'gl_TexCoord gl_TextureEnvColor gl_TextureMatrix gl_TextureMatrixInverse gl_TextureMatrixInverseTranspose ' + 'gl_TextureMatrixTranspose gl_Vertex gl_VertexID gl_ViewportIndex gl_WorkGroupID gl_WorkGroupSize gl_in gl_out ' +
-      // Functions
+      built_in: // Constants
+      'gl_MaxAtomicCounterBindings gl_MaxAtomicCounterBufferSize gl_MaxClipDistances gl_MaxClipPlanes ' + 'gl_MaxCombinedAtomicCounterBuffers gl_MaxCombinedAtomicCounters gl_MaxCombinedImageUniforms ' + 'gl_MaxCombinedImageUnitsAndFragmentOutputs gl_MaxCombinedTextureImageUnits gl_MaxComputeAtomicCounterBuffers ' + 'gl_MaxComputeAtomicCounters gl_MaxComputeImageUniforms gl_MaxComputeTextureImageUnits ' + 'gl_MaxComputeUniformComponents gl_MaxComputeWorkGroupCount gl_MaxComputeWorkGroupSize ' + 'gl_MaxDrawBuffers gl_MaxFragmentAtomicCounterBuffers gl_MaxFragmentAtomicCounters ' + 'gl_MaxFragmentImageUniforms gl_MaxFragmentInputComponents gl_MaxFragmentInputVectors ' + 'gl_MaxFragmentUniformComponents gl_MaxFragmentUniformVectors gl_MaxGeometryAtomicCounterBuffers ' + 'gl_MaxGeometryAtomicCounters gl_MaxGeometryImageUniforms gl_MaxGeometryInputComponents ' + 'gl_MaxGeometryOutputComponents gl_MaxGeometryOutputVertices gl_MaxGeometryTextureImageUnits ' + 'gl_MaxGeometryTotalOutputComponents gl_MaxGeometryUniformComponents gl_MaxGeometryVaryingComponents ' + 'gl_MaxImageSamples gl_MaxImageUnits gl_MaxLights gl_MaxPatchVertices gl_MaxProgramTexelOffset ' + 'gl_MaxTessControlAtomicCounterBuffers gl_MaxTessControlAtomicCounters gl_MaxTessControlImageUniforms ' + 'gl_MaxTessControlInputComponents gl_MaxTessControlOutputComponents gl_MaxTessControlTextureImageUnits ' + 'gl_MaxTessControlTotalOutputComponents gl_MaxTessControlUniformComponents ' + 'gl_MaxTessEvaluationAtomicCounterBuffers gl_MaxTessEvaluationAtomicCounters ' + 'gl_MaxTessEvaluationImageUniforms gl_MaxTessEvaluationInputComponents gl_MaxTessEvaluationOutputComponents ' + 'gl_MaxTessEvaluationTextureImageUnits gl_MaxTessEvaluationUniformComponents ' + 'gl_MaxTessGenLevel gl_MaxTessPatchComponents gl_MaxTextureCoords gl_MaxTextureImageUnits ' + 'gl_MaxTextureUnits gl_MaxVaryingComponents gl_MaxVaryingFloats gl_MaxVaryingVectors ' + 'gl_MaxVertexAtomicCounterBuffers gl_MaxVertexAtomicCounters gl_MaxVertexAttribs gl_MaxVertexImageUniforms ' + 'gl_MaxVertexOutputComponents gl_MaxVertexOutputVectors gl_MaxVertexTextureImageUnits ' + 'gl_MaxVertexUniformComponents gl_MaxVertexUniformVectors gl_MaxViewports gl_MinProgramTexelOffset ' + // Variables
+      'gl_BackColor gl_BackLightModelProduct gl_BackLightProduct gl_BackMaterial ' + 'gl_BackSecondaryColor gl_ClipDistance gl_ClipPlane gl_ClipVertex gl_Color ' + 'gl_DepthRange gl_EyePlaneQ gl_EyePlaneR gl_EyePlaneS gl_EyePlaneT gl_Fog gl_FogCoord ' + 'gl_FogFragCoord gl_FragColor gl_FragCoord gl_FragData gl_FragDepth gl_FrontColor ' + 'gl_FrontFacing gl_FrontLightModelProduct gl_FrontLightProduct gl_FrontMaterial ' + 'gl_FrontSecondaryColor gl_GlobalInvocationID gl_InstanceID gl_InvocationID gl_Layer gl_LightModel ' + 'gl_LightSource gl_LocalInvocationID gl_LocalInvocationIndex gl_ModelViewMatrix ' + 'gl_ModelViewMatrixInverse gl_ModelViewMatrixInverseTranspose gl_ModelViewMatrixTranspose ' + 'gl_ModelViewProjectionMatrix gl_ModelViewProjectionMatrixInverse gl_ModelViewProjectionMatrixInverseTranspose ' + 'gl_ModelViewProjectionMatrixTranspose gl_MultiTexCoord0 gl_MultiTexCoord1 gl_MultiTexCoord2 ' + 'gl_MultiTexCoord3 gl_MultiTexCoord4 gl_MultiTexCoord5 gl_MultiTexCoord6 gl_MultiTexCoord7 ' + 'gl_Normal gl_NormalMatrix gl_NormalScale gl_NumSamples gl_NumWorkGroups gl_ObjectPlaneQ ' + 'gl_ObjectPlaneR gl_ObjectPlaneS gl_ObjectPlaneT gl_PatchVerticesIn gl_Point gl_PointCoord ' + 'gl_PointSize gl_Position gl_PrimitiveID gl_PrimitiveIDIn gl_ProjectionMatrix gl_ProjectionMatrixInverse ' + 'gl_ProjectionMatrixInverseTranspose gl_ProjectionMatrixTranspose gl_SampleID gl_SampleMask ' + 'gl_SampleMaskIn gl_SamplePosition gl_SecondaryColor gl_TessCoord gl_TessLevelInner gl_TessLevelOuter ' + 'gl_TexCoord gl_TextureEnvColor gl_TextureMatrix gl_TextureMatrixInverse gl_TextureMatrixInverseTranspose ' + 'gl_TextureMatrixTranspose gl_Vertex gl_VertexID gl_ViewportIndex gl_WorkGroupID gl_WorkGroupSize gl_in gl_out ' + // Functions
       'EmitStreamVertex EmitVertex EndPrimitive EndStreamPrimitive abs acos acosh all any asin ' + 'asinh atan atanh atomicAdd atomicAnd atomicCompSwap atomicCounter atomicCounterDecrement ' + 'atomicCounterIncrement atomicExchange atomicMax atomicMin atomicOr atomicXor barrier ' + 'bitCount bitfieldExtract bitfieldInsert bitfieldReverse ceil clamp cos cosh cross ' + 'dFdx dFdy degrees determinant distance dot equal exp exp2 faceforward findLSB findMSB ' + 'floatBitsToInt floatBitsToUint floor fma fract frexp ftransform fwidth greaterThan ' + 'greaterThanEqual groupMemoryBarrier imageAtomicAdd imageAtomicAnd imageAtomicCompSwap ' + 'imageAtomicExchange imageAtomicMax imageAtomicMin imageAtomicOr imageAtomicXor imageLoad ' + 'imageSize imageStore imulExtended intBitsToFloat interpolateAtCentroid interpolateAtOffset ' + 'interpolateAtSample inverse inversesqrt isinf isnan ldexp length lessThan lessThanEqual log ' + 'log2 matrixCompMult max memoryBarrier memoryBarrierAtomicCounter memoryBarrierBuffer ' + 'memoryBarrierImage memoryBarrierShared min mix mod modf noise1 noise2 noise3 noise4 ' + 'normalize not notEqual outerProduct packDouble2x32 packHalf2x16 packSnorm2x16 packSnorm4x8 ' + 'packUnorm2x16 packUnorm4x8 pow radians reflect refract round roundEven shadow1D shadow1DLod ' + 'shadow1DProj shadow1DProjLod shadow2D shadow2DLod shadow2DProj shadow2DProjLod sign sin sinh ' + 'smoothstep sqrt step tan tanh texelFetch texelFetchOffset texture texture1D texture1DLod ' + 'texture1DProj texture1DProjLod texture2D texture2DLod texture2DProj texture2DProjLod ' + 'texture3D texture3DLod texture3DProj texture3DProjLod textureCube textureCubeLod ' + 'textureGather textureGatherOffset textureGatherOffsets textureGrad textureGradOffset ' + 'textureLod textureLodOffset textureOffset textureProj textureProjGrad textureProjGradOffset ' + 'textureProjLod textureProjLodOffset textureProjOffset textureQueryLevels textureQueryLod ' + 'textureSize transpose trunc uaddCarry uintBitsToFloat umulExtended unpackDouble2x32 ' + 'unpackHalf2x16 unpackSnorm2x16 unpackSnorm4x8 unpackUnorm2x16 unpackUnorm4x8 usubBorrow',
       literal: 'true false'
     },
@@ -9790,6 +9950,7 @@ function glsl(hljs) {
     }]
   };
 }
+
 module.exports = glsl;
 
 /***/ }),
@@ -9807,7 +9968,6 @@ Description: Game Maker Language for GameMaker Studio 2
 Website: https://docs2.yoyogames.com
 Category: scripting
 */
-
 function gml(hljs) {
   const GML_KEYWORDS = {
     keyword: 'begin end if then else while do for break continue with until ' + 'repeat exit and or xor not return mod div switch case default var ' + 'globalvar enum function constructor delete #macro #region #endregion',
@@ -9823,6 +9983,7 @@ function gml(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE, hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = gml;
 
 /***/ }),
@@ -9841,7 +10002,6 @@ Description: Google go language (golang). For info about language
 Website: http://golang.org/
 Category: common, system
 */
-
 function go(hljs) {
   const GO_KEYWORDS = {
     keyword: 'break default func interface select case map struct chan else goto package switch ' + 'const fallthrough if range type continue for import return var go defer ' + 'bool byte complex64 complex128 float32 float64 int8 int16 int32 int64 string uint8 ' + 'uint16 uint32 uint64 int uint uintptr rune',
@@ -9867,6 +10027,7 @@ function go(hljs) {
       }, hljs.C_NUMBER_MODE]
     }, {
       begin: /:=/ // relevance booster
+
     }, {
       className: 'function',
       beginKeywords: 'func',
@@ -9882,6 +10043,7 @@ function go(hljs) {
     }]
   };
 }
+
 module.exports = go;
 
 /***/ }),
@@ -9898,7 +10060,6 @@ Author: Philippe Charriere <ph.charriere@gmail.com>
 Description: a lightweight dynamic language for the JVM
 Website: http://golo-lang.org/
 */
-
 function golo(hljs) {
   return {
     name: 'Golo',
@@ -9912,6 +10073,7 @@ function golo(hljs) {
     }]
   };
 }
+
 module.exports = golo;
 
 /***/ }),
@@ -9928,7 +10090,6 @@ Description: Gradle is an open-source build automation tool focused on flexibili
 Website: https://gradle.org
 Author: Damian Mee <mee.damian@gmail.com>
 */
-
 function gradle(hljs) {
   return {
     name: 'Gradle',
@@ -9939,6 +10100,7 @@ function gradle(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE, hljs.NUMBER_MODE, hljs.REGEXP_MODE]
   };
 }
+
 module.exports = gradle;
 
 /***/ }),
@@ -9963,24 +10125,25 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
  Language: Groovy
  Author: Guillaume Laforge <glaforge@gmail.com>
@@ -9988,10 +10151,12 @@ function concat(...args) {
  Website: https://groovy-lang.org
  */
 
+
 function variants(variants, obj = {}) {
   obj.variants = variants;
   return obj;
 }
+
 function groovy(hljs) {
   const IDENT_RE = '[A-Za-z0-9_$]+';
   const COMMENT = variants([hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.COMMENT('/\\*\\*', '\\*/', {
@@ -10029,10 +10194,8 @@ function groovy(hljs) {
     keywords: {
       built_in: 'this super',
       literal: 'true false null',
-      keyword: 'byte short char int long boolean float double void ' +
-      // groovy specific keywords
-      'def as in assert trait ' +
-      // common keywords with Java
+      keyword: 'byte short char int long boolean float double void ' + // groovy specific keywords
+      'def as in assert trait ' + // common keywords with Java
       'abstract static volatile transient public private protected synchronized final ' + 'class interface enum if else for while switch case break default continue ' + 'throw throws try catch finally implements extends new import package return instanceof'
     },
     contains: [hljs.SHEBANG({
@@ -10073,6 +10236,7 @@ function groovy(hljs) {
     illegal: /#|<\//
   };
 }
+
 module.exports = groovy;
 
 /***/ }),
@@ -10090,7 +10254,6 @@ Author: Dan Allen <dan.j.allen@gmail.com>
 Website: http://haml.info
 Category: template
 */
-
 // TODO support filter tags like :javascript, support inline HTML
 function haml(hljs) {
   return {
@@ -10100,8 +10263,7 @@ function haml(hljs) {
       className: 'meta',
       begin: '^!!!( (5|1\\.1|Strict|Frameset|Basic|Mobile|RDFa|XML\\b.*))?$',
       relevance: 10
-    },
-    // FIXME these comments should be allowed to span indented lines
+    }, // FIXME these comments should be allowed to span indented lines
     hljs.COMMENT('^\\s*(!=#|=#|-#|/).*$', false, {
       relevance: 0
     }), {
@@ -10168,6 +10330,7 @@ function haml(hljs) {
     }]
   };
 }
+
 module.exports = haml;
 
 /***/ }),
@@ -10192,32 +10355,34 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function anyNumberOfTimes(re) {
   return concat('(', re, ')*');
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -10225,11 +10390,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: Handlebars
 Requires: xml.js
@@ -10239,15 +10405,14 @@ Website: https://handlebarsjs.com
 Category: template
 */
 
+
 function handlebars(hljs) {
   const BUILT_INS = {
     'builtin-name': ['action', 'bindattr', 'collection', 'component', 'concat', 'debugger', 'each', 'each-in', 'get', 'hash', 'if', 'in', 'input', 'link-to', 'loc', 'log', 'lookup', 'mut', 'outlet', 'partial', 'query-params', 'render', 'template', 'textarea', 'unbound', 'unless', 'view', 'with', 'yield']
   };
   const LITERALS = {
     literal: ['true', 'false', 'undefined', 'null']
-  };
-
-  // as defined in https://handlebarsjs.com/guide/expressions.html#literal-segments
+  }; // as defined in https://handlebarsjs.com/guide/expressions.html#literal-segments
   // this regex matches literal segments like ' abc ' or [ abc ] as well as helpers and paths
   // like a/b, ./abc/cde, and abc.bcd
 
@@ -10257,11 +10422,9 @@ function handlebars(hljs) {
   const PLAIN_ID_REGEX = /[^\s!"#%&'()*+,.\/;<=>@\[\\\]^`{|}~]+/;
   const PATH_DELIMITER_REGEX = /(\.|\/)/;
   const ANY_ID = either(DOUBLE_QUOTED_ID_REGEX, SINGLE_QUOTED_ID_REGEX, BRACKET_QUOTED_ID_REGEX, PLAIN_ID_REGEX);
-  const IDENTIFIER_REGEX = concat(optional(/\.|\.\/|\//),
-  // relative or absolute path
-  ANY_ID, anyNumberOfTimes(concat(PATH_DELIMITER_REGEX, ANY_ID)));
+  const IDENTIFIER_REGEX = concat(optional(/\.|\.\/|\//), // relative or absolute path
+  ANY_ID, anyNumberOfTimes(concat(PATH_DELIMITER_REGEX, ANY_ID))); // identifier followed by a equal-sign (without the equal sign)
 
-  // identifier followed by a equal-sign (without the equal sign)
   const HASH_PARAM_REGEX = concat('(', BRACKET_QUOTED_ID_REGEX, '|', PLAIN_ID_REGEX, ')(?==)');
   const HELPER_NAME_OR_PATH_EXPRESSION = {
     begin: IDENTIFIER_REGEX,
@@ -10272,8 +10435,8 @@ function handlebars(hljs) {
   });
   const SUB_EXPRESSION = {
     begin: /\(/,
-    end: /\)/
-    // the "contains" is added below when all necessary sub-modes are defined
+    end: /\)/ // the "contains" is added below when all necessary sub-modes are defined
+
   };
   const HASH = {
     // fka "attribute-assignment", parameters of the form 'key=value'
@@ -10302,10 +10465,10 @@ function handlebars(hljs) {
   };
   const HELPER_PARAMETERS = {
     contains: [hljs.NUMBER_MODE, hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE, BLOCK_PARAMS, HASH, HELPER_PARAMETER, SUB_EXPRESSION],
-    returnEnd: true
-    // the property "end" is defined through inheritance when the mode is used. If depends
+    returnEnd: true // the property "end" is defined through inheritance when the mode is used. If depends
     // on the surrounding mode, but "endsWithParent" does not work here (i.e. it includes the
     // end-token of the surrounding mode)
+
   };
   const SUB_EXPRESSION_CONTENTS = hljs.inherit(HELPER_NAME_OR_PATH_EXPRESSION, {
     className: 'name',
@@ -10400,6 +10563,7 @@ function handlebars(hljs) {
     }]
   };
 }
+
 module.exports = handlebars;
 
 /***/ }),
@@ -10417,7 +10581,6 @@ Contributors: Zena Treep <zena.treep@gmail.com>
 Website: https://www.haskell.org
 Category: functional
 */
-
 function haskell(hljs) {
   const COMMENT = {
     variants: [hljs.COMMENT('--', '$'), hljs.COMMENT(/\{-/, /-\}/, {
@@ -10460,8 +10623,7 @@ function haskell(hljs) {
     name: 'Haskell',
     aliases: ['hs'],
     keywords: 'let in if then else case of where do module import hiding ' + 'qualified type data newtype deriving class instance as default ' + 'infix infixl infixr foreign export ccall stdcall cplusplus ' + 'jvm dotnet safe unsafe family forall mdo proc rec',
-    contains: [
-    // Top-level constructions.
+    contains: [// Top-level constructions.
     {
       beginKeywords: 'module',
       end: 'where',
@@ -10503,11 +10665,8 @@ function haskell(hljs) {
       className: 'meta',
       begin: '#!\\/usr\\/bin\\/env\ runhaskell',
       end: '$'
-    },
-    // "Whitespaces".
-    PRAGMA, PREPROCESSOR,
-    // Literals and names.
-
+    }, // "Whitespaces".
+    PRAGMA, PREPROCESSOR, // Literals and names.
     // TODO: characters.
     hljs.QUOTE_STRING_MODE, hljs.C_NUMBER_MODE, CONSTRUCTOR, hljs.inherit(hljs.TITLE_MODE, {
       begin: '^[_a-z][\\w\']*'
@@ -10517,6 +10676,7 @@ function haskell(hljs) {
     }]
   };
 }
+
 module.exports = haskell;
 
 /***/ }),
@@ -10534,7 +10694,6 @@ Author: Christopher Kaster <ikasoki@gmail.com> (Based on the actionscript.js lan
 Contributors: Kenton Hamaluik <kentonh@gmail.com>
 Website: https://haxe.org
 */
-
 function haxe(hljs) {
   const HAXE_BASIC_TYPES = 'Int Float String Bool Dynamic Void Array ';
   return {
@@ -10657,6 +10816,7 @@ function haxe(hljs) {
     illegal: /<\//
   };
 }
+
 module.exports = haxe;
 
 /***/ }),
@@ -10673,7 +10833,6 @@ Author: prince <MC.prince.0203@gmail.com>
 Website: https://en.wikipedia.org/wiki/Hot_Soup_Processor
 Category: scripting
 */
-
 function hsp(hljs) {
   return {
     name: 'HSP',
@@ -10708,6 +10867,7 @@ function hsp(hljs) {
     }, hljs.NUMBER_MODE, hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = hsp;
 
 /***/ }),
@@ -10732,32 +10892,34 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function anyNumberOfTimes(re) {
   return concat('(', re, ')*');
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -10765,11 +10927,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: Handlebars
 Requires: xml.js
@@ -10779,15 +10942,14 @@ Website: https://handlebarsjs.com
 Category: template
 */
 
+
 function handlebars(hljs) {
   const BUILT_INS = {
     'builtin-name': ['action', 'bindattr', 'collection', 'component', 'concat', 'debugger', 'each', 'each-in', 'get', 'hash', 'if', 'in', 'input', 'link-to', 'loc', 'log', 'lookup', 'mut', 'outlet', 'partial', 'query-params', 'render', 'template', 'textarea', 'unbound', 'unless', 'view', 'with', 'yield']
   };
   const LITERALS = {
     literal: ['true', 'false', 'undefined', 'null']
-  };
-
-  // as defined in https://handlebarsjs.com/guide/expressions.html#literal-segments
+  }; // as defined in https://handlebarsjs.com/guide/expressions.html#literal-segments
   // this regex matches literal segments like ' abc ' or [ abc ] as well as helpers and paths
   // like a/b, ./abc/cde, and abc.bcd
 
@@ -10797,11 +10959,9 @@ function handlebars(hljs) {
   const PLAIN_ID_REGEX = /[^\s!"#%&'()*+,.\/;<=>@\[\\\]^`{|}~]+/;
   const PATH_DELIMITER_REGEX = /(\.|\/)/;
   const ANY_ID = either(DOUBLE_QUOTED_ID_REGEX, SINGLE_QUOTED_ID_REGEX, BRACKET_QUOTED_ID_REGEX, PLAIN_ID_REGEX);
-  const IDENTIFIER_REGEX = concat(optional(/\.|\.\/|\//),
-  // relative or absolute path
-  ANY_ID, anyNumberOfTimes(concat(PATH_DELIMITER_REGEX, ANY_ID)));
+  const IDENTIFIER_REGEX = concat(optional(/\.|\.\/|\//), // relative or absolute path
+  ANY_ID, anyNumberOfTimes(concat(PATH_DELIMITER_REGEX, ANY_ID))); // identifier followed by a equal-sign (without the equal sign)
 
-  // identifier followed by a equal-sign (without the equal sign)
   const HASH_PARAM_REGEX = concat('(', BRACKET_QUOTED_ID_REGEX, '|', PLAIN_ID_REGEX, ')(?==)');
   const HELPER_NAME_OR_PATH_EXPRESSION = {
     begin: IDENTIFIER_REGEX,
@@ -10812,8 +10972,8 @@ function handlebars(hljs) {
   });
   const SUB_EXPRESSION = {
     begin: /\(/,
-    end: /\)/
-    // the "contains" is added below when all necessary sub-modes are defined
+    end: /\)/ // the "contains" is added below when all necessary sub-modes are defined
+
   };
   const HASH = {
     // fka "attribute-assignment", parameters of the form 'key=value'
@@ -10842,10 +11002,10 @@ function handlebars(hljs) {
   };
   const HELPER_PARAMETERS = {
     contains: [hljs.NUMBER_MODE, hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE, BLOCK_PARAMS, HASH, HELPER_PARAMETER, SUB_EXPRESSION],
-    returnEnd: true
-    // the property "end" is defined through inheritance when the mode is used. If depends
+    returnEnd: true // the property "end" is defined through inheritance when the mode is used. If depends
     // on the surrounding mode, but "endsWithParent" does not work here (i.e. it includes the
     // end-token of the surrounding mode)
+
   };
   const SUB_EXPRESSION_CONTENTS = hljs.inherit(HELPER_NAME_OR_PATH_EXPRESSION, {
     className: 'name',
@@ -10940,7 +11100,6 @@ function handlebars(hljs) {
     }]
   };
 }
-
 /*
  Language: HTMLBars (legacy)
  Requires: xml.js
@@ -10949,23 +11108,24 @@ function handlebars(hljs) {
  Category: template
  */
 
+
 function htmlbars(hljs) {
   const definition = handlebars(hljs);
-  definition.name = "HTMLbars";
-
-  // HACK: This lets handlebars do the auto-detection if it's been loaded (by
+  definition.name = "HTMLbars"; // HACK: This lets handlebars do the auto-detection if it's been loaded (by
   // default the build script will load in alphabetical order) and if not (perhaps
   // an install is only using `htmlbars`, not `handlebars`) then this will still
   // allow HTMLBars to participate in the auto-detection
-
   // worse case someone will have HTMLbars and handlebars competing for the same
   // content and will need to change their setup to only require handlebars, but
   // I don't consider this a breaking change
+
   if (hljs.getLanguage("handlebars")) {
     definition.disableAutodetect = true;
   }
+
   return definition;
 }
+
 module.exports = htmlbars;
 
 /***/ }),
@@ -10990,16 +11150,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: HTTP
 Description: HTTP request and response headers with automatic body highlighting
@@ -11007,6 +11167,7 @@ Author: Ivan Sagalaev <maniac@softwaremaniacs.org>
 Category: common, protocols
 Website: https://developer.mozilla.org/en-US/docs/Web/HTTP/Overview
 */
+
 
 function http(hljs) {
   const VERSION = 'HTTP/(2|1\\.[01])';
@@ -11037,8 +11198,7 @@ function http(hljs) {
     name: 'HTTP',
     aliases: ['https'],
     illegal: /\S/,
-    contains: [
-    // response
+    contains: [// response
     {
       begin: '^(?=' + VERSION + " \\d{3})",
       end: /$/,
@@ -11054,8 +11214,7 @@ function http(hljs) {
         illegal: /\S/,
         contains: HEADERS_AND_BODY
       }
-    },
-    // request
+    }, // request
     {
       begin: '(?=^[A-Z]+ (.*?) ' + VERSION + '$)',
       end: /$/,
@@ -11077,13 +11236,13 @@ function http(hljs) {
         illegal: /\S/,
         contains: HEADERS_AND_BODY
       }
-    },
-    // to allow headers to work even without a preamble
+    }, // to allow headers to work even without a preamble
     hljs.inherit(HEADER, {
       relevance: 0
     })]
   };
 }
+
 module.exports = http;
 
 /***/ }),
@@ -11101,14 +11260,12 @@ Author: Sergey Sobko <s.sobko@profitware.ru>
 Website: http://docs.hylang.org/en/stable/
 Category: lisp
 */
-
 function hy(hljs) {
   var SYMBOLSTART = 'a-zA-Z_\\-!.?+*=<>&#\'';
   var SYMBOL_RE = '[' + SYMBOLSTART + '][' + SYMBOLSTART + '0-9/;:]*';
   var keywords = {
     $pattern: SYMBOL_RE,
-    'builtin-name':
-    // keywords
+    'builtin-name': // keywords
     '!= % %= & &= * ** **= *= *map ' + '+ += , --build-class-- --import-- -= . / // //= ' + '/= < << <<= <= = > >= >> >>= ' + '@ @= ^ ^= abs accumulate all and any ap-compose ' + 'ap-dotimes ap-each ap-each-while ap-filter ap-first ap-if ap-last ap-map ap-map-when ap-pipe ' + 'ap-reduce ap-reject apply as-> ascii assert assoc bin break butlast ' + 'callable calling-module-name car case cdr chain chr coll? combinations compile ' + 'compress cond cons cons? continue count curry cut cycle dec ' + 'def default-method defclass defmacro defmacro-alias defmacro/g! defmain defmethod defmulti defn ' + 'defn-alias defnc defnr defreader defseq del delattr delete-route dict-comp dir ' + 'disassemble dispatch-reader-macro distinct divmod do doto drop drop-last drop-while empty? ' + 'end-sequence eval eval-and-compile eval-when-compile even? every? except exec filter first ' + 'flatten float? fn fnc fnr for for* format fraction genexpr ' + 'gensym get getattr global globals group-by hasattr hash hex id ' + 'identity if if* if-not if-python2 import in inc input instance? ' + 'integer integer-char? integer? interleave interpose is is-coll is-cons is-empty is-even ' + 'is-every is-float is-instance is-integer is-integer-char is-iterable is-iterator is-keyword is-neg is-none ' + 'is-not is-numeric is-odd is-pos is-string is-symbol is-zero isinstance islice issubclass ' + 'iter iterable? iterate iterator? keyword keyword? lambda last len let ' + 'lif lif-not list* list-comp locals loop macro-error macroexpand macroexpand-1 macroexpand-all ' + 'map max merge-with method-decorator min multi-decorator multicombinations name neg? next ' + 'none? nonlocal not not-in not? nth numeric? oct odd? open ' + 'or ord partition permutations pos? post-route postwalk pow prewalk print ' + 'product profile/calls profile/cpu put-route quasiquote quote raise range read read-str ' + 'recursive-replace reduce remove repeat repeatedly repr require rest round route ' + 'route-with-methods rwm second seq set-comp setattr setv some sorted string ' + 'string? sum switch symbol? take take-nth take-while tee try unless ' + 'unquote unquote-splicing vars walk when while with with* with-decorator with-gensyms ' + 'xi xor yield yield-from zero? zip zip-longest | |= ~'
   };
   var SIMPLE_NUMBER_RE = '[-+]?\\d+(\\.\\d+)?';
@@ -11170,6 +11327,7 @@ function hy(hljs) {
     contains: [hljs.SHEBANG(), LIST, STRING, HINT, HINT_COL, COMMENT, KEY, COLLECTION, NUMBER, LITERAL]
   };
 }
+
 module.exports = hy;
 
 /***/ }),
@@ -11186,7 +11344,6 @@ Author: Bruno Dias <bruno.r.dias@gmail.com>
 Description: Language definition for Inform 7, a DSL for writing parser interactive fiction.
 Website: http://inform7.com
 */
-
 function inform7(hljs) {
   const START_BRACKET = '\\[';
   const END_BRACKET = '\\]';
@@ -11196,14 +11353,10 @@ function inform7(hljs) {
     case_insensitive: true,
     keywords: {
       // Some keywords more or less unique to I7, for relevance.
-      keyword:
-      // kind:
-      'thing room person man woman animal container ' + 'supporter backdrop door ' +
-      // characteristic:
-      'scenery open closed locked inside gender ' +
-      // verb:
-      'is are say understand ' +
-      // misc keyword:
+      keyword: // kind:
+      'thing room person man woman animal container ' + 'supporter backdrop door ' + // characteristic:
+      'scenery open closed locked inside gender ' + // verb:
+      'is are say understand ' + // misc keyword:
       'kind of rule'
     },
     contains: [{
@@ -11238,6 +11391,7 @@ function inform7(hljs) {
     }]
   };
 }
+
 module.exports = inform7;
 
 /***/ }),
@@ -11262,24 +11416,25 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -11287,11 +11442,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: TOML, also INI
 Description: TOML aims to be a minimal configuration file format that's easy to read due to obvious semantics.
@@ -11299,6 +11455,7 @@ Contributors: Guillaume Gomez <guillaume1.gomez@gmail.com>
 Category: common, config
 Website: https://github.com/toml-lang/toml
 */
+
 
 function ini(hljs) {
   const NUMBERS = {
@@ -11379,6 +11536,7 @@ function ini(hljs) {
     }]
   };
 }
+
 module.exports = ini;
 
 /***/ }),
@@ -11403,16 +11561,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: IRPF90
 Author: Anthony Scemama <scemama@irsamc.ups-tlse.fr>
@@ -11422,14 +11580,15 @@ Category: scientific
 */
 
 /** @type LanguageFn */
+
+
 function irpf90(hljs) {
   const PARAMS = {
     className: 'params',
     begin: '\\(',
     end: '\\)'
-  };
+  }; // regex in both fortran and irpf90 should match
 
-  // regex in both fortran and irpf90 should match
   const OPTIONAL_NUMBER_SUFFIX = /(_[a-z_\d]+)?/;
   const OPTIONAL_NUMBER_EXP = /([de][+-]?\d+)?/;
   const NUMBER = {
@@ -11445,11 +11604,9 @@ function irpf90(hljs) {
   };
   const F_KEYWORDS = {
     literal: '.False. .True.',
-    keyword: 'kind do while private call intrinsic where elsewhere ' + 'type endtype endmodule endselect endinterface end enddo endif if forall endforall only contains default return stop then ' + 'public subroutine|10 function program .and. .or. .not. .le. .eq. .ge. .gt. .lt. ' + 'goto save else use module select case ' + 'access blank direct exist file fmt form formatted iostat name named nextrec number opened rec recl sequential status unformatted unit ' + 'continue format pause cycle exit ' + 'c_null_char c_alert c_backspace c_form_feed flush wait decimal round iomsg ' + 'synchronous nopass non_overridable pass protected volatile abstract extends import ' + 'non_intrinsic value deferred generic final enumerator class associate bind enum ' + 'c_int c_short c_long c_long_long c_signed_char c_size_t c_int8_t c_int16_t c_int32_t c_int64_t c_int_least8_t c_int_least16_t ' + 'c_int_least32_t c_int_least64_t c_int_fast8_t c_int_fast16_t c_int_fast32_t c_int_fast64_t c_intmax_t C_intptr_t c_float c_double ' + 'c_long_double c_float_complex c_double_complex c_long_double_complex c_bool c_char c_null_ptr c_null_funptr ' + 'c_new_line c_carriage_return c_horizontal_tab c_vertical_tab iso_c_binding c_loc c_funloc c_associated  c_f_pointer ' + 'c_ptr c_funptr iso_fortran_env character_storage_size error_unit file_storage_size input_unit iostat_end iostat_eor ' + 'numeric_storage_size output_unit c_f_procpointer ieee_arithmetic ieee_support_underflow_control ' + 'ieee_get_underflow_mode ieee_set_underflow_mode newunit contiguous recursive ' + 'pad position action delim readwrite eor advance nml interface procedure namelist include sequence elemental pure ' + 'integer real character complex logical dimension allocatable|10 parameter ' + 'external implicit|10 none double precision assign intent optional pointer ' + 'target in out common equivalence data ' +
-    // IRPF90 special keywords
+    keyword: 'kind do while private call intrinsic where elsewhere ' + 'type endtype endmodule endselect endinterface end enddo endif if forall endforall only contains default return stop then ' + 'public subroutine|10 function program .and. .or. .not. .le. .eq. .ge. .gt. .lt. ' + 'goto save else use module select case ' + 'access blank direct exist file fmt form formatted iostat name named nextrec number opened rec recl sequential status unformatted unit ' + 'continue format pause cycle exit ' + 'c_null_char c_alert c_backspace c_form_feed flush wait decimal round iomsg ' + 'synchronous nopass non_overridable pass protected volatile abstract extends import ' + 'non_intrinsic value deferred generic final enumerator class associate bind enum ' + 'c_int c_short c_long c_long_long c_signed_char c_size_t c_int8_t c_int16_t c_int32_t c_int64_t c_int_least8_t c_int_least16_t ' + 'c_int_least32_t c_int_least64_t c_int_fast8_t c_int_fast16_t c_int_fast32_t c_int_fast64_t c_intmax_t C_intptr_t c_float c_double ' + 'c_long_double c_float_complex c_double_complex c_long_double_complex c_bool c_char c_null_ptr c_null_funptr ' + 'c_new_line c_carriage_return c_horizontal_tab c_vertical_tab iso_c_binding c_loc c_funloc c_associated  c_f_pointer ' + 'c_ptr c_funptr iso_fortran_env character_storage_size error_unit file_storage_size input_unit iostat_end iostat_eor ' + 'numeric_storage_size output_unit c_f_procpointer ieee_arithmetic ieee_support_underflow_control ' + 'ieee_get_underflow_mode ieee_set_underflow_mode newunit contiguous recursive ' + 'pad position action delim readwrite eor advance nml interface procedure namelist include sequence elemental pure ' + 'integer real character complex logical dimension allocatable|10 parameter ' + 'external implicit|10 none double precision assign intent optional pointer ' + 'target in out common equivalence data ' + // IRPF90 special keywords
     'begin_provider &begin_provider end_provider begin_shell end_shell begin_template end_template subst assert touch ' + 'soft_touch provide no_dep free irp_if irp_else irp_endif irp_write irp_read',
-    built_in: 'alog alog10 amax0 amax1 amin0 amin1 amod cabs ccos cexp clog csin csqrt dabs dacos dasin datan datan2 dcos dcosh ddim dexp dint ' + 'dlog dlog10 dmax1 dmin1 dmod dnint dsign dsin dsinh dsqrt dtan dtanh float iabs idim idint idnint ifix isign max0 max1 min0 min1 sngl ' + 'algama cdabs cdcos cdexp cdlog cdsin cdsqrt cqabs cqcos cqexp cqlog cqsin cqsqrt dcmplx dconjg derf derfc dfloat dgamma dimag dlgama ' + 'iqint qabs qacos qasin qatan qatan2 qcmplx qconjg qcos qcosh qdim qerf qerfc qexp qgamma qimag qlgama qlog qlog10 qmax1 qmin1 qmod ' + 'qnint qsign qsin qsinh qsqrt qtan qtanh abs acos aimag aint anint asin atan atan2 char cmplx conjg cos cosh exp ichar index int log ' + 'log10 max min nint sign sin sinh sqrt tan tanh print write dim lge lgt lle llt mod nullify allocate deallocate ' + 'adjustl adjustr all allocated any associated bit_size btest ceiling count cshift date_and_time digits dot_product ' + 'eoshift epsilon exponent floor fraction huge iand ibclr ibits ibset ieor ior ishft ishftc lbound len_trim matmul ' + 'maxexponent maxloc maxval merge minexponent minloc minval modulo mvbits nearest pack present product ' + 'radix random_number random_seed range repeat reshape rrspacing scale scan selected_int_kind selected_real_kind ' + 'set_exponent shape size spacing spread sum system_clock tiny transpose trim ubound unpack verify achar iachar transfer ' + 'dble entry dprod cpu_time command_argument_count get_command get_command_argument get_environment_variable is_iostat_end ' + 'ieee_arithmetic ieee_support_underflow_control ieee_get_underflow_mode ieee_set_underflow_mode ' + 'is_iostat_eor move_alloc new_line selected_char_kind same_type_as extends_type_of ' + 'acosh asinh atanh bessel_j0 bessel_j1 bessel_jn bessel_y0 bessel_y1 bessel_yn erf erfc erfc_scaled gamma log_gamma hypot norm2 ' + 'atomic_define atomic_ref execute_command_line leadz trailz storage_size merge_bits ' + 'bge bgt ble blt dshiftl dshiftr findloc iall iany iparity image_index lcobound ucobound maskl maskr ' + 'num_images parity popcnt poppar shifta shiftl shiftr this_image ' +
-    // IRPF90 special built_ins
+    built_in: 'alog alog10 amax0 amax1 amin0 amin1 amod cabs ccos cexp clog csin csqrt dabs dacos dasin datan datan2 dcos dcosh ddim dexp dint ' + 'dlog dlog10 dmax1 dmin1 dmod dnint dsign dsin dsinh dsqrt dtan dtanh float iabs idim idint idnint ifix isign max0 max1 min0 min1 sngl ' + 'algama cdabs cdcos cdexp cdlog cdsin cdsqrt cqabs cqcos cqexp cqlog cqsin cqsqrt dcmplx dconjg derf derfc dfloat dgamma dimag dlgama ' + 'iqint qabs qacos qasin qatan qatan2 qcmplx qconjg qcos qcosh qdim qerf qerfc qexp qgamma qimag qlgama qlog qlog10 qmax1 qmin1 qmod ' + 'qnint qsign qsin qsinh qsqrt qtan qtanh abs acos aimag aint anint asin atan atan2 char cmplx conjg cos cosh exp ichar index int log ' + 'log10 max min nint sign sin sinh sqrt tan tanh print write dim lge lgt lle llt mod nullify allocate deallocate ' + 'adjustl adjustr all allocated any associated bit_size btest ceiling count cshift date_and_time digits dot_product ' + 'eoshift epsilon exponent floor fraction huge iand ibclr ibits ibset ieor ior ishft ishftc lbound len_trim matmul ' + 'maxexponent maxloc maxval merge minexponent minloc minval modulo mvbits nearest pack present product ' + 'radix random_number random_seed range repeat reshape rrspacing scale scan selected_int_kind selected_real_kind ' + 'set_exponent shape size spacing spread sum system_clock tiny transpose trim ubound unpack verify achar iachar transfer ' + 'dble entry dprod cpu_time command_argument_count get_command get_command_argument get_environment_variable is_iostat_end ' + 'ieee_arithmetic ieee_support_underflow_control ieee_get_underflow_mode ieee_set_underflow_mode ' + 'is_iostat_eor move_alloc new_line selected_char_kind same_type_as extends_type_of ' + 'acosh asinh atanh bessel_j0 bessel_j1 bessel_jn bessel_y0 bessel_y1 bessel_yn erf erfc erfc_scaled gamma log_gamma hypot norm2 ' + 'atomic_define atomic_ref execute_command_line leadz trailz storage_size merge_bits ' + 'bge bgt ble blt dshiftl dshiftr findloc iall iany iparity image_index lcobound ucobound maskl maskr ' + 'num_images parity popcnt poppar shifta shiftl shiftr this_image ' + // IRPF90 special built_ins
     'IRP_ALIGN irp_here'
   };
   return {
@@ -11475,6 +11632,7 @@ function irpf90(hljs) {
     }), NUMBER]
   };
 }
+
 module.exports = irpf90;
 
 /***/ }),
@@ -11491,421 +11649,284 @@ Author: Dmitriy Tarasov <dimatar@gmail.com>
 Description: built-in language DIRECTUM
 Category: enterprise
 */
-
 function isbl(hljs) {
   // Определение идентификаторов
-  const UNDERSCORE_IDENT_RE = "[A-Za-zА-Яа-яёЁ_!][A-Za-zА-Яа-яёЁ_0-9]*";
+  const UNDERSCORE_IDENT_RE = "[A-Za-zА-Яа-яёЁ_!][A-Za-zА-Яа-яёЁ_0-9]*"; // Определение имен функций
 
-  // Определение имен функций
-  const FUNCTION_NAME_IDENT_RE = "[A-Za-zА-Яа-яёЁ_][A-Za-zА-Яа-яёЁ_0-9]*";
+  const FUNCTION_NAME_IDENT_RE = "[A-Za-zА-Яа-яёЁ_][A-Za-zА-Яа-яёЁ_0-9]*"; // keyword : ключевые слова
 
-  // keyword : ключевые слова
-  const KEYWORD = "and и else иначе endexcept endfinally endforeach конецвсе endif конецесли endwhile конецпока " + "except exitfor finally foreach все if если in в not не or или try while пока ";
+  const KEYWORD = "and и else иначе endexcept endfinally endforeach конецвсе endif конецесли endwhile конецпока " + "except exitfor finally foreach все if если in в not не or или try while пока "; // SYSRES Constants
 
-  // SYSRES Constants
-  const sysres_constants = "SYSRES_CONST_ACCES_RIGHT_TYPE_EDIT " + "SYSRES_CONST_ACCES_RIGHT_TYPE_FULL " + "SYSRES_CONST_ACCES_RIGHT_TYPE_VIEW " + "SYSRES_CONST_ACCESS_MODE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_NO_ACCESS_VIEW " + "SYSRES_CONST_ACCESS_NO_ACCESS_VIEW_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_ADD_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_ADD_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_CHANGE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_CHANGE_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_DELETE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_DELETE_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_EXECUTE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_EXECUTE_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_NO_ACCESS_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_NO_ACCESS_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_RATIFY_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_RATIFY_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_TYPE_CHANGE " + "SYSRES_CONST_ACCESS_TYPE_CHANGE_CODE " + "SYSRES_CONST_ACCESS_TYPE_EXISTS " + "SYSRES_CONST_ACCESS_TYPE_EXISTS_CODE " + "SYSRES_CONST_ACCESS_TYPE_FULL " + "SYSRES_CONST_ACCESS_TYPE_FULL_CODE " + "SYSRES_CONST_ACCESS_TYPE_VIEW " + "SYSRES_CONST_ACCESS_TYPE_VIEW_CODE " + "SYSRES_CONST_ACTION_TYPE_ABORT " + "SYSRES_CONST_ACTION_TYPE_ACCEPT " + "SYSRES_CONST_ACTION_TYPE_ACCESS_RIGHTS " + "SYSRES_CONST_ACTION_TYPE_ADD_ATTACHMENT " + "SYSRES_CONST_ACTION_TYPE_CHANGE_CARD " + "SYSRES_CONST_ACTION_TYPE_CHANGE_KIND " + "SYSRES_CONST_ACTION_TYPE_CHANGE_STORAGE " + "SYSRES_CONST_ACTION_TYPE_CONTINUE " + "SYSRES_CONST_ACTION_TYPE_COPY " + "SYSRES_CONST_ACTION_TYPE_CREATE " + "SYSRES_CONST_ACTION_TYPE_CREATE_VERSION " + "SYSRES_CONST_ACTION_TYPE_DELETE " + "SYSRES_CONST_ACTION_TYPE_DELETE_ATTACHMENT " + "SYSRES_CONST_ACTION_TYPE_DELETE_VERSION " + "SYSRES_CONST_ACTION_TYPE_DISABLE_DELEGATE_ACCESS_RIGHTS " + "SYSRES_CONST_ACTION_TYPE_ENABLE_DELEGATE_ACCESS_RIGHTS " + "SYSRES_CONST_ACTION_TYPE_ENCRYPTION_BY_CERTIFICATE " + "SYSRES_CONST_ACTION_TYPE_ENCRYPTION_BY_CERTIFICATE_AND_PASSWORD " + "SYSRES_CONST_ACTION_TYPE_ENCRYPTION_BY_PASSWORD " + "SYSRES_CONST_ACTION_TYPE_EXPORT_WITH_LOCK " + "SYSRES_CONST_ACTION_TYPE_EXPORT_WITHOUT_LOCK " + "SYSRES_CONST_ACTION_TYPE_IMPORT_WITH_UNLOCK " + "SYSRES_CONST_ACTION_TYPE_IMPORT_WITHOUT_UNLOCK " + "SYSRES_CONST_ACTION_TYPE_LIFE_CYCLE_STAGE " + "SYSRES_CONST_ACTION_TYPE_LOCK " + "SYSRES_CONST_ACTION_TYPE_LOCK_FOR_SERVER " + "SYSRES_CONST_ACTION_TYPE_LOCK_MODIFY " + "SYSRES_CONST_ACTION_TYPE_MARK_AS_READED " + "SYSRES_CONST_ACTION_TYPE_MARK_AS_UNREADED " + "SYSRES_CONST_ACTION_TYPE_MODIFY " + "SYSRES_CONST_ACTION_TYPE_MODIFY_CARD " + "SYSRES_CONST_ACTION_TYPE_MOVE_TO_ARCHIVE " + "SYSRES_CONST_ACTION_TYPE_OFF_ENCRYPTION " + "SYSRES_CONST_ACTION_TYPE_PASSWORD_CHANGE " + "SYSRES_CONST_ACTION_TYPE_PERFORM " + "SYSRES_CONST_ACTION_TYPE_RECOVER_FROM_LOCAL_COPY " + "SYSRES_CONST_ACTION_TYPE_RESTART " + "SYSRES_CONST_ACTION_TYPE_RESTORE_FROM_ARCHIVE " + "SYSRES_CONST_ACTION_TYPE_REVISION " + "SYSRES_CONST_ACTION_TYPE_SEND_BY_MAIL " + "SYSRES_CONST_ACTION_TYPE_SIGN " + "SYSRES_CONST_ACTION_TYPE_START " + "SYSRES_CONST_ACTION_TYPE_UNLOCK " + "SYSRES_CONST_ACTION_TYPE_UNLOCK_FROM_SERVER " + "SYSRES_CONST_ACTION_TYPE_VERSION_STATE " + "SYSRES_CONST_ACTION_TYPE_VERSION_VISIBILITY " + "SYSRES_CONST_ACTION_TYPE_VIEW " + "SYSRES_CONST_ACTION_TYPE_VIEW_SHADOW_COPY " + "SYSRES_CONST_ACTION_TYPE_WORKFLOW_DESCRIPTION_MODIFY " + "SYSRES_CONST_ACTION_TYPE_WRITE_HISTORY " + "SYSRES_CONST_ACTIVE_VERSION_STATE_PICK_VALUE " + "SYSRES_CONST_ADD_REFERENCE_MODE_NAME " + "SYSRES_CONST_ADDITION_REQUISITE_CODE " + "SYSRES_CONST_ADDITIONAL_PARAMS_REQUISITE_CODE " + "SYSRES_CONST_ADITIONAL_JOB_END_DATE_REQUISITE_NAME " + "SYSRES_CONST_ADITIONAL_JOB_READ_REQUISITE_NAME " + "SYSRES_CONST_ADITIONAL_JOB_START_DATE_REQUISITE_NAME " + "SYSRES_CONST_ADITIONAL_JOB_STATE_REQUISITE_NAME " + "SYSRES_CONST_ADMINISTRATION_HISTORY_ADDING_USER_TO_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_ADDING_USER_TO_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_COMP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_COMP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_USER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_USER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_CREATION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_CREATION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_DELETION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_DELETION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_COMP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_COMP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_FROM_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_FROM_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_RESTRICTION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_RESTRICTION_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_PRIVILEGE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_PRIVILEGE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_RIGHTS_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_RIGHTS_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_MAIN_SERVER_CHANGED_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_MAIN_SERVER_CHANGED_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_PUBLIC_CHANGED_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_PUBLIC_CHANGED_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_RESTRICTION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_RESTRICTION_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_PRIVILEGE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_PRIVILEGE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_RIGHTS_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_RIGHTS_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_CREATION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_CREATION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_DELETION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_DELETION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_CATEGORY_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_CATEGORY_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_COMP_TITLE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_COMP_TITLE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_FULL_NAME_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_FULL_NAME_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_PARENT_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_PARENT_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_AUTH_TYPE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_AUTH_TYPE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_LOGIN_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_LOGIN_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_STATUS_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_STATUS_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_USER_PASSWORD_CHANGE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_USER_PASSWORD_CHANGE_ACTION " + "SYSRES_CONST_ALL_ACCEPT_CONDITION_RUS " + "SYSRES_CONST_ALL_USERS_GROUP " + "SYSRES_CONST_ALL_USERS_GROUP_NAME " + "SYSRES_CONST_ALL_USERS_SERVER_GROUP_NAME " + "SYSRES_CONST_ALLOWED_ACCESS_TYPE_CODE " + "SYSRES_CONST_ALLOWED_ACCESS_TYPE_NAME " + "SYSRES_CONST_APP_VIEWER_TYPE_REQUISITE_CODE " + "SYSRES_CONST_APPROVING_SIGNATURE_NAME " + "SYSRES_CONST_APPROVING_SIGNATURE_REQUISITE_CODE " + "SYSRES_CONST_ASSISTANT_SUBSTITUE_TYPE " + "SYSRES_CONST_ASSISTANT_SUBSTITUE_TYPE_CODE " + "SYSRES_CONST_ATTACH_TYPE_COMPONENT_TOKEN " + "SYSRES_CONST_ATTACH_TYPE_DOC " + "SYSRES_CONST_ATTACH_TYPE_EDOC " + "SYSRES_CONST_ATTACH_TYPE_FOLDER " + "SYSRES_CONST_ATTACH_TYPE_JOB " + "SYSRES_CONST_ATTACH_TYPE_REFERENCE " + "SYSRES_CONST_ATTACH_TYPE_TASK " + "SYSRES_CONST_AUTH_ENCODED_PASSWORD " + "SYSRES_CONST_AUTH_ENCODED_PASSWORD_CODE " + "SYSRES_CONST_AUTH_NOVELL " + "SYSRES_CONST_AUTH_PASSWORD " + "SYSRES_CONST_AUTH_PASSWORD_CODE " + "SYSRES_CONST_AUTH_WINDOWS " + "SYSRES_CONST_AUTHENTICATING_SIGNATURE_NAME " + "SYSRES_CONST_AUTHENTICATING_SIGNATURE_REQUISITE_CODE " + "SYSRES_CONST_AUTO_ENUM_METHOD_FLAG " + "SYSRES_CONST_AUTO_NUMERATION_CODE " + "SYSRES_CONST_AUTO_STRONG_ENUM_METHOD_FLAG " + "SYSRES_CONST_AUTOTEXT_NAME_REQUISITE_CODE " + "SYSRES_CONST_AUTOTEXT_TEXT_REQUISITE_CODE " + "SYSRES_CONST_AUTOTEXT_USAGE_ALL " + "SYSRES_CONST_AUTOTEXT_USAGE_ALL_CODE " + "SYSRES_CONST_AUTOTEXT_USAGE_SIGN " + "SYSRES_CONST_AUTOTEXT_USAGE_SIGN_CODE " + "SYSRES_CONST_AUTOTEXT_USAGE_WORK " + "SYSRES_CONST_AUTOTEXT_USAGE_WORK_CODE " + "SYSRES_CONST_AUTOTEXT_USE_ANYWHERE_CODE " + "SYSRES_CONST_AUTOTEXT_USE_ON_SIGNING_CODE " + "SYSRES_CONST_AUTOTEXT_USE_ON_WORK_CODE " + "SYSRES_CONST_BEGIN_DATE_REQUISITE_CODE " + "SYSRES_CONST_BLACK_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_BLUE_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_BTN_PART " + "SYSRES_CONST_CALCULATED_ROLE_TYPE_CODE " + "SYSRES_CONST_CALL_TYPE_VARIABLE_BUTTON_VALUE " + "SYSRES_CONST_CALL_TYPE_VARIABLE_PROGRAM_VALUE " + "SYSRES_CONST_CANCEL_MESSAGE_FUNCTION_RESULT " + "SYSRES_CONST_CARD_PART " + "SYSRES_CONST_CARD_REFERENCE_MODE_NAME " + "SYSRES_CONST_CERTIFICATE_TYPE_REQUISITE_ENCRYPT_VALUE " + "SYSRES_CONST_CERTIFICATE_TYPE_REQUISITE_SIGN_AND_ENCRYPT_VALUE " + "SYSRES_CONST_CERTIFICATE_TYPE_REQUISITE_SIGN_VALUE " + "SYSRES_CONST_CHECK_PARAM_VALUE_DATE_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_FLOAT_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_INTEGER_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_PICK_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_REEFRENCE_PARAM_TYPE " + "SYSRES_CONST_CLOSED_RECORD_FLAG_VALUE_FEMININE " + "SYSRES_CONST_CLOSED_RECORD_FLAG_VALUE_MASCULINE " + "SYSRES_CONST_CODE_COMPONENT_TYPE_ADMIN " + "SYSRES_CONST_CODE_COMPONENT_TYPE_DEVELOPER " + "SYSRES_CONST_CODE_COMPONENT_TYPE_DOCS " + "SYSRES_CONST_CODE_COMPONENT_TYPE_EDOC_CARDS " + "SYSRES_CONST_CODE_COMPONENT_TYPE_EXTERNAL_EXECUTABLE " + "SYSRES_CONST_CODE_COMPONENT_TYPE_OTHER " + "SYSRES_CONST_CODE_COMPONENT_TYPE_REFERENCE " + "SYSRES_CONST_CODE_COMPONENT_TYPE_REPORT " + "SYSRES_CONST_CODE_COMPONENT_TYPE_SCRIPT " + "SYSRES_CONST_CODE_COMPONENT_TYPE_URL " + "SYSRES_CONST_CODE_REQUISITE_ACCESS " + "SYSRES_CONST_CODE_REQUISITE_CODE " + "SYSRES_CONST_CODE_REQUISITE_COMPONENT " + "SYSRES_CONST_CODE_REQUISITE_DESCRIPTION " + "SYSRES_CONST_CODE_REQUISITE_EXCLUDE_COMPONENT " + "SYSRES_CONST_CODE_REQUISITE_RECORD " + "SYSRES_CONST_COMMENT_REQ_CODE " + "SYSRES_CONST_COMMON_SETTINGS_REQUISITE_CODE " + "SYSRES_CONST_COMP_CODE_GRD " + "SYSRES_CONST_COMPONENT_GROUP_TYPE_REQUISITE_CODE " + "SYSRES_CONST_COMPONENT_TYPE_ADMIN_COMPONENTS " + "SYSRES_CONST_COMPONENT_TYPE_DEVELOPER_COMPONENTS " + "SYSRES_CONST_COMPONENT_TYPE_DOCS " + "SYSRES_CONST_COMPONENT_TYPE_EDOC_CARDS " + "SYSRES_CONST_COMPONENT_TYPE_EDOCS " + "SYSRES_CONST_COMPONENT_TYPE_EXTERNAL_EXECUTABLE " + "SYSRES_CONST_COMPONENT_TYPE_OTHER " + "SYSRES_CONST_COMPONENT_TYPE_REFERENCE_TYPES " + "SYSRES_CONST_COMPONENT_TYPE_REFERENCES " + "SYSRES_CONST_COMPONENT_TYPE_REPORTS " + "SYSRES_CONST_COMPONENT_TYPE_SCRIPTS " + "SYSRES_CONST_COMPONENT_TYPE_URL " + "SYSRES_CONST_COMPONENTS_REMOTE_SERVERS_VIEW_CODE " + "SYSRES_CONST_CONDITION_BLOCK_DESCRIPTION " + "SYSRES_CONST_CONST_FIRM_STATUS_COMMON " + "SYSRES_CONST_CONST_FIRM_STATUS_INDIVIDUAL " + "SYSRES_CONST_CONST_NEGATIVE_VALUE " + "SYSRES_CONST_CONST_POSITIVE_VALUE " + "SYSRES_CONST_CONST_SERVER_STATUS_DONT_REPLICATE " + "SYSRES_CONST_CONST_SERVER_STATUS_REPLICATE " + "SYSRES_CONST_CONTENTS_REQUISITE_CODE " + "SYSRES_CONST_DATA_TYPE_BOOLEAN " + "SYSRES_CONST_DATA_TYPE_DATE " + "SYSRES_CONST_DATA_TYPE_FLOAT " + "SYSRES_CONST_DATA_TYPE_INTEGER " + "SYSRES_CONST_DATA_TYPE_PICK " + "SYSRES_CONST_DATA_TYPE_REFERENCE " + "SYSRES_CONST_DATA_TYPE_STRING " + "SYSRES_CONST_DATA_TYPE_TEXT " + "SYSRES_CONST_DATA_TYPE_VARIANT " + "SYSRES_CONST_DATE_CLOSE_REQ_CODE " + "SYSRES_CONST_DATE_FORMAT_DATE_ONLY_CHAR " + "SYSRES_CONST_DATE_OPEN_REQ_CODE " + "SYSRES_CONST_DATE_REQUISITE " + "SYSRES_CONST_DATE_REQUISITE_CODE " + "SYSRES_CONST_DATE_REQUISITE_NAME " + "SYSRES_CONST_DATE_REQUISITE_TYPE " + "SYSRES_CONST_DATE_TYPE_CHAR " + "SYSRES_CONST_DATETIME_FORMAT_VALUE " + "SYSRES_CONST_DEA_ACCESS_RIGHTS_ACTION_CODE " + "SYSRES_CONST_DESCRIPTION_LOCALIZE_ID_REQUISITE_CODE " + "SYSRES_CONST_DESCRIPTION_REQUISITE_CODE " + "SYSRES_CONST_DET1_PART " + "SYSRES_CONST_DET2_PART " + "SYSRES_CONST_DET3_PART " + "SYSRES_CONST_DET4_PART " + "SYSRES_CONST_DET5_PART " + "SYSRES_CONST_DET6_PART " + "SYSRES_CONST_DETAIL_DATASET_KEY_REQUISITE_CODE " + "SYSRES_CONST_DETAIL_PICK_REQUISITE_CODE " + "SYSRES_CONST_DETAIL_REQ_CODE " + "SYSRES_CONST_DO_NOT_USE_ACCESS_TYPE_CODE " + "SYSRES_CONST_DO_NOT_USE_ACCESS_TYPE_NAME " + "SYSRES_CONST_DO_NOT_USE_ON_VIEW_ACCESS_TYPE_CODE " + "SYSRES_CONST_DO_NOT_USE_ON_VIEW_ACCESS_TYPE_NAME " + "SYSRES_CONST_DOCUMENT_STORAGES_CODE " + "SYSRES_CONST_DOCUMENT_TEMPLATES_TYPE_NAME " + "SYSRES_CONST_DOUBLE_REQUISITE_CODE " + "SYSRES_CONST_EDITOR_CLOSE_FILE_OBSERV_TYPE_CODE " + "SYSRES_CONST_EDITOR_CLOSE_PROCESS_OBSERV_TYPE_CODE " + "SYSRES_CONST_EDITOR_TYPE_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_APPLICATION_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_CREATE_SEVERAL_PROCESSES_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_EXTENSION_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_OBSERVER_BY_PROCESS_TYPE " + "SYSRES_CONST_EDITORS_REFERENCE_CODE " + "SYSRES_CONST_EDITORS_REPLACE_SPEC_CHARS_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_USE_PLUGINS_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_VIEW_DOCUMENT_OPENED_TO_EDIT_CODE " + "SYSRES_CONST_EDOC_CARD_TYPE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_CARD_TYPES_LINK_REQUISITE_CODE " + "SYSRES_CONST_EDOC_CERTIFICATE_AND_PASSWORD_ENCODE_CODE " + "SYSRES_CONST_EDOC_CERTIFICATE_ENCODE_CODE " + "SYSRES_CONST_EDOC_DATE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_KIND_REFERENCE_CODE " + "SYSRES_CONST_EDOC_KINDS_BY_TEMPLATE_ACTION_CODE " + "SYSRES_CONST_EDOC_MANAGE_ACCESS_CODE " + "SYSRES_CONST_EDOC_NONE_ENCODE_CODE " + "SYSRES_CONST_EDOC_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_EDOC_PASSWORD_ENCODE_CODE " + "SYSRES_CONST_EDOC_READONLY_ACCESS_CODE " + "SYSRES_CONST_EDOC_SHELL_LIFE_TYPE_VIEW_VALUE " + "SYSRES_CONST_EDOC_SIZE_RESTRICTION_PRIORITY_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_CHECK_ACCESS_RIGHTS_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_COMPUTER_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_DATABASE_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_EDIT_IN_STORAGE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_LOCAL_PATH_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_SHARED_SOURCE_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDOC_TEMPLATE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_TYPES_REFERENCE_CODE " + "SYSRES_CONST_EDOC_VERSION_ACTIVE_STAGE_CODE " + "SYSRES_CONST_EDOC_VERSION_DESIGN_STAGE_CODE " + "SYSRES_CONST_EDOC_VERSION_OBSOLETE_STAGE_CODE " + "SYSRES_CONST_EDOC_WRITE_ACCES_CODE " + "SYSRES_CONST_EDOCUMENT_CARD_REQUISITES_REFERENCE_CODE_SELECTED_REQUISITE " + "SYSRES_CONST_ENCODE_CERTIFICATE_TYPE_CODE " + "SYSRES_CONST_END_DATE_REQUISITE_CODE " + "SYSRES_CONST_ENUMERATION_TYPE_REQUISITE_CODE " + "SYSRES_CONST_EXECUTE_ACCESS_RIGHTS_TYPE_CODE " + "SYSRES_CONST_EXECUTIVE_FILE_STORAGE_TYPE " + "SYSRES_CONST_EXIST_CONST " + "SYSRES_CONST_EXIST_VALUE " + "SYSRES_CONST_EXPORT_LOCK_TYPE_ASK " + "SYSRES_CONST_EXPORT_LOCK_TYPE_WITH_LOCK " + "SYSRES_CONST_EXPORT_LOCK_TYPE_WITHOUT_LOCK " + "SYSRES_CONST_EXPORT_VERSION_TYPE_ASK " + "SYSRES_CONST_EXPORT_VERSION_TYPE_LAST " + "SYSRES_CONST_EXPORT_VERSION_TYPE_LAST_ACTIVE " + "SYSRES_CONST_EXTENSION_REQUISITE_CODE " + "SYSRES_CONST_FILTER_NAME_REQUISITE_CODE " + "SYSRES_CONST_FILTER_REQUISITE_CODE " + "SYSRES_CONST_FILTER_TYPE_COMMON_CODE " + "SYSRES_CONST_FILTER_TYPE_COMMON_NAME " + "SYSRES_CONST_FILTER_TYPE_USER_CODE " + "SYSRES_CONST_FILTER_TYPE_USER_NAME " + "SYSRES_CONST_FILTER_VALUE_REQUISITE_NAME " + "SYSRES_CONST_FLOAT_NUMBER_FORMAT_CHAR " + "SYSRES_CONST_FLOAT_REQUISITE_TYPE " + "SYSRES_CONST_FOLDER_AUTHOR_VALUE " + "SYSRES_CONST_FOLDER_KIND_ANY_OBJECTS " + "SYSRES_CONST_FOLDER_KIND_COMPONENTS " + "SYSRES_CONST_FOLDER_KIND_EDOCS " + "SYSRES_CONST_FOLDER_KIND_JOBS " + "SYSRES_CONST_FOLDER_KIND_TASKS " + "SYSRES_CONST_FOLDER_TYPE_COMMON " + "SYSRES_CONST_FOLDER_TYPE_COMPONENT " + "SYSRES_CONST_FOLDER_TYPE_FAVORITES " + "SYSRES_CONST_FOLDER_TYPE_INBOX " + "SYSRES_CONST_FOLDER_TYPE_OUTBOX " + "SYSRES_CONST_FOLDER_TYPE_QUICK_LAUNCH " + "SYSRES_CONST_FOLDER_TYPE_SEARCH " + "SYSRES_CONST_FOLDER_TYPE_SHORTCUTS " + "SYSRES_CONST_FOLDER_TYPE_USER " + "SYSRES_CONST_FROM_DICTIONARY_ENUM_METHOD_FLAG " + "SYSRES_CONST_FULL_SUBSTITUTE_TYPE " + "SYSRES_CONST_FULL_SUBSTITUTE_TYPE_CODE " + "SYSRES_CONST_FUNCTION_CANCEL_RESULT " + "SYSRES_CONST_FUNCTION_CATEGORY_SYSTEM " + "SYSRES_CONST_FUNCTION_CATEGORY_USER " + "SYSRES_CONST_FUNCTION_FAILURE_RESULT " + "SYSRES_CONST_FUNCTION_SAVE_RESULT " + "SYSRES_CONST_GENERATED_REQUISITE " + "SYSRES_CONST_GREEN_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_GROUP_ACCOUNT_TYPE_VALUE_CODE " + "SYSRES_CONST_GROUP_CATEGORY_NORMAL_CODE " + "SYSRES_CONST_GROUP_CATEGORY_NORMAL_NAME " + "SYSRES_CONST_GROUP_CATEGORY_SERVICE_CODE " + "SYSRES_CONST_GROUP_CATEGORY_SERVICE_NAME " + "SYSRES_CONST_GROUP_COMMON_CATEGORY_FIELD_VALUE " + "SYSRES_CONST_GROUP_FULL_NAME_REQUISITE_CODE " + "SYSRES_CONST_GROUP_NAME_REQUISITE_CODE " + "SYSRES_CONST_GROUP_RIGHTS_T_REQUISITE_CODE " + "SYSRES_CONST_GROUP_SERVER_CODES_REQUISITE_CODE " + "SYSRES_CONST_GROUP_SERVER_NAME_REQUISITE_CODE " + "SYSRES_CONST_GROUP_SERVICE_CATEGORY_FIELD_VALUE " + "SYSRES_CONST_GROUP_USER_REQUISITE_CODE " + "SYSRES_CONST_GROUPS_REFERENCE_CODE " + "SYSRES_CONST_GROUPS_REQUISITE_CODE " + "SYSRES_CONST_HIDDEN_MODE_NAME " + "SYSRES_CONST_HIGH_LVL_REQUISITE_CODE " + "SYSRES_CONST_HISTORY_ACTION_CREATE_CODE " + "SYSRES_CONST_HISTORY_ACTION_DELETE_CODE " + "SYSRES_CONST_HISTORY_ACTION_EDIT_CODE " + "SYSRES_CONST_HOUR_CHAR " + "SYSRES_CONST_ID_REQUISITE_CODE " + "SYSRES_CONST_IDSPS_REQUISITE_CODE " + "SYSRES_CONST_IMAGE_MODE_COLOR " + "SYSRES_CONST_IMAGE_MODE_GREYSCALE " + "SYSRES_CONST_IMAGE_MODE_MONOCHROME " + "SYSRES_CONST_IMPORTANCE_HIGH " + "SYSRES_CONST_IMPORTANCE_LOW " + "SYSRES_CONST_IMPORTANCE_NORMAL " + "SYSRES_CONST_IN_DESIGN_VERSION_STATE_PICK_VALUE " + "SYSRES_CONST_INCOMING_WORK_RULE_TYPE_CODE " + "SYSRES_CONST_INT_REQUISITE " + "SYSRES_CONST_INT_REQUISITE_TYPE " + "SYSRES_CONST_INTEGER_NUMBER_FORMAT_CHAR " + "SYSRES_CONST_INTEGER_TYPE_CHAR " + "SYSRES_CONST_IS_GENERATED_REQUISITE_NEGATIVE_VALUE " + "SYSRES_CONST_IS_PUBLIC_ROLE_REQUISITE_CODE " + "SYSRES_CONST_IS_REMOTE_USER_NEGATIVE_VALUE " + "SYSRES_CONST_IS_REMOTE_USER_POSITIVE_VALUE " + "SYSRES_CONST_IS_STORED_REQUISITE_NEGATIVE_VALUE " + "SYSRES_CONST_IS_STORED_REQUISITE_STORED_VALUE " + "SYSRES_CONST_ITALIC_LIFE_CYCLE_STAGE_DRAW_STYLE " + "SYSRES_CONST_JOB_BLOCK_DESCRIPTION " + "SYSRES_CONST_JOB_KIND_CONTROL_JOB " + "SYSRES_CONST_JOB_KIND_JOB " + "SYSRES_CONST_JOB_KIND_NOTICE " + "SYSRES_CONST_JOB_STATE_ABORTED " + "SYSRES_CONST_JOB_STATE_COMPLETE " + "SYSRES_CONST_JOB_STATE_WORKING " + "SYSRES_CONST_KIND_REQUISITE_CODE " + "SYSRES_CONST_KIND_REQUISITE_NAME " + "SYSRES_CONST_KINDS_CREATE_SHADOW_COPIES_REQUISITE_CODE " + "SYSRES_CONST_KINDS_DEFAULT_EDOC_LIFE_STAGE_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_ALL_TEPLATES_ALLOWED_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_ALLOW_LIFE_CYCLE_STAGE_CHANGING_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_ALLOW_MULTIPLE_ACTIVE_VERSIONS_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_SHARE_ACCES_RIGHTS_BY_DEFAULT_CODE " + "SYSRES_CONST_KINDS_EDOC_TEMPLATE_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_TYPE_REQUISITE_CODE " + "SYSRES_CONST_KINDS_SIGNERS_REQUISITES_CODE " + "SYSRES_CONST_KOD_INPUT_TYPE " + "SYSRES_CONST_LAST_UPDATE_DATE_REQUISITE_CODE " + "SYSRES_CONST_LIFE_CYCLE_START_STAGE_REQUISITE_CODE " + "SYSRES_CONST_LILAC_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_LINK_OBJECT_KIND_COMPONENT " + "SYSRES_CONST_LINK_OBJECT_KIND_DOCUMENT " + "SYSRES_CONST_LINK_OBJECT_KIND_EDOC " + "SYSRES_CONST_LINK_OBJECT_KIND_FOLDER " + "SYSRES_CONST_LINK_OBJECT_KIND_JOB " + "SYSRES_CONST_LINK_OBJECT_KIND_REFERENCE " + "SYSRES_CONST_LINK_OBJECT_KIND_TASK " + "SYSRES_CONST_LINK_REF_TYPE_REQUISITE_CODE " + "SYSRES_CONST_LIST_REFERENCE_MODE_NAME " + "SYSRES_CONST_LOCALIZATION_DICTIONARY_MAIN_VIEW_CODE " + "SYSRES_CONST_MAIN_VIEW_CODE " + "SYSRES_CONST_MANUAL_ENUM_METHOD_FLAG " + "SYSRES_CONST_MASTER_COMP_TYPE_REQUISITE_CODE " + "SYSRES_CONST_MASTER_TABLE_REC_ID_REQUISITE_CODE " + "SYSRES_CONST_MAXIMIZED_MODE_NAME " + "SYSRES_CONST_ME_VALUE " + "SYSRES_CONST_MESSAGE_ATTENTION_CAPTION " + "SYSRES_CONST_MESSAGE_CONFIRMATION_CAPTION " + "SYSRES_CONST_MESSAGE_ERROR_CAPTION " + "SYSRES_CONST_MESSAGE_INFORMATION_CAPTION " + "SYSRES_CONST_MINIMIZED_MODE_NAME " + "SYSRES_CONST_MINUTE_CHAR " + "SYSRES_CONST_MODULE_REQUISITE_CODE " + "SYSRES_CONST_MONITORING_BLOCK_DESCRIPTION " + "SYSRES_CONST_MONTH_FORMAT_VALUE " + "SYSRES_CONST_NAME_LOCALIZE_ID_REQUISITE_CODE " + "SYSRES_CONST_NAME_REQUISITE_CODE " + "SYSRES_CONST_NAME_SINGULAR_REQUISITE_CODE " + "SYSRES_CONST_NAMEAN_INPUT_TYPE " + "SYSRES_CONST_NEGATIVE_PICK_VALUE " + "SYSRES_CONST_NEGATIVE_VALUE " + "SYSRES_CONST_NO " + "SYSRES_CONST_NO_PICK_VALUE " + "SYSRES_CONST_NO_SIGNATURE_REQUISITE_CODE " + "SYSRES_CONST_NO_VALUE " + "SYSRES_CONST_NONE_ACCESS_RIGHTS_TYPE_CODE " + "SYSRES_CONST_NONOPERATING_RECORD_FLAG_VALUE " + "SYSRES_CONST_NONOPERATING_RECORD_FLAG_VALUE_MASCULINE " + "SYSRES_CONST_NORMAL_ACCESS_RIGHTS_TYPE_CODE " + "SYSRES_CONST_NORMAL_LIFE_CYCLE_STAGE_DRAW_STYLE " + "SYSRES_CONST_NORMAL_MODE_NAME " + "SYSRES_CONST_NOT_ALLOWED_ACCESS_TYPE_CODE " + "SYSRES_CONST_NOT_ALLOWED_ACCESS_TYPE_NAME " + "SYSRES_CONST_NOTE_REQUISITE_CODE " + "SYSRES_CONST_NOTICE_BLOCK_DESCRIPTION " + "SYSRES_CONST_NUM_REQUISITE " + "SYSRES_CONST_NUM_STR_REQUISITE_CODE " + "SYSRES_CONST_NUMERATION_AUTO_NOT_STRONG " + "SYSRES_CONST_NUMERATION_AUTO_STRONG " + "SYSRES_CONST_NUMERATION_FROM_DICTONARY " + "SYSRES_CONST_NUMERATION_MANUAL " + "SYSRES_CONST_NUMERIC_TYPE_CHAR " + "SYSRES_CONST_NUMREQ_REQUISITE_CODE " + "SYSRES_CONST_OBSOLETE_VERSION_STATE_PICK_VALUE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE_CODE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE_FEMININE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE_MASCULINE " + "SYSRES_CONST_OPTIONAL_FORM_COMP_REQCODE_PREFIX " + "SYSRES_CONST_ORANGE_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_ORIGINALREF_REQUISITE_CODE " + "SYSRES_CONST_OURFIRM_REF_CODE " + "SYSRES_CONST_OURFIRM_REQUISITE_CODE " + "SYSRES_CONST_OURFIRM_VAR " + "SYSRES_CONST_OUTGOING_WORK_RULE_TYPE_CODE " + "SYSRES_CONST_PICK_NEGATIVE_RESULT " + "SYSRES_CONST_PICK_POSITIVE_RESULT " + "SYSRES_CONST_PICK_REQUISITE " + "SYSRES_CONST_PICK_REQUISITE_TYPE " + "SYSRES_CONST_PICK_TYPE_CHAR " + "SYSRES_CONST_PLAN_STATUS_REQUISITE_CODE " + "SYSRES_CONST_PLATFORM_VERSION_COMMENT " + "SYSRES_CONST_PLUGINS_SETTINGS_DESCRIPTION_REQUISITE_CODE " + "SYSRES_CONST_POSITIVE_PICK_VALUE " + "SYSRES_CONST_POWER_TO_CREATE_ACTION_CODE " + "SYSRES_CONST_POWER_TO_SIGN_ACTION_CODE " + "SYSRES_CONST_PRIORITY_REQUISITE_CODE " + "SYSRES_CONST_QUALIFIED_TASK_TYPE " + "SYSRES_CONST_QUALIFIED_TASK_TYPE_CODE " + "SYSRES_CONST_RECSTAT_REQUISITE_CODE " + "SYSRES_CONST_RED_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_REF_ID_T_REF_TYPE_REQUISITE_CODE " + "SYSRES_CONST_REF_REQUISITE " + "SYSRES_CONST_REF_REQUISITE_TYPE " + "SYSRES_CONST_REF_REQUISITES_REFERENCE_CODE_SELECTED_REQUISITE " + "SYSRES_CONST_REFERENCE_RECORD_HISTORY_CREATE_ACTION_CODE " + "SYSRES_CONST_REFERENCE_RECORD_HISTORY_DELETE_ACTION_CODE " + "SYSRES_CONST_REFERENCE_RECORD_HISTORY_MODIFY_ACTION_CODE " + "SYSRES_CONST_REFERENCE_TYPE_CHAR " + "SYSRES_CONST_REFERENCE_TYPE_REQUISITE_NAME " + "SYSRES_CONST_REFERENCES_ADD_PARAMS_REQUISITE_CODE " + "SYSRES_CONST_REFERENCES_DISPLAY_REQUISITE_REQUISITE_CODE " + "SYSRES_CONST_REMOTE_SERVER_STATUS_WORKING " + "SYSRES_CONST_REMOTE_SERVER_TYPE_MAIN " + "SYSRES_CONST_REMOTE_SERVER_TYPE_SECONDARY " + "SYSRES_CONST_REMOTE_USER_FLAG_VALUE_CODE " + "SYSRES_CONST_REPORT_APP_EDITOR_INTERNAL " + "SYSRES_CONST_REPORT_BASE_REPORT_ID_REQUISITE_CODE " + "SYSRES_CONST_REPORT_BASE_REPORT_REQUISITE_CODE " + "SYSRES_CONST_REPORT_SCRIPT_REQUISITE_CODE " + "SYSRES_CONST_REPORT_TEMPLATE_REQUISITE_CODE " + "SYSRES_CONST_REPORT_VIEWER_CODE_REQUISITE_CODE " + "SYSRES_CONST_REQ_ALLOW_COMPONENT_DEFAULT_VALUE " + "SYSRES_CONST_REQ_ALLOW_RECORD_DEFAULT_VALUE " + "SYSRES_CONST_REQ_ALLOW_SERVER_COMPONENT_DEFAULT_VALUE " + "SYSRES_CONST_REQ_MODE_AVAILABLE_CODE " + "SYSRES_CONST_REQ_MODE_EDIT_CODE " + "SYSRES_CONST_REQ_MODE_HIDDEN_CODE " + "SYSRES_CONST_REQ_MODE_NOT_AVAILABLE_CODE " + "SYSRES_CONST_REQ_MODE_VIEW_CODE " + "SYSRES_CONST_REQ_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_REQ_SECTION_VALUE " + "SYSRES_CONST_REQ_TYPE_VALUE " + "SYSRES_CONST_REQUISITE_FORMAT_BY_UNIT " + "SYSRES_CONST_REQUISITE_FORMAT_DATE_FULL " + "SYSRES_CONST_REQUISITE_FORMAT_DATE_TIME " + "SYSRES_CONST_REQUISITE_FORMAT_LEFT " + "SYSRES_CONST_REQUISITE_FORMAT_RIGHT " + "SYSRES_CONST_REQUISITE_FORMAT_WITHOUT_UNIT " + "SYSRES_CONST_REQUISITE_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_REQUISITE_SECTION_ACTIONS " + "SYSRES_CONST_REQUISITE_SECTION_BUTTON " + "SYSRES_CONST_REQUISITE_SECTION_BUTTONS " + "SYSRES_CONST_REQUISITE_SECTION_CARD " + "SYSRES_CONST_REQUISITE_SECTION_TABLE " + "SYSRES_CONST_REQUISITE_SECTION_TABLE10 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE11 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE12 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE13 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE14 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE15 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE16 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE17 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE18 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE19 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE2 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE20 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE21 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE22 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE23 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE24 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE3 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE4 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE5 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE6 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE7 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE8 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE9 " + "SYSRES_CONST_REQUISITES_PSEUDOREFERENCE_REQUISITE_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_RIGHT_ALIGNMENT_CODE " + "SYSRES_CONST_ROLES_REFERENCE_CODE " + "SYSRES_CONST_ROUTE_STEP_AFTER_RUS " + "SYSRES_CONST_ROUTE_STEP_AND_CONDITION_RUS " + "SYSRES_CONST_ROUTE_STEP_OR_CONDITION_RUS " + "SYSRES_CONST_ROUTE_TYPE_COMPLEX " + "SYSRES_CONST_ROUTE_TYPE_PARALLEL " + "SYSRES_CONST_ROUTE_TYPE_SERIAL " + "SYSRES_CONST_SBDATASETDESC_NEGATIVE_VALUE " + "SYSRES_CONST_SBDATASETDESC_POSITIVE_VALUE " + "SYSRES_CONST_SBVIEWSDESC_POSITIVE_VALUE " + "SYSRES_CONST_SCRIPT_BLOCK_DESCRIPTION " + "SYSRES_CONST_SEARCH_BY_TEXT_REQUISITE_CODE " + "SYSRES_CONST_SEARCHES_COMPONENT_CONTENT " + "SYSRES_CONST_SEARCHES_CRITERIA_ACTION_NAME " + "SYSRES_CONST_SEARCHES_EDOC_CONTENT " + "SYSRES_CONST_SEARCHES_FOLDER_CONTENT " + "SYSRES_CONST_SEARCHES_JOB_CONTENT " + "SYSRES_CONST_SEARCHES_REFERENCE_CODE " + "SYSRES_CONST_SEARCHES_TASK_CONTENT " + "SYSRES_CONST_SECOND_CHAR " + "SYSRES_CONST_SECTION_REQUISITE_ACTIONS_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_CARD_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_CODE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_1_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_2_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_3_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_4_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_5_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_6_VALUE " + "SYSRES_CONST_SELECT_REFERENCE_MODE_NAME " + "SYSRES_CONST_SELECT_TYPE_SELECTABLE " + "SYSRES_CONST_SELECT_TYPE_SELECTABLE_ONLY_CHILD " + "SYSRES_CONST_SELECT_TYPE_SELECTABLE_WITH_CHILD " + "SYSRES_CONST_SELECT_TYPE_UNSLECTABLE " + "SYSRES_CONST_SERVER_TYPE_MAIN " + "SYSRES_CONST_SERVICE_USER_CATEGORY_FIELD_VALUE " + "SYSRES_CONST_SETTINGS_USER_REQUISITE_CODE " + "SYSRES_CONST_SIGNATURE_AND_ENCODE_CERTIFICATE_TYPE_CODE " + "SYSRES_CONST_SIGNATURE_CERTIFICATE_TYPE_CODE " + "SYSRES_CONST_SINGULAR_TITLE_REQUISITE_CODE " + "SYSRES_CONST_SQL_SERVER_AUTHENTIFICATION_FLAG_VALUE_CODE " + "SYSRES_CONST_SQL_SERVER_ENCODE_AUTHENTIFICATION_FLAG_VALUE_CODE " + "SYSRES_CONST_STANDART_ROUTE_REFERENCE_CODE " + "SYSRES_CONST_STANDART_ROUTE_REFERENCE_COMMENT_REQUISITE_CODE " + "SYSRES_CONST_STANDART_ROUTES_GROUPS_REFERENCE_CODE " + "SYSRES_CONST_STATE_REQ_NAME " + "SYSRES_CONST_STATE_REQUISITE_ACTIVE_VALUE " + "SYSRES_CONST_STATE_REQUISITE_CLOSED_VALUE " + "SYSRES_CONST_STATE_REQUISITE_CODE " + "SYSRES_CONST_STATIC_ROLE_TYPE_CODE " + "SYSRES_CONST_STATUS_PLAN_DEFAULT_VALUE " + "SYSRES_CONST_STATUS_VALUE_AUTOCLEANING " + "SYSRES_CONST_STATUS_VALUE_BLUE_SQUARE " + "SYSRES_CONST_STATUS_VALUE_COMPLETE " + "SYSRES_CONST_STATUS_VALUE_GREEN_SQUARE " + "SYSRES_CONST_STATUS_VALUE_ORANGE_SQUARE " + "SYSRES_CONST_STATUS_VALUE_PURPLE_SQUARE " + "SYSRES_CONST_STATUS_VALUE_RED_SQUARE " + "SYSRES_CONST_STATUS_VALUE_SUSPEND " + "SYSRES_CONST_STATUS_VALUE_YELLOW_SQUARE " + "SYSRES_CONST_STDROUTE_SHOW_TO_USERS_REQUISITE_CODE " + "SYSRES_CONST_STORAGE_TYPE_FILE " + "SYSRES_CONST_STORAGE_TYPE_SQL_SERVER " + "SYSRES_CONST_STR_REQUISITE " + "SYSRES_CONST_STRIKEOUT_LIFE_CYCLE_STAGE_DRAW_STYLE " + "SYSRES_CONST_STRING_FORMAT_LEFT_ALIGN_CHAR " + "SYSRES_CONST_STRING_FORMAT_RIGHT_ALIGN_CHAR " + "SYSRES_CONST_STRING_REQUISITE_CODE " + "SYSRES_CONST_STRING_REQUISITE_TYPE " + "SYSRES_CONST_STRING_TYPE_CHAR " + "SYSRES_CONST_SUBSTITUTES_PSEUDOREFERENCE_CODE " + "SYSRES_CONST_SUBTASK_BLOCK_DESCRIPTION " + "SYSRES_CONST_SYSTEM_SETTING_CURRENT_USER_PARAM_VALUE " + "SYSRES_CONST_SYSTEM_SETTING_EMPTY_VALUE_PARAM_VALUE " + "SYSRES_CONST_SYSTEM_VERSION_COMMENT " + "SYSRES_CONST_TASK_ACCESS_TYPE_ALL " + "SYSRES_CONST_TASK_ACCESS_TYPE_ALL_MEMBERS " + "SYSRES_CONST_TASK_ACCESS_TYPE_MANUAL " + "SYSRES_CONST_TASK_ENCODE_TYPE_CERTIFICATION " + "SYSRES_CONST_TASK_ENCODE_TYPE_CERTIFICATION_AND_PASSWORD " + "SYSRES_CONST_TASK_ENCODE_TYPE_NONE " + "SYSRES_CONST_TASK_ENCODE_TYPE_PASSWORD " + "SYSRES_CONST_TASK_ROUTE_ALL_CONDITION " + "SYSRES_CONST_TASK_ROUTE_AND_CONDITION " + "SYSRES_CONST_TASK_ROUTE_OR_CONDITION " + "SYSRES_CONST_TASK_STATE_ABORTED " + "SYSRES_CONST_TASK_STATE_COMPLETE " + "SYSRES_CONST_TASK_STATE_CONTINUED " + "SYSRES_CONST_TASK_STATE_CONTROL " + "SYSRES_CONST_TASK_STATE_INIT " + "SYSRES_CONST_TASK_STATE_WORKING " + "SYSRES_CONST_TASK_TITLE " + "SYSRES_CONST_TASK_TYPES_GROUPS_REFERENCE_CODE " + "SYSRES_CONST_TASK_TYPES_REFERENCE_CODE " + "SYSRES_CONST_TEMPLATES_REFERENCE_CODE " + "SYSRES_CONST_TEST_DATE_REQUISITE_NAME " + "SYSRES_CONST_TEST_DEV_DATABASE_NAME " + "SYSRES_CONST_TEST_DEV_SYSTEM_CODE " + "SYSRES_CONST_TEST_EDMS_DATABASE_NAME " + "SYSRES_CONST_TEST_EDMS_MAIN_CODE " + "SYSRES_CONST_TEST_EDMS_MAIN_DB_NAME " + "SYSRES_CONST_TEST_EDMS_SECOND_CODE " + "SYSRES_CONST_TEST_EDMS_SECOND_DB_NAME " + "SYSRES_CONST_TEST_EDMS_SYSTEM_CODE " + "SYSRES_CONST_TEST_NUMERIC_REQUISITE_NAME " + "SYSRES_CONST_TEXT_REQUISITE " + "SYSRES_CONST_TEXT_REQUISITE_CODE " + "SYSRES_CONST_TEXT_REQUISITE_TYPE " + "SYSRES_CONST_TEXT_TYPE_CHAR " + "SYSRES_CONST_TYPE_CODE_REQUISITE_CODE " + "SYSRES_CONST_TYPE_REQUISITE_CODE " + "SYSRES_CONST_UNDEFINED_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_UNITS_SECTION_ID_REQUISITE_CODE " + "SYSRES_CONST_UNITS_SECTION_REQUISITE_CODE " + "SYSRES_CONST_UNOPERATING_RECORD_FLAG_VALUE_CODE " + "SYSRES_CONST_UNSTORED_DATA_REQUISITE_CODE " + "SYSRES_CONST_UNSTORED_DATA_REQUISITE_NAME " + "SYSRES_CONST_USE_ACCESS_TYPE_CODE " + "SYSRES_CONST_USE_ACCESS_TYPE_NAME " + "SYSRES_CONST_USER_ACCOUNT_TYPE_VALUE_CODE " + "SYSRES_CONST_USER_ADDITIONAL_INFORMATION_REQUISITE_CODE " + "SYSRES_CONST_USER_AND_GROUP_ID_FROM_PSEUDOREFERENCE_REQUISITE_CODE " + "SYSRES_CONST_USER_CATEGORY_NORMAL " + "SYSRES_CONST_USER_CERTIFICATE_REQUISITE_CODE " + "SYSRES_CONST_USER_CERTIFICATE_STATE_REQUISITE_CODE " + "SYSRES_CONST_USER_CERTIFICATE_SUBJECT_NAME_REQUISITE_CODE " + "SYSRES_CONST_USER_CERTIFICATE_THUMBPRINT_REQUISITE_CODE " + "SYSRES_CONST_USER_COMMON_CATEGORY " + "SYSRES_CONST_USER_COMMON_CATEGORY_CODE " + "SYSRES_CONST_USER_FULL_NAME_REQUISITE_CODE " + "SYSRES_CONST_USER_GROUP_TYPE_REQUISITE_CODE " + "SYSRES_CONST_USER_LOGIN_REQUISITE_CODE " + "SYSRES_CONST_USER_REMOTE_CONTROLLER_REQUISITE_CODE " + "SYSRES_CONST_USER_REMOTE_SYSTEM_REQUISITE_CODE " + "SYSRES_CONST_USER_RIGHTS_T_REQUISITE_CODE " + "SYSRES_CONST_USER_SERVER_NAME_REQUISITE_CODE " + "SYSRES_CONST_USER_SERVICE_CATEGORY " + "SYSRES_CONST_USER_SERVICE_CATEGORY_CODE " + "SYSRES_CONST_USER_STATUS_ADMINISTRATOR_CODE " + "SYSRES_CONST_USER_STATUS_ADMINISTRATOR_NAME " + "SYSRES_CONST_USER_STATUS_DEVELOPER_CODE " + "SYSRES_CONST_USER_STATUS_DEVELOPER_NAME " + "SYSRES_CONST_USER_STATUS_DISABLED_CODE " + "SYSRES_CONST_USER_STATUS_DISABLED_NAME " + "SYSRES_CONST_USER_STATUS_SYSTEM_DEVELOPER_CODE " + "SYSRES_CONST_USER_STATUS_USER_CODE " + "SYSRES_CONST_USER_STATUS_USER_NAME " + "SYSRES_CONST_USER_STATUS_USER_NAME_DEPRECATED " + "SYSRES_CONST_USER_TYPE_FIELD_VALUE_USER " + "SYSRES_CONST_USER_TYPE_REQUISITE_CODE " + "SYSRES_CONST_USERS_CONTROLLER_REQUISITE_CODE " + "SYSRES_CONST_USERS_IS_MAIN_SERVER_REQUISITE_CODE " + "SYSRES_CONST_USERS_REFERENCE_CODE " + "SYSRES_CONST_USERS_REGISTRATION_CERTIFICATES_ACTION_NAME " + "SYSRES_CONST_USERS_REQUISITE_CODE " + "SYSRES_CONST_USERS_SYSTEM_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_ACCESS_RIGHTS_TYPR_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_AUTHENTICATION_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_COMPONENT_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_GROUP_REQUISITE_CODE " + "SYSRES_CONST_USERS_VIEW_CERTIFICATES_ACTION_NAME " + "SYSRES_CONST_VIEW_DEFAULT_CODE " + "SYSRES_CONST_VIEW_DEFAULT_NAME " + "SYSRES_CONST_VIEWER_REQUISITE_CODE " + "SYSRES_CONST_WAITING_BLOCK_DESCRIPTION " + "SYSRES_CONST_WIZARD_FORM_LABEL_TEST_STRING  " + "SYSRES_CONST_WIZARD_QUERY_PARAM_HEIGHT_ETALON_STRING " + "SYSRES_CONST_WIZARD_REFERENCE_COMMENT_REQUISITE_CODE " + "SYSRES_CONST_WORK_RULES_DESCRIPTION_REQUISITE_CODE " + "SYSRES_CONST_WORK_TIME_CALENDAR_REFERENCE_CODE " + "SYSRES_CONST_WORK_WORKFLOW_HARD_ROUTE_TYPE_VALUE " + "SYSRES_CONST_WORK_WORKFLOW_HARD_ROUTE_TYPE_VALUE_CODE " + "SYSRES_CONST_WORK_WORKFLOW_HARD_ROUTE_TYPE_VALUE_CODE_RUS " + "SYSRES_CONST_WORK_WORKFLOW_SOFT_ROUTE_TYPE_VALUE_CODE_RUS " + "SYSRES_CONST_WORKFLOW_ROUTE_TYPR_HARD " + "SYSRES_CONST_WORKFLOW_ROUTE_TYPR_SOFT " + "SYSRES_CONST_XML_ENCODING " + "SYSRES_CONST_XREC_STAT_REQUISITE_CODE " + "SYSRES_CONST_XRECID_FIELD_NAME " + "SYSRES_CONST_YES " + "SYSRES_CONST_YES_NO_2_REQUISITE_CODE " + "SYSRES_CONST_YES_NO_REQUISITE_CODE " + "SYSRES_CONST_YES_NO_T_REF_TYPE_REQUISITE_CODE " + "SYSRES_CONST_YES_PICK_VALUE " + "SYSRES_CONST_YES_VALUE ";
+  const sysres_constants = "SYSRES_CONST_ACCES_RIGHT_TYPE_EDIT " + "SYSRES_CONST_ACCES_RIGHT_TYPE_FULL " + "SYSRES_CONST_ACCES_RIGHT_TYPE_VIEW " + "SYSRES_CONST_ACCESS_MODE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_NO_ACCESS_VIEW " + "SYSRES_CONST_ACCESS_NO_ACCESS_VIEW_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_ADD_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_ADD_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_CHANGE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_CHANGE_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_DELETE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_DELETE_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_EXECUTE_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_EXECUTE_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_NO_ACCESS_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_NO_ACCESS_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_RATIFY_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_RATIFY_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW_REQUISITE_CODE " + "SYSRES_CONST_ACCESS_RIGHTS_VIEW_REQUISITE_YES_CODE " + "SYSRES_CONST_ACCESS_TYPE_CHANGE " + "SYSRES_CONST_ACCESS_TYPE_CHANGE_CODE " + "SYSRES_CONST_ACCESS_TYPE_EXISTS " + "SYSRES_CONST_ACCESS_TYPE_EXISTS_CODE " + "SYSRES_CONST_ACCESS_TYPE_FULL " + "SYSRES_CONST_ACCESS_TYPE_FULL_CODE " + "SYSRES_CONST_ACCESS_TYPE_VIEW " + "SYSRES_CONST_ACCESS_TYPE_VIEW_CODE " + "SYSRES_CONST_ACTION_TYPE_ABORT " + "SYSRES_CONST_ACTION_TYPE_ACCEPT " + "SYSRES_CONST_ACTION_TYPE_ACCESS_RIGHTS " + "SYSRES_CONST_ACTION_TYPE_ADD_ATTACHMENT " + "SYSRES_CONST_ACTION_TYPE_CHANGE_CARD " + "SYSRES_CONST_ACTION_TYPE_CHANGE_KIND " + "SYSRES_CONST_ACTION_TYPE_CHANGE_STORAGE " + "SYSRES_CONST_ACTION_TYPE_CONTINUE " + "SYSRES_CONST_ACTION_TYPE_COPY " + "SYSRES_CONST_ACTION_TYPE_CREATE " + "SYSRES_CONST_ACTION_TYPE_CREATE_VERSION " + "SYSRES_CONST_ACTION_TYPE_DELETE " + "SYSRES_CONST_ACTION_TYPE_DELETE_ATTACHMENT " + "SYSRES_CONST_ACTION_TYPE_DELETE_VERSION " + "SYSRES_CONST_ACTION_TYPE_DISABLE_DELEGATE_ACCESS_RIGHTS " + "SYSRES_CONST_ACTION_TYPE_ENABLE_DELEGATE_ACCESS_RIGHTS " + "SYSRES_CONST_ACTION_TYPE_ENCRYPTION_BY_CERTIFICATE " + "SYSRES_CONST_ACTION_TYPE_ENCRYPTION_BY_CERTIFICATE_AND_PASSWORD " + "SYSRES_CONST_ACTION_TYPE_ENCRYPTION_BY_PASSWORD " + "SYSRES_CONST_ACTION_TYPE_EXPORT_WITH_LOCK " + "SYSRES_CONST_ACTION_TYPE_EXPORT_WITHOUT_LOCK " + "SYSRES_CONST_ACTION_TYPE_IMPORT_WITH_UNLOCK " + "SYSRES_CONST_ACTION_TYPE_IMPORT_WITHOUT_UNLOCK " + "SYSRES_CONST_ACTION_TYPE_LIFE_CYCLE_STAGE " + "SYSRES_CONST_ACTION_TYPE_LOCK " + "SYSRES_CONST_ACTION_TYPE_LOCK_FOR_SERVER " + "SYSRES_CONST_ACTION_TYPE_LOCK_MODIFY " + "SYSRES_CONST_ACTION_TYPE_MARK_AS_READED " + "SYSRES_CONST_ACTION_TYPE_MARK_AS_UNREADED " + "SYSRES_CONST_ACTION_TYPE_MODIFY " + "SYSRES_CONST_ACTION_TYPE_MODIFY_CARD " + "SYSRES_CONST_ACTION_TYPE_MOVE_TO_ARCHIVE " + "SYSRES_CONST_ACTION_TYPE_OFF_ENCRYPTION " + "SYSRES_CONST_ACTION_TYPE_PASSWORD_CHANGE " + "SYSRES_CONST_ACTION_TYPE_PERFORM " + "SYSRES_CONST_ACTION_TYPE_RECOVER_FROM_LOCAL_COPY " + "SYSRES_CONST_ACTION_TYPE_RESTART " + "SYSRES_CONST_ACTION_TYPE_RESTORE_FROM_ARCHIVE " + "SYSRES_CONST_ACTION_TYPE_REVISION " + "SYSRES_CONST_ACTION_TYPE_SEND_BY_MAIL " + "SYSRES_CONST_ACTION_TYPE_SIGN " + "SYSRES_CONST_ACTION_TYPE_START " + "SYSRES_CONST_ACTION_TYPE_UNLOCK " + "SYSRES_CONST_ACTION_TYPE_UNLOCK_FROM_SERVER " + "SYSRES_CONST_ACTION_TYPE_VERSION_STATE " + "SYSRES_CONST_ACTION_TYPE_VERSION_VISIBILITY " + "SYSRES_CONST_ACTION_TYPE_VIEW " + "SYSRES_CONST_ACTION_TYPE_VIEW_SHADOW_COPY " + "SYSRES_CONST_ACTION_TYPE_WORKFLOW_DESCRIPTION_MODIFY " + "SYSRES_CONST_ACTION_TYPE_WRITE_HISTORY " + "SYSRES_CONST_ACTIVE_VERSION_STATE_PICK_VALUE " + "SYSRES_CONST_ADD_REFERENCE_MODE_NAME " + "SYSRES_CONST_ADDITION_REQUISITE_CODE " + "SYSRES_CONST_ADDITIONAL_PARAMS_REQUISITE_CODE " + "SYSRES_CONST_ADITIONAL_JOB_END_DATE_REQUISITE_NAME " + "SYSRES_CONST_ADITIONAL_JOB_READ_REQUISITE_NAME " + "SYSRES_CONST_ADITIONAL_JOB_START_DATE_REQUISITE_NAME " + "SYSRES_CONST_ADITIONAL_JOB_STATE_REQUISITE_NAME " + "SYSRES_CONST_ADMINISTRATION_HISTORY_ADDING_USER_TO_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_ADDING_USER_TO_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_COMP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_COMP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_USER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_CREATION_USER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_CREATION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_CREATION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_DELETION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DATABASE_USER_DELETION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_COMP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_COMP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_FROM_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_DELETION_USER_FROM_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_RESTRICTION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_FILTERER_RESTRICTION_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_PRIVILEGE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_PRIVILEGE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_RIGHTS_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_GRANTING_RIGHTS_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_MAIN_SERVER_CHANGED_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_MAIN_SERVER_CHANGED_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_PUBLIC_CHANGED_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_IS_PUBLIC_CHANGED_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_RESTRICTION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_FILTERER_RESTRICTION_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_PRIVILEGE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_PRIVILEGE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_RIGHTS_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_REMOVING_RIGHTS_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_CREATION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_CREATION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_DELETION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_SERVER_LOGIN_DELETION_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_CATEGORY_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_CATEGORY_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_COMP_TITLE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_COMP_TITLE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_FULL_NAME_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_FULL_NAME_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_PARENT_GROUP_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_PARENT_GROUP_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_AUTH_TYPE_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_AUTH_TYPE_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_LOGIN_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_LOGIN_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_STATUS_ACTION " + "SYSRES_CONST_ADMINISTRATION_HISTORY_UPDATING_USER_STATUS_ACTION_CODE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_USER_PASSWORD_CHANGE " + "SYSRES_CONST_ADMINISTRATION_HISTORY_USER_PASSWORD_CHANGE_ACTION " + "SYSRES_CONST_ALL_ACCEPT_CONDITION_RUS " + "SYSRES_CONST_ALL_USERS_GROUP " + "SYSRES_CONST_ALL_USERS_GROUP_NAME " + "SYSRES_CONST_ALL_USERS_SERVER_GROUP_NAME " + "SYSRES_CONST_ALLOWED_ACCESS_TYPE_CODE " + "SYSRES_CONST_ALLOWED_ACCESS_TYPE_NAME " + "SYSRES_CONST_APP_VIEWER_TYPE_REQUISITE_CODE " + "SYSRES_CONST_APPROVING_SIGNATURE_NAME " + "SYSRES_CONST_APPROVING_SIGNATURE_REQUISITE_CODE " + "SYSRES_CONST_ASSISTANT_SUBSTITUE_TYPE " + "SYSRES_CONST_ASSISTANT_SUBSTITUE_TYPE_CODE " + "SYSRES_CONST_ATTACH_TYPE_COMPONENT_TOKEN " + "SYSRES_CONST_ATTACH_TYPE_DOC " + "SYSRES_CONST_ATTACH_TYPE_EDOC " + "SYSRES_CONST_ATTACH_TYPE_FOLDER " + "SYSRES_CONST_ATTACH_TYPE_JOB " + "SYSRES_CONST_ATTACH_TYPE_REFERENCE " + "SYSRES_CONST_ATTACH_TYPE_TASK " + "SYSRES_CONST_AUTH_ENCODED_PASSWORD " + "SYSRES_CONST_AUTH_ENCODED_PASSWORD_CODE " + "SYSRES_CONST_AUTH_NOVELL " + "SYSRES_CONST_AUTH_PASSWORD " + "SYSRES_CONST_AUTH_PASSWORD_CODE " + "SYSRES_CONST_AUTH_WINDOWS " + "SYSRES_CONST_AUTHENTICATING_SIGNATURE_NAME " + "SYSRES_CONST_AUTHENTICATING_SIGNATURE_REQUISITE_CODE " + "SYSRES_CONST_AUTO_ENUM_METHOD_FLAG " + "SYSRES_CONST_AUTO_NUMERATION_CODE " + "SYSRES_CONST_AUTO_STRONG_ENUM_METHOD_FLAG " + "SYSRES_CONST_AUTOTEXT_NAME_REQUISITE_CODE " + "SYSRES_CONST_AUTOTEXT_TEXT_REQUISITE_CODE " + "SYSRES_CONST_AUTOTEXT_USAGE_ALL " + "SYSRES_CONST_AUTOTEXT_USAGE_ALL_CODE " + "SYSRES_CONST_AUTOTEXT_USAGE_SIGN " + "SYSRES_CONST_AUTOTEXT_USAGE_SIGN_CODE " + "SYSRES_CONST_AUTOTEXT_USAGE_WORK " + "SYSRES_CONST_AUTOTEXT_USAGE_WORK_CODE " + "SYSRES_CONST_AUTOTEXT_USE_ANYWHERE_CODE " + "SYSRES_CONST_AUTOTEXT_USE_ON_SIGNING_CODE " + "SYSRES_CONST_AUTOTEXT_USE_ON_WORK_CODE " + "SYSRES_CONST_BEGIN_DATE_REQUISITE_CODE " + "SYSRES_CONST_BLACK_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_BLUE_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_BTN_PART " + "SYSRES_CONST_CALCULATED_ROLE_TYPE_CODE " + "SYSRES_CONST_CALL_TYPE_VARIABLE_BUTTON_VALUE " + "SYSRES_CONST_CALL_TYPE_VARIABLE_PROGRAM_VALUE " + "SYSRES_CONST_CANCEL_MESSAGE_FUNCTION_RESULT " + "SYSRES_CONST_CARD_PART " + "SYSRES_CONST_CARD_REFERENCE_MODE_NAME " + "SYSRES_CONST_CERTIFICATE_TYPE_REQUISITE_ENCRYPT_VALUE " + "SYSRES_CONST_CERTIFICATE_TYPE_REQUISITE_SIGN_AND_ENCRYPT_VALUE " + "SYSRES_CONST_CERTIFICATE_TYPE_REQUISITE_SIGN_VALUE " + "SYSRES_CONST_CHECK_PARAM_VALUE_DATE_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_FLOAT_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_INTEGER_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_PICK_PARAM_TYPE " + "SYSRES_CONST_CHECK_PARAM_VALUE_REEFRENCE_PARAM_TYPE " + "SYSRES_CONST_CLOSED_RECORD_FLAG_VALUE_FEMININE " + "SYSRES_CONST_CLOSED_RECORD_FLAG_VALUE_MASCULINE " + "SYSRES_CONST_CODE_COMPONENT_TYPE_ADMIN " + "SYSRES_CONST_CODE_COMPONENT_TYPE_DEVELOPER " + "SYSRES_CONST_CODE_COMPONENT_TYPE_DOCS " + "SYSRES_CONST_CODE_COMPONENT_TYPE_EDOC_CARDS " + "SYSRES_CONST_CODE_COMPONENT_TYPE_EXTERNAL_EXECUTABLE " + "SYSRES_CONST_CODE_COMPONENT_TYPE_OTHER " + "SYSRES_CONST_CODE_COMPONENT_TYPE_REFERENCE " + "SYSRES_CONST_CODE_COMPONENT_TYPE_REPORT " + "SYSRES_CONST_CODE_COMPONENT_TYPE_SCRIPT " + "SYSRES_CONST_CODE_COMPONENT_TYPE_URL " + "SYSRES_CONST_CODE_REQUISITE_ACCESS " + "SYSRES_CONST_CODE_REQUISITE_CODE " + "SYSRES_CONST_CODE_REQUISITE_COMPONENT " + "SYSRES_CONST_CODE_REQUISITE_DESCRIPTION " + "SYSRES_CONST_CODE_REQUISITE_EXCLUDE_COMPONENT " + "SYSRES_CONST_CODE_REQUISITE_RECORD " + "SYSRES_CONST_COMMENT_REQ_CODE " + "SYSRES_CONST_COMMON_SETTINGS_REQUISITE_CODE " + "SYSRES_CONST_COMP_CODE_GRD " + "SYSRES_CONST_COMPONENT_GROUP_TYPE_REQUISITE_CODE " + "SYSRES_CONST_COMPONENT_TYPE_ADMIN_COMPONENTS " + "SYSRES_CONST_COMPONENT_TYPE_DEVELOPER_COMPONENTS " + "SYSRES_CONST_COMPONENT_TYPE_DOCS " + "SYSRES_CONST_COMPONENT_TYPE_EDOC_CARDS " + "SYSRES_CONST_COMPONENT_TYPE_EDOCS " + "SYSRES_CONST_COMPONENT_TYPE_EXTERNAL_EXECUTABLE " + "SYSRES_CONST_COMPONENT_TYPE_OTHER " + "SYSRES_CONST_COMPONENT_TYPE_REFERENCE_TYPES " + "SYSRES_CONST_COMPONENT_TYPE_REFERENCES " + "SYSRES_CONST_COMPONENT_TYPE_REPORTS " + "SYSRES_CONST_COMPONENT_TYPE_SCRIPTS " + "SYSRES_CONST_COMPONENT_TYPE_URL " + "SYSRES_CONST_COMPONENTS_REMOTE_SERVERS_VIEW_CODE " + "SYSRES_CONST_CONDITION_BLOCK_DESCRIPTION " + "SYSRES_CONST_CONST_FIRM_STATUS_COMMON " + "SYSRES_CONST_CONST_FIRM_STATUS_INDIVIDUAL " + "SYSRES_CONST_CONST_NEGATIVE_VALUE " + "SYSRES_CONST_CONST_POSITIVE_VALUE " + "SYSRES_CONST_CONST_SERVER_STATUS_DONT_REPLICATE " + "SYSRES_CONST_CONST_SERVER_STATUS_REPLICATE " + "SYSRES_CONST_CONTENTS_REQUISITE_CODE " + "SYSRES_CONST_DATA_TYPE_BOOLEAN " + "SYSRES_CONST_DATA_TYPE_DATE " + "SYSRES_CONST_DATA_TYPE_FLOAT " + "SYSRES_CONST_DATA_TYPE_INTEGER " + "SYSRES_CONST_DATA_TYPE_PICK " + "SYSRES_CONST_DATA_TYPE_REFERENCE " + "SYSRES_CONST_DATA_TYPE_STRING " + "SYSRES_CONST_DATA_TYPE_TEXT " + "SYSRES_CONST_DATA_TYPE_VARIANT " + "SYSRES_CONST_DATE_CLOSE_REQ_CODE " + "SYSRES_CONST_DATE_FORMAT_DATE_ONLY_CHAR " + "SYSRES_CONST_DATE_OPEN_REQ_CODE " + "SYSRES_CONST_DATE_REQUISITE " + "SYSRES_CONST_DATE_REQUISITE_CODE " + "SYSRES_CONST_DATE_REQUISITE_NAME " + "SYSRES_CONST_DATE_REQUISITE_TYPE " + "SYSRES_CONST_DATE_TYPE_CHAR " + "SYSRES_CONST_DATETIME_FORMAT_VALUE " + "SYSRES_CONST_DEA_ACCESS_RIGHTS_ACTION_CODE " + "SYSRES_CONST_DESCRIPTION_LOCALIZE_ID_REQUISITE_CODE " + "SYSRES_CONST_DESCRIPTION_REQUISITE_CODE " + "SYSRES_CONST_DET1_PART " + "SYSRES_CONST_DET2_PART " + "SYSRES_CONST_DET3_PART " + "SYSRES_CONST_DET4_PART " + "SYSRES_CONST_DET5_PART " + "SYSRES_CONST_DET6_PART " + "SYSRES_CONST_DETAIL_DATASET_KEY_REQUISITE_CODE " + "SYSRES_CONST_DETAIL_PICK_REQUISITE_CODE " + "SYSRES_CONST_DETAIL_REQ_CODE " + "SYSRES_CONST_DO_NOT_USE_ACCESS_TYPE_CODE " + "SYSRES_CONST_DO_NOT_USE_ACCESS_TYPE_NAME " + "SYSRES_CONST_DO_NOT_USE_ON_VIEW_ACCESS_TYPE_CODE " + "SYSRES_CONST_DO_NOT_USE_ON_VIEW_ACCESS_TYPE_NAME " + "SYSRES_CONST_DOCUMENT_STORAGES_CODE " + "SYSRES_CONST_DOCUMENT_TEMPLATES_TYPE_NAME " + "SYSRES_CONST_DOUBLE_REQUISITE_CODE " + "SYSRES_CONST_EDITOR_CLOSE_FILE_OBSERV_TYPE_CODE " + "SYSRES_CONST_EDITOR_CLOSE_PROCESS_OBSERV_TYPE_CODE " + "SYSRES_CONST_EDITOR_TYPE_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_APPLICATION_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_CREATE_SEVERAL_PROCESSES_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_EXTENSION_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_OBSERVER_BY_PROCESS_TYPE " + "SYSRES_CONST_EDITORS_REFERENCE_CODE " + "SYSRES_CONST_EDITORS_REPLACE_SPEC_CHARS_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_USE_PLUGINS_REQUISITE_CODE " + "SYSRES_CONST_EDITORS_VIEW_DOCUMENT_OPENED_TO_EDIT_CODE " + "SYSRES_CONST_EDOC_CARD_TYPE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_CARD_TYPES_LINK_REQUISITE_CODE " + "SYSRES_CONST_EDOC_CERTIFICATE_AND_PASSWORD_ENCODE_CODE " + "SYSRES_CONST_EDOC_CERTIFICATE_ENCODE_CODE " + "SYSRES_CONST_EDOC_DATE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_KIND_REFERENCE_CODE " + "SYSRES_CONST_EDOC_KINDS_BY_TEMPLATE_ACTION_CODE " + "SYSRES_CONST_EDOC_MANAGE_ACCESS_CODE " + "SYSRES_CONST_EDOC_NONE_ENCODE_CODE " + "SYSRES_CONST_EDOC_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_EDOC_PASSWORD_ENCODE_CODE " + "SYSRES_CONST_EDOC_READONLY_ACCESS_CODE " + "SYSRES_CONST_EDOC_SHELL_LIFE_TYPE_VIEW_VALUE " + "SYSRES_CONST_EDOC_SIZE_RESTRICTION_PRIORITY_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_CHECK_ACCESS_RIGHTS_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_COMPUTER_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_DATABASE_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_EDIT_IN_STORAGE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_LOCAL_PATH_REQUISITE_CODE " + "SYSRES_CONST_EDOC_STORAGE_SHARED_SOURCE_NAME_REQUISITE_CODE " + "SYSRES_CONST_EDOC_TEMPLATE_REQUISITE_CODE " + "SYSRES_CONST_EDOC_TYPES_REFERENCE_CODE " + "SYSRES_CONST_EDOC_VERSION_ACTIVE_STAGE_CODE " + "SYSRES_CONST_EDOC_VERSION_DESIGN_STAGE_CODE " + "SYSRES_CONST_EDOC_VERSION_OBSOLETE_STAGE_CODE " + "SYSRES_CONST_EDOC_WRITE_ACCES_CODE " + "SYSRES_CONST_EDOCUMENT_CARD_REQUISITES_REFERENCE_CODE_SELECTED_REQUISITE " + "SYSRES_CONST_ENCODE_CERTIFICATE_TYPE_CODE " + "SYSRES_CONST_END_DATE_REQUISITE_CODE " + "SYSRES_CONST_ENUMERATION_TYPE_REQUISITE_CODE " + "SYSRES_CONST_EXECUTE_ACCESS_RIGHTS_TYPE_CODE " + "SYSRES_CONST_EXECUTIVE_FILE_STORAGE_TYPE " + "SYSRES_CONST_EXIST_CONST " + "SYSRES_CONST_EXIST_VALUE " + "SYSRES_CONST_EXPORT_LOCK_TYPE_ASK " + "SYSRES_CONST_EXPORT_LOCK_TYPE_WITH_LOCK " + "SYSRES_CONST_EXPORT_LOCK_TYPE_WITHOUT_LOCK " + "SYSRES_CONST_EXPORT_VERSION_TYPE_ASK " + "SYSRES_CONST_EXPORT_VERSION_TYPE_LAST " + "SYSRES_CONST_EXPORT_VERSION_TYPE_LAST_ACTIVE " + "SYSRES_CONST_EXTENSION_REQUISITE_CODE " + "SYSRES_CONST_FILTER_NAME_REQUISITE_CODE " + "SYSRES_CONST_FILTER_REQUISITE_CODE " + "SYSRES_CONST_FILTER_TYPE_COMMON_CODE " + "SYSRES_CONST_FILTER_TYPE_COMMON_NAME " + "SYSRES_CONST_FILTER_TYPE_USER_CODE " + "SYSRES_CONST_FILTER_TYPE_USER_NAME " + "SYSRES_CONST_FILTER_VALUE_REQUISITE_NAME " + "SYSRES_CONST_FLOAT_NUMBER_FORMAT_CHAR " + "SYSRES_CONST_FLOAT_REQUISITE_TYPE " + "SYSRES_CONST_FOLDER_AUTHOR_VALUE " + "SYSRES_CONST_FOLDER_KIND_ANY_OBJECTS " + "SYSRES_CONST_FOLDER_KIND_COMPONENTS " + "SYSRES_CONST_FOLDER_KIND_EDOCS " + "SYSRES_CONST_FOLDER_KIND_JOBS " + "SYSRES_CONST_FOLDER_KIND_TASKS " + "SYSRES_CONST_FOLDER_TYPE_COMMON " + "SYSRES_CONST_FOLDER_TYPE_COMPONENT " + "SYSRES_CONST_FOLDER_TYPE_FAVORITES " + "SYSRES_CONST_FOLDER_TYPE_INBOX " + "SYSRES_CONST_FOLDER_TYPE_OUTBOX " + "SYSRES_CONST_FOLDER_TYPE_QUICK_LAUNCH " + "SYSRES_CONST_FOLDER_TYPE_SEARCH " + "SYSRES_CONST_FOLDER_TYPE_SHORTCUTS " + "SYSRES_CONST_FOLDER_TYPE_USER " + "SYSRES_CONST_FROM_DICTIONARY_ENUM_METHOD_FLAG " + "SYSRES_CONST_FULL_SUBSTITUTE_TYPE " + "SYSRES_CONST_FULL_SUBSTITUTE_TYPE_CODE " + "SYSRES_CONST_FUNCTION_CANCEL_RESULT " + "SYSRES_CONST_FUNCTION_CATEGORY_SYSTEM " + "SYSRES_CONST_FUNCTION_CATEGORY_USER " + "SYSRES_CONST_FUNCTION_FAILURE_RESULT " + "SYSRES_CONST_FUNCTION_SAVE_RESULT " + "SYSRES_CONST_GENERATED_REQUISITE " + "SYSRES_CONST_GREEN_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_GROUP_ACCOUNT_TYPE_VALUE_CODE " + "SYSRES_CONST_GROUP_CATEGORY_NORMAL_CODE " + "SYSRES_CONST_GROUP_CATEGORY_NORMAL_NAME " + "SYSRES_CONST_GROUP_CATEGORY_SERVICE_CODE " + "SYSRES_CONST_GROUP_CATEGORY_SERVICE_NAME " + "SYSRES_CONST_GROUP_COMMON_CATEGORY_FIELD_VALUE " + "SYSRES_CONST_GROUP_FULL_NAME_REQUISITE_CODE " + "SYSRES_CONST_GROUP_NAME_REQUISITE_CODE " + "SYSRES_CONST_GROUP_RIGHTS_T_REQUISITE_CODE " + "SYSRES_CONST_GROUP_SERVER_CODES_REQUISITE_CODE " + "SYSRES_CONST_GROUP_SERVER_NAME_REQUISITE_CODE " + "SYSRES_CONST_GROUP_SERVICE_CATEGORY_FIELD_VALUE " + "SYSRES_CONST_GROUP_USER_REQUISITE_CODE " + "SYSRES_CONST_GROUPS_REFERENCE_CODE " + "SYSRES_CONST_GROUPS_REQUISITE_CODE " + "SYSRES_CONST_HIDDEN_MODE_NAME " + "SYSRES_CONST_HIGH_LVL_REQUISITE_CODE " + "SYSRES_CONST_HISTORY_ACTION_CREATE_CODE " + "SYSRES_CONST_HISTORY_ACTION_DELETE_CODE " + "SYSRES_CONST_HISTORY_ACTION_EDIT_CODE " + "SYSRES_CONST_HOUR_CHAR " + "SYSRES_CONST_ID_REQUISITE_CODE " + "SYSRES_CONST_IDSPS_REQUISITE_CODE " + "SYSRES_CONST_IMAGE_MODE_COLOR " + "SYSRES_CONST_IMAGE_MODE_GREYSCALE " + "SYSRES_CONST_IMAGE_MODE_MONOCHROME " + "SYSRES_CONST_IMPORTANCE_HIGH " + "SYSRES_CONST_IMPORTANCE_LOW " + "SYSRES_CONST_IMPORTANCE_NORMAL " + "SYSRES_CONST_IN_DESIGN_VERSION_STATE_PICK_VALUE " + "SYSRES_CONST_INCOMING_WORK_RULE_TYPE_CODE " + "SYSRES_CONST_INT_REQUISITE " + "SYSRES_CONST_INT_REQUISITE_TYPE " + "SYSRES_CONST_INTEGER_NUMBER_FORMAT_CHAR " + "SYSRES_CONST_INTEGER_TYPE_CHAR " + "SYSRES_CONST_IS_GENERATED_REQUISITE_NEGATIVE_VALUE " + "SYSRES_CONST_IS_PUBLIC_ROLE_REQUISITE_CODE " + "SYSRES_CONST_IS_REMOTE_USER_NEGATIVE_VALUE " + "SYSRES_CONST_IS_REMOTE_USER_POSITIVE_VALUE " + "SYSRES_CONST_IS_STORED_REQUISITE_NEGATIVE_VALUE " + "SYSRES_CONST_IS_STORED_REQUISITE_STORED_VALUE " + "SYSRES_CONST_ITALIC_LIFE_CYCLE_STAGE_DRAW_STYLE " + "SYSRES_CONST_JOB_BLOCK_DESCRIPTION " + "SYSRES_CONST_JOB_KIND_CONTROL_JOB " + "SYSRES_CONST_JOB_KIND_JOB " + "SYSRES_CONST_JOB_KIND_NOTICE " + "SYSRES_CONST_JOB_STATE_ABORTED " + "SYSRES_CONST_JOB_STATE_COMPLETE " + "SYSRES_CONST_JOB_STATE_WORKING " + "SYSRES_CONST_KIND_REQUISITE_CODE " + "SYSRES_CONST_KIND_REQUISITE_NAME " + "SYSRES_CONST_KINDS_CREATE_SHADOW_COPIES_REQUISITE_CODE " + "SYSRES_CONST_KINDS_DEFAULT_EDOC_LIFE_STAGE_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_ALL_TEPLATES_ALLOWED_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_ALLOW_LIFE_CYCLE_STAGE_CHANGING_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_ALLOW_MULTIPLE_ACTIVE_VERSIONS_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_SHARE_ACCES_RIGHTS_BY_DEFAULT_CODE " + "SYSRES_CONST_KINDS_EDOC_TEMPLATE_REQUISITE_CODE " + "SYSRES_CONST_KINDS_EDOC_TYPE_REQUISITE_CODE " + "SYSRES_CONST_KINDS_SIGNERS_REQUISITES_CODE " + "SYSRES_CONST_KOD_INPUT_TYPE " + "SYSRES_CONST_LAST_UPDATE_DATE_REQUISITE_CODE " + "SYSRES_CONST_LIFE_CYCLE_START_STAGE_REQUISITE_CODE " + "SYSRES_CONST_LILAC_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_LINK_OBJECT_KIND_COMPONENT " + "SYSRES_CONST_LINK_OBJECT_KIND_DOCUMENT " + "SYSRES_CONST_LINK_OBJECT_KIND_EDOC " + "SYSRES_CONST_LINK_OBJECT_KIND_FOLDER " + "SYSRES_CONST_LINK_OBJECT_KIND_JOB " + "SYSRES_CONST_LINK_OBJECT_KIND_REFERENCE " + "SYSRES_CONST_LINK_OBJECT_KIND_TASK " + "SYSRES_CONST_LINK_REF_TYPE_REQUISITE_CODE " + "SYSRES_CONST_LIST_REFERENCE_MODE_NAME " + "SYSRES_CONST_LOCALIZATION_DICTIONARY_MAIN_VIEW_CODE " + "SYSRES_CONST_MAIN_VIEW_CODE " + "SYSRES_CONST_MANUAL_ENUM_METHOD_FLAG " + "SYSRES_CONST_MASTER_COMP_TYPE_REQUISITE_CODE " + "SYSRES_CONST_MASTER_TABLE_REC_ID_REQUISITE_CODE " + "SYSRES_CONST_MAXIMIZED_MODE_NAME " + "SYSRES_CONST_ME_VALUE " + "SYSRES_CONST_MESSAGE_ATTENTION_CAPTION " + "SYSRES_CONST_MESSAGE_CONFIRMATION_CAPTION " + "SYSRES_CONST_MESSAGE_ERROR_CAPTION " + "SYSRES_CONST_MESSAGE_INFORMATION_CAPTION " + "SYSRES_CONST_MINIMIZED_MODE_NAME " + "SYSRES_CONST_MINUTE_CHAR " + "SYSRES_CONST_MODULE_REQUISITE_CODE " + "SYSRES_CONST_MONITORING_BLOCK_DESCRIPTION " + "SYSRES_CONST_MONTH_FORMAT_VALUE " + "SYSRES_CONST_NAME_LOCALIZE_ID_REQUISITE_CODE " + "SYSRES_CONST_NAME_REQUISITE_CODE " + "SYSRES_CONST_NAME_SINGULAR_REQUISITE_CODE " + "SYSRES_CONST_NAMEAN_INPUT_TYPE " + "SYSRES_CONST_NEGATIVE_PICK_VALUE " + "SYSRES_CONST_NEGATIVE_VALUE " + "SYSRES_CONST_NO " + "SYSRES_CONST_NO_PICK_VALUE " + "SYSRES_CONST_NO_SIGNATURE_REQUISITE_CODE " + "SYSRES_CONST_NO_VALUE " + "SYSRES_CONST_NONE_ACCESS_RIGHTS_TYPE_CODE " + "SYSRES_CONST_NONOPERATING_RECORD_FLAG_VALUE " + "SYSRES_CONST_NONOPERATING_RECORD_FLAG_VALUE_MASCULINE " + "SYSRES_CONST_NORMAL_ACCESS_RIGHTS_TYPE_CODE " + "SYSRES_CONST_NORMAL_LIFE_CYCLE_STAGE_DRAW_STYLE " + "SYSRES_CONST_NORMAL_MODE_NAME " + "SYSRES_CONST_NOT_ALLOWED_ACCESS_TYPE_CODE " + "SYSRES_CONST_NOT_ALLOWED_ACCESS_TYPE_NAME " + "SYSRES_CONST_NOTE_REQUISITE_CODE " + "SYSRES_CONST_NOTICE_BLOCK_DESCRIPTION " + "SYSRES_CONST_NUM_REQUISITE " + "SYSRES_CONST_NUM_STR_REQUISITE_CODE " + "SYSRES_CONST_NUMERATION_AUTO_NOT_STRONG " + "SYSRES_CONST_NUMERATION_AUTO_STRONG " + "SYSRES_CONST_NUMERATION_FROM_DICTONARY " + "SYSRES_CONST_NUMERATION_MANUAL " + "SYSRES_CONST_NUMERIC_TYPE_CHAR " + "SYSRES_CONST_NUMREQ_REQUISITE_CODE " + "SYSRES_CONST_OBSOLETE_VERSION_STATE_PICK_VALUE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE_CODE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE_FEMININE " + "SYSRES_CONST_OPERATING_RECORD_FLAG_VALUE_MASCULINE " + "SYSRES_CONST_OPTIONAL_FORM_COMP_REQCODE_PREFIX " + "SYSRES_CONST_ORANGE_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_ORIGINALREF_REQUISITE_CODE " + "SYSRES_CONST_OURFIRM_REF_CODE " + "SYSRES_CONST_OURFIRM_REQUISITE_CODE " + "SYSRES_CONST_OURFIRM_VAR " + "SYSRES_CONST_OUTGOING_WORK_RULE_TYPE_CODE " + "SYSRES_CONST_PICK_NEGATIVE_RESULT " + "SYSRES_CONST_PICK_POSITIVE_RESULT " + "SYSRES_CONST_PICK_REQUISITE " + "SYSRES_CONST_PICK_REQUISITE_TYPE " + "SYSRES_CONST_PICK_TYPE_CHAR " + "SYSRES_CONST_PLAN_STATUS_REQUISITE_CODE " + "SYSRES_CONST_PLATFORM_VERSION_COMMENT " + "SYSRES_CONST_PLUGINS_SETTINGS_DESCRIPTION_REQUISITE_CODE " + "SYSRES_CONST_POSITIVE_PICK_VALUE " + "SYSRES_CONST_POWER_TO_CREATE_ACTION_CODE " + "SYSRES_CONST_POWER_TO_SIGN_ACTION_CODE " + "SYSRES_CONST_PRIORITY_REQUISITE_CODE " + "SYSRES_CONST_QUALIFIED_TASK_TYPE " + "SYSRES_CONST_QUALIFIED_TASK_TYPE_CODE " + "SYSRES_CONST_RECSTAT_REQUISITE_CODE " + "SYSRES_CONST_RED_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_REF_ID_T_REF_TYPE_REQUISITE_CODE " + "SYSRES_CONST_REF_REQUISITE " + "SYSRES_CONST_REF_REQUISITE_TYPE " + "SYSRES_CONST_REF_REQUISITES_REFERENCE_CODE_SELECTED_REQUISITE " + "SYSRES_CONST_REFERENCE_RECORD_HISTORY_CREATE_ACTION_CODE " + "SYSRES_CONST_REFERENCE_RECORD_HISTORY_DELETE_ACTION_CODE " + "SYSRES_CONST_REFERENCE_RECORD_HISTORY_MODIFY_ACTION_CODE " + "SYSRES_CONST_REFERENCE_TYPE_CHAR " + "SYSRES_CONST_REFERENCE_TYPE_REQUISITE_NAME " + "SYSRES_CONST_REFERENCES_ADD_PARAMS_REQUISITE_CODE " + "SYSRES_CONST_REFERENCES_DISPLAY_REQUISITE_REQUISITE_CODE " + "SYSRES_CONST_REMOTE_SERVER_STATUS_WORKING " + "SYSRES_CONST_REMOTE_SERVER_TYPE_MAIN " + "SYSRES_CONST_REMOTE_SERVER_TYPE_SECONDARY " + "SYSRES_CONST_REMOTE_USER_FLAG_VALUE_CODE " + "SYSRES_CONST_REPORT_APP_EDITOR_INTERNAL " + "SYSRES_CONST_REPORT_BASE_REPORT_ID_REQUISITE_CODE " + "SYSRES_CONST_REPORT_BASE_REPORT_REQUISITE_CODE " + "SYSRES_CONST_REPORT_SCRIPT_REQUISITE_CODE " + "SYSRES_CONST_REPORT_TEMPLATE_REQUISITE_CODE " + "SYSRES_CONST_REPORT_VIEWER_CODE_REQUISITE_CODE " + "SYSRES_CONST_REQ_ALLOW_COMPONENT_DEFAULT_VALUE " + "SYSRES_CONST_REQ_ALLOW_RECORD_DEFAULT_VALUE " + "SYSRES_CONST_REQ_ALLOW_SERVER_COMPONENT_DEFAULT_VALUE " + "SYSRES_CONST_REQ_MODE_AVAILABLE_CODE " + "SYSRES_CONST_REQ_MODE_EDIT_CODE " + "SYSRES_CONST_REQ_MODE_HIDDEN_CODE " + "SYSRES_CONST_REQ_MODE_NOT_AVAILABLE_CODE " + "SYSRES_CONST_REQ_MODE_VIEW_CODE " + "SYSRES_CONST_REQ_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_REQ_SECTION_VALUE " + "SYSRES_CONST_REQ_TYPE_VALUE " + "SYSRES_CONST_REQUISITE_FORMAT_BY_UNIT " + "SYSRES_CONST_REQUISITE_FORMAT_DATE_FULL " + "SYSRES_CONST_REQUISITE_FORMAT_DATE_TIME " + "SYSRES_CONST_REQUISITE_FORMAT_LEFT " + "SYSRES_CONST_REQUISITE_FORMAT_RIGHT " + "SYSRES_CONST_REQUISITE_FORMAT_WITHOUT_UNIT " + "SYSRES_CONST_REQUISITE_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_REQUISITE_SECTION_ACTIONS " + "SYSRES_CONST_REQUISITE_SECTION_BUTTON " + "SYSRES_CONST_REQUISITE_SECTION_BUTTONS " + "SYSRES_CONST_REQUISITE_SECTION_CARD " + "SYSRES_CONST_REQUISITE_SECTION_TABLE " + "SYSRES_CONST_REQUISITE_SECTION_TABLE10 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE11 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE12 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE13 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE14 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE15 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE16 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE17 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE18 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE19 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE2 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE20 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE21 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE22 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE23 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE24 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE3 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE4 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE5 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE6 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE7 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE8 " + "SYSRES_CONST_REQUISITE_SECTION_TABLE9 " + "SYSRES_CONST_REQUISITES_PSEUDOREFERENCE_REQUISITE_NUMBER_REQUISITE_CODE " + "SYSRES_CONST_RIGHT_ALIGNMENT_CODE " + "SYSRES_CONST_ROLES_REFERENCE_CODE " + "SYSRES_CONST_ROUTE_STEP_AFTER_RUS " + "SYSRES_CONST_ROUTE_STEP_AND_CONDITION_RUS " + "SYSRES_CONST_ROUTE_STEP_OR_CONDITION_RUS " + "SYSRES_CONST_ROUTE_TYPE_COMPLEX " + "SYSRES_CONST_ROUTE_TYPE_PARALLEL " + "SYSRES_CONST_ROUTE_TYPE_SERIAL " + "SYSRES_CONST_SBDATASETDESC_NEGATIVE_VALUE " + "SYSRES_CONST_SBDATASETDESC_POSITIVE_VALUE " + "SYSRES_CONST_SBVIEWSDESC_POSITIVE_VALUE " + "SYSRES_CONST_SCRIPT_BLOCK_DESCRIPTION " + "SYSRES_CONST_SEARCH_BY_TEXT_REQUISITE_CODE " + "SYSRES_CONST_SEARCHES_COMPONENT_CONTENT " + "SYSRES_CONST_SEARCHES_CRITERIA_ACTION_NAME " + "SYSRES_CONST_SEARCHES_EDOC_CONTENT " + "SYSRES_CONST_SEARCHES_FOLDER_CONTENT " + "SYSRES_CONST_SEARCHES_JOB_CONTENT " + "SYSRES_CONST_SEARCHES_REFERENCE_CODE " + "SYSRES_CONST_SEARCHES_TASK_CONTENT " + "SYSRES_CONST_SECOND_CHAR " + "SYSRES_CONST_SECTION_REQUISITE_ACTIONS_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_CARD_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_CODE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_1_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_2_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_3_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_4_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_5_VALUE " + "SYSRES_CONST_SECTION_REQUISITE_DETAIL_6_VALUE " + "SYSRES_CONST_SELECT_REFERENCE_MODE_NAME " + "SYSRES_CONST_SELECT_TYPE_SELECTABLE " + "SYSRES_CONST_SELECT_TYPE_SELECTABLE_ONLY_CHILD " + "SYSRES_CONST_SELECT_TYPE_SELECTABLE_WITH_CHILD " + "SYSRES_CONST_SELECT_TYPE_UNSLECTABLE " + "SYSRES_CONST_SERVER_TYPE_MAIN " + "SYSRES_CONST_SERVICE_USER_CATEGORY_FIELD_VALUE " + "SYSRES_CONST_SETTINGS_USER_REQUISITE_CODE " + "SYSRES_CONST_SIGNATURE_AND_ENCODE_CERTIFICATE_TYPE_CODE " + "SYSRES_CONST_SIGNATURE_CERTIFICATE_TYPE_CODE " + "SYSRES_CONST_SINGULAR_TITLE_REQUISITE_CODE " + "SYSRES_CONST_SQL_SERVER_AUTHENTIFICATION_FLAG_VALUE_CODE " + "SYSRES_CONST_SQL_SERVER_ENCODE_AUTHENTIFICATION_FLAG_VALUE_CODE " + "SYSRES_CONST_STANDART_ROUTE_REFERENCE_CODE " + "SYSRES_CONST_STANDART_ROUTE_REFERENCE_COMMENT_REQUISITE_CODE " + "SYSRES_CONST_STANDART_ROUTES_GROUPS_REFERENCE_CODE " + "SYSRES_CONST_STATE_REQ_NAME " + "SYSRES_CONST_STATE_REQUISITE_ACTIVE_VALUE " + "SYSRES_CONST_STATE_REQUISITE_CLOSED_VALUE " + "SYSRES_CONST_STATE_REQUISITE_CODE " + "SYSRES_CONST_STATIC_ROLE_TYPE_CODE " + "SYSRES_CONST_STATUS_PLAN_DEFAULT_VALUE " + "SYSRES_CONST_STATUS_VALUE_AUTOCLEANING " + "SYSRES_CONST_STATUS_VALUE_BLUE_SQUARE " + "SYSRES_CONST_STATUS_VALUE_COMPLETE " + "SYSRES_CONST_STATUS_VALUE_GREEN_SQUARE " + "SYSRES_CONST_STATUS_VALUE_ORANGE_SQUARE " + "SYSRES_CONST_STATUS_VALUE_PURPLE_SQUARE " + "SYSRES_CONST_STATUS_VALUE_RED_SQUARE " + "SYSRES_CONST_STATUS_VALUE_SUSPEND " + "SYSRES_CONST_STATUS_VALUE_YELLOW_SQUARE " + "SYSRES_CONST_STDROUTE_SHOW_TO_USERS_REQUISITE_CODE " + "SYSRES_CONST_STORAGE_TYPE_FILE " + "SYSRES_CONST_STORAGE_TYPE_SQL_SERVER " + "SYSRES_CONST_STR_REQUISITE " + "SYSRES_CONST_STRIKEOUT_LIFE_CYCLE_STAGE_DRAW_STYLE " + "SYSRES_CONST_STRING_FORMAT_LEFT_ALIGN_CHAR " + "SYSRES_CONST_STRING_FORMAT_RIGHT_ALIGN_CHAR " + "SYSRES_CONST_STRING_REQUISITE_CODE " + "SYSRES_CONST_STRING_REQUISITE_TYPE " + "SYSRES_CONST_STRING_TYPE_CHAR " + "SYSRES_CONST_SUBSTITUTES_PSEUDOREFERENCE_CODE " + "SYSRES_CONST_SUBTASK_BLOCK_DESCRIPTION " + "SYSRES_CONST_SYSTEM_SETTING_CURRENT_USER_PARAM_VALUE " + "SYSRES_CONST_SYSTEM_SETTING_EMPTY_VALUE_PARAM_VALUE " + "SYSRES_CONST_SYSTEM_VERSION_COMMENT " + "SYSRES_CONST_TASK_ACCESS_TYPE_ALL " + "SYSRES_CONST_TASK_ACCESS_TYPE_ALL_MEMBERS " + "SYSRES_CONST_TASK_ACCESS_TYPE_MANUAL " + "SYSRES_CONST_TASK_ENCODE_TYPE_CERTIFICATION " + "SYSRES_CONST_TASK_ENCODE_TYPE_CERTIFICATION_AND_PASSWORD " + "SYSRES_CONST_TASK_ENCODE_TYPE_NONE " + "SYSRES_CONST_TASK_ENCODE_TYPE_PASSWORD " + "SYSRES_CONST_TASK_ROUTE_ALL_CONDITION " + "SYSRES_CONST_TASK_ROUTE_AND_CONDITION " + "SYSRES_CONST_TASK_ROUTE_OR_CONDITION " + "SYSRES_CONST_TASK_STATE_ABORTED " + "SYSRES_CONST_TASK_STATE_COMPLETE " + "SYSRES_CONST_TASK_STATE_CONTINUED " + "SYSRES_CONST_TASK_STATE_CONTROL " + "SYSRES_CONST_TASK_STATE_INIT " + "SYSRES_CONST_TASK_STATE_WORKING " + "SYSRES_CONST_TASK_TITLE " + "SYSRES_CONST_TASK_TYPES_GROUPS_REFERENCE_CODE " + "SYSRES_CONST_TASK_TYPES_REFERENCE_CODE " + "SYSRES_CONST_TEMPLATES_REFERENCE_CODE " + "SYSRES_CONST_TEST_DATE_REQUISITE_NAME " + "SYSRES_CONST_TEST_DEV_DATABASE_NAME " + "SYSRES_CONST_TEST_DEV_SYSTEM_CODE " + "SYSRES_CONST_TEST_EDMS_DATABASE_NAME " + "SYSRES_CONST_TEST_EDMS_MAIN_CODE " + "SYSRES_CONST_TEST_EDMS_MAIN_DB_NAME " + "SYSRES_CONST_TEST_EDMS_SECOND_CODE " + "SYSRES_CONST_TEST_EDMS_SECOND_DB_NAME " + "SYSRES_CONST_TEST_EDMS_SYSTEM_CODE " + "SYSRES_CONST_TEST_NUMERIC_REQUISITE_NAME " + "SYSRES_CONST_TEXT_REQUISITE " + "SYSRES_CONST_TEXT_REQUISITE_CODE " + "SYSRES_CONST_TEXT_REQUISITE_TYPE " + "SYSRES_CONST_TEXT_TYPE_CHAR " + "SYSRES_CONST_TYPE_CODE_REQUISITE_CODE " + "SYSRES_CONST_TYPE_REQUISITE_CODE " + "SYSRES_CONST_UNDEFINED_LIFE_CYCLE_STAGE_FONT_COLOR " + "SYSRES_CONST_UNITS_SECTION_ID_REQUISITE_CODE " + "SYSRES_CONST_UNITS_SECTION_REQUISITE_CODE " + "SYSRES_CONST_UNOPERATING_RECORD_FLAG_VALUE_CODE " + "SYSRES_CONST_UNSTORED_DATA_REQUISITE_CODE " + "SYSRES_CONST_UNSTORED_DATA_REQUISITE_NAME " + "SYSRES_CONST_USE_ACCESS_TYPE_CODE " + "SYSRES_CONST_USE_ACCESS_TYPE_NAME " + "SYSRES_CONST_USER_ACCOUNT_TYPE_VALUE_CODE " + "SYSRES_CONST_USER_ADDITIONAL_INFORMATION_REQUISITE_CODE " + "SYSRES_CONST_USER_AND_GROUP_ID_FROM_PSEUDOREFERENCE_REQUISITE_CODE " + "SYSRES_CONST_USER_CATEGORY_NORMAL " + "SYSRES_CONST_USER_CERTIFICATE_REQUISITE_CODE " + "SYSRES_CONST_USER_CERTIFICATE_STATE_REQUISITE_CODE " + "SYSRES_CONST_USER_CERTIFICATE_SUBJECT_NAME_REQUISITE_CODE " + "SYSRES_CONST_USER_CERTIFICATE_THUMBPRINT_REQUISITE_CODE " + "SYSRES_CONST_USER_COMMON_CATEGORY " + "SYSRES_CONST_USER_COMMON_CATEGORY_CODE " + "SYSRES_CONST_USER_FULL_NAME_REQUISITE_CODE " + "SYSRES_CONST_USER_GROUP_TYPE_REQUISITE_CODE " + "SYSRES_CONST_USER_LOGIN_REQUISITE_CODE " + "SYSRES_CONST_USER_REMOTE_CONTROLLER_REQUISITE_CODE " + "SYSRES_CONST_USER_REMOTE_SYSTEM_REQUISITE_CODE " + "SYSRES_CONST_USER_RIGHTS_T_REQUISITE_CODE " + "SYSRES_CONST_USER_SERVER_NAME_REQUISITE_CODE " + "SYSRES_CONST_USER_SERVICE_CATEGORY " + "SYSRES_CONST_USER_SERVICE_CATEGORY_CODE " + "SYSRES_CONST_USER_STATUS_ADMINISTRATOR_CODE " + "SYSRES_CONST_USER_STATUS_ADMINISTRATOR_NAME " + "SYSRES_CONST_USER_STATUS_DEVELOPER_CODE " + "SYSRES_CONST_USER_STATUS_DEVELOPER_NAME " + "SYSRES_CONST_USER_STATUS_DISABLED_CODE " + "SYSRES_CONST_USER_STATUS_DISABLED_NAME " + "SYSRES_CONST_USER_STATUS_SYSTEM_DEVELOPER_CODE " + "SYSRES_CONST_USER_STATUS_USER_CODE " + "SYSRES_CONST_USER_STATUS_USER_NAME " + "SYSRES_CONST_USER_STATUS_USER_NAME_DEPRECATED " + "SYSRES_CONST_USER_TYPE_FIELD_VALUE_USER " + "SYSRES_CONST_USER_TYPE_REQUISITE_CODE " + "SYSRES_CONST_USERS_CONTROLLER_REQUISITE_CODE " + "SYSRES_CONST_USERS_IS_MAIN_SERVER_REQUISITE_CODE " + "SYSRES_CONST_USERS_REFERENCE_CODE " + "SYSRES_CONST_USERS_REGISTRATION_CERTIFICATES_ACTION_NAME " + "SYSRES_CONST_USERS_REQUISITE_CODE " + "SYSRES_CONST_USERS_SYSTEM_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_ACCESS_RIGHTS_TYPR_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_AUTHENTICATION_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_COMPONENT_REQUISITE_CODE " + "SYSRES_CONST_USERS_USER_GROUP_REQUISITE_CODE " + "SYSRES_CONST_USERS_VIEW_CERTIFICATES_ACTION_NAME " + "SYSRES_CONST_VIEW_DEFAULT_CODE " + "SYSRES_CONST_VIEW_DEFAULT_NAME " + "SYSRES_CONST_VIEWER_REQUISITE_CODE " + "SYSRES_CONST_WAITING_BLOCK_DESCRIPTION " + "SYSRES_CONST_WIZARD_FORM_LABEL_TEST_STRING  " + "SYSRES_CONST_WIZARD_QUERY_PARAM_HEIGHT_ETALON_STRING " + "SYSRES_CONST_WIZARD_REFERENCE_COMMENT_REQUISITE_CODE " + "SYSRES_CONST_WORK_RULES_DESCRIPTION_REQUISITE_CODE " + "SYSRES_CONST_WORK_TIME_CALENDAR_REFERENCE_CODE " + "SYSRES_CONST_WORK_WORKFLOW_HARD_ROUTE_TYPE_VALUE " + "SYSRES_CONST_WORK_WORKFLOW_HARD_ROUTE_TYPE_VALUE_CODE " + "SYSRES_CONST_WORK_WORKFLOW_HARD_ROUTE_TYPE_VALUE_CODE_RUS " + "SYSRES_CONST_WORK_WORKFLOW_SOFT_ROUTE_TYPE_VALUE_CODE_RUS " + "SYSRES_CONST_WORKFLOW_ROUTE_TYPR_HARD " + "SYSRES_CONST_WORKFLOW_ROUTE_TYPR_SOFT " + "SYSRES_CONST_XML_ENCODING " + "SYSRES_CONST_XREC_STAT_REQUISITE_CODE " + "SYSRES_CONST_XRECID_FIELD_NAME " + "SYSRES_CONST_YES " + "SYSRES_CONST_YES_NO_2_REQUISITE_CODE " + "SYSRES_CONST_YES_NO_REQUISITE_CODE " + "SYSRES_CONST_YES_NO_T_REF_TYPE_REQUISITE_CODE " + "SYSRES_CONST_YES_PICK_VALUE " + "SYSRES_CONST_YES_VALUE "; // Base constant
 
-  // Base constant
-  const base_constants = "CR FALSE nil NO_VALUE NULL TAB TRUE YES_VALUE ";
+  const base_constants = "CR FALSE nil NO_VALUE NULL TAB TRUE YES_VALUE "; // Base group name
 
-  // Base group name
-  const base_group_name_constants = "ADMINISTRATORS_GROUP_NAME CUSTOMIZERS_GROUP_NAME DEVELOPERS_GROUP_NAME SERVICE_USERS_GROUP_NAME ";
+  const base_group_name_constants = "ADMINISTRATORS_GROUP_NAME CUSTOMIZERS_GROUP_NAME DEVELOPERS_GROUP_NAME SERVICE_USERS_GROUP_NAME "; // Decision block properties
 
-  // Decision block properties
-  const decision_block_properties_constants = "DECISION_BLOCK_FIRST_OPERAND_PROPERTY DECISION_BLOCK_NAME_PROPERTY DECISION_BLOCK_OPERATION_PROPERTY " + "DECISION_BLOCK_RESULT_TYPE_PROPERTY DECISION_BLOCK_SECOND_OPERAND_PROPERTY ";
+  const decision_block_properties_constants = "DECISION_BLOCK_FIRST_OPERAND_PROPERTY DECISION_BLOCK_NAME_PROPERTY DECISION_BLOCK_OPERATION_PROPERTY " + "DECISION_BLOCK_RESULT_TYPE_PROPERTY DECISION_BLOCK_SECOND_OPERAND_PROPERTY "; // File extension
 
-  // File extension
-  const file_extension_constants = "ANY_FILE_EXTENTION COMPRESSED_DOCUMENT_EXTENSION EXTENDED_DOCUMENT_EXTENSION " + "SHORT_COMPRESSED_DOCUMENT_EXTENSION SHORT_EXTENDED_DOCUMENT_EXTENSION ";
+  const file_extension_constants = "ANY_FILE_EXTENTION COMPRESSED_DOCUMENT_EXTENSION EXTENDED_DOCUMENT_EXTENSION " + "SHORT_COMPRESSED_DOCUMENT_EXTENSION SHORT_EXTENDED_DOCUMENT_EXTENSION "; // Job block properties
 
-  // Job block properties
-  const job_block_properties_constants = "JOB_BLOCK_ABORT_DEADLINE_PROPERTY " + "JOB_BLOCK_AFTER_FINISH_EVENT " + "JOB_BLOCK_AFTER_QUERY_PARAMETERS_EVENT " + "JOB_BLOCK_ATTACHMENT_PROPERTY " + "JOB_BLOCK_ATTACHMENTS_RIGHTS_GROUP_PROPERTY " + "JOB_BLOCK_ATTACHMENTS_RIGHTS_TYPE_PROPERTY " + "JOB_BLOCK_BEFORE_QUERY_PARAMETERS_EVENT " + "JOB_BLOCK_BEFORE_START_EVENT " + "JOB_BLOCK_CREATED_JOBS_PROPERTY " + "JOB_BLOCK_DEADLINE_PROPERTY " + "JOB_BLOCK_EXECUTION_RESULTS_PROPERTY " + "JOB_BLOCK_IS_PARALLEL_PROPERTY " + "JOB_BLOCK_IS_RELATIVE_ABORT_DEADLINE_PROPERTY " + "JOB_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "JOB_BLOCK_JOB_TEXT_PROPERTY " + "JOB_BLOCK_NAME_PROPERTY " + "JOB_BLOCK_NEED_SIGN_ON_PERFORM_PROPERTY " + "JOB_BLOCK_PERFORMER_PROPERTY " + "JOB_BLOCK_RELATIVE_ABORT_DEADLINE_TYPE_PROPERTY " + "JOB_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "JOB_BLOCK_SUBJECT_PROPERTY ";
+  const job_block_properties_constants = "JOB_BLOCK_ABORT_DEADLINE_PROPERTY " + "JOB_BLOCK_AFTER_FINISH_EVENT " + "JOB_BLOCK_AFTER_QUERY_PARAMETERS_EVENT " + "JOB_BLOCK_ATTACHMENT_PROPERTY " + "JOB_BLOCK_ATTACHMENTS_RIGHTS_GROUP_PROPERTY " + "JOB_BLOCK_ATTACHMENTS_RIGHTS_TYPE_PROPERTY " + "JOB_BLOCK_BEFORE_QUERY_PARAMETERS_EVENT " + "JOB_BLOCK_BEFORE_START_EVENT " + "JOB_BLOCK_CREATED_JOBS_PROPERTY " + "JOB_BLOCK_DEADLINE_PROPERTY " + "JOB_BLOCK_EXECUTION_RESULTS_PROPERTY " + "JOB_BLOCK_IS_PARALLEL_PROPERTY " + "JOB_BLOCK_IS_RELATIVE_ABORT_DEADLINE_PROPERTY " + "JOB_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "JOB_BLOCK_JOB_TEXT_PROPERTY " + "JOB_BLOCK_NAME_PROPERTY " + "JOB_BLOCK_NEED_SIGN_ON_PERFORM_PROPERTY " + "JOB_BLOCK_PERFORMER_PROPERTY " + "JOB_BLOCK_RELATIVE_ABORT_DEADLINE_TYPE_PROPERTY " + "JOB_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "JOB_BLOCK_SUBJECT_PROPERTY "; // Language code
 
-  // Language code
-  const language_code_constants = "ENGLISH_LANGUAGE_CODE RUSSIAN_LANGUAGE_CODE ";
+  const language_code_constants = "ENGLISH_LANGUAGE_CODE RUSSIAN_LANGUAGE_CODE "; // Launching external applications
 
-  // Launching external applications
-  const launching_external_applications_constants = "smHidden smMaximized smMinimized smNormal wmNo wmYes ";
+  const launching_external_applications_constants = "smHidden smMaximized smMinimized smNormal wmNo wmYes "; // Link kind
 
-  // Link kind
-  const link_kind_constants = "COMPONENT_TOKEN_LINK_KIND " + "DOCUMENT_LINK_KIND " + "EDOCUMENT_LINK_KIND " + "FOLDER_LINK_KIND " + "JOB_LINK_KIND " + "REFERENCE_LINK_KIND " + "TASK_LINK_KIND ";
+  const link_kind_constants = "COMPONENT_TOKEN_LINK_KIND " + "DOCUMENT_LINK_KIND " + "EDOCUMENT_LINK_KIND " + "FOLDER_LINK_KIND " + "JOB_LINK_KIND " + "REFERENCE_LINK_KIND " + "TASK_LINK_KIND "; // Lock type
 
-  // Lock type
-  const lock_type_constants = "COMPONENT_TOKEN_LOCK_TYPE EDOCUMENT_VERSION_LOCK_TYPE ";
+  const lock_type_constants = "COMPONENT_TOKEN_LOCK_TYPE EDOCUMENT_VERSION_LOCK_TYPE "; // Monitor block properties
 
-  // Monitor block properties
-  const monitor_block_properties_constants = "MONITOR_BLOCK_AFTER_FINISH_EVENT " + "MONITOR_BLOCK_BEFORE_START_EVENT " + "MONITOR_BLOCK_DEADLINE_PROPERTY " + "MONITOR_BLOCK_INTERVAL_PROPERTY " + "MONITOR_BLOCK_INTERVAL_TYPE_PROPERTY " + "MONITOR_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "MONITOR_BLOCK_NAME_PROPERTY " + "MONITOR_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "MONITOR_BLOCK_SEARCH_SCRIPT_PROPERTY ";
+  const monitor_block_properties_constants = "MONITOR_BLOCK_AFTER_FINISH_EVENT " + "MONITOR_BLOCK_BEFORE_START_EVENT " + "MONITOR_BLOCK_DEADLINE_PROPERTY " + "MONITOR_BLOCK_INTERVAL_PROPERTY " + "MONITOR_BLOCK_INTERVAL_TYPE_PROPERTY " + "MONITOR_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "MONITOR_BLOCK_NAME_PROPERTY " + "MONITOR_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "MONITOR_BLOCK_SEARCH_SCRIPT_PROPERTY "; // Notice block properties
 
-  // Notice block properties
-  const notice_block_properties_constants = "NOTICE_BLOCK_AFTER_FINISH_EVENT " + "NOTICE_BLOCK_ATTACHMENT_PROPERTY " + "NOTICE_BLOCK_ATTACHMENTS_RIGHTS_GROUP_PROPERTY " + "NOTICE_BLOCK_ATTACHMENTS_RIGHTS_TYPE_PROPERTY " + "NOTICE_BLOCK_BEFORE_START_EVENT " + "NOTICE_BLOCK_CREATED_NOTICES_PROPERTY " + "NOTICE_BLOCK_DEADLINE_PROPERTY " + "NOTICE_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "NOTICE_BLOCK_NAME_PROPERTY " + "NOTICE_BLOCK_NOTICE_TEXT_PROPERTY " + "NOTICE_BLOCK_PERFORMER_PROPERTY " + "NOTICE_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "NOTICE_BLOCK_SUBJECT_PROPERTY ";
+  const notice_block_properties_constants = "NOTICE_BLOCK_AFTER_FINISH_EVENT " + "NOTICE_BLOCK_ATTACHMENT_PROPERTY " + "NOTICE_BLOCK_ATTACHMENTS_RIGHTS_GROUP_PROPERTY " + "NOTICE_BLOCK_ATTACHMENTS_RIGHTS_TYPE_PROPERTY " + "NOTICE_BLOCK_BEFORE_START_EVENT " + "NOTICE_BLOCK_CREATED_NOTICES_PROPERTY " + "NOTICE_BLOCK_DEADLINE_PROPERTY " + "NOTICE_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "NOTICE_BLOCK_NAME_PROPERTY " + "NOTICE_BLOCK_NOTICE_TEXT_PROPERTY " + "NOTICE_BLOCK_PERFORMER_PROPERTY " + "NOTICE_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "NOTICE_BLOCK_SUBJECT_PROPERTY "; // Object events
 
-  // Object events
-  const object_events_constants = "dseAfterCancel " + "dseAfterClose " + "dseAfterDelete " + "dseAfterDeleteOutOfTransaction " + "dseAfterInsert " + "dseAfterOpen " + "dseAfterScroll " + "dseAfterUpdate " + "dseAfterUpdateOutOfTransaction " + "dseBeforeCancel " + "dseBeforeClose " + "dseBeforeDelete " + "dseBeforeDetailUpdate " + "dseBeforeInsert " + "dseBeforeOpen " + "dseBeforeUpdate " + "dseOnAnyRequisiteChange " + "dseOnCloseRecord " + "dseOnDeleteError " + "dseOnOpenRecord " + "dseOnPrepareUpdate " + "dseOnUpdateError " + "dseOnUpdateRatifiedRecord " + "dseOnValidDelete " + "dseOnValidUpdate " + "reOnChange " + "reOnChangeValues " + "SELECTION_BEGIN_ROUTE_EVENT " + "SELECTION_END_ROUTE_EVENT ";
+  const object_events_constants = "dseAfterCancel " + "dseAfterClose " + "dseAfterDelete " + "dseAfterDeleteOutOfTransaction " + "dseAfterInsert " + "dseAfterOpen " + "dseAfterScroll " + "dseAfterUpdate " + "dseAfterUpdateOutOfTransaction " + "dseBeforeCancel " + "dseBeforeClose " + "dseBeforeDelete " + "dseBeforeDetailUpdate " + "dseBeforeInsert " + "dseBeforeOpen " + "dseBeforeUpdate " + "dseOnAnyRequisiteChange " + "dseOnCloseRecord " + "dseOnDeleteError " + "dseOnOpenRecord " + "dseOnPrepareUpdate " + "dseOnUpdateError " + "dseOnUpdateRatifiedRecord " + "dseOnValidDelete " + "dseOnValidUpdate " + "reOnChange " + "reOnChangeValues " + "SELECTION_BEGIN_ROUTE_EVENT " + "SELECTION_END_ROUTE_EVENT "; // Object params
 
-  // Object params
-  const object_params_constants = "CURRENT_PERIOD_IS_REQUIRED " + "PREVIOUS_CARD_TYPE_NAME " + "SHOW_RECORD_PROPERTIES_FORM ";
+  const object_params_constants = "CURRENT_PERIOD_IS_REQUIRED " + "PREVIOUS_CARD_TYPE_NAME " + "SHOW_RECORD_PROPERTIES_FORM "; // Other
 
-  // Other
-  const other_constants = "ACCESS_RIGHTS_SETTING_DIALOG_CODE " + "ADMINISTRATOR_USER_CODE " + "ANALYTIC_REPORT_TYPE " + "asrtHideLocal " + "asrtHideRemote " + "CALCULATED_ROLE_TYPE_CODE " + "COMPONENTS_REFERENCE_DEVELOPER_VIEW_CODE " + "DCTS_TEST_PROTOCOLS_FOLDER_PATH " + "E_EDOC_VERSION_ALREADY_APPROVINGLY_SIGNED " + "E_EDOC_VERSION_ALREADY_APPROVINGLY_SIGNED_BY_USER " + "E_EDOC_VERSION_ALREDY_SIGNED " + "E_EDOC_VERSION_ALREDY_SIGNED_BY_USER " + "EDOC_TYPES_CODE_REQUISITE_FIELD_NAME " + "EDOCUMENTS_ALIAS_NAME " + "FILES_FOLDER_PATH " + "FILTER_OPERANDS_DELIMITER " + "FILTER_OPERATIONS_DELIMITER " + "FORMCARD_NAME " + "FORMLIST_NAME " + "GET_EXTENDED_DOCUMENT_EXTENSION_CREATION_MODE " + "GET_EXTENDED_DOCUMENT_EXTENSION_IMPORT_MODE " + "INTEGRATED_REPORT_TYPE " + "IS_BUILDER_APPLICATION_ROLE " + "IS_BUILDER_APPLICATION_ROLE2 " + "IS_BUILDER_USERS " + "ISBSYSDEV " + "LOG_FOLDER_PATH " + "mbCancel " + "mbNo " + "mbNoToAll " + "mbOK " + "mbYes " + "mbYesToAll " + "MEMORY_DATASET_DESRIPTIONS_FILENAME " + "mrNo " + "mrNoToAll " + "mrYes " + "mrYesToAll " + "MULTIPLE_SELECT_DIALOG_CODE " + "NONOPERATING_RECORD_FLAG_FEMININE " + "NONOPERATING_RECORD_FLAG_MASCULINE " + "OPERATING_RECORD_FLAG_FEMININE " + "OPERATING_RECORD_FLAG_MASCULINE " + "PROFILING_SETTINGS_COMMON_SETTINGS_CODE_VALUE " + "PROGRAM_INITIATED_LOOKUP_ACTION " + "ratDelete " + "ratEdit " + "ratInsert " + "REPORT_TYPE " + "REQUIRED_PICK_VALUES_VARIABLE " + "rmCard " + "rmList " + "SBRTE_PROGID_DEV " + "SBRTE_PROGID_RELEASE " + "STATIC_ROLE_TYPE_CODE " + "SUPPRESS_EMPTY_TEMPLATE_CREATION " + "SYSTEM_USER_CODE " + "UPDATE_DIALOG_DATASET " + "USED_IN_OBJECT_HINT_PARAM " + "USER_INITIATED_LOOKUP_ACTION " + "USER_NAME_FORMAT " + "USER_SELECTION_RESTRICTIONS " + "WORKFLOW_TEST_PROTOCOLS_FOLDER_PATH " + "ELS_SUBTYPE_CONTROL_NAME " + "ELS_FOLDER_KIND_CONTROL_NAME " + "REPEAT_PROCESS_CURRENT_OBJECT_EXCEPTION_NAME ";
+  const other_constants = "ACCESS_RIGHTS_SETTING_DIALOG_CODE " + "ADMINISTRATOR_USER_CODE " + "ANALYTIC_REPORT_TYPE " + "asrtHideLocal " + "asrtHideRemote " + "CALCULATED_ROLE_TYPE_CODE " + "COMPONENTS_REFERENCE_DEVELOPER_VIEW_CODE " + "DCTS_TEST_PROTOCOLS_FOLDER_PATH " + "E_EDOC_VERSION_ALREADY_APPROVINGLY_SIGNED " + "E_EDOC_VERSION_ALREADY_APPROVINGLY_SIGNED_BY_USER " + "E_EDOC_VERSION_ALREDY_SIGNED " + "E_EDOC_VERSION_ALREDY_SIGNED_BY_USER " + "EDOC_TYPES_CODE_REQUISITE_FIELD_NAME " + "EDOCUMENTS_ALIAS_NAME " + "FILES_FOLDER_PATH " + "FILTER_OPERANDS_DELIMITER " + "FILTER_OPERATIONS_DELIMITER " + "FORMCARD_NAME " + "FORMLIST_NAME " + "GET_EXTENDED_DOCUMENT_EXTENSION_CREATION_MODE " + "GET_EXTENDED_DOCUMENT_EXTENSION_IMPORT_MODE " + "INTEGRATED_REPORT_TYPE " + "IS_BUILDER_APPLICATION_ROLE " + "IS_BUILDER_APPLICATION_ROLE2 " + "IS_BUILDER_USERS " + "ISBSYSDEV " + "LOG_FOLDER_PATH " + "mbCancel " + "mbNo " + "mbNoToAll " + "mbOK " + "mbYes " + "mbYesToAll " + "MEMORY_DATASET_DESRIPTIONS_FILENAME " + "mrNo " + "mrNoToAll " + "mrYes " + "mrYesToAll " + "MULTIPLE_SELECT_DIALOG_CODE " + "NONOPERATING_RECORD_FLAG_FEMININE " + "NONOPERATING_RECORD_FLAG_MASCULINE " + "OPERATING_RECORD_FLAG_FEMININE " + "OPERATING_RECORD_FLAG_MASCULINE " + "PROFILING_SETTINGS_COMMON_SETTINGS_CODE_VALUE " + "PROGRAM_INITIATED_LOOKUP_ACTION " + "ratDelete " + "ratEdit " + "ratInsert " + "REPORT_TYPE " + "REQUIRED_PICK_VALUES_VARIABLE " + "rmCard " + "rmList " + "SBRTE_PROGID_DEV " + "SBRTE_PROGID_RELEASE " + "STATIC_ROLE_TYPE_CODE " + "SUPPRESS_EMPTY_TEMPLATE_CREATION " + "SYSTEM_USER_CODE " + "UPDATE_DIALOG_DATASET " + "USED_IN_OBJECT_HINT_PARAM " + "USER_INITIATED_LOOKUP_ACTION " + "USER_NAME_FORMAT " + "USER_SELECTION_RESTRICTIONS " + "WORKFLOW_TEST_PROTOCOLS_FOLDER_PATH " + "ELS_SUBTYPE_CONTROL_NAME " + "ELS_FOLDER_KIND_CONTROL_NAME " + "REPEAT_PROCESS_CURRENT_OBJECT_EXCEPTION_NAME "; // Privileges
 
-  // Privileges
-  const privileges_constants = "PRIVILEGE_COMPONENT_FULL_ACCESS " + "PRIVILEGE_DEVELOPMENT_EXPORT " + "PRIVILEGE_DEVELOPMENT_IMPORT " + "PRIVILEGE_DOCUMENT_DELETE " + "PRIVILEGE_ESD " + "PRIVILEGE_FOLDER_DELETE " + "PRIVILEGE_MANAGE_ACCESS_RIGHTS " + "PRIVILEGE_MANAGE_REPLICATION " + "PRIVILEGE_MANAGE_SESSION_SERVER " + "PRIVILEGE_OBJECT_FULL_ACCESS " + "PRIVILEGE_OBJECT_VIEW " + "PRIVILEGE_RESERVE_LICENSE " + "PRIVILEGE_SYSTEM_CUSTOMIZE " + "PRIVILEGE_SYSTEM_DEVELOP " + "PRIVILEGE_SYSTEM_INSTALL " + "PRIVILEGE_TASK_DELETE " + "PRIVILEGE_USER_PLUGIN_SETTINGS_CUSTOMIZE " + "PRIVILEGES_PSEUDOREFERENCE_CODE ";
+  const privileges_constants = "PRIVILEGE_COMPONENT_FULL_ACCESS " + "PRIVILEGE_DEVELOPMENT_EXPORT " + "PRIVILEGE_DEVELOPMENT_IMPORT " + "PRIVILEGE_DOCUMENT_DELETE " + "PRIVILEGE_ESD " + "PRIVILEGE_FOLDER_DELETE " + "PRIVILEGE_MANAGE_ACCESS_RIGHTS " + "PRIVILEGE_MANAGE_REPLICATION " + "PRIVILEGE_MANAGE_SESSION_SERVER " + "PRIVILEGE_OBJECT_FULL_ACCESS " + "PRIVILEGE_OBJECT_VIEW " + "PRIVILEGE_RESERVE_LICENSE " + "PRIVILEGE_SYSTEM_CUSTOMIZE " + "PRIVILEGE_SYSTEM_DEVELOP " + "PRIVILEGE_SYSTEM_INSTALL " + "PRIVILEGE_TASK_DELETE " + "PRIVILEGE_USER_PLUGIN_SETTINGS_CUSTOMIZE " + "PRIVILEGES_PSEUDOREFERENCE_CODE "; // Pseudoreference code
 
-  // Pseudoreference code
-  const pseudoreference_code_constants = "ACCESS_TYPES_PSEUDOREFERENCE_CODE " + "ALL_AVAILABLE_COMPONENTS_PSEUDOREFERENCE_CODE " + "ALL_AVAILABLE_PRIVILEGES_PSEUDOREFERENCE_CODE " + "ALL_REPLICATE_COMPONENTS_PSEUDOREFERENCE_CODE " + "AVAILABLE_DEVELOPERS_COMPONENTS_PSEUDOREFERENCE_CODE " + "COMPONENTS_PSEUDOREFERENCE_CODE " + "FILTRATER_SETTINGS_CONFLICTS_PSEUDOREFERENCE_CODE " + "GROUPS_PSEUDOREFERENCE_CODE " + "RECEIVE_PROTOCOL_PSEUDOREFERENCE_CODE " + "REFERENCE_REQUISITE_PSEUDOREFERENCE_CODE " + "REFERENCE_REQUISITES_PSEUDOREFERENCE_CODE " + "REFTYPES_PSEUDOREFERENCE_CODE " + "REPLICATION_SEANCES_DIARY_PSEUDOREFERENCE_CODE " + "SEND_PROTOCOL_PSEUDOREFERENCE_CODE " + "SUBSTITUTES_PSEUDOREFERENCE_CODE " + "SYSTEM_SETTINGS_PSEUDOREFERENCE_CODE " + "UNITS_PSEUDOREFERENCE_CODE " + "USERS_PSEUDOREFERENCE_CODE " + "VIEWERS_PSEUDOREFERENCE_CODE ";
+  const pseudoreference_code_constants = "ACCESS_TYPES_PSEUDOREFERENCE_CODE " + "ALL_AVAILABLE_COMPONENTS_PSEUDOREFERENCE_CODE " + "ALL_AVAILABLE_PRIVILEGES_PSEUDOREFERENCE_CODE " + "ALL_REPLICATE_COMPONENTS_PSEUDOREFERENCE_CODE " + "AVAILABLE_DEVELOPERS_COMPONENTS_PSEUDOREFERENCE_CODE " + "COMPONENTS_PSEUDOREFERENCE_CODE " + "FILTRATER_SETTINGS_CONFLICTS_PSEUDOREFERENCE_CODE " + "GROUPS_PSEUDOREFERENCE_CODE " + "RECEIVE_PROTOCOL_PSEUDOREFERENCE_CODE " + "REFERENCE_REQUISITE_PSEUDOREFERENCE_CODE " + "REFERENCE_REQUISITES_PSEUDOREFERENCE_CODE " + "REFTYPES_PSEUDOREFERENCE_CODE " + "REPLICATION_SEANCES_DIARY_PSEUDOREFERENCE_CODE " + "SEND_PROTOCOL_PSEUDOREFERENCE_CODE " + "SUBSTITUTES_PSEUDOREFERENCE_CODE " + "SYSTEM_SETTINGS_PSEUDOREFERENCE_CODE " + "UNITS_PSEUDOREFERENCE_CODE " + "USERS_PSEUDOREFERENCE_CODE " + "VIEWERS_PSEUDOREFERENCE_CODE "; // Requisite ISBCertificateType values
 
-  // Requisite ISBCertificateType values
-  const requisite_ISBCertificateType_values_constants = "CERTIFICATE_TYPE_ENCRYPT " + "CERTIFICATE_TYPE_SIGN " + "CERTIFICATE_TYPE_SIGN_AND_ENCRYPT ";
+  const requisite_ISBCertificateType_values_constants = "CERTIFICATE_TYPE_ENCRYPT " + "CERTIFICATE_TYPE_SIGN " + "CERTIFICATE_TYPE_SIGN_AND_ENCRYPT "; // Requisite ISBEDocStorageType values
 
-  // Requisite ISBEDocStorageType values
-  const requisite_ISBEDocStorageType_values_constants = "STORAGE_TYPE_FILE " + "STORAGE_TYPE_NAS_CIFS " + "STORAGE_TYPE_SAPERION " + "STORAGE_TYPE_SQL_SERVER ";
+  const requisite_ISBEDocStorageType_values_constants = "STORAGE_TYPE_FILE " + "STORAGE_TYPE_NAS_CIFS " + "STORAGE_TYPE_SAPERION " + "STORAGE_TYPE_SQL_SERVER "; // Requisite CompType2 values
 
-  // Requisite CompType2 values
-  const requisite_compType2_values_constants = "COMPTYPE2_REQUISITE_DOCUMENTS_VALUE " + "COMPTYPE2_REQUISITE_TASKS_VALUE " + "COMPTYPE2_REQUISITE_FOLDERS_VALUE " + "COMPTYPE2_REQUISITE_REFERENCES_VALUE ";
+  const requisite_compType2_values_constants = "COMPTYPE2_REQUISITE_DOCUMENTS_VALUE " + "COMPTYPE2_REQUISITE_TASKS_VALUE " + "COMPTYPE2_REQUISITE_FOLDERS_VALUE " + "COMPTYPE2_REQUISITE_REFERENCES_VALUE "; // Requisite name
 
-  // Requisite name
-  const requisite_name_constants = "SYSREQ_CODE " + "SYSREQ_COMPTYPE2 " + "SYSREQ_CONST_AVAILABLE_FOR_WEB " + "SYSREQ_CONST_COMMON_CODE " + "SYSREQ_CONST_COMMON_VALUE " + "SYSREQ_CONST_FIRM_CODE " + "SYSREQ_CONST_FIRM_STATUS " + "SYSREQ_CONST_FIRM_VALUE " + "SYSREQ_CONST_SERVER_STATUS " + "SYSREQ_CONTENTS " + "SYSREQ_DATE_OPEN " + "SYSREQ_DATE_CLOSE " + "SYSREQ_DESCRIPTION " + "SYSREQ_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_DOUBLE " + "SYSREQ_EDOC_ACCESS_TYPE " + "SYSREQ_EDOC_AUTHOR " + "SYSREQ_EDOC_CREATED " + "SYSREQ_EDOC_DELEGATE_RIGHTS_REQUISITE_CODE " + "SYSREQ_EDOC_EDITOR " + "SYSREQ_EDOC_ENCODE_TYPE " + "SYSREQ_EDOC_ENCRYPTION_PLUGIN_NAME " + "SYSREQ_EDOC_ENCRYPTION_PLUGIN_VERSION " + "SYSREQ_EDOC_EXPORT_DATE " + "SYSREQ_EDOC_EXPORTER " + "SYSREQ_EDOC_KIND " + "SYSREQ_EDOC_LIFE_STAGE_NAME " + "SYSREQ_EDOC_LOCKED_FOR_SERVER_CODE " + "SYSREQ_EDOC_MODIFIED " + "SYSREQ_EDOC_NAME " + "SYSREQ_EDOC_NOTE " + "SYSREQ_EDOC_QUALIFIED_ID " + "SYSREQ_EDOC_SESSION_KEY " + "SYSREQ_EDOC_SESSION_KEY_ENCRYPTION_PLUGIN_NAME " + "SYSREQ_EDOC_SESSION_KEY_ENCRYPTION_PLUGIN_VERSION " + "SYSREQ_EDOC_SIGNATURE_TYPE " + "SYSREQ_EDOC_SIGNED " + "SYSREQ_EDOC_STORAGE " + "SYSREQ_EDOC_STORAGES_ARCHIVE_STORAGE " + "SYSREQ_EDOC_STORAGES_CHECK_RIGHTS " + "SYSREQ_EDOC_STORAGES_COMPUTER_NAME " + "SYSREQ_EDOC_STORAGES_EDIT_IN_STORAGE " + "SYSREQ_EDOC_STORAGES_EXECUTIVE_STORAGE " + "SYSREQ_EDOC_STORAGES_FUNCTION " + "SYSREQ_EDOC_STORAGES_INITIALIZED " + "SYSREQ_EDOC_STORAGES_LOCAL_PATH " + "SYSREQ_EDOC_STORAGES_SAPERION_DATABASE_NAME " + "SYSREQ_EDOC_STORAGES_SEARCH_BY_TEXT " + "SYSREQ_EDOC_STORAGES_SERVER_NAME " + "SYSREQ_EDOC_STORAGES_SHARED_SOURCE_NAME " + "SYSREQ_EDOC_STORAGES_TYPE " + "SYSREQ_EDOC_TEXT_MODIFIED " + "SYSREQ_EDOC_TYPE_ACT_CODE " + "SYSREQ_EDOC_TYPE_ACT_DESCRIPTION " + "SYSREQ_EDOC_TYPE_ACT_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_ACT_ON_EXECUTE " + "SYSREQ_EDOC_TYPE_ACT_ON_EXECUTE_EXISTS " + "SYSREQ_EDOC_TYPE_ACT_SECTION " + "SYSREQ_EDOC_TYPE_ADD_PARAMS " + "SYSREQ_EDOC_TYPE_COMMENT " + "SYSREQ_EDOC_TYPE_EVENT_TEXT " + "SYSREQ_EDOC_TYPE_NAME_IN_SINGULAR " + "SYSREQ_EDOC_TYPE_NAME_IN_SINGULAR_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_NAME_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_NUMERATION_METHOD " + "SYSREQ_EDOC_TYPE_PSEUDO_REQUISITE_CODE " + "SYSREQ_EDOC_TYPE_REQ_CODE " + "SYSREQ_EDOC_TYPE_REQ_DESCRIPTION " + "SYSREQ_EDOC_TYPE_REQ_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_REQ_IS_LEADING " + "SYSREQ_EDOC_TYPE_REQ_IS_REQUIRED " + "SYSREQ_EDOC_TYPE_REQ_NUMBER " + "SYSREQ_EDOC_TYPE_REQ_ON_CHANGE " + "SYSREQ_EDOC_TYPE_REQ_ON_CHANGE_EXISTS " + "SYSREQ_EDOC_TYPE_REQ_ON_SELECT " + "SYSREQ_EDOC_TYPE_REQ_ON_SELECT_KIND " + "SYSREQ_EDOC_TYPE_REQ_SECTION " + "SYSREQ_EDOC_TYPE_VIEW_CARD " + "SYSREQ_EDOC_TYPE_VIEW_CODE " + "SYSREQ_EDOC_TYPE_VIEW_COMMENT " + "SYSREQ_EDOC_TYPE_VIEW_IS_MAIN " + "SYSREQ_EDOC_TYPE_VIEW_NAME " + "SYSREQ_EDOC_TYPE_VIEW_NAME_LOCALIZE_ID " + "SYSREQ_EDOC_VERSION_AUTHOR " + "SYSREQ_EDOC_VERSION_CRC " + "SYSREQ_EDOC_VERSION_DATA " + "SYSREQ_EDOC_VERSION_EDITOR " + "SYSREQ_EDOC_VERSION_EXPORT_DATE " + "SYSREQ_EDOC_VERSION_EXPORTER " + "SYSREQ_EDOC_VERSION_HIDDEN " + "SYSREQ_EDOC_VERSION_LIFE_STAGE " + "SYSREQ_EDOC_VERSION_MODIFIED " + "SYSREQ_EDOC_VERSION_NOTE " + "SYSREQ_EDOC_VERSION_SIGNATURE_TYPE " + "SYSREQ_EDOC_VERSION_SIGNED " + "SYSREQ_EDOC_VERSION_SIZE " + "SYSREQ_EDOC_VERSION_SOURCE " + "SYSREQ_EDOC_VERSION_TEXT_MODIFIED " + "SYSREQ_EDOCKIND_DEFAULT_VERSION_STATE_CODE " + "SYSREQ_FOLDER_KIND " + "SYSREQ_FUNC_CATEGORY " + "SYSREQ_FUNC_COMMENT " + "SYSREQ_FUNC_GROUP " + "SYSREQ_FUNC_GROUP_COMMENT " + "SYSREQ_FUNC_GROUP_NUMBER " + "SYSREQ_FUNC_HELP " + "SYSREQ_FUNC_PARAM_DEF_VALUE " + "SYSREQ_FUNC_PARAM_IDENT " + "SYSREQ_FUNC_PARAM_NUMBER " + "SYSREQ_FUNC_PARAM_TYPE " + "SYSREQ_FUNC_TEXT " + "SYSREQ_GROUP_CATEGORY " + "SYSREQ_ID " + "SYSREQ_LAST_UPDATE " + "SYSREQ_LEADER_REFERENCE " + "SYSREQ_LINE_NUMBER " + "SYSREQ_MAIN_RECORD_ID " + "SYSREQ_NAME " + "SYSREQ_NAME_LOCALIZE_ID " + "SYSREQ_NOTE " + "SYSREQ_ORIGINAL_RECORD " + "SYSREQ_OUR_FIRM " + "SYSREQ_PROFILING_SETTINGS_BATCH_LOGING " + "SYSREQ_PROFILING_SETTINGS_BATCH_SIZE " + "SYSREQ_PROFILING_SETTINGS_PROFILING_ENABLED " + "SYSREQ_PROFILING_SETTINGS_SQL_PROFILING_ENABLED " + "SYSREQ_PROFILING_SETTINGS_START_LOGGED " + "SYSREQ_RECORD_STATUS " + "SYSREQ_REF_REQ_FIELD_NAME " + "SYSREQ_REF_REQ_FORMAT " + "SYSREQ_REF_REQ_GENERATED " + "SYSREQ_REF_REQ_LENGTH " + "SYSREQ_REF_REQ_PRECISION " + "SYSREQ_REF_REQ_REFERENCE " + "SYSREQ_REF_REQ_SECTION " + "SYSREQ_REF_REQ_STORED " + "SYSREQ_REF_REQ_TOKENS " + "SYSREQ_REF_REQ_TYPE " + "SYSREQ_REF_REQ_VIEW " + "SYSREQ_REF_TYPE_ACT_CODE " + "SYSREQ_REF_TYPE_ACT_DESCRIPTION " + "SYSREQ_REF_TYPE_ACT_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_REF_TYPE_ACT_ON_EXECUTE " + "SYSREQ_REF_TYPE_ACT_ON_EXECUTE_EXISTS " + "SYSREQ_REF_TYPE_ACT_SECTION " + "SYSREQ_REF_TYPE_ADD_PARAMS " + "SYSREQ_REF_TYPE_COMMENT " + "SYSREQ_REF_TYPE_COMMON_SETTINGS " + "SYSREQ_REF_TYPE_DISPLAY_REQUISITE_NAME " + "SYSREQ_REF_TYPE_EVENT_TEXT " + "SYSREQ_REF_TYPE_MAIN_LEADING_REF " + "SYSREQ_REF_TYPE_NAME_IN_SINGULAR " + "SYSREQ_REF_TYPE_NAME_IN_SINGULAR_LOCALIZE_ID " + "SYSREQ_REF_TYPE_NAME_LOCALIZE_ID " + "SYSREQ_REF_TYPE_NUMERATION_METHOD " + "SYSREQ_REF_TYPE_REQ_CODE " + "SYSREQ_REF_TYPE_REQ_DESCRIPTION " + "SYSREQ_REF_TYPE_REQ_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_REF_TYPE_REQ_IS_CONTROL " + "SYSREQ_REF_TYPE_REQ_IS_FILTER " + "SYSREQ_REF_TYPE_REQ_IS_LEADING " + "SYSREQ_REF_TYPE_REQ_IS_REQUIRED " + "SYSREQ_REF_TYPE_REQ_NUMBER " + "SYSREQ_REF_TYPE_REQ_ON_CHANGE " + "SYSREQ_REF_TYPE_REQ_ON_CHANGE_EXISTS " + "SYSREQ_REF_TYPE_REQ_ON_SELECT " + "SYSREQ_REF_TYPE_REQ_ON_SELECT_KIND " + "SYSREQ_REF_TYPE_REQ_SECTION " + "SYSREQ_REF_TYPE_VIEW_CARD " + "SYSREQ_REF_TYPE_VIEW_CODE " + "SYSREQ_REF_TYPE_VIEW_COMMENT " + "SYSREQ_REF_TYPE_VIEW_IS_MAIN " + "SYSREQ_REF_TYPE_VIEW_NAME " + "SYSREQ_REF_TYPE_VIEW_NAME_LOCALIZE_ID " + "SYSREQ_REFERENCE_TYPE_ID " + "SYSREQ_STATE " + "SYSREQ_STATЕ " + "SYSREQ_SYSTEM_SETTINGS_VALUE " + "SYSREQ_TYPE " + "SYSREQ_UNIT " + "SYSREQ_UNIT_ID " + "SYSREQ_USER_GROUPS_GROUP_FULL_NAME " + "SYSREQ_USER_GROUPS_GROUP_NAME " + "SYSREQ_USER_GROUPS_GROUP_SERVER_NAME " + "SYSREQ_USERS_ACCESS_RIGHTS " + "SYSREQ_USERS_AUTHENTICATION " + "SYSREQ_USERS_CATEGORY " + "SYSREQ_USERS_COMPONENT " + "SYSREQ_USERS_COMPONENT_USER_IS_PUBLIC " + "SYSREQ_USERS_DOMAIN " + "SYSREQ_USERS_FULL_USER_NAME " + "SYSREQ_USERS_GROUP " + "SYSREQ_USERS_IS_MAIN_SERVER " + "SYSREQ_USERS_LOGIN " + "SYSREQ_USERS_REFERENCE_USER_IS_PUBLIC " + "SYSREQ_USERS_STATUS " + "SYSREQ_USERS_USER_CERTIFICATE " + "SYSREQ_USERS_USER_CERTIFICATE_INFO " + "SYSREQ_USERS_USER_CERTIFICATE_PLUGIN_NAME " + "SYSREQ_USERS_USER_CERTIFICATE_PLUGIN_VERSION " + "SYSREQ_USERS_USER_CERTIFICATE_STATE " + "SYSREQ_USERS_USER_CERTIFICATE_SUBJECT_NAME " + "SYSREQ_USERS_USER_CERTIFICATE_THUMBPRINT " + "SYSREQ_USERS_USER_DEFAULT_CERTIFICATE " + "SYSREQ_USERS_USER_DESCRIPTION " + "SYSREQ_USERS_USER_GLOBAL_NAME " + "SYSREQ_USERS_USER_LOGIN " + "SYSREQ_USERS_USER_MAIN_SERVER " + "SYSREQ_USERS_USER_TYPE " + "SYSREQ_WORK_RULES_FOLDER_ID ";
+  const requisite_name_constants = "SYSREQ_CODE " + "SYSREQ_COMPTYPE2 " + "SYSREQ_CONST_AVAILABLE_FOR_WEB " + "SYSREQ_CONST_COMMON_CODE " + "SYSREQ_CONST_COMMON_VALUE " + "SYSREQ_CONST_FIRM_CODE " + "SYSREQ_CONST_FIRM_STATUS " + "SYSREQ_CONST_FIRM_VALUE " + "SYSREQ_CONST_SERVER_STATUS " + "SYSREQ_CONTENTS " + "SYSREQ_DATE_OPEN " + "SYSREQ_DATE_CLOSE " + "SYSREQ_DESCRIPTION " + "SYSREQ_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_DOUBLE " + "SYSREQ_EDOC_ACCESS_TYPE " + "SYSREQ_EDOC_AUTHOR " + "SYSREQ_EDOC_CREATED " + "SYSREQ_EDOC_DELEGATE_RIGHTS_REQUISITE_CODE " + "SYSREQ_EDOC_EDITOR " + "SYSREQ_EDOC_ENCODE_TYPE " + "SYSREQ_EDOC_ENCRYPTION_PLUGIN_NAME " + "SYSREQ_EDOC_ENCRYPTION_PLUGIN_VERSION " + "SYSREQ_EDOC_EXPORT_DATE " + "SYSREQ_EDOC_EXPORTER " + "SYSREQ_EDOC_KIND " + "SYSREQ_EDOC_LIFE_STAGE_NAME " + "SYSREQ_EDOC_LOCKED_FOR_SERVER_CODE " + "SYSREQ_EDOC_MODIFIED " + "SYSREQ_EDOC_NAME " + "SYSREQ_EDOC_NOTE " + "SYSREQ_EDOC_QUALIFIED_ID " + "SYSREQ_EDOC_SESSION_KEY " + "SYSREQ_EDOC_SESSION_KEY_ENCRYPTION_PLUGIN_NAME " + "SYSREQ_EDOC_SESSION_KEY_ENCRYPTION_PLUGIN_VERSION " + "SYSREQ_EDOC_SIGNATURE_TYPE " + "SYSREQ_EDOC_SIGNED " + "SYSREQ_EDOC_STORAGE " + "SYSREQ_EDOC_STORAGES_ARCHIVE_STORAGE " + "SYSREQ_EDOC_STORAGES_CHECK_RIGHTS " + "SYSREQ_EDOC_STORAGES_COMPUTER_NAME " + "SYSREQ_EDOC_STORAGES_EDIT_IN_STORAGE " + "SYSREQ_EDOC_STORAGES_EXECUTIVE_STORAGE " + "SYSREQ_EDOC_STORAGES_FUNCTION " + "SYSREQ_EDOC_STORAGES_INITIALIZED " + "SYSREQ_EDOC_STORAGES_LOCAL_PATH " + "SYSREQ_EDOC_STORAGES_SAPERION_DATABASE_NAME " + "SYSREQ_EDOC_STORAGES_SEARCH_BY_TEXT " + "SYSREQ_EDOC_STORAGES_SERVER_NAME " + "SYSREQ_EDOC_STORAGES_SHARED_SOURCE_NAME " + "SYSREQ_EDOC_STORAGES_TYPE " + "SYSREQ_EDOC_TEXT_MODIFIED " + "SYSREQ_EDOC_TYPE_ACT_CODE " + "SYSREQ_EDOC_TYPE_ACT_DESCRIPTION " + "SYSREQ_EDOC_TYPE_ACT_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_ACT_ON_EXECUTE " + "SYSREQ_EDOC_TYPE_ACT_ON_EXECUTE_EXISTS " + "SYSREQ_EDOC_TYPE_ACT_SECTION " + "SYSREQ_EDOC_TYPE_ADD_PARAMS " + "SYSREQ_EDOC_TYPE_COMMENT " + "SYSREQ_EDOC_TYPE_EVENT_TEXT " + "SYSREQ_EDOC_TYPE_NAME_IN_SINGULAR " + "SYSREQ_EDOC_TYPE_NAME_IN_SINGULAR_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_NAME_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_NUMERATION_METHOD " + "SYSREQ_EDOC_TYPE_PSEUDO_REQUISITE_CODE " + "SYSREQ_EDOC_TYPE_REQ_CODE " + "SYSREQ_EDOC_TYPE_REQ_DESCRIPTION " + "SYSREQ_EDOC_TYPE_REQ_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_EDOC_TYPE_REQ_IS_LEADING " + "SYSREQ_EDOC_TYPE_REQ_IS_REQUIRED " + "SYSREQ_EDOC_TYPE_REQ_NUMBER " + "SYSREQ_EDOC_TYPE_REQ_ON_CHANGE " + "SYSREQ_EDOC_TYPE_REQ_ON_CHANGE_EXISTS " + "SYSREQ_EDOC_TYPE_REQ_ON_SELECT " + "SYSREQ_EDOC_TYPE_REQ_ON_SELECT_KIND " + "SYSREQ_EDOC_TYPE_REQ_SECTION " + "SYSREQ_EDOC_TYPE_VIEW_CARD " + "SYSREQ_EDOC_TYPE_VIEW_CODE " + "SYSREQ_EDOC_TYPE_VIEW_COMMENT " + "SYSREQ_EDOC_TYPE_VIEW_IS_MAIN " + "SYSREQ_EDOC_TYPE_VIEW_NAME " + "SYSREQ_EDOC_TYPE_VIEW_NAME_LOCALIZE_ID " + "SYSREQ_EDOC_VERSION_AUTHOR " + "SYSREQ_EDOC_VERSION_CRC " + "SYSREQ_EDOC_VERSION_DATA " + "SYSREQ_EDOC_VERSION_EDITOR " + "SYSREQ_EDOC_VERSION_EXPORT_DATE " + "SYSREQ_EDOC_VERSION_EXPORTER " + "SYSREQ_EDOC_VERSION_HIDDEN " + "SYSREQ_EDOC_VERSION_LIFE_STAGE " + "SYSREQ_EDOC_VERSION_MODIFIED " + "SYSREQ_EDOC_VERSION_NOTE " + "SYSREQ_EDOC_VERSION_SIGNATURE_TYPE " + "SYSREQ_EDOC_VERSION_SIGNED " + "SYSREQ_EDOC_VERSION_SIZE " + "SYSREQ_EDOC_VERSION_SOURCE " + "SYSREQ_EDOC_VERSION_TEXT_MODIFIED " + "SYSREQ_EDOCKIND_DEFAULT_VERSION_STATE_CODE " + "SYSREQ_FOLDER_KIND " + "SYSREQ_FUNC_CATEGORY " + "SYSREQ_FUNC_COMMENT " + "SYSREQ_FUNC_GROUP " + "SYSREQ_FUNC_GROUP_COMMENT " + "SYSREQ_FUNC_GROUP_NUMBER " + "SYSREQ_FUNC_HELP " + "SYSREQ_FUNC_PARAM_DEF_VALUE " + "SYSREQ_FUNC_PARAM_IDENT " + "SYSREQ_FUNC_PARAM_NUMBER " + "SYSREQ_FUNC_PARAM_TYPE " + "SYSREQ_FUNC_TEXT " + "SYSREQ_GROUP_CATEGORY " + "SYSREQ_ID " + "SYSREQ_LAST_UPDATE " + "SYSREQ_LEADER_REFERENCE " + "SYSREQ_LINE_NUMBER " + "SYSREQ_MAIN_RECORD_ID " + "SYSREQ_NAME " + "SYSREQ_NAME_LOCALIZE_ID " + "SYSREQ_NOTE " + "SYSREQ_ORIGINAL_RECORD " + "SYSREQ_OUR_FIRM " + "SYSREQ_PROFILING_SETTINGS_BATCH_LOGING " + "SYSREQ_PROFILING_SETTINGS_BATCH_SIZE " + "SYSREQ_PROFILING_SETTINGS_PROFILING_ENABLED " + "SYSREQ_PROFILING_SETTINGS_SQL_PROFILING_ENABLED " + "SYSREQ_PROFILING_SETTINGS_START_LOGGED " + "SYSREQ_RECORD_STATUS " + "SYSREQ_REF_REQ_FIELD_NAME " + "SYSREQ_REF_REQ_FORMAT " + "SYSREQ_REF_REQ_GENERATED " + "SYSREQ_REF_REQ_LENGTH " + "SYSREQ_REF_REQ_PRECISION " + "SYSREQ_REF_REQ_REFERENCE " + "SYSREQ_REF_REQ_SECTION " + "SYSREQ_REF_REQ_STORED " + "SYSREQ_REF_REQ_TOKENS " + "SYSREQ_REF_REQ_TYPE " + "SYSREQ_REF_REQ_VIEW " + "SYSREQ_REF_TYPE_ACT_CODE " + "SYSREQ_REF_TYPE_ACT_DESCRIPTION " + "SYSREQ_REF_TYPE_ACT_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_REF_TYPE_ACT_ON_EXECUTE " + "SYSREQ_REF_TYPE_ACT_ON_EXECUTE_EXISTS " + "SYSREQ_REF_TYPE_ACT_SECTION " + "SYSREQ_REF_TYPE_ADD_PARAMS " + "SYSREQ_REF_TYPE_COMMENT " + "SYSREQ_REF_TYPE_COMMON_SETTINGS " + "SYSREQ_REF_TYPE_DISPLAY_REQUISITE_NAME " + "SYSREQ_REF_TYPE_EVENT_TEXT " + "SYSREQ_REF_TYPE_MAIN_LEADING_REF " + "SYSREQ_REF_TYPE_NAME_IN_SINGULAR " + "SYSREQ_REF_TYPE_NAME_IN_SINGULAR_LOCALIZE_ID " + "SYSREQ_REF_TYPE_NAME_LOCALIZE_ID " + "SYSREQ_REF_TYPE_NUMERATION_METHOD " + "SYSREQ_REF_TYPE_REQ_CODE " + "SYSREQ_REF_TYPE_REQ_DESCRIPTION " + "SYSREQ_REF_TYPE_REQ_DESCRIPTION_LOCALIZE_ID " + "SYSREQ_REF_TYPE_REQ_IS_CONTROL " + "SYSREQ_REF_TYPE_REQ_IS_FILTER " + "SYSREQ_REF_TYPE_REQ_IS_LEADING " + "SYSREQ_REF_TYPE_REQ_IS_REQUIRED " + "SYSREQ_REF_TYPE_REQ_NUMBER " + "SYSREQ_REF_TYPE_REQ_ON_CHANGE " + "SYSREQ_REF_TYPE_REQ_ON_CHANGE_EXISTS " + "SYSREQ_REF_TYPE_REQ_ON_SELECT " + "SYSREQ_REF_TYPE_REQ_ON_SELECT_KIND " + "SYSREQ_REF_TYPE_REQ_SECTION " + "SYSREQ_REF_TYPE_VIEW_CARD " + "SYSREQ_REF_TYPE_VIEW_CODE " + "SYSREQ_REF_TYPE_VIEW_COMMENT " + "SYSREQ_REF_TYPE_VIEW_IS_MAIN " + "SYSREQ_REF_TYPE_VIEW_NAME " + "SYSREQ_REF_TYPE_VIEW_NAME_LOCALIZE_ID " + "SYSREQ_REFERENCE_TYPE_ID " + "SYSREQ_STATE " + "SYSREQ_STATЕ " + "SYSREQ_SYSTEM_SETTINGS_VALUE " + "SYSREQ_TYPE " + "SYSREQ_UNIT " + "SYSREQ_UNIT_ID " + "SYSREQ_USER_GROUPS_GROUP_FULL_NAME " + "SYSREQ_USER_GROUPS_GROUP_NAME " + "SYSREQ_USER_GROUPS_GROUP_SERVER_NAME " + "SYSREQ_USERS_ACCESS_RIGHTS " + "SYSREQ_USERS_AUTHENTICATION " + "SYSREQ_USERS_CATEGORY " + "SYSREQ_USERS_COMPONENT " + "SYSREQ_USERS_COMPONENT_USER_IS_PUBLIC " + "SYSREQ_USERS_DOMAIN " + "SYSREQ_USERS_FULL_USER_NAME " + "SYSREQ_USERS_GROUP " + "SYSREQ_USERS_IS_MAIN_SERVER " + "SYSREQ_USERS_LOGIN " + "SYSREQ_USERS_REFERENCE_USER_IS_PUBLIC " + "SYSREQ_USERS_STATUS " + "SYSREQ_USERS_USER_CERTIFICATE " + "SYSREQ_USERS_USER_CERTIFICATE_INFO " + "SYSREQ_USERS_USER_CERTIFICATE_PLUGIN_NAME " + "SYSREQ_USERS_USER_CERTIFICATE_PLUGIN_VERSION " + "SYSREQ_USERS_USER_CERTIFICATE_STATE " + "SYSREQ_USERS_USER_CERTIFICATE_SUBJECT_NAME " + "SYSREQ_USERS_USER_CERTIFICATE_THUMBPRINT " + "SYSREQ_USERS_USER_DEFAULT_CERTIFICATE " + "SYSREQ_USERS_USER_DESCRIPTION " + "SYSREQ_USERS_USER_GLOBAL_NAME " + "SYSREQ_USERS_USER_LOGIN " + "SYSREQ_USERS_USER_MAIN_SERVER " + "SYSREQ_USERS_USER_TYPE " + "SYSREQ_WORK_RULES_FOLDER_ID "; // Result
 
-  // Result
-  const result_constants = "RESULT_VAR_NAME RESULT_VAR_NAME_ENG ";
+  const result_constants = "RESULT_VAR_NAME RESULT_VAR_NAME_ENG "; // Rule identification
 
-  // Rule identification
-  const rule_identification_constants = "AUTO_NUMERATION_RULE_ID " + "CANT_CHANGE_ID_REQUISITE_RULE_ID " + "CANT_CHANGE_OURFIRM_REQUISITE_RULE_ID " + "CHECK_CHANGING_REFERENCE_RECORD_USE_RULE_ID " + "CHECK_CODE_REQUISITE_RULE_ID " + "CHECK_DELETING_REFERENCE_RECORD_USE_RULE_ID " + "CHECK_FILTRATER_CHANGES_RULE_ID " + "CHECK_RECORD_INTERVAL_RULE_ID " + "CHECK_REFERENCE_INTERVAL_RULE_ID " + "CHECK_REQUIRED_DATA_FULLNESS_RULE_ID " + "CHECK_REQUIRED_REQUISITES_FULLNESS_RULE_ID " + "MAKE_RECORD_UNRATIFIED_RULE_ID " + "RESTORE_AUTO_NUMERATION_RULE_ID " + "SET_FIRM_CONTEXT_FROM_RECORD_RULE_ID " + "SET_FIRST_RECORD_IN_LIST_FORM_RULE_ID " + "SET_IDSPS_VALUE_RULE_ID " + "SET_NEXT_CODE_VALUE_RULE_ID " + "SET_OURFIRM_BOUNDS_RULE_ID " + "SET_OURFIRM_REQUISITE_RULE_ID ";
+  const rule_identification_constants = "AUTO_NUMERATION_RULE_ID " + "CANT_CHANGE_ID_REQUISITE_RULE_ID " + "CANT_CHANGE_OURFIRM_REQUISITE_RULE_ID " + "CHECK_CHANGING_REFERENCE_RECORD_USE_RULE_ID " + "CHECK_CODE_REQUISITE_RULE_ID " + "CHECK_DELETING_REFERENCE_RECORD_USE_RULE_ID " + "CHECK_FILTRATER_CHANGES_RULE_ID " + "CHECK_RECORD_INTERVAL_RULE_ID " + "CHECK_REFERENCE_INTERVAL_RULE_ID " + "CHECK_REQUIRED_DATA_FULLNESS_RULE_ID " + "CHECK_REQUIRED_REQUISITES_FULLNESS_RULE_ID " + "MAKE_RECORD_UNRATIFIED_RULE_ID " + "RESTORE_AUTO_NUMERATION_RULE_ID " + "SET_FIRM_CONTEXT_FROM_RECORD_RULE_ID " + "SET_FIRST_RECORD_IN_LIST_FORM_RULE_ID " + "SET_IDSPS_VALUE_RULE_ID " + "SET_NEXT_CODE_VALUE_RULE_ID " + "SET_OURFIRM_BOUNDS_RULE_ID " + "SET_OURFIRM_REQUISITE_RULE_ID "; // Script block properties
 
-  // Script block properties
-  const script_block_properties_constants = "SCRIPT_BLOCK_AFTER_FINISH_EVENT " + "SCRIPT_BLOCK_BEFORE_START_EVENT " + "SCRIPT_BLOCK_EXECUTION_RESULTS_PROPERTY " + "SCRIPT_BLOCK_NAME_PROPERTY " + "SCRIPT_BLOCK_SCRIPT_PROPERTY ";
+  const script_block_properties_constants = "SCRIPT_BLOCK_AFTER_FINISH_EVENT " + "SCRIPT_BLOCK_BEFORE_START_EVENT " + "SCRIPT_BLOCK_EXECUTION_RESULTS_PROPERTY " + "SCRIPT_BLOCK_NAME_PROPERTY " + "SCRIPT_BLOCK_SCRIPT_PROPERTY "; // Subtask block properties
 
-  // Subtask block properties
-  const subtask_block_properties_constants = "SUBTASK_BLOCK_ABORT_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_AFTER_FINISH_EVENT " + "SUBTASK_BLOCK_ASSIGN_PARAMS_EVENT " + "SUBTASK_BLOCK_ATTACHMENTS_PROPERTY " + "SUBTASK_BLOCK_ATTACHMENTS_RIGHTS_GROUP_PROPERTY " + "SUBTASK_BLOCK_ATTACHMENTS_RIGHTS_TYPE_PROPERTY " + "SUBTASK_BLOCK_BEFORE_START_EVENT " + "SUBTASK_BLOCK_CREATED_TASK_PROPERTY " + "SUBTASK_BLOCK_CREATION_EVENT " + "SUBTASK_BLOCK_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_IMPORTANCE_PROPERTY " + "SUBTASK_BLOCK_INITIATOR_PROPERTY " + "SUBTASK_BLOCK_IS_RELATIVE_ABORT_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_JOBS_TYPE_PROPERTY " + "SUBTASK_BLOCK_NAME_PROPERTY " + "SUBTASK_BLOCK_PARALLEL_ROUTE_PROPERTY " + "SUBTASK_BLOCK_PERFORMERS_PROPERTY " + "SUBTASK_BLOCK_RELATIVE_ABORT_DEADLINE_TYPE_PROPERTY " + "SUBTASK_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "SUBTASK_BLOCK_REQUIRE_SIGN_PROPERTY " + "SUBTASK_BLOCK_STANDARD_ROUTE_PROPERTY " + "SUBTASK_BLOCK_START_EVENT " + "SUBTASK_BLOCK_STEP_CONTROL_PROPERTY " + "SUBTASK_BLOCK_SUBJECT_PROPERTY " + "SUBTASK_BLOCK_TASK_CONTROL_PROPERTY " + "SUBTASK_BLOCK_TEXT_PROPERTY " + "SUBTASK_BLOCK_UNLOCK_ATTACHMENTS_ON_STOP_PROPERTY " + "SUBTASK_BLOCK_USE_STANDARD_ROUTE_PROPERTY " + "SUBTASK_BLOCK_WAIT_FOR_TASK_COMPLETE_PROPERTY ";
+  const subtask_block_properties_constants = "SUBTASK_BLOCK_ABORT_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_AFTER_FINISH_EVENT " + "SUBTASK_BLOCK_ASSIGN_PARAMS_EVENT " + "SUBTASK_BLOCK_ATTACHMENTS_PROPERTY " + "SUBTASK_BLOCK_ATTACHMENTS_RIGHTS_GROUP_PROPERTY " + "SUBTASK_BLOCK_ATTACHMENTS_RIGHTS_TYPE_PROPERTY " + "SUBTASK_BLOCK_BEFORE_START_EVENT " + "SUBTASK_BLOCK_CREATED_TASK_PROPERTY " + "SUBTASK_BLOCK_CREATION_EVENT " + "SUBTASK_BLOCK_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_IMPORTANCE_PROPERTY " + "SUBTASK_BLOCK_INITIATOR_PROPERTY " + "SUBTASK_BLOCK_IS_RELATIVE_ABORT_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "SUBTASK_BLOCK_JOBS_TYPE_PROPERTY " + "SUBTASK_BLOCK_NAME_PROPERTY " + "SUBTASK_BLOCK_PARALLEL_ROUTE_PROPERTY " + "SUBTASK_BLOCK_PERFORMERS_PROPERTY " + "SUBTASK_BLOCK_RELATIVE_ABORT_DEADLINE_TYPE_PROPERTY " + "SUBTASK_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY " + "SUBTASK_BLOCK_REQUIRE_SIGN_PROPERTY " + "SUBTASK_BLOCK_STANDARD_ROUTE_PROPERTY " + "SUBTASK_BLOCK_START_EVENT " + "SUBTASK_BLOCK_STEP_CONTROL_PROPERTY " + "SUBTASK_BLOCK_SUBJECT_PROPERTY " + "SUBTASK_BLOCK_TASK_CONTROL_PROPERTY " + "SUBTASK_BLOCK_TEXT_PROPERTY " + "SUBTASK_BLOCK_UNLOCK_ATTACHMENTS_ON_STOP_PROPERTY " + "SUBTASK_BLOCK_USE_STANDARD_ROUTE_PROPERTY " + "SUBTASK_BLOCK_WAIT_FOR_TASK_COMPLETE_PROPERTY "; // System component
 
-  // System component
-  const system_component_constants = "SYSCOMP_CONTROL_JOBS " + "SYSCOMP_FOLDERS " + "SYSCOMP_JOBS " + "SYSCOMP_NOTICES " + "SYSCOMP_TASKS ";
+  const system_component_constants = "SYSCOMP_CONTROL_JOBS " + "SYSCOMP_FOLDERS " + "SYSCOMP_JOBS " + "SYSCOMP_NOTICES " + "SYSCOMP_TASKS "; // System dialogs
 
-  // System dialogs
-  const system_dialogs_constants = "SYSDLG_CREATE_EDOCUMENT " + "SYSDLG_CREATE_EDOCUMENT_VERSION " + "SYSDLG_CURRENT_PERIOD " + "SYSDLG_EDIT_FUNCTION_HELP " + "SYSDLG_EDOCUMENT_KINDS_FOR_TEMPLATE " + "SYSDLG_EXPORT_MULTIPLE_EDOCUMENTS " + "SYSDLG_EXPORT_SINGLE_EDOCUMENT " + "SYSDLG_IMPORT_EDOCUMENT " + "SYSDLG_MULTIPLE_SELECT " + "SYSDLG_SETUP_ACCESS_RIGHTS " + "SYSDLG_SETUP_DEFAULT_RIGHTS " + "SYSDLG_SETUP_FILTER_CONDITION " + "SYSDLG_SETUP_SIGN_RIGHTS " + "SYSDLG_SETUP_TASK_OBSERVERS " + "SYSDLG_SETUP_TASK_ROUTE " + "SYSDLG_SETUP_USERS_LIST " + "SYSDLG_SIGN_EDOCUMENT " + "SYSDLG_SIGN_MULTIPLE_EDOCUMENTS ";
+  const system_dialogs_constants = "SYSDLG_CREATE_EDOCUMENT " + "SYSDLG_CREATE_EDOCUMENT_VERSION " + "SYSDLG_CURRENT_PERIOD " + "SYSDLG_EDIT_FUNCTION_HELP " + "SYSDLG_EDOCUMENT_KINDS_FOR_TEMPLATE " + "SYSDLG_EXPORT_MULTIPLE_EDOCUMENTS " + "SYSDLG_EXPORT_SINGLE_EDOCUMENT " + "SYSDLG_IMPORT_EDOCUMENT " + "SYSDLG_MULTIPLE_SELECT " + "SYSDLG_SETUP_ACCESS_RIGHTS " + "SYSDLG_SETUP_DEFAULT_RIGHTS " + "SYSDLG_SETUP_FILTER_CONDITION " + "SYSDLG_SETUP_SIGN_RIGHTS " + "SYSDLG_SETUP_TASK_OBSERVERS " + "SYSDLG_SETUP_TASK_ROUTE " + "SYSDLG_SETUP_USERS_LIST " + "SYSDLG_SIGN_EDOCUMENT " + "SYSDLG_SIGN_MULTIPLE_EDOCUMENTS "; // System reference names
 
-  // System reference names
-  const system_reference_names_constants = "SYSREF_ACCESS_RIGHTS_TYPES " + "SYSREF_ADMINISTRATION_HISTORY " + "SYSREF_ALL_AVAILABLE_COMPONENTS " + "SYSREF_ALL_AVAILABLE_PRIVILEGES " + "SYSREF_ALL_REPLICATING_COMPONENTS " + "SYSREF_AVAILABLE_DEVELOPERS_COMPONENTS " + "SYSREF_CALENDAR_EVENTS " + "SYSREF_COMPONENT_TOKEN_HISTORY " + "SYSREF_COMPONENT_TOKENS " + "SYSREF_COMPONENTS " + "SYSREF_CONSTANTS " + "SYSREF_DATA_RECEIVE_PROTOCOL " + "SYSREF_DATA_SEND_PROTOCOL " + "SYSREF_DIALOGS " + "SYSREF_DIALOGS_REQUISITES " + "SYSREF_EDITORS " + "SYSREF_EDOC_CARDS " + "SYSREF_EDOC_TYPES " + "SYSREF_EDOCUMENT_CARD_REQUISITES " + "SYSREF_EDOCUMENT_CARD_TYPES " + "SYSREF_EDOCUMENT_CARD_TYPES_REFERENCE " + "SYSREF_EDOCUMENT_CARDS " + "SYSREF_EDOCUMENT_HISTORY " + "SYSREF_EDOCUMENT_KINDS " + "SYSREF_EDOCUMENT_REQUISITES " + "SYSREF_EDOCUMENT_SIGNATURES " + "SYSREF_EDOCUMENT_TEMPLATES " + "SYSREF_EDOCUMENT_TEXT_STORAGES " + "SYSREF_EDOCUMENT_VIEWS " + "SYSREF_FILTERER_SETUP_CONFLICTS " + "SYSREF_FILTRATER_SETTING_CONFLICTS " + "SYSREF_FOLDER_HISTORY " + "SYSREF_FOLDERS " + "SYSREF_FUNCTION_GROUPS " + "SYSREF_FUNCTION_PARAMS " + "SYSREF_FUNCTIONS " + "SYSREF_JOB_HISTORY " + "SYSREF_LINKS " + "SYSREF_LOCALIZATION_DICTIONARY " + "SYSREF_LOCALIZATION_LANGUAGES " + "SYSREF_MODULES " + "SYSREF_PRIVILEGES " + "SYSREF_RECORD_HISTORY " + "SYSREF_REFERENCE_REQUISITES " + "SYSREF_REFERENCE_TYPE_VIEWS " + "SYSREF_REFERENCE_TYPES " + "SYSREF_REFERENCES " + "SYSREF_REFERENCES_REQUISITES " + "SYSREF_REMOTE_SERVERS " + "SYSREF_REPLICATION_SESSIONS_LOG " + "SYSREF_REPLICATION_SESSIONS_PROTOCOL " + "SYSREF_REPORTS " + "SYSREF_ROLES " + "SYSREF_ROUTE_BLOCK_GROUPS " + "SYSREF_ROUTE_BLOCKS " + "SYSREF_SCRIPTS " + "SYSREF_SEARCHES " + "SYSREF_SERVER_EVENTS " + "SYSREF_SERVER_EVENTS_HISTORY " + "SYSREF_STANDARD_ROUTE_GROUPS " + "SYSREF_STANDARD_ROUTES " + "SYSREF_STATUSES " + "SYSREF_SYSTEM_SETTINGS " + "SYSREF_TASK_HISTORY " + "SYSREF_TASK_KIND_GROUPS " + "SYSREF_TASK_KINDS " + "SYSREF_TASK_RIGHTS " + "SYSREF_TASK_SIGNATURES " + "SYSREF_TASKS " + "SYSREF_UNITS " + "SYSREF_USER_GROUPS " + "SYSREF_USER_GROUPS_REFERENCE " + "SYSREF_USER_SUBSTITUTION " + "SYSREF_USERS " + "SYSREF_USERS_REFERENCE " + "SYSREF_VIEWERS " + "SYSREF_WORKING_TIME_CALENDARS ";
+  const system_reference_names_constants = "SYSREF_ACCESS_RIGHTS_TYPES " + "SYSREF_ADMINISTRATION_HISTORY " + "SYSREF_ALL_AVAILABLE_COMPONENTS " + "SYSREF_ALL_AVAILABLE_PRIVILEGES " + "SYSREF_ALL_REPLICATING_COMPONENTS " + "SYSREF_AVAILABLE_DEVELOPERS_COMPONENTS " + "SYSREF_CALENDAR_EVENTS " + "SYSREF_COMPONENT_TOKEN_HISTORY " + "SYSREF_COMPONENT_TOKENS " + "SYSREF_COMPONENTS " + "SYSREF_CONSTANTS " + "SYSREF_DATA_RECEIVE_PROTOCOL " + "SYSREF_DATA_SEND_PROTOCOL " + "SYSREF_DIALOGS " + "SYSREF_DIALOGS_REQUISITES " + "SYSREF_EDITORS " + "SYSREF_EDOC_CARDS " + "SYSREF_EDOC_TYPES " + "SYSREF_EDOCUMENT_CARD_REQUISITES " + "SYSREF_EDOCUMENT_CARD_TYPES " + "SYSREF_EDOCUMENT_CARD_TYPES_REFERENCE " + "SYSREF_EDOCUMENT_CARDS " + "SYSREF_EDOCUMENT_HISTORY " + "SYSREF_EDOCUMENT_KINDS " + "SYSREF_EDOCUMENT_REQUISITES " + "SYSREF_EDOCUMENT_SIGNATURES " + "SYSREF_EDOCUMENT_TEMPLATES " + "SYSREF_EDOCUMENT_TEXT_STORAGES " + "SYSREF_EDOCUMENT_VIEWS " + "SYSREF_FILTERER_SETUP_CONFLICTS " + "SYSREF_FILTRATER_SETTING_CONFLICTS " + "SYSREF_FOLDER_HISTORY " + "SYSREF_FOLDERS " + "SYSREF_FUNCTION_GROUPS " + "SYSREF_FUNCTION_PARAMS " + "SYSREF_FUNCTIONS " + "SYSREF_JOB_HISTORY " + "SYSREF_LINKS " + "SYSREF_LOCALIZATION_DICTIONARY " + "SYSREF_LOCALIZATION_LANGUAGES " + "SYSREF_MODULES " + "SYSREF_PRIVILEGES " + "SYSREF_RECORD_HISTORY " + "SYSREF_REFERENCE_REQUISITES " + "SYSREF_REFERENCE_TYPE_VIEWS " + "SYSREF_REFERENCE_TYPES " + "SYSREF_REFERENCES " + "SYSREF_REFERENCES_REQUISITES " + "SYSREF_REMOTE_SERVERS " + "SYSREF_REPLICATION_SESSIONS_LOG " + "SYSREF_REPLICATION_SESSIONS_PROTOCOL " + "SYSREF_REPORTS " + "SYSREF_ROLES " + "SYSREF_ROUTE_BLOCK_GROUPS " + "SYSREF_ROUTE_BLOCKS " + "SYSREF_SCRIPTS " + "SYSREF_SEARCHES " + "SYSREF_SERVER_EVENTS " + "SYSREF_SERVER_EVENTS_HISTORY " + "SYSREF_STANDARD_ROUTE_GROUPS " + "SYSREF_STANDARD_ROUTES " + "SYSREF_STATUSES " + "SYSREF_SYSTEM_SETTINGS " + "SYSREF_TASK_HISTORY " + "SYSREF_TASK_KIND_GROUPS " + "SYSREF_TASK_KINDS " + "SYSREF_TASK_RIGHTS " + "SYSREF_TASK_SIGNATURES " + "SYSREF_TASKS " + "SYSREF_UNITS " + "SYSREF_USER_GROUPS " + "SYSREF_USER_GROUPS_REFERENCE " + "SYSREF_USER_SUBSTITUTION " + "SYSREF_USERS " + "SYSREF_USERS_REFERENCE " + "SYSREF_VIEWERS " + "SYSREF_WORKING_TIME_CALENDARS "; // Table name
 
-  // Table name
-  const table_name_constants = "ACCESS_RIGHTS_TABLE_NAME " + "EDMS_ACCESS_TABLE_NAME " + "EDOC_TYPES_TABLE_NAME ";
+  const table_name_constants = "ACCESS_RIGHTS_TABLE_NAME " + "EDMS_ACCESS_TABLE_NAME " + "EDOC_TYPES_TABLE_NAME "; // Test
 
-  // Test
-  const test_constants = "TEST_DEV_DB_NAME " + "TEST_DEV_SYSTEM_CODE " + "TEST_EDMS_DB_NAME " + "TEST_EDMS_MAIN_CODE " + "TEST_EDMS_MAIN_DB_NAME " + "TEST_EDMS_SECOND_CODE " + "TEST_EDMS_SECOND_DB_NAME " + "TEST_EDMS_SYSTEM_CODE " + "TEST_ISB5_MAIN_CODE " + "TEST_ISB5_SECOND_CODE " + "TEST_SQL_SERVER_2005_NAME " + "TEST_SQL_SERVER_NAME ";
+  const test_constants = "TEST_DEV_DB_NAME " + "TEST_DEV_SYSTEM_CODE " + "TEST_EDMS_DB_NAME " + "TEST_EDMS_MAIN_CODE " + "TEST_EDMS_MAIN_DB_NAME " + "TEST_EDMS_SECOND_CODE " + "TEST_EDMS_SECOND_DB_NAME " + "TEST_EDMS_SYSTEM_CODE " + "TEST_ISB5_MAIN_CODE " + "TEST_ISB5_SECOND_CODE " + "TEST_SQL_SERVER_2005_NAME " + "TEST_SQL_SERVER_NAME "; // Using the dialog windows
 
-  // Using the dialog windows
-  const using_the_dialog_windows_constants = "ATTENTION_CAPTION " + "cbsCommandLinks " + "cbsDefault " + "CONFIRMATION_CAPTION " + "ERROR_CAPTION " + "INFORMATION_CAPTION " + "mrCancel " + "mrOk ";
+  const using_the_dialog_windows_constants = "ATTENTION_CAPTION " + "cbsCommandLinks " + "cbsDefault " + "CONFIRMATION_CAPTION " + "ERROR_CAPTION " + "INFORMATION_CAPTION " + "mrCancel " + "mrOk "; // Using the document
 
-  // Using the document
-  const using_the_document_constants = "EDOC_VERSION_ACTIVE_STAGE_CODE " + "EDOC_VERSION_DESIGN_STAGE_CODE " + "EDOC_VERSION_OBSOLETE_STAGE_CODE ";
+  const using_the_document_constants = "EDOC_VERSION_ACTIVE_STAGE_CODE " + "EDOC_VERSION_DESIGN_STAGE_CODE " + "EDOC_VERSION_OBSOLETE_STAGE_CODE "; // Using the EA and encryption
 
-  // Using the EA and encryption
-  const using_the_EA_and_encryption_constants = "cpDataEnciphermentEnabled " + "cpDigitalSignatureEnabled " + "cpID " + "cpIssuer " + "cpPluginVersion " + "cpSerial " + "cpSubjectName " + "cpSubjSimpleName " + "cpValidFromDate " + "cpValidToDate ";
+  const using_the_EA_and_encryption_constants = "cpDataEnciphermentEnabled " + "cpDigitalSignatureEnabled " + "cpID " + "cpIssuer " + "cpPluginVersion " + "cpSerial " + "cpSubjectName " + "cpSubjSimpleName " + "cpValidFromDate " + "cpValidToDate "; // Using the ISBL-editor
 
-  // Using the ISBL-editor
-  const using_the_ISBL_editor_constants = "ISBL_SYNTAX " + "NO_SYNTAX " + "XML_SYNTAX ";
+  const using_the_ISBL_editor_constants = "ISBL_SYNTAX " + "NO_SYNTAX " + "XML_SYNTAX "; // Wait block properties
 
-  // Wait block properties
-  const wait_block_properties_constants = "WAIT_BLOCK_AFTER_FINISH_EVENT " + "WAIT_BLOCK_BEFORE_START_EVENT " + "WAIT_BLOCK_DEADLINE_PROPERTY " + "WAIT_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "WAIT_BLOCK_NAME_PROPERTY " + "WAIT_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY ";
+  const wait_block_properties_constants = "WAIT_BLOCK_AFTER_FINISH_EVENT " + "WAIT_BLOCK_BEFORE_START_EVENT " + "WAIT_BLOCK_DEADLINE_PROPERTY " + "WAIT_BLOCK_IS_RELATIVE_DEADLINE_PROPERTY " + "WAIT_BLOCK_NAME_PROPERTY " + "WAIT_BLOCK_RELATIVE_DEADLINE_TYPE_PROPERTY "; // SYSRES Common
 
-  // SYSRES Common
-  const sysres_common_constants = "SYSRES_COMMON " + "SYSRES_CONST " + "SYSRES_MBFUNC " + "SYSRES_SBDATA " + "SYSRES_SBGUI " + "SYSRES_SBINTF " + "SYSRES_SBREFDSC " + "SYSRES_SQLERRORS " + "SYSRES_SYSCOMP ";
+  const sysres_common_constants = "SYSRES_COMMON " + "SYSRES_CONST " + "SYSRES_MBFUNC " + "SYSRES_SBDATA " + "SYSRES_SBGUI " + "SYSRES_SBINTF " + "SYSRES_SBREFDSC " + "SYSRES_SQLERRORS " + "SYSRES_SYSCOMP "; // Константы ==> built_in
 
-  // Константы ==> built_in
-  const CONSTANTS = sysres_constants + base_constants + base_group_name_constants + decision_block_properties_constants + file_extension_constants + job_block_properties_constants + language_code_constants + launching_external_applications_constants + link_kind_constants + lock_type_constants + monitor_block_properties_constants + notice_block_properties_constants + object_events_constants + object_params_constants + other_constants + privileges_constants + pseudoreference_code_constants + requisite_ISBCertificateType_values_constants + requisite_ISBEDocStorageType_values_constants + requisite_compType2_values_constants + requisite_name_constants + result_constants + rule_identification_constants + script_block_properties_constants + subtask_block_properties_constants + system_component_constants + system_dialogs_constants + system_reference_names_constants + table_name_constants + test_constants + using_the_dialog_windows_constants + using_the_document_constants + using_the_EA_and_encryption_constants + using_the_ISBL_editor_constants + wait_block_properties_constants + sysres_common_constants;
+  const CONSTANTS = sysres_constants + base_constants + base_group_name_constants + decision_block_properties_constants + file_extension_constants + job_block_properties_constants + language_code_constants + launching_external_applications_constants + link_kind_constants + lock_type_constants + monitor_block_properties_constants + notice_block_properties_constants + object_events_constants + object_params_constants + other_constants + privileges_constants + pseudoreference_code_constants + requisite_ISBCertificateType_values_constants + requisite_ISBEDocStorageType_values_constants + requisite_compType2_values_constants + requisite_name_constants + result_constants + rule_identification_constants + script_block_properties_constants + subtask_block_properties_constants + system_component_constants + system_dialogs_constants + system_reference_names_constants + table_name_constants + test_constants + using_the_dialog_windows_constants + using_the_document_constants + using_the_EA_and_encryption_constants + using_the_ISBL_editor_constants + wait_block_properties_constants + sysres_common_constants; // enum TAccountType
 
-  // enum TAccountType
-  const TAccountType = "atUser atGroup atRole ";
+  const TAccountType = "atUser atGroup atRole "; // enum TActionEnabledMode
 
-  // enum TActionEnabledMode
-  const TActionEnabledMode = "aemEnabledAlways " + "aemDisabledAlways " + "aemEnabledOnBrowse " + "aemEnabledOnEdit " + "aemDisabledOnBrowseEmpty ";
+  const TActionEnabledMode = "aemEnabledAlways " + "aemDisabledAlways " + "aemEnabledOnBrowse " + "aemEnabledOnEdit " + "aemDisabledOnBrowseEmpty "; // enum TAddPosition
 
-  // enum TAddPosition
-  const TAddPosition = "apBegin apEnd ";
+  const TAddPosition = "apBegin apEnd "; // enum TAlignment
 
-  // enum TAlignment
-  const TAlignment = "alLeft alRight ";
+  const TAlignment = "alLeft alRight "; // enum TAreaShowMode
 
-  // enum TAreaShowMode
-  const TAreaShowMode = "asmNever " + "asmNoButCustomize " + "asmAsLastTime " + "asmYesButCustomize " + "asmAlways ";
+  const TAreaShowMode = "asmNever " + "asmNoButCustomize " + "asmAsLastTime " + "asmYesButCustomize " + "asmAlways "; // enum TCertificateInvalidationReason
 
-  // enum TCertificateInvalidationReason
-  const TCertificateInvalidationReason = "cirCommon cirRevoked ";
+  const TCertificateInvalidationReason = "cirCommon cirRevoked "; // enum TCertificateType
 
-  // enum TCertificateType
-  const TCertificateType = "ctSignature ctEncode ctSignatureEncode ";
+  const TCertificateType = "ctSignature ctEncode ctSignatureEncode "; // enum TCheckListBoxItemState
 
-  // enum TCheckListBoxItemState
-  const TCheckListBoxItemState = "clbUnchecked clbChecked clbGrayed ";
+  const TCheckListBoxItemState = "clbUnchecked clbChecked clbGrayed "; // enum TCloseOnEsc
 
-  // enum TCloseOnEsc
-  const TCloseOnEsc = "ceISB ceAlways ceNever ";
+  const TCloseOnEsc = "ceISB ceAlways ceNever "; // enum TCompType
 
-  // enum TCompType
-  const TCompType = "ctDocument " + "ctReference " + "ctScript " + "ctUnknown " + "ctReport " + "ctDialog " + "ctFunction " + "ctFolder " + "ctEDocument " + "ctTask " + "ctJob " + "ctNotice " + "ctControlJob ";
+  const TCompType = "ctDocument " + "ctReference " + "ctScript " + "ctUnknown " + "ctReport " + "ctDialog " + "ctFunction " + "ctFolder " + "ctEDocument " + "ctTask " + "ctJob " + "ctNotice " + "ctControlJob "; // enum TConditionFormat
 
-  // enum TConditionFormat
-  const TConditionFormat = "cfInternal cfDisplay ";
+  const TConditionFormat = "cfInternal cfDisplay "; // enum TConnectionIntent
 
-  // enum TConnectionIntent
-  const TConnectionIntent = "ciUnspecified ciWrite ciRead ";
+  const TConnectionIntent = "ciUnspecified ciWrite ciRead "; // enum TContentKind
 
-  // enum TContentKind
-  const TContentKind = "ckFolder " + "ckEDocument " + "ckTask " + "ckJob " + "ckComponentToken " + "ckAny " + "ckReference " + "ckScript " + "ckReport " + "ckDialog ";
+  const TContentKind = "ckFolder " + "ckEDocument " + "ckTask " + "ckJob " + "ckComponentToken " + "ckAny " + "ckReference " + "ckScript " + "ckReport " + "ckDialog "; // enum TControlType
 
-  // enum TControlType
-  const TControlType = "ctISBLEditor " + "ctBevel " + "ctButton " + "ctCheckListBox " + "ctComboBox " + "ctComboEdit " + "ctGrid " + "ctDBCheckBox " + "ctDBComboBox " + "ctDBEdit " + "ctDBEllipsis " + "ctDBMemo " + "ctDBNavigator " + "ctDBRadioGroup " + "ctDBStatusLabel " + "ctEdit " + "ctGroupBox " + "ctInplaceHint " + "ctMemo " + "ctPanel " + "ctListBox " + "ctRadioButton " + "ctRichEdit " + "ctTabSheet " + "ctWebBrowser " + "ctImage " + "ctHyperLink " + "ctLabel " + "ctDBMultiEllipsis " + "ctRibbon " + "ctRichView " + "ctInnerPanel " + "ctPanelGroup " + "ctBitButton ";
+  const TControlType = "ctISBLEditor " + "ctBevel " + "ctButton " + "ctCheckListBox " + "ctComboBox " + "ctComboEdit " + "ctGrid " + "ctDBCheckBox " + "ctDBComboBox " + "ctDBEdit " + "ctDBEllipsis " + "ctDBMemo " + "ctDBNavigator " + "ctDBRadioGroup " + "ctDBStatusLabel " + "ctEdit " + "ctGroupBox " + "ctInplaceHint " + "ctMemo " + "ctPanel " + "ctListBox " + "ctRadioButton " + "ctRichEdit " + "ctTabSheet " + "ctWebBrowser " + "ctImage " + "ctHyperLink " + "ctLabel " + "ctDBMultiEllipsis " + "ctRibbon " + "ctRichView " + "ctInnerPanel " + "ctPanelGroup " + "ctBitButton "; // enum TCriterionContentType
 
-  // enum TCriterionContentType
-  const TCriterionContentType = "cctDate " + "cctInteger " + "cctNumeric " + "cctPick " + "cctReference " + "cctString " + "cctText ";
+  const TCriterionContentType = "cctDate " + "cctInteger " + "cctNumeric " + "cctPick " + "cctReference " + "cctString " + "cctText "; // enum TCultureType
 
-  // enum TCultureType
-  const TCultureType = "cltInternal cltPrimary cltGUI ";
+  const TCultureType = "cltInternal cltPrimary cltGUI "; // enum TDataSetEventType
 
-  // enum TDataSetEventType
-  const TDataSetEventType = "dseBeforeOpen " + "dseAfterOpen " + "dseBeforeClose " + "dseAfterClose " + "dseOnValidDelete " + "dseBeforeDelete " + "dseAfterDelete " + "dseAfterDeleteOutOfTransaction " + "dseOnDeleteError " + "dseBeforeInsert " + "dseAfterInsert " + "dseOnValidUpdate " + "dseBeforeUpdate " + "dseOnUpdateRatifiedRecord " + "dseAfterUpdate " + "dseAfterUpdateOutOfTransaction " + "dseOnUpdateError " + "dseAfterScroll " + "dseOnOpenRecord " + "dseOnCloseRecord " + "dseBeforeCancel " + "dseAfterCancel " + "dseOnUpdateDeadlockError " + "dseBeforeDetailUpdate " + "dseOnPrepareUpdate " + "dseOnAnyRequisiteChange ";
+  const TDataSetEventType = "dseBeforeOpen " + "dseAfterOpen " + "dseBeforeClose " + "dseAfterClose " + "dseOnValidDelete " + "dseBeforeDelete " + "dseAfterDelete " + "dseAfterDeleteOutOfTransaction " + "dseOnDeleteError " + "dseBeforeInsert " + "dseAfterInsert " + "dseOnValidUpdate " + "dseBeforeUpdate " + "dseOnUpdateRatifiedRecord " + "dseAfterUpdate " + "dseAfterUpdateOutOfTransaction " + "dseOnUpdateError " + "dseAfterScroll " + "dseOnOpenRecord " + "dseOnCloseRecord " + "dseBeforeCancel " + "dseAfterCancel " + "dseOnUpdateDeadlockError " + "dseBeforeDetailUpdate " + "dseOnPrepareUpdate " + "dseOnAnyRequisiteChange "; // enum TDataSetState
 
-  // enum TDataSetState
-  const TDataSetState = "dssEdit dssInsert dssBrowse dssInActive ";
+  const TDataSetState = "dssEdit dssInsert dssBrowse dssInActive "; // enum TDateFormatType
 
-  // enum TDateFormatType
-  const TDateFormatType = "dftDate dftShortDate dftDateTime dftTimeStamp ";
+  const TDateFormatType = "dftDate dftShortDate dftDateTime dftTimeStamp "; // enum TDateOffsetType
 
-  // enum TDateOffsetType
-  const TDateOffsetType = "dotDays dotHours dotMinutes dotSeconds ";
+  const TDateOffsetType = "dotDays dotHours dotMinutes dotSeconds "; // enum TDateTimeKind
 
-  // enum TDateTimeKind
-  const TDateTimeKind = "dtkndLocal dtkndUTC ";
+  const TDateTimeKind = "dtkndLocal dtkndUTC "; // enum TDeaAccessRights
 
-  // enum TDeaAccessRights
-  const TDeaAccessRights = "arNone arView arEdit arFull ";
+  const TDeaAccessRights = "arNone arView arEdit arFull "; // enum TDocumentDefaultAction
 
-  // enum TDocumentDefaultAction
-  const TDocumentDefaultAction = "ddaView ddaEdit ";
+  const TDocumentDefaultAction = "ddaView ddaEdit "; // enum TEditMode
 
-  // enum TEditMode
-  const TEditMode = "emLock " + "emEdit " + "emSign " + "emExportWithLock " + "emImportWithUnlock " + "emChangeVersionNote " + "emOpenForModify " + "emChangeLifeStage " + "emDelete " + "emCreateVersion " + "emImport " + "emUnlockExportedWithLock " + "emStart " + "emAbort " + "emReInit " + "emMarkAsReaded " + "emMarkAsUnreaded " + "emPerform " + "emAccept " + "emResume " + "emChangeRights " + "emEditRoute " + "emEditObserver " + "emRecoveryFromLocalCopy " + "emChangeWorkAccessType " + "emChangeEncodeTypeToCertificate " + "emChangeEncodeTypeToPassword " + "emChangeEncodeTypeToNone " + "emChangeEncodeTypeToCertificatePassword " + "emChangeStandardRoute " + "emGetText " + "emOpenForView " + "emMoveToStorage " + "emCreateObject " + "emChangeVersionHidden " + "emDeleteVersion " + "emChangeLifeCycleStage " + "emApprovingSign " + "emExport " + "emContinue " + "emLockFromEdit " + "emUnLockForEdit " + "emLockForServer " + "emUnlockFromServer " + "emDelegateAccessRights " + "emReEncode ";
+  const TEditMode = "emLock " + "emEdit " + "emSign " + "emExportWithLock " + "emImportWithUnlock " + "emChangeVersionNote " + "emOpenForModify " + "emChangeLifeStage " + "emDelete " + "emCreateVersion " + "emImport " + "emUnlockExportedWithLock " + "emStart " + "emAbort " + "emReInit " + "emMarkAsReaded " + "emMarkAsUnreaded " + "emPerform " + "emAccept " + "emResume " + "emChangeRights " + "emEditRoute " + "emEditObserver " + "emRecoveryFromLocalCopy " + "emChangeWorkAccessType " + "emChangeEncodeTypeToCertificate " + "emChangeEncodeTypeToPassword " + "emChangeEncodeTypeToNone " + "emChangeEncodeTypeToCertificatePassword " + "emChangeStandardRoute " + "emGetText " + "emOpenForView " + "emMoveToStorage " + "emCreateObject " + "emChangeVersionHidden " + "emDeleteVersion " + "emChangeLifeCycleStage " + "emApprovingSign " + "emExport " + "emContinue " + "emLockFromEdit " + "emUnLockForEdit " + "emLockForServer " + "emUnlockFromServer " + "emDelegateAccessRights " + "emReEncode "; // enum TEditorCloseObservType
 
-  // enum TEditorCloseObservType
-  const TEditorCloseObservType = "ecotFile ecotProcess ";
+  const TEditorCloseObservType = "ecotFile ecotProcess "; // enum TEdmsApplicationAction
 
-  // enum TEdmsApplicationAction
-  const TEdmsApplicationAction = "eaGet eaCopy eaCreate eaCreateStandardRoute ";
+  const TEdmsApplicationAction = "eaGet eaCopy eaCreate eaCreateStandardRoute "; // enum TEDocumentLockType
 
-  // enum TEDocumentLockType
-  const TEDocumentLockType = "edltAll edltNothing edltQuery ";
+  const TEDocumentLockType = "edltAll edltNothing edltQuery "; // enum TEDocumentStepShowMode
 
-  // enum TEDocumentStepShowMode
-  const TEDocumentStepShowMode = "essmText essmCard ";
+  const TEDocumentStepShowMode = "essmText essmCard "; // enum TEDocumentStepVersionType
 
-  // enum TEDocumentStepVersionType
-  const TEDocumentStepVersionType = "esvtLast esvtLastActive esvtSpecified ";
+  const TEDocumentStepVersionType = "esvtLast esvtLastActive esvtSpecified "; // enum TEDocumentStorageFunction
 
-  // enum TEDocumentStorageFunction
-  const TEDocumentStorageFunction = "edsfExecutive edsfArchive ";
+  const TEDocumentStorageFunction = "edsfExecutive edsfArchive "; // enum TEDocumentStorageType
 
-  // enum TEDocumentStorageType
-  const TEDocumentStorageType = "edstSQLServer edstFile ";
+  const TEDocumentStorageType = "edstSQLServer edstFile "; // enum TEDocumentVersionSourceType
 
-  // enum TEDocumentVersionSourceType
-  const TEDocumentVersionSourceType = "edvstNone edvstEDocumentVersionCopy edvstFile edvstTemplate edvstScannedFile ";
+  const TEDocumentVersionSourceType = "edvstNone edvstEDocumentVersionCopy edvstFile edvstTemplate edvstScannedFile "; // enum TEDocumentVersionState
 
-  // enum TEDocumentVersionState
-  const TEDocumentVersionState = "vsDefault vsDesign vsActive vsObsolete ";
+  const TEDocumentVersionState = "vsDefault vsDesign vsActive vsObsolete "; // enum TEncodeType
 
-  // enum TEncodeType
-  const TEncodeType = "etNone etCertificate etPassword etCertificatePassword ";
+  const TEncodeType = "etNone etCertificate etPassword etCertificatePassword "; // enum TExceptionCategory
 
-  // enum TExceptionCategory
-  const TExceptionCategory = "ecException ecWarning ecInformation ";
+  const TExceptionCategory = "ecException ecWarning ecInformation "; // enum TExportedSignaturesType
 
-  // enum TExportedSignaturesType
-  const TExportedSignaturesType = "estAll estApprovingOnly ";
+  const TExportedSignaturesType = "estAll estApprovingOnly "; // enum TExportedVersionType
 
-  // enum TExportedVersionType
-  const TExportedVersionType = "evtLast evtLastActive evtQuery ";
+  const TExportedVersionType = "evtLast evtLastActive evtQuery "; // enum TFieldDataType
 
-  // enum TFieldDataType
-  const TFieldDataType = "fdtString " + "fdtNumeric " + "fdtInteger " + "fdtDate " + "fdtText " + "fdtUnknown " + "fdtWideString " + "fdtLargeInteger ";
+  const TFieldDataType = "fdtString " + "fdtNumeric " + "fdtInteger " + "fdtDate " + "fdtText " + "fdtUnknown " + "fdtWideString " + "fdtLargeInteger "; // enum TFolderType
 
-  // enum TFolderType
-  const TFolderType = "ftInbox " + "ftOutbox " + "ftFavorites " + "ftCommonFolder " + "ftUserFolder " + "ftComponents " + "ftQuickLaunch " + "ftShortcuts " + "ftSearch ";
+  const TFolderType = "ftInbox " + "ftOutbox " + "ftFavorites " + "ftCommonFolder " + "ftUserFolder " + "ftComponents " + "ftQuickLaunch " + "ftShortcuts " + "ftSearch "; // enum TGridRowHeight
 
-  // enum TGridRowHeight
-  const TGridRowHeight = "grhAuto " + "grhX1 " + "grhX2 " + "grhX3 ";
+  const TGridRowHeight = "grhAuto " + "grhX1 " + "grhX2 " + "grhX3 "; // enum THyperlinkType
 
-  // enum THyperlinkType
-  const THyperlinkType = "hltText " + "hltRTF " + "hltHTML ";
+  const THyperlinkType = "hltText " + "hltRTF " + "hltHTML "; // enum TImageFileFormat
 
-  // enum TImageFileFormat
-  const TImageFileFormat = "iffBMP " + "iffJPEG " + "iffMultiPageTIFF " + "iffSinglePageTIFF " + "iffTIFF " + "iffPNG ";
+  const TImageFileFormat = "iffBMP " + "iffJPEG " + "iffMultiPageTIFF " + "iffSinglePageTIFF " + "iffTIFF " + "iffPNG "; // enum TImageMode
 
-  // enum TImageMode
-  const TImageMode = "im8bGrayscale " + "im24bRGB " + "im1bMonochrome ";
+  const TImageMode = "im8bGrayscale " + "im24bRGB " + "im1bMonochrome "; // enum TImageType
 
-  // enum TImageType
-  const TImageType = "itBMP " + "itJPEG " + "itWMF " + "itPNG ";
+  const TImageType = "itBMP " + "itJPEG " + "itWMF " + "itPNG "; // enum TInplaceHintKind
 
-  // enum TInplaceHintKind
-  const TInplaceHintKind = "ikhInformation " + "ikhWarning " + "ikhError " + "ikhNoIcon ";
+  const TInplaceHintKind = "ikhInformation " + "ikhWarning " + "ikhError " + "ikhNoIcon "; // enum TISBLContext
 
-  // enum TISBLContext
-  const TISBLContext = "icUnknown " + "icScript " + "icFunction " + "icIntegratedReport " + "icAnalyticReport " + "icDataSetEventHandler " + "icActionHandler " + "icFormEventHandler " + "icLookUpEventHandler " + "icRequisiteChangeEventHandler " + "icBeforeSearchEventHandler " + "icRoleCalculation " + "icSelectRouteEventHandler " + "icBlockPropertyCalculation " + "icBlockQueryParamsEventHandler " + "icChangeSearchResultEventHandler " + "icBlockEventHandler " + "icSubTaskInitEventHandler " + "icEDocDataSetEventHandler " + "icEDocLookUpEventHandler " + "icEDocActionHandler " + "icEDocFormEventHandler " + "icEDocRequisiteChangeEventHandler " + "icStructuredConversionRule " + "icStructuredConversionEventBefore " + "icStructuredConversionEventAfter " + "icWizardEventHandler " + "icWizardFinishEventHandler " + "icWizardStepEventHandler " + "icWizardStepFinishEventHandler " + "icWizardActionEnableEventHandler " + "icWizardActionExecuteEventHandler " + "icCreateJobsHandler " + "icCreateNoticesHandler " + "icBeforeLookUpEventHandler " + "icAfterLookUpEventHandler " + "icTaskAbortEventHandler " + "icWorkflowBlockActionHandler " + "icDialogDataSetEventHandler " + "icDialogActionHandler " + "icDialogLookUpEventHandler " + "icDialogRequisiteChangeEventHandler " + "icDialogFormEventHandler " + "icDialogValidCloseEventHandler " + "icBlockFormEventHandler " + "icTaskFormEventHandler " + "icReferenceMethod " + "icEDocMethod " + "icDialogMethod " + "icProcessMessageHandler ";
+  const TISBLContext = "icUnknown " + "icScript " + "icFunction " + "icIntegratedReport " + "icAnalyticReport " + "icDataSetEventHandler " + "icActionHandler " + "icFormEventHandler " + "icLookUpEventHandler " + "icRequisiteChangeEventHandler " + "icBeforeSearchEventHandler " + "icRoleCalculation " + "icSelectRouteEventHandler " + "icBlockPropertyCalculation " + "icBlockQueryParamsEventHandler " + "icChangeSearchResultEventHandler " + "icBlockEventHandler " + "icSubTaskInitEventHandler " + "icEDocDataSetEventHandler " + "icEDocLookUpEventHandler " + "icEDocActionHandler " + "icEDocFormEventHandler " + "icEDocRequisiteChangeEventHandler " + "icStructuredConversionRule " + "icStructuredConversionEventBefore " + "icStructuredConversionEventAfter " + "icWizardEventHandler " + "icWizardFinishEventHandler " + "icWizardStepEventHandler " + "icWizardStepFinishEventHandler " + "icWizardActionEnableEventHandler " + "icWizardActionExecuteEventHandler " + "icCreateJobsHandler " + "icCreateNoticesHandler " + "icBeforeLookUpEventHandler " + "icAfterLookUpEventHandler " + "icTaskAbortEventHandler " + "icWorkflowBlockActionHandler " + "icDialogDataSetEventHandler " + "icDialogActionHandler " + "icDialogLookUpEventHandler " + "icDialogRequisiteChangeEventHandler " + "icDialogFormEventHandler " + "icDialogValidCloseEventHandler " + "icBlockFormEventHandler " + "icTaskFormEventHandler " + "icReferenceMethod " + "icEDocMethod " + "icDialogMethod " + "icProcessMessageHandler "; // enum TItemShow
 
-  // enum TItemShow
-  const TItemShow = "isShow " + "isHide " + "isByUserSettings ";
+  const TItemShow = "isShow " + "isHide " + "isByUserSettings "; // enum TJobKind
 
-  // enum TJobKind
-  const TJobKind = "jkJob " + "jkNotice " + "jkControlJob ";
+  const TJobKind = "jkJob " + "jkNotice " + "jkControlJob "; // enum TJoinType
 
-  // enum TJoinType
-  const TJoinType = "jtInner " + "jtLeft " + "jtRight " + "jtFull " + "jtCross ";
+  const TJoinType = "jtInner " + "jtLeft " + "jtRight " + "jtFull " + "jtCross "; // enum TLabelPos
 
-  // enum TLabelPos
-  const TLabelPos = "lbpAbove " + "lbpBelow " + "lbpLeft " + "lbpRight ";
+  const TLabelPos = "lbpAbove " + "lbpBelow " + "lbpLeft " + "lbpRight "; // enum TLicensingType
 
-  // enum TLicensingType
-  const TLicensingType = "eltPerConnection " + "eltPerUser ";
+  const TLicensingType = "eltPerConnection " + "eltPerUser "; // enum TLifeCycleStageFontColor
 
-  // enum TLifeCycleStageFontColor
-  const TLifeCycleStageFontColor = "sfcUndefined " + "sfcBlack " + "sfcGreen " + "sfcRed " + "sfcBlue " + "sfcOrange " + "sfcLilac ";
+  const TLifeCycleStageFontColor = "sfcUndefined " + "sfcBlack " + "sfcGreen " + "sfcRed " + "sfcBlue " + "sfcOrange " + "sfcLilac "; // enum TLifeCycleStageFontStyle
 
-  // enum TLifeCycleStageFontStyle
-  const TLifeCycleStageFontStyle = "sfsItalic " + "sfsStrikeout " + "sfsNormal ";
+  const TLifeCycleStageFontStyle = "sfsItalic " + "sfsStrikeout " + "sfsNormal "; // enum TLockableDevelopmentComponentType
 
-  // enum TLockableDevelopmentComponentType
-  const TLockableDevelopmentComponentType = "ldctStandardRoute " + "ldctWizard " + "ldctScript " + "ldctFunction " + "ldctRouteBlock " + "ldctIntegratedReport " + "ldctAnalyticReport " + "ldctReferenceType " + "ldctEDocumentType " + "ldctDialog " + "ldctServerEvents ";
+  const TLockableDevelopmentComponentType = "ldctStandardRoute " + "ldctWizard " + "ldctScript " + "ldctFunction " + "ldctRouteBlock " + "ldctIntegratedReport " + "ldctAnalyticReport " + "ldctReferenceType " + "ldctEDocumentType " + "ldctDialog " + "ldctServerEvents "; // enum TMaxRecordCountRestrictionType
 
-  // enum TMaxRecordCountRestrictionType
-  const TMaxRecordCountRestrictionType = "mrcrtNone " + "mrcrtUser " + "mrcrtMaximal " + "mrcrtCustom ";
+  const TMaxRecordCountRestrictionType = "mrcrtNone " + "mrcrtUser " + "mrcrtMaximal " + "mrcrtCustom "; // enum TRangeValueType
 
-  // enum TRangeValueType
-  const TRangeValueType = "vtEqual " + "vtGreaterOrEqual " + "vtLessOrEqual " + "vtRange ";
+  const TRangeValueType = "vtEqual " + "vtGreaterOrEqual " + "vtLessOrEqual " + "vtRange "; // enum TRelativeDate
 
-  // enum TRelativeDate
-  const TRelativeDate = "rdYesterday " + "rdToday " + "rdTomorrow " + "rdThisWeek " + "rdThisMonth " + "rdThisYear " + "rdNextMonth " + "rdNextWeek " + "rdLastWeek " + "rdLastMonth ";
+  const TRelativeDate = "rdYesterday " + "rdToday " + "rdTomorrow " + "rdThisWeek " + "rdThisMonth " + "rdThisYear " + "rdNextMonth " + "rdNextWeek " + "rdLastWeek " + "rdLastMonth "; // enum TReportDestination
 
-  // enum TReportDestination
-  const TReportDestination = "rdWindow " + "rdFile " + "rdPrinter ";
+  const TReportDestination = "rdWindow " + "rdFile " + "rdPrinter "; // enum TReqDataType
 
-  // enum TReqDataType
-  const TReqDataType = "rdtString " + "rdtNumeric " + "rdtInteger " + "rdtDate " + "rdtReference " + "rdtAccount " + "rdtText " + "rdtPick " + "rdtUnknown " + "rdtLargeInteger " + "rdtDocument ";
+  const TReqDataType = "rdtString " + "rdtNumeric " + "rdtInteger " + "rdtDate " + "rdtReference " + "rdtAccount " + "rdtText " + "rdtPick " + "rdtUnknown " + "rdtLargeInteger " + "rdtDocument "; // enum TRequisiteEventType
 
-  // enum TRequisiteEventType
-  const TRequisiteEventType = "reOnChange " + "reOnChangeValues ";
+  const TRequisiteEventType = "reOnChange " + "reOnChangeValues "; // enum TSBTimeType
 
-  // enum TSBTimeType
-  const TSBTimeType = "ttGlobal " + "ttLocal " + "ttUser " + "ttSystem ";
+  const TSBTimeType = "ttGlobal " + "ttLocal " + "ttUser " + "ttSystem "; // enum TSearchShowMode
 
-  // enum TSearchShowMode
-  const TSearchShowMode = "ssmBrowse " + "ssmSelect " + "ssmMultiSelect " + "ssmBrowseModal ";
+  const TSearchShowMode = "ssmBrowse " + "ssmSelect " + "ssmMultiSelect " + "ssmBrowseModal "; // enum TSelectMode
 
-  // enum TSelectMode
-  const TSelectMode = "smSelect " + "smLike " + "smCard ";
+  const TSelectMode = "smSelect " + "smLike " + "smCard "; // enum TSignatureType
 
-  // enum TSignatureType
-  const TSignatureType = "stNone " + "stAuthenticating " + "stApproving ";
+  const TSignatureType = "stNone " + "stAuthenticating " + "stApproving "; // enum TSignerContentType
 
-  // enum TSignerContentType
-  const TSignerContentType = "sctString " + "sctStream ";
+  const TSignerContentType = "sctString " + "sctStream "; // enum TStringsSortType
 
-  // enum TStringsSortType
-  const TStringsSortType = "sstAnsiSort " + "sstNaturalSort ";
+  const TStringsSortType = "sstAnsiSort " + "sstNaturalSort "; // enum TStringValueType
 
-  // enum TStringValueType
-  const TStringValueType = "svtEqual " + "svtContain ";
+  const TStringValueType = "svtEqual " + "svtContain "; // enum TStructuredObjectAttributeType
 
-  // enum TStructuredObjectAttributeType
-  const TStructuredObjectAttributeType = "soatString " + "soatNumeric " + "soatInteger " + "soatDatetime " + "soatReferenceRecord " + "soatText " + "soatPick " + "soatBoolean " + "soatEDocument " + "soatAccount " + "soatIntegerCollection " + "soatNumericCollection " + "soatStringCollection " + "soatPickCollection " + "soatDatetimeCollection " + "soatBooleanCollection " + "soatReferenceRecordCollection " + "soatEDocumentCollection " + "soatAccountCollection " + "soatContents " + "soatUnknown ";
+  const TStructuredObjectAttributeType = "soatString " + "soatNumeric " + "soatInteger " + "soatDatetime " + "soatReferenceRecord " + "soatText " + "soatPick " + "soatBoolean " + "soatEDocument " + "soatAccount " + "soatIntegerCollection " + "soatNumericCollection " + "soatStringCollection " + "soatPickCollection " + "soatDatetimeCollection " + "soatBooleanCollection " + "soatReferenceRecordCollection " + "soatEDocumentCollection " + "soatAccountCollection " + "soatContents " + "soatUnknown "; // enum TTaskAbortReason
 
-  // enum TTaskAbortReason
-  const TTaskAbortReason = "tarAbortByUser " + "tarAbortByWorkflowException ";
+  const TTaskAbortReason = "tarAbortByUser " + "tarAbortByWorkflowException "; // enum TTextValueType
 
-  // enum TTextValueType
-  const TTextValueType = "tvtAllWords " + "tvtExactPhrase " + "tvtAnyWord ";
+  const TTextValueType = "tvtAllWords " + "tvtExactPhrase " + "tvtAnyWord "; // enum TUserObjectStatus
 
-  // enum TUserObjectStatus
-  const TUserObjectStatus = "usNone " + "usCompleted " + "usRedSquare " + "usBlueSquare " + "usYellowSquare " + "usGreenSquare " + "usOrangeSquare " + "usPurpleSquare " + "usFollowUp ";
+  const TUserObjectStatus = "usNone " + "usCompleted " + "usRedSquare " + "usBlueSquare " + "usYellowSquare " + "usGreenSquare " + "usOrangeSquare " + "usPurpleSquare " + "usFollowUp "; // enum TUserType
 
-  // enum TUserType
-  const TUserType = "utUnknown " + "utUser " + "utDeveloper " + "utAdministrator " + "utSystemDeveloper " + "utDisconnected ";
+  const TUserType = "utUnknown " + "utUser " + "utDeveloper " + "utAdministrator " + "utSystemDeveloper " + "utDisconnected "; // enum TValuesBuildType
 
-  // enum TValuesBuildType
-  const TValuesBuildType = "btAnd " + "btDetailAnd " + "btOr " + "btNotOr " + "btOnly ";
+  const TValuesBuildType = "btAnd " + "btDetailAnd " + "btOr " + "btNotOr " + "btOnly "; // enum TViewMode
 
-  // enum TViewMode
-  const TViewMode = "vmView " + "vmSelect " + "vmNavigation ";
+  const TViewMode = "vmView " + "vmSelect " + "vmNavigation "; // enum TViewSelectionMode
 
-  // enum TViewSelectionMode
-  const TViewSelectionMode = "vsmSingle " + "vsmMultiple " + "vsmMultipleCheck " + "vsmNoSelection ";
+  const TViewSelectionMode = "vsmSingle " + "vsmMultiple " + "vsmMultipleCheck " + "vsmNoSelection "; // enum TWizardActionType
 
-  // enum TWizardActionType
-  const TWizardActionType = "wfatPrevious " + "wfatNext " + "wfatCancel " + "wfatFinish ";
+  const TWizardActionType = "wfatPrevious " + "wfatNext " + "wfatCancel " + "wfatFinish "; // enum TWizardFormElementProperty
 
-  // enum TWizardFormElementProperty
-  const TWizardFormElementProperty = "wfepUndefined " + "wfepText3 " + "wfepText6 " + "wfepText9 " + "wfepSpinEdit " + "wfepDropDown " + "wfepRadioGroup " + "wfepFlag " + "wfepText12 " + "wfepText15 " + "wfepText18 " + "wfepText21 " + "wfepText24 " + "wfepText27 " + "wfepText30 " + "wfepRadioGroupColumn1 " + "wfepRadioGroupColumn2 " + "wfepRadioGroupColumn3 ";
+  const TWizardFormElementProperty = "wfepUndefined " + "wfepText3 " + "wfepText6 " + "wfepText9 " + "wfepSpinEdit " + "wfepDropDown " + "wfepRadioGroup " + "wfepFlag " + "wfepText12 " + "wfepText15 " + "wfepText18 " + "wfepText21 " + "wfepText24 " + "wfepText27 " + "wfepText30 " + "wfepRadioGroupColumn1 " + "wfepRadioGroupColumn2 " + "wfepRadioGroupColumn3 "; // enum TWizardFormElementType
 
-  // enum TWizardFormElementType
-  const TWizardFormElementType = "wfetQueryParameter " + "wfetText " + "wfetDelimiter " + "wfetLabel ";
+  const TWizardFormElementType = "wfetQueryParameter " + "wfetText " + "wfetDelimiter " + "wfetLabel "; // enum TWizardParamType
 
-  // enum TWizardParamType
-  const TWizardParamType = "wptString " + "wptInteger " + "wptNumeric " + "wptBoolean " + "wptDateTime " + "wptPick " + "wptText " + "wptUser " + "wptUserList " + "wptEDocumentInfo " + "wptEDocumentInfoList " + "wptReferenceRecordInfo " + "wptReferenceRecordInfoList " + "wptFolderInfo " + "wptTaskInfo " + "wptContents " + "wptFileName " + "wptDate ";
+  const TWizardParamType = "wptString " + "wptInteger " + "wptNumeric " + "wptBoolean " + "wptDateTime " + "wptPick " + "wptText " + "wptUser " + "wptUserList " + "wptEDocumentInfo " + "wptEDocumentInfoList " + "wptReferenceRecordInfo " + "wptReferenceRecordInfoList " + "wptFolderInfo " + "wptTaskInfo " + "wptContents " + "wptFileName " + "wptDate "; // enum TWizardStepResult
 
-  // enum TWizardStepResult
-  const TWizardStepResult = "wsrComplete " + "wsrGoNext " + "wsrGoPrevious " + "wsrCustom " + "wsrCancel " + "wsrGoFinal ";
+  const TWizardStepResult = "wsrComplete " + "wsrGoNext " + "wsrGoPrevious " + "wsrCustom " + "wsrCancel " + "wsrGoFinal "; // enum TWizardStepType
 
-  // enum TWizardStepType
-  const TWizardStepType = "wstForm " + "wstEDocument " + "wstTaskCard " + "wstReferenceRecordCard " + "wstFinal ";
+  const TWizardStepType = "wstForm " + "wstEDocument " + "wstTaskCard " + "wstReferenceRecordCard " + "wstFinal "; // enum TWorkAccessType
 
-  // enum TWorkAccessType
-  const TWorkAccessType = "waAll " + "waPerformers " + "waManual ";
+  const TWorkAccessType = "waAll " + "waPerformers " + "waManual "; // enum TWorkflowBlockType
 
-  // enum TWorkflowBlockType
-  const TWorkflowBlockType = "wsbStart " + "wsbFinish " + "wsbNotice " + "wsbStep " + "wsbDecision " + "wsbWait " + "wsbMonitor " + "wsbScript " + "wsbConnector " + "wsbSubTask " + "wsbLifeCycleStage " + "wsbPause ";
+  const TWorkflowBlockType = "wsbStart " + "wsbFinish " + "wsbNotice " + "wsbStep " + "wsbDecision " + "wsbWait " + "wsbMonitor " + "wsbScript " + "wsbConnector " + "wsbSubTask " + "wsbLifeCycleStage " + "wsbPause "; // enum TWorkflowDataType
 
-  // enum TWorkflowDataType
-  const TWorkflowDataType = "wdtInteger " + "wdtFloat " + "wdtString " + "wdtPick " + "wdtDateTime " + "wdtBoolean " + "wdtTask " + "wdtJob " + "wdtFolder " + "wdtEDocument " + "wdtReferenceRecord " + "wdtUser " + "wdtGroup " + "wdtRole " + "wdtIntegerCollection " + "wdtFloatCollection " + "wdtStringCollection " + "wdtPickCollection " + "wdtDateTimeCollection " + "wdtBooleanCollection " + "wdtTaskCollection " + "wdtJobCollection " + "wdtFolderCollection " + "wdtEDocumentCollection " + "wdtReferenceRecordCollection " + "wdtUserCollection " + "wdtGroupCollection " + "wdtRoleCollection " + "wdtContents " + "wdtUserList " + "wdtSearchDescription " + "wdtDeadLine " + "wdtPickSet " + "wdtAccountCollection ";
+  const TWorkflowDataType = "wdtInteger " + "wdtFloat " + "wdtString " + "wdtPick " + "wdtDateTime " + "wdtBoolean " + "wdtTask " + "wdtJob " + "wdtFolder " + "wdtEDocument " + "wdtReferenceRecord " + "wdtUser " + "wdtGroup " + "wdtRole " + "wdtIntegerCollection " + "wdtFloatCollection " + "wdtStringCollection " + "wdtPickCollection " + "wdtDateTimeCollection " + "wdtBooleanCollection " + "wdtTaskCollection " + "wdtJobCollection " + "wdtFolderCollection " + "wdtEDocumentCollection " + "wdtReferenceRecordCollection " + "wdtUserCollection " + "wdtGroupCollection " + "wdtRoleCollection " + "wdtContents " + "wdtUserList " + "wdtSearchDescription " + "wdtDeadLine " + "wdtPickSet " + "wdtAccountCollection "; // enum TWorkImportance
 
-  // enum TWorkImportance
-  const TWorkImportance = "wiLow " + "wiNormal " + "wiHigh ";
+  const TWorkImportance = "wiLow " + "wiNormal " + "wiHigh "; // enum TWorkRouteType
 
-  // enum TWorkRouteType
-  const TWorkRouteType = "wrtSoft " + "wrtHard ";
+  const TWorkRouteType = "wrtSoft " + "wrtHard "; // enum TWorkState
 
-  // enum TWorkState
-  const TWorkState = "wsInit " + "wsRunning " + "wsDone " + "wsControlled " + "wsAborted " + "wsContinued ";
+  const TWorkState = "wsInit " + "wsRunning " + "wsDone " + "wsControlled " + "wsAborted " + "wsContinued "; // enum TWorkTextBuildingMode
 
-  // enum TWorkTextBuildingMode
-  const TWorkTextBuildingMode = "wtmFull " + "wtmFromCurrent " + "wtmOnlyCurrent ";
+  const TWorkTextBuildingMode = "wtmFull " + "wtmFromCurrent " + "wtmOnlyCurrent "; // Перечисления
 
-  // Перечисления
-  const ENUMS = TAccountType + TActionEnabledMode + TAddPosition + TAlignment + TAreaShowMode + TCertificateInvalidationReason + TCertificateType + TCheckListBoxItemState + TCloseOnEsc + TCompType + TConditionFormat + TConnectionIntent + TContentKind + TControlType + TCriterionContentType + TCultureType + TDataSetEventType + TDataSetState + TDateFormatType + TDateOffsetType + TDateTimeKind + TDeaAccessRights + TDocumentDefaultAction + TEditMode + TEditorCloseObservType + TEdmsApplicationAction + TEDocumentLockType + TEDocumentStepShowMode + TEDocumentStepVersionType + TEDocumentStorageFunction + TEDocumentStorageType + TEDocumentVersionSourceType + TEDocumentVersionState + TEncodeType + TExceptionCategory + TExportedSignaturesType + TExportedVersionType + TFieldDataType + TFolderType + TGridRowHeight + THyperlinkType + TImageFileFormat + TImageMode + TImageType + TInplaceHintKind + TISBLContext + TItemShow + TJobKind + TJoinType + TLabelPos + TLicensingType + TLifeCycleStageFontColor + TLifeCycleStageFontStyle + TLockableDevelopmentComponentType + TMaxRecordCountRestrictionType + TRangeValueType + TRelativeDate + TReportDestination + TReqDataType + TRequisiteEventType + TSBTimeType + TSearchShowMode + TSelectMode + TSignatureType + TSignerContentType + TStringsSortType + TStringValueType + TStructuredObjectAttributeType + TTaskAbortReason + TTextValueType + TUserObjectStatus + TUserType + TValuesBuildType + TViewMode + TViewSelectionMode + TWizardActionType + TWizardFormElementProperty + TWizardFormElementType + TWizardParamType + TWizardStepResult + TWizardStepType + TWorkAccessType + TWorkflowBlockType + TWorkflowDataType + TWorkImportance + TWorkRouteType + TWorkState + TWorkTextBuildingMode;
+  const ENUMS = TAccountType + TActionEnabledMode + TAddPosition + TAlignment + TAreaShowMode + TCertificateInvalidationReason + TCertificateType + TCheckListBoxItemState + TCloseOnEsc + TCompType + TConditionFormat + TConnectionIntent + TContentKind + TControlType + TCriterionContentType + TCultureType + TDataSetEventType + TDataSetState + TDateFormatType + TDateOffsetType + TDateTimeKind + TDeaAccessRights + TDocumentDefaultAction + TEditMode + TEditorCloseObservType + TEdmsApplicationAction + TEDocumentLockType + TEDocumentStepShowMode + TEDocumentStepVersionType + TEDocumentStorageFunction + TEDocumentStorageType + TEDocumentVersionSourceType + TEDocumentVersionState + TEncodeType + TExceptionCategory + TExportedSignaturesType + TExportedVersionType + TFieldDataType + TFolderType + TGridRowHeight + THyperlinkType + TImageFileFormat + TImageMode + TImageType + TInplaceHintKind + TISBLContext + TItemShow + TJobKind + TJoinType + TLabelPos + TLicensingType + TLifeCycleStageFontColor + TLifeCycleStageFontStyle + TLockableDevelopmentComponentType + TMaxRecordCountRestrictionType + TRangeValueType + TRelativeDate + TReportDestination + TReqDataType + TRequisiteEventType + TSBTimeType + TSearchShowMode + TSelectMode + TSignatureType + TSignerContentType + TStringsSortType + TStringValueType + TStructuredObjectAttributeType + TTaskAbortReason + TTextValueType + TUserObjectStatus + TUserType + TValuesBuildType + TViewMode + TViewSelectionMode + TWizardActionType + TWizardFormElementProperty + TWizardFormElementType + TWizardParamType + TWizardStepResult + TWizardStepType + TWorkAccessType + TWorkflowBlockType + TWorkflowDataType + TWorkImportance + TWorkRouteType + TWorkState + TWorkTextBuildingMode; // Системные функции ==> SYSFUNCTIONS
 
-  // Системные функции ==> SYSFUNCTIONS
-  const system_functions = "AddSubString " + "AdjustLineBreaks " + "AmountInWords " + "Analysis " + "ArrayDimCount " + "ArrayHighBound " + "ArrayLowBound " + "ArrayOf " + "ArrayReDim " + "Assert " + "Assigned " + "BeginOfMonth " + "BeginOfPeriod " + "BuildProfilingOperationAnalysis " + "CallProcedure " + "CanReadFile " + "CArrayElement " + "CDataSetRequisite " + "ChangeDate " + "ChangeReferenceDataset " + "Char " + "CharPos " + "CheckParam " + "CheckParamValue " + "CompareStrings " + "ConstantExists " + "ControlState " + "ConvertDateStr " + "Copy " + "CopyFile " + "CreateArray " + "CreateCachedReference " + "CreateConnection " + "CreateDialog " + "CreateDualListDialog " + "CreateEditor " + "CreateException " + "CreateFile " + "CreateFolderDialog " + "CreateInputDialog " + "CreateLinkFile " + "CreateList " + "CreateLock " + "CreateMemoryDataSet " + "CreateObject " + "CreateOpenDialog " + "CreateProgress " + "CreateQuery " + "CreateReference " + "CreateReport " + "CreateSaveDialog " + "CreateScript " + "CreateSQLPivotFunction " + "CreateStringList " + "CreateTreeListSelectDialog " + "CSelectSQL " + "CSQL " + "CSubString " + "CurrentUserID " + "CurrentUserName " + "CurrentVersion " + "DataSetLocateEx " + "DateDiff " + "DateTimeDiff " + "DateToStr " + "DayOfWeek " + "DeleteFile " + "DirectoryExists " + "DisableCheckAccessRights " + "DisableCheckFullShowingRestriction " + "DisableMassTaskSendingRestrictions " + "DropTable " + "DupeString " + "EditText " + "EnableCheckAccessRights " + "EnableCheckFullShowingRestriction " + "EnableMassTaskSendingRestrictions " + "EndOfMonth " + "EndOfPeriod " + "ExceptionExists " + "ExceptionsOff " + "ExceptionsOn " + "Execute " + "ExecuteProcess " + "Exit " + "ExpandEnvironmentVariables " + "ExtractFileDrive " + "ExtractFileExt " + "ExtractFileName " + "ExtractFilePath " + "ExtractParams " + "FileExists " + "FileSize " + "FindFile " + "FindSubString " + "FirmContext " + "ForceDirectories " + "Format " + "FormatDate " + "FormatNumeric " + "FormatSQLDate " + "FormatString " + "FreeException " + "GetComponent " + "GetComponentLaunchParam " + "GetConstant " + "GetLastException " + "GetReferenceRecord " + "GetRefTypeByRefID " + "GetTableID " + "GetTempFolder " + "IfThen " + "In " + "IndexOf " + "InputDialog " + "InputDialogEx " + "InteractiveMode " + "IsFileLocked " + "IsGraphicFile " + "IsNumeric " + "Length " + "LoadString " + "LoadStringFmt " + "LocalTimeToUTC " + "LowerCase " + "Max " + "MessageBox " + "MessageBoxEx " + "MimeDecodeBinary " + "MimeDecodeString " + "MimeEncodeBinary " + "MimeEncodeString " + "Min " + "MoneyInWords " + "MoveFile " + "NewID " + "Now " + "OpenFile " + "Ord " + "Precision " + "Raise " + "ReadCertificateFromFile " + "ReadFile " + "ReferenceCodeByID " + "ReferenceNumber " + "ReferenceRequisiteMode " + "ReferenceRequisiteValue " + "RegionDateSettings " + "RegionNumberSettings " + "RegionTimeSettings " + "RegRead " + "RegWrite " + "RenameFile " + "Replace " + "Round " + "SelectServerCode " + "SelectSQL " + "ServerDateTime " + "SetConstant " + "SetManagedFolderFieldsState " + "ShowConstantsInputDialog " + "ShowMessage " + "Sleep " + "Split " + "SQL " + "SQL2XLSTAB " + "SQLProfilingSendReport " + "StrToDate " + "SubString " + "SubStringCount " + "SystemSetting " + "Time " + "TimeDiff " + "Today " + "Transliterate " + "Trim " + "UpperCase " + "UserStatus " + "UTCToLocalTime " + "ValidateXML " + "VarIsClear " + "VarIsEmpty " + "VarIsNull " + "WorkTimeDiff " + "WriteFile " + "WriteFileEx " + "WriteObjectHistory " + "Анализ " + "БазаДанных " + "БлокЕсть " + "БлокЕстьРасш " + "БлокИнфо " + "БлокСнять " + "БлокСнятьРасш " + "БлокУстановить " + "Ввод " + "ВводМеню " + "ВедС " + "ВедСпр " + "ВерхняяГраницаМассива " + "ВнешПрогр " + "Восст " + "ВременнаяПапка " + "Время " + "ВыборSQL " + "ВыбратьЗапись " + "ВыделитьСтр " + "Вызвать " + "Выполнить " + "ВыпПрогр " + "ГрафическийФайл " + "ГруппаДополнительно " + "ДатаВремяСерв " + "ДеньНедели " + "ДиалогДаНет " + "ДлинаСтр " + "ДобПодстр " + "ЕПусто " + "ЕслиТо " + "ЕЧисло " + "ЗамПодстр " + "ЗаписьСправочника " + "ЗначПоляСпр " + "ИДТипСпр " + "ИзвлечьДиск " + "ИзвлечьИмяФайла " + "ИзвлечьПуть " + "ИзвлечьРасширение " + "ИзмДат " + "ИзменитьРазмерМассива " + "ИзмеренийМассива " + "ИмяОрг " + "ИмяПоляСпр " + "Индекс " + "ИндикаторЗакрыть " + "ИндикаторОткрыть " + "ИндикаторШаг " + "ИнтерактивныйРежим " + "ИтогТблСпр " + "КодВидВедСпр " + "КодВидСпрПоИД " + "КодПоAnalit " + "КодСимвола " + "КодСпр " + "КолПодстр " + "КолПроп " + "КонМес " + "Конст " + "КонстЕсть " + "КонстЗнач " + "КонТран " + "КопироватьФайл " + "КопияСтр " + "КПериод " + "КСтрТблСпр " + "Макс " + "МаксСтрТблСпр " + "Массив " + "Меню " + "МенюРасш " + "Мин " + "НаборДанныхНайтиРасш " + "НаимВидСпр " + "НаимПоAnalit " + "НаимСпр " + "НастроитьПереводыСтрок " + "НачМес " + "НачТран " + "НижняяГраницаМассива " + "НомерСпр " + "НПериод " + "Окно " + "Окр " + "Окружение " + "ОтлИнфДобавить " + "ОтлИнфУдалить " + "Отчет " + "ОтчетАнал " + "ОтчетИнт " + "ПапкаСуществует " + "Пауза " + "ПВыборSQL " + "ПереименоватьФайл " + "Переменные " + "ПереместитьФайл " + "Подстр " + "ПоискПодстр " + "ПоискСтр " + "ПолучитьИДТаблицы " + "ПользовательДополнительно " + "ПользовательИД " + "ПользовательИмя " + "ПользовательСтатус " + "Прервать " + "ПроверитьПараметр " + "ПроверитьПараметрЗнач " + "ПроверитьУсловие " + "РазбСтр " + "РазнВремя " + "РазнДат " + "РазнДатаВремя " + "РазнРабВремя " + "РегУстВрем " + "РегУстДат " + "РегУстЧсл " + "РедТекст " + "РеестрЗапись " + "РеестрСписокИменПарам " + "РеестрЧтение " + "РеквСпр " + "РеквСпрПр " + "Сегодня " + "Сейчас " + "Сервер " + "СерверПроцессИД " + "СертификатФайлСчитать " + "СжПроб " + "Символ " + "СистемаДиректумКод " + "СистемаИнформация " + "СистемаКод " + "Содержит " + "СоединениеЗакрыть " + "СоединениеОткрыть " + "СоздатьДиалог " + "СоздатьДиалогВыбораИзДвухСписков " + "СоздатьДиалогВыбораПапки " + "СоздатьДиалогОткрытияФайла " + "СоздатьДиалогСохраненияФайла " + "СоздатьЗапрос " + "СоздатьИндикатор " + "СоздатьИсключение " + "СоздатьКэшированныйСправочник " + "СоздатьМассив " + "СоздатьНаборДанных " + "СоздатьОбъект " + "СоздатьОтчет " + "СоздатьПапку " + "СоздатьРедактор " + "СоздатьСоединение " + "СоздатьСписок " + "СоздатьСписокСтрок " + "СоздатьСправочник " + "СоздатьСценарий " + "СоздСпр " + "СостСпр " + "Сохр " + "СохрСпр " + "СписокСистем " + "Спр " + "Справочник " + "СпрБлокЕсть " + "СпрБлокСнять " + "СпрБлокСнятьРасш " + "СпрБлокУстановить " + "СпрИзмНабДан " + "СпрКод " + "СпрНомер " + "СпрОбновить " + "СпрОткрыть " + "СпрОтменить " + "СпрПарам " + "СпрПолеЗнач " + "СпрПолеИмя " + "СпрРекв " + "СпрРеквВведЗн " + "СпрРеквНовые " + "СпрРеквПр " + "СпрРеквПредЗн " + "СпрРеквРежим " + "СпрРеквТипТекст " + "СпрСоздать " + "СпрСост " + "СпрСохранить " + "СпрТблИтог " + "СпрТблСтр " + "СпрТблСтрКол " + "СпрТблСтрМакс " + "СпрТблСтрМин " + "СпрТблСтрПред " + "СпрТблСтрСлед " + "СпрТблСтрСозд " + "СпрТблСтрУд " + "СпрТекПредст " + "СпрУдалить " + "СравнитьСтр " + "СтрВерхРегистр " + "СтрНижнРегистр " + "СтрТблСпр " + "СумПроп " + "Сценарий " + "СценарийПарам " + "ТекВерсия " + "ТекОрг " + "Точн " + "Тран " + "Транслитерация " + "УдалитьТаблицу " + "УдалитьФайл " + "УдСпр " + "УдСтрТблСпр " + "Уст " + "УстановкиКонстант " + "ФайлАтрибутСчитать " + "ФайлАтрибутУстановить " + "ФайлВремя " + "ФайлВремяУстановить " + "ФайлВыбрать " + "ФайлЗанят " + "ФайлЗаписать " + "ФайлИскать " + "ФайлКопировать " + "ФайлМожноЧитать " + "ФайлОткрыть " + "ФайлПереименовать " + "ФайлПерекодировать " + "ФайлПереместить " + "ФайлПросмотреть " + "ФайлРазмер " + "ФайлСоздать " + "ФайлСсылкаСоздать " + "ФайлСуществует " + "ФайлСчитать " + "ФайлУдалить " + "ФмтSQLДат " + "ФмтДат " + "ФмтСтр " + "ФмтЧсл " + "Формат " + "ЦМассивЭлемент " + "ЦНаборДанныхРеквизит " + "ЦПодстр ";
+  const system_functions = "AddSubString " + "AdjustLineBreaks " + "AmountInWords " + "Analysis " + "ArrayDimCount " + "ArrayHighBound " + "ArrayLowBound " + "ArrayOf " + "ArrayReDim " + "Assert " + "Assigned " + "BeginOfMonth " + "BeginOfPeriod " + "BuildProfilingOperationAnalysis " + "CallProcedure " + "CanReadFile " + "CArrayElement " + "CDataSetRequisite " + "ChangeDate " + "ChangeReferenceDataset " + "Char " + "CharPos " + "CheckParam " + "CheckParamValue " + "CompareStrings " + "ConstantExists " + "ControlState " + "ConvertDateStr " + "Copy " + "CopyFile " + "CreateArray " + "CreateCachedReference " + "CreateConnection " + "CreateDialog " + "CreateDualListDialog " + "CreateEditor " + "CreateException " + "CreateFile " + "CreateFolderDialog " + "CreateInputDialog " + "CreateLinkFile " + "CreateList " + "CreateLock " + "CreateMemoryDataSet " + "CreateObject " + "CreateOpenDialog " + "CreateProgress " + "CreateQuery " + "CreateReference " + "CreateReport " + "CreateSaveDialog " + "CreateScript " + "CreateSQLPivotFunction " + "CreateStringList " + "CreateTreeListSelectDialog " + "CSelectSQL " + "CSQL " + "CSubString " + "CurrentUserID " + "CurrentUserName " + "CurrentVersion " + "DataSetLocateEx " + "DateDiff " + "DateTimeDiff " + "DateToStr " + "DayOfWeek " + "DeleteFile " + "DirectoryExists " + "DisableCheckAccessRights " + "DisableCheckFullShowingRestriction " + "DisableMassTaskSendingRestrictions " + "DropTable " + "DupeString " + "EditText " + "EnableCheckAccessRights " + "EnableCheckFullShowingRestriction " + "EnableMassTaskSendingRestrictions " + "EndOfMonth " + "EndOfPeriod " + "ExceptionExists " + "ExceptionsOff " + "ExceptionsOn " + "Execute " + "ExecuteProcess " + "Exit " + "ExpandEnvironmentVariables " + "ExtractFileDrive " + "ExtractFileExt " + "ExtractFileName " + "ExtractFilePath " + "ExtractParams " + "FileExists " + "FileSize " + "FindFile " + "FindSubString " + "FirmContext " + "ForceDirectories " + "Format " + "FormatDate " + "FormatNumeric " + "FormatSQLDate " + "FormatString " + "FreeException " + "GetComponent " + "GetComponentLaunchParam " + "GetConstant " + "GetLastException " + "GetReferenceRecord " + "GetRefTypeByRefID " + "GetTableID " + "GetTempFolder " + "IfThen " + "In " + "IndexOf " + "InputDialog " + "InputDialogEx " + "InteractiveMode " + "IsFileLocked " + "IsGraphicFile " + "IsNumeric " + "Length " + "LoadString " + "LoadStringFmt " + "LocalTimeToUTC " + "LowerCase " + "Max " + "MessageBox " + "MessageBoxEx " + "MimeDecodeBinary " + "MimeDecodeString " + "MimeEncodeBinary " + "MimeEncodeString " + "Min " + "MoneyInWords " + "MoveFile " + "NewID " + "Now " + "OpenFile " + "Ord " + "Precision " + "Raise " + "ReadCertificateFromFile " + "ReadFile " + "ReferenceCodeByID " + "ReferenceNumber " + "ReferenceRequisiteMode " + "ReferenceRequisiteValue " + "RegionDateSettings " + "RegionNumberSettings " + "RegionTimeSettings " + "RegRead " + "RegWrite " + "RenameFile " + "Replace " + "Round " + "SelectServerCode " + "SelectSQL " + "ServerDateTime " + "SetConstant " + "SetManagedFolderFieldsState " + "ShowConstantsInputDialog " + "ShowMessage " + "Sleep " + "Split " + "SQL " + "SQL2XLSTAB " + "SQLProfilingSendReport " + "StrToDate " + "SubString " + "SubStringCount " + "SystemSetting " + "Time " + "TimeDiff " + "Today " + "Transliterate " + "Trim " + "UpperCase " + "UserStatus " + "UTCToLocalTime " + "ValidateXML " + "VarIsClear " + "VarIsEmpty " + "VarIsNull " + "WorkTimeDiff " + "WriteFile " + "WriteFileEx " + "WriteObjectHistory " + "Анализ " + "БазаДанных " + "БлокЕсть " + "БлокЕстьРасш " + "БлокИнфо " + "БлокСнять " + "БлокСнятьРасш " + "БлокУстановить " + "Ввод " + "ВводМеню " + "ВедС " + "ВедСпр " + "ВерхняяГраницаМассива " + "ВнешПрогр " + "Восст " + "ВременнаяПапка " + "Время " + "ВыборSQL " + "ВыбратьЗапись " + "ВыделитьСтр " + "Вызвать " + "Выполнить " + "ВыпПрогр " + "ГрафическийФайл " + "ГруппаДополнительно " + "ДатаВремяСерв " + "ДеньНедели " + "ДиалогДаНет " + "ДлинаСтр " + "ДобПодстр " + "ЕПусто " + "ЕслиТо " + "ЕЧисло " + "ЗамПодстр " + "ЗаписьСправочника " + "ЗначПоляСпр " + "ИДТипСпр " + "ИзвлечьДиск " + "ИзвлечьИмяФайла " + "ИзвлечьПуть " + "ИзвлечьРасширение " + "ИзмДат " + "ИзменитьРазмерМассива " + "ИзмеренийМассива " + "ИмяОрг " + "ИмяПоляСпр " + "Индекс " + "ИндикаторЗакрыть " + "ИндикаторОткрыть " + "ИндикаторШаг " + "ИнтерактивныйРежим " + "ИтогТблСпр " + "КодВидВедСпр " + "КодВидСпрПоИД " + "КодПоAnalit " + "КодСимвола " + "КодСпр " + "КолПодстр " + "КолПроп " + "КонМес " + "Конст " + "КонстЕсть " + "КонстЗнач " + "КонТран " + "КопироватьФайл " + "КопияСтр " + "КПериод " + "КСтрТблСпр " + "Макс " + "МаксСтрТблСпр " + "Массив " + "Меню " + "МенюРасш " + "Мин " + "НаборДанныхНайтиРасш " + "НаимВидСпр " + "НаимПоAnalit " + "НаимСпр " + "НастроитьПереводыСтрок " + "НачМес " + "НачТран " + "НижняяГраницаМассива " + "НомерСпр " + "НПериод " + "Окно " + "Окр " + "Окружение " + "ОтлИнфДобавить " + "ОтлИнфУдалить " + "Отчет " + "ОтчетАнал " + "ОтчетИнт " + "ПапкаСуществует " + "Пауза " + "ПВыборSQL " + "ПереименоватьФайл " + "Переменные " + "ПереместитьФайл " + "Подстр " + "ПоискПодстр " + "ПоискСтр " + "ПолучитьИДТаблицы " + "ПользовательДополнительно " + "ПользовательИД " + "ПользовательИмя " + "ПользовательСтатус " + "Прервать " + "ПроверитьПараметр " + "ПроверитьПараметрЗнач " + "ПроверитьУсловие " + "РазбСтр " + "РазнВремя " + "РазнДат " + "РазнДатаВремя " + "РазнРабВремя " + "РегУстВрем " + "РегУстДат " + "РегУстЧсл " + "РедТекст " + "РеестрЗапись " + "РеестрСписокИменПарам " + "РеестрЧтение " + "РеквСпр " + "РеквСпрПр " + "Сегодня " + "Сейчас " + "Сервер " + "СерверПроцессИД " + "СертификатФайлСчитать " + "СжПроб " + "Символ " + "СистемаДиректумКод " + "СистемаИнформация " + "СистемаКод " + "Содержит " + "СоединениеЗакрыть " + "СоединениеОткрыть " + "СоздатьДиалог " + "СоздатьДиалогВыбораИзДвухСписков " + "СоздатьДиалогВыбораПапки " + "СоздатьДиалогОткрытияФайла " + "СоздатьДиалогСохраненияФайла " + "СоздатьЗапрос " + "СоздатьИндикатор " + "СоздатьИсключение " + "СоздатьКэшированныйСправочник " + "СоздатьМассив " + "СоздатьНаборДанных " + "СоздатьОбъект " + "СоздатьОтчет " + "СоздатьПапку " + "СоздатьРедактор " + "СоздатьСоединение " + "СоздатьСписок " + "СоздатьСписокСтрок " + "СоздатьСправочник " + "СоздатьСценарий " + "СоздСпр " + "СостСпр " + "Сохр " + "СохрСпр " + "СписокСистем " + "Спр " + "Справочник " + "СпрБлокЕсть " + "СпрБлокСнять " + "СпрБлокСнятьРасш " + "СпрБлокУстановить " + "СпрИзмНабДан " + "СпрКод " + "СпрНомер " + "СпрОбновить " + "СпрОткрыть " + "СпрОтменить " + "СпрПарам " + "СпрПолеЗнач " + "СпрПолеИмя " + "СпрРекв " + "СпрРеквВведЗн " + "СпрРеквНовые " + "СпрРеквПр " + "СпрРеквПредЗн " + "СпрРеквРежим " + "СпрРеквТипТекст " + "СпрСоздать " + "СпрСост " + "СпрСохранить " + "СпрТблИтог " + "СпрТблСтр " + "СпрТблСтрКол " + "СпрТблСтрМакс " + "СпрТблСтрМин " + "СпрТблСтрПред " + "СпрТблСтрСлед " + "СпрТблСтрСозд " + "СпрТблСтрУд " + "СпрТекПредст " + "СпрУдалить " + "СравнитьСтр " + "СтрВерхРегистр " + "СтрНижнРегистр " + "СтрТблСпр " + "СумПроп " + "Сценарий " + "СценарийПарам " + "ТекВерсия " + "ТекОрг " + "Точн " + "Тран " + "Транслитерация " + "УдалитьТаблицу " + "УдалитьФайл " + "УдСпр " + "УдСтрТблСпр " + "Уст " + "УстановкиКонстант " + "ФайлАтрибутСчитать " + "ФайлАтрибутУстановить " + "ФайлВремя " + "ФайлВремяУстановить " + "ФайлВыбрать " + "ФайлЗанят " + "ФайлЗаписать " + "ФайлИскать " + "ФайлКопировать " + "ФайлМожноЧитать " + "ФайлОткрыть " + "ФайлПереименовать " + "ФайлПерекодировать " + "ФайлПереместить " + "ФайлПросмотреть " + "ФайлРазмер " + "ФайлСоздать " + "ФайлСсылкаСоздать " + "ФайлСуществует " + "ФайлСчитать " + "ФайлУдалить " + "ФмтSQLДат " + "ФмтДат " + "ФмтСтр " + "ФмтЧсл " + "Формат " + "ЦМассивЭлемент " + "ЦНаборДанныхРеквизит " + "ЦПодстр "; // Предопределенные переменные ==> built_in
 
-  // Предопределенные переменные ==> built_in
-  const predefined_variables = "AltState " + "Application " + "CallType " + "ComponentTokens " + "CreatedJobs " + "CreatedNotices " + "ControlState " + "DialogResult " + "Dialogs " + "EDocuments " + "EDocumentVersionSource " + "Folders " + "GlobalIDs " + "Job " + "Jobs " + "InputValue " + "LookUpReference " + "LookUpRequisiteNames " + "LookUpSearch " + "Object " + "ParentComponent " + "Processes " + "References " + "Requisite " + "ReportName " + "Reports " + "Result " + "Scripts " + "Searches " + "SelectedAttachments " + "SelectedItems " + "SelectMode " + "Sender " + "ServerEvents " + "ServiceFactory " + "ShiftState " + "SubTask " + "SystemDialogs " + "Tasks " + "Wizard " + "Wizards " + "Work " + "ВызовСпособ " + "ИмяОтчета " + "РеквЗнач ";
+  const predefined_variables = "AltState " + "Application " + "CallType " + "ComponentTokens " + "CreatedJobs " + "CreatedNotices " + "ControlState " + "DialogResult " + "Dialogs " + "EDocuments " + "EDocumentVersionSource " + "Folders " + "GlobalIDs " + "Job " + "Jobs " + "InputValue " + "LookUpReference " + "LookUpRequisiteNames " + "LookUpSearch " + "Object " + "ParentComponent " + "Processes " + "References " + "Requisite " + "ReportName " + "Reports " + "Result " + "Scripts " + "Searches " + "SelectedAttachments " + "SelectedItems " + "SelectMode " + "Sender " + "ServerEvents " + "ServiceFactory " + "ShiftState " + "SubTask " + "SystemDialogs " + "Tasks " + "Wizard " + "Wizards " + "Work " + "ВызовСпособ " + "ИмяОтчета " + "РеквЗнач "; // Интерфейсы ==> type
 
-  // Интерфейсы ==> type
-  const interfaces = "IApplication " + "IAccessRights " + "IAccountRepository " + "IAccountSelectionRestrictions " + "IAction " + "IActionList " + "IAdministrationHistoryDescription " + "IAnchors " + "IApplication " + "IArchiveInfo " + "IAttachment " + "IAttachmentList " + "ICheckListBox " + "ICheckPointedList " + "IColumn " + "IComponent " + "IComponentDescription " + "IComponentToken " + "IComponentTokenFactory " + "IComponentTokenInfo " + "ICompRecordInfo " + "IConnection " + "IContents " + "IControl " + "IControlJob " + "IControlJobInfo " + "IControlList " + "ICrypto " + "ICrypto2 " + "ICustomJob " + "ICustomJobInfo " + "ICustomListBox " + "ICustomObjectWizardStep " + "ICustomWork " + "ICustomWorkInfo " + "IDataSet " + "IDataSetAccessInfo " + "IDataSigner " + "IDateCriterion " + "IDateRequisite " + "IDateRequisiteDescription " + "IDateValue " + "IDeaAccessRights " + "IDeaObjectInfo " + "IDevelopmentComponentLock " + "IDialog " + "IDialogFactory " + "IDialogPickRequisiteItems " + "IDialogsFactory " + "IDICSFactory " + "IDocRequisite " + "IDocumentInfo " + "IDualListDialog " + "IECertificate " + "IECertificateInfo " + "IECertificates " + "IEditControl " + "IEditorForm " + "IEdmsExplorer " + "IEdmsObject " + "IEdmsObjectDescription " + "IEdmsObjectFactory " + "IEdmsObjectInfo " + "IEDocument " + "IEDocumentAccessRights " + "IEDocumentDescription " + "IEDocumentEditor " + "IEDocumentFactory " + "IEDocumentInfo " + "IEDocumentStorage " + "IEDocumentVersion " + "IEDocumentVersionListDialog " + "IEDocumentVersionSource " + "IEDocumentWizardStep " + "IEDocVerSignature " + "IEDocVersionState " + "IEnabledMode " + "IEncodeProvider " + "IEncrypter " + "IEvent " + "IEventList " + "IException " + "IExternalEvents " + "IExternalHandler " + "IFactory " + "IField " + "IFileDialog " + "IFolder " + "IFolderDescription " + "IFolderDialog " + "IFolderFactory " + "IFolderInfo " + "IForEach " + "IForm " + "IFormTitle " + "IFormWizardStep " + "IGlobalIDFactory " + "IGlobalIDInfo " + "IGrid " + "IHasher " + "IHistoryDescription " + "IHyperLinkControl " + "IImageButton " + "IImageControl " + "IInnerPanel " + "IInplaceHint " + "IIntegerCriterion " + "IIntegerList " + "IIntegerRequisite " + "IIntegerValue " + "IISBLEditorForm " + "IJob " + "IJobDescription " + "IJobFactory " + "IJobForm " + "IJobInfo " + "ILabelControl " + "ILargeIntegerCriterion " + "ILargeIntegerRequisite " + "ILargeIntegerValue " + "ILicenseInfo " + "ILifeCycleStage " + "IList " + "IListBox " + "ILocalIDInfo " + "ILocalization " + "ILock " + "IMemoryDataSet " + "IMessagingFactory " + "IMetadataRepository " + "INotice " + "INoticeInfo " + "INumericCriterion " + "INumericRequisite " + "INumericValue " + "IObject " + "IObjectDescription " + "IObjectImporter " + "IObjectInfo " + "IObserver " + "IPanelGroup " + "IPickCriterion " + "IPickProperty " + "IPickRequisite " + "IPickRequisiteDescription " + "IPickRequisiteItem " + "IPickRequisiteItems " + "IPickValue " + "IPrivilege " + "IPrivilegeList " + "IProcess " + "IProcessFactory " + "IProcessMessage " + "IProgress " + "IProperty " + "IPropertyChangeEvent " + "IQuery " + "IReference " + "IReferenceCriterion " + "IReferenceEnabledMode " + "IReferenceFactory " + "IReferenceHistoryDescription " + "IReferenceInfo " + "IReferenceRecordCardWizardStep " + "IReferenceRequisiteDescription " + "IReferencesFactory " + "IReferenceValue " + "IRefRequisite " + "IReport " + "IReportFactory " + "IRequisite " + "IRequisiteDescription " + "IRequisiteDescriptionList " + "IRequisiteFactory " + "IRichEdit " + "IRouteStep " + "IRule " + "IRuleList " + "ISchemeBlock " + "IScript " + "IScriptFactory " + "ISearchCriteria " + "ISearchCriterion " + "ISearchDescription " + "ISearchFactory " + "ISearchFolderInfo " + "ISearchForObjectDescription " + "ISearchResultRestrictions " + "ISecuredContext " + "ISelectDialog " + "IServerEvent " + "IServerEventFactory " + "IServiceDialog " + "IServiceFactory " + "ISignature " + "ISignProvider " + "ISignProvider2 " + "ISignProvider3 " + "ISimpleCriterion " + "IStringCriterion " + "IStringList " + "IStringRequisite " + "IStringRequisiteDescription " + "IStringValue " + "ISystemDialogsFactory " + "ISystemInfo " + "ITabSheet " + "ITask " + "ITaskAbortReasonInfo " + "ITaskCardWizardStep " + "ITaskDescription " + "ITaskFactory " + "ITaskInfo " + "ITaskRoute " + "ITextCriterion " + "ITextRequisite " + "ITextValue " + "ITreeListSelectDialog " + "IUser " + "IUserList " + "IValue " + "IView " + "IWebBrowserControl " + "IWizard " + "IWizardAction " + "IWizardFactory " + "IWizardFormElement " + "IWizardParam " + "IWizardPickParam " + "IWizardReferenceParam " + "IWizardStep " + "IWorkAccessRights " + "IWorkDescription " + "IWorkflowAskableParam " + "IWorkflowAskableParams " + "IWorkflowBlock " + "IWorkflowBlockResult " + "IWorkflowEnabledMode " + "IWorkflowParam " + "IWorkflowPickParam " + "IWorkflowReferenceParam " + "IWorkState " + "IWorkTreeCustomNode " + "IWorkTreeJobNode " + "IWorkTreeTaskNode " + "IXMLEditorForm " + "SBCrypto ";
+  const interfaces = "IApplication " + "IAccessRights " + "IAccountRepository " + "IAccountSelectionRestrictions " + "IAction " + "IActionList " + "IAdministrationHistoryDescription " + "IAnchors " + "IApplication " + "IArchiveInfo " + "IAttachment " + "IAttachmentList " + "ICheckListBox " + "ICheckPointedList " + "IColumn " + "IComponent " + "IComponentDescription " + "IComponentToken " + "IComponentTokenFactory " + "IComponentTokenInfo " + "ICompRecordInfo " + "IConnection " + "IContents " + "IControl " + "IControlJob " + "IControlJobInfo " + "IControlList " + "ICrypto " + "ICrypto2 " + "ICustomJob " + "ICustomJobInfo " + "ICustomListBox " + "ICustomObjectWizardStep " + "ICustomWork " + "ICustomWorkInfo " + "IDataSet " + "IDataSetAccessInfo " + "IDataSigner " + "IDateCriterion " + "IDateRequisite " + "IDateRequisiteDescription " + "IDateValue " + "IDeaAccessRights " + "IDeaObjectInfo " + "IDevelopmentComponentLock " + "IDialog " + "IDialogFactory " + "IDialogPickRequisiteItems " + "IDialogsFactory " + "IDICSFactory " + "IDocRequisite " + "IDocumentInfo " + "IDualListDialog " + "IECertificate " + "IECertificateInfo " + "IECertificates " + "IEditControl " + "IEditorForm " + "IEdmsExplorer " + "IEdmsObject " + "IEdmsObjectDescription " + "IEdmsObjectFactory " + "IEdmsObjectInfo " + "IEDocument " + "IEDocumentAccessRights " + "IEDocumentDescription " + "IEDocumentEditor " + "IEDocumentFactory " + "IEDocumentInfo " + "IEDocumentStorage " + "IEDocumentVersion " + "IEDocumentVersionListDialog " + "IEDocumentVersionSource " + "IEDocumentWizardStep " + "IEDocVerSignature " + "IEDocVersionState " + "IEnabledMode " + "IEncodeProvider " + "IEncrypter " + "IEvent " + "IEventList " + "IException " + "IExternalEvents " + "IExternalHandler " + "IFactory " + "IField " + "IFileDialog " + "IFolder " + "IFolderDescription " + "IFolderDialog " + "IFolderFactory " + "IFolderInfo " + "IForEach " + "IForm " + "IFormTitle " + "IFormWizardStep " + "IGlobalIDFactory " + "IGlobalIDInfo " + "IGrid " + "IHasher " + "IHistoryDescription " + "IHyperLinkControl " + "IImageButton " + "IImageControl " + "IInnerPanel " + "IInplaceHint " + "IIntegerCriterion " + "IIntegerList " + "IIntegerRequisite " + "IIntegerValue " + "IISBLEditorForm " + "IJob " + "IJobDescription " + "IJobFactory " + "IJobForm " + "IJobInfo " + "ILabelControl " + "ILargeIntegerCriterion " + "ILargeIntegerRequisite " + "ILargeIntegerValue " + "ILicenseInfo " + "ILifeCycleStage " + "IList " + "IListBox " + "ILocalIDInfo " + "ILocalization " + "ILock " + "IMemoryDataSet " + "IMessagingFactory " + "IMetadataRepository " + "INotice " + "INoticeInfo " + "INumericCriterion " + "INumericRequisite " + "INumericValue " + "IObject " + "IObjectDescription " + "IObjectImporter " + "IObjectInfo " + "IObserver " + "IPanelGroup " + "IPickCriterion " + "IPickProperty " + "IPickRequisite " + "IPickRequisiteDescription " + "IPickRequisiteItem " + "IPickRequisiteItems " + "IPickValue " + "IPrivilege " + "IPrivilegeList " + "IProcess " + "IProcessFactory " + "IProcessMessage " + "IProgress " + "IProperty " + "IPropertyChangeEvent " + "IQuery " + "IReference " + "IReferenceCriterion " + "IReferenceEnabledMode " + "IReferenceFactory " + "IReferenceHistoryDescription " + "IReferenceInfo " + "IReferenceRecordCardWizardStep " + "IReferenceRequisiteDescription " + "IReferencesFactory " + "IReferenceValue " + "IRefRequisite " + "IReport " + "IReportFactory " + "IRequisite " + "IRequisiteDescription " + "IRequisiteDescriptionList " + "IRequisiteFactory " + "IRichEdit " + "IRouteStep " + "IRule " + "IRuleList " + "ISchemeBlock " + "IScript " + "IScriptFactory " + "ISearchCriteria " + "ISearchCriterion " + "ISearchDescription " + "ISearchFactory " + "ISearchFolderInfo " + "ISearchForObjectDescription " + "ISearchResultRestrictions " + "ISecuredContext " + "ISelectDialog " + "IServerEvent " + "IServerEventFactory " + "IServiceDialog " + "IServiceFactory " + "ISignature " + "ISignProvider " + "ISignProvider2 " + "ISignProvider3 " + "ISimpleCriterion " + "IStringCriterion " + "IStringList " + "IStringRequisite " + "IStringRequisiteDescription " + "IStringValue " + "ISystemDialogsFactory " + "ISystemInfo " + "ITabSheet " + "ITask " + "ITaskAbortReasonInfo " + "ITaskCardWizardStep " + "ITaskDescription " + "ITaskFactory " + "ITaskInfo " + "ITaskRoute " + "ITextCriterion " + "ITextRequisite " + "ITextValue " + "ITreeListSelectDialog " + "IUser " + "IUserList " + "IValue " + "IView " + "IWebBrowserControl " + "IWizard " + "IWizardAction " + "IWizardFactory " + "IWizardFormElement " + "IWizardParam " + "IWizardPickParam " + "IWizardReferenceParam " + "IWizardStep " + "IWorkAccessRights " + "IWorkDescription " + "IWorkflowAskableParam " + "IWorkflowAskableParams " + "IWorkflowBlock " + "IWorkflowBlockResult " + "IWorkflowEnabledMode " + "IWorkflowParam " + "IWorkflowPickParam " + "IWorkflowReferenceParam " + "IWorkState " + "IWorkTreeCustomNode " + "IWorkTreeJobNode " + "IWorkTreeTaskNode " + "IXMLEditorForm " + "SBCrypto "; // built_in : встроенные или библиотечные объекты (константы, перечисления)
 
-  // built_in : встроенные или библиотечные объекты (константы, перечисления)
-  const BUILTIN = CONSTANTS + ENUMS;
+  const BUILTIN = CONSTANTS + ENUMS; // class: встроенные наборы значений, системные объекты, фабрики
 
-  // class: встроенные наборы значений, системные объекты, фабрики
-  const CLASS = predefined_variables;
+  const CLASS = predefined_variables; // literal : примитивные типы
 
-  // literal : примитивные типы
-  const LITERAL = "null true false nil ";
+  const LITERAL = "null true false nil "; // number : числа
 
-  // number : числа
   const NUMBERS = {
     className: "number",
     begin: hljs.NUMBER_RE,
     relevance: 0
-  };
+  }; // string : строки
 
-  // string : строки
   const STRINGS = {
     className: "string",
     variants: [{
@@ -11915,72 +11936,63 @@ function isbl(hljs) {
       begin: "'",
       end: "'"
     }]
-  };
+  }; // Токены
 
-  // Токены
   const DOCTAGS = {
     className: "doctag",
     begin: "\\b(?:TODO|DONE|BEGIN|END|STUB|CHG|FIXME|NOTE|BUG|XXX)\\b",
     relevance: 0
-  };
+  }; // Однострочный комментарий
 
-  // Однострочный комментарий
   const ISBL_LINE_COMMENT_MODE = {
     className: "comment",
     begin: "//",
     end: "$",
     relevance: 0,
     contains: [hljs.PHRASAL_WORDS_MODE, DOCTAGS]
-  };
+  }; // Многострочный комментарий
 
-  // Многострочный комментарий
   const ISBL_BLOCK_COMMENT_MODE = {
     className: "comment",
     begin: "/\\*",
     end: "\\*/",
     relevance: 0,
     contains: [hljs.PHRASAL_WORDS_MODE, DOCTAGS]
-  };
+  }; // comment : комментарии
 
-  // comment : комментарии
   const COMMENTS = {
     variants: [ISBL_LINE_COMMENT_MODE, ISBL_BLOCK_COMMENT_MODE]
-  };
+  }; // keywords : ключевые слова
 
-  // keywords : ключевые слова
   const KEYWORDS = {
     $pattern: UNDERSCORE_IDENT_RE,
     keyword: KEYWORD,
     built_in: BUILTIN,
     class: CLASS,
     literal: LITERAL
-  };
+  }; // methods : методы
 
-  // methods : методы
   const METHODS = {
     begin: "\\.\\s*" + hljs.UNDERSCORE_IDENT_RE,
     keywords: KEYWORDS,
     relevance: 0
-  };
+  }; // type : встроенные типы
 
-  // type : встроенные типы
   const TYPES = {
     className: "type",
     begin: ":[ \\t]*(" + interfaces.trim().replace(/\s/g, "|") + ")",
     end: "[ \\t]*=",
     excludeEnd: true
-  };
+  }; // variables : переменные
 
-  // variables : переменные
   const VARIABLES = {
     className: "variable",
     keywords: KEYWORDS,
     begin: UNDERSCORE_IDENT_RE,
     relevance: 0,
     contains: [TYPES, METHODS]
-  };
+  }; // Имена функций
 
-  // Имена функций
   const FUNCTION_TITLE = FUNCTION_NAME_IDENT_RE + "\\(";
   const TITLE_MODE = {
     className: "title",
@@ -11992,9 +12004,8 @@ function isbl(hljs) {
     end: "\\(",
     returnBegin: true,
     excludeEnd: true
-  };
+  }; // function : функции
 
-  // function : функции
   const FUNCTIONS = {
     className: "function",
     begin: FUNCTION_TITLE,
@@ -12012,6 +12023,7 @@ function isbl(hljs) {
     contains: [FUNCTIONS, TYPES, METHODS, VARIABLES, STRINGS, NUMBERS, COMMENTS]
   };
 }
+
 module.exports = isbl;
 
 /***/ }),
@@ -12028,43 +12040,35 @@ var frac = `\\.(${decimalDigits})`;
 var hexDigits = '[0-9a-fA-F](_*[0-9a-fA-F])*';
 var NUMERIC = {
   className: 'number',
-  variants: [
-  // DecimalFloatingPointLiteral
+  variants: [// DecimalFloatingPointLiteral
   // including ExponentPart
   {
     begin: `(\\b(${decimalDigits})((${frac})|\\.)?|(${frac}))` + `[eE][+-]?(${decimalDigits})[fFdD]?\\b`
-  },
-  // excluding ExponentPart
+  }, // excluding ExponentPart
   {
     begin: `\\b(${decimalDigits})((${frac})[fFdD]?\\b|\\.([fFdD]\\b)?)`
   }, {
     begin: `(${frac})[fFdD]?\\b`
   }, {
     begin: `\\b(${decimalDigits})[fFdD]\\b`
-  },
-  // HexadecimalFloatingPointLiteral
+  }, // HexadecimalFloatingPointLiteral
   {
     begin: `\\b0[xX]((${hexDigits})\\.?|(${hexDigits})?\\.(${hexDigits}))` + `[pP][+-]?(${decimalDigits})[fFdD]?\\b`
-  },
-  // DecimalIntegerLiteral
+  }, // DecimalIntegerLiteral
   {
     begin: '\\b(0|[1-9](_*[0-9])*)[lL]?\\b'
-  },
-  // HexIntegerLiteral
+  }, // HexIntegerLiteral
   {
     begin: `\\b0[xX](${hexDigits})[lL]?\\b`
-  },
-  // OctalIntegerLiteral
+  }, // OctalIntegerLiteral
   {
     begin: '\\b0(_*[0-7])*[lL]?\\b'
-  },
-  // BinaryIntegerLiteral
+  }, // BinaryIntegerLiteral
   {
     begin: '\\b0[bB][01](_*[01])*[lL]?\\b'
   }],
   relevance: 0
 };
-
 /*
 Language: Java
 Author: Vsevolod Solovyov <vsevolod.solovyov@gmail.com>
@@ -12083,6 +12087,7 @@ function java(hljs) {
       begin: /\(/,
       end: /\)/,
       contains: ["self"] // allow nested () inside our annotation
+
     }]
   };
   const NUMBER = NUMERIC;
@@ -12101,8 +12106,7 @@ function java(hljs) {
         className: 'doctag',
         begin: '@[A-Za-z]+'
       }]
-    }),
-    // relevance boost
+    }), // relevance boost
     {
       begin: /import java\.[a-z]+\./,
       keywords: "import",
@@ -12172,6 +12176,7 @@ function java(hljs) {
     }, NUMBER, ANNOTATION]
   };
 }
+
 module.exports = java;
 
 /***/ }),
@@ -12183,10 +12188,8 @@ module.exports = java;
 /***/ ((module) => {
 
 const IDENT_RE = '[A-Za-z$_][0-9A-Za-z$_]*';
-const KEYWORDS = ["as",
-// for exports
-"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class",
-// JS handles these with a special rule
+const KEYWORDS = ["as", // for exports
+"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class", // JS handles these with a special rule
 // "get",
 // "set",
 "debugger", "async", "await", "static", "import", "from", "export", "extends"];
@@ -12197,7 +12200,6 @@ const BUILT_IN_GLOBALS = ["setInterval", "setTimeout", "clearInterval", "clearTi
 const BUILT_IN_VARIABLES = ["arguments", "this", "super", "console", "window", "document", "localStorage", "module", "global" // Node.js
 ];
 const BUILT_INS = [].concat(BUILT_IN_GLOBALS, BUILT_IN_VARIABLES, TYPES, ERROR_TYPES);
-
 /**
  * @param {string} value
  * @returns {RegExp}
@@ -12207,29 +12209,31 @@ const BUILT_INS = [].concat(BUILT_IN_GLOBALS, BUILT_IN_VARIABLES, TYPES, ERROR_T
  * @param {RegExp | string } re
  * @returns {string}
  */
+
 function source(re) {
   if (!re) return null;
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: JavaScript
 Description: JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.
@@ -12238,6 +12242,8 @@ Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript
 */
 
 /** @type LanguageFn */
+
+
 function javascript(hljs) {
   /**
    * Takes a string like "<Booger" and checks to see
@@ -12253,6 +12259,7 @@ function javascript(hljs) {
     const pos = match.input.indexOf(tag, after);
     return pos !== -1;
   };
+
   const IDENT_RE$1 = IDENT_RE;
   const FRAGMENT = {
     begin: '<>',
@@ -12261,22 +12268,24 @@ function javascript(hljs) {
   const XML_TAG = {
     begin: /<[A-Za-z0-9\\._:-]+/,
     end: /\/[A-Za-z0-9\\._:-]+>|\/>/,
+
     /**
      * @param {RegExpMatchArray} match
      * @param {CallbackResponse} response
      */
     isTrulyOpeningTag: (match, response) => {
       const afterMatchIndex = match[0].length + match.index;
-      const nextChar = match.input[afterMatchIndex];
-      // nested type?
+      const nextChar = match.input[afterMatchIndex]; // nested type?
       // HTML should not include another raw `<` inside a tag
       // But a type might: `<Array<Array<number>>`, etc.
+
       if (nextChar === "<") {
         response.ignoreMatch();
         return;
-      }
-      // <something>
+      } // <something>
       // This is now either a tag or a type.
+
+
       if (nextChar === ">") {
         // if we cannot find a matching closing tag, then we
         // will ignore it
@@ -12293,36 +12302,31 @@ function javascript(hljs) {
     keyword: KEYWORDS,
     literal: LITERALS,
     built_in: BUILT_INS
-  };
+  }; // https://tc39.es/ecma262/#sec-literals-numeric-literals
 
-  // https://tc39.es/ecma262/#sec-literals-numeric-literals
   const decimalDigits = '[0-9](_?[0-9])*';
-  const frac = `\\.(${decimalDigits})`;
-  // DecimalIntegerLiteral, including Annex B NonOctalDecimalIntegerLiteral
+  const frac = `\\.(${decimalDigits})`; // DecimalIntegerLiteral, including Annex B NonOctalDecimalIntegerLiteral
   // https://tc39.es/ecma262/#sec-additional-syntax-numeric-literals
+
   const decimalInteger = `0|[1-9](_?[0-9])*|0[0-7]*[89][0-9]*`;
   const NUMBER = {
     className: 'number',
-    variants: [
-    // DecimalLiteral
+    variants: [// DecimalLiteral
     {
       begin: `(\\b(${decimalInteger})((${frac})|\\.)?|(${frac}))` + `[eE][+-]?(${decimalDigits})\\b`
     }, {
       begin: `\\b(${decimalInteger})\\b((${frac})\\b|\\.)?|(${frac})\\b`
-    },
-    // DecimalBigIntegerLiteral
+    }, // DecimalBigIntegerLiteral
     {
       begin: `\\b(0|[1-9](_?[0-9])*)n\\b`
-    },
-    // NonDecimalIntegerLiteral
+    }, // NonDecimalIntegerLiteral
     {
       begin: "\\b0[xX][0-9a-fA-F](_?[0-9a-fA-F])*n?\\b"
     }, {
       begin: "\\b0[bB][0-1](_?[0-1])*n?\\b"
     }, {
       begin: "\\b0[oO][0-7](_?[0-7])*n?\\b"
-    },
-    // LegacyOctalIntegerLiteral (does not include underscore separators)
+    }, // LegacyOctalIntegerLiteral (does not include underscore separators)
     // https://tc39.es/ecma262/#sec-additional-syntax-numeric-literals
     {
       begin: "\\b0[0-7]+n?\\b"
@@ -12335,6 +12339,7 @@ function javascript(hljs) {
     end: '\\}',
     keywords: KEYWORDS$1,
     contains: [] // defined later
+
   };
   const HTML_TEMPLATE = {
     begin: 'html`',
@@ -12377,8 +12382,7 @@ function javascript(hljs) {
         begin: IDENT_RE$1 + '(?=\\s*(-)|$)',
         endsParent: true,
         relevance: 0
-      },
-      // eat spaces (not newlines) so we can find
+      }, // eat spaces (not newlines) so we can find
       // types or variables
       {
         begin: /(?=[^\n])\s/,
@@ -12400,8 +12404,7 @@ function javascript(hljs) {
     contains: ["self"].concat(SUBST_INTERNALS)
   });
   const SUBST_AND_COMMENTS = [].concat(COMMENT, SUBST.contains);
-  const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
-  // eat recursive parens in sub expressions
+  const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([// eat recursive parens in sub expressions
   {
     begin: /\(/,
     end: /\)/,
@@ -12437,8 +12440,7 @@ function javascript(hljs) {
       begin: /^\s*['"]use (strict|asm)['"]/
     }, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE, HTML_TEMPLATE, CSS_TEMPLATE, TEMPLATE_STRING, COMMENT, NUMBER, {
       // object attr container
-      begin: concat(/[{,\n]\s*/,
-      // we need to look ahead to make sure that we actually have an
+      begin: concat(/[{,\n]\s*/, // we need to look ahead to make sure that we actually have an
       // attribute coming up so we don't steal a comma from a potential
       // "value" container
       //
@@ -12448,8 +12450,7 @@ function javascript(hljs) {
       // fails to find any actual attrs. But this still does the job because
       // it prevents the value contain rule from grabbing this instead and
       // prevening this rule from firing when we actually DO have keys.
-      lookahead(concat(
-      // we also need to allow for multiple possible comments inbetween
+      lookahead(concat( // we also need to allow for multiple possible comments inbetween
       // the first key:value pairing
       /(((\/\/.*$)|(\/\*(\*[^/]|[^*])*\*\/))\s*)*/, IDENT_RE$1 + '\\s*:'))),
       relevance: 0,
@@ -12537,16 +12538,14 @@ function javascript(hljs) {
       // we have to count the parens to make sure we actually have the correct
       // bounding ( ).  There could be any number of sub-expressions inside
       // also surrounded by parens.
-      begin: hljs.UNDERSCORE_IDENT_RE + '\\(' +
-      // first parens
+      begin: hljs.UNDERSCORE_IDENT_RE + '\\(' + // first parens
       '[^()]*(\\(' + '[^()]*(\\(' + '[^()]*' + '\\)[^()]*)*' + '\\)[^()]*)*' + '\\)\\s*\\{',
       // end parens
       returnBegin: true,
       contains: [PARAMS, hljs.inherit(hljs.TITLE_MODE, {
         begin: IDENT_RE$1
       })]
-    },
-    // hack: prevents detection of keywords in some circumstances
+    }, // hack: prevents detection of keywords in some circumstances
     // .keyword()
     // $keyword = x
     {
@@ -12581,14 +12580,15 @@ function javascript(hljs) {
         begin: IDENT_RE$1
       }), {
         begin: /\(\)/
-      },
-      // eat to avoid empty params
+      }, // eat to avoid empty params
       PARAMS]
     }, {
       begin: /\$[(.]/ // relevance booster for a pattern common to JS libs: `$(something)` and `$.something`
+
     }]
   };
 }
+
 module.exports = javascript;
 
 /***/ }),
@@ -12606,7 +12606,6 @@ module.exports = javascript;
  Website: https://docs.jboss.org/author/display/WFLY/Command+Line+Interface
  Category: config
  */
-
 function jbossCli(hljs) {
   const PARAM = {
     begin: /[\w-]+ *=/,
@@ -12649,6 +12648,7 @@ function jbossCli(hljs) {
     contains: [hljs.HASH_COMMENT_MODE, hljs.QUOTE_STRING_MODE, COMMAND_PARAMS, OPERATION, PATH, PARAMSBLOCK]
   };
 }
+
 module.exports = jbossCli;
 
 /***/ }),
@@ -12666,7 +12666,6 @@ Author: Ivan Sagalaev <maniac@softwaremaniacs.org>
 Website: http://www.json.org
 Category: common, protocols
 */
-
 function json(hljs) {
   const LITERALS = {
     literal: 'true false null'
@@ -12712,6 +12711,7 @@ function json(hljs) {
     illegal: '\\S'
   };
 }
+
 module.exports = json;
 
 /***/ }),
@@ -12745,7 +12745,6 @@ left un-highlighted.
 Using simply spaces to identify line continuations may get a false-positive if the output
 also prints out six spaces, but such cases should be rare.
 */
-
 function juliaRepl(hljs) {
   return {
     name: 'Julia REPL',
@@ -12768,6 +12767,7 @@ function juliaRepl(hljs) {
     }]
   };
 }
+
 module.exports = juliaRepl;
 
 /***/ }),
@@ -12785,17 +12785,13 @@ Author: Kenta Sato <bicycle1885@gmail.com>
 Contributors: Alex Arslan <ararslan@comcast.net>, Fredrik Ekre <ekrefredrik@gmail.com>
 Website: https://julialang.org
 */
-
 function julia(hljs) {
   // Since there are numerous special names in Julia, it is too much trouble
   // to maintain them by hand. Hence these names (i.e. keywords, literals and
   // built-ins) are automatically generated from Julia 1.5.2 itself through
   // the following scripts for each.
-
   // ref: https://docs.julialang.org/en/v1/manual/variables/#Allowed-Variable-Names
-  var VARIABLE_NAME_RE = '[A-Za-z_\\u00A1-\\uFFFF][A-Za-z_0-9\\u00A1-\\uFFFF]*';
-
-  // # keyword generator, multi-word keywords handled manually below (Julia 1.5.2)
+  var VARIABLE_NAME_RE = '[A-Za-z_\\u00A1-\\uFFFF][A-Za-z_0-9\\u00A1-\\uFFFF]*'; // # keyword generator, multi-word keywords handled manually below (Julia 1.5.2)
   // import REPL.REPLCompletions
   // res = String["in", "isa", "where"]
   // for kw in collect(x.keyword for x in REPLCompletions.complete_keyword(""))
@@ -12805,9 +12801,8 @@ function julia(hljs) {
   // end
   // sort!(unique!(res))
   // foreach(x -> println("\'", x, "\',"), res)
-  var KEYWORD_LIST = ['baremodule', 'begin', 'break', 'catch', 'ccall', 'const', 'continue', 'do', 'else', 'elseif', 'end', 'export', 'false', 'finally', 'for', 'function', 'global', 'if', 'import', 'in', 'isa', 'let', 'local', 'macro', 'module', 'quote', 'return', 'true', 'try', 'using', 'where', 'while'];
 
-  // # literal generator (Julia 1.5.2)
+  var KEYWORD_LIST = ['baremodule', 'begin', 'break', 'catch', 'ccall', 'const', 'continue', 'do', 'else', 'elseif', 'end', 'export', 'false', 'finally', 'for', 'function', 'global', 'if', 'import', 'in', 'isa', 'let', 'local', 'macro', 'module', 'quote', 'return', 'true', 'try', 'using', 'where', 'while']; // # literal generator (Julia 1.5.2)
   // import REPL.REPLCompletions
   // res = String["true", "false"]
   // for compl in filter!(x -> isa(x, REPLCompletions.ModuleCompletion) && (x.parent === Base || x.parent === Core),
@@ -12822,9 +12817,8 @@ function julia(hljs) {
   // end
   // sort!(unique!(res))
   // foreach(x -> println("\'", x, "\',"), res)
-  var LITERAL_LIST = ['ARGS', 'C_NULL', 'DEPOT_PATH', 'ENDIAN_BOM', 'ENV', 'Inf', 'Inf16', 'Inf32', 'Inf64', 'InsertionSort', 'LOAD_PATH', 'MergeSort', 'NaN', 'NaN16', 'NaN32', 'NaN64', 'PROGRAM_FILE', 'QuickSort', 'RoundDown', 'RoundFromZero', 'RoundNearest', 'RoundNearestTiesAway', 'RoundNearestTiesUp', 'RoundToZero', 'RoundUp', 'VERSION|0', 'devnull', 'false', 'im', 'missing', 'nothing', 'pi', 'stderr', 'stdin', 'stdout', 'true', 'undef', 'π', 'ℯ'];
 
-  // # built_in generator (Julia 1.5.2)
+  var LITERAL_LIST = ['ARGS', 'C_NULL', 'DEPOT_PATH', 'ENDIAN_BOM', 'ENV', 'Inf', 'Inf16', 'Inf32', 'Inf64', 'InsertionSort', 'LOAD_PATH', 'MergeSort', 'NaN', 'NaN16', 'NaN32', 'NaN64', 'PROGRAM_FILE', 'QuickSort', 'RoundDown', 'RoundFromZero', 'RoundNearest', 'RoundNearestTiesAway', 'RoundNearestTiesUp', 'RoundToZero', 'RoundUp', 'VERSION|0', 'devnull', 'false', 'im', 'missing', 'nothing', 'pi', 'stderr', 'stdin', 'stdout', 'true', 'undef', 'π', 'ℯ']; // # built_in generator (Julia 1.5.2)
   // import REPL.REPLCompletions
   // res = String[]
   // for compl in filter!(x -> isa(x, REPLCompletions.ModuleCompletion) && (x.parent === Base || x.parent === Core),
@@ -12839,21 +12833,20 @@ function julia(hljs) {
   // end
   // sort!(unique!(res))
   // foreach(x -> println("\'", x, "\',"), res)
+
   var BUILT_IN_LIST = ['AbstractArray', 'AbstractChannel', 'AbstractChar', 'AbstractDict', 'AbstractDisplay', 'AbstractFloat', 'AbstractIrrational', 'AbstractMatrix', 'AbstractRange', 'AbstractSet', 'AbstractString', 'AbstractUnitRange', 'AbstractVecOrMat', 'AbstractVector', 'Any', 'ArgumentError', 'Array', 'AssertionError', 'BigFloat', 'BigInt', 'BitArray', 'BitMatrix', 'BitSet', 'BitVector', 'Bool', 'BoundsError', 'CapturedException', 'CartesianIndex', 'CartesianIndices', 'Cchar', 'Cdouble', 'Cfloat', 'Channel', 'Char', 'Cint', 'Cintmax_t', 'Clong', 'Clonglong', 'Cmd', 'Colon', 'Complex', 'ComplexF16', 'ComplexF32', 'ComplexF64', 'CompositeException', 'Condition', 'Cptrdiff_t', 'Cshort', 'Csize_t', 'Cssize_t', 'Cstring', 'Cuchar', 'Cuint', 'Cuintmax_t', 'Culong', 'Culonglong', 'Cushort', 'Cvoid', 'Cwchar_t', 'Cwstring', 'DataType', 'DenseArray', 'DenseMatrix', 'DenseVecOrMat', 'DenseVector', 'Dict', 'DimensionMismatch', 'Dims', 'DivideError', 'DomainError', 'EOFError', 'Enum', 'ErrorException', 'Exception', 'ExponentialBackOff', 'Expr', 'Float16', 'Float32', 'Float64', 'Function', 'GlobalRef', 'HTML', 'IO', 'IOBuffer', 'IOContext', 'IOStream', 'IdDict', 'IndexCartesian', 'IndexLinear', 'IndexStyle', 'InexactError', 'InitError', 'Int', 'Int128', 'Int16', 'Int32', 'Int64', 'Int8', 'Integer', 'InterruptException', 'InvalidStateException', 'Irrational', 'KeyError', 'LinRange', 'LineNumberNode', 'LinearIndices', 'LoadError', 'MIME', 'Matrix', 'Method', 'MethodError', 'Missing', 'MissingException', 'Module', 'NTuple', 'NamedTuple', 'Nothing', 'Number', 'OrdinalRange', 'OutOfMemoryError', 'OverflowError', 'Pair', 'PartialQuickSort', 'PermutedDimsArray', 'Pipe', 'ProcessFailedException', 'Ptr', 'QuoteNode', 'Rational', 'RawFD', 'ReadOnlyMemoryError', 'Real', 'ReentrantLock', 'Ref', 'Regex', 'RegexMatch', 'RoundingMode', 'SegmentationFault', 'Set', 'Signed', 'Some', 'StackOverflowError', 'StepRange', 'StepRangeLen', 'StridedArray', 'StridedMatrix', 'StridedVecOrMat', 'StridedVector', 'String', 'StringIndexError', 'SubArray', 'SubString', 'SubstitutionString', 'Symbol', 'SystemError', 'Task', 'TaskFailedException', 'Text', 'TextDisplay', 'Timer', 'Tuple', 'Type', 'TypeError', 'TypeVar', 'UInt', 'UInt128', 'UInt16', 'UInt32', 'UInt64', 'UInt8', 'UndefInitializer', 'UndefKeywordError', 'UndefRefError', 'UndefVarError', 'Union', 'UnionAll', 'UnitRange', 'Unsigned', 'Val', 'Vararg', 'VecElement', 'VecOrMat', 'Vector', 'VersionNumber', 'WeakKeyDict', 'WeakRef'];
   var KEYWORDS = {
     $pattern: VARIABLE_NAME_RE,
     keyword: KEYWORD_LIST,
     literal: LITERAL_LIST,
     built_in: BUILT_IN_LIST
-  };
+  }; // placeholder for recursive self-reference
 
-  // placeholder for recursive self-reference
   var DEFAULT = {
     keywords: KEYWORDS,
     illegal: /<\//
-  };
+  }; // ref: https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/
 
-  // ref: https://docs.julialang.org/en/v1/manual/integers-and-floating-point-numbers/
   var NUMBER = {
     className: 'number',
     // supported numeric literals:
@@ -12879,9 +12872,8 @@ function julia(hljs) {
   var INTERPOLATED_VARIABLE = {
     className: 'variable',
     begin: '\\$' + VARIABLE_NAME_RE
-  };
+  }; // TODO: neatly escape normal code in string literal
 
-  // TODO: neatly escape normal code in string literal
   var STRING = {
     className: 'string',
     contains: [hljs.BACKSLASH_ESCAPE, INTERPOLATION, INTERPOLATED_VARIABLE],
@@ -12926,6 +12918,7 @@ function julia(hljs) {
   INTERPOLATION.contains = DEFAULT.contains;
   return DEFAULT;
 }
+
 module.exports = julia;
 
 /***/ }),
@@ -12942,43 +12935,35 @@ var frac = `\\.(${decimalDigits})`;
 var hexDigits = '[0-9a-fA-F](_*[0-9a-fA-F])*';
 var NUMERIC = {
   className: 'number',
-  variants: [
-  // DecimalFloatingPointLiteral
+  variants: [// DecimalFloatingPointLiteral
   // including ExponentPart
   {
     begin: `(\\b(${decimalDigits})((${frac})|\\.)?|(${frac}))` + `[eE][+-]?(${decimalDigits})[fFdD]?\\b`
-  },
-  // excluding ExponentPart
+  }, // excluding ExponentPart
   {
     begin: `\\b(${decimalDigits})((${frac})[fFdD]?\\b|\\.([fFdD]\\b)?)`
   }, {
     begin: `(${frac})[fFdD]?\\b`
   }, {
     begin: `\\b(${decimalDigits})[fFdD]\\b`
-  },
-  // HexadecimalFloatingPointLiteral
+  }, // HexadecimalFloatingPointLiteral
   {
     begin: `\\b0[xX]((${hexDigits})\\.?|(${hexDigits})?\\.(${hexDigits}))` + `[pP][+-]?(${decimalDigits})[fFdD]?\\b`
-  },
-  // DecimalIntegerLiteral
+  }, // DecimalIntegerLiteral
   {
     begin: '\\b(0|[1-9](_*[0-9])*)[lL]?\\b'
-  },
-  // HexIntegerLiteral
+  }, // HexIntegerLiteral
   {
     begin: `\\b0[xX](${hexDigits})[lL]?\\b`
-  },
-  // OctalIntegerLiteral
+  }, // OctalIntegerLiteral
   {
     begin: '\\b0(_*[0-7])*[lL]?\\b'
-  },
-  // BinaryIntegerLiteral
+  }, // BinaryIntegerLiteral
   {
     begin: '\\b0[bB][01](_*[01])*[lL]?\\b'
   }],
   relevance: 0
 };
-
 /*
  Language: Kotlin
  Description: Kotlin is an OSS statically typed programming language that targets the JVM, Android, JavaScript and Native.
@@ -13006,9 +12991,8 @@ function kotlin(hljs) {
   const LABEL = {
     className: 'symbol',
     begin: hljs.UNDERSCORE_IDENT_RE + '@'
-  };
+  }; // for string templates
 
-  // for string templates
   const SUBST = {
     className: 'subst',
     begin: /\$\{/,
@@ -13025,8 +13009,7 @@ function kotlin(hljs) {
       begin: '"""',
       end: '"""(?=[^"])',
       contains: [VARIABLE, SUBST]
-    },
-    // Can't use built-in modes easily, as we want to use STRING in the meta
+    }, // Can't use built-in modes easily, as we want to use STRING in the meta
     // context as 'meta-string' and there's no syntax to remove explicitly set
     // classNames in built-in modes.
     {
@@ -13056,11 +13039,10 @@ function kotlin(hljs) {
         className: 'meta-string'
       })]
     }]
-  };
-
-  // https://kotlinlang.org/docs/reference/whatsnew11.html#underscores-in-numeric-literals
+  }; // https://kotlinlang.org/docs/reference/whatsnew11.html#underscores-in-numeric-literals
   // According to the doc above, the number mode of kotlin is the same as java 8,
   // so the code below is copied from java.js
+
   const KOTLIN_NUMBER_MODE = NUMERIC;
   const KOTLIN_NESTED_COMMENT = hljs.COMMENT('/\\*', '\\*/', {
     contains: [hljs.C_BLOCK_COMMENT_MODE]
@@ -13073,6 +13055,7 @@ function kotlin(hljs) {
       begin: /\(/,
       end: /\)/,
       contains: [] // defined later
+
     }]
   };
   const KOTLIN_PAREN_TYPE2 = KOTLIN_PAREN_TYPE;
@@ -13153,6 +13136,7 @@ function kotlin(hljs) {
     }, KOTLIN_NUMBER_MODE]
   };
 }
+
 module.exports = kotlin;
 
 /***/ }),
@@ -13169,7 +13153,6 @@ Author: Eric Knibbe <eric@lassosoft.com>
 Description: Lasso is a language and server platform for database-driven web applications. This definition handles Lasso 9 syntax and LassoScript for Lasso 8.6 and earlier.
 Website: http://www.lassosoft.com/What-Is-Lasso
 */
-
 function lasso(hljs) {
   const LASSO_IDENT_RE = '[a-zA-Z_][\\w.]*';
   const LASSO_ANGLE_RE = '<\\?(lasso(script)?|=)';
@@ -13291,6 +13274,7 @@ function lasso(hljs) {
     }].concat(LASSO_CODE)
   };
 }
+
 module.exports = lasso;
 
 /***/ }),
@@ -13315,7 +13299,6 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -13323,11 +13306,12 @@ function source(re) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: LaTeX
 Author: Benedikt Wilde <bwilde@posteo.de>
@@ -13336,28 +13320,25 @@ Category: markup
 */
 
 /** @type LanguageFn */
+
+
 function latex(hljs) {
   const KNOWN_CONTROL_WORDS = either(...['(?:NeedsTeXFormat|RequirePackage|GetIdInfo)', 'Provides(?:Expl)?(?:Package|Class|File)', '(?:DeclareOption|ProcessOptions)', '(?:documentclass|usepackage|input|include)', 'makeat(?:letter|other)', 'ExplSyntax(?:On|Off)', '(?:new|renew|provide)?command', '(?:re)newenvironment', '(?:New|Renew|Provide|Declare)(?:Expandable)?DocumentCommand', '(?:New|Renew|Provide|Declare)DocumentEnvironment', '(?:(?:e|g|x)?def|let)', '(?:begin|end)', '(?:part|chapter|(?:sub){0,2}section|(?:sub)?paragraph)', 'caption', '(?:label|(?:eq|page|name)?ref|(?:paren|foot|super)?cite)', '(?:alpha|beta|[Gg]amma|[Dd]elta|(?:var)?epsilon|zeta|eta|[Tt]heta|vartheta)', '(?:iota|(?:var)?kappa|[Ll]ambda|mu|nu|[Xx]i|[Pp]i|varpi|(?:var)rho)', '(?:[Ss]igma|varsigma|tau|[Uu]psilon|[Pp]hi|varphi|chi|[Pp]si|[Oo]mega)', '(?:frac|sum|prod|lim|infty|times|sqrt|leq|geq|left|right|middle|[bB]igg?)', '(?:[lr]angle|q?quad|[lcvdi]?dots|d?dot|hat|tilde|bar)'].map(word => word + '(?![a-zA-Z@:_])'));
-  const L3_REGEX = new RegExp([
-  // A function \module_function_name:signature or \__module_function_name:signature,
+  const L3_REGEX = new RegExp([// A function \module_function_name:signature or \__module_function_name:signature,
   // where both module and function_name need at least two characters and
   // function_name may contain single underscores.
-  '(?:__)?[a-zA-Z]{2,}_[a-zA-Z](?:_?[a-zA-Z])+:[a-zA-Z]*',
-  // A variable \scope_module_and_name_type or \scope__module_ane_name_type,
+  '(?:__)?[a-zA-Z]{2,}_[a-zA-Z](?:_?[a-zA-Z])+:[a-zA-Z]*', // A variable \scope_module_and_name_type or \scope__module_ane_name_type,
   // where scope is one of l, g or c, type needs at least two characters
   // and module_and_name may contain single underscores.
-  '[lgc]__?[a-zA-Z](?:_?[a-zA-Z])*_[a-zA-Z]{2,}',
-  // A quark \q_the_name or \q__the_name or
+  '[lgc]__?[a-zA-Z](?:_?[a-zA-Z])*_[a-zA-Z]{2,}', // A quark \q_the_name or \q__the_name or
   // scan mark \s_the_name or \s__vthe_name,
   // where variable_name needs at least two characters and
   // may contain single underscores.
-  '[qs]__?[a-zA-Z](?:_?[a-zA-Z])+',
-  // Other LaTeX3 macro names that are not covered by the three rules above.
+  '[qs]__?[a-zA-Z](?:_?[a-zA-Z])+', // Other LaTeX3 macro names that are not covered by the three rules above.
   'use(?:_i)?:[a-zA-Z]*', '(?:else|fi|or):', '(?:if|cs|exp):w', '(?:hbox|vbox):n', '::[a-zA-Z]_unbraced', '::[a-zA-Z:]'].map(pattern => pattern + '(?![a-zA-Z:_])').join('|'));
   const L2_VARIANTS = [{
     begin: /[a-zA-Z@]+/
-  },
-  // control word
+  }, // control word
   {
     begin: /[^a-zA-Z@]?/
   } // control symbol
@@ -13442,6 +13423,7 @@ function latex(hljs) {
   };
   const ARGUMENT_M = [ARGUMENT_BRACES];
   const ARGUMENT_O = [ARGUMENT_BRACKETS];
+
   const ARGUMENT_AND_THEN = function (arg, starts_mode) {
     return {
       contains: [SPACE_GOBBLER],
@@ -13452,6 +13434,7 @@ function latex(hljs) {
       }
     };
   };
+
   const CSNAME = function (csname, starts_mode) {
     return {
       begin: '\\\\' + csname + '(?![a-zA-Z@:_])',
@@ -13464,6 +13447,7 @@ function latex(hljs) {
       starts: starts_mode
     };
   };
+
   const BEGIN_ENV = function (envname, starts_mode) {
     return hljs.inherit({
       begin: '\\\\begin(?=[ \t]*(\\r?\\n[ \t]*)?\\{' + envname + '\\})',
@@ -13474,6 +13458,7 @@ function latex(hljs) {
       relevance: 0
     }, ARGUMENT_AND_THEN(ARGUMENT_M, starts_mode));
   };
+
   const VERBATIM_DELIMITED_EQUAL = (innerName = "string") => {
     return hljs.END_SAME_AS_BEGIN({
       className: innerName,
@@ -13484,12 +13469,14 @@ function latex(hljs) {
       endsParent: true
     });
   };
+
   const VERBATIM_DELIMITED_ENV = function (envname) {
     return {
       className: 'string',
       end: '(?=\\\\end\\{' + envname + '\\})'
     };
   };
+
   const VERBATIM_DELIMITED_BRACES = (innerName = "string") => {
     return {
       relevance: 0,
@@ -13510,6 +13497,7 @@ function latex(hljs) {
       }
     };
   };
+
   const VERBATIM = [...['verb', 'lstinline'].map(csname => CSNAME(csname, {
     contains: [VERBATIM_DELIMITED_EQUAL()]
   })), CSNAME('mint', ARGUMENT_AND_THEN(ARGUMENT_M, {
@@ -13529,6 +13517,7 @@ function latex(hljs) {
     contains: [...VERBATIM, ...EVERYTHING_BUT_VERBATIM]
   };
 }
+
 module.exports = latex;
 
 /***/ }),
@@ -13574,6 +13563,7 @@ function ldif(hljs) {
     }, hljs.HASH_COMMENT_MODE]
   };
 }
+
 module.exports = ldif;
 
 /***/ }),
@@ -13589,7 +13579,6 @@ Language: Leaf
 Author: Hale Chan <halechan@qq.com>
 Description: Based on the Leaf reference from https://vapor.github.io/documentation/guide/leaf.html.
 */
-
 function leaf(hljs) {
   return {
     name: 'Leaf',
@@ -13622,6 +13611,7 @@ function leaf(hljs) {
     }]
   };
 }
+
 module.exports = leaf;
 
 /***/ }),
@@ -13651,53 +13641,34 @@ const MODES = hljs => {
     }
   };
 };
+
 const TAGS = ['a', 'abbr', 'address', 'article', 'aside', 'audio', 'b', 'blockquote', 'body', 'button', 'canvas', 'caption', 'cite', 'code', 'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'mark', 'menu', 'nav', 'object', 'ol', 'p', 'q', 'quote', 'samp', 'section', 'span', 'strong', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'ul', 'var', 'video'];
-const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width',
-// TODO: find a better solution?
-'min-width', 'max-width', 'min-height', 'max-height'];
+const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width', // TODO: find a better solution?
+'min-width', 'max-width', 'min-height', 'max-height']; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
-const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir',
-// dir()
-'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has',
-// has()
-'host',
-// host or host()
-'host-context',
-// host-context()
-'hover', 'indeterminate', 'in-range', 'invalid', 'is',
-// is()
-'lang',
-// lang()
-'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not',
-// not()
-'nth-child',
-// nth-child()
-'nth-col',
-// nth-col()
-'nth-last-child',
-// nth-last-child()
-'nth-last-col',
-// nth-last-col()
-'nth-last-of-type',
-//nth-last-of-type()
-'nth-of-type',
-//nth-of-type()
+const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir', // dir()
+'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has', // has()
+'host', // host or host()
+'host-context', // host-context()
+'hover', 'indeterminate', 'in-range', 'invalid', 'is', // is()
+'lang', // lang()
+'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not', // not()
+'nth-child', // nth-child()
+'nth-col', // nth-col()
+'nth-last-child', // nth-last-child()
+'nth-last-col', // nth-last-col()
+'nth-last-of-type', //nth-last-of-type()
+'nth-of-type', //nth-of-type()
 'only-child', 'only-of-type', 'optional', 'out-of-range', 'past', 'placeholder-shown', 'read-only', 'read-write', 'required', 'right', 'root', 'scope', 'target', 'target-within', 'user-invalid', 'valid', 'visited', 'where' // where()
-];
+]; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 const PSEUDO_ELEMENTS = ['after', 'backdrop', 'before', 'cue', 'cue-region', 'first-letter', 'first-line', 'grammar-error', 'marker', 'part', 'placeholder', 'selection', 'slotted', 'spelling-error'];
-const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src',
-// @font-face
-'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index'
-// reverse makes sure longer attributes `font-weight` are matched fully
+const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src', // @font-face
+'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index' // reverse makes sure longer attributes `font-weight` are matched fully
 // instead of getting false positives on say `font`
-].reverse();
+].reverse(); // some grammars use them all as a single group
 
-// some grammars use them all as a single group
 const PSEUDO_SELECTORS = PSEUDO_CLASSES.concat(PSEUDO_ELEMENTS);
-
 /*
 Language: Less
 Description: It's CSS, with just a little more.
@@ -13707,13 +13678,14 @@ Category: common, css
 */
 
 /** @type LanguageFn */
+
 function less(hljs) {
   const modes = MODES(hljs);
   const PSEUDO_SELECTORS$1 = PSEUDO_SELECTORS;
   const AT_MODIFIERS = "and or not only";
   const IDENT_RE = '[\\w-]+'; // yes, Less identifiers may begin with a digit
-  const INTERP_IDENT_RE = '(' + IDENT_RE + '|@\\{' + IDENT_RE + '\\})';
 
+  const INTERP_IDENT_RE = '(' + IDENT_RE + '|@\\{' + IDENT_RE + '\\})';
   /* Generic Modes */
 
   const RULES = [];
@@ -13726,6 +13698,7 @@ function less(hljs) {
       begin: '~?' + c + '.*?' + c
     };
   };
+
   const IDENT_MODE = function (name, begin, relevance) {
     return {
       className: name,
@@ -13733,6 +13706,7 @@ function less(hljs) {
       relevance: relevance
     };
   };
+
   const AT_KEYWORDS = {
     $pattern: /[a-z-]+/,
     keyword: AT_MODIFIERS,
@@ -13745,11 +13719,9 @@ function less(hljs) {
     contains: VALUE_MODES,
     keywords: AT_KEYWORDS,
     relevance: 0
-  };
+  }; // generic Less highlighter (used almost everywhere except selectors):
 
-  // generic Less highlighter (used almost everywhere except selectors):
-  VALUE_MODES.push(hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRING_MODE("'"), STRING_MODE('"'), hljs.CSS_NUMBER_MODE,
-  // fixme: it does not include dot for numbers like .5em :(
+  VALUE_MODES.push(hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRING_MODE("'"), STRING_MODE('"'), hljs.CSS_NUMBER_MODE, // fixme: it does not include dot for numbers like .5em :(
   {
     begin: '(url|data-uri)\\(',
     starts: {
@@ -13757,8 +13729,7 @@ function less(hljs) {
       end: '[\\)\\n]',
       excludeEnd: true
     }
-  }, modes.HEXCOLOR, PARENS_MODE, IDENT_MODE('variable', '@@?' + IDENT_RE, 10), IDENT_MODE('variable', '@\\{' + IDENT_RE + '\\}'), IDENT_MODE('built_in', '~?`[^`]*?`'),
-  // inline javascript (or whatever host language) *multiline* string
+  }, modes.HEXCOLOR, PARENS_MODE, IDENT_MODE('variable', '@@?' + IDENT_RE, 10), IDENT_MODE('variable', '@\\{' + IDENT_RE + '\\}'), IDENT_MODE('built_in', '~?`[^`]*?`'), // inline javascript (or whatever host language) *multiline* string
   {
     // @media features (it’s here to not duplicate things in AT_RULE_MODE with extra PARENS_MODE overriding):
     className: 'attribute',
@@ -13778,8 +13749,8 @@ function less(hljs) {
     contains: [{
       beginKeywords: 'and not'
     }].concat(VALUE_MODES) // using this form to override VALUE’s 'function' match
-  };
 
+  };
   /* Rule-Level Modes */
 
   const RULE_MODE = {
@@ -13811,13 +13782,11 @@ function less(hljs) {
       contains: VALUE_MODES,
       relevance: 0
     }
-  };
+  }; // variable definitions and calls
 
-  // variable definitions and calls
   const VAR_RULE_MODE = {
     className: 'variable',
-    variants: [
-    // using more strict pattern for higher relevance to increase chances of Less detection.
+    variants: [// using more strict pattern for higher relevance to increase chances of Less detection.
     // this is *the only* Less specific statement used in most of the sources, so...
     // (we’ll still often loose to the css-parser unless there's '//' comment,
     // simply because 1 variable just can't beat 99 properties :)
@@ -13840,6 +13809,7 @@ function less(hljs) {
     variants: [{
       begin: '[\\.#:&\\[>]',
       end: '[;{}]' // mixin calls end with ';'
+
     }, {
       begin: INTERP_IDENT_RE,
       end: /\{/
@@ -13848,13 +13818,11 @@ function less(hljs) {
     returnEnd: true,
     illegal: '[<=\'$"]',
     relevance: 0,
-    contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, MIXIN_GUARD_MODE, IDENT_MODE('keyword', 'all\\b'), IDENT_MODE('variable', '@\\{' + IDENT_RE + '\\}'),
-    // otherwise it’s identified as tag
+    contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, MIXIN_GUARD_MODE, IDENT_MODE('keyword', 'all\\b'), IDENT_MODE('variable', '@\\{' + IDENT_RE + '\\}'), // otherwise it’s identified as tag
     {
       begin: '\\b(' + TAGS.join('|') + ')\\b',
       className: 'selector-tag'
-    }, IDENT_MODE('selector-tag', INTERP_IDENT_RE + '%?', 0),
-    // '%' for more consistent coloring of @keyframes "tags"
+    }, IDENT_MODE('selector-tag', INTERP_IDENT_RE + '%?', 0), // '%' for more consistent coloring of @keyframes "tags"
     IDENT_MODE('selector-id', '#' + INTERP_IDENT_RE), IDENT_MODE('selector-class', '\\.' + INTERP_IDENT_RE, 0), IDENT_MODE('selector-tag', '&', 0), modes.ATTRIBUTE_SELECTOR_MODE, {
       className: 'selector-pseudo',
       begin: ':(' + PSEUDO_CLASSES.join('|') + ')'
@@ -13865,8 +13833,7 @@ function less(hljs) {
       begin: '\\(',
       end: '\\)',
       contains: VALUE_WITH_RULESETS
-    },
-    // argument list of parametric mixins
+    }, // argument list of parametric mixins
     {
       begin: '!important'
     } // eat !important after mixin call or it will be colored as tag
@@ -13885,6 +13852,7 @@ function less(hljs) {
     contains: RULES
   };
 }
+
 module.exports = less;
 
 /***/ }),
@@ -13901,7 +13869,6 @@ Description: Generic lisp syntax
 Author: Vasily Polovnyov <vast@whiteants.net>
 Category: lisp
 */
-
 function lisp(hljs) {
   var LISP_IDENT_RE = '[a-zA-Z_\\-+\\*\\/<=>&#][a-zA-Z0-9_\\-+*\\/<=>&#!]*';
   var MEC_RE = '\\|[^]*?\\|';
@@ -13998,6 +13965,7 @@ function lisp(hljs) {
     contains: [NUMBER, hljs.SHEBANG(), LITERAL, STRING, COMMENT, QUOTED, QUOTED_ATOM, LIST, IDENT]
   };
 }
+
 module.exports = lisp;
 
 /***/ }),
@@ -14016,7 +13984,6 @@ Version: 1.1
 Date: 2019-04-17
 Category: enterprise
 */
-
 function livecodeserver(hljs) {
   const VARIABLE = {
     className: 'variable',
@@ -14079,6 +14046,7 @@ function livecodeserver(hljs) {
     illegal: ';$|^\\[|^=|&|\\{'
   };
 }
+
 module.exports = livecodeserver;
 
 /***/ }),
@@ -14089,10 +14057,8 @@ module.exports = livecodeserver;
   \***************************************************************/
 /***/ ((module) => {
 
-const KEYWORDS = ["as",
-// for exports
-"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class",
-// JS handles these with a special rule
+const KEYWORDS = ["as", // for exports
+"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class", // JS handles these with a special rule
 // "get",
 // "set",
 "debugger", "async", "await", "static", "import", "from", "export", "extends"];
@@ -14103,7 +14069,6 @@ const BUILT_IN_GLOBALS = ["setInterval", "setTimeout", "clearInterval", "clearTi
 const BUILT_IN_VARIABLES = ["arguments", "this", "super", "console", "window", "document", "localStorage", "module", "global" // Node.js
 ];
 const BUILT_INS = [].concat(BUILT_IN_GLOBALS, BUILT_IN_VARIABLES, TYPES, ERROR_TYPES);
-
 /*
 Language: LiveScript
 Author: Taneli Vatanen <taneli.vatanen@gmail.com>
@@ -14147,6 +14112,7 @@ function livescript(hljs) {
       end: '(\\s*/)?',
       relevance: 0
     } // a number tries to eat the following slash to prevent treating it as a regexp
+
   }, {
     className: 'string',
     variants: [{
@@ -14195,6 +14161,7 @@ function livescript(hljs) {
     className: 'params',
     begin: '\\(',
     returnBegin: true,
+
     /* We need another contained nameless mode to not have every nested
     pair of parens to be called "params" */
     contains: [{
@@ -14212,8 +14179,7 @@ function livescript(hljs) {
     aliases: ['ls'],
     keywords: KEYWORDS$1,
     illegal: /\/\*/,
-    contains: EXPRESSIONS.concat([hljs.COMMENT('\\/\\*', '\\*\\/'), hljs.HASH_COMMENT_MODE, SYMBOLS,
-    // relevance booster
+    contains: EXPRESSIONS.concat([hljs.COMMENT('\\/\\*', '\\*\\/'), hljs.HASH_COMMENT_MODE, SYMBOLS, // relevance booster
     {
       className: 'function',
       contains: [TITLE, PARAMS],
@@ -14248,6 +14214,7 @@ function livescript(hljs) {
     }])
   };
 }
+
 module.exports = livescript;
 
 /***/ }),
@@ -14272,16 +14239,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: LLVM IR
 Author: Michael Rodler <contact@f0rki.at>
@@ -14292,6 +14259,8 @@ Audit: 2020
 */
 
 /** @type LanguageFn */
+
+
 function llvm(hljs) {
   const IDENT_RE = /([-a-zA-Z$._][\w$.-]*)/;
   const TYPE = {
@@ -14345,8 +14314,7 @@ function llvm(hljs) {
       begin: concat(/!/, IDENT_RE)
     }, {
       begin: concat(/!\d+/, IDENT_RE)
-    },
-    // https://llvm.org/docs/LangRef.html#namedmetadatastructure
+    }, // https://llvm.org/docs/LangRef.html#namedmetadatastructure
     // obviously a single digit can also be used in this fashion
     {
       begin: /!\d+/
@@ -14356,16 +14324,14 @@ function llvm(hljs) {
     name: 'LLVM IR',
     // TODO: split into different categories of keywords
     keywords: 'begin end true false declare define global ' + 'constant private linker_private internal ' + 'available_externally linkonce linkonce_odr weak ' + 'weak_odr appending dllimport dllexport common ' + 'default hidden protected extern_weak external ' + 'thread_local zeroinitializer undef null to tail ' + 'target triple datalayout volatile nuw nsw nnan ' + 'ninf nsz arcp fast exact inbounds align ' + 'addrspace section alias module asm sideeffect ' + 'gc dbg linker_private_weak attributes blockaddress ' + 'initialexec localdynamic localexec prefix unnamed_addr ' + 'ccc fastcc coldcc x86_stdcallcc x86_fastcallcc ' + 'arm_apcscc arm_aapcscc arm_aapcs_vfpcc ptx_device ' + 'ptx_kernel intel_ocl_bicc msp430_intrcc spir_func ' + 'spir_kernel x86_64_sysvcc x86_64_win64cc x86_thiscallcc ' + 'cc c signext zeroext inreg sret nounwind ' + 'noreturn noalias nocapture byval nest readnone ' + 'readonly inlinehint noinline alwaysinline optsize ssp ' + 'sspreq noredzone noimplicitfloat naked builtin cold ' + 'nobuiltin noduplicate nonlazybind optnone returns_twice ' + 'sanitize_address sanitize_memory sanitize_thread sspstrong ' + 'uwtable returned type opaque eq ne slt sgt ' + 'sle sge ult ugt ule uge oeq one olt ogt ' + 'ole oge ord uno ueq une x acq_rel acquire ' + 'alignstack atomic catch cleanup filter inteldialect ' + 'max min monotonic nand personality release seq_cst ' + 'singlethread umax umin unordered xchg add fadd ' + 'sub fsub mul fmul udiv sdiv fdiv urem srem ' + 'frem shl lshr ashr and or xor icmp fcmp ' + 'phi call trunc zext sext fptrunc fpext uitofp ' + 'sitofp fptoui fptosi inttoptr ptrtoint bitcast ' + 'addrspacecast select va_arg ret br switch invoke ' + 'unwind unreachable indirectbr landingpad resume ' + 'malloc alloca free load store getelementptr ' + 'extractelement insertelement shufflevector getresult ' + 'extractvalue insertvalue atomicrmw cmpxchg fence ' + 'argmemonly double',
-    contains: [TYPE,
-    // this matches "empty comments"...
+    contains: [TYPE, // this matches "empty comments"...
     // ...because it's far more likely this is a statement terminator in
     // another language than an actual comment
     hljs.COMMENT(/;\s*$/, null, {
       relevance: 0
     }), hljs.COMMENT(/;/, /$/), hljs.QUOTE_STRING_MODE, {
       className: 'string',
-      variants: [
-      // Double-quoted string
+      variants: [// Double-quoted string
       {
         begin: /"/,
         end: /[^\\]"/
@@ -14373,6 +14339,7 @@ function llvm(hljs) {
     }, FUNCTION, PUNCTUATION, OPERATOR, VARIABLE, LABEL, NUMBER]
   };
 }
+
 module.exports = llvm;
 
 /***/ }),
@@ -14390,7 +14357,6 @@ Author: Builder's Brewery <buildersbrewery@gmail.com>
 Website: http://wiki.secondlife.com/wiki/LSL_Portal
 Category: scripting
 */
-
 function lsl(hljs) {
   var LSL_STRING_ESCAPE_CHARS = {
     className: 'subst',
@@ -14447,6 +14413,7 @@ function lsl(hljs) {
     }]
   };
 }
+
 module.exports = lsl;
 
 /***/ }),
@@ -14464,7 +14431,6 @@ Author: Andrew Fedorov <dmmdrs@mail.ru>
 Category: common, scripting
 Website: https://www.lua.org
 */
-
 function lua(hljs) {
   const OPENING_LONG_BRACKET = '\\[=*\\[';
   const CLOSING_LONG_BRACKET = '\\]=*\\]';
@@ -14483,12 +14449,9 @@ function lua(hljs) {
       $pattern: hljs.UNDERSCORE_IDENT_RE,
       literal: "true false nil",
       keyword: "and break do else elseif end for goto if in local not or repeat return then until while",
-      built_in:
-      // Metatags and globals:
-      '_G _ENV _VERSION __index __newindex __mode __call __metatable __tostring __len ' + '__gc __add __sub __mul __div __mod __pow __concat __unm __eq __lt __le assert ' +
-      // Standard methods and properties:
-      'collectgarbage dofile error getfenv getmetatable ipairs load loadfile loadstring ' + 'module next pairs pcall print rawequal rawget rawset require select setfenv ' + 'setmetatable tonumber tostring type unpack xpcall arg self ' +
-      // Library methods and properties (one line per library):
+      built_in: // Metatags and globals:
+      '_G _ENV _VERSION __index __newindex __mode __call __metatable __tostring __len ' + '__gc __add __sub __mul __div __mod __pow __concat __unm __eq __lt __le assert ' + // Standard methods and properties:
+      'collectgarbage dofile error getfenv getmetatable ipairs load loadfile loadstring ' + 'module next pairs pcall print rawequal rawget rawset require select setfenv ' + 'setmetatable tonumber tostring type unpack xpcall arg self ' + // Library methods and properties (one line per library):
       'coroutine resume yield status wrap create running debug getupvalue ' + 'debug sethook getmetatable gethook setmetatable setlocal traceback setfenv getinfo setupvalue getlocal getregistry getfenv ' + 'io lines write close flush open output type read stderr stdin input stdout popen tmpfile ' + 'math log max acos huge ldexp pi cos tanh pow deg tan cosh sinh random randomseed frexp ceil floor rad abs sqrt modf asin min mod fmod log10 atan2 exp sin atan ' + 'os exit setlocale date getenv difftime remove time clock tmpname rename execute package preload loadlib loaded loaders cpath config path seeall ' + 'string sub upper len gfind rep find match char dump gmatch reverse byte format gsub lower ' + 'table setn insert getn foreachi maxn foreach concat sort remove'
     },
     contains: COMMENTS.concat([{
@@ -14512,6 +14475,7 @@ function lua(hljs) {
     }])
   };
 }
+
 module.exports = lua;
 
 /***/ }),
@@ -14529,7 +14493,6 @@ Contributors: Joël Porquet <joel@porquet.org>
 Website: https://www.gnu.org/software/make/manual/html_node/Introduction.html
 Category: common
 */
-
 function makefile(hljs) {
   /* Variables: simple (eg $(var)) and special (eg $@) */
   const VARIABLE = {
@@ -14542,6 +14505,7 @@ function makefile(hljs) {
     }]
   };
   /* Quoted string with variables inside */
+
   const QUOTE_STRING = {
     className: 'string',
     begin: /"/,
@@ -14549,6 +14513,7 @@ function makefile(hljs) {
     contains: [hljs.BACKSLASH_ESCAPE, VARIABLE]
   };
   /* Function: $(func arg,...) */
+
   const FUNC = {
     className: 'variable',
     begin: /\$\([\w-]+\s/,
@@ -14559,10 +14524,12 @@ function makefile(hljs) {
     contains: [VARIABLE]
   };
   /* Variable assignment */
+
   const ASSIGNMENT = {
     begin: '^' + hljs.UNDERSCORE_IDENT_RE + '\\s*(?=[:+?]?=)'
   };
   /* Meta targets (.PHONY) */
+
   const META = {
     className: 'meta',
     begin: /^\.PHONY:/,
@@ -14573,6 +14540,7 @@ function makefile(hljs) {
     }
   };
   /* Targets */
+
   const TARGET = {
     className: 'section',
     begin: /^[^\s]+:/,
@@ -14589,6 +14557,7 @@ function makefile(hljs) {
     contains: [hljs.HASH_COMMENT_MODE, VARIABLE, QUOTE_STRING, FUNC, ASSIGNMENT, META, TARGET]
   };
 }
+
 module.exports = makefile;
 
 /***/ }),
@@ -14613,16 +14582,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Markdown
 Requires: xml.js
@@ -14630,6 +14599,7 @@ Author: John Crepezzi <john.crepezzi@gmail.com>
 Website: https://daringfireball.net/projects/markdown/
 Category: common, markup
 */
+
 
 function markdown(hljs) {
   const INLINE_HTML = {
@@ -14644,14 +14614,12 @@ function markdown(hljs) {
   };
   const CODE = {
     className: 'code',
-    variants: [
-    // TODO: fix to allow these to work with sublanguage also
+    variants: [// TODO: fix to allow these to work with sublanguage also
     {
       begin: '(`{3,})[^`](.|\\n)*?\\1`*[ ]*'
     }, {
       begin: '(~{3,})[^~](.|\\n)*?\\1~*[ ]*'
-    },
-    // needed to allow markdown as a sublanguage to work
+    }, // needed to allow markdown as a sublanguage to work
     {
       begin: '```',
       end: '```+[ ]*$'
@@ -14695,27 +14663,23 @@ function markdown(hljs) {
   };
   const URL_SCHEME = /[A-Za-z][A-Za-z0-9+.-]*/;
   const LINK = {
-    variants: [
-    // too much like nested array access in so many languages
+    variants: [// too much like nested array access in so many languages
     // to have any real relevance
     {
       begin: /\[.+?\]\[.*?\]/,
       relevance: 0
-    },
-    // popular internet URLs
+    }, // popular internet URLs
     {
       begin: /\[.+?\]\(((data|javascript|mailto):|(?:http|ftp)s?:\/\/).*?\)/,
       relevance: 2
     }, {
       begin: concat(/\[.+?\]\(/, URL_SCHEME, /:\/\/.*?\)/),
       relevance: 2
-    },
-    // relative urls
+    }, // relative urls
     {
       begin: /\[.+?\]\([./?&#].*?\)/,
       relevance: 1
-    },
-    // whatever else, lower relevance (might not be a link at all)
+    }, // whatever else, lower relevance (might not be a link at all)
     {
       begin: /\[.+?\]\(.*?\)/,
       relevance: 0
@@ -14804,6 +14768,7 @@ function markdown(hljs) {
     contains: [HEADER, INLINE_HTML, LIST, BOLD, ITALIC, BLOCKQUOTE, CODE, HORIZONTAL_RULE, LINK, LINK_REFERENCE]
   };
 }
+
 module.exports = markdown;
 
 /***/ }),
@@ -14815,7 +14780,6 @@ module.exports = markdown;
 /***/ ((module) => {
 
 const SYSTEM_SYMBOLS = ["AASTriangle", "AbelianGroup", "Abort", "AbortKernels", "AbortProtect", "AbortScheduledTask", "Above", "Abs", "AbsArg", "AbsArgPlot", "Absolute", "AbsoluteCorrelation", "AbsoluteCorrelationFunction", "AbsoluteCurrentValue", "AbsoluteDashing", "AbsoluteFileName", "AbsoluteOptions", "AbsolutePointSize", "AbsoluteThickness", "AbsoluteTime", "AbsoluteTiming", "AcceptanceThreshold", "AccountingForm", "Accumulate", "Accuracy", "AccuracyGoal", "ActionDelay", "ActionMenu", "ActionMenuBox", "ActionMenuBoxOptions", "Activate", "Active", "ActiveClassification", "ActiveClassificationObject", "ActiveItem", "ActivePrediction", "ActivePredictionObject", "ActiveStyle", "AcyclicGraphQ", "AddOnHelpPath", "AddSides", "AddTo", "AddToSearchIndex", "AddUsers", "AdjacencyGraph", "AdjacencyList", "AdjacencyMatrix", "AdjacentMeshCells", "AdjustmentBox", "AdjustmentBoxOptions", "AdjustTimeSeriesForecast", "AdministrativeDivisionData", "AffineHalfSpace", "AffineSpace", "AffineStateSpaceModel", "AffineTransform", "After", "AggregatedEntityClass", "AggregationLayer", "AircraftData", "AirportData", "AirPressureData", "AirTemperatureData", "AiryAi", "AiryAiPrime", "AiryAiZero", "AiryBi", "AiryBiPrime", "AiryBiZero", "AlgebraicIntegerQ", "AlgebraicNumber", "AlgebraicNumberDenominator", "AlgebraicNumberNorm", "AlgebraicNumberPolynomial", "AlgebraicNumberTrace", "AlgebraicRules", "AlgebraicRulesData", "Algebraics", "AlgebraicUnitQ", "Alignment", "AlignmentMarker", "AlignmentPoint", "All", "AllowAdultContent", "AllowedCloudExtraParameters", "AllowedCloudParameterExtensions", "AllowedDimensions", "AllowedFrequencyRange", "AllowedHeads", "AllowGroupClose", "AllowIncomplete", "AllowInlineCells", "AllowKernelInitialization", "AllowLooseGrammar", "AllowReverseGroupClose", "AllowScriptLevelChange", "AllowVersionUpdate", "AllTrue", "Alphabet", "AlphabeticOrder", "AlphabeticSort", "AlphaChannel", "AlternateImage", "AlternatingFactorial", "AlternatingGroup", "AlternativeHypothesis", "Alternatives", "AltitudeMethod", "AmbientLight", "AmbiguityFunction", "AmbiguityList", "Analytic", "AnatomyData", "AnatomyForm", "AnatomyPlot3D", "AnatomySkinStyle", "AnatomyStyling", "AnchoredSearch", "And", "AndersonDarlingTest", "AngerJ", "AngleBisector", "AngleBracket", "AnglePath", "AnglePath3D", "AngleVector", "AngularGauge", "Animate", "AnimationCycleOffset", "AnimationCycleRepetitions", "AnimationDirection", "AnimationDisplayTime", "AnimationRate", "AnimationRepetitions", "AnimationRunning", "AnimationRunTime", "AnimationTimeIndex", "Animator", "AnimatorBox", "AnimatorBoxOptions", "AnimatorElements", "Annotate", "Annotation", "AnnotationDelete", "AnnotationKeys", "AnnotationRules", "AnnotationValue", "Annuity", "AnnuityDue", "Annulus", "AnomalyDetection", "AnomalyDetector", "AnomalyDetectorFunction", "Anonymous", "Antialiasing", "AntihermitianMatrixQ", "Antisymmetric", "AntisymmetricMatrixQ", "Antonyms", "AnyOrder", "AnySubset", "AnyTrue", "Apart", "ApartSquareFree", "APIFunction", "Appearance", "AppearanceElements", "AppearanceRules", "AppellF1", "Append", "AppendCheck", "AppendLayer", "AppendTo", "Apply", "ApplySides", "ArcCos", "ArcCosh", "ArcCot", "ArcCoth", "ArcCsc", "ArcCsch", "ArcCurvature", "ARCHProcess", "ArcLength", "ArcSec", "ArcSech", "ArcSin", "ArcSinDistribution", "ArcSinh", "ArcTan", "ArcTanh", "Area", "Arg", "ArgMax", "ArgMin", "ArgumentCountQ", "ARIMAProcess", "ArithmeticGeometricMean", "ARMAProcess", "Around", "AroundReplace", "ARProcess", "Array", "ArrayComponents", "ArrayDepth", "ArrayFilter", "ArrayFlatten", "ArrayMesh", "ArrayPad", "ArrayPlot", "ArrayQ", "ArrayResample", "ArrayReshape", "ArrayRules", "Arrays", "Arrow", "Arrow3DBox", "ArrowBox", "Arrowheads", "ASATriangle", "Ask", "AskAppend", "AskConfirm", "AskDisplay", "AskedQ", "AskedValue", "AskFunction", "AskState", "AskTemplateDisplay", "AspectRatio", "AspectRatioFixed", "Assert", "AssociateTo", "Association", "AssociationFormat", "AssociationMap", "AssociationQ", "AssociationThread", "AssumeDeterministic", "Assuming", "Assumptions", "AstronomicalData", "Asymptotic", "AsymptoticDSolveValue", "AsymptoticEqual", "AsymptoticEquivalent", "AsymptoticGreater", "AsymptoticGreaterEqual", "AsymptoticIntegrate", "AsymptoticLess", "AsymptoticLessEqual", "AsymptoticOutputTracker", "AsymptoticProduct", "AsymptoticRSolveValue", "AsymptoticSolve", "AsymptoticSum", "Asynchronous", "AsynchronousTaskObject", "AsynchronousTasks", "Atom", "AtomCoordinates", "AtomCount", "AtomDiagramCoordinates", "AtomList", "AtomQ", "AttentionLayer", "Attributes", "Audio", "AudioAmplify", "AudioAnnotate", "AudioAnnotationLookup", "AudioBlockMap", "AudioCapture", "AudioChannelAssignment", "AudioChannelCombine", "AudioChannelMix", "AudioChannels", "AudioChannelSeparate", "AudioData", "AudioDelay", "AudioDelete", "AudioDevice", "AudioDistance", "AudioEncoding", "AudioFade", "AudioFrequencyShift", "AudioGenerator", "AudioIdentify", "AudioInputDevice", "AudioInsert", "AudioInstanceQ", "AudioIntervals", "AudioJoin", "AudioLabel", "AudioLength", "AudioLocalMeasurements", "AudioLooping", "AudioLoudness", "AudioMeasurements", "AudioNormalize", "AudioOutputDevice", "AudioOverlay", "AudioPad", "AudioPan", "AudioPartition", "AudioPause", "AudioPitchShift", "AudioPlay", "AudioPlot", "AudioQ", "AudioRecord", "AudioReplace", "AudioResample", "AudioReverb", "AudioReverse", "AudioSampleRate", "AudioSpectralMap", "AudioSpectralTransformation", "AudioSplit", "AudioStop", "AudioStream", "AudioStreams", "AudioTimeStretch", "AudioTracks", "AudioTrim", "AudioType", "AugmentedPolyhedron", "AugmentedSymmetricPolynomial", "Authenticate", "Authentication", "AuthenticationDialog", "AutoAction", "Autocomplete", "AutocompletionFunction", "AutoCopy", "AutocorrelationTest", "AutoDelete", "AutoEvaluateEvents", "AutoGeneratedPackage", "AutoIndent", "AutoIndentSpacings", "AutoItalicWords", "AutoloadPath", "AutoMatch", "Automatic", "AutomaticImageSize", "AutoMultiplicationSymbol", "AutoNumberFormatting", "AutoOpenNotebooks", "AutoOpenPalettes", "AutoQuoteCharacters", "AutoRefreshed", "AutoRemove", "AutorunSequencing", "AutoScaling", "AutoScroll", "AutoSpacing", "AutoStyleOptions", "AutoStyleWords", "AutoSubmitting", "Axes", "AxesEdge", "AxesLabel", "AxesOrigin", "AxesStyle", "AxiomaticTheory", "Axis", "BabyMonsterGroupB", "Back", "Background", "BackgroundAppearance", "BackgroundTasksSettings", "Backslash", "Backsubstitution", "Backward", "Ball", "Band", "BandpassFilter", "BandstopFilter", "BarabasiAlbertGraphDistribution", "BarChart", "BarChart3D", "BarcodeImage", "BarcodeRecognize", "BaringhausHenzeTest", "BarLegend", "BarlowProschanImportance", "BarnesG", "BarOrigin", "BarSpacing", "BartlettHannWindow", "BartlettWindow", "BaseDecode", "BaseEncode", "BaseForm", "Baseline", "BaselinePosition", "BaseStyle", "BasicRecurrentLayer", "BatchNormalizationLayer", "BatchSize", "BatesDistribution", "BattleLemarieWavelet", "BayesianMaximization", "BayesianMaximizationObject", "BayesianMinimization", "BayesianMinimizationObject", "Because", "BeckmannDistribution", "Beep", "Before", "Begin", "BeginDialogPacket", "BeginFrontEndInteractionPacket", "BeginPackage", "BellB", "BellY", "Below", "BenfordDistribution", "BeniniDistribution", "BenktanderGibratDistribution", "BenktanderWeibullDistribution", "BernoulliB", "BernoulliDistribution", "BernoulliGraphDistribution", "BernoulliProcess", "BernsteinBasis", "BesselFilterModel", "BesselI", "BesselJ", "BesselJZero", "BesselK", "BesselY", "BesselYZero", "Beta", "BetaBinomialDistribution", "BetaDistribution", "BetaNegativeBinomialDistribution", "BetaPrimeDistribution", "BetaRegularized", "Between", "BetweennessCentrality", "BeveledPolyhedron", "BezierCurve", "BezierCurve3DBox", "BezierCurve3DBoxOptions", "BezierCurveBox", "BezierCurveBoxOptions", "BezierFunction", "BilateralFilter", "Binarize", "BinaryDeserialize", "BinaryDistance", "BinaryFormat", "BinaryImageQ", "BinaryRead", "BinaryReadList", "BinarySerialize", "BinaryWrite", "BinCounts", "BinLists", "Binomial", "BinomialDistribution", "BinomialProcess", "BinormalDistribution", "BiorthogonalSplineWavelet", "BipartiteGraphQ", "BiquadraticFilterModel", "BirnbaumImportance", "BirnbaumSaundersDistribution", "BitAnd", "BitClear", "BitGet", "BitLength", "BitNot", "BitOr", "BitSet", "BitShiftLeft", "BitShiftRight", "BitXor", "BiweightLocation", "BiweightMidvariance", "Black", "BlackmanHarrisWindow", "BlackmanNuttallWindow", "BlackmanWindow", "Blank", "BlankForm", "BlankNullSequence", "BlankSequence", "Blend", "Block", "BlockchainAddressData", "BlockchainBase", "BlockchainBlockData", "BlockchainContractValue", "BlockchainData", "BlockchainGet", "BlockchainKeyEncode", "BlockchainPut", "BlockchainTokenData", "BlockchainTransaction", "BlockchainTransactionData", "BlockchainTransactionSign", "BlockchainTransactionSubmit", "BlockMap", "BlockRandom", "BlomqvistBeta", "BlomqvistBetaTest", "Blue", "Blur", "BodePlot", "BohmanWindow", "Bold", "Bond", "BondCount", "BondList", "BondQ", "Bookmarks", "Boole", "BooleanConsecutiveFunction", "BooleanConvert", "BooleanCountingFunction", "BooleanFunction", "BooleanGraph", "BooleanMaxterms", "BooleanMinimize", "BooleanMinterms", "BooleanQ", "BooleanRegion", "Booleans", "BooleanStrings", "BooleanTable", "BooleanVariables", "BorderDimensions", "BorelTannerDistribution", "Bottom", "BottomHatTransform", "BoundaryDiscretizeGraphics", "BoundaryDiscretizeRegion", "BoundaryMesh", "BoundaryMeshRegion", "BoundaryMeshRegionQ", "BoundaryStyle", "BoundedRegionQ", "BoundingRegion", "Bounds", "Box", "BoxBaselineShift", "BoxData", "BoxDimensions", "Boxed", "Boxes", "BoxForm", "BoxFormFormatTypes", "BoxFrame", "BoxID", "BoxMargins", "BoxMatrix", "BoxObject", "BoxRatios", "BoxRotation", "BoxRotationPoint", "BoxStyle", "BoxWhiskerChart", "Bra", "BracketingBar", "BraKet", "BrayCurtisDistance", "BreadthFirstScan", "Break", "BridgeData", "BrightnessEqualize", "BroadcastStationData", "Brown", "BrownForsytheTest", "BrownianBridgeProcess", "BrowserCategory", "BSplineBasis", "BSplineCurve", "BSplineCurve3DBox", "BSplineCurve3DBoxOptions", "BSplineCurveBox", "BSplineCurveBoxOptions", "BSplineFunction", "BSplineSurface", "BSplineSurface3DBox", "BSplineSurface3DBoxOptions", "BubbleChart", "BubbleChart3D", "BubbleScale", "BubbleSizes", "BuildingData", "BulletGauge", "BusinessDayQ", "ButterflyGraph", "ButterworthFilterModel", "Button", "ButtonBar", "ButtonBox", "ButtonBoxOptions", "ButtonCell", "ButtonContents", "ButtonData", "ButtonEvaluator", "ButtonExpandable", "ButtonFrame", "ButtonFunction", "ButtonMargins", "ButtonMinHeight", "ButtonNote", "ButtonNotebook", "ButtonSource", "ButtonStyle", "ButtonStyleMenuListing", "Byte", "ByteArray", "ByteArrayFormat", "ByteArrayQ", "ByteArrayToString", "ByteCount", "ByteOrdering", "C", "CachedValue", "CacheGraphics", "CachePersistence", "CalendarConvert", "CalendarData", "CalendarType", "Callout", "CalloutMarker", "CalloutStyle", "CallPacket", "CanberraDistance", "Cancel", "CancelButton", "CandlestickChart", "CanonicalGraph", "CanonicalizePolygon", "CanonicalizePolyhedron", "CanonicalName", "CanonicalWarpingCorrespondence", "CanonicalWarpingDistance", "CantorMesh", "CantorStaircase", "Cap", "CapForm", "CapitalDifferentialD", "Capitalize", "CapsuleShape", "CaptureRunning", "CardinalBSplineBasis", "CarlemanLinearize", "CarmichaelLambda", "CaseOrdering", "Cases", "CaseSensitive", "Cashflow", "Casoratian", "Catalan", "CatalanNumber", "Catch", "CategoricalDistribution", "Catenate", "CatenateLayer", "CauchyDistribution", "CauchyWindow", "CayleyGraph", "CDF", "CDFDeploy", "CDFInformation", "CDFWavelet", "Ceiling", "CelestialSystem", "Cell", "CellAutoOverwrite", "CellBaseline", "CellBoundingBox", "CellBracketOptions", "CellChangeTimes", "CellContents", "CellContext", "CellDingbat", "CellDynamicExpression", "CellEditDuplicate", "CellElementsBoundingBox", "CellElementSpacings", "CellEpilog", "CellEvaluationDuplicate", "CellEvaluationFunction", "CellEvaluationLanguage", "CellEventActions", "CellFrame", "CellFrameColor", "CellFrameLabelMargins", "CellFrameLabels", "CellFrameMargins", "CellGroup", "CellGroupData", "CellGrouping", "CellGroupingRules", "CellHorizontalScrolling", "CellID", "CellLabel", "CellLabelAutoDelete", "CellLabelMargins", "CellLabelPositioning", "CellLabelStyle", "CellLabelTemplate", "CellMargins", "CellObject", "CellOpen", "CellPrint", "CellProlog", "Cells", "CellSize", "CellStyle", "CellTags", "CellularAutomaton", "CensoredDistribution", "Censoring", "Center", "CenterArray", "CenterDot", "CentralFeature", "CentralMoment", "CentralMomentGeneratingFunction", "Cepstrogram", "CepstrogramArray", "CepstrumArray", "CForm", "ChampernowneNumber", "ChangeOptions", "ChannelBase", "ChannelBrokerAction", "ChannelDatabin", "ChannelHistoryLength", "ChannelListen", "ChannelListener", "ChannelListeners", "ChannelListenerWait", "ChannelObject", "ChannelPreSendFunction", "ChannelReceiverFunction", "ChannelSend", "ChannelSubscribers", "ChanVeseBinarize", "Character", "CharacterCounts", "CharacterEncoding", "CharacterEncodingsPath", "CharacteristicFunction", "CharacteristicPolynomial", "CharacterName", "CharacterNormalize", "CharacterRange", "Characters", "ChartBaseStyle", "ChartElementData", "ChartElementDataFunction", "ChartElementFunction", "ChartElements", "ChartLabels", "ChartLayout", "ChartLegends", "ChartStyle", "Chebyshev1FilterModel", "Chebyshev2FilterModel", "ChebyshevDistance", "ChebyshevT", "ChebyshevU", "Check", "CheckAbort", "CheckAll", "Checkbox", "CheckboxBar", "CheckboxBox", "CheckboxBoxOptions", "ChemicalData", "ChessboardDistance", "ChiDistribution", "ChineseRemainder", "ChiSquareDistribution", "ChoiceButtons", "ChoiceDialog", "CholeskyDecomposition", "Chop", "ChromaticityPlot", "ChromaticityPlot3D", "ChromaticPolynomial", "Circle", "CircleBox", "CircleDot", "CircleMinus", "CirclePlus", "CirclePoints", "CircleThrough", "CircleTimes", "CirculantGraph", "CircularOrthogonalMatrixDistribution", "CircularQuaternionMatrixDistribution", "CircularRealMatrixDistribution", "CircularSymplecticMatrixDistribution", "CircularUnitaryMatrixDistribution", "Circumsphere", "CityData", "ClassifierFunction", "ClassifierInformation", "ClassifierMeasurements", "ClassifierMeasurementsObject", "Classify", "ClassPriors", "Clear", "ClearAll", "ClearAttributes", "ClearCookies", "ClearPermissions", "ClearSystemCache", "ClebschGordan", "ClickPane", "Clip", "ClipboardNotebook", "ClipFill", "ClippingStyle", "ClipPlanes", "ClipPlanesStyle", "ClipRange", "Clock", "ClockGauge", "ClockwiseContourIntegral", "Close", "Closed", "CloseKernels", "ClosenessCentrality", "Closing", "ClosingAutoSave", "ClosingEvent", "ClosingSaveDialog", "CloudAccountData", "CloudBase", "CloudConnect", "CloudConnections", "CloudDeploy", "CloudDirectory", "CloudDisconnect", "CloudEvaluate", "CloudExport", "CloudExpression", "CloudExpressions", "CloudFunction", "CloudGet", "CloudImport", "CloudLoggingData", "CloudObject", "CloudObjectInformation", "CloudObjectInformationData", "CloudObjectNameFormat", "CloudObjects", "CloudObjectURLType", "CloudPublish", "CloudPut", "CloudRenderingMethod", "CloudSave", "CloudShare", "CloudSubmit", "CloudSymbol", "CloudUnshare", "CloudUserID", "ClusterClassify", "ClusterDissimilarityFunction", "ClusteringComponents", "ClusteringTree", "CMYKColor", "Coarse", "CodeAssistOptions", "Coefficient", "CoefficientArrays", "CoefficientDomain", "CoefficientList", "CoefficientRules", "CoifletWavelet", "Collect", "Colon", "ColonForm", "ColorBalance", "ColorCombine", "ColorConvert", "ColorCoverage", "ColorData", "ColorDataFunction", "ColorDetect", "ColorDistance", "ColorFunction", "ColorFunctionScaling", "Colorize", "ColorNegate", "ColorOutput", "ColorProfileData", "ColorQ", "ColorQuantize", "ColorReplace", "ColorRules", "ColorSelectorSettings", "ColorSeparate", "ColorSetter", "ColorSetterBox", "ColorSetterBoxOptions", "ColorSlider", "ColorsNear", "ColorSpace", "ColorToneMapping", "Column", "ColumnAlignments", "ColumnBackgrounds", "ColumnForm", "ColumnLines", "ColumnsEqual", "ColumnSpacings", "ColumnWidths", "CombinedEntityClass", "CombinerFunction", "CometData", "CommonDefaultFormatTypes", "Commonest", "CommonestFilter", "CommonName", "CommonUnits", "CommunityBoundaryStyle", "CommunityGraphPlot", "CommunityLabels", "CommunityRegionStyle", "CompanyData", "CompatibleUnitQ", "CompilationOptions", "CompilationTarget", "Compile", "Compiled", "CompiledCodeFunction", "CompiledFunction", "CompilerOptions", "Complement", "ComplementedEntityClass", "CompleteGraph", "CompleteGraphQ", "CompleteKaryTree", "CompletionsListPacket", "Complex", "ComplexContourPlot", "Complexes", "ComplexExpand", "ComplexInfinity", "ComplexityFunction", "ComplexListPlot", "ComplexPlot", "ComplexPlot3D", "ComplexRegionPlot", "ComplexStreamPlot", "ComplexVectorPlot", "ComponentMeasurements", "ComponentwiseContextMenu", "Compose", "ComposeList", "ComposeSeries", "CompositeQ", "Composition", "CompoundElement", "CompoundExpression", "CompoundPoissonDistribution", "CompoundPoissonProcess", "CompoundRenewalProcess", "Compress", "CompressedData", "CompressionLevel", "ComputeUncertainty", "Condition", "ConditionalExpression", "Conditioned", "Cone", "ConeBox", "ConfidenceLevel", "ConfidenceRange", "ConfidenceTransform", "ConfigurationPath", "ConformAudio", "ConformImages", "Congruent", "ConicHullRegion", "ConicHullRegion3DBox", "ConicHullRegionBox", "ConicOptimization", "Conjugate", "ConjugateTranspose", "Conjunction", "Connect", "ConnectedComponents", "ConnectedGraphComponents", "ConnectedGraphQ", "ConnectedMeshComponents", "ConnectedMoleculeComponents", "ConnectedMoleculeQ", "ConnectionSettings", "ConnectLibraryCallbackFunction", "ConnectSystemModelComponents", "ConnesWindow", "ConoverTest", "ConsoleMessage", "ConsoleMessagePacket", "Constant", "ConstantArray", "ConstantArrayLayer", "ConstantImage", "ConstantPlusLayer", "ConstantRegionQ", "Constants", "ConstantTimesLayer", "ConstellationData", "ConstrainedMax", "ConstrainedMin", "Construct", "Containing", "ContainsAll", "ContainsAny", "ContainsExactly", "ContainsNone", "ContainsOnly", "ContentFieldOptions", "ContentLocationFunction", "ContentObject", "ContentPadding", "ContentsBoundingBox", "ContentSelectable", "ContentSize", "Context", "ContextMenu", "Contexts", "ContextToFileName", "Continuation", "Continue", "ContinuedFraction", "ContinuedFractionK", "ContinuousAction", "ContinuousMarkovProcess", "ContinuousTask", "ContinuousTimeModelQ", "ContinuousWaveletData", "ContinuousWaveletTransform", "ContourDetect", "ContourGraphics", "ContourIntegral", "ContourLabels", "ContourLines", "ContourPlot", "ContourPlot3D", "Contours", "ContourShading", "ContourSmoothing", "ContourStyle", "ContraharmonicMean", "ContrastiveLossLayer", "Control", "ControlActive", "ControlAlignment", "ControlGroupContentsBox", "ControllabilityGramian", "ControllabilityMatrix", "ControllableDecomposition", "ControllableModelQ", "ControllerDuration", "ControllerInformation", "ControllerInformationData", "ControllerLinking", "ControllerManipulate", "ControllerMethod", "ControllerPath", "ControllerState", "ControlPlacement", "ControlsRendering", "ControlType", "Convergents", "ConversionOptions", "ConversionRules", "ConvertToBitmapPacket", "ConvertToPostScript", "ConvertToPostScriptPacket", "ConvexHullMesh", "ConvexPolygonQ", "ConvexPolyhedronQ", "ConvolutionLayer", "Convolve", "ConwayGroupCo1", "ConwayGroupCo2", "ConwayGroupCo3", "CookieFunction", "Cookies", "CoordinateBoundingBox", "CoordinateBoundingBoxArray", "CoordinateBounds", "CoordinateBoundsArray", "CoordinateChartData", "CoordinatesToolOptions", "CoordinateTransform", "CoordinateTransformData", "CoprimeQ", "Coproduct", "CopulaDistribution", "Copyable", "CopyDatabin", "CopyDirectory", "CopyFile", "CopyTag", "CopyToClipboard", "CornerFilter", "CornerNeighbors", "Correlation", "CorrelationDistance", "CorrelationFunction", "CorrelationTest", "Cos", "Cosh", "CoshIntegral", "CosineDistance", "CosineWindow", "CosIntegral", "Cot", "Coth", "Count", "CountDistinct", "CountDistinctBy", "CounterAssignments", "CounterBox", "CounterBoxOptions", "CounterClockwiseContourIntegral", "CounterEvaluator", "CounterFunction", "CounterIncrements", "CounterStyle", "CounterStyleMenuListing", "CountRoots", "CountryData", "Counts", "CountsBy", "Covariance", "CovarianceEstimatorFunction", "CovarianceFunction", "CoxianDistribution", "CoxIngersollRossProcess", "CoxModel", "CoxModelFit", "CramerVonMisesTest", "CreateArchive", "CreateCellID", "CreateChannel", "CreateCloudExpression", "CreateDatabin", "CreateDataStructure", "CreateDataSystemModel", "CreateDialog", "CreateDirectory", "CreateDocument", "CreateFile", "CreateIntermediateDirectories", "CreateManagedLibraryExpression", "CreateNotebook", "CreatePacletArchive", "CreatePalette", "CreatePalettePacket", "CreatePermissionsGroup", "CreateScheduledTask", "CreateSearchIndex", "CreateSystemModel", "CreateTemporary", "CreateUUID", "CreateWindow", "CriterionFunction", "CriticalityFailureImportance", "CriticalitySuccessImportance", "CriticalSection", "Cross", "CrossEntropyLossLayer", "CrossingCount", "CrossingDetect", "CrossingPolygon", "CrossMatrix", "Csc", "Csch", "CTCLossLayer", "Cube", "CubeRoot", "Cubics", "Cuboid", "CuboidBox", "Cumulant", "CumulantGeneratingFunction", "Cup", "CupCap", "Curl", "CurlyDoubleQuote", "CurlyQuote", "CurrencyConvert", "CurrentDate", "CurrentImage", "CurrentlySpeakingPacket", "CurrentNotebookImage", "CurrentScreenImage", "CurrentValue", "Curry", "CurryApplied", "CurvatureFlowFilter", "CurveClosed", "Cyan", "CycleGraph", "CycleIndexPolynomial", "Cycles", "CyclicGroup", "Cyclotomic", "Cylinder", "CylinderBox", "CylindricalDecomposition", "D", "DagumDistribution", "DamData", "DamerauLevenshteinDistance", "DampingFactor", "Darker", "Dashed", "Dashing", "DatabaseConnect", "DatabaseDisconnect", "DatabaseReference", "Databin", "DatabinAdd", "DatabinRemove", "Databins", "DatabinUpload", "DataCompression", "DataDistribution", "DataRange", "DataReversed", "Dataset", "DatasetDisplayPanel", "DataStructure", "DataStructureQ", "Date", "DateBounds", "Dated", "DateDelimiters", "DateDifference", "DatedUnit", "DateFormat", "DateFunction", "DateHistogram", "DateInterval", "DateList", "DateListLogPlot", "DateListPlot", "DateListStepPlot", "DateObject", "DateObjectQ", "DateOverlapsQ", "DatePattern", "DatePlus", "DateRange", "DateReduction", "DateString", "DateTicksFormat", "DateValue", "DateWithinQ", "DaubechiesWavelet", "DavisDistribution", "DawsonF", "DayCount", "DayCountConvention", "DayHemisphere", "DaylightQ", "DayMatchQ", "DayName", "DayNightTerminator", "DayPlus", "DayRange", "DayRound", "DeBruijnGraph", "DeBruijnSequence", "Debug", "DebugTag", "Decapitalize", "Decimal", "DecimalForm", "DeclareKnownSymbols", "DeclarePackage", "Decompose", "DeconvolutionLayer", "Decrement", "Decrypt", "DecryptFile", "DedekindEta", "DeepSpaceProbeData", "Default", "DefaultAxesStyle", "DefaultBaseStyle", "DefaultBoxStyle", "DefaultButton", "DefaultColor", "DefaultControlPlacement", "DefaultDuplicateCellStyle", "DefaultDuration", "DefaultElement", "DefaultFaceGridsStyle", "DefaultFieldHintStyle", "DefaultFont", "DefaultFontProperties", "DefaultFormatType", "DefaultFormatTypeForStyle", "DefaultFrameStyle", "DefaultFrameTicksStyle", "DefaultGridLinesStyle", "DefaultInlineFormatType", "DefaultInputFormatType", "DefaultLabelStyle", "DefaultMenuStyle", "DefaultNaturalLanguage", "DefaultNewCellStyle", "DefaultNewInlineCellStyle", "DefaultNotebook", "DefaultOptions", "DefaultOutputFormatType", "DefaultPrintPrecision", "DefaultStyle", "DefaultStyleDefinitions", "DefaultTextFormatType", "DefaultTextInlineFormatType", "DefaultTicksStyle", "DefaultTooltipStyle", "DefaultValue", "DefaultValues", "Defer", "DefineExternal", "DefineInputStreamMethod", "DefineOutputStreamMethod", "DefineResourceFunction", "Definition", "Degree", "DegreeCentrality", "DegreeGraphDistribution", "DegreeLexicographic", "DegreeReverseLexicographic", "DEigensystem", "DEigenvalues", "Deinitialization", "Del", "DelaunayMesh", "Delayed", "Deletable", "Delete", "DeleteAnomalies", "DeleteBorderComponents", "DeleteCases", "DeleteChannel", "DeleteCloudExpression", "DeleteContents", "DeleteDirectory", "DeleteDuplicates", "DeleteDuplicatesBy", "DeleteFile", "DeleteMissing", "DeleteObject", "DeletePermissionsKey", "DeleteSearchIndex", "DeleteSmallComponents", "DeleteStopwords", "DeleteWithContents", "DeletionWarning", "DelimitedArray", "DelimitedSequence", "Delimiter", "DelimiterFlashTime", "DelimiterMatching", "Delimiters", "DeliveryFunction", "Dendrogram", "Denominator", "DensityGraphics", "DensityHistogram", "DensityPlot", "DensityPlot3D", "DependentVariables", "Deploy", "Deployed", "Depth", "DepthFirstScan", "Derivative", "DerivativeFilter", "DerivedKey", "DescriptorStateSpace", "DesignMatrix", "DestroyAfterEvaluation", "Det", "DeviceClose", "DeviceConfigure", "DeviceExecute", "DeviceExecuteAsynchronous", "DeviceObject", "DeviceOpen", "DeviceOpenQ", "DeviceRead", "DeviceReadBuffer", "DeviceReadLatest", "DeviceReadList", "DeviceReadTimeSeries", "Devices", "DeviceStreams", "DeviceWrite", "DeviceWriteBuffer", "DGaussianWavelet", "DiacriticalPositioning", "Diagonal", "DiagonalizableMatrixQ", "DiagonalMatrix", "DiagonalMatrixQ", "Dialog", "DialogIndent", "DialogInput", "DialogLevel", "DialogNotebook", "DialogProlog", "DialogReturn", "DialogSymbols", "Diamond", "DiamondMatrix", "DiceDissimilarity", "DictionaryLookup", "DictionaryWordQ", "DifferenceDelta", "DifferenceOrder", "DifferenceQuotient", "DifferenceRoot", "DifferenceRootReduce", "Differences", "DifferentialD", "DifferentialRoot", "DifferentialRootReduce", "DifferentiatorFilter", "DigitalSignature", "DigitBlock", "DigitBlockMinimum", "DigitCharacter", "DigitCount", "DigitQ", "DihedralAngle", "DihedralGroup", "Dilation", "DimensionalCombinations", "DimensionalMeshComponents", "DimensionReduce", "DimensionReducerFunction", "DimensionReduction", "Dimensions", "DiracComb", "DiracDelta", "DirectedEdge", "DirectedEdges", "DirectedGraph", "DirectedGraphQ", "DirectedInfinity", "Direction", "Directive", "Directory", "DirectoryName", "DirectoryQ", "DirectoryStack", "DirichletBeta", "DirichletCharacter", "DirichletCondition", "DirichletConvolve", "DirichletDistribution", "DirichletEta", "DirichletL", "DirichletLambda", "DirichletTransform", "DirichletWindow", "DisableConsolePrintPacket", "DisableFormatting", "DiscreteAsymptotic", "DiscreteChirpZTransform", "DiscreteConvolve", "DiscreteDelta", "DiscreteHadamardTransform", "DiscreteIndicator", "DiscreteLimit", "DiscreteLQEstimatorGains", "DiscreteLQRegulatorGains", "DiscreteLyapunovSolve", "DiscreteMarkovProcess", "DiscreteMaxLimit", "DiscreteMinLimit", "DiscretePlot", "DiscretePlot3D", "DiscreteRatio", "DiscreteRiccatiSolve", "DiscreteShift", "DiscreteTimeModelQ", "DiscreteUniformDistribution", "DiscreteVariables", "DiscreteWaveletData", "DiscreteWaveletPacketTransform", "DiscreteWaveletTransform", "DiscretizeGraphics", "DiscretizeRegion", "Discriminant", "DisjointQ", "Disjunction", "Disk", "DiskBox", "DiskMatrix", "DiskSegment", "Dispatch", "DispatchQ", "DispersionEstimatorFunction", "Display", "DisplayAllSteps", "DisplayEndPacket", "DisplayFlushImagePacket", "DisplayForm", "DisplayFunction", "DisplayPacket", "DisplayRules", "DisplaySetSizePacket", "DisplayString", "DisplayTemporary", "DisplayWith", "DisplayWithRef", "DisplayWithVariable", "DistanceFunction", "DistanceMatrix", "DistanceTransform", "Distribute", "Distributed", "DistributedContexts", "DistributeDefinitions", "DistributionChart", "DistributionDomain", "DistributionFitTest", "DistributionParameterAssumptions", "DistributionParameterQ", "Dithering", "Div", "Divergence", "Divide", "DivideBy", "Dividers", "DivideSides", "Divisible", "Divisors", "DivisorSigma", "DivisorSum", "DMSList", "DMSString", "Do", "DockedCells", "DocumentGenerator", "DocumentGeneratorInformation", "DocumentGeneratorInformationData", "DocumentGenerators", "DocumentNotebook", "DocumentWeightingRules", "Dodecahedron", "DomainRegistrationInformation", "DominantColors", "DOSTextFormat", "Dot", "DotDashed", "DotEqual", "DotLayer", "DotPlusLayer", "Dotted", "DoubleBracketingBar", "DoubleContourIntegral", "DoubleDownArrow", "DoubleLeftArrow", "DoubleLeftRightArrow", "DoubleLeftTee", "DoubleLongLeftArrow", "DoubleLongLeftRightArrow", "DoubleLongRightArrow", "DoubleRightArrow", "DoubleRightTee", "DoubleUpArrow", "DoubleUpDownArrow", "DoubleVerticalBar", "DoublyInfinite", "Down", "DownArrow", "DownArrowBar", "DownArrowUpArrow", "DownLeftRightVector", "DownLeftTeeVector", "DownLeftVector", "DownLeftVectorBar", "DownRightTeeVector", "DownRightVector", "DownRightVectorBar", "Downsample", "DownTee", "DownTeeArrow", "DownValues", "DragAndDrop", "DrawEdges", "DrawFrontFaces", "DrawHighlighted", "Drop", "DropoutLayer", "DSolve", "DSolveValue", "Dt", "DualLinearProgramming", "DualPolyhedron", "DualSystemsModel", "DumpGet", "DumpSave", "DuplicateFreeQ", "Duration", "Dynamic", "DynamicBox", "DynamicBoxOptions", "DynamicEvaluationTimeout", "DynamicGeoGraphics", "DynamicImage", "DynamicLocation", "DynamicModule", "DynamicModuleBox", "DynamicModuleBoxOptions", "DynamicModuleParent", "DynamicModuleValues", "DynamicName", "DynamicNamespace", "DynamicReference", "DynamicSetting", "DynamicUpdating", "DynamicWrapper", "DynamicWrapperBox", "DynamicWrapperBoxOptions", "E", "EarthImpactData", "EarthquakeData", "EccentricityCentrality", "Echo", "EchoFunction", "EclipseType", "EdgeAdd", "EdgeBetweennessCentrality", "EdgeCapacity", "EdgeCapForm", "EdgeColor", "EdgeConnectivity", "EdgeContract", "EdgeCost", "EdgeCount", "EdgeCoverQ", "EdgeCycleMatrix", "EdgeDashing", "EdgeDelete", "EdgeDetect", "EdgeForm", "EdgeIndex", "EdgeJoinForm", "EdgeLabeling", "EdgeLabels", "EdgeLabelStyle", "EdgeList", "EdgeOpacity", "EdgeQ", "EdgeRenderingFunction", "EdgeRules", "EdgeShapeFunction", "EdgeStyle", "EdgeTaggedGraph", "EdgeTaggedGraphQ", "EdgeTags", "EdgeThickness", "EdgeWeight", "EdgeWeightedGraphQ", "Editable", "EditButtonSettings", "EditCellTagsSettings", "EditDistance", "EffectiveInterest", "Eigensystem", "Eigenvalues", "EigenvectorCentrality", "Eigenvectors", "Element", "ElementData", "ElementwiseLayer", "ElidedForms", "Eliminate", "EliminationOrder", "Ellipsoid", "EllipticE", "EllipticExp", "EllipticExpPrime", "EllipticF", "EllipticFilterModel", "EllipticK", "EllipticLog", "EllipticNomeQ", "EllipticPi", "EllipticReducedHalfPeriods", "EllipticTheta", "EllipticThetaPrime", "EmbedCode", "EmbeddedHTML", "EmbeddedService", "EmbeddingLayer", "EmbeddingObject", "EmitSound", "EmphasizeSyntaxErrors", "EmpiricalDistribution", "Empty", "EmptyGraphQ", "EmptyRegion", "EnableConsolePrintPacket", "Enabled", "Encode", "Encrypt", "EncryptedObject", "EncryptFile", "End", "EndAdd", "EndDialogPacket", "EndFrontEndInteractionPacket", "EndOfBuffer", "EndOfFile", "EndOfLine", "EndOfString", "EndPackage", "EngineEnvironment", "EngineeringForm", "Enter", "EnterExpressionPacket", "EnterTextPacket", "Entity", "EntityClass", "EntityClassList", "EntityCopies", "EntityFunction", "EntityGroup", "EntityInstance", "EntityList", "EntityPrefetch", "EntityProperties", "EntityProperty", "EntityPropertyClass", "EntityRegister", "EntityStore", "EntityStores", "EntityTypeName", "EntityUnregister", "EntityValue", "Entropy", "EntropyFilter", "Environment", "Epilog", "EpilogFunction", "Equal", "EqualColumns", "EqualRows", "EqualTilde", "EqualTo", "EquatedTo", "Equilibrium", "EquirippleFilterKernel", "Equivalent", "Erf", "Erfc", "Erfi", "ErlangB", "ErlangC", "ErlangDistribution", "Erosion", "ErrorBox", "ErrorBoxOptions", "ErrorNorm", "ErrorPacket", "ErrorsDialogSettings", "EscapeRadius", "EstimatedBackground", "EstimatedDistribution", "EstimatedProcess", "EstimatorGains", "EstimatorRegulator", "EuclideanDistance", "EulerAngles", "EulerCharacteristic", "EulerE", "EulerGamma", "EulerianGraphQ", "EulerMatrix", "EulerPhi", "Evaluatable", "Evaluate", "Evaluated", "EvaluatePacket", "EvaluateScheduledTask", "EvaluationBox", "EvaluationCell", "EvaluationCompletionAction", "EvaluationData", "EvaluationElements", "EvaluationEnvironment", "EvaluationMode", "EvaluationMonitor", "EvaluationNotebook", "EvaluationObject", "EvaluationOrder", "Evaluator", "EvaluatorNames", "EvenQ", "EventData", "EventEvaluator", "EventHandler", "EventHandlerTag", "EventLabels", "EventSeries", "ExactBlackmanWindow", "ExactNumberQ", "ExactRootIsolation", "ExampleData", "Except", "ExcludedForms", "ExcludedLines", "ExcludedPhysicalQuantities", "ExcludePods", "Exclusions", "ExclusionsStyle", "Exists", "Exit", "ExitDialog", "ExoplanetData", "Exp", "Expand", "ExpandAll", "ExpandDenominator", "ExpandFileName", "ExpandNumerator", "Expectation", "ExpectationE", "ExpectedValue", "ExpGammaDistribution", "ExpIntegralE", "ExpIntegralEi", "ExpirationDate", "Exponent", "ExponentFunction", "ExponentialDistribution", "ExponentialFamily", "ExponentialGeneratingFunction", "ExponentialMovingAverage", "ExponentialPowerDistribution", "ExponentPosition", "ExponentStep", "Export", "ExportAutoReplacements", "ExportByteArray", "ExportForm", "ExportPacket", "ExportString", "Expression", "ExpressionCell", "ExpressionGraph", "ExpressionPacket", "ExpressionUUID", "ExpToTrig", "ExtendedEntityClass", "ExtendedGCD", "Extension", "ExtentElementFunction", "ExtentMarkers", "ExtentSize", "ExternalBundle", "ExternalCall", "ExternalDataCharacterEncoding", "ExternalEvaluate", "ExternalFunction", "ExternalFunctionName", "ExternalIdentifier", "ExternalObject", "ExternalOptions", "ExternalSessionObject", "ExternalSessions", "ExternalStorageBase", "ExternalStorageDownload", "ExternalStorageGet", "ExternalStorageObject", "ExternalStoragePut", "ExternalStorageUpload", "ExternalTypeSignature", "ExternalValue", "Extract", "ExtractArchive", "ExtractLayer", "ExtractPacletArchive", "ExtremeValueDistribution", "FaceAlign", "FaceForm", "FaceGrids", "FaceGridsStyle", "FacialFeatures", "Factor", "FactorComplete", "Factorial", "Factorial2", "FactorialMoment", "FactorialMomentGeneratingFunction", "FactorialPower", "FactorInteger", "FactorList", "FactorSquareFree", "FactorSquareFreeList", "FactorTerms", "FactorTermsList", "Fail", "Failure", "FailureAction", "FailureDistribution", "FailureQ", "False", "FareySequence", "FARIMAProcess", "FeatureDistance", "FeatureExtract", "FeatureExtraction", "FeatureExtractor", "FeatureExtractorFunction", "FeatureNames", "FeatureNearest", "FeatureSpacePlot", "FeatureSpacePlot3D", "FeatureTypes", "FEDisableConsolePrintPacket", "FeedbackLinearize", "FeedbackSector", "FeedbackSectorStyle", "FeedbackType", "FEEnableConsolePrintPacket", "FetalGrowthData", "Fibonacci", "Fibonorial", "FieldCompletionFunction", "FieldHint", "FieldHintStyle", "FieldMasked", "FieldSize", "File", "FileBaseName", "FileByteCount", "FileConvert", "FileDate", "FileExistsQ", "FileExtension", "FileFormat", "FileHandler", "FileHash", "FileInformation", "FileName", "FileNameDepth", "FileNameDialogSettings", "FileNameDrop", "FileNameForms", "FileNameJoin", "FileNames", "FileNameSetter", "FileNameSplit", "FileNameTake", "FilePrint", "FileSize", "FileSystemMap", "FileSystemScan", "FileTemplate", "FileTemplateApply", "FileType", "FilledCurve", "FilledCurveBox", "FilledCurveBoxOptions", "Filling", "FillingStyle", "FillingTransform", "FilteredEntityClass", "FilterRules", "FinancialBond", "FinancialData", "FinancialDerivative", "FinancialIndicator", "Find", "FindAnomalies", "FindArgMax", "FindArgMin", "FindChannels", "FindClique", "FindClusters", "FindCookies", "FindCurvePath", "FindCycle", "FindDevices", "FindDistribution", "FindDistributionParameters", "FindDivisions", "FindEdgeCover", "FindEdgeCut", "FindEdgeIndependentPaths", "FindEquationalProof", "FindEulerianCycle", "FindExternalEvaluators", "FindFaces", "FindFile", "FindFit", "FindFormula", "FindFundamentalCycles", "FindGeneratingFunction", "FindGeoLocation", "FindGeometricConjectures", "FindGeometricTransform", "FindGraphCommunities", "FindGraphIsomorphism", "FindGraphPartition", "FindHamiltonianCycle", "FindHamiltonianPath", "FindHiddenMarkovStates", "FindImageText", "FindIndependentEdgeSet", "FindIndependentVertexSet", "FindInstance", "FindIntegerNullVector", "FindKClan", "FindKClique", "FindKClub", "FindKPlex", "FindLibrary", "FindLinearRecurrence", "FindList", "FindMatchingColor", "FindMaximum", "FindMaximumCut", "FindMaximumFlow", "FindMaxValue", "FindMeshDefects", "FindMinimum", "FindMinimumCostFlow", "FindMinimumCut", "FindMinValue", "FindMoleculeSubstructure", "FindPath", "FindPeaks", "FindPermutation", "FindPostmanTour", "FindProcessParameters", "FindRepeat", "FindRoot", "FindSequenceFunction", "FindSettings", "FindShortestPath", "FindShortestTour", "FindSpanningTree", "FindSystemModelEquilibrium", "FindTextualAnswer", "FindThreshold", "FindTransientRepeat", "FindVertexCover", "FindVertexCut", "FindVertexIndependentPaths", "Fine", "FinishDynamic", "FiniteAbelianGroupCount", "FiniteGroupCount", "FiniteGroupData", "First", "FirstCase", "FirstPassageTimeDistribution", "FirstPosition", "FischerGroupFi22", "FischerGroupFi23", "FischerGroupFi24Prime", "FisherHypergeometricDistribution", "FisherRatioTest", "FisherZDistribution", "Fit", "FitAll", "FitRegularization", "FittedModel", "FixedOrder", "FixedPoint", "FixedPointList", "FlashSelection", "Flat", "Flatten", "FlattenAt", "FlattenLayer", "FlatTopWindow", "FlipView", "Floor", "FlowPolynomial", "FlushPrintOutputPacket", "Fold", "FoldList", "FoldPair", "FoldPairList", "FollowRedirects", "Font", "FontColor", "FontFamily", "FontForm", "FontName", "FontOpacity", "FontPostScriptName", "FontProperties", "FontReencoding", "FontSize", "FontSlant", "FontSubstitutions", "FontTracking", "FontVariations", "FontWeight", "For", "ForAll", "ForceVersionInstall", "Format", "FormatRules", "FormatType", "FormatTypeAutoConvert", "FormatValues", "FormBox", "FormBoxOptions", "FormControl", "FormFunction", "FormLayoutFunction", "FormObject", "FormPage", "FormTheme", "FormulaData", "FormulaLookup", "FortranForm", "Forward", "ForwardBackward", "Fourier", "FourierCoefficient", "FourierCosCoefficient", "FourierCosSeries", "FourierCosTransform", "FourierDCT", "FourierDCTFilter", "FourierDCTMatrix", "FourierDST", "FourierDSTMatrix", "FourierMatrix", "FourierParameters", "FourierSequenceTransform", "FourierSeries", "FourierSinCoefficient", "FourierSinSeries", "FourierSinTransform", "FourierTransform", "FourierTrigSeries", "FractionalBrownianMotionProcess", "FractionalGaussianNoiseProcess", "FractionalPart", "FractionBox", "FractionBoxOptions", "FractionLine", "Frame", "FrameBox", "FrameBoxOptions", "Framed", "FrameInset", "FrameLabel", "Frameless", "FrameMargins", "FrameRate", "FrameStyle", "FrameTicks", "FrameTicksStyle", "FRatioDistribution", "FrechetDistribution", "FreeQ", "FrenetSerretSystem", "FrequencySamplingFilterKernel", "FresnelC", "FresnelF", "FresnelG", "FresnelS", "Friday", "FrobeniusNumber", "FrobeniusSolve", "FromAbsoluteTime", "FromCharacterCode", "FromCoefficientRules", "FromContinuedFraction", "FromDate", "FromDigits", "FromDMS", "FromEntity", "FromJulianDate", "FromLetterNumber", "FromPolarCoordinates", "FromRomanNumeral", "FromSphericalCoordinates", "FromUnixTime", "Front", "FrontEndDynamicExpression", "FrontEndEventActions", "FrontEndExecute", "FrontEndObject", "FrontEndResource", "FrontEndResourceString", "FrontEndStackSize", "FrontEndToken", "FrontEndTokenExecute", "FrontEndValueCache", "FrontEndVersion", "FrontFaceColor", "FrontFaceOpacity", "Full", "FullAxes", "FullDefinition", "FullForm", "FullGraphics", "FullInformationOutputRegulator", "FullOptions", "FullRegion", "FullSimplify", "Function", "FunctionCompile", "FunctionCompileExport", "FunctionCompileExportByteArray", "FunctionCompileExportLibrary", "FunctionCompileExportString", "FunctionDomain", "FunctionExpand", "FunctionInterpolation", "FunctionPeriod", "FunctionRange", "FunctionSpace", "FussellVeselyImportance", "GaborFilter", "GaborMatrix", "GaborWavelet", "GainMargins", "GainPhaseMargins", "GalaxyData", "GalleryView", "Gamma", "GammaDistribution", "GammaRegularized", "GapPenalty", "GARCHProcess", "GatedRecurrentLayer", "Gather", "GatherBy", "GaugeFaceElementFunction", "GaugeFaceStyle", "GaugeFrameElementFunction", "GaugeFrameSize", "GaugeFrameStyle", "GaugeLabels", "GaugeMarkers", "GaugeStyle", "GaussianFilter", "GaussianIntegers", "GaussianMatrix", "GaussianOrthogonalMatrixDistribution", "GaussianSymplecticMatrixDistribution", "GaussianUnitaryMatrixDistribution", "GaussianWindow", "GCD", "GegenbauerC", "General", "GeneralizedLinearModelFit", "GenerateAsymmetricKeyPair", "GenerateConditions", "GeneratedCell", "GeneratedDocumentBinding", "GenerateDerivedKey", "GenerateDigitalSignature", "GenerateDocument", "GeneratedParameters", "GeneratedQuantityMagnitudes", "GenerateFileSignature", "GenerateHTTPResponse", "GenerateSecuredAuthenticationKey", "GenerateSymmetricKey", "GeneratingFunction", "GeneratorDescription", "GeneratorHistoryLength", "GeneratorOutputType", "Generic", "GenericCylindricalDecomposition", "GenomeData", "GenomeLookup", "GeoAntipode", "GeoArea", "GeoArraySize", "GeoBackground", "GeoBoundingBox", "GeoBounds", "GeoBoundsRegion", "GeoBubbleChart", "GeoCenter", "GeoCircle", "GeoContourPlot", "GeoDensityPlot", "GeodesicClosing", "GeodesicDilation", "GeodesicErosion", "GeodesicOpening", "GeoDestination", "GeodesyData", "GeoDirection", "GeoDisk", "GeoDisplacement", "GeoDistance", "GeoDistanceList", "GeoElevationData", "GeoEntities", "GeoGraphics", "GeogravityModelData", "GeoGridDirectionDifference", "GeoGridLines", "GeoGridLinesStyle", "GeoGridPosition", "GeoGridRange", "GeoGridRangePadding", "GeoGridUnitArea", "GeoGridUnitDistance", "GeoGridVector", "GeoGroup", "GeoHemisphere", "GeoHemisphereBoundary", "GeoHistogram", "GeoIdentify", "GeoImage", "GeoLabels", "GeoLength", "GeoListPlot", "GeoLocation", "GeologicalPeriodData", "GeomagneticModelData", "GeoMarker", "GeometricAssertion", "GeometricBrownianMotionProcess", "GeometricDistribution", "GeometricMean", "GeometricMeanFilter", "GeometricOptimization", "GeometricScene", "GeometricTransformation", "GeometricTransformation3DBox", "GeometricTransformation3DBoxOptions", "GeometricTransformationBox", "GeometricTransformationBoxOptions", "GeoModel", "GeoNearest", "GeoPath", "GeoPosition", "GeoPositionENU", "GeoPositionXYZ", "GeoProjection", "GeoProjectionData", "GeoRange", "GeoRangePadding", "GeoRegionValuePlot", "GeoResolution", "GeoScaleBar", "GeoServer", "GeoSmoothHistogram", "GeoStreamPlot", "GeoStyling", "GeoStylingImageFunction", "GeoVariant", "GeoVector", "GeoVectorENU", "GeoVectorPlot", "GeoVectorXYZ", "GeoVisibleRegion", "GeoVisibleRegionBoundary", "GeoWithinQ", "GeoZoomLevel", "GestureHandler", "GestureHandlerTag", "Get", "GetBoundingBoxSizePacket", "GetContext", "GetEnvironment", "GetFileName", "GetFrontEndOptionsDataPacket", "GetLinebreakInformationPacket", "GetMenusPacket", "GetPageBreakInformationPacket", "Glaisher", "GlobalClusteringCoefficient", "GlobalPreferences", "GlobalSession", "Glow", "GoldenAngle", "GoldenRatio", "GompertzMakehamDistribution", "GoochShading", "GoodmanKruskalGamma", "GoodmanKruskalGammaTest", "Goto", "Grad", "Gradient", "GradientFilter", "GradientOrientationFilter", "GrammarApply", "GrammarRules", "GrammarToken", "Graph", "Graph3D", "GraphAssortativity", "GraphAutomorphismGroup", "GraphCenter", "GraphComplement", "GraphData", "GraphDensity", "GraphDiameter", "GraphDifference", "GraphDisjointUnion", "GraphDistance", "GraphDistanceMatrix", "GraphElementData", "GraphEmbedding", "GraphHighlight", "GraphHighlightStyle", "GraphHub", "Graphics", "Graphics3D", "Graphics3DBox", "Graphics3DBoxOptions", "GraphicsArray", "GraphicsBaseline", "GraphicsBox", "GraphicsBoxOptions", "GraphicsColor", "GraphicsColumn", "GraphicsComplex", "GraphicsComplex3DBox", "GraphicsComplex3DBoxOptions", "GraphicsComplexBox", "GraphicsComplexBoxOptions", "GraphicsContents", "GraphicsData", "GraphicsGrid", "GraphicsGridBox", "GraphicsGroup", "GraphicsGroup3DBox", "GraphicsGroup3DBoxOptions", "GraphicsGroupBox", "GraphicsGroupBoxOptions", "GraphicsGrouping", "GraphicsHighlightColor", "GraphicsRow", "GraphicsSpacing", "GraphicsStyle", "GraphIntersection", "GraphLayout", "GraphLinkEfficiency", "GraphPeriphery", "GraphPlot", "GraphPlot3D", "GraphPower", "GraphPropertyDistribution", "GraphQ", "GraphRadius", "GraphReciprocity", "GraphRoot", "GraphStyle", "GraphUnion", "Gray", "GrayLevel", "Greater", "GreaterEqual", "GreaterEqualLess", "GreaterEqualThan", "GreaterFullEqual", "GreaterGreater", "GreaterLess", "GreaterSlantEqual", "GreaterThan", "GreaterTilde", "Green", "GreenFunction", "Grid", "GridBaseline", "GridBox", "GridBoxAlignment", "GridBoxBackground", "GridBoxDividers", "GridBoxFrame", "GridBoxItemSize", "GridBoxItemStyle", "GridBoxOptions", "GridBoxSpacings", "GridCreationSettings", "GridDefaultElement", "GridElementStyleOptions", "GridFrame", "GridFrameMargins", "GridGraph", "GridLines", "GridLinesStyle", "GroebnerBasis", "GroupActionBase", "GroupBy", "GroupCentralizer", "GroupElementFromWord", "GroupElementPosition", "GroupElementQ", "GroupElements", "GroupElementToWord", "GroupGenerators", "Groupings", "GroupMultiplicationTable", "GroupOrbits", "GroupOrder", "GroupPageBreakWithin", "GroupSetwiseStabilizer", "GroupStabilizer", "GroupStabilizerChain", "GroupTogetherGrouping", "GroupTogetherNestedGrouping", "GrowCutComponents", "Gudermannian", "GuidedFilter", "GumbelDistribution", "HaarWavelet", "HadamardMatrix", "HalfLine", "HalfNormalDistribution", "HalfPlane", "HalfSpace", "HalftoneShading", "HamiltonianGraphQ", "HammingDistance", "HammingWindow", "HandlerFunctions", "HandlerFunctionsKeys", "HankelH1", "HankelH2", "HankelMatrix", "HankelTransform", "HannPoissonWindow", "HannWindow", "HaradaNortonGroupHN", "HararyGraph", "HarmonicMean", "HarmonicMeanFilter", "HarmonicNumber", "Hash", "HatchFilling", "HatchShading", "Haversine", "HazardFunction", "Head", "HeadCompose", "HeaderAlignment", "HeaderBackground", "HeaderDisplayFunction", "HeaderLines", "HeaderSize", "HeaderStyle", "Heads", "HeavisideLambda", "HeavisidePi", "HeavisideTheta", "HeldGroupHe", "HeldPart", "HelpBrowserLookup", "HelpBrowserNotebook", "HelpBrowserSettings", "Here", "HermiteDecomposition", "HermiteH", "HermitianMatrixQ", "HessenbergDecomposition", "Hessian", "HeunB", "HeunBPrime", "HeunC", "HeunCPrime", "HeunD", "HeunDPrime", "HeunG", "HeunGPrime", "HeunT", "HeunTPrime", "HexadecimalCharacter", "Hexahedron", "HexahedronBox", "HexahedronBoxOptions", "HiddenItems", "HiddenMarkovProcess", "HiddenSurface", "Highlighted", "HighlightGraph", "HighlightImage", "HighlightMesh", "HighpassFilter", "HigmanSimsGroupHS", "HilbertCurve", "HilbertFilter", "HilbertMatrix", "Histogram", "Histogram3D", "HistogramDistribution", "HistogramList", "HistogramTransform", "HistogramTransformInterpolation", "HistoricalPeriodData", "HitMissTransform", "HITSCentrality", "HjorthDistribution", "HodgeDual", "HoeffdingD", "HoeffdingDTest", "Hold", "HoldAll", "HoldAllComplete", "HoldComplete", "HoldFirst", "HoldForm", "HoldPattern", "HoldRest", "HolidayCalendar", "HomeDirectory", "HomePage", "Horizontal", "HorizontalForm", "HorizontalGauge", "HorizontalScrollPosition", "HornerForm", "HostLookup", "HotellingTSquareDistribution", "HoytDistribution", "HTMLSave", "HTTPErrorResponse", "HTTPRedirect", "HTTPRequest", "HTTPRequestData", "HTTPResponse", "Hue", "HumanGrowthData", "HumpDownHump", "HumpEqual", "HurwitzLerchPhi", "HurwitzZeta", "HyperbolicDistribution", "HypercubeGraph", "HyperexponentialDistribution", "Hyperfactorial", "Hypergeometric0F1", "Hypergeometric0F1Regularized", "Hypergeometric1F1", "Hypergeometric1F1Regularized", "Hypergeometric2F1", "Hypergeometric2F1Regularized", "HypergeometricDistribution", "HypergeometricPFQ", "HypergeometricPFQRegularized", "HypergeometricU", "Hyperlink", "HyperlinkAction", "HyperlinkCreationSettings", "Hyperplane", "Hyphenation", "HyphenationOptions", "HypoexponentialDistribution", "HypothesisTestData", "I", "IconData", "Iconize", "IconizedObject", "IconRules", "Icosahedron", "Identity", "IdentityMatrix", "If", "IgnoreCase", "IgnoreDiacritics", "IgnorePunctuation", "IgnoreSpellCheck", "IgnoringInactive", "Im", "Image", "Image3D", "Image3DProjection", "Image3DSlices", "ImageAccumulate", "ImageAdd", "ImageAdjust", "ImageAlign", "ImageApply", "ImageApplyIndexed", "ImageAspectRatio", "ImageAssemble", "ImageAugmentationLayer", "ImageBoundingBoxes", "ImageCache", "ImageCacheValid", "ImageCapture", "ImageCaptureFunction", "ImageCases", "ImageChannels", "ImageClip", "ImageCollage", "ImageColorSpace", "ImageCompose", "ImageContainsQ", "ImageContents", "ImageConvolve", "ImageCooccurrence", "ImageCorners", "ImageCorrelate", "ImageCorrespondingPoints", "ImageCrop", "ImageData", "ImageDeconvolve", "ImageDemosaic", "ImageDifference", "ImageDimensions", "ImageDisplacements", "ImageDistance", "ImageEffect", "ImageExposureCombine", "ImageFeatureTrack", "ImageFileApply", "ImageFileFilter", "ImageFileScan", "ImageFilter", "ImageFocusCombine", "ImageForestingComponents", "ImageFormattingWidth", "ImageForwardTransformation", "ImageGraphics", "ImageHistogram", "ImageIdentify", "ImageInstanceQ", "ImageKeypoints", "ImageLabels", "ImageLegends", "ImageLevels", "ImageLines", "ImageMargins", "ImageMarker", "ImageMarkers", "ImageMeasurements", "ImageMesh", "ImageMultiply", "ImageOffset", "ImagePad", "ImagePadding", "ImagePartition", "ImagePeriodogram", "ImagePerspectiveTransformation", "ImagePosition", "ImagePreviewFunction", "ImagePyramid", "ImagePyramidApply", "ImageQ", "ImageRangeCache", "ImageRecolor", "ImageReflect", "ImageRegion", "ImageResize", "ImageResolution", "ImageRestyle", "ImageRotate", "ImageRotated", "ImageSaliencyFilter", "ImageScaled", "ImageScan", "ImageSize", "ImageSizeAction", "ImageSizeCache", "ImageSizeMultipliers", "ImageSizeRaw", "ImageSubtract", "ImageTake", "ImageTransformation", "ImageTrim", "ImageType", "ImageValue", "ImageValuePositions", "ImagingDevice", "ImplicitRegion", "Implies", "Import", "ImportAutoReplacements", "ImportByteArray", "ImportOptions", "ImportString", "ImprovementImportance", "In", "Inactivate", "Inactive", "IncidenceGraph", "IncidenceList", "IncidenceMatrix", "IncludeAromaticBonds", "IncludeConstantBasis", "IncludeDefinitions", "IncludeDirectories", "IncludeFileExtension", "IncludeGeneratorTasks", "IncludeHydrogens", "IncludeInflections", "IncludeMetaInformation", "IncludePods", "IncludeQuantities", "IncludeRelatedTables", "IncludeSingularTerm", "IncludeWindowTimes", "Increment", "IndefiniteMatrixQ", "Indent", "IndentingNewlineSpacings", "IndentMaxFraction", "IndependenceTest", "IndependentEdgeSetQ", "IndependentPhysicalQuantity", "IndependentUnit", "IndependentUnitDimension", "IndependentVertexSetQ", "Indeterminate", "IndeterminateThreshold", "IndexCreationOptions", "Indexed", "IndexEdgeTaggedGraph", "IndexGraph", "IndexTag", "Inequality", "InexactNumberQ", "InexactNumbers", "InfiniteFuture", "InfiniteLine", "InfinitePast", "InfinitePlane", "Infinity", "Infix", "InflationAdjust", "InflationMethod", "Information", "InformationData", "InformationDataGrid", "Inherited", "InheritScope", "InhomogeneousPoissonProcess", "InitialEvaluationHistory", "Initialization", "InitializationCell", "InitializationCellEvaluation", "InitializationCellWarning", "InitializationObjects", "InitializationValue", "Initialize", "InitialSeeding", "InlineCounterAssignments", "InlineCounterIncrements", "InlineRules", "Inner", "InnerPolygon", "InnerPolyhedron", "Inpaint", "Input", "InputAliases", "InputAssumptions", "InputAutoReplacements", "InputField", "InputFieldBox", "InputFieldBoxOptions", "InputForm", "InputGrouping", "InputNamePacket", "InputNotebook", "InputPacket", "InputSettings", "InputStream", "InputString", "InputStringPacket", "InputToBoxFormPacket", "Insert", "InsertionFunction", "InsertionPointObject", "InsertLinebreaks", "InsertResults", "Inset", "Inset3DBox", "Inset3DBoxOptions", "InsetBox", "InsetBoxOptions", "Insphere", "Install", "InstallService", "InstanceNormalizationLayer", "InString", "Integer", "IntegerDigits", "IntegerExponent", "IntegerLength", "IntegerName", "IntegerPart", "IntegerPartitions", "IntegerQ", "IntegerReverse", "Integers", "IntegerString", "Integral", "Integrate", "Interactive", "InteractiveTradingChart", "Interlaced", "Interleaving", "InternallyBalancedDecomposition", "InterpolatingFunction", "InterpolatingPolynomial", "Interpolation", "InterpolationOrder", "InterpolationPoints", "InterpolationPrecision", "Interpretation", "InterpretationBox", "InterpretationBoxOptions", "InterpretationFunction", "Interpreter", "InterpretTemplate", "InterquartileRange", "Interrupt", "InterruptSettings", "IntersectedEntityClass", "IntersectingQ", "Intersection", "Interval", "IntervalIntersection", "IntervalMarkers", "IntervalMarkersStyle", "IntervalMemberQ", "IntervalSlider", "IntervalUnion", "Into", "Inverse", "InverseBetaRegularized", "InverseCDF", "InverseChiSquareDistribution", "InverseContinuousWaveletTransform", "InverseDistanceTransform", "InverseEllipticNomeQ", "InverseErf", "InverseErfc", "InverseFourier", "InverseFourierCosTransform", "InverseFourierSequenceTransform", "InverseFourierSinTransform", "InverseFourierTransform", "InverseFunction", "InverseFunctions", "InverseGammaDistribution", "InverseGammaRegularized", "InverseGaussianDistribution", "InverseGudermannian", "InverseHankelTransform", "InverseHaversine", "InverseImagePyramid", "InverseJacobiCD", "InverseJacobiCN", "InverseJacobiCS", "InverseJacobiDC", "InverseJacobiDN", "InverseJacobiDS", "InverseJacobiNC", "InverseJacobiND", "InverseJacobiNS", "InverseJacobiSC", "InverseJacobiSD", "InverseJacobiSN", "InverseLaplaceTransform", "InverseMellinTransform", "InversePermutation", "InverseRadon", "InverseRadonTransform", "InverseSeries", "InverseShortTimeFourier", "InverseSpectrogram", "InverseSurvivalFunction", "InverseTransformedRegion", "InverseWaveletTransform", "InverseWeierstrassP", "InverseWishartMatrixDistribution", "InverseZTransform", "Invisible", "InvisibleApplication", "InvisibleTimes", "IPAddress", "IrreduciblePolynomialQ", "IslandData", "IsolatingInterval", "IsomorphicGraphQ", "IsotopeData", "Italic", "Item", "ItemAspectRatio", "ItemBox", "ItemBoxOptions", "ItemDisplayFunction", "ItemSize", "ItemStyle", "ItoProcess", "JaccardDissimilarity", "JacobiAmplitude", "Jacobian", "JacobiCD", "JacobiCN", "JacobiCS", "JacobiDC", "JacobiDN", "JacobiDS", "JacobiNC", "JacobiND", "JacobiNS", "JacobiP", "JacobiSC", "JacobiSD", "JacobiSN", "JacobiSymbol", "JacobiZeta", "JankoGroupJ1", "JankoGroupJ2", "JankoGroupJ3", "JankoGroupJ4", "JarqueBeraALMTest", "JohnsonDistribution", "Join", "JoinAcross", "Joined", "JoinedCurve", "JoinedCurveBox", "JoinedCurveBoxOptions", "JoinForm", "JordanDecomposition", "JordanModelDecomposition", "JulianDate", "JuliaSetBoettcher", "JuliaSetIterationCount", "JuliaSetPlot", "JuliaSetPoints", "K", "KagiChart", "KaiserBesselWindow", "KaiserWindow", "KalmanEstimator", "KalmanFilter", "KarhunenLoeveDecomposition", "KaryTree", "KatzCentrality", "KCoreComponents", "KDistribution", "KEdgeConnectedComponents", "KEdgeConnectedGraphQ", "KeepExistingVersion", "KelvinBei", "KelvinBer", "KelvinKei", "KelvinKer", "KendallTau", "KendallTauTest", "KernelExecute", "KernelFunction", "KernelMixtureDistribution", "KernelObject", "Kernels", "Ket", "Key", "KeyCollisionFunction", "KeyComplement", "KeyDrop", "KeyDropFrom", "KeyExistsQ", "KeyFreeQ", "KeyIntersection", "KeyMap", "KeyMemberQ", "KeypointStrength", "Keys", "KeySelect", "KeySort", "KeySortBy", "KeyTake", "KeyUnion", "KeyValueMap", "KeyValuePattern", "Khinchin", "KillProcess", "KirchhoffGraph", "KirchhoffMatrix", "KleinInvariantJ", "KnapsackSolve", "KnightTourGraph", "KnotData", "KnownUnitQ", "KochCurve", "KolmogorovSmirnovTest", "KroneckerDelta", "KroneckerModelDecomposition", "KroneckerProduct", "KroneckerSymbol", "KuiperTest", "KumaraswamyDistribution", "Kurtosis", "KuwaharaFilter", "KVertexConnectedComponents", "KVertexConnectedGraphQ", "LABColor", "Label", "Labeled", "LabeledSlider", "LabelingFunction", "LabelingSize", "LabelStyle", "LabelVisibility", "LaguerreL", "LakeData", "LambdaComponents", "LambertW", "LaminaData", "LanczosWindow", "LandauDistribution", "Language", "LanguageCategory", "LanguageData", "LanguageIdentify", "LanguageOptions", "LaplaceDistribution", "LaplaceTransform", "Laplacian", "LaplacianFilter", "LaplacianGaussianFilter", "Large", "Larger", "Last", "Latitude", "LatitudeLongitude", "LatticeData", "LatticeReduce", "Launch", "LaunchKernels", "LayeredGraphPlot", "LayerSizeFunction", "LayoutInformation", "LCHColor", "LCM", "LeaderSize", "LeafCount", "LeapYearQ", "LearnDistribution", "LearnedDistribution", "LearningRate", "LearningRateMultipliers", "LeastSquares", "LeastSquaresFilterKernel", "Left", "LeftArrow", "LeftArrowBar", "LeftArrowRightArrow", "LeftDownTeeVector", "LeftDownVector", "LeftDownVectorBar", "LeftRightArrow", "LeftRightVector", "LeftTee", "LeftTeeArrow", "LeftTeeVector", "LeftTriangle", "LeftTriangleBar", "LeftTriangleEqual", "LeftUpDownVector", "LeftUpTeeVector", "LeftUpVector", "LeftUpVectorBar", "LeftVector", "LeftVectorBar", "LegendAppearance", "Legended", "LegendFunction", "LegendLabel", "LegendLayout", "LegendMargins", "LegendMarkers", "LegendMarkerSize", "LegendreP", "LegendreQ", "LegendreType", "Length", "LengthWhile", "LerchPhi", "Less", "LessEqual", "LessEqualGreater", "LessEqualThan", "LessFullEqual", "LessGreater", "LessLess", "LessSlantEqual", "LessThan", "LessTilde", "LetterCharacter", "LetterCounts", "LetterNumber", "LetterQ", "Level", "LeveneTest", "LeviCivitaTensor", "LevyDistribution", "Lexicographic", "LibraryDataType", "LibraryFunction", "LibraryFunctionError", "LibraryFunctionInformation", "LibraryFunctionLoad", "LibraryFunctionUnload", "LibraryLoad", "LibraryUnload", "LicenseID", "LiftingFilterData", "LiftingWaveletTransform", "LightBlue", "LightBrown", "LightCyan", "Lighter", "LightGray", "LightGreen", "Lighting", "LightingAngle", "LightMagenta", "LightOrange", "LightPink", "LightPurple", "LightRed", "LightSources", "LightYellow", "Likelihood", "Limit", "LimitsPositioning", "LimitsPositioningTokens", "LindleyDistribution", "Line", "Line3DBox", "Line3DBoxOptions", "LinearFilter", "LinearFractionalOptimization", "LinearFractionalTransform", "LinearGradientImage", "LinearizingTransformationData", "LinearLayer", "LinearModelFit", "LinearOffsetFunction", "LinearOptimization", "LinearProgramming", "LinearRecurrence", "LinearSolve", "LinearSolveFunction", "LineBox", "LineBoxOptions", "LineBreak", "LinebreakAdjustments", "LineBreakChart", "LinebreakSemicolonWeighting", "LineBreakWithin", "LineColor", "LineGraph", "LineIndent", "LineIndentMaxFraction", "LineIntegralConvolutionPlot", "LineIntegralConvolutionScale", "LineLegend", "LineOpacity", "LineSpacing", "LineWrapParts", "LinkActivate", "LinkClose", "LinkConnect", "LinkConnectedQ", "LinkCreate", "LinkError", "LinkFlush", "LinkFunction", "LinkHost", "LinkInterrupt", "LinkLaunch", "LinkMode", "LinkObject", "LinkOpen", "LinkOptions", "LinkPatterns", "LinkProtocol", "LinkRankCentrality", "LinkRead", "LinkReadHeld", "LinkReadyQ", "Links", "LinkService", "LinkWrite", "LinkWriteHeld", "LiouvilleLambda", "List", "Listable", "ListAnimate", "ListContourPlot", "ListContourPlot3D", "ListConvolve", "ListCorrelate", "ListCurvePathPlot", "ListDeconvolve", "ListDensityPlot", "ListDensityPlot3D", "Listen", "ListFormat", "ListFourierSequenceTransform", "ListInterpolation", "ListLineIntegralConvolutionPlot", "ListLinePlot", "ListLogLinearPlot", "ListLogLogPlot", "ListLogPlot", "ListPicker", "ListPickerBox", "ListPickerBoxBackground", "ListPickerBoxOptions", "ListPlay", "ListPlot", "ListPlot3D", "ListPointPlot3D", "ListPolarPlot", "ListQ", "ListSliceContourPlot3D", "ListSliceDensityPlot3D", "ListSliceVectorPlot3D", "ListStepPlot", "ListStreamDensityPlot", "ListStreamPlot", "ListSurfacePlot3D", "ListVectorDensityPlot", "ListVectorPlot", "ListVectorPlot3D", "ListZTransform", "Literal", "LiteralSearch", "LocalAdaptiveBinarize", "LocalCache", "LocalClusteringCoefficient", "LocalizeDefinitions", "LocalizeVariables", "LocalObject", "LocalObjects", "LocalResponseNormalizationLayer", "LocalSubmit", "LocalSymbol", "LocalTime", "LocalTimeZone", "LocationEquivalenceTest", "LocationTest", "Locator", "LocatorAutoCreate", "LocatorBox", "LocatorBoxOptions", "LocatorCentering", "LocatorPane", "LocatorPaneBox", "LocatorPaneBoxOptions", "LocatorRegion", "Locked", "Log", "Log10", "Log2", "LogBarnesG", "LogGamma", "LogGammaDistribution", "LogicalExpand", "LogIntegral", "LogisticDistribution", "LogisticSigmoid", "LogitModelFit", "LogLikelihood", "LogLinearPlot", "LogLogisticDistribution", "LogLogPlot", "LogMultinormalDistribution", "LogNormalDistribution", "LogPlot", "LogRankTest", "LogSeriesDistribution", "LongEqual", "Longest", "LongestCommonSequence", "LongestCommonSequencePositions", "LongestCommonSubsequence", "LongestCommonSubsequencePositions", "LongestMatch", "LongestOrderedSequence", "LongForm", "Longitude", "LongLeftArrow", "LongLeftRightArrow", "LongRightArrow", "LongShortTermMemoryLayer", "Lookup", "Loopback", "LoopFreeGraphQ", "Looping", "LossFunction", "LowerCaseQ", "LowerLeftArrow", "LowerRightArrow", "LowerTriangularize", "LowerTriangularMatrixQ", "LowpassFilter", "LQEstimatorGains", "LQGRegulator", "LQOutputRegulatorGains", "LQRegulatorGains", "LUBackSubstitution", "LucasL", "LuccioSamiComponents", "LUDecomposition", "LunarEclipse", "LUVColor", "LyapunovSolve", "LyonsGroupLy", "MachineID", "MachineName", "MachineNumberQ", "MachinePrecision", "MacintoshSystemPageSetup", "Magenta", "Magnification", "Magnify", "MailAddressValidation", "MailExecute", "MailFolder", "MailItem", "MailReceiverFunction", "MailResponseFunction", "MailSearch", "MailServerConnect", "MailServerConnection", "MailSettings", "MainSolve", "MaintainDynamicCaches", "Majority", "MakeBoxes", "MakeExpression", "MakeRules", "ManagedLibraryExpressionID", "ManagedLibraryExpressionQ", "MandelbrotSetBoettcher", "MandelbrotSetDistance", "MandelbrotSetIterationCount", "MandelbrotSetMemberQ", "MandelbrotSetPlot", "MangoldtLambda", "ManhattanDistance", "Manipulate", "Manipulator", "MannedSpaceMissionData", "MannWhitneyTest", "MantissaExponent", "Manual", "Map", "MapAll", "MapAt", "MapIndexed", "MAProcess", "MapThread", "MarchenkoPasturDistribution", "MarcumQ", "MardiaCombinedTest", "MardiaKurtosisTest", "MardiaSkewnessTest", "MarginalDistribution", "MarkovProcessProperties", "Masking", "MatchingDissimilarity", "MatchLocalNameQ", "MatchLocalNames", "MatchQ", "Material", "MathematicalFunctionData", "MathematicaNotation", "MathieuC", "MathieuCharacteristicA", "MathieuCharacteristicB", "MathieuCharacteristicExponent", "MathieuCPrime", "MathieuGroupM11", "MathieuGroupM12", "MathieuGroupM22", "MathieuGroupM23", "MathieuGroupM24", "MathieuS", "MathieuSPrime", "MathMLForm", "MathMLText", "Matrices", "MatrixExp", "MatrixForm", "MatrixFunction", "MatrixLog", "MatrixNormalDistribution", "MatrixPlot", "MatrixPower", "MatrixPropertyDistribution", "MatrixQ", "MatrixRank", "MatrixTDistribution", "Max", "MaxBend", "MaxCellMeasure", "MaxColorDistance", "MaxDate", "MaxDetect", "MaxDuration", "MaxExtraBandwidths", "MaxExtraConditions", "MaxFeatureDisplacement", "MaxFeatures", "MaxFilter", "MaximalBy", "Maximize", "MaxItems", "MaxIterations", "MaxLimit", "MaxMemoryUsed", "MaxMixtureKernels", "MaxOverlapFraction", "MaxPlotPoints", "MaxPoints", "MaxRecursion", "MaxStableDistribution", "MaxStepFraction", "MaxSteps", "MaxStepSize", "MaxTrainingRounds", "MaxValue", "MaxwellDistribution", "MaxWordGap", "McLaughlinGroupMcL", "Mean", "MeanAbsoluteLossLayer", "MeanAround", "MeanClusteringCoefficient", "MeanDegreeConnectivity", "MeanDeviation", "MeanFilter", "MeanGraphDistance", "MeanNeighborDegree", "MeanShift", "MeanShiftFilter", "MeanSquaredLossLayer", "Median", "MedianDeviation", "MedianFilter", "MedicalTestData", "Medium", "MeijerG", "MeijerGReduce", "MeixnerDistribution", "MellinConvolve", "MellinTransform", "MemberQ", "MemoryAvailable", "MemoryConstrained", "MemoryConstraint", "MemoryInUse", "MengerMesh", "Menu", "MenuAppearance", "MenuCommandKey", "MenuEvaluator", "MenuItem", "MenuList", "MenuPacket", "MenuSortingValue", "MenuStyle", "MenuView", "Merge", "MergeDifferences", "MergingFunction", "MersennePrimeExponent", "MersennePrimeExponentQ", "Mesh", "MeshCellCentroid", "MeshCellCount", "MeshCellHighlight", "MeshCellIndex", "MeshCellLabel", "MeshCellMarker", "MeshCellMeasure", "MeshCellQuality", "MeshCells", "MeshCellShapeFunction", "MeshCellStyle", "MeshConnectivityGraph", "MeshCoordinates", "MeshFunctions", "MeshPrimitives", "MeshQualityGoal", "MeshRange", "MeshRefinementFunction", "MeshRegion", "MeshRegionQ", "MeshShading", "MeshStyle", "Message", "MessageDialog", "MessageList", "MessageName", "MessageObject", "MessageOptions", "MessagePacket", "Messages", "MessagesNotebook", "MetaCharacters", "MetaInformation", "MeteorShowerData", "Method", "MethodOptions", "MexicanHatWavelet", "MeyerWavelet", "Midpoint", "Min", "MinColorDistance", "MinDate", "MinDetect", "MineralData", "MinFilter", "MinimalBy", "MinimalPolynomial", "MinimalStateSpaceModel", "Minimize", "MinimumTimeIncrement", "MinIntervalSize", "MinkowskiQuestionMark", "MinLimit", "MinMax", "MinorPlanetData", "Minors", "MinRecursion", "MinSize", "MinStableDistribution", "Minus", "MinusPlus", "MinValue", "Missing", "MissingBehavior", "MissingDataMethod", "MissingDataRules", "MissingQ", "MissingString", "MissingStyle", "MissingValuePattern", "MittagLefflerE", "MixedFractionParts", "MixedGraphQ", "MixedMagnitude", "MixedRadix", "MixedRadixQuantity", "MixedUnit", "MixtureDistribution", "Mod", "Modal", "Mode", "Modular", "ModularInverse", "ModularLambda", "Module", "Modulus", "MoebiusMu", "Molecule", "MoleculeContainsQ", "MoleculeEquivalentQ", "MoleculeGraph", "MoleculeModify", "MoleculePattern", "MoleculePlot", "MoleculePlot3D", "MoleculeProperty", "MoleculeQ", "MoleculeRecognize", "MoleculeValue", "Moment", "Momentary", "MomentConvert", "MomentEvaluate", "MomentGeneratingFunction", "MomentOfInertia", "Monday", "Monitor", "MonomialList", "MonomialOrder", "MonsterGroupM", "MoonPhase", "MoonPosition", "MorletWavelet", "MorphologicalBinarize", "MorphologicalBranchPoints", "MorphologicalComponents", "MorphologicalEulerNumber", "MorphologicalGraph", "MorphologicalPerimeter", "MorphologicalTransform", "MortalityData", "Most", "MountainData", "MouseAnnotation", "MouseAppearance", "MouseAppearanceTag", "MouseButtons", "Mouseover", "MousePointerNote", "MousePosition", "MovieData", "MovingAverage", "MovingMap", "MovingMedian", "MoyalDistribution", "Multicolumn", "MultiedgeStyle", "MultigraphQ", "MultilaunchWarning", "MultiLetterItalics", "MultiLetterStyle", "MultilineFunction", "Multinomial", "MultinomialDistribution", "MultinormalDistribution", "MultiplicativeOrder", "Multiplicity", "MultiplySides", "Multiselection", "MultivariateHypergeometricDistribution", "MultivariatePoissonDistribution", "MultivariateTDistribution", "N", "NakagamiDistribution", "NameQ", "Names", "NamespaceBox", "NamespaceBoxOptions", "Nand", "NArgMax", "NArgMin", "NBernoulliB", "NBodySimulation", "NBodySimulationData", "NCache", "NDEigensystem", "NDEigenvalues", "NDSolve", "NDSolveValue", "Nearest", "NearestFunction", "NearestMeshCells", "NearestNeighborGraph", "NearestTo", "NebulaData", "NeedCurrentFrontEndPackagePacket", "NeedCurrentFrontEndSymbolsPacket", "NeedlemanWunschSimilarity", "Needs", "Negative", "NegativeBinomialDistribution", "NegativeDefiniteMatrixQ", "NegativeIntegers", "NegativeMultinomialDistribution", "NegativeRationals", "NegativeReals", "NegativeSemidefiniteMatrixQ", "NeighborhoodData", "NeighborhoodGraph", "Nest", "NestedGreaterGreater", "NestedLessLess", "NestedScriptRules", "NestGraph", "NestList", "NestWhile", "NestWhileList", "NetAppend", "NetBidirectionalOperator", "NetChain", "NetDecoder", "NetDelete", "NetDrop", "NetEncoder", "NetEvaluationMode", "NetExtract", "NetFlatten", "NetFoldOperator", "NetGANOperator", "NetGraph", "NetInformation", "NetInitialize", "NetInsert", "NetInsertSharedArrays", "NetJoin", "NetMapOperator", "NetMapThreadOperator", "NetMeasurements", "NetModel", "NetNestOperator", "NetPairEmbeddingOperator", "NetPort", "NetPortGradient", "NetPrepend", "NetRename", "NetReplace", "NetReplacePart", "NetSharedArray", "NetStateObject", "NetTake", "NetTrain", "NetTrainResultsObject", "NetworkPacketCapture", "NetworkPacketRecording", "NetworkPacketRecordingDuring", "NetworkPacketTrace", "NeumannValue", "NevilleThetaC", "NevilleThetaD", "NevilleThetaN", "NevilleThetaS", "NewPrimitiveStyle", "NExpectation", "Next", "NextCell", "NextDate", "NextPrime", "NextScheduledTaskTime", "NHoldAll", "NHoldFirst", "NHoldRest", "NicholsGridLines", "NicholsPlot", "NightHemisphere", "NIntegrate", "NMaximize", "NMaxValue", "NMinimize", "NMinValue", "NominalVariables", "NonAssociative", "NoncentralBetaDistribution", "NoncentralChiSquareDistribution", "NoncentralFRatioDistribution", "NoncentralStudentTDistribution", "NonCommutativeMultiply", "NonConstants", "NondimensionalizationTransform", "None", "NoneTrue", "NonlinearModelFit", "NonlinearStateSpaceModel", "NonlocalMeansFilter", "NonNegative", "NonNegativeIntegers", "NonNegativeRationals", "NonNegativeReals", "NonPositive", "NonPositiveIntegers", "NonPositiveRationals", "NonPositiveReals", "Nor", "NorlundB", "Norm", "Normal", "NormalDistribution", "NormalGrouping", "NormalizationLayer", "Normalize", "Normalized", "NormalizedSquaredEuclideanDistance", "NormalMatrixQ", "NormalsFunction", "NormFunction", "Not", "NotCongruent", "NotCupCap", "NotDoubleVerticalBar", "Notebook", "NotebookApply", "NotebookAutoSave", "NotebookClose", "NotebookConvertSettings", "NotebookCreate", "NotebookCreateReturnObject", "NotebookDefault", "NotebookDelete", "NotebookDirectory", "NotebookDynamicExpression", "NotebookEvaluate", "NotebookEventActions", "NotebookFileName", "NotebookFind", "NotebookFindReturnObject", "NotebookGet", "NotebookGetLayoutInformationPacket", "NotebookGetMisspellingsPacket", "NotebookImport", "NotebookInformation", "NotebookInterfaceObject", "NotebookLocate", "NotebookObject", "NotebookOpen", "NotebookOpenReturnObject", "NotebookPath", "NotebookPrint", "NotebookPut", "NotebookPutReturnObject", "NotebookRead", "NotebookResetGeneratedCells", "Notebooks", "NotebookSave", "NotebookSaveAs", "NotebookSelection", "NotebookSetupLayoutInformationPacket", "NotebooksMenu", "NotebookTemplate", "NotebookWrite", "NotElement", "NotEqualTilde", "NotExists", "NotGreater", "NotGreaterEqual", "NotGreaterFullEqual", "NotGreaterGreater", "NotGreaterLess", "NotGreaterSlantEqual", "NotGreaterTilde", "Nothing", "NotHumpDownHump", "NotHumpEqual", "NotificationFunction", "NotLeftTriangle", "NotLeftTriangleBar", "NotLeftTriangleEqual", "NotLess", "NotLessEqual", "NotLessFullEqual", "NotLessGreater", "NotLessLess", "NotLessSlantEqual", "NotLessTilde", "NotNestedGreaterGreater", "NotNestedLessLess", "NotPrecedes", "NotPrecedesEqual", "NotPrecedesSlantEqual", "NotPrecedesTilde", "NotReverseElement", "NotRightTriangle", "NotRightTriangleBar", "NotRightTriangleEqual", "NotSquareSubset", "NotSquareSubsetEqual", "NotSquareSuperset", "NotSquareSupersetEqual", "NotSubset", "NotSubsetEqual", "NotSucceeds", "NotSucceedsEqual", "NotSucceedsSlantEqual", "NotSucceedsTilde", "NotSuperset", "NotSupersetEqual", "NotTilde", "NotTildeEqual", "NotTildeFullEqual", "NotTildeTilde", "NotVerticalBar", "Now", "NoWhitespace", "NProbability", "NProduct", "NProductFactors", "NRoots", "NSolve", "NSum", "NSumTerms", "NuclearExplosionData", "NuclearReactorData", "Null", "NullRecords", "NullSpace", "NullWords", "Number", "NumberCompose", "NumberDecompose", "NumberExpand", "NumberFieldClassNumber", "NumberFieldDiscriminant", "NumberFieldFundamentalUnits", "NumberFieldIntegralBasis", "NumberFieldNormRepresentatives", "NumberFieldRegulator", "NumberFieldRootsOfUnity", "NumberFieldSignature", "NumberForm", "NumberFormat", "NumberLinePlot", "NumberMarks", "NumberMultiplier", "NumberPadding", "NumberPoint", "NumberQ", "NumberSeparator", "NumberSigns", "NumberString", "Numerator", "NumeratorDenominator", "NumericalOrder", "NumericalSort", "NumericArray", "NumericArrayQ", "NumericArrayType", "NumericFunction", "NumericQ", "NuttallWindow", "NValues", "NyquistGridLines", "NyquistPlot", "O", "ObservabilityGramian", "ObservabilityMatrix", "ObservableDecomposition", "ObservableModelQ", "OceanData", "Octahedron", "OddQ", "Off", "Offset", "OLEData", "On", "ONanGroupON", "Once", "OneIdentity", "Opacity", "OpacityFunction", "OpacityFunctionScaling", "Open", "OpenAppend", "Opener", "OpenerBox", "OpenerBoxOptions", "OpenerView", "OpenFunctionInspectorPacket", "Opening", "OpenRead", "OpenSpecialOptions", "OpenTemporary", "OpenWrite", "Operate", "OperatingSystem", "OperatorApplied", "OptimumFlowData", "Optional", "OptionalElement", "OptionInspectorSettings", "OptionQ", "Options", "OptionsPacket", "OptionsPattern", "OptionValue", "OptionValueBox", "OptionValueBoxOptions", "Or", "Orange", "Order", "OrderDistribution", "OrderedQ", "Ordering", "OrderingBy", "OrderingLayer", "Orderless", "OrderlessPatternSequence", "OrnsteinUhlenbeckProcess", "Orthogonalize", "OrthogonalMatrixQ", "Out", "Outer", "OuterPolygon", "OuterPolyhedron", "OutputAutoOverwrite", "OutputControllabilityMatrix", "OutputControllableModelQ", "OutputForm", "OutputFormData", "OutputGrouping", "OutputMathEditExpression", "OutputNamePacket", "OutputResponse", "OutputSizeLimit", "OutputStream", "Over", "OverBar", "OverDot", "Overflow", "OverHat", "Overlaps", "Overlay", "OverlayBox", "OverlayBoxOptions", "Overscript", "OverscriptBox", "OverscriptBoxOptions", "OverTilde", "OverVector", "OverwriteTarget", "OwenT", "OwnValues", "Package", "PackingMethod", "PackPaclet", "PacletDataRebuild", "PacletDirectoryAdd", "PacletDirectoryLoad", "PacletDirectoryRemove", "PacletDirectoryUnload", "PacletDisable", "PacletEnable", "PacletFind", "PacletFindRemote", "PacletInformation", "PacletInstall", "PacletInstallSubmit", "PacletNewerQ", "PacletObject", "PacletObjectQ", "PacletSite", "PacletSiteObject", "PacletSiteRegister", "PacletSites", "PacletSiteUnregister", "PacletSiteUpdate", "PacletUninstall", "PacletUpdate", "PaddedForm", "Padding", "PaddingLayer", "PaddingSize", "PadeApproximant", "PadLeft", "PadRight", "PageBreakAbove", "PageBreakBelow", "PageBreakWithin", "PageFooterLines", "PageFooters", "PageHeaderLines", "PageHeaders", "PageHeight", "PageRankCentrality", "PageTheme", "PageWidth", "Pagination", "PairedBarChart", "PairedHistogram", "PairedSmoothHistogram", "PairedTTest", "PairedZTest", "PaletteNotebook", "PalettePath", "PalindromeQ", "Pane", "PaneBox", "PaneBoxOptions", "Panel", "PanelBox", "PanelBoxOptions", "Paneled", "PaneSelector", "PaneSelectorBox", "PaneSelectorBoxOptions", "PaperWidth", "ParabolicCylinderD", "ParagraphIndent", "ParagraphSpacing", "ParallelArray", "ParallelCombine", "ParallelDo", "Parallelepiped", "ParallelEvaluate", "Parallelization", "Parallelize", "ParallelMap", "ParallelNeeds", "Parallelogram", "ParallelProduct", "ParallelSubmit", "ParallelSum", "ParallelTable", "ParallelTry", "Parameter", "ParameterEstimator", "ParameterMixtureDistribution", "ParameterVariables", "ParametricFunction", "ParametricNDSolve", "ParametricNDSolveValue", "ParametricPlot", "ParametricPlot3D", "ParametricRampLayer", "ParametricRegion", "ParentBox", "ParentCell", "ParentConnect", "ParentDirectory", "ParentForm", "Parenthesize", "ParentList", "ParentNotebook", "ParetoDistribution", "ParetoPickandsDistribution", "ParkData", "Part", "PartBehavior", "PartialCorrelationFunction", "PartialD", "ParticleAcceleratorData", "ParticleData", "Partition", "PartitionGranularity", "PartitionsP", "PartitionsQ", "PartLayer", "PartOfSpeech", "PartProtection", "ParzenWindow", "PascalDistribution", "PassEventsDown", "PassEventsUp", "Paste", "PasteAutoQuoteCharacters", "PasteBoxFormInlineCells", "PasteButton", "Path", "PathGraph", "PathGraphQ", "Pattern", "PatternFilling", "PatternSequence", "PatternTest", "PauliMatrix", "PaulWavelet", "Pause", "PausedTime", "PDF", "PeakDetect", "PeanoCurve", "PearsonChiSquareTest", "PearsonCorrelationTest", "PearsonDistribution", "PercentForm", "PerfectNumber", "PerfectNumberQ", "PerformanceGoal", "Perimeter", "PeriodicBoundaryCondition", "PeriodicInterpolation", "Periodogram", "PeriodogramArray", "Permanent", "Permissions", "PermissionsGroup", "PermissionsGroupMemberQ", "PermissionsGroups", "PermissionsKey", "PermissionsKeys", "PermutationCycles", "PermutationCyclesQ", "PermutationGroup", "PermutationLength", "PermutationList", "PermutationListQ", "PermutationMax", "PermutationMin", "PermutationOrder", "PermutationPower", "PermutationProduct", "PermutationReplace", "Permutations", "PermutationSupport", "Permute", "PeronaMalikFilter", "Perpendicular", "PerpendicularBisector", "PersistenceLocation", "PersistenceTime", "PersistentObject", "PersistentObjects", "PersistentValue", "PersonData", "PERTDistribution", "PetersenGraph", "PhaseMargins", "PhaseRange", "PhysicalSystemData", "Pi", "Pick", "PIDData", "PIDDerivativeFilter", "PIDFeedforward", "PIDTune", "Piecewise", "PiecewiseExpand", "PieChart", "PieChart3D", "PillaiTrace", "PillaiTraceTest", "PingTime", "Pink", "PitchRecognize", "Pivoting", "PixelConstrained", "PixelValue", "PixelValuePositions", "Placed", "Placeholder", "PlaceholderReplace", "Plain", "PlanarAngle", "PlanarGraph", "PlanarGraphQ", "PlanckRadiationLaw", "PlaneCurveData", "PlanetaryMoonData", "PlanetData", "PlantData", "Play", "PlayRange", "Plot", "Plot3D", "Plot3Matrix", "PlotDivision", "PlotJoined", "PlotLabel", "PlotLabels", "PlotLayout", "PlotLegends", "PlotMarkers", "PlotPoints", "PlotRange", "PlotRangeClipping", "PlotRangeClipPlanesStyle", "PlotRangePadding", "PlotRegion", "PlotStyle", "PlotTheme", "Pluralize", "Plus", "PlusMinus", "Pochhammer", "PodStates", "PodWidth", "Point", "Point3DBox", "Point3DBoxOptions", "PointBox", "PointBoxOptions", "PointFigureChart", "PointLegend", "PointSize", "PoissonConsulDistribution", "PoissonDistribution", "PoissonProcess", "PoissonWindow", "PolarAxes", "PolarAxesOrigin", "PolarGridLines", "PolarPlot", "PolarTicks", "PoleZeroMarkers", "PolyaAeppliDistribution", "PolyGamma", "Polygon", "Polygon3DBox", "Polygon3DBoxOptions", "PolygonalNumber", "PolygonAngle", "PolygonBox", "PolygonBoxOptions", "PolygonCoordinates", "PolygonDecomposition", "PolygonHoleScale", "PolygonIntersections", "PolygonScale", "Polyhedron", "PolyhedronAngle", "PolyhedronCoordinates", "PolyhedronData", "PolyhedronDecomposition", "PolyhedronGenus", "PolyLog", "PolynomialExtendedGCD", "PolynomialForm", "PolynomialGCD", "PolynomialLCM", "PolynomialMod", "PolynomialQ", "PolynomialQuotient", "PolynomialQuotientRemainder", "PolynomialReduce", "PolynomialRemainder", "Polynomials", "PoolingLayer", "PopupMenu", "PopupMenuBox", "PopupMenuBoxOptions", "PopupView", "PopupWindow", "Position", "PositionIndex", "Positive", "PositiveDefiniteMatrixQ", "PositiveIntegers", "PositiveRationals", "PositiveReals", "PositiveSemidefiniteMatrixQ", "PossibleZeroQ", "Postfix", "PostScript", "Power", "PowerDistribution", "PowerExpand", "PowerMod", "PowerModList", "PowerRange", "PowerSpectralDensity", "PowersRepresentations", "PowerSymmetricPolynomial", "Precedence", "PrecedenceForm", "Precedes", "PrecedesEqual", "PrecedesSlantEqual", "PrecedesTilde", "Precision", "PrecisionGoal", "PreDecrement", "Predict", "PredictionRoot", "PredictorFunction", "PredictorInformation", "PredictorMeasurements", "PredictorMeasurementsObject", "PreemptProtect", "PreferencesPath", "Prefix", "PreIncrement", "Prepend", "PrependLayer", "PrependTo", "PreprocessingRules", "PreserveColor", "PreserveImageOptions", "Previous", "PreviousCell", "PreviousDate", "PriceGraphDistribution", "PrimaryPlaceholder", "Prime", "PrimeNu", "PrimeOmega", "PrimePi", "PrimePowerQ", "PrimeQ", "Primes", "PrimeZetaP", "PrimitivePolynomialQ", "PrimitiveRoot", "PrimitiveRootList", "PrincipalComponents", "PrincipalValue", "Print", "PrintableASCIIQ", "PrintAction", "PrintForm", "PrintingCopies", "PrintingOptions", "PrintingPageRange", "PrintingStartingPageNumber", "PrintingStyleEnvironment", "Printout3D", "Printout3DPreviewer", "PrintPrecision", "PrintTemporary", "Prism", "PrismBox", "PrismBoxOptions", "PrivateCellOptions", "PrivateEvaluationOptions", "PrivateFontOptions", "PrivateFrontEndOptions", "PrivateKey", "PrivateNotebookOptions", "PrivatePaths", "Probability", "ProbabilityDistribution", "ProbabilityPlot", "ProbabilityPr", "ProbabilityScalePlot", "ProbitModelFit", "ProcessConnection", "ProcessDirectory", "ProcessEnvironment", "Processes", "ProcessEstimator", "ProcessInformation", "ProcessObject", "ProcessParameterAssumptions", "ProcessParameterQ", "ProcessStateDomain", "ProcessStatus", "ProcessTimeDomain", "Product", "ProductDistribution", "ProductLog", "ProgressIndicator", "ProgressIndicatorBox", "ProgressIndicatorBoxOptions", "Projection", "Prolog", "PromptForm", "ProofObject", "Properties", "Property", "PropertyList", "PropertyValue", "Proportion", "Proportional", "Protect", "Protected", "ProteinData", "Pruning", "PseudoInverse", "PsychrometricPropertyData", "PublicKey", "PublisherID", "PulsarData", "PunctuationCharacter", "Purple", "Put", "PutAppend", "Pyramid", "PyramidBox", "PyramidBoxOptions", "QBinomial", "QFactorial", "QGamma", "QHypergeometricPFQ", "QnDispersion", "QPochhammer", "QPolyGamma", "QRDecomposition", "QuadraticIrrationalQ", "QuadraticOptimization", "Quantile", "QuantilePlot", "Quantity", "QuantityArray", "QuantityDistribution", "QuantityForm", "QuantityMagnitude", "QuantityQ", "QuantityUnit", "QuantityVariable", "QuantityVariableCanonicalUnit", "QuantityVariableDimensions", "QuantityVariableIdentifier", "QuantityVariablePhysicalQuantity", "Quartics", "QuartileDeviation", "Quartiles", "QuartileSkewness", "Query", "QueueingNetworkProcess", "QueueingProcess", "QueueProperties", "Quiet", "Quit", "Quotient", "QuotientRemainder", "RadialGradientImage", "RadialityCentrality", "RadicalBox", "RadicalBoxOptions", "RadioButton", "RadioButtonBar", "RadioButtonBox", "RadioButtonBoxOptions", "Radon", "RadonTransform", "RamanujanTau", "RamanujanTauL", "RamanujanTauTheta", "RamanujanTauZ", "Ramp", "Random", "RandomChoice", "RandomColor", "RandomComplex", "RandomEntity", "RandomFunction", "RandomGeoPosition", "RandomGraph", "RandomImage", "RandomInstance", "RandomInteger", "RandomPermutation", "RandomPoint", "RandomPolygon", "RandomPolyhedron", "RandomPrime", "RandomReal", "RandomSample", "RandomSeed", "RandomSeeding", "RandomVariate", "RandomWalkProcess", "RandomWord", "Range", "RangeFilter", "RangeSpecification", "RankedMax", "RankedMin", "RarerProbability", "Raster", "Raster3D", "Raster3DBox", "Raster3DBoxOptions", "RasterArray", "RasterBox", "RasterBoxOptions", "Rasterize", "RasterSize", "Rational", "RationalFunctions", "Rationalize", "Rationals", "Ratios", "RawArray", "RawBoxes", "RawData", "RawMedium", "RayleighDistribution", "Re", "Read", "ReadByteArray", "ReadLine", "ReadList", "ReadProtected", "ReadString", "Real", "RealAbs", "RealBlockDiagonalForm", "RealDigits", "RealExponent", "Reals", "RealSign", "Reap", "RebuildPacletData", "RecognitionPrior", "RecognitionThreshold", "Record", "RecordLists", "RecordSeparators", "Rectangle", "RectangleBox", "RectangleBoxOptions", "RectangleChart", "RectangleChart3D", "RectangularRepeatingElement", "RecurrenceFilter", "RecurrenceTable", "RecurringDigitsForm", "Red", "Reduce", "RefBox", "ReferenceLineStyle", "ReferenceMarkers", "ReferenceMarkerStyle", "Refine", "ReflectionMatrix", "ReflectionTransform", "Refresh", "RefreshRate", "Region", "RegionBinarize", "RegionBoundary", "RegionBoundaryStyle", "RegionBounds", "RegionCentroid", "RegionDifference", "RegionDimension", "RegionDisjoint", "RegionDistance", "RegionDistanceFunction", "RegionEmbeddingDimension", "RegionEqual", "RegionFillingStyle", "RegionFunction", "RegionImage", "RegionIntersection", "RegionMeasure", "RegionMember", "RegionMemberFunction", "RegionMoment", "RegionNearest", "RegionNearestFunction", "RegionPlot", "RegionPlot3D", "RegionProduct", "RegionQ", "RegionResize", "RegionSize", "RegionSymmetricDifference", "RegionUnion", "RegionWithin", "RegisterExternalEvaluator", "RegularExpression", "Regularization", "RegularlySampledQ", "RegularPolygon", "ReIm", "ReImLabels", "ReImPlot", "ReImStyle", "Reinstall", "RelationalDatabase", "RelationGraph", "Release", "ReleaseHold", "ReliabilityDistribution", "ReliefImage", "ReliefPlot", "RemoteAuthorizationCaching", "RemoteConnect", "RemoteConnectionObject", "RemoteFile", "RemoteRun", "RemoteRunProcess", "Remove", "RemoveAlphaChannel", "RemoveAsynchronousTask", "RemoveAudioStream", "RemoveBackground", "RemoveChannelListener", "RemoveChannelSubscribers", "Removed", "RemoveDiacritics", "RemoveInputStreamMethod", "RemoveOutputStreamMethod", "RemoveProperty", "RemoveScheduledTask", "RemoveUsers", "RemoveVideoStream", "RenameDirectory", "RenameFile", "RenderAll", "RenderingOptions", "RenewalProcess", "RenkoChart", "RepairMesh", "Repeated", "RepeatedNull", "RepeatedString", "RepeatedTiming", "RepeatingElement", "Replace", "ReplaceAll", "ReplaceHeldPart", "ReplaceImageValue", "ReplaceList", "ReplacePart", "ReplacePixelValue", "ReplaceRepeated", "ReplicateLayer", "RequiredPhysicalQuantities", "Resampling", "ResamplingAlgorithmData", "ResamplingMethod", "Rescale", "RescalingTransform", "ResetDirectory", "ResetMenusPacket", "ResetScheduledTask", "ReshapeLayer", "Residue", "ResizeLayer", "Resolve", "ResourceAcquire", "ResourceData", "ResourceFunction", "ResourceObject", "ResourceRegister", "ResourceRemove", "ResourceSearch", "ResourceSubmissionObject", "ResourceSubmit", "ResourceSystemBase", "ResourceSystemPath", "ResourceUpdate", "ResourceVersion", "ResponseForm", "Rest", "RestartInterval", "Restricted", "Resultant", "ResumePacket", "Return", "ReturnEntersInput", "ReturnExpressionPacket", "ReturnInputFormPacket", "ReturnPacket", "ReturnReceiptFunction", "ReturnTextPacket", "Reverse", "ReverseApplied", "ReverseBiorthogonalSplineWavelet", "ReverseElement", "ReverseEquilibrium", "ReverseGraph", "ReverseSort", "ReverseSortBy", "ReverseUpEquilibrium", "RevolutionAxis", "RevolutionPlot3D", "RGBColor", "RiccatiSolve", "RiceDistribution", "RidgeFilter", "RiemannR", "RiemannSiegelTheta", "RiemannSiegelZ", "RiemannXi", "Riffle", "Right", "RightArrow", "RightArrowBar", "RightArrowLeftArrow", "RightComposition", "RightCosetRepresentative", "RightDownTeeVector", "RightDownVector", "RightDownVectorBar", "RightTee", "RightTeeArrow", "RightTeeVector", "RightTriangle", "RightTriangleBar", "RightTriangleEqual", "RightUpDownVector", "RightUpTeeVector", "RightUpVector", "RightUpVectorBar", "RightVector", "RightVectorBar", "RiskAchievementImportance", "RiskReductionImportance", "RogersTanimotoDissimilarity", "RollPitchYawAngles", "RollPitchYawMatrix", "RomanNumeral", "Root", "RootApproximant", "RootIntervals", "RootLocusPlot", "RootMeanSquare", "RootOfUnityQ", "RootReduce", "Roots", "RootSum", "Rotate", "RotateLabel", "RotateLeft", "RotateRight", "RotationAction", "RotationBox", "RotationBoxOptions", "RotationMatrix", "RotationTransform", "Round", "RoundImplies", "RoundingRadius", "Row", "RowAlignments", "RowBackgrounds", "RowBox", "RowHeights", "RowLines", "RowMinHeight", "RowReduce", "RowsEqual", "RowSpacings", "RSolve", "RSolveValue", "RudinShapiro", "RudvalisGroupRu", "Rule", "RuleCondition", "RuleDelayed", "RuleForm", "RulePlot", "RulerUnits", "Run", "RunProcess", "RunScheduledTask", "RunThrough", "RuntimeAttributes", "RuntimeOptions", "RussellRaoDissimilarity", "SameQ", "SameTest", "SameTestProperties", "SampledEntityClass", "SampleDepth", "SampledSoundFunction", "SampledSoundList", "SampleRate", "SamplingPeriod", "SARIMAProcess", "SARMAProcess", "SASTriangle", "SatelliteData", "SatisfiabilityCount", "SatisfiabilityInstances", "SatisfiableQ", "Saturday", "Save", "Saveable", "SaveAutoDelete", "SaveConnection", "SaveDefinitions", "SavitzkyGolayMatrix", "SawtoothWave", "Scale", "Scaled", "ScaleDivisions", "ScaledMousePosition", "ScaleOrigin", "ScalePadding", "ScaleRanges", "ScaleRangeStyle", "ScalingFunctions", "ScalingMatrix", "ScalingTransform", "Scan", "ScheduledTask", "ScheduledTaskActiveQ", "ScheduledTaskInformation", "ScheduledTaskInformationData", "ScheduledTaskObject", "ScheduledTasks", "SchurDecomposition", "ScientificForm", "ScientificNotationThreshold", "ScorerGi", "ScorerGiPrime", "ScorerHi", "ScorerHiPrime", "ScreenRectangle", "ScreenStyleEnvironment", "ScriptBaselineShifts", "ScriptForm", "ScriptLevel", "ScriptMinSize", "ScriptRules", "ScriptSizeMultipliers", "Scrollbars", "ScrollingOptions", "ScrollPosition", "SearchAdjustment", "SearchIndexObject", "SearchIndices", "SearchQueryString", "SearchResultObject", "Sec", "Sech", "SechDistribution", "SecondOrderConeOptimization", "SectionGrouping", "SectorChart", "SectorChart3D", "SectorOrigin", "SectorSpacing", "SecuredAuthenticationKey", "SecuredAuthenticationKeys", "SeedRandom", "Select", "Selectable", "SelectComponents", "SelectedCells", "SelectedNotebook", "SelectFirst", "Selection", "SelectionAnimate", "SelectionCell", "SelectionCellCreateCell", "SelectionCellDefaultStyle", "SelectionCellParentStyle", "SelectionCreateCell", "SelectionDebuggerTag", "SelectionDuplicateCell", "SelectionEvaluate", "SelectionEvaluateCreateCell", "SelectionMove", "SelectionPlaceholder", "SelectionSetStyle", "SelectWithContents", "SelfLoops", "SelfLoopStyle", "SemanticImport", "SemanticImportString", "SemanticInterpretation", "SemialgebraicComponentInstances", "SemidefiniteOptimization", "SendMail", "SendMessage", "Sequence", "SequenceAlignment", "SequenceAttentionLayer", "SequenceCases", "SequenceCount", "SequenceFold", "SequenceFoldList", "SequenceForm", "SequenceHold", "SequenceLastLayer", "SequenceMostLayer", "SequencePosition", "SequencePredict", "SequencePredictorFunction", "SequenceReplace", "SequenceRestLayer", "SequenceReverseLayer", "SequenceSplit", "Series", "SeriesCoefficient", "SeriesData", "SeriesTermGoal", "ServiceConnect", "ServiceDisconnect", "ServiceExecute", "ServiceObject", "ServiceRequest", "ServiceResponse", "ServiceSubmit", "SessionSubmit", "SessionTime", "Set", "SetAccuracy", "SetAlphaChannel", "SetAttributes", "Setbacks", "SetBoxFormNamesPacket", "SetCloudDirectory", "SetCookies", "SetDelayed", "SetDirectory", "SetEnvironment", "SetEvaluationNotebook", "SetFileDate", "SetFileLoadingContext", "SetNotebookStatusLine", "SetOptions", "SetOptionsPacket", "SetPermissions", "SetPrecision", "SetProperty", "SetSecuredAuthenticationKey", "SetSelectedNotebook", "SetSharedFunction", "SetSharedVariable", "SetSpeechParametersPacket", "SetStreamPosition", "SetSystemModel", "SetSystemOptions", "Setter", "SetterBar", "SetterBox", "SetterBoxOptions", "Setting", "SetUsers", "SetValue", "Shading", "Shallow", "ShannonWavelet", "ShapiroWilkTest", "Share", "SharingList", "Sharpen", "ShearingMatrix", "ShearingTransform", "ShellRegion", "ShenCastanMatrix", "ShiftedGompertzDistribution", "ShiftRegisterSequence", "Short", "ShortDownArrow", "Shortest", "ShortestMatch", "ShortestPathFunction", "ShortLeftArrow", "ShortRightArrow", "ShortTimeFourier", "ShortTimeFourierData", "ShortUpArrow", "Show", "ShowAutoConvert", "ShowAutoSpellCheck", "ShowAutoStyles", "ShowCellBracket", "ShowCellLabel", "ShowCellTags", "ShowClosedCellArea", "ShowCodeAssist", "ShowContents", "ShowControls", "ShowCursorTracker", "ShowGroupOpenCloseIcon", "ShowGroupOpener", "ShowInvisibleCharacters", "ShowPageBreaks", "ShowPredictiveInterface", "ShowSelection", "ShowShortBoxForm", "ShowSpecialCharacters", "ShowStringCharacters", "ShowSyntaxStyles", "ShrinkingDelay", "ShrinkWrapBoundingBox", "SiderealTime", "SiegelTheta", "SiegelTukeyTest", "SierpinskiCurve", "SierpinskiMesh", "Sign", "Signature", "SignedRankTest", "SignedRegionDistance", "SignificanceLevel", "SignPadding", "SignTest", "SimilarityRules", "SimpleGraph", "SimpleGraphQ", "SimplePolygonQ", "SimplePolyhedronQ", "Simplex", "Simplify", "Sin", "Sinc", "SinghMaddalaDistribution", "SingleEvaluation", "SingleLetterItalics", "SingleLetterStyle", "SingularValueDecomposition", "SingularValueList", "SingularValuePlot", "SingularValues", "Sinh", "SinhIntegral", "SinIntegral", "SixJSymbol", "Skeleton", "SkeletonTransform", "SkellamDistribution", "Skewness", "SkewNormalDistribution", "SkinStyle", "Skip", "SliceContourPlot3D", "SliceDensityPlot3D", "SliceDistribution", "SliceVectorPlot3D", "Slider", "Slider2D", "Slider2DBox", "Slider2DBoxOptions", "SliderBox", "SliderBoxOptions", "SlideView", "Slot", "SlotSequence", "Small", "SmallCircle", "Smaller", "SmithDecomposition", "SmithDelayCompensator", "SmithWatermanSimilarity", "SmoothDensityHistogram", "SmoothHistogram", "SmoothHistogram3D", "SmoothKernelDistribution", "SnDispersion", "Snippet", "SnubPolyhedron", "SocialMediaData", "Socket", "SocketConnect", "SocketListen", "SocketListener", "SocketObject", "SocketOpen", "SocketReadMessage", "SocketReadyQ", "Sockets", "SocketWaitAll", "SocketWaitNext", "SoftmaxLayer", "SokalSneathDissimilarity", "SolarEclipse", "SolarSystemFeatureData", "SolidAngle", "SolidData", "SolidRegionQ", "Solve", "SolveAlways", "SolveDelayed", "Sort", "SortBy", "SortedBy", "SortedEntityClass", "Sound", "SoundAndGraphics", "SoundNote", "SoundVolume", "SourceLink", "Sow", "Space", "SpaceCurveData", "SpaceForm", "Spacer", "Spacings", "Span", "SpanAdjustments", "SpanCharacterRounding", "SpanFromAbove", "SpanFromBoth", "SpanFromLeft", "SpanLineThickness", "SpanMaxSize", "SpanMinSize", "SpanningCharacters", "SpanSymmetric", "SparseArray", "SpatialGraphDistribution", "SpatialMedian", "SpatialTransformationLayer", "Speak", "SpeakerMatchQ", "SpeakTextPacket", "SpearmanRankTest", "SpearmanRho", "SpeciesData", "SpecificityGoal", "SpectralLineData", "Spectrogram", "SpectrogramArray", "Specularity", "SpeechCases", "SpeechInterpreter", "SpeechRecognize", "SpeechSynthesize", "SpellingCorrection", "SpellingCorrectionList", "SpellingDictionaries", "SpellingDictionariesPath", "SpellingOptions", "SpellingSuggestionsPacket", "Sphere", "SphereBox", "SpherePoints", "SphericalBesselJ", "SphericalBesselY", "SphericalHankelH1", "SphericalHankelH2", "SphericalHarmonicY", "SphericalPlot3D", "SphericalRegion", "SphericalShell", "SpheroidalEigenvalue", "SpheroidalJoiningFactor", "SpheroidalPS", "SpheroidalPSPrime", "SpheroidalQS", "SpheroidalQSPrime", "SpheroidalRadialFactor", "SpheroidalS1", "SpheroidalS1Prime", "SpheroidalS2", "SpheroidalS2Prime", "Splice", "SplicedDistribution", "SplineClosed", "SplineDegree", "SplineKnots", "SplineWeights", "Split", "SplitBy", "SpokenString", "Sqrt", "SqrtBox", "SqrtBoxOptions", "Square", "SquaredEuclideanDistance", "SquareFreeQ", "SquareIntersection", "SquareMatrixQ", "SquareRepeatingElement", "SquaresR", "SquareSubset", "SquareSubsetEqual", "SquareSuperset", "SquareSupersetEqual", "SquareUnion", "SquareWave", "SSSTriangle", "StabilityMargins", "StabilityMarginsStyle", "StableDistribution", "Stack", "StackBegin", "StackComplete", "StackedDateListPlot", "StackedListPlot", "StackInhibit", "StadiumShape", "StandardAtmosphereData", "StandardDeviation", "StandardDeviationFilter", "StandardForm", "Standardize", "Standardized", "StandardOceanData", "StandbyDistribution", "Star", "StarClusterData", "StarData", "StarGraph", "StartAsynchronousTask", "StartExternalSession", "StartingStepSize", "StartOfLine", "StartOfString", "StartProcess", "StartScheduledTask", "StartupSound", "StartWebSession", "StateDimensions", "StateFeedbackGains", "StateOutputEstimator", "StateResponse", "StateSpaceModel", "StateSpaceRealization", "StateSpaceTransform", "StateTransformationLinearize", "StationaryDistribution", "StationaryWaveletPacketTransform", "StationaryWaveletTransform", "StatusArea", "StatusCentrality", "StepMonitor", "StereochemistryElements", "StieltjesGamma", "StippleShading", "StirlingS1", "StirlingS2", "StopAsynchronousTask", "StoppingPowerData", "StopScheduledTask", "StrataVariables", "StratonovichProcess", "StreamColorFunction", "StreamColorFunctionScaling", "StreamDensityPlot", "StreamMarkers", "StreamPlot", "StreamPoints", "StreamPosition", "Streams", "StreamScale", "StreamStyle", "String", "StringBreak", "StringByteCount", "StringCases", "StringContainsQ", "StringCount", "StringDelete", "StringDrop", "StringEndsQ", "StringExpression", "StringExtract", "StringForm", "StringFormat", "StringFreeQ", "StringInsert", "StringJoin", "StringLength", "StringMatchQ", "StringPadLeft", "StringPadRight", "StringPart", "StringPartition", "StringPosition", "StringQ", "StringRepeat", "StringReplace", "StringReplaceList", "StringReplacePart", "StringReverse", "StringRiffle", "StringRotateLeft", "StringRotateRight", "StringSkeleton", "StringSplit", "StringStartsQ", "StringTake", "StringTemplate", "StringToByteArray", "StringToStream", "StringTrim", "StripBoxes", "StripOnInput", "StripWrapperBoxes", "StrokeForm", "StructuralImportance", "StructuredArray", "StructuredArrayHeadQ", "StructuredSelection", "StruveH", "StruveL", "Stub", "StudentTDistribution", "Style", "StyleBox", "StyleBoxAutoDelete", "StyleData", "StyleDefinitions", "StyleForm", "StyleHints", "StyleKeyMapping", "StyleMenuListing", "StyleNameDialogSettings", "StyleNames", "StylePrint", "StyleSheetPath", "Subdivide", "Subfactorial", "Subgraph", "SubMinus", "SubPlus", "SubresultantPolynomialRemainders", "SubresultantPolynomials", "Subresultants", "Subscript", "SubscriptBox", "SubscriptBoxOptions", "Subscripted", "Subsequences", "Subset", "SubsetCases", "SubsetCount", "SubsetEqual", "SubsetMap", "SubsetPosition", "SubsetQ", "SubsetReplace", "Subsets", "SubStar", "SubstitutionSystem", "Subsuperscript", "SubsuperscriptBox", "SubsuperscriptBoxOptions", "SubtitleEncoding", "SubtitleTracks", "Subtract", "SubtractFrom", "SubtractSides", "SubValues", "Succeeds", "SucceedsEqual", "SucceedsSlantEqual", "SucceedsTilde", "Success", "SuchThat", "Sum", "SumConvergence", "SummationLayer", "Sunday", "SunPosition", "Sunrise", "Sunset", "SuperDagger", "SuperMinus", "SupernovaData", "SuperPlus", "Superscript", "SuperscriptBox", "SuperscriptBoxOptions", "Superset", "SupersetEqual", "SuperStar", "Surd", "SurdForm", "SurfaceAppearance", "SurfaceArea", "SurfaceColor", "SurfaceData", "SurfaceGraphics", "SurvivalDistribution", "SurvivalFunction", "SurvivalModel", "SurvivalModelFit", "SuspendPacket", "SuzukiDistribution", "SuzukiGroupSuz", "SwatchLegend", "Switch", "Symbol", "SymbolName", "SymletWavelet", "Symmetric", "SymmetricGroup", "SymmetricKey", "SymmetricMatrixQ", "SymmetricPolynomial", "SymmetricReduction", "Symmetrize", "SymmetrizedArray", "SymmetrizedArrayRules", "SymmetrizedDependentComponents", "SymmetrizedIndependentComponents", "SymmetrizedReplacePart", "SynchronousInitialization", "SynchronousUpdating", "Synonyms", "Syntax", "SyntaxForm", "SyntaxInformation", "SyntaxLength", "SyntaxPacket", "SyntaxQ", "SynthesizeMissingValues", "SystemCredential", "SystemCredentialData", "SystemCredentialKey", "SystemCredentialKeys", "SystemCredentialStoreObject", "SystemDialogInput", "SystemException", "SystemGet", "SystemHelpPath", "SystemInformation", "SystemInformationData", "SystemInstall", "SystemModel", "SystemModeler", "SystemModelExamples", "SystemModelLinearize", "SystemModelParametricSimulate", "SystemModelPlot", "SystemModelProgressReporting", "SystemModelReliability", "SystemModels", "SystemModelSimulate", "SystemModelSimulateSensitivity", "SystemModelSimulationData", "SystemOpen", "SystemOptions", "SystemProcessData", "SystemProcesses", "SystemsConnectionsModel", "SystemsModelDelay", "SystemsModelDelayApproximate", "SystemsModelDelete", "SystemsModelDimensions", "SystemsModelExtract", "SystemsModelFeedbackConnect", "SystemsModelLabels", "SystemsModelLinearity", "SystemsModelMerge", "SystemsModelOrder", "SystemsModelParallelConnect", "SystemsModelSeriesConnect", "SystemsModelStateFeedbackConnect", "SystemsModelVectorRelativeOrders", "SystemStub", "SystemTest", "Tab", "TabFilling", "Table", "TableAlignments", "TableDepth", "TableDirections", "TableForm", "TableHeadings", "TableSpacing", "TableView", "TableViewBox", "TableViewBoxBackground", "TableViewBoxItemSize", "TableViewBoxOptions", "TabSpacings", "TabView", "TabViewBox", "TabViewBoxOptions", "TagBox", "TagBoxNote", "TagBoxOptions", "TaggingRules", "TagSet", "TagSetDelayed", "TagStyle", "TagUnset", "Take", "TakeDrop", "TakeLargest", "TakeLargestBy", "TakeList", "TakeSmallest", "TakeSmallestBy", "TakeWhile", "Tally", "Tan", "Tanh", "TargetDevice", "TargetFunctions", "TargetSystem", "TargetUnits", "TaskAbort", "TaskExecute", "TaskObject", "TaskRemove", "TaskResume", "Tasks", "TaskSuspend", "TaskWait", "TautologyQ", "TelegraphProcess", "TemplateApply", "TemplateArgBox", "TemplateBox", "TemplateBoxOptions", "TemplateEvaluate", "TemplateExpression", "TemplateIf", "TemplateObject", "TemplateSequence", "TemplateSlot", "TemplateSlotSequence", "TemplateUnevaluated", "TemplateVerbatim", "TemplateWith", "TemporalData", "TemporalRegularity", "Temporary", "TemporaryVariable", "TensorContract", "TensorDimensions", "TensorExpand", "TensorProduct", "TensorQ", "TensorRank", "TensorReduce", "TensorSymmetry", "TensorTranspose", "TensorWedge", "TestID", "TestReport", "TestReportObject", "TestResultObject", "Tetrahedron", "TetrahedronBox", "TetrahedronBoxOptions", "TeXForm", "TeXSave", "Text", "Text3DBox", "Text3DBoxOptions", "TextAlignment", "TextBand", "TextBoundingBox", "TextBox", "TextCases", "TextCell", "TextClipboardType", "TextContents", "TextData", "TextElement", "TextForm", "TextGrid", "TextJustification", "TextLine", "TextPacket", "TextParagraph", "TextPosition", "TextRecognize", "TextSearch", "TextSearchReport", "TextSentences", "TextString", "TextStructure", "TextStyle", "TextTranslation", "Texture", "TextureCoordinateFunction", "TextureCoordinateScaling", "TextWords", "Therefore", "ThermodynamicData", "ThermometerGauge", "Thick", "Thickness", "Thin", "Thinning", "ThisLink", "ThompsonGroupTh", "Thread", "ThreadingLayer", "ThreeJSymbol", "Threshold", "Through", "Throw", "ThueMorse", "Thumbnail", "Thursday", "Ticks", "TicksStyle", "TideData", "Tilde", "TildeEqual", "TildeFullEqual", "TildeTilde", "TimeConstrained", "TimeConstraint", "TimeDirection", "TimeFormat", "TimeGoal", "TimelinePlot", "TimeObject", "TimeObjectQ", "TimeRemaining", "Times", "TimesBy", "TimeSeries", "TimeSeriesAggregate", "TimeSeriesForecast", "TimeSeriesInsert", "TimeSeriesInvertibility", "TimeSeriesMap", "TimeSeriesMapThread", "TimeSeriesModel", "TimeSeriesModelFit", "TimeSeriesResample", "TimeSeriesRescale", "TimeSeriesShift", "TimeSeriesThread", "TimeSeriesWindow", "TimeUsed", "TimeValue", "TimeWarpingCorrespondence", "TimeWarpingDistance", "TimeZone", "TimeZoneConvert", "TimeZoneOffset", "Timing", "Tiny", "TitleGrouping", "TitsGroupT", "ToBoxes", "ToCharacterCode", "ToColor", "ToContinuousTimeModel", "ToDate", "Today", "ToDiscreteTimeModel", "ToEntity", "ToeplitzMatrix", "ToExpression", "ToFileName", "Together", "Toggle", "ToggleFalse", "Toggler", "TogglerBar", "TogglerBox", "TogglerBoxOptions", "ToHeldExpression", "ToInvertibleTimeSeries", "TokenWords", "Tolerance", "ToLowerCase", "Tomorrow", "ToNumberField", "TooBig", "Tooltip", "TooltipBox", "TooltipBoxOptions", "TooltipDelay", "TooltipStyle", "ToonShading", "Top", "TopHatTransform", "ToPolarCoordinates", "TopologicalSort", "ToRadicals", "ToRules", "ToSphericalCoordinates", "ToString", "Total", "TotalHeight", "TotalLayer", "TotalVariationFilter", "TotalWidth", "TouchPosition", "TouchscreenAutoZoom", "TouchscreenControlPlacement", "ToUpperCase", "Tr", "Trace", "TraceAbove", "TraceAction", "TraceBackward", "TraceDepth", "TraceDialog", "TraceForward", "TraceInternal", "TraceLevel", "TraceOff", "TraceOn", "TraceOriginal", "TracePrint", "TraceScan", "TrackedSymbols", "TrackingFunction", "TracyWidomDistribution", "TradingChart", "TraditionalForm", "TraditionalFunctionNotation", "TraditionalNotation", "TraditionalOrder", "TrainingProgressCheckpointing", "TrainingProgressFunction", "TrainingProgressMeasurements", "TrainingProgressReporting", "TrainingStoppingCriterion", "TrainingUpdateSchedule", "TransferFunctionCancel", "TransferFunctionExpand", "TransferFunctionFactor", "TransferFunctionModel", "TransferFunctionPoles", "TransferFunctionTransform", "TransferFunctionZeros", "TransformationClass", "TransformationFunction", "TransformationFunctions", "TransformationMatrix", "TransformedDistribution", "TransformedField", "TransformedProcess", "TransformedRegion", "TransitionDirection", "TransitionDuration", "TransitionEffect", "TransitiveClosureGraph", "TransitiveReductionGraph", "Translate", "TranslationOptions", "TranslationTransform", "Transliterate", "Transparent", "TransparentColor", "Transpose", "TransposeLayer", "TrapSelection", "TravelDirections", "TravelDirectionsData", "TravelDistance", "TravelDistanceList", "TravelMethod", "TravelTime", "TreeForm", "TreeGraph", "TreeGraphQ", "TreePlot", "TrendStyle", "Triangle", "TriangleCenter", "TriangleConstruct", "TriangleMeasurement", "TriangleWave", "TriangularDistribution", "TriangulateMesh", "Trig", "TrigExpand", "TrigFactor", "TrigFactorList", "Trigger", "TrigReduce", "TrigToExp", "TrimmedMean", "TrimmedVariance", "TropicalStormData", "True", "TrueQ", "TruncatedDistribution", "TruncatedPolyhedron", "TsallisQExponentialDistribution", "TsallisQGaussianDistribution", "TTest", "Tube", "TubeBezierCurveBox", "TubeBezierCurveBoxOptions", "TubeBox", "TubeBoxOptions", "TubeBSplineCurveBox", "TubeBSplineCurveBoxOptions", "Tuesday", "TukeyLambdaDistribution", "TukeyWindow", "TunnelData", "Tuples", "TuranGraph", "TuringMachine", "TuttePolynomial", "TwoWayRule", "Typed", "TypeSpecifier", "UnateQ", "Uncompress", "UnconstrainedParameters", "Undefined", "UnderBar", "Underflow", "Underlined", "Underoverscript", "UnderoverscriptBox", "UnderoverscriptBoxOptions", "Underscript", "UnderscriptBox", "UnderscriptBoxOptions", "UnderseaFeatureData", "UndirectedEdge", "UndirectedGraph", "UndirectedGraphQ", "UndoOptions", "UndoTrackedVariables", "Unequal", "UnequalTo", "Unevaluated", "UniformDistribution", "UniformGraphDistribution", "UniformPolyhedron", "UniformSumDistribution", "Uninstall", "Union", "UnionedEntityClass", "UnionPlus", "Unique", "UnitaryMatrixQ", "UnitBox", "UnitConvert", "UnitDimensions", "Unitize", "UnitRootTest", "UnitSimplify", "UnitStep", "UnitSystem", "UnitTriangle", "UnitVector", "UnitVectorLayer", "UnityDimensions", "UniverseModelData", "UniversityData", "UnixTime", "Unprotect", "UnregisterExternalEvaluator", "UnsameQ", "UnsavedVariables", "Unset", "UnsetShared", "UntrackedVariables", "Up", "UpArrow", "UpArrowBar", "UpArrowDownArrow", "Update", "UpdateDynamicObjects", "UpdateDynamicObjectsSynchronous", "UpdateInterval", "UpdatePacletSites", "UpdateSearchIndex", "UpDownArrow", "UpEquilibrium", "UpperCaseQ", "UpperLeftArrow", "UpperRightArrow", "UpperTriangularize", "UpperTriangularMatrixQ", "Upsample", "UpSet", "UpSetDelayed", "UpTee", "UpTeeArrow", "UpTo", "UpValues", "URL", "URLBuild", "URLDecode", "URLDispatcher", "URLDownload", "URLDownloadSubmit", "URLEncode", "URLExecute", "URLExpand", "URLFetch", "URLFetchAsynchronous", "URLParse", "URLQueryDecode", "URLQueryEncode", "URLRead", "URLResponseTime", "URLSave", "URLSaveAsynchronous", "URLShorten", "URLSubmit", "UseGraphicsRange", "UserDefinedWavelet", "Using", "UsingFrontEnd", "UtilityFunction", "V2Get", "ValenceErrorHandling", "ValidationLength", "ValidationSet", "Value", "ValueBox", "ValueBoxOptions", "ValueDimensions", "ValueForm", "ValuePreprocessingFunction", "ValueQ", "Values", "ValuesData", "Variables", "Variance", "VarianceEquivalenceTest", "VarianceEstimatorFunction", "VarianceGammaDistribution", "VarianceTest", "VectorAngle", "VectorAround", "VectorAspectRatio", "VectorColorFunction", "VectorColorFunctionScaling", "VectorDensityPlot", "VectorGlyphData", "VectorGreater", "VectorGreaterEqual", "VectorLess", "VectorLessEqual", "VectorMarkers", "VectorPlot", "VectorPlot3D", "VectorPoints", "VectorQ", "VectorRange", "Vectors", "VectorScale", "VectorScaling", "VectorSizes", "VectorStyle", "Vee", "Verbatim", "Verbose", "VerboseConvertToPostScriptPacket", "VerificationTest", "VerifyConvergence", "VerifyDerivedKey", "VerifyDigitalSignature", "VerifyFileSignature", "VerifyInterpretation", "VerifySecurityCertificates", "VerifySolutions", "VerifyTestAssumptions", "Version", "VersionedPreferences", "VersionNumber", "VertexAdd", "VertexCapacity", "VertexColors", "VertexComponent", "VertexConnectivity", "VertexContract", "VertexCoordinateRules", "VertexCoordinates", "VertexCorrelationSimilarity", "VertexCosineSimilarity", "VertexCount", "VertexCoverQ", "VertexDataCoordinates", "VertexDegree", "VertexDelete", "VertexDiceSimilarity", "VertexEccentricity", "VertexInComponent", "VertexInDegree", "VertexIndex", "VertexJaccardSimilarity", "VertexLabeling", "VertexLabels", "VertexLabelStyle", "VertexList", "VertexNormals", "VertexOutComponent", "VertexOutDegree", "VertexQ", "VertexRenderingFunction", "VertexReplace", "VertexShape", "VertexShapeFunction", "VertexSize", "VertexStyle", "VertexTextureCoordinates", "VertexWeight", "VertexWeightedGraphQ", "Vertical", "VerticalBar", "VerticalForm", "VerticalGauge", "VerticalSeparator", "VerticalSlider", "VerticalTilde", "Video", "VideoEncoding", "VideoExtractFrames", "VideoFrameList", "VideoFrameMap", "VideoPause", "VideoPlay", "VideoQ", "VideoStop", "VideoStream", "VideoStreams", "VideoTimeSeries", "VideoTracks", "VideoTrim", "ViewAngle", "ViewCenter", "ViewMatrix", "ViewPoint", "ViewPointSelectorSettings", "ViewPort", "ViewProjection", "ViewRange", "ViewVector", "ViewVertical", "VirtualGroupData", "Visible", "VisibleCell", "VoiceStyleData", "VoigtDistribution", "VolcanoData", "Volume", "VonMisesDistribution", "VoronoiMesh", "WaitAll", "WaitAsynchronousTask", "WaitNext", "WaitUntil", "WakebyDistribution", "WalleniusHypergeometricDistribution", "WaringYuleDistribution", "WarpingCorrespondence", "WarpingDistance", "WatershedComponents", "WatsonUSquareTest", "WattsStrogatzGraphDistribution", "WaveletBestBasis", "WaveletFilterCoefficients", "WaveletImagePlot", "WaveletListPlot", "WaveletMapIndexed", "WaveletMatrixPlot", "WaveletPhi", "WaveletPsi", "WaveletScale", "WaveletScalogram", "WaveletThreshold", "WeaklyConnectedComponents", "WeaklyConnectedGraphComponents", "WeaklyConnectedGraphQ", "WeakStationarity", "WeatherData", "WeatherForecastData", "WebAudioSearch", "WebElementObject", "WeberE", "WebExecute", "WebImage", "WebImageSearch", "WebSearch", "WebSessionObject", "WebSessions", "WebWindowObject", "Wedge", "Wednesday", "WeibullDistribution", "WeierstrassE1", "WeierstrassE2", "WeierstrassE3", "WeierstrassEta1", "WeierstrassEta2", "WeierstrassEta3", "WeierstrassHalfPeriods", "WeierstrassHalfPeriodW1", "WeierstrassHalfPeriodW2", "WeierstrassHalfPeriodW3", "WeierstrassInvariantG2", "WeierstrassInvariantG3", "WeierstrassInvariants", "WeierstrassP", "WeierstrassPPrime", "WeierstrassSigma", "WeierstrassZeta", "WeightedAdjacencyGraph", "WeightedAdjacencyMatrix", "WeightedData", "WeightedGraphQ", "Weights", "WelchWindow", "WheelGraph", "WhenEvent", "Which", "While", "White", "WhiteNoiseProcess", "WhitePoint", "Whitespace", "WhitespaceCharacter", "WhittakerM", "WhittakerW", "WienerFilter", "WienerProcess", "WignerD", "WignerSemicircleDistribution", "WikidataData", "WikidataSearch", "WikipediaData", "WikipediaSearch", "WilksW", "WilksWTest", "WindDirectionData", "WindingCount", "WindingPolygon", "WindowClickSelect", "WindowElements", "WindowFloating", "WindowFrame", "WindowFrameElements", "WindowMargins", "WindowMovable", "WindowOpacity", "WindowPersistentStyles", "WindowSelected", "WindowSize", "WindowStatusArea", "WindowTitle", "WindowToolbars", "WindowWidth", "WindSpeedData", "WindVectorData", "WinsorizedMean", "WinsorizedVariance", "WishartMatrixDistribution", "With", "WolframAlpha", "WolframAlphaDate", "WolframAlphaQuantity", "WolframAlphaResult", "WolframLanguageData", "Word", "WordBoundary", "WordCharacter", "WordCloud", "WordCount", "WordCounts", "WordData", "WordDefinition", "WordFrequency", "WordFrequencyData", "WordList", "WordOrientation", "WordSearch", "WordSelectionFunction", "WordSeparators", "WordSpacings", "WordStem", "WordTranslation", "WorkingPrecision", "WrapAround", "Write", "WriteLine", "WriteString", "Wronskian", "XMLElement", "XMLObject", "XMLTemplate", "Xnor", "Xor", "XYZColor", "Yellow", "Yesterday", "YuleDissimilarity", "ZernikeR", "ZeroSymmetric", "ZeroTest", "ZeroWidthTimes", "Zeta", "ZetaZero", "ZIPCodeData", "ZipfDistribution", "ZoomCenter", "ZoomFactor", "ZTest", "ZTransform", "$Aborted", "$ActivationGroupID", "$ActivationKey", "$ActivationUserRegistered", "$AddOnsDirectory", "$AllowDataUpdates", "$AllowExternalChannelFunctions", "$AllowInternet", "$AssertFunction", "$Assumptions", "$AsynchronousTask", "$AudioDecoders", "$AudioEncoders", "$AudioInputDevices", "$AudioOutputDevices", "$BaseDirectory", "$BasePacletsDirectory", "$BatchInput", "$BatchOutput", "$BlockchainBase", "$BoxForms", "$ByteOrdering", "$CacheBaseDirectory", "$Canceled", "$ChannelBase", "$CharacterEncoding", "$CharacterEncodings", "$CloudAccountName", "$CloudBase", "$CloudConnected", "$CloudConnection", "$CloudCreditsAvailable", "$CloudEvaluation", "$CloudExpressionBase", "$CloudObjectNameFormat", "$CloudObjectURLType", "$CloudRootDirectory", "$CloudSymbolBase", "$CloudUserID", "$CloudUserUUID", "$CloudVersion", "$CloudVersionNumber", "$CloudWolframEngineVersionNumber", "$CommandLine", "$CompilationTarget", "$ConditionHold", "$ConfiguredKernels", "$Context", "$ContextPath", "$ControlActiveSetting", "$Cookies", "$CookieStore", "$CreationDate", "$CurrentLink", "$CurrentTask", "$CurrentWebSession", "$DataStructures", "$DateStringFormat", "$DefaultAudioInputDevice", "$DefaultAudioOutputDevice", "$DefaultFont", "$DefaultFrontEnd", "$DefaultImagingDevice", "$DefaultLocalBase", "$DefaultMailbox", "$DefaultNetworkInterface", "$DefaultPath", "$DefaultProxyRules", "$DefaultSystemCredentialStore", "$Display", "$DisplayFunction", "$DistributedContexts", "$DynamicEvaluation", "$Echo", "$EmbedCodeEnvironments", "$EmbeddableServices", "$EntityStores", "$Epilog", "$EvaluationCloudBase", "$EvaluationCloudObject", "$EvaluationEnvironment", "$ExportFormats", "$ExternalIdentifierTypes", "$ExternalStorageBase", "$Failed", "$FinancialDataSource", "$FontFamilies", "$FormatType", "$FrontEnd", "$FrontEndSession", "$GeoEntityTypes", "$GeoLocation", "$GeoLocationCity", "$GeoLocationCountry", "$GeoLocationPrecision", "$GeoLocationSource", "$HistoryLength", "$HomeDirectory", "$HTMLExportRules", "$HTTPCookies", "$HTTPRequest", "$IgnoreEOF", "$ImageFormattingWidth", "$ImageResolution", "$ImagingDevice", "$ImagingDevices", "$ImportFormats", "$IncomingMailSettings", "$InitialDirectory", "$Initialization", "$InitializationContexts", "$Input", "$InputFileName", "$InputStreamMethods", "$Inspector", "$InstallationDate", "$InstallationDirectory", "$InterfaceEnvironment", "$InterpreterTypes", "$IterationLimit", "$KernelCount", "$KernelID", "$Language", "$LaunchDirectory", "$LibraryPath", "$LicenseExpirationDate", "$LicenseID", "$LicenseProcesses", "$LicenseServer", "$LicenseSubprocesses", "$LicenseType", "$Line", "$Linked", "$LinkSupported", "$LoadedFiles", "$LocalBase", "$LocalSymbolBase", "$MachineAddresses", "$MachineDomain", "$MachineDomains", "$MachineEpsilon", "$MachineID", "$MachineName", "$MachinePrecision", "$MachineType", "$MaxExtraPrecision", "$MaxLicenseProcesses", "$MaxLicenseSubprocesses", "$MaxMachineNumber", "$MaxNumber", "$MaxPiecewiseCases", "$MaxPrecision", "$MaxRootDegree", "$MessageGroups", "$MessageList", "$MessagePrePrint", "$Messages", "$MinMachineNumber", "$MinNumber", "$MinorReleaseNumber", "$MinPrecision", "$MobilePhone", "$ModuleNumber", "$NetworkConnected", "$NetworkInterfaces", "$NetworkLicense", "$NewMessage", "$NewSymbol", "$NotebookInlineStorageLimit", "$Notebooks", "$NoValue", "$NumberMarks", "$Off", "$OperatingSystem", "$Output", "$OutputForms", "$OutputSizeLimit", "$OutputStreamMethods", "$Packages", "$ParentLink", "$ParentProcessID", "$PasswordFile", "$PatchLevelID", "$Path", "$PathnameSeparator", "$PerformanceGoal", "$Permissions", "$PermissionsGroupBase", "$PersistenceBase", "$PersistencePath", "$PipeSupported", "$PlotTheme", "$Post", "$Pre", "$PreferencesDirectory", "$PreInitialization", "$PrePrint", "$PreRead", "$PrintForms", "$PrintLiteral", "$Printout3DPreviewer", "$ProcessID", "$ProcessorCount", "$ProcessorType", "$ProductInformation", "$ProgramName", "$PublisherID", "$RandomState", "$RecursionLimit", "$RegisteredDeviceClasses", "$RegisteredUserName", "$ReleaseNumber", "$RequesterAddress", "$RequesterWolframID", "$RequesterWolframUUID", "$RootDirectory", "$ScheduledTask", "$ScriptCommandLine", "$ScriptInputString", "$SecuredAuthenticationKeyTokens", "$ServiceCreditsAvailable", "$Services", "$SessionID", "$SetParentLink", "$SharedFunctions", "$SharedVariables", "$SoundDisplay", "$SoundDisplayFunction", "$SourceLink", "$SSHAuthentication", "$SubtitleDecoders", "$SubtitleEncoders", "$SummaryBoxDataSizeLimit", "$SuppressInputFormHeads", "$SynchronousEvaluation", "$SyntaxHandler", "$System", "$SystemCharacterEncoding", "$SystemCredentialStore", "$SystemID", "$SystemMemory", "$SystemShell", "$SystemTimeZone", "$SystemWordLength", "$TemplatePath", "$TemporaryDirectory", "$TemporaryPrefix", "$TestFileName", "$TextStyle", "$TimedOut", "$TimeUnit", "$TimeZone", "$TimeZoneEntity", "$TopDirectory", "$TraceOff", "$TraceOn", "$TracePattern", "$TracePostAction", "$TracePreAction", "$UnitSystem", "$Urgent", "$UserAddOnsDirectory", "$UserAgentLanguages", "$UserAgentMachine", "$UserAgentName", "$UserAgentOperatingSystem", "$UserAgentString", "$UserAgentVersion", "$UserBaseDirectory", "$UserBasePacletsDirectory", "$UserDocumentsDirectory", "$Username", "$UserName", "$UserURLBase", "$Version", "$VersionNumber", "$VideoDecoders", "$VideoEncoders", "$VoiceStyles", "$WolframDocumentsDirectory", "$WolframID", "$WolframUUID"];
-
 /**
  * @param {string} value
  * @returns {RegExp}
@@ -14825,29 +14789,31 @@ const SYSTEM_SYMBOLS = ["AASTriangle", "AbelianGroup", "Abort", "AbortKernels", 
  * @param {RegExp | string } re
  * @returns {string}
  */
+
 function source(re) {
   if (!re) return null;
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -14855,11 +14821,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: Wolfram Language
 Description: The Wolfram Language is the programming language used in Wolfram Mathematica, a modern technical computing system spanning most areas of technical computing.
@@ -14869,6 +14836,8 @@ Category: scientific
 */
 
 /** @type LanguageFn */
+
+
 function mathematica(hljs) {
   /*
   This rather scary looking matching of Mathematica numbers is carefully explained by Robert Jacobson here:
@@ -14891,6 +14860,7 @@ function mathematica(hljs) {
   const SYMBOL_RE = /[a-zA-Z$][a-zA-Z0-9$]*/;
   const SYSTEM_SYMBOLS_SET = new Set(SYSTEM_SYMBOLS);
   /** @type {Mode} */
+
   const SYMBOLS = {
     variants: [{
       className: 'builtin-symbol',
@@ -14951,6 +14921,7 @@ function mathematica(hljs) {
     }), PATTERNS, SLOTS, MESSAGES, SYMBOLS, NAMED_CHARACTER, hljs.QUOTE_STRING_MODE, NUMBERS, OPERATORS, BRACES]
   };
 }
+
 module.exports = mathematica;
 
 /***/ }),
@@ -15037,6 +15008,7 @@ function matlab(hljs) {
     }, hljs.COMMENT('^\\s*%\\{\\s*$', '^\\s*%\\}\\s*$'), hljs.COMMENT('%', '$')]
   };
 }
+
 module.exports = matlab;
 
 /***/ }),
@@ -15053,7 +15025,6 @@ Author: Robert Dodier <robert.dodier@gmail.com>
 Website: http://maxima.sourceforge.net
 Category: scientific
 */
-
 function maxima(hljs) {
   const KEYWORDS = 'if then else elseif for thru do while unless step in and or not';
   const LITERALS = 'true false unknown inf minf ind und %e %i %pi %phi %gamma';
@@ -15097,6 +15068,7 @@ function maxima(hljs) {
     illegal: /@/
   };
 }
+
 module.exports = maxima;
 
 /***/ }),
@@ -15114,7 +15086,6 @@ Author: Shuen-Huei Guan <drake.guan@gmail.com>
 Website: http://www.autodesk.com/products/autodesk-maya/overview
 Category: graphics
 */
-
 function mel(hljs) {
   return {
     name: 'MEL',
@@ -15131,6 +15102,7 @@ function mel(hljs) {
     }, hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE]
   };
 }
+
 module.exports = mel;
 
 /***/ }),
@@ -15147,14 +15119,11 @@ Author: mucaho <mkucko@gmail.com>
 Description: Mercury is a logic/functional programming language which combines the clarity and expressiveness of declarative programming with advanced static analysis and error detection features.
 Website: https://www.mercurylang.org
 */
-
 function mercury(hljs) {
   const KEYWORDS = {
     keyword: 'module use_module import_module include_module end_module initialise ' + 'mutable initialize finalize finalise interface implementation pred ' + 'mode func type inst solver any_pred any_func is semidet det nondet ' + 'multi erroneous failure cc_nondet cc_multi typeclass instance where ' + 'pragma promise external trace atomic or_else require_complete_switch ' + 'require_det require_semidet require_multi require_nondet ' + 'require_cc_multi require_cc_nondet require_erroneous require_failure',
-    meta:
-    // pragma
-    'inline no_inline type_spec source_file fact_table obsolete memo ' + 'loop_check minimal_model terminates does_not_terminate ' + 'check_termination promise_equivalent_clauses ' +
-    // preprocessor
+    meta: // pragma
+    'inline no_inline type_spec source_file fact_table obsolete memo ' + 'loop_check minimal_model terminates does_not_terminate ' + 'check_termination promise_equivalent_clauses ' + // preprocessor
     'foreign_proc foreign_decl foreign_code foreign_type ' + 'foreign_import_module foreign_export_enum foreign_export ' + 'foreign_enum may_call_mercury will_not_call_mercury thread_safe ' + 'not_thread_safe maybe_thread_safe promise_pure promise_semipure ' + 'tabled_for_io local untrailed trailed attach_to_io_state ' + 'can_pass_as_mercury_type stable will_not_throw_exception ' + 'may_modify_trail will_not_modify_trail may_duplicate ' + 'may_not_duplicate affects_liveness does_not_affect_liveness ' + 'doesnt_affect_liveness no_sharing unknown_sharing sharing',
     built_in: 'some all not if then else true fail false try catch catch_any ' + 'semidet_true semidet_false semidet_fail impure_true impure semipure'
   };
@@ -15175,6 +15144,7 @@ function mercury(hljs) {
     relevance: 0
   };
   STRING.contains = STRING.contains.slice(); // we need our own copy of contains
+
   STRING.contains.push(STRING_FMT);
   const IMPLICATION = {
     className: 'built_in',
@@ -15214,6 +15184,7 @@ function mercury(hljs) {
     }]
   };
 }
+
 module.exports = mercury;
 
 /***/ }),
@@ -15231,7 +15202,6 @@ Description: MIPS Assembly (up to MIPS32R2)
 Website: https://en.wikipedia.org/wiki/MIPS_architecture
 Category: assembler
 */
-
 function mipsasm(hljs) {
   // local labels: %?[FB]?[AT]?\d{1,2}\w+
   return {
@@ -15240,44 +15210,30 @@ function mipsasm(hljs) {
     aliases: ['mips'],
     keywords: {
       $pattern: '\\.?' + hljs.IDENT_RE,
-      meta:
-      // GNU preprocs
+      meta: // GNU preprocs
       '.2byte .4byte .align .ascii .asciz .balign .byte .code .data .else .end .endif .endm .endr .equ .err .exitm .extern .global .hword .if .ifdef .ifndef .include .irp .long .macro .rept .req .section .set .skip .space .text .word .ltorg ',
-      built_in: '$0 $1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 ' +
-      // integer registers
-      '$16 $17 $18 $19 $20 $21 $22 $23 $24 $25 $26 $27 $28 $29 $30 $31 ' +
-      // integer registers
-      'zero at v0 v1 a0 a1 a2 a3 a4 a5 a6 a7 ' +
-      // integer register aliases
-      't0 t1 t2 t3 t4 t5 t6 t7 t8 t9 s0 s1 s2 s3 s4 s5 s6 s7 s8 ' +
-      // integer register aliases
-      'k0 k1 gp sp fp ra ' +
-      // integer register aliases
-      '$f0 $f1 $f2 $f2 $f4 $f5 $f6 $f7 $f8 $f9 $f10 $f11 $f12 $f13 $f14 $f15 ' +
-      // floating-point registers
-      '$f16 $f17 $f18 $f19 $f20 $f21 $f22 $f23 $f24 $f25 $f26 $f27 $f28 $f29 $f30 $f31 ' +
-      // floating-point registers
-      'Context Random EntryLo0 EntryLo1 Context PageMask Wired EntryHi ' +
-      // Coprocessor 0 registers
-      'HWREna BadVAddr Count Compare SR IntCtl SRSCtl SRSMap Cause EPC PRId ' +
-      // Coprocessor 0 registers
-      'EBase Config Config1 Config2 Config3 LLAddr Debug DEPC DESAVE CacheErr ' +
-      // Coprocessor 0 registers
+      built_in: '$0 $1 $2 $3 $4 $5 $6 $7 $8 $9 $10 $11 $12 $13 $14 $15 ' + // integer registers
+      '$16 $17 $18 $19 $20 $21 $22 $23 $24 $25 $26 $27 $28 $29 $30 $31 ' + // integer registers
+      'zero at v0 v1 a0 a1 a2 a3 a4 a5 a6 a7 ' + // integer register aliases
+      't0 t1 t2 t3 t4 t5 t6 t7 t8 t9 s0 s1 s2 s3 s4 s5 s6 s7 s8 ' + // integer register aliases
+      'k0 k1 gp sp fp ra ' + // integer register aliases
+      '$f0 $f1 $f2 $f2 $f4 $f5 $f6 $f7 $f8 $f9 $f10 $f11 $f12 $f13 $f14 $f15 ' + // floating-point registers
+      '$f16 $f17 $f18 $f19 $f20 $f21 $f22 $f23 $f24 $f25 $f26 $f27 $f28 $f29 $f30 $f31 ' + // floating-point registers
+      'Context Random EntryLo0 EntryLo1 Context PageMask Wired EntryHi ' + // Coprocessor 0 registers
+      'HWREna BadVAddr Count Compare SR IntCtl SRSCtl SRSMap Cause EPC PRId ' + // Coprocessor 0 registers
+      'EBase Config Config1 Config2 Config3 LLAddr Debug DEPC DESAVE CacheErr ' + // Coprocessor 0 registers
       'ECC ErrorEPC TagLo DataLo TagHi DataHi WatchLo WatchHi PerfCtl PerfCnt ' // Coprocessor 0 registers
+
     },
     contains: [{
       className: 'keyword',
-      begin: '\\b(' +
-      // mnemonics
+      begin: '\\b(' + // mnemonics
       // 32-bit integer instructions
-      'addi?u?|andi?|b(al)?|beql?|bgez(al)?l?|bgtzl?|blezl?|bltz(al)?l?|' + 'bnel?|cl[oz]|divu?|ext|ins|j(al)?|jalr(\\.hb)?|jr(\\.hb)?|lbu?|lhu?|' + 'll|lui|lw[lr]?|maddu?|mfhi|mflo|movn|movz|move|msubu?|mthi|mtlo|mul|' + 'multu?|nop|nor|ori?|rotrv?|sb|sc|se[bh]|sh|sllv?|slti?u?|srav?|' + 'srlv?|subu?|sw[lr]?|xori?|wsbh|' +
-      // floating-point instructions
-      'abs\\.[sd]|add\\.[sd]|alnv.ps|bc1[ft]l?|' + 'c\\.(s?f|un|u?eq|[ou]lt|[ou]le|ngle?|seq|l[et]|ng[et])\\.[sd]|' + '(ceil|floor|round|trunc)\\.[lw]\\.[sd]|cfc1|cvt\\.d\\.[lsw]|' + 'cvt\\.l\\.[dsw]|cvt\\.ps\\.s|cvt\\.s\\.[dlw]|cvt\\.s\\.p[lu]|cvt\\.w\\.[dls]|' + 'div\\.[ds]|ldx?c1|luxc1|lwx?c1|madd\\.[sd]|mfc1|mov[fntz]?\\.[ds]|' + 'msub\\.[sd]|mth?c1|mul\\.[ds]|neg\\.[ds]|nmadd\\.[ds]|nmsub\\.[ds]|' + 'p[lu][lu]\\.ps|recip\\.fmt|r?sqrt\\.[ds]|sdx?c1|sub\\.[ds]|suxc1|' + 'swx?c1|' +
-      // system control instructions
+      'addi?u?|andi?|b(al)?|beql?|bgez(al)?l?|bgtzl?|blezl?|bltz(al)?l?|' + 'bnel?|cl[oz]|divu?|ext|ins|j(al)?|jalr(\\.hb)?|jr(\\.hb)?|lbu?|lhu?|' + 'll|lui|lw[lr]?|maddu?|mfhi|mflo|movn|movz|move|msubu?|mthi|mtlo|mul|' + 'multu?|nop|nor|ori?|rotrv?|sb|sc|se[bh]|sh|sllv?|slti?u?|srav?|' + 'srlv?|subu?|sw[lr]?|xori?|wsbh|' + // floating-point instructions
+      'abs\\.[sd]|add\\.[sd]|alnv.ps|bc1[ft]l?|' + 'c\\.(s?f|un|u?eq|[ou]lt|[ou]le|ngle?|seq|l[et]|ng[et])\\.[sd]|' + '(ceil|floor|round|trunc)\\.[lw]\\.[sd]|cfc1|cvt\\.d\\.[lsw]|' + 'cvt\\.l\\.[dsw]|cvt\\.ps\\.s|cvt\\.s\\.[dlw]|cvt\\.s\\.p[lu]|cvt\\.w\\.[dls]|' + 'div\\.[ds]|ldx?c1|luxc1|lwx?c1|madd\\.[sd]|mfc1|mov[fntz]?\\.[ds]|' + 'msub\\.[sd]|mth?c1|mul\\.[ds]|neg\\.[ds]|nmadd\\.[ds]|nmsub\\.[ds]|' + 'p[lu][lu]\\.ps|recip\\.fmt|r?sqrt\\.[ds]|sdx?c1|sub\\.[ds]|suxc1|' + 'swx?c1|' + // system control instructions
       'break|cache|d?eret|[de]i|ehb|mfc0|mtc0|pause|prefx?|rdhwr|' + 'rdpgpr|sdbbp|ssnop|synci?|syscall|teqi?|tgei?u?|tlb(p|r|w[ir])|' + 'tlti?u?|tnei?|wait|wrpgpr' + ')',
       end: '\\s'
-    },
-    // lines ending with ; or # aren't really comments, probably auto-detect fail
+    }, // lines ending with ; or # aren't really comments, probably auto-detect fail
     hljs.COMMENT('[;#](?!\\s*$)', '$'), hljs.C_BLOCK_COMMENT_MODE, hljs.QUOTE_STRING_MODE, {
       className: 'string',
       begin: '\'',
@@ -15317,6 +15273,7 @@ function mipsasm(hljs) {
     illegal: /\//
   };
 }
+
 module.exports = mipsasm;
 
 /***/ }),
@@ -15334,7 +15291,6 @@ Author: Kelley van Evert <kelleyvanevert@gmail.com>
 Website: http://mizar.org/language/
 Category: scientific
 */
-
 function mizar(hljs) {
   return {
     name: 'Mizar',
@@ -15342,6 +15298,7 @@ function mizar(hljs) {
     contains: [hljs.COMMENT('::', '$')]
   };
 }
+
 module.exports = mizar;
 
 /***/ }),
@@ -15367,14 +15324,12 @@ function mojolicious(hljs) {
     contains: [{
       className: 'meta',
       begin: '^__(END|DATA)__$'
-    },
-    // mojolicious line
+    }, // mojolicious line
     {
       begin: "^\\s*%{1,2}={0,2}",
       end: '$',
       subLanguage: 'perl'
-    },
-    // mojolicious block
+    }, // mojolicious block
     {
       begin: "<%{1,2}={0,2}",
       end: "={0,1}%>",
@@ -15384,6 +15339,7 @@ function mojolicious(hljs) {
     }]
   };
 }
+
 module.exports = mojolicious;
 
 /***/ }),
@@ -15400,7 +15356,6 @@ Description: Monkey2 is an easy to use, cross platform, games oriented programmi
 Author: Arthur Bikmullin <devolonter@gmail.com>
 Website: https://blitzresearch.itch.io/monkey2
 */
-
 function monkey(hljs) {
   const NUMBER = {
     className: 'number',
@@ -15453,6 +15408,7 @@ function monkey(hljs) {
     }, hljs.QUOTE_STRING_MODE, NUMBER]
   };
 }
+
 module.exports = monkey;
 
 /***/ }),
@@ -15471,11 +15427,9 @@ Origin: coffeescript.js
 Website: http://moonscript.org/
 Category: scripting
 */
-
 function moonscript(hljs) {
   const KEYWORDS = {
-    keyword:
-    // Moonscript keywords
+    keyword: // Moonscript keywords
     'if then not for in while do return else elseif break continue switch and or ' + 'unless when class extends super local import export from using',
     literal: 'true false nil',
     built_in: '_G _VERSION assert collectgarbage dofile error getfenv getmetatable ipairs load ' + 'loadfile loadstring module next pairs pcall print rawequal rawget rawset require ' + 'select setfenv setmetatable tonumber tostring type unpack xpcall coroutine debug ' + 'io math os package string table'
@@ -15492,8 +15446,7 @@ function moonscript(hljs) {
       end: '(\\s*/)?',
       relevance: 0
     }
-  }),
-  // a number tries to eat the following slash to prevent treating it as a regexp
+  }), // a number tries to eat the following slash to prevent treating it as a regexp
   {
     className: 'string',
     variants: [{
@@ -15510,8 +15463,10 @@ function moonscript(hljs) {
     begin: '@__' + hljs.IDENT_RE
   }, {
     begin: '@' + hljs.IDENT_RE // relevance booster on par with CoffeeScript
+
   }, {
     begin: hljs.IDENT_RE + '\\\\' + hljs.IDENT_RE // inst\method
+
   }];
   SUBST.contains = EXPRESSIONS;
   const TITLE = hljs.inherit(hljs.TITLE_MODE, {
@@ -15522,6 +15477,7 @@ function moonscript(hljs) {
     className: 'params',
     begin: '\\([^\\(]',
     returnBegin: true,
+
     /* We need another contained nameless mode to not have every nested
     pair of parens to be called "params" */
     contains: [{
@@ -15576,6 +15532,7 @@ function moonscript(hljs) {
     }])
   };
 }
+
 module.exports = moonscript;
 
 /***/ }),
@@ -15593,7 +15550,6 @@ module.exports = moonscript;
  Description: Couchbase query language
  Website: https://www.couchbase.com/products/n1ql
  */
-
 function n1ql(hljs) {
   return {
     name: 'N1QL',
@@ -15630,6 +15586,7 @@ function n1ql(hljs) {
     }, hljs.C_BLOCK_COMMENT_MODE]
   };
 }
+
 module.exports = n1ql;
 
 /***/ }),
@@ -15647,7 +15604,6 @@ Contributors: Ivan Sagalaev <maniac@softwaremaniacs.org>
 Category: common, config
 Website: https://www.nginx.com
 */
-
 function nginx(hljs) {
   const VAR = {
     className: 'variable',
@@ -15678,8 +15634,7 @@ function nginx(hljs) {
         begin: /'/,
         end: /'/
       }]
-    },
-    // this swallows entire URLs to avoid detecting numbers within
+    }, // this swallows entire URLs to avoid detecting numbers within
     {
       begin: '([a-z]+):/',
       end: '\\s',
@@ -15693,28 +15648,23 @@ function nginx(hljs) {
         begin: "\\s\\^",
         end: "\\s|\\{|;",
         returnEnd: true
-      },
-      // regexp locations (~, ~*)
+      }, // regexp locations (~, ~*)
       {
         begin: "~\\*?\\s+",
         end: "\\s|\\{|;",
         returnEnd: true
-      },
-      // *.example.com
+      }, // *.example.com
       {
         begin: "\\*(\\.[a-z\\-]+)+"
-      },
-      // sub.example.*
+      }, // sub.example.*
       {
         begin: "([a-z\\-]+\\.)+\\*"
       }]
-    },
-    // IP
+    }, // IP
     {
       className: 'number',
       begin: '\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(:\\d{1,5})?\\b'
-    },
-    // units
+    }, // units
     {
       className: 'number',
       begin: '\\b\\d+[kKmMgGdshdwy]*\\b',
@@ -15747,6 +15697,7 @@ function nginx(hljs) {
     illegal: '[^\\s\\}]'
   };
 }
+
 module.exports = nginx;
 
 /***/ }),
@@ -15763,7 +15714,6 @@ Description: Nim is a statically typed compiled systems programming language.
 Website: https://nim-lang.org
 Category: system
 */
-
 function nim(hljs) {
   return {
     name: 'Nim',
@@ -15808,6 +15758,7 @@ function nim(hljs) {
     }, hljs.HASH_COMMENT_MODE]
   };
 }
+
 module.exports = nim;
 
 /***/ }),
@@ -15824,7 +15775,6 @@ Author: Domen Kožar <domen@dev.si>
 Description: Nix functional language
 Website: http://nixos.org/nix
 */
-
 function nix(hljs) {
   const NIX_KEYWORDS = {
     keyword: 'rec with let in inherit assert if else then',
@@ -15866,6 +15816,7 @@ function nix(hljs) {
     contains: EXPRESSIONS
   };
 }
+
 module.exports = nix;
 
 /***/ }),
@@ -15906,6 +15857,7 @@ function nodeRepl(hljs) {
     }]
   };
 }
+
 module.exports = nodeRepl;
 
 /***/ }),
@@ -15922,7 +15874,6 @@ Description: Nullsoft Scriptable Install System
 Author: Jan T. Sott <jan.sott@gmail.com>
 Website: https://nsis.sourceforge.io/Main_Page
 */
-
 function nsis(hljs) {
   const CONSTANTS = {
     className: 'variable',
@@ -15995,6 +15946,7 @@ function nsis(hljs) {
     }, STRING, COMPILER, DEFINES, VARIABLES, LANGUAGES, PARAMETERS, PLUGINS, hljs.NUMBER_MODE]
   };
 }
+
 module.exports = nsis;
 
 /***/ }),
@@ -16012,7 +15964,6 @@ Contributors: Angel G. Olloqui <angelgarcia.mail@gmail.com>, Matt Diephouse <mat
 Website: https://developer.apple.com/documentation/objectivec
 Category: common
 */
-
 function objectivec(hljs) {
   const API_CLASS = {
     className: 'built_in',
@@ -16073,6 +16024,7 @@ function objectivec(hljs) {
     }]
   };
 }
+
 module.exports = objectivec;
 
 /***/ }),
@@ -16091,7 +16043,6 @@ Description: OCaml language definition.
 Website: https://ocaml.org
 Category: functional
 */
-
 function ocaml(hljs) {
   /* missing support for heredoc-like string (OCaml 4.0.2+) */
   return {
@@ -16099,10 +16050,13 @@ function ocaml(hljs) {
     aliases: ['ml'],
     keywords: {
       $pattern: '[a-z_]\\w*!?',
-      keyword: 'and as assert asr begin class constraint do done downto else end ' + 'exception external for fun function functor if in include ' + 'inherit! inherit initializer land lazy let lor lsl lsr lxor match method!|10 method ' + 'mod module mutable new object of open! open or private rec sig struct ' + 'then to try type val! val virtual when while with ' + /* camlp4 */
+      keyword: 'and as assert asr begin class constraint do done downto else end ' + 'exception external for fun function functor if in include ' + 'inherit! inherit initializer land lazy let lor lsl lsr lxor match method!|10 method ' + 'mod module mutable new object of open! open or private rec sig struct ' + 'then to try type val! val virtual when while with ' +
+      /* camlp4 */
       'parser value',
-      built_in: /* built-in types */
-      'array bool bytes char exn|5 float int int32 int64 list lazy_t|5 nativeint|5 string unit ' + /* (some) types in Pervasives */
+      built_in:
+      /* built-in types */
+      'array bool bytes char exn|5 float int int32 int64 list lazy_t|5 nativeint|5 string unit ' +
+      /* (some) types in Pervasives */
       'in_channel out_channel ref',
       literal: 'true false'
     },
@@ -16118,6 +16072,7 @@ function ocaml(hljs) {
       className: 'symbol',
       begin: '\'[A-Za-z_](?!\')[\\w\']*'
       /* the grammar is ambiguous on how 'a'b should be interpreted but not the compiler */
+
     }, {
       /* polymorphic variant */
       className: 'type',
@@ -16142,9 +16097,11 @@ function ocaml(hljs) {
       relevance: 0
     }, {
       begin: /->/ // relevance booster
+
     }]
   };
 }
+
 module.exports = ocaml;
 
 /***/ }),
@@ -16162,7 +16119,6 @@ Description: OpenSCAD is a language for the 3D CAD modeling software of the same
 Website: https://www.openscad.org
 Category: scientific
 */
-
 function openscad(hljs) {
   const SPECIAL_VARS = {
     className: 'keyword',
@@ -16216,6 +16172,7 @@ function openscad(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, NUMBERS, PREPRO, STRING, SPECIAL_VARS, MODIFIERS, FUNCTIONS]
   };
 }
+
 module.exports = openscad;
 
 /***/ }),
@@ -16232,7 +16189,6 @@ Author: Carlo Kok <ck@remobjects.com>
 Description: Oxygene is built on the foundation of Object Pascal, revamped and extended to be a modern language for the twenty-first century.
 Website: https://www.elementscompiler.com/elements/default.aspx
 */
-
 function oxygene(hljs) {
   const OXYGENE_KEYWORDS = {
     $pattern: /\.?\w+/,
@@ -16283,6 +16239,7 @@ function oxygene(hljs) {
     }]
   };
 }
+
 module.exports = oxygene;
 
 /***/ }),
@@ -16300,7 +16257,6 @@ Author: Oleg Volchkov <oleg@volchkov.net>
 Website: https://www.parser.ru/en/
 Category: template
 */
-
 function parser3(hljs) {
   const CURLY_SUBCOMMENT = hljs.COMMENT(/\{/, /\}/, {
     contains: ['self']
@@ -16331,6 +16287,7 @@ function parser3(hljs) {
     }, hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = parser3;
 
 /***/ }),
@@ -16355,16 +16312,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -16372,11 +16329,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: Perl
 Author: Peter Leonov <gojpeg@yandex.ru>
@@ -16385,11 +16343,13 @@ Category: common
 */
 
 /** @type LanguageFn */
-function perl(hljs) {
-  const KEYWORDS = ['abs', 'accept', 'alarm', 'and', 'atan2', 'bind', 'binmode', 'bless', 'break', 'caller', 'chdir', 'chmod', 'chomp', 'chop', 'chown', 'chr', 'chroot', 'close', 'closedir', 'connect', 'continue', 'cos', 'crypt', 'dbmclose', 'dbmopen', 'defined', 'delete', 'die', 'do', 'dump', 'each', 'else', 'elsif', 'endgrent', 'endhostent', 'endnetent', 'endprotoent', 'endpwent', 'endservent', 'eof', 'eval', 'exec', 'exists', 'exit', 'exp', 'fcntl', 'fileno', 'flock', 'for', 'foreach', 'fork', 'format', 'formline', 'getc', 'getgrent', 'getgrgid', 'getgrnam', 'gethostbyaddr', 'gethostbyname', 'gethostent', 'getlogin', 'getnetbyaddr', 'getnetbyname', 'getnetent', 'getpeername', 'getpgrp', 'getpriority', 'getprotobyname', 'getprotobynumber', 'getprotoent', 'getpwent', 'getpwnam', 'getpwuid', 'getservbyname', 'getservbyport', 'getservent', 'getsockname', 'getsockopt', 'given', 'glob', 'gmtime', 'goto', 'grep', 'gt', 'hex', 'if', 'index', 'int', 'ioctl', 'join', 'keys', 'kill', 'last', 'lc', 'lcfirst', 'length', 'link', 'listen', 'local', 'localtime', 'log', 'lstat', 'lt', 'ma', 'map', 'mkdir', 'msgctl', 'msgget', 'msgrcv', 'msgsnd', 'my', 'ne', 'next', 'no', 'not', 'oct', 'open', 'opendir', 'or', 'ord', 'our', 'pack', 'package', 'pipe', 'pop', 'pos', 'print', 'printf', 'prototype', 'push', 'q|0', 'qq', 'quotemeta', 'qw', 'qx', 'rand', 'read', 'readdir', 'readline', 'readlink', 'readpipe', 'recv', 'redo', 'ref', 'rename', 'require', 'reset', 'return', 'reverse', 'rewinddir', 'rindex', 'rmdir', 'say', 'scalar', 'seek', 'seekdir', 'select', 'semctl', 'semget', 'semop', 'send', 'setgrent', 'sethostent', 'setnetent', 'setpgrp', 'setpriority', 'setprotoent', 'setpwent', 'setservent', 'setsockopt', 'shift', 'shmctl', 'shmget', 'shmread', 'shmwrite', 'shutdown', 'sin', 'sleep', 'socket', 'socketpair', 'sort', 'splice', 'split', 'sprintf', 'sqrt', 'srand', 'stat', 'state', 'study', 'sub', 'substr', 'symlink', 'syscall', 'sysopen', 'sysread', 'sysseek', 'system', 'syswrite', 'tell', 'telldir', 'tie', 'tied', 'time', 'times', 'tr', 'truncate', 'uc', 'ucfirst', 'umask', 'undef', 'unless', 'unlink', 'unpack', 'unshift', 'untie', 'until', 'use', 'utime', 'values', 'vec', 'wait', 'waitpid', 'wantarray', 'warn', 'when', 'while', 'write', 'x|0', 'xor', 'y|0'];
 
-  // https://perldoc.perl.org/perlre#Modifiers
+
+function perl(hljs) {
+  const KEYWORDS = ['abs', 'accept', 'alarm', 'and', 'atan2', 'bind', 'binmode', 'bless', 'break', 'caller', 'chdir', 'chmod', 'chomp', 'chop', 'chown', 'chr', 'chroot', 'close', 'closedir', 'connect', 'continue', 'cos', 'crypt', 'dbmclose', 'dbmopen', 'defined', 'delete', 'die', 'do', 'dump', 'each', 'else', 'elsif', 'endgrent', 'endhostent', 'endnetent', 'endprotoent', 'endpwent', 'endservent', 'eof', 'eval', 'exec', 'exists', 'exit', 'exp', 'fcntl', 'fileno', 'flock', 'for', 'foreach', 'fork', 'format', 'formline', 'getc', 'getgrent', 'getgrgid', 'getgrnam', 'gethostbyaddr', 'gethostbyname', 'gethostent', 'getlogin', 'getnetbyaddr', 'getnetbyname', 'getnetent', 'getpeername', 'getpgrp', 'getpriority', 'getprotobyname', 'getprotobynumber', 'getprotoent', 'getpwent', 'getpwnam', 'getpwuid', 'getservbyname', 'getservbyport', 'getservent', 'getsockname', 'getsockopt', 'given', 'glob', 'gmtime', 'goto', 'grep', 'gt', 'hex', 'if', 'index', 'int', 'ioctl', 'join', 'keys', 'kill', 'last', 'lc', 'lcfirst', 'length', 'link', 'listen', 'local', 'localtime', 'log', 'lstat', 'lt', 'ma', 'map', 'mkdir', 'msgctl', 'msgget', 'msgrcv', 'msgsnd', 'my', 'ne', 'next', 'no', 'not', 'oct', 'open', 'opendir', 'or', 'ord', 'our', 'pack', 'package', 'pipe', 'pop', 'pos', 'print', 'printf', 'prototype', 'push', 'q|0', 'qq', 'quotemeta', 'qw', 'qx', 'rand', 'read', 'readdir', 'readline', 'readlink', 'readpipe', 'recv', 'redo', 'ref', 'rename', 'require', 'reset', 'return', 'reverse', 'rewinddir', 'rindex', 'rmdir', 'say', 'scalar', 'seek', 'seekdir', 'select', 'semctl', 'semget', 'semop', 'send', 'setgrent', 'sethostent', 'setnetent', 'setpgrp', 'setpriority', 'setprotoent', 'setpwent', 'setservent', 'setsockopt', 'shift', 'shmctl', 'shmget', 'shmread', 'shmwrite', 'shutdown', 'sin', 'sleep', 'socket', 'socketpair', 'sort', 'splice', 'split', 'sprintf', 'sqrt', 'srand', 'stat', 'state', 'study', 'sub', 'substr', 'symlink', 'syscall', 'sysopen', 'sysread', 'sysseek', 'system', 'syswrite', 'tell', 'telldir', 'tie', 'tied', 'time', 'times', 'tr', 'truncate', 'uc', 'ucfirst', 'umask', 'undef', 'unless', 'unlink', 'unpack', 'unshift', 'untie', 'until', 'use', 'utime', 'values', 'vec', 'wait', 'waitpid', 'wantarray', 'warn', 'when', 'while', 'write', 'x|0', 'xor', 'y|0']; // https://perldoc.perl.org/perlre#Modifiers
+
   const REGEX_MODIFIERS = /[dualxmsipngr]{0,12}/; // aa and xx are valid, making max length 12
+
   const PERL_KEYWORDS = {
     $pattern: /[\w.]+/,
     keyword: KEYWORDS.join(" ")
@@ -16402,15 +16362,14 @@ function perl(hljs) {
   };
   const METHOD = {
     begin: /->\{/,
-    end: /\}/
-    // contains defined later
+    end: /\}/ // contains defined later
+
   };
   const VAR = {
     variants: [{
       begin: /\$\d/
     }, {
-      begin: concat(/[$%@](\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/,
-      // negative look-ahead tries to avoid matching patterns that are not
+      begin: concat(/[$%@](\^\w\b|#\w+(::\w+)*|\{\w+\}|\w+(::\w*)*)/, // negative look-ahead tries to avoid matching patterns that are not
       // Perl at all like $ident$, @ident@, etc.
       `(?![A-Za-z])(?![@$%])`)
     }, {
@@ -16419,8 +16378,7 @@ function perl(hljs) {
     }]
   };
   const STRING_CONTAINS = [hljs.BACKSLASH_ESCAPE, SUBST, VAR];
-  const REGEX_DELIMS = [/!/, /\//, /\|/, /\?/, /'/, /"/,
-  // valid but infrequent and weird
+  const REGEX_DELIMS = [/!/, /\//, /\|/, /\?/, /'/, /"/, // valid but infrequent and weird
   /#/ // valid but infrequent and weird
   ];
   /**
@@ -16428,6 +16386,7 @@ function perl(hljs) {
    * @param {string|RegExp} open
    * @param {string|RegExp} close
    */
+
   const PAIRED_DOUBLE_RE = (prefix, open, close = '\\1') => {
     const middle = close === '\\1' ? close : concat(close, open);
     return concat(concat("(?:", prefix, ")"), open, /(?:\\.|[^\\\/])*?/, middle, /(?:\\.|[^\\\/])*?/, close, REGEX_MODIFIERS);
@@ -16437,9 +16396,12 @@ function perl(hljs) {
    * @param {string|RegExp} open
    * @param {string|RegExp} close
    */
+
+
   const PAIRED_RE = (prefix, open, close) => {
     return concat(concat("(?:", prefix, ")"), open, /(?:\\.|[^\\\/])*?/, close, REGEX_MODIFIERS);
   };
+
   const PERL_DEFAULT_CONTAINS = [VAR, hljs.HASH_COMMENT_MODE, hljs.COMMENT(/^=\w/, /=cut/, {
     endsWithParent: true
   }), METHOD, {
@@ -16498,12 +16460,10 @@ function perl(hljs) {
     relevance: 0,
     contains: [hljs.HASH_COMMENT_MODE, {
       className: 'regexp',
-      variants: [
-      // allow matching common delimiters
+      variants: [// allow matching common delimiters
       {
         begin: PAIRED_DOUBLE_RE("s|tr|y", either(...REGEX_DELIMS))
-      },
-      // and then paired delmis
+      }, // and then paired delmis
       {
         begin: PAIRED_DOUBLE_RE("s|tr|y", "\\(", "\\)")
       }, {
@@ -16519,16 +16479,13 @@ function perl(hljs) {
         // as relevant
         begin: /(m|qr)\/\//,
         relevance: 0
-      },
-      // prefix is optional with /regex/
+      }, // prefix is optional with /regex/
       {
         begin: PAIRED_RE("(?:m|qr)?", /\//, /\//)
-      },
-      // allow matching common delimiters
+      }, // allow matching common delimiters
       {
         begin: PAIRED_RE("m|qr", either(...REGEX_DELIMS), /\1/)
-      },
-      // allow common paired delmins
+      }, // allow common paired delmins
       {
         begin: PAIRED_RE("m|qr", /\(/, /\)/)
       }, {
@@ -16566,6 +16523,7 @@ function perl(hljs) {
     contains: PERL_DEFAULT_CONTAINS
   };
 }
+
 module.exports = perl;
 
 /***/ }),
@@ -16583,7 +16541,6 @@ Author: Peter Piwowarski <oldlaptop654@aol.com>
 Website: http://man.openbsd.org/pf.conf
 Category: config
 */
-
 function pf(hljs) {
   const MACRO = {
     className: 'variable',
@@ -16610,6 +16567,7 @@ function pf(hljs) {
     contains: [hljs.HASH_COMMENT_MODE, hljs.NUMBER_MODE, hljs.QUOTE_STRING_MODE, MACRO, TABLE]
   };
 }
+
 module.exports = pf;
 
 /***/ }),
@@ -16637,103 +16595,63 @@ Description:
       call from other constructs, hence we can't highlight _all_ function names. And
       some names highlighted while others not looks ugly.
 */
-
 function pgsql(hljs) {
   const COMMENT_MODE = hljs.COMMENT('--', '$');
   const UNQUOTED_IDENT = '[a-zA-Z_][a-zA-Z_0-9$]*';
   const DOLLAR_STRING = '\\$([a-zA-Z_]?|[a-zA-Z_][a-zA-Z_0-9]*)\\$';
   const LABEL = '<<\\s*' + UNQUOTED_IDENT + '\\s*>>';
-  const SQL_KW =
-  // https://www.postgresql.org/docs/11/static/sql-keywords-appendix.html
+  const SQL_KW = // https://www.postgresql.org/docs/11/static/sql-keywords-appendix.html
   // https://www.postgresql.org/docs/11/static/sql-commands.html
   // SQL commands (starting words)
-  'ABORT ALTER ANALYZE BEGIN CALL CHECKPOINT|10 CLOSE CLUSTER COMMENT COMMIT COPY CREATE DEALLOCATE DECLARE ' + 'DELETE DISCARD DO DROP END EXECUTE EXPLAIN FETCH GRANT IMPORT INSERT LISTEN LOAD LOCK MOVE NOTIFY ' + 'PREPARE REASSIGN|10 REFRESH REINDEX RELEASE RESET REVOKE ROLLBACK SAVEPOINT SECURITY SELECT SET SHOW ' + 'START TRUNCATE UNLISTEN|10 UPDATE VACUUM|10 VALUES ' +
-  // SQL commands (others)
-  'AGGREGATE COLLATION CONVERSION|10 DATABASE DEFAULT PRIVILEGES DOMAIN TRIGGER EXTENSION FOREIGN ' + 'WRAPPER|10 TABLE FUNCTION GROUP LANGUAGE LARGE OBJECT MATERIALIZED VIEW OPERATOR CLASS ' + 'FAMILY POLICY PUBLICATION|10 ROLE RULE SCHEMA SEQUENCE SERVER STATISTICS SUBSCRIPTION SYSTEM ' + 'TABLESPACE CONFIGURATION DICTIONARY PARSER TEMPLATE TYPE USER MAPPING PREPARED ACCESS ' + 'METHOD CAST AS TRANSFORM TRANSACTION OWNED TO INTO SESSION AUTHORIZATION ' + 'INDEX PROCEDURE ASSERTION ' +
-  // additional reserved key words
-  'ALL ANALYSE AND ANY ARRAY ASC ASYMMETRIC|10 BOTH CASE CHECK ' + 'COLLATE COLUMN CONCURRENTLY|10 CONSTRAINT CROSS ' + 'DEFERRABLE RANGE ' + 'DESC DISTINCT ELSE EXCEPT FOR FREEZE|10 FROM FULL HAVING ' + 'ILIKE IN INITIALLY INNER INTERSECT IS ISNULL JOIN LATERAL LEADING LIKE LIMIT ' + 'NATURAL NOT NOTNULL NULL OFFSET ON ONLY OR ORDER OUTER OVERLAPS PLACING PRIMARY ' + 'REFERENCES RETURNING SIMILAR SOME SYMMETRIC TABLESAMPLE THEN ' + 'TRAILING UNION UNIQUE USING VARIADIC|10 VERBOSE WHEN WHERE WINDOW WITH ' +
-  // some of non-reserved (which are used in clauses or as PL/pgSQL keyword)
-  'BY RETURNS INOUT OUT SETOF|10 IF STRICT CURRENT CONTINUE OWNER LOCATION OVER PARTITION WITHIN ' + 'BETWEEN ESCAPE EXTERNAL INVOKER DEFINER WORK RENAME VERSION CONNECTION CONNECT ' + 'TABLES TEMP TEMPORARY FUNCTIONS SEQUENCES TYPES SCHEMAS OPTION CASCADE RESTRICT ADD ADMIN ' + 'EXISTS VALID VALIDATE ENABLE DISABLE REPLICA|10 ALWAYS PASSING COLUMNS PATH ' + 'REF VALUE OVERRIDING IMMUTABLE STABLE VOLATILE BEFORE AFTER EACH ROW PROCEDURAL ' + 'ROUTINE NO HANDLER VALIDATOR OPTIONS STORAGE OIDS|10 WITHOUT INHERIT DEPENDS CALLED ' + 'INPUT LEAKPROOF|10 COST ROWS NOWAIT SEARCH UNTIL ENCRYPTED|10 PASSWORD CONFLICT|10 ' + 'INSTEAD INHERITS CHARACTERISTICS WRITE CURSOR ALSO STATEMENT SHARE EXCLUSIVE INLINE ' + 'ISOLATION REPEATABLE READ COMMITTED SERIALIZABLE UNCOMMITTED LOCAL GLOBAL SQL PROCEDURES ' + 'RECURSIVE SNAPSHOT ROLLUP CUBE TRUSTED|10 INCLUDE FOLLOWING PRECEDING UNBOUNDED RANGE GROUPS ' + 'UNENCRYPTED|10 SYSID FORMAT DELIMITER HEADER QUOTE ENCODING FILTER OFF ' +
-  // some parameters of VACUUM/ANALYZE/EXPLAIN
-  'FORCE_QUOTE FORCE_NOT_NULL FORCE_NULL COSTS BUFFERS TIMING SUMMARY DISABLE_PAGE_SKIPPING ' +
-  //
-  'RESTART CYCLE GENERATED IDENTITY DEFERRED IMMEDIATE LEVEL LOGGED UNLOGGED ' + 'OF NOTHING NONE EXCLUDE ATTRIBUTE ' +
-  // from GRANT (not keywords actually)
-  'USAGE ROUTINES ' +
-  // actually literals, but look better this way (due to IS TRUE, IS FALSE, ISNULL etc)
+  'ABORT ALTER ANALYZE BEGIN CALL CHECKPOINT|10 CLOSE CLUSTER COMMENT COMMIT COPY CREATE DEALLOCATE DECLARE ' + 'DELETE DISCARD DO DROP END EXECUTE EXPLAIN FETCH GRANT IMPORT INSERT LISTEN LOAD LOCK MOVE NOTIFY ' + 'PREPARE REASSIGN|10 REFRESH REINDEX RELEASE RESET REVOKE ROLLBACK SAVEPOINT SECURITY SELECT SET SHOW ' + 'START TRUNCATE UNLISTEN|10 UPDATE VACUUM|10 VALUES ' + // SQL commands (others)
+  'AGGREGATE COLLATION CONVERSION|10 DATABASE DEFAULT PRIVILEGES DOMAIN TRIGGER EXTENSION FOREIGN ' + 'WRAPPER|10 TABLE FUNCTION GROUP LANGUAGE LARGE OBJECT MATERIALIZED VIEW OPERATOR CLASS ' + 'FAMILY POLICY PUBLICATION|10 ROLE RULE SCHEMA SEQUENCE SERVER STATISTICS SUBSCRIPTION SYSTEM ' + 'TABLESPACE CONFIGURATION DICTIONARY PARSER TEMPLATE TYPE USER MAPPING PREPARED ACCESS ' + 'METHOD CAST AS TRANSFORM TRANSACTION OWNED TO INTO SESSION AUTHORIZATION ' + 'INDEX PROCEDURE ASSERTION ' + // additional reserved key words
+  'ALL ANALYSE AND ANY ARRAY ASC ASYMMETRIC|10 BOTH CASE CHECK ' + 'COLLATE COLUMN CONCURRENTLY|10 CONSTRAINT CROSS ' + 'DEFERRABLE RANGE ' + 'DESC DISTINCT ELSE EXCEPT FOR FREEZE|10 FROM FULL HAVING ' + 'ILIKE IN INITIALLY INNER INTERSECT IS ISNULL JOIN LATERAL LEADING LIKE LIMIT ' + 'NATURAL NOT NOTNULL NULL OFFSET ON ONLY OR ORDER OUTER OVERLAPS PLACING PRIMARY ' + 'REFERENCES RETURNING SIMILAR SOME SYMMETRIC TABLESAMPLE THEN ' + 'TRAILING UNION UNIQUE USING VARIADIC|10 VERBOSE WHEN WHERE WINDOW WITH ' + // some of non-reserved (which are used in clauses or as PL/pgSQL keyword)
+  'BY RETURNS INOUT OUT SETOF|10 IF STRICT CURRENT CONTINUE OWNER LOCATION OVER PARTITION WITHIN ' + 'BETWEEN ESCAPE EXTERNAL INVOKER DEFINER WORK RENAME VERSION CONNECTION CONNECT ' + 'TABLES TEMP TEMPORARY FUNCTIONS SEQUENCES TYPES SCHEMAS OPTION CASCADE RESTRICT ADD ADMIN ' + 'EXISTS VALID VALIDATE ENABLE DISABLE REPLICA|10 ALWAYS PASSING COLUMNS PATH ' + 'REF VALUE OVERRIDING IMMUTABLE STABLE VOLATILE BEFORE AFTER EACH ROW PROCEDURAL ' + 'ROUTINE NO HANDLER VALIDATOR OPTIONS STORAGE OIDS|10 WITHOUT INHERIT DEPENDS CALLED ' + 'INPUT LEAKPROOF|10 COST ROWS NOWAIT SEARCH UNTIL ENCRYPTED|10 PASSWORD CONFLICT|10 ' + 'INSTEAD INHERITS CHARACTERISTICS WRITE CURSOR ALSO STATEMENT SHARE EXCLUSIVE INLINE ' + 'ISOLATION REPEATABLE READ COMMITTED SERIALIZABLE UNCOMMITTED LOCAL GLOBAL SQL PROCEDURES ' + 'RECURSIVE SNAPSHOT ROLLUP CUBE TRUSTED|10 INCLUDE FOLLOWING PRECEDING UNBOUNDED RANGE GROUPS ' + 'UNENCRYPTED|10 SYSID FORMAT DELIMITER HEADER QUOTE ENCODING FILTER OFF ' + // some parameters of VACUUM/ANALYZE/EXPLAIN
+  'FORCE_QUOTE FORCE_NOT_NULL FORCE_NULL COSTS BUFFERS TIMING SUMMARY DISABLE_PAGE_SKIPPING ' + //
+  'RESTART CYCLE GENERATED IDENTITY DEFERRED IMMEDIATE LEVEL LOGGED UNLOGGED ' + 'OF NOTHING NONE EXCLUDE ATTRIBUTE ' + // from GRANT (not keywords actually)
+  'USAGE ROUTINES ' + // actually literals, but look better this way (due to IS TRUE, IS FALSE, ISNULL etc)
   'TRUE FALSE NAN INFINITY ';
-  const ROLE_ATTRS =
-  // only those not in keywrods already
+  const ROLE_ATTRS = // only those not in keywrods already
   'SUPERUSER NOSUPERUSER CREATEDB NOCREATEDB CREATEROLE NOCREATEROLE INHERIT NOINHERIT ' + 'LOGIN NOLOGIN REPLICATION NOREPLICATION BYPASSRLS NOBYPASSRLS ';
   const PLPGSQL_KW = 'ALIAS BEGIN CONSTANT DECLARE END EXCEPTION RETURN PERFORM|10 RAISE GET DIAGNOSTICS ' + 'STACKED|10 FOREACH LOOP ELSIF EXIT WHILE REVERSE SLICE DEBUG LOG INFO NOTICE WARNING ASSERT ' + 'OPEN ';
-  const TYPES =
-  // https://www.postgresql.org/docs/11/static/datatype.html
-  'BIGINT INT8 BIGSERIAL SERIAL8 BIT VARYING VARBIT BOOLEAN BOOL BOX BYTEA CHARACTER CHAR VARCHAR ' + 'CIDR CIRCLE DATE DOUBLE PRECISION FLOAT8 FLOAT INET INTEGER INT INT4 INTERVAL JSON JSONB LINE LSEG|10 ' + 'MACADDR MACADDR8 MONEY NUMERIC DEC DECIMAL PATH POINT POLYGON REAL FLOAT4 SMALLINT INT2 ' + 'SMALLSERIAL|10 SERIAL2|10 SERIAL|10 SERIAL4|10 TEXT TIME ZONE TIMETZ|10 TIMESTAMP TIMESTAMPTZ|10 TSQUERY|10 TSVECTOR|10 ' + 'TXID_SNAPSHOT|10 UUID XML NATIONAL NCHAR ' + 'INT4RANGE|10 INT8RANGE|10 NUMRANGE|10 TSRANGE|10 TSTZRANGE|10 DATERANGE|10 ' +
-  // pseudotypes
-  'ANYELEMENT ANYARRAY ANYNONARRAY ANYENUM ANYRANGE CSTRING INTERNAL ' + 'RECORD PG_DDL_COMMAND VOID UNKNOWN OPAQUE REFCURSOR ' +
-  // spec. type
-  'NAME ' +
-  // OID-types
+  const TYPES = // https://www.postgresql.org/docs/11/static/datatype.html
+  'BIGINT INT8 BIGSERIAL SERIAL8 BIT VARYING VARBIT BOOLEAN BOOL BOX BYTEA CHARACTER CHAR VARCHAR ' + 'CIDR CIRCLE DATE DOUBLE PRECISION FLOAT8 FLOAT INET INTEGER INT INT4 INTERVAL JSON JSONB LINE LSEG|10 ' + 'MACADDR MACADDR8 MONEY NUMERIC DEC DECIMAL PATH POINT POLYGON REAL FLOAT4 SMALLINT INT2 ' + 'SMALLSERIAL|10 SERIAL2|10 SERIAL|10 SERIAL4|10 TEXT TIME ZONE TIMETZ|10 TIMESTAMP TIMESTAMPTZ|10 TSQUERY|10 TSVECTOR|10 ' + 'TXID_SNAPSHOT|10 UUID XML NATIONAL NCHAR ' + 'INT4RANGE|10 INT8RANGE|10 NUMRANGE|10 TSRANGE|10 TSTZRANGE|10 DATERANGE|10 ' + // pseudotypes
+  'ANYELEMENT ANYARRAY ANYNONARRAY ANYENUM ANYRANGE CSTRING INTERNAL ' + 'RECORD PG_DDL_COMMAND VOID UNKNOWN OPAQUE REFCURSOR ' + // spec. type
+  'NAME ' + // OID-types
   'OID REGPROC|10 REGPROCEDURE|10 REGOPER|10 REGOPERATOR|10 REGCLASS|10 REGTYPE|10 REGROLE|10 ' + 'REGNAMESPACE|10 REGCONFIG|10 REGDICTIONARY|10 '; // +
 
   const TYPES_RE = TYPES.trim().split(' ').map(function (val) {
     return val.split('|')[0];
   }).join('|');
   const SQL_BI = 'CURRENT_TIME CURRENT_TIMESTAMP CURRENT_USER CURRENT_CATALOG|10 CURRENT_DATE LOCALTIME LOCALTIMESTAMP ' + 'CURRENT_ROLE|10 CURRENT_SCHEMA|10 SESSION_USER PUBLIC ';
-  const PLPGSQL_BI = 'FOUND NEW OLD TG_NAME|10 TG_WHEN|10 TG_LEVEL|10 TG_OP|10 TG_RELID|10 TG_RELNAME|10 ' + 'TG_TABLE_NAME|10 TG_TABLE_SCHEMA|10 TG_NARGS|10 TG_ARGV|10 TG_EVENT|10 TG_TAG|10 ' +
-  // get diagnostics
+  const PLPGSQL_BI = 'FOUND NEW OLD TG_NAME|10 TG_WHEN|10 TG_LEVEL|10 TG_OP|10 TG_RELID|10 TG_RELNAME|10 ' + 'TG_TABLE_NAME|10 TG_TABLE_SCHEMA|10 TG_NARGS|10 TG_ARGV|10 TG_EVENT|10 TG_TAG|10 ' + // get diagnostics
   'ROW_COUNT RESULT_OID|10 PG_CONTEXT|10 RETURNED_SQLSTATE COLUMN_NAME CONSTRAINT_NAME ' + 'PG_DATATYPE_NAME|10 MESSAGE_TEXT TABLE_NAME SCHEMA_NAME PG_EXCEPTION_DETAIL|10 ' + 'PG_EXCEPTION_HINT|10 PG_EXCEPTION_CONTEXT|10 ';
-  const PLPGSQL_EXCEPTIONS =
-  // exceptions https://www.postgresql.org/docs/current/static/errcodes-appendix.html
+  const PLPGSQL_EXCEPTIONS = // exceptions https://www.postgresql.org/docs/current/static/errcodes-appendix.html
   'SQLSTATE SQLERRM|10 ' + 'SUCCESSFUL_COMPLETION WARNING DYNAMIC_RESULT_SETS_RETURNED IMPLICIT_ZERO_BIT_PADDING ' + 'NULL_VALUE_ELIMINATED_IN_SET_FUNCTION PRIVILEGE_NOT_GRANTED PRIVILEGE_NOT_REVOKED ' + 'STRING_DATA_RIGHT_TRUNCATION DEPRECATED_FEATURE NO_DATA NO_ADDITIONAL_DYNAMIC_RESULT_SETS_RETURNED ' + 'SQL_STATEMENT_NOT_YET_COMPLETE CONNECTION_EXCEPTION CONNECTION_DOES_NOT_EXIST CONNECTION_FAILURE ' + 'SQLCLIENT_UNABLE_TO_ESTABLISH_SQLCONNECTION SQLSERVER_REJECTED_ESTABLISHMENT_OF_SQLCONNECTION ' + 'TRANSACTION_RESOLUTION_UNKNOWN PROTOCOL_VIOLATION TRIGGERED_ACTION_EXCEPTION FEATURE_NOT_SUPPORTED ' + 'INVALID_TRANSACTION_INITIATION LOCATOR_EXCEPTION INVALID_LOCATOR_SPECIFICATION INVALID_GRANTOR ' + 'INVALID_GRANT_OPERATION INVALID_ROLE_SPECIFICATION DIAGNOSTICS_EXCEPTION ' + 'STACKED_DIAGNOSTICS_ACCESSED_WITHOUT_ACTIVE_HANDLER CASE_NOT_FOUND CARDINALITY_VIOLATION ' + 'DATA_EXCEPTION ARRAY_SUBSCRIPT_ERROR CHARACTER_NOT_IN_REPERTOIRE DATETIME_FIELD_OVERFLOW ' + 'DIVISION_BY_ZERO ERROR_IN_ASSIGNMENT ESCAPE_CHARACTER_CONFLICT INDICATOR_OVERFLOW ' + 'INTERVAL_FIELD_OVERFLOW INVALID_ARGUMENT_FOR_LOGARITHM INVALID_ARGUMENT_FOR_NTILE_FUNCTION ' + 'INVALID_ARGUMENT_FOR_NTH_VALUE_FUNCTION INVALID_ARGUMENT_FOR_POWER_FUNCTION ' + 'INVALID_ARGUMENT_FOR_WIDTH_BUCKET_FUNCTION INVALID_CHARACTER_VALUE_FOR_CAST ' + 'INVALID_DATETIME_FORMAT INVALID_ESCAPE_CHARACTER INVALID_ESCAPE_OCTET INVALID_ESCAPE_SEQUENCE ' + 'NONSTANDARD_USE_OF_ESCAPE_CHARACTER INVALID_INDICATOR_PARAMETER_VALUE INVALID_PARAMETER_VALUE ' + 'INVALID_REGULAR_EXPRESSION INVALID_ROW_COUNT_IN_LIMIT_CLAUSE ' + 'INVALID_ROW_COUNT_IN_RESULT_OFFSET_CLAUSE INVALID_TABLESAMPLE_ARGUMENT INVALID_TABLESAMPLE_REPEAT ' + 'INVALID_TIME_ZONE_DISPLACEMENT_VALUE INVALID_USE_OF_ESCAPE_CHARACTER MOST_SPECIFIC_TYPE_MISMATCH ' + 'NULL_VALUE_NOT_ALLOWED NULL_VALUE_NO_INDICATOR_PARAMETER NUMERIC_VALUE_OUT_OF_RANGE ' + 'SEQUENCE_GENERATOR_LIMIT_EXCEEDED STRING_DATA_LENGTH_MISMATCH STRING_DATA_RIGHT_TRUNCATION ' + 'SUBSTRING_ERROR TRIM_ERROR UNTERMINATED_C_STRING ZERO_LENGTH_CHARACTER_STRING ' + 'FLOATING_POINT_EXCEPTION INVALID_TEXT_REPRESENTATION INVALID_BINARY_REPRESENTATION ' + 'BAD_COPY_FILE_FORMAT UNTRANSLATABLE_CHARACTER NOT_AN_XML_DOCUMENT INVALID_XML_DOCUMENT ' + 'INVALID_XML_CONTENT INVALID_XML_COMMENT INVALID_XML_PROCESSING_INSTRUCTION ' + 'INTEGRITY_CONSTRAINT_VIOLATION RESTRICT_VIOLATION NOT_NULL_VIOLATION FOREIGN_KEY_VIOLATION ' + 'UNIQUE_VIOLATION CHECK_VIOLATION EXCLUSION_VIOLATION INVALID_CURSOR_STATE ' + 'INVALID_TRANSACTION_STATE ACTIVE_SQL_TRANSACTION BRANCH_TRANSACTION_ALREADY_ACTIVE ' + 'HELD_CURSOR_REQUIRES_SAME_ISOLATION_LEVEL INAPPROPRIATE_ACCESS_MODE_FOR_BRANCH_TRANSACTION ' + 'INAPPROPRIATE_ISOLATION_LEVEL_FOR_BRANCH_TRANSACTION ' + 'NO_ACTIVE_SQL_TRANSACTION_FOR_BRANCH_TRANSACTION READ_ONLY_SQL_TRANSACTION ' + 'SCHEMA_AND_DATA_STATEMENT_MIXING_NOT_SUPPORTED NO_ACTIVE_SQL_TRANSACTION ' + 'IN_FAILED_SQL_TRANSACTION IDLE_IN_TRANSACTION_SESSION_TIMEOUT INVALID_SQL_STATEMENT_NAME ' + 'TRIGGERED_DATA_CHANGE_VIOLATION INVALID_AUTHORIZATION_SPECIFICATION INVALID_PASSWORD ' + 'DEPENDENT_PRIVILEGE_DESCRIPTORS_STILL_EXIST DEPENDENT_OBJECTS_STILL_EXIST ' + 'INVALID_TRANSACTION_TERMINATION SQL_ROUTINE_EXCEPTION FUNCTION_EXECUTED_NO_RETURN_STATEMENT ' + 'MODIFYING_SQL_DATA_NOT_PERMITTED PROHIBITED_SQL_STATEMENT_ATTEMPTED ' + 'READING_SQL_DATA_NOT_PERMITTED INVALID_CURSOR_NAME EXTERNAL_ROUTINE_EXCEPTION ' + 'CONTAINING_SQL_NOT_PERMITTED MODIFYING_SQL_DATA_NOT_PERMITTED ' + 'PROHIBITED_SQL_STATEMENT_ATTEMPTED READING_SQL_DATA_NOT_PERMITTED ' + 'EXTERNAL_ROUTINE_INVOCATION_EXCEPTION INVALID_SQLSTATE_RETURNED NULL_VALUE_NOT_ALLOWED ' + 'TRIGGER_PROTOCOL_VIOLATED SRF_PROTOCOL_VIOLATED EVENT_TRIGGER_PROTOCOL_VIOLATED ' + 'SAVEPOINT_EXCEPTION INVALID_SAVEPOINT_SPECIFICATION INVALID_CATALOG_NAME ' + 'INVALID_SCHEMA_NAME TRANSACTION_ROLLBACK TRANSACTION_INTEGRITY_CONSTRAINT_VIOLATION ' + 'SERIALIZATION_FAILURE STATEMENT_COMPLETION_UNKNOWN DEADLOCK_DETECTED ' + 'SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION SYNTAX_ERROR INSUFFICIENT_PRIVILEGE CANNOT_COERCE ' + 'GROUPING_ERROR WINDOWING_ERROR INVALID_RECURSION INVALID_FOREIGN_KEY INVALID_NAME ' + 'NAME_TOO_LONG RESERVED_NAME DATATYPE_MISMATCH INDETERMINATE_DATATYPE COLLATION_MISMATCH ' + 'INDETERMINATE_COLLATION WRONG_OBJECT_TYPE GENERATED_ALWAYS UNDEFINED_COLUMN ' + 'UNDEFINED_FUNCTION UNDEFINED_TABLE UNDEFINED_PARAMETER UNDEFINED_OBJECT ' + 'DUPLICATE_COLUMN DUPLICATE_CURSOR DUPLICATE_DATABASE DUPLICATE_FUNCTION ' + 'DUPLICATE_PREPARED_STATEMENT DUPLICATE_SCHEMA DUPLICATE_TABLE DUPLICATE_ALIAS ' + 'DUPLICATE_OBJECT AMBIGUOUS_COLUMN AMBIGUOUS_FUNCTION AMBIGUOUS_PARAMETER AMBIGUOUS_ALIAS ' + 'INVALID_COLUMN_REFERENCE INVALID_COLUMN_DEFINITION INVALID_CURSOR_DEFINITION ' + 'INVALID_DATABASE_DEFINITION INVALID_FUNCTION_DEFINITION ' + 'INVALID_PREPARED_STATEMENT_DEFINITION INVALID_SCHEMA_DEFINITION INVALID_TABLE_DEFINITION ' + 'INVALID_OBJECT_DEFINITION WITH_CHECK_OPTION_VIOLATION INSUFFICIENT_RESOURCES DISK_FULL ' + 'OUT_OF_MEMORY TOO_MANY_CONNECTIONS CONFIGURATION_LIMIT_EXCEEDED PROGRAM_LIMIT_EXCEEDED ' + 'STATEMENT_TOO_COMPLEX TOO_MANY_COLUMNS TOO_MANY_ARGUMENTS OBJECT_NOT_IN_PREREQUISITE_STATE ' + 'OBJECT_IN_USE CANT_CHANGE_RUNTIME_PARAM LOCK_NOT_AVAILABLE OPERATOR_INTERVENTION ' + 'QUERY_CANCELED ADMIN_SHUTDOWN CRASH_SHUTDOWN CANNOT_CONNECT_NOW DATABASE_DROPPED ' + 'SYSTEM_ERROR IO_ERROR UNDEFINED_FILE DUPLICATE_FILE SNAPSHOT_TOO_OLD CONFIG_FILE_ERROR ' + 'LOCK_FILE_EXISTS FDW_ERROR FDW_COLUMN_NAME_NOT_FOUND FDW_DYNAMIC_PARAMETER_VALUE_NEEDED ' + 'FDW_FUNCTION_SEQUENCE_ERROR FDW_INCONSISTENT_DESCRIPTOR_INFORMATION ' + 'FDW_INVALID_ATTRIBUTE_VALUE FDW_INVALID_COLUMN_NAME FDW_INVALID_COLUMN_NUMBER ' + 'FDW_INVALID_DATA_TYPE FDW_INVALID_DATA_TYPE_DESCRIPTORS ' + 'FDW_INVALID_DESCRIPTOR_FIELD_IDENTIFIER FDW_INVALID_HANDLE FDW_INVALID_OPTION_INDEX ' + 'FDW_INVALID_OPTION_NAME FDW_INVALID_STRING_LENGTH_OR_BUFFER_LENGTH ' + 'FDW_INVALID_STRING_FORMAT FDW_INVALID_USE_OF_NULL_POINTER FDW_TOO_MANY_HANDLES ' + 'FDW_OUT_OF_MEMORY FDW_NO_SCHEMAS FDW_OPTION_NAME_NOT_FOUND FDW_REPLY_HANDLE ' + 'FDW_SCHEMA_NOT_FOUND FDW_TABLE_NOT_FOUND FDW_UNABLE_TO_CREATE_EXECUTION ' + 'FDW_UNABLE_TO_CREATE_REPLY FDW_UNABLE_TO_ESTABLISH_CONNECTION PLPGSQL_ERROR ' + 'RAISE_EXCEPTION NO_DATA_FOUND TOO_MANY_ROWS ASSERT_FAILURE INTERNAL_ERROR DATA_CORRUPTED ' + 'INDEX_CORRUPTED ';
-  const FUNCTIONS =
-  // https://www.postgresql.org/docs/11/static/functions-aggregate.html
-  'ARRAY_AGG AVG BIT_AND BIT_OR BOOL_AND BOOL_OR COUNT EVERY JSON_AGG JSONB_AGG JSON_OBJECT_AGG ' + 'JSONB_OBJECT_AGG MAX MIN MODE STRING_AGG SUM XMLAGG ' + 'CORR COVAR_POP COVAR_SAMP REGR_AVGX REGR_AVGY REGR_COUNT REGR_INTERCEPT REGR_R2 REGR_SLOPE ' + 'REGR_SXX REGR_SXY REGR_SYY STDDEV STDDEV_POP STDDEV_SAMP VARIANCE VAR_POP VAR_SAMP ' + 'PERCENTILE_CONT PERCENTILE_DISC ' +
-  // https://www.postgresql.org/docs/11/static/functions-window.html
-  'ROW_NUMBER RANK DENSE_RANK PERCENT_RANK CUME_DIST NTILE LAG LEAD FIRST_VALUE LAST_VALUE NTH_VALUE ' +
-  // https://www.postgresql.org/docs/11/static/functions-comparison.html
-  'NUM_NONNULLS NUM_NULLS ' +
-  // https://www.postgresql.org/docs/11/static/functions-math.html
-  'ABS CBRT CEIL CEILING DEGREES DIV EXP FLOOR LN LOG MOD PI POWER RADIANS ROUND SCALE SIGN SQRT ' + 'TRUNC WIDTH_BUCKET ' + 'RANDOM SETSEED ' + 'ACOS ACOSD ASIN ASIND ATAN ATAND ATAN2 ATAN2D COS COSD COT COTD SIN SIND TAN TAND ' +
-  // https://www.postgresql.org/docs/11/static/functions-string.html
-  'BIT_LENGTH CHAR_LENGTH CHARACTER_LENGTH LOWER OCTET_LENGTH OVERLAY POSITION SUBSTRING TREAT TRIM UPPER ' + 'ASCII BTRIM CHR CONCAT CONCAT_WS CONVERT CONVERT_FROM CONVERT_TO DECODE ENCODE INITCAP ' + 'LEFT LENGTH LPAD LTRIM MD5 PARSE_IDENT PG_CLIENT_ENCODING QUOTE_IDENT|10 QUOTE_LITERAL|10 ' + 'QUOTE_NULLABLE|10 REGEXP_MATCH REGEXP_MATCHES REGEXP_REPLACE REGEXP_SPLIT_TO_ARRAY ' + 'REGEXP_SPLIT_TO_TABLE REPEAT REPLACE REVERSE RIGHT RPAD RTRIM SPLIT_PART STRPOS SUBSTR ' + 'TO_ASCII TO_HEX TRANSLATE ' +
-  // https://www.postgresql.org/docs/11/static/functions-binarystring.html
-  'OCTET_LENGTH GET_BIT GET_BYTE SET_BIT SET_BYTE ' +
-  // https://www.postgresql.org/docs/11/static/functions-formatting.html
-  'TO_CHAR TO_DATE TO_NUMBER TO_TIMESTAMP ' +
-  // https://www.postgresql.org/docs/11/static/functions-datetime.html
-  'AGE CLOCK_TIMESTAMP|10 DATE_PART DATE_TRUNC ISFINITE JUSTIFY_DAYS JUSTIFY_HOURS JUSTIFY_INTERVAL ' + 'MAKE_DATE MAKE_INTERVAL|10 MAKE_TIME MAKE_TIMESTAMP|10 MAKE_TIMESTAMPTZ|10 NOW STATEMENT_TIMESTAMP|10 ' + 'TIMEOFDAY TRANSACTION_TIMESTAMP|10 ' +
-  // https://www.postgresql.org/docs/11/static/functions-enum.html
-  'ENUM_FIRST ENUM_LAST ENUM_RANGE ' +
-  // https://www.postgresql.org/docs/11/static/functions-geometry.html
-  'AREA CENTER DIAMETER HEIGHT ISCLOSED ISOPEN NPOINTS PCLOSE POPEN RADIUS WIDTH ' + 'BOX BOUND_BOX CIRCLE LINE LSEG PATH POLYGON ' +
-  // https://www.postgresql.org/docs/11/static/functions-net.html
-  'ABBREV BROADCAST HOST HOSTMASK MASKLEN NETMASK NETWORK SET_MASKLEN TEXT INET_SAME_FAMILY ' + 'INET_MERGE MACADDR8_SET7BIT ' +
-  // https://www.postgresql.org/docs/11/static/functions-textsearch.html
-  'ARRAY_TO_TSVECTOR GET_CURRENT_TS_CONFIG NUMNODE PLAINTO_TSQUERY PHRASETO_TSQUERY WEBSEARCH_TO_TSQUERY ' + 'QUERYTREE SETWEIGHT STRIP TO_TSQUERY TO_TSVECTOR JSON_TO_TSVECTOR JSONB_TO_TSVECTOR TS_DELETE ' + 'TS_FILTER TS_HEADLINE TS_RANK TS_RANK_CD TS_REWRITE TSQUERY_PHRASE TSVECTOR_TO_ARRAY ' + 'TSVECTOR_UPDATE_TRIGGER TSVECTOR_UPDATE_TRIGGER_COLUMN ' +
-  // https://www.postgresql.org/docs/11/static/functions-xml.html
-  'XMLCOMMENT XMLCONCAT XMLELEMENT XMLFOREST XMLPI XMLROOT ' + 'XMLEXISTS XML_IS_WELL_FORMED XML_IS_WELL_FORMED_DOCUMENT XML_IS_WELL_FORMED_CONTENT ' + 'XPATH XPATH_EXISTS XMLTABLE XMLNAMESPACES ' + 'TABLE_TO_XML TABLE_TO_XMLSCHEMA TABLE_TO_XML_AND_XMLSCHEMA ' + 'QUERY_TO_XML QUERY_TO_XMLSCHEMA QUERY_TO_XML_AND_XMLSCHEMA ' + 'CURSOR_TO_XML CURSOR_TO_XMLSCHEMA ' + 'SCHEMA_TO_XML SCHEMA_TO_XMLSCHEMA SCHEMA_TO_XML_AND_XMLSCHEMA ' + 'DATABASE_TO_XML DATABASE_TO_XMLSCHEMA DATABASE_TO_XML_AND_XMLSCHEMA ' + 'XMLATTRIBUTES ' +
-  // https://www.postgresql.org/docs/11/static/functions-json.html
-  'TO_JSON TO_JSONB ARRAY_TO_JSON ROW_TO_JSON JSON_BUILD_ARRAY JSONB_BUILD_ARRAY JSON_BUILD_OBJECT ' + 'JSONB_BUILD_OBJECT JSON_OBJECT JSONB_OBJECT JSON_ARRAY_LENGTH JSONB_ARRAY_LENGTH JSON_EACH ' + 'JSONB_EACH JSON_EACH_TEXT JSONB_EACH_TEXT JSON_EXTRACT_PATH JSONB_EXTRACT_PATH ' + 'JSON_OBJECT_KEYS JSONB_OBJECT_KEYS JSON_POPULATE_RECORD JSONB_POPULATE_RECORD JSON_POPULATE_RECORDSET ' + 'JSONB_POPULATE_RECORDSET JSON_ARRAY_ELEMENTS JSONB_ARRAY_ELEMENTS JSON_ARRAY_ELEMENTS_TEXT ' + 'JSONB_ARRAY_ELEMENTS_TEXT JSON_TYPEOF JSONB_TYPEOF JSON_TO_RECORD JSONB_TO_RECORD JSON_TO_RECORDSET ' + 'JSONB_TO_RECORDSET JSON_STRIP_NULLS JSONB_STRIP_NULLS JSONB_SET JSONB_INSERT JSONB_PRETTY ' +
-  // https://www.postgresql.org/docs/11/static/functions-sequence.html
-  'CURRVAL LASTVAL NEXTVAL SETVAL ' +
-  // https://www.postgresql.org/docs/11/static/functions-conditional.html
-  'COALESCE NULLIF GREATEST LEAST ' +
-  // https://www.postgresql.org/docs/11/static/functions-array.html
-  'ARRAY_APPEND ARRAY_CAT ARRAY_NDIMS ARRAY_DIMS ARRAY_FILL ARRAY_LENGTH ARRAY_LOWER ARRAY_POSITION ' + 'ARRAY_POSITIONS ARRAY_PREPEND ARRAY_REMOVE ARRAY_REPLACE ARRAY_TO_STRING ARRAY_UPPER CARDINALITY ' + 'STRING_TO_ARRAY UNNEST ' +
-  // https://www.postgresql.org/docs/11/static/functions-range.html
-  'ISEMPTY LOWER_INC UPPER_INC LOWER_INF UPPER_INF RANGE_MERGE ' +
-  // https://www.postgresql.org/docs/11/static/functions-srf.html
-  'GENERATE_SERIES GENERATE_SUBSCRIPTS ' +
-  // https://www.postgresql.org/docs/11/static/functions-info.html
-  'CURRENT_DATABASE CURRENT_QUERY CURRENT_SCHEMA|10 CURRENT_SCHEMAS|10 INET_CLIENT_ADDR INET_CLIENT_PORT ' + 'INET_SERVER_ADDR INET_SERVER_PORT ROW_SECURITY_ACTIVE FORMAT_TYPE ' + 'TO_REGCLASS TO_REGPROC TO_REGPROCEDURE TO_REGOPER TO_REGOPERATOR TO_REGTYPE TO_REGNAMESPACE TO_REGROLE ' + 'COL_DESCRIPTION OBJ_DESCRIPTION SHOBJ_DESCRIPTION ' + 'TXID_CURRENT TXID_CURRENT_IF_ASSIGNED TXID_CURRENT_SNAPSHOT TXID_SNAPSHOT_XIP TXID_SNAPSHOT_XMAX ' + 'TXID_SNAPSHOT_XMIN TXID_VISIBLE_IN_SNAPSHOT TXID_STATUS ' +
-  // https://www.postgresql.org/docs/11/static/functions-admin.html
-  'CURRENT_SETTING SET_CONFIG BRIN_SUMMARIZE_NEW_VALUES BRIN_SUMMARIZE_RANGE BRIN_DESUMMARIZE_RANGE ' + 'GIN_CLEAN_PENDING_LIST ' +
-  // https://www.postgresql.org/docs/11/static/functions-trigger.html
-  'SUPPRESS_REDUNDANT_UPDATES_TRIGGER ' +
-  // ihttps://www.postgresql.org/docs/devel/static/lo-funcs.html
-  'LO_FROM_BYTEA LO_PUT LO_GET LO_CREAT LO_CREATE LO_UNLINK LO_IMPORT LO_EXPORT LOREAD LOWRITE ' +
-  //
+  const FUNCTIONS = // https://www.postgresql.org/docs/11/static/functions-aggregate.html
+  'ARRAY_AGG AVG BIT_AND BIT_OR BOOL_AND BOOL_OR COUNT EVERY JSON_AGG JSONB_AGG JSON_OBJECT_AGG ' + 'JSONB_OBJECT_AGG MAX MIN MODE STRING_AGG SUM XMLAGG ' + 'CORR COVAR_POP COVAR_SAMP REGR_AVGX REGR_AVGY REGR_COUNT REGR_INTERCEPT REGR_R2 REGR_SLOPE ' + 'REGR_SXX REGR_SXY REGR_SYY STDDEV STDDEV_POP STDDEV_SAMP VARIANCE VAR_POP VAR_SAMP ' + 'PERCENTILE_CONT PERCENTILE_DISC ' + // https://www.postgresql.org/docs/11/static/functions-window.html
+  'ROW_NUMBER RANK DENSE_RANK PERCENT_RANK CUME_DIST NTILE LAG LEAD FIRST_VALUE LAST_VALUE NTH_VALUE ' + // https://www.postgresql.org/docs/11/static/functions-comparison.html
+  'NUM_NONNULLS NUM_NULLS ' + // https://www.postgresql.org/docs/11/static/functions-math.html
+  'ABS CBRT CEIL CEILING DEGREES DIV EXP FLOOR LN LOG MOD PI POWER RADIANS ROUND SCALE SIGN SQRT ' + 'TRUNC WIDTH_BUCKET ' + 'RANDOM SETSEED ' + 'ACOS ACOSD ASIN ASIND ATAN ATAND ATAN2 ATAN2D COS COSD COT COTD SIN SIND TAN TAND ' + // https://www.postgresql.org/docs/11/static/functions-string.html
+  'BIT_LENGTH CHAR_LENGTH CHARACTER_LENGTH LOWER OCTET_LENGTH OVERLAY POSITION SUBSTRING TREAT TRIM UPPER ' + 'ASCII BTRIM CHR CONCAT CONCAT_WS CONVERT CONVERT_FROM CONVERT_TO DECODE ENCODE INITCAP ' + 'LEFT LENGTH LPAD LTRIM MD5 PARSE_IDENT PG_CLIENT_ENCODING QUOTE_IDENT|10 QUOTE_LITERAL|10 ' + 'QUOTE_NULLABLE|10 REGEXP_MATCH REGEXP_MATCHES REGEXP_REPLACE REGEXP_SPLIT_TO_ARRAY ' + 'REGEXP_SPLIT_TO_TABLE REPEAT REPLACE REVERSE RIGHT RPAD RTRIM SPLIT_PART STRPOS SUBSTR ' + 'TO_ASCII TO_HEX TRANSLATE ' + // https://www.postgresql.org/docs/11/static/functions-binarystring.html
+  'OCTET_LENGTH GET_BIT GET_BYTE SET_BIT SET_BYTE ' + // https://www.postgresql.org/docs/11/static/functions-formatting.html
+  'TO_CHAR TO_DATE TO_NUMBER TO_TIMESTAMP ' + // https://www.postgresql.org/docs/11/static/functions-datetime.html
+  'AGE CLOCK_TIMESTAMP|10 DATE_PART DATE_TRUNC ISFINITE JUSTIFY_DAYS JUSTIFY_HOURS JUSTIFY_INTERVAL ' + 'MAKE_DATE MAKE_INTERVAL|10 MAKE_TIME MAKE_TIMESTAMP|10 MAKE_TIMESTAMPTZ|10 NOW STATEMENT_TIMESTAMP|10 ' + 'TIMEOFDAY TRANSACTION_TIMESTAMP|10 ' + // https://www.postgresql.org/docs/11/static/functions-enum.html
+  'ENUM_FIRST ENUM_LAST ENUM_RANGE ' + // https://www.postgresql.org/docs/11/static/functions-geometry.html
+  'AREA CENTER DIAMETER HEIGHT ISCLOSED ISOPEN NPOINTS PCLOSE POPEN RADIUS WIDTH ' + 'BOX BOUND_BOX CIRCLE LINE LSEG PATH POLYGON ' + // https://www.postgresql.org/docs/11/static/functions-net.html
+  'ABBREV BROADCAST HOST HOSTMASK MASKLEN NETMASK NETWORK SET_MASKLEN TEXT INET_SAME_FAMILY ' + 'INET_MERGE MACADDR8_SET7BIT ' + // https://www.postgresql.org/docs/11/static/functions-textsearch.html
+  'ARRAY_TO_TSVECTOR GET_CURRENT_TS_CONFIG NUMNODE PLAINTO_TSQUERY PHRASETO_TSQUERY WEBSEARCH_TO_TSQUERY ' + 'QUERYTREE SETWEIGHT STRIP TO_TSQUERY TO_TSVECTOR JSON_TO_TSVECTOR JSONB_TO_TSVECTOR TS_DELETE ' + 'TS_FILTER TS_HEADLINE TS_RANK TS_RANK_CD TS_REWRITE TSQUERY_PHRASE TSVECTOR_TO_ARRAY ' + 'TSVECTOR_UPDATE_TRIGGER TSVECTOR_UPDATE_TRIGGER_COLUMN ' + // https://www.postgresql.org/docs/11/static/functions-xml.html
+  'XMLCOMMENT XMLCONCAT XMLELEMENT XMLFOREST XMLPI XMLROOT ' + 'XMLEXISTS XML_IS_WELL_FORMED XML_IS_WELL_FORMED_DOCUMENT XML_IS_WELL_FORMED_CONTENT ' + 'XPATH XPATH_EXISTS XMLTABLE XMLNAMESPACES ' + 'TABLE_TO_XML TABLE_TO_XMLSCHEMA TABLE_TO_XML_AND_XMLSCHEMA ' + 'QUERY_TO_XML QUERY_TO_XMLSCHEMA QUERY_TO_XML_AND_XMLSCHEMA ' + 'CURSOR_TO_XML CURSOR_TO_XMLSCHEMA ' + 'SCHEMA_TO_XML SCHEMA_TO_XMLSCHEMA SCHEMA_TO_XML_AND_XMLSCHEMA ' + 'DATABASE_TO_XML DATABASE_TO_XMLSCHEMA DATABASE_TO_XML_AND_XMLSCHEMA ' + 'XMLATTRIBUTES ' + // https://www.postgresql.org/docs/11/static/functions-json.html
+  'TO_JSON TO_JSONB ARRAY_TO_JSON ROW_TO_JSON JSON_BUILD_ARRAY JSONB_BUILD_ARRAY JSON_BUILD_OBJECT ' + 'JSONB_BUILD_OBJECT JSON_OBJECT JSONB_OBJECT JSON_ARRAY_LENGTH JSONB_ARRAY_LENGTH JSON_EACH ' + 'JSONB_EACH JSON_EACH_TEXT JSONB_EACH_TEXT JSON_EXTRACT_PATH JSONB_EXTRACT_PATH ' + 'JSON_OBJECT_KEYS JSONB_OBJECT_KEYS JSON_POPULATE_RECORD JSONB_POPULATE_RECORD JSON_POPULATE_RECORDSET ' + 'JSONB_POPULATE_RECORDSET JSON_ARRAY_ELEMENTS JSONB_ARRAY_ELEMENTS JSON_ARRAY_ELEMENTS_TEXT ' + 'JSONB_ARRAY_ELEMENTS_TEXT JSON_TYPEOF JSONB_TYPEOF JSON_TO_RECORD JSONB_TO_RECORD JSON_TO_RECORDSET ' + 'JSONB_TO_RECORDSET JSON_STRIP_NULLS JSONB_STRIP_NULLS JSONB_SET JSONB_INSERT JSONB_PRETTY ' + // https://www.postgresql.org/docs/11/static/functions-sequence.html
+  'CURRVAL LASTVAL NEXTVAL SETVAL ' + // https://www.postgresql.org/docs/11/static/functions-conditional.html
+  'COALESCE NULLIF GREATEST LEAST ' + // https://www.postgresql.org/docs/11/static/functions-array.html
+  'ARRAY_APPEND ARRAY_CAT ARRAY_NDIMS ARRAY_DIMS ARRAY_FILL ARRAY_LENGTH ARRAY_LOWER ARRAY_POSITION ' + 'ARRAY_POSITIONS ARRAY_PREPEND ARRAY_REMOVE ARRAY_REPLACE ARRAY_TO_STRING ARRAY_UPPER CARDINALITY ' + 'STRING_TO_ARRAY UNNEST ' + // https://www.postgresql.org/docs/11/static/functions-range.html
+  'ISEMPTY LOWER_INC UPPER_INC LOWER_INF UPPER_INF RANGE_MERGE ' + // https://www.postgresql.org/docs/11/static/functions-srf.html
+  'GENERATE_SERIES GENERATE_SUBSCRIPTS ' + // https://www.postgresql.org/docs/11/static/functions-info.html
+  'CURRENT_DATABASE CURRENT_QUERY CURRENT_SCHEMA|10 CURRENT_SCHEMAS|10 INET_CLIENT_ADDR INET_CLIENT_PORT ' + 'INET_SERVER_ADDR INET_SERVER_PORT ROW_SECURITY_ACTIVE FORMAT_TYPE ' + 'TO_REGCLASS TO_REGPROC TO_REGPROCEDURE TO_REGOPER TO_REGOPERATOR TO_REGTYPE TO_REGNAMESPACE TO_REGROLE ' + 'COL_DESCRIPTION OBJ_DESCRIPTION SHOBJ_DESCRIPTION ' + 'TXID_CURRENT TXID_CURRENT_IF_ASSIGNED TXID_CURRENT_SNAPSHOT TXID_SNAPSHOT_XIP TXID_SNAPSHOT_XMAX ' + 'TXID_SNAPSHOT_XMIN TXID_VISIBLE_IN_SNAPSHOT TXID_STATUS ' + // https://www.postgresql.org/docs/11/static/functions-admin.html
+  'CURRENT_SETTING SET_CONFIG BRIN_SUMMARIZE_NEW_VALUES BRIN_SUMMARIZE_RANGE BRIN_DESUMMARIZE_RANGE ' + 'GIN_CLEAN_PENDING_LIST ' + // https://www.postgresql.org/docs/11/static/functions-trigger.html
+  'SUPPRESS_REDUNDANT_UPDATES_TRIGGER ' + // ihttps://www.postgresql.org/docs/devel/static/lo-funcs.html
+  'LO_FROM_BYTEA LO_PUT LO_GET LO_CREAT LO_CREATE LO_UNLINK LO_IMPORT LO_EXPORT LOREAD LOWRITE ' + //
   'GROUPING CAST ';
   const FUNCTIONS_RE = FUNCTIONS.trim().split(' ').map(function (val) {
     return val.split('|')[0];
@@ -16749,8 +16667,7 @@ function pgsql(hljs) {
     // Forbid some cunstructs from other languages to improve autodetect. In fact
     // "[a-z]:" is legal (as part of array slice), but improbabal.
     illegal: /:==|\W\s*\(\*|(^|\s)\$[a-z]|\{\{|[a-z]:\s*$|\.\.\.|TO:|DO:/,
-    contains: [
-    // special handling of some words, which are reserved only in some contexts
+    contains: [// special handling of some words, which are reserved only in some contexts
     {
       className: 'keyword',
       variants: [{
@@ -16838,33 +16755,27 @@ function pgsql(hljs) {
       }, {
         begin: /\bAS\s+(ASSIGNMENT|IMPLICIT|PERMISSIVE|RESTRICTIVE|ENUM|RANGE)\b/
       }]
-    },
-    // functions named as keywords, followed by '('
+    }, // functions named as keywords, followed by '('
     {
-      begin: /\b(FORMAT|FAMILY|VERSION)\s*\(/
-      // keywords: { built_in: 'FORMAT FAMILY VERSION' }
-    },
-    // INCLUDE ( ... ) in index_parameters in CREATE TABLE
+      begin: /\b(FORMAT|FAMILY|VERSION)\s*\(/ // keywords: { built_in: 'FORMAT FAMILY VERSION' }
+
+    }, // INCLUDE ( ... ) in index_parameters in CREATE TABLE
     {
       begin: /\bINCLUDE\s*\(/,
       keywords: 'INCLUDE'
-    },
-    // not highlight RANGE if not in frame_clause (not 100% correct, but seems satisfactory)
+    }, // not highlight RANGE if not in frame_clause (not 100% correct, but seems satisfactory)
     {
       begin: /\bRANGE(?!\s*(BETWEEN|UNBOUNDED|CURRENT|[-0-9]+))/
-    },
-    // disable highlighting in commands CREATE AGGREGATE/COLLATION/DATABASE/OPERTOR/TEXT SEARCH .../TYPE
+    }, // disable highlighting in commands CREATE AGGREGATE/COLLATION/DATABASE/OPERTOR/TEXT SEARCH .../TYPE
     // and in PL/pgSQL RAISE ... USING
     {
       begin: /\b(VERSION|OWNER|TEMPLATE|TABLESPACE|CONNECTION\s+LIMIT|PROCEDURE|RESTRICT|JOIN|PARSER|COPY|START|END|COLLATION|INPUT|ANALYZE|STORAGE|LIKE|DEFAULT|DELIMITER|ENCODING|COLUMN|CONSTRAINT|TABLE|SCHEMA)\s*=/
-    },
-    // PG_smth; HAS_some_PRIVILEGE
+    }, // PG_smth; HAS_some_PRIVILEGE
     {
       // className: 'built_in',
       begin: /\b(PG_\w+?|HAS_[A-Z_]+_PRIVILEGE)\b/,
       relevance: 10
-    },
-    // extract
+    }, // extract
     {
       begin: /\bEXTRACT\s*\(/,
       end: /\bFROM\b/,
@@ -16873,24 +16784,21 @@ function pgsql(hljs) {
         // built_in: 'EXTRACT',
         type: 'CENTURY DAY DECADE DOW DOY EPOCH HOUR ISODOW ISOYEAR MICROSECONDS ' + 'MILLENNIUM MILLISECONDS MINUTE MONTH QUARTER SECOND TIMEZONE TIMEZONE_HOUR ' + 'TIMEZONE_MINUTE WEEK YEAR'
       }
-    },
-    // xmlelement, xmlpi - special NAME
+    }, // xmlelement, xmlpi - special NAME
     {
       begin: /\b(XMLELEMENT|XMLPI)\s*\(\s*NAME/,
       keywords: {
         // built_in: 'XMLELEMENT XMLPI',
         keyword: 'NAME'
       }
-    },
-    // xmlparse, xmlserialize
+    }, // xmlparse, xmlserialize
     {
       begin: /\b(XMLPARSE|XMLSERIALIZE)\s*\(\s*(DOCUMENT|CONTENT)/,
       keywords: {
         // built_in: 'XMLPARSE XMLSERIALIZE',
         keyword: 'DOCUMENT CONTENT'
       }
-    },
-    // Sequences. We actually skip everything between CACHE|INCREMENT|MAXVALUE|MINVALUE and
+    }, // Sequences. We actually skip everything between CACHE|INCREMENT|MAXVALUE|MINVALUE and
     // nearest following numeric constant. Without with trick we find a lot of "keywords"
     // in 'avrasm' autodetection test...
     {
@@ -16898,33 +16806,29 @@ function pgsql(hljs) {
       end: hljs.C_NUMBER_RE,
       returnEnd: true,
       keywords: 'BY CACHE INCREMENT MAXVALUE MINVALUE'
-    },
-    // WITH|WITHOUT TIME ZONE as part of datatype
+    }, // WITH|WITHOUT TIME ZONE as part of datatype
     {
       className: 'type',
       begin: /\b(WITH|WITHOUT)\s+TIME\s+ZONE\b/
-    },
-    // INTERVAL optional fields
+    }, // INTERVAL optional fields
     {
       className: 'type',
       begin: /\bINTERVAL\s+(YEAR|MONTH|DAY|HOUR|MINUTE|SECOND)(\s+TO\s+(MONTH|HOUR|MINUTE|SECOND))?\b/
-    },
-    // Pseudo-types which allowed only as return type
+    }, // Pseudo-types which allowed only as return type
     {
       begin: /\bRETURNS\s+(LANGUAGE_HANDLER|TRIGGER|EVENT_TRIGGER|FDW_HANDLER|INDEX_AM_HANDLER|TSM_HANDLER)\b/,
       keywords: {
         keyword: 'RETURNS',
         type: 'LANGUAGE_HANDLER TRIGGER EVENT_TRIGGER FDW_HANDLER INDEX_AM_HANDLER TSM_HANDLER'
       }
-    },
-    // Known functions - only when followed by '('
+    }, // Known functions - only when followed by '('
     {
-      begin: '\\b(' + FUNCTIONS_RE + ')\\s*\\('
-      // keywords: { built_in: FUNCTIONS }
-    },
-    // Types
+      begin: '\\b(' + FUNCTIONS_RE + ')\\s*\\(' // keywords: { built_in: FUNCTIONS }
+
+    }, // Types
     {
       begin: '\\.(' + TYPES_RE + ')\\b' // prevent highlight as type, say, 'oid' in 'pgclass.oid'
+
     }, {
       begin: '\\b(' + TYPES_RE + ')\\s+PATH\\b',
       // in XMLTABLE
@@ -16936,8 +16840,7 @@ function pgsql(hljs) {
     }, {
       className: 'type',
       begin: '\\b(' + TYPES_RE + ')\\b'
-    },
-    // Strings, see https://www.postgresql.org/docs/11/static/sql-syntax-lexical.html#SQL-SYNTAX-CONSTANTS
+    }, // Strings, see https://www.postgresql.org/docs/11/static/sql-syntax-lexical.html#SQL-SYNTAX-CONSTANTS
     {
       className: 'string',
       begin: '\'',
@@ -16962,20 +16865,16 @@ function pgsql(hljs) {
         subLanguage: ['pgsql', 'perl', 'python', 'tcl', 'r', 'lua', 'java', 'php', 'ruby', 'bash', 'scheme', 'xml', 'json'],
         endsWithParent: true
       }]
-    }),
-    // identifiers in quotes
+    }), // identifiers in quotes
     {
       begin: '"',
       end: '"',
       contains: [{
         begin: '""'
       }]
-    },
-    // numbers
-    hljs.C_NUMBER_MODE,
-    // comments
-    hljs.C_BLOCK_COMMENT_MODE, COMMENT_MODE,
-    // PL/pgSQL staff
+    }, // numbers
+    hljs.C_NUMBER_MODE, // comments
+    hljs.C_BLOCK_COMMENT_MODE, COMMENT_MODE, // PL/pgSQL staff
     // %ROWTYPE, %TYPE, $n
     {
       className: 'meta',
@@ -16991,8 +16890,7 @@ function pgsql(hljs) {
         begin: '^#\\w',
         end: '$'
       }]
-    },
-    // <<labeles>>
+    }, // <<labeles>>
     {
       className: 'symbol',
       begin: LABEL,
@@ -17000,6 +16898,7 @@ function pgsql(hljs) {
     }]
   };
 }
+
 module.exports = pgsql;
 
 /***/ }),
@@ -17017,7 +16916,6 @@ Author: Josh Goebel <hello@joshgoebel.com>
 Website: https://www.php.net
 Category: common
 */
-
 function phpTemplate(hljs) {
   return {
     name: "PHP template",
@@ -17026,8 +16924,7 @@ function phpTemplate(hljs) {
       begin: /<\?(php|=)?/,
       end: /\?>/,
       subLanguage: 'php',
-      contains: [
-      // We don't want the php closing tag ?> to close the PHP block when
+      contains: [// We don't want the php closing tag ?> to close the PHP block when
       // inside any of the following blocks:
       {
         begin: '/\\*',
@@ -17055,6 +16952,7 @@ function phpTemplate(hljs) {
     }]
   };
 }
+
 module.exports = phpTemplate;
 
 /***/ }),
@@ -17080,8 +16978,7 @@ Category: common
 function php(hljs) {
   const VARIABLE = {
     className: 'variable',
-    begin: '\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*' +
-    // negative look-ahead tries to avoid matching patterns that are not
+    begin: '\\$+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*' + // negative look-ahead tries to avoid matching patterns that are not
     // Perl at all like $ident$, @ident@, etc.
     `(?![A-Za-z0-9])(?![$])`
   };
@@ -17090,8 +16987,7 @@ function php(hljs) {
     variants: [{
       begin: /<\?php/,
       relevance: 10
-    },
-    // boost for obvious PHP
+    }, // boost for obvious PHP
     {
       begin: /<\?[=]?/
     }, {
@@ -17135,16 +17031,13 @@ function php(hljs) {
     className: 'number',
     variants: [{
       begin: `\\b0b[01]+(?:_[01]+)*\\b`
-    },
-    // Binary w/ underscore support
+    }, // Binary w/ underscore support
     {
       begin: `\\b0o[0-7]+(?:_[0-7]+)*\\b`
-    },
-    // Octals w/ underscore support
+    }, // Octals w/ underscore support
     {
       begin: `\\b0x[\\da-f]+(?:_[\\da-f]+)*\\b`
-    },
-    // Hex w/ underscore support
+    }, // Hex w/ underscore support
     // Decimals w/ underscore support, with optional fragments and scientific exponent (e) suffix.
     {
       begin: `(?:\\b\\d+(?:_\\d+)*(\\.(?:\\d+(?:_\\d+)*))?|\\B\\.\\d+)(?:e[+-]?\\d+)?`
@@ -17152,30 +17045,23 @@ function php(hljs) {
     relevance: 0
   };
   const KEYWORDS = {
-    keyword:
-    // Magic constants:
+    keyword: // Magic constants:
     // <https://www.php.net/manual/en/language.constants.predefined.php>
-    '__CLASS__ __DIR__ __FILE__ __FUNCTION__ __LINE__ __METHOD__ __NAMESPACE__ __TRAIT__ ' +
-    // Function that look like language construct or language construct that look like function:
+    '__CLASS__ __DIR__ __FILE__ __FUNCTION__ __LINE__ __METHOD__ __NAMESPACE__ __TRAIT__ ' + // Function that look like language construct or language construct that look like function:
     // List of keywords that may not require parenthesis
-    'die echo exit include include_once print require require_once ' +
-    // These are not language construct (function) but operate on the currently-executing function and can access the current symbol table
+    'die echo exit include include_once print require require_once ' + // These are not language construct (function) but operate on the currently-executing function and can access the current symbol table
     // 'compact extract func_get_arg func_get_args func_num_args get_called_class get_parent_class ' +
     // Other keywords:
     // <https://www.php.net/manual/en/reserved.php>
     // <https://www.php.net/manual/en/language.types.type-juggling.php>
     'array abstract and as binary bool boolean break callable case catch class clone const continue declare ' + 'default do double else elseif empty enddeclare endfor endforeach endif endswitch endwhile enum eval extends ' + 'final finally float for foreach from global goto if implements instanceof insteadof int integer interface ' + 'isset iterable list match|0 mixed new object or private protected public real return string switch throw trait ' + 'try unset use var void while xor yield',
     literal: 'false null true',
-    built_in:
-    // Standard PHP library:
+    built_in: // Standard PHP library:
     // <https://www.php.net/manual/en/book.spl.php>
-    'Error|0 ' +
-    // error is too common a name esp since PHP is case in-sensitive
-    'AppendIterator ArgumentCountError ArithmeticError ArrayIterator ArrayObject AssertionError BadFunctionCallException BadMethodCallException CachingIterator CallbackFilterIterator CompileError Countable DirectoryIterator DivisionByZeroError DomainException EmptyIterator ErrorException Exception FilesystemIterator FilterIterator GlobIterator InfiniteIterator InvalidArgumentException IteratorIterator LengthException LimitIterator LogicException MultipleIterator NoRewindIterator OutOfBoundsException OutOfRangeException OuterIterator OverflowException ParentIterator ParseError RangeException RecursiveArrayIterator RecursiveCachingIterator RecursiveCallbackFilterIterator RecursiveDirectoryIterator RecursiveFilterIterator RecursiveIterator RecursiveIteratorIterator RecursiveRegexIterator RecursiveTreeIterator RegexIterator RuntimeException SeekableIterator SplDoublyLinkedList SplFileInfo SplFileObject SplFixedArray SplHeap SplMaxHeap SplMinHeap SplObjectStorage SplObserver SplObserver SplPriorityQueue SplQueue SplStack SplSubject SplSubject SplTempFileObject TypeError UnderflowException UnexpectedValueException UnhandledMatchError ' +
-    // Reserved interfaces:
+    'Error|0 ' + // error is too common a name esp since PHP is case in-sensitive
+    'AppendIterator ArgumentCountError ArithmeticError ArrayIterator ArrayObject AssertionError BadFunctionCallException BadMethodCallException CachingIterator CallbackFilterIterator CompileError Countable DirectoryIterator DivisionByZeroError DomainException EmptyIterator ErrorException Exception FilesystemIterator FilterIterator GlobIterator InfiniteIterator InvalidArgumentException IteratorIterator LengthException LimitIterator LogicException MultipleIterator NoRewindIterator OutOfBoundsException OutOfRangeException OuterIterator OverflowException ParentIterator ParseError RangeException RecursiveArrayIterator RecursiveCachingIterator RecursiveCallbackFilterIterator RecursiveDirectoryIterator RecursiveFilterIterator RecursiveIterator RecursiveIteratorIterator RecursiveRegexIterator RecursiveTreeIterator RegexIterator RuntimeException SeekableIterator SplDoublyLinkedList SplFileInfo SplFileObject SplFixedArray SplHeap SplMaxHeap SplMinHeap SplObjectStorage SplObserver SplObserver SplPriorityQueue SplQueue SplStack SplSubject SplSubject SplTempFileObject TypeError UnderflowException UnexpectedValueException UnhandledMatchError ' + // Reserved interfaces:
     // <https://www.php.net/manual/en/reserved.interfaces.php>
-    'ArrayAccess Closure Generator Iterator IteratorAggregate Serializable Stringable Throwable Traversable WeakReference WeakMap ' +
-    // Reserved classes:
+    'ArrayAccess Closure Generator Iterator IteratorAggregate Serializable Stringable Throwable Traversable WeakReference WeakMap ' + // Reserved classes:
     // <https://www.php.net/manual/en/reserved.classes.php>
     'Directory __PHP_Incomplete_Class parent php_user_filter self static stdClass'
   };
@@ -17250,6 +17136,7 @@ function php(hljs) {
     }, STRING, NUMBER]
   };
 }
+
 module.exports = php;
 
 /***/ }),
@@ -17266,7 +17153,6 @@ Author: Egor Rogov (e.rogov@postgrespro.ru)
 Description: Plain text without any highlighting.
 Category: common
 */
-
 function plaintext(hljs) {
   return {
     name: 'Plain text',
@@ -17274,6 +17160,7 @@ function plaintext(hljs) {
     disableAutodetect: true
   };
 }
+
 module.exports = plaintext;
 
 /***/ }),
@@ -17291,7 +17178,6 @@ Description: Pony is an open-source, object-oriented, actor-model,
              capabilities-secure, high performance programming language.
 Website: https://www.ponylang.io
 */
-
 function pony(hljs) {
   const KEYWORDS = {
     keyword: 'actor addressof and as be break class compile_error compile_intrinsic ' + 'consume continue delegate digestof do else elseif embed end error ' + 'for fun if ifdef in interface is isnt lambda let match new not object ' + 'or primitive recover repeat return struct then trait try type until ' + 'use var where while with xor',
@@ -17331,7 +17217,6 @@ function pony(hljs) {
     begin: '(-?)(\\b0[xX][a-fA-F0-9]+|\\b0[bB][01]+|(\\b\\d+(_\\d+)?(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)',
     relevance: 0
   };
-
   /**
    * The `FUNCTION` and `CLASS` modes were intentionally removed to simplify
    * highlighting and fix cases like
@@ -17349,6 +17234,7 @@ function pony(hljs) {
     contains: [TYPE_NAME, TRIPLE_QUOTE_STRING_MODE, QUOTE_STRING_MODE, SINGLE_QUOTE_CHAR_MODE, PRIMED_NAME, NUMBER_MODE, hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE]
   };
 }
+
 module.exports = pony;
 
 /***/ }),
@@ -17366,19 +17252,17 @@ Author: David Mohundro <david@mohundro.com>
 Contributors: Nicholas Blumhardt <nblumhardt@nblumhardt.com>, Victor Zhou <OiCMudkips@users.noreply.github.com>, Nicolas Le Gall <contact@nlegall.fr>
 Website: https://docs.microsoft.com/en-us/powershell/
 */
-
 function powershell(hljs) {
-  const TYPES = ["string", "char", "byte", "int", "long", "bool", "decimal", "single", "double", "DateTime", "xml", "array", "hashtable", "void"];
+  const TYPES = ["string", "char", "byte", "int", "long", "bool", "decimal", "single", "double", "DateTime", "xml", "array", "hashtable", "void"]; // https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands
 
-  // https://docs.microsoft.com/en-us/powershell/scripting/developer/cmdlet/approved-verbs-for-windows-powershell-commands
   const VALID_VERBS = 'Add|Clear|Close|Copy|Enter|Exit|Find|Format|Get|Hide|Join|Lock|' + 'Move|New|Open|Optimize|Pop|Push|Redo|Remove|Rename|Reset|Resize|' + 'Search|Select|Set|Show|Skip|Split|Step|Switch|Undo|Unlock|' + 'Watch|Backup|Checkpoint|Compare|Compress|Convert|ConvertFrom|' + 'ConvertTo|Dismount|Edit|Expand|Export|Group|Import|Initialize|' + 'Limit|Merge|Mount|Out|Publish|Restore|Save|Sync|Unpublish|Update|' + 'Approve|Assert|Build|Complete|Confirm|Deny|Deploy|Disable|Enable|Install|Invoke|' + 'Register|Request|Restart|Resume|Start|Stop|Submit|Suspend|Uninstall|' + 'Unregister|Wait|Debug|Measure|Ping|Repair|Resolve|Test|Trace|Connect|' + 'Disconnect|Read|Receive|Send|Write|Block|Grant|Protect|Revoke|Unblock|' + 'Unprotect|Use|ForEach|Sort|Tee|Where';
   const COMPARISON_OPERATORS = '-and|-as|-band|-bnot|-bor|-bxor|-casesensitive|-ccontains|-ceq|-cge|-cgt|' + '-cle|-clike|-clt|-cmatch|-cne|-cnotcontains|-cnotlike|-cnotmatch|-contains|' + '-creplace|-csplit|-eq|-exact|-f|-file|-ge|-gt|-icontains|-ieq|-ige|-igt|' + '-ile|-ilike|-ilt|-imatch|-in|-ine|-inotcontains|-inotlike|-inotmatch|' + '-ireplace|-is|-isnot|-isplit|-join|-le|-like|-lt|-match|-ne|-not|' + '-notcontains|-notin|-notlike|-notmatch|-or|-regex|-replace|-shl|-shr|' + '-split|-wildcard|-xor';
   const KEYWORDS = {
     $pattern: /-?[A-z\.\-]+\b/,
     keyword: 'if else foreach return do while until elseif begin for trap data dynamicparam ' + 'end break throw param continue finally in switch exit filter try process catch ' + 'hidden static parameter',
     // "echo" relevance has been set to 0 to avoid auto-detect conflicts with shell transcripts
-    built_in: 'ac asnp cat cd CFS chdir clc clear clhy cli clp cls clv cnsn compare copy cp ' + 'cpi cpp curl cvpa dbp del diff dir dnsn ebp echo|0 epal epcsv epsn erase etsn exsn fc fhx ' + 'fl ft fw gal gbp gc gcb gci gcm gcs gdr gerr ghy gi gin gjb gl gm gmo gp gps gpv group ' + 'gsn gsnp gsv gtz gu gv gwmi h history icm iex ihy ii ipal ipcsv ipmo ipsn irm ise iwmi ' + 'iwr kill lp ls man md measure mi mount move mp mv nal ndr ni nmo npssc nsn nv ogv oh ' + 'popd ps pushd pwd r rbp rcjb rcsn rd rdr ren ri rjb rm rmdir rmo rni rnp rp rsn rsnp ' + 'rujb rv rvpa rwmi sajb sal saps sasv sbp sc scb select set shcm si sl sleep sls sort sp ' + 'spjb spps spsv start stz sujb sv swmi tee trcm type wget where wjb write'
-    // TODO: 'validate[A-Z]+' can't work in keywords
+    built_in: 'ac asnp cat cd CFS chdir clc clear clhy cli clp cls clv cnsn compare copy cp ' + 'cpi cpp curl cvpa dbp del diff dir dnsn ebp echo|0 epal epcsv epsn erase etsn exsn fc fhx ' + 'fl ft fw gal gbp gc gcb gci gcm gcs gdr gerr ghy gi gin gjb gl gm gmo gp gps gpv group ' + 'gsn gsnp gsv gtz gu gv gwmi h history icm iex ihy ii ipal ipcsv ipmo ipsn irm ise iwmi ' + 'iwr kill lp ls man md measure mi mount move mp mv nal ndr ni nmo npssc nsn nv ogv oh ' + 'popd ps pushd pwd r rbp rcjb rcsn rd rdr ren ri rjb rm rmdir rmo rni rnp rp rsn rsnp ' + 'rujb rv rvpa rwmi sajb sal saps sasv sbp sc scb select set shcm si sl sleep sls sort sp ' + 'spjb spps spsv start stz sujb sv swmi tee trcm type wget where wjb write' // TODO: 'validate[A-Z]+' can't work in keywords
+
   };
   const TITLE_NAME_RE = /\w[\w\d]*((-)[\w\d]+)*/;
   const BACKTICK_ESCAPE = {
@@ -17427,20 +17311,24 @@ function powershell(hljs) {
   };
   const PS_HELPTAGS = {
     className: "doctag",
-    variants: [/* no paramater help tags */
+    variants: [
+    /* no paramater help tags */
     {
       begin: /\.(synopsis|description|example|inputs|outputs|notes|link|component|role|functionality)/
-    }, /* one parameter help tags */
+    },
+    /* one parameter help tags */
     {
       begin: /\.(parameter|forwardhelptargetname|forwardhelpcategory|remotehelprunspace|externalhelp)\s+\S+/
     }]
   };
   const PS_COMMENT = hljs.inherit(hljs.COMMENT(null, null), {
-    variants: [/* single-line comment */
+    variants: [
+    /* single-line comment */
     {
       begin: /#/,
       end: /$/
-    }, /* multi-line comment */
+    },
+    /* multi-line comment */
     {
       begin: /<#/,
       end: /#>/
@@ -17482,12 +17370,10 @@ function powershell(hljs) {
       className: "params",
       relevance: 0,
       contains: [VAR]
-    }
-    // CMDLETS
+    } // CMDLETS
     ]
-  };
+  }; // Using statment, plus type, plus assembly name.
 
-  // Using statment, plus type, plus assembly name.
   const PS_USING = {
     begin: /using\s/,
     end: /$/,
@@ -17496,12 +17382,10 @@ function powershell(hljs) {
       className: 'keyword',
       begin: /(using|assembly|command|module|namespace|type)/
     }]
-  };
+  }; // Comperison operators & function named parameters.
 
-  // Comperison operators & function named parameters.
   const PS_ARGUMENTS = {
-    variants: [
-    // PS literals are pretty verbose so it's a good idea to accent them a bit.
+    variants: [// PS literals are pretty verbose so it's a good idea to accent them a bit.
     {
       className: 'operator',
       begin: '('.concat(COMPARISON_OPERATORS, ')\\b')
@@ -17515,10 +17399,9 @@ function powershell(hljs) {
     className: 'selector-tag',
     begin: /@\B/,
     relevance: 0
-  };
-
-  // It's a very general rule so I'll narrow it a bit with some strict boundaries
+  }; // It's a very general rule so I'll narrow it a bit with some strict boundaries
   // to avoid any possible false-positive collisions!
+
   const PS_METHODS = {
     className: 'function',
     begin: /\[.*\]\s*[\w]+[ ]??\(/,
@@ -17534,10 +17417,8 @@ function powershell(hljs) {
       endsParent: true
     })]
   };
-  const GENTLEMANS_SET = [
-  // STATIC_MEMBER,
-  PS_METHODS, PS_COMMENT, BACKTICK_ESCAPE, hljs.NUMBER_MODE, QUOTE_STRING, APOS_STRING,
-  // PS_NEW_OBJECT_TYPE,
+  const GENTLEMANS_SET = [// STATIC_MEMBER,
+  PS_METHODS, PS_COMMENT, BACKTICK_ESCAPE, hljs.NUMBER_MODE, QUOTE_STRING, APOS_STRING, // PS_NEW_OBJECT_TYPE,
   CMDLETS, VAR, LITERAL, HASH_SIGNS];
   const PS_TYPE = {
     begin: /\[/,
@@ -17564,6 +17445,7 @@ function powershell(hljs) {
     contains: GENTLEMANS_SET.concat(PS_CLASS, PS_FUNCTION, PS_USING, PS_ARGUMENTS, PS_TYPE)
   };
 }
+
 module.exports = powershell;
 
 /***/ }),
@@ -17581,13 +17463,11 @@ Author: Erik Paluka <erik.paluka@gmail.com>
 Website: https://processing.org
 Category: graphics
 */
-
 function processing(hljs) {
   return {
     name: 'Processing',
     keywords: {
-      keyword: 'BufferedReader PVector PFont PImage PGraphics HashMap boolean byte char color ' + 'double float int long String Array FloatDict FloatList IntDict IntList JSONArray JSONObject ' + 'Object StringDict StringList Table TableRow XML ' +
-      // Java keywords
+      keyword: 'BufferedReader PVector PFont PImage PGraphics HashMap boolean byte char color ' + 'double float int long String Array FloatDict FloatList IntDict IntList JSONArray JSONObject ' + 'Object StringDict StringList Table TableRow XML ' + // Java keywords
       'false synchronized int abstract float private char boolean static null if const ' + 'for true while long throw strictfp finally protected import native final return void ' + 'enum else break transient new catch instanceof byte super volatile case assert short ' + 'package default double public try this switch continue throws protected public private',
       literal: 'P2D P3D HALF_PI PI QUARTER_PI TAU TWO_PI',
       title: 'setup draw',
@@ -17596,6 +17476,7 @@ function processing(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE, hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = processing;
 
 /***/ }),
@@ -17611,7 +17492,6 @@ Language: Python profiler
 Description: Python profiler results
 Author: Brian Beck <exogen@gmail.com>
 */
-
 function profile(hljs) {
   return {
     name: 'Python profiler',
@@ -17639,6 +17519,7 @@ function profile(hljs) {
     }]
   };
 }
+
 module.exports = profile;
 
 /***/ }),
@@ -17655,7 +17536,6 @@ Description: Prolog is a general purpose logic programming language associated w
 Author: Raivo Laanemets <raivo@infdot.com>
 Website: https://en.wikipedia.org/wiki/Prolog
 */
-
 function prolog(hljs) {
   const ATOM = {
     begin: /[a-z][A-Za-z0-9_]*/,
@@ -17699,6 +17579,7 @@ function prolog(hljs) {
   const SPACE_CODE = {
     className: 'string',
     begin: /0'\\s/ // 0'\s
+
   };
   const PRED_OP = {
     // relevance booster
@@ -17715,6 +17596,7 @@ function prolog(hljs) {
     }])
   };
 }
+
 module.exports = prolog;
 
 /***/ }),
@@ -17731,12 +17613,11 @@ Contributors: Valentin Aitken <valentin@nalisbg.com>, Egor Rogov <e.rogov@postgr
 Website: https://en.wikipedia.org/wiki/.properties
 Category: common, config
 */
-
 function properties(hljs) {
   // whitespaces: space, tab, formfeed
   var WS0 = '[ \\t\\f]*';
-  var WS1 = '[ \\t\\f]+';
-  // delimiter
+  var WS1 = '[ \\t\\f]+'; // delimiter
+
   var EQUAL_DELIM = WS0 + '[:=]' + WS0;
   var WS_DELIM = WS1;
   var DELIM = '(' + EQUAL_DELIM + '|' + WS_DELIM + ')';
@@ -17762,8 +17643,7 @@ function properties(hljs) {
     name: '.properties',
     case_insensitive: true,
     illegal: /\S/,
-    contains: [hljs.COMMENT('^\\s*[!#]', '$'),
-    // key: everything until whitespace or = or : (taking into account backslashes)
+    contains: [hljs.COMMENT('^\\s*[!#]', '$'), // key: everything until whitespace or = or : (taking into account backslashes)
     // case of a "normal" key
     {
       returnBegin: true,
@@ -17781,8 +17661,7 @@ function properties(hljs) {
         relevance: 0
       }],
       starts: DELIM_AND_VALUE
-    },
-    // case of key containing non-alphanumeric chars => relevance = 0
+    }, // case of key containing non-alphanumeric chars => relevance = 0
     {
       begin: KEY_OTHER + DELIM,
       returnBegin: true,
@@ -17794,8 +17673,7 @@ function properties(hljs) {
         relevance: 0
       }],
       starts: DELIM_AND_VALUE
-    },
-    // case of an empty key
+    }, // case of an empty key
     {
       className: 'attr',
       relevance: 0,
@@ -17803,6 +17681,7 @@ function properties(hljs) {
     }]
   };
 }
+
 module.exports = properties;
 
 /***/ }),
@@ -17820,7 +17699,6 @@ Description: Protocol buffer message definition format
 Website: https://developers.google.com/protocol-buffers/docs/proto3
 Category: protocols
 */
-
 function protobuf(hljs) {
   return {
     name: 'Protocol Buffers',
@@ -17839,6 +17717,7 @@ function protobuf(hljs) {
           endsWithParent: true,
           excludeEnd: true
         } // hack: eating everything after the first title
+
       })]
     }, {
       className: 'function',
@@ -17853,6 +17732,7 @@ function protobuf(hljs) {
     }]
   };
 }
+
 module.exports = protobuf;
 
 /***/ }),
@@ -17869,15 +17749,18 @@ Author: Jose Molina Colmenero <gaudy41@gmail.com>
 Website: https://puppet.com/docs
 Category: config
 */
-
 function puppet(hljs) {
   const PUPPET_KEYWORDS = {
-    keyword: /* language keywords */
+    keyword:
+    /* language keywords */
     'and case default else elsif false if in import enherits node or true undef unless main settings $string ',
-    literal: /* metaparameters */
-    'alias audit before loglevel noop require subscribe tag ' + /* normal attributes */
+    literal:
+    /* metaparameters */
+    'alias audit before loglevel noop require subscribe tag ' +
+    /* normal attributes */
     'owner ensure group mode name|0 changes context force incl lens load_path onlyif provider returns root show_diff type_check ' + 'en_address ip_address realname command environment hour monute month monthday special target weekday ' + 'creates cwd ogoutput refresh refreshonly tries try_sleep umask backup checksum content ctime force ignore ' + 'links mtime purge recurse recurselimit replace selinux_ignore_defaults selrange selrole seltype seluser source ' + 'souirce_permissions sourceselect validate_cmd validate_replacement allowdupe attribute_membership auth_membership forcelocal gid ' + 'ia_load_module members system host_aliases ip allowed_trunk_vlans description device_url duplex encapsulation etherchannel ' + 'native_vlan speed principals allow_root auth_class auth_type authenticate_user k_of_n mechanisms rule session_owner shared options ' + 'device fstype enable hasrestart directory present absent link atboot blockdevice device dump pass remounts poller_tag use ' + 'message withpath adminfile allow_virtual allowcdrom category configfiles flavor install_options instance package_settings platform ' + 'responsefile status uninstall_options vendor unless_system_user unless_uid binary control flags hasstatus manifest pattern restart running ' + 'start stop allowdupe auths expiry gid groups home iterations key_membership keys managehome membership password password_max_age ' + 'password_min_age profile_membership profiles project purge_ssh_keys role_membership roles salt shell uid baseurl cost descr enabled ' + 'enablegroups exclude failovermethod gpgcheck gpgkey http_caching include includepkgs keepalive metadata_expire metalink mirrorlist ' + 'priority protect proxy proxy_password proxy_username repo_gpgcheck s3_enabled skip_if_unavailable sslcacert sslclientcert sslclientkey ' + 'sslverify mounted',
-    built_in: /* core facts */
+    built_in:
+    /* core facts */
     'architecture augeasversion blockdevices boardmanufacturer boardproductname boardserialnumber cfkey dhcp_servers ' + 'domain ec2_ ec2_userdata facterversion filesystems ldom fqdn gid hardwareisa hardwaremodel hostname id|0 interfaces ' + 'ipaddress ipaddress_ ipaddress6 ipaddress6_ iphostnumber is_virtual kernel kernelmajversion kernelrelease kernelversion ' + 'kernelrelease kernelversion lsbdistcodename lsbdistdescription lsbdistid lsbdistrelease lsbmajdistrelease lsbminordistrelease ' + 'lsbrelease macaddress macaddress_ macosx_buildversion macosx_productname macosx_productversion macosx_productverson_major ' + 'macosx_productversion_minor manufacturer memoryfree memorysize netmask metmask_ network_ operatingsystem operatingsystemmajrelease ' + 'operatingsystemrelease osfamily partitions path physicalprocessorcount processor processorcount productname ps puppetversion ' + 'rubysitedir rubyversion selinux selinux_config_mode selinux_config_policy selinux_current_mode selinux_current_mode selinux_enforced ' + 'selinux_policyversion serialnumber sp_ sshdsakey sshecdsakey sshrsakey swapencrypted swapfree swapsize timezone type uniqueid uptime ' + 'uptime_days uptime_hours uptime_seconds uuid virtual vlans xendomains zfs_version zonenae zones zpool_version'
   };
   const COMMENT = hljs.COMMENT('#', '$');
@@ -17946,6 +17829,7 @@ function puppet(hljs) {
     }]
   };
 }
+
 module.exports = puppet;
 
 /***/ }),
@@ -17963,9 +17847,7 @@ Description: Syntax highlighting for PureBASIC (v.5.00-5.60). No inline ASM high
 Credits: I've taken inspiration from the PureBasic language file for GeSHi, created by Gustavo Julio Fiorenza (GuShH).
 Website: https://www.purebasic.com
 */
-
 // Base deafult colors in PB IDE: background: #FFFFDF; foreground: #000000;
-
 function purebasic(hljs) {
   const STRINGS = {
     // PB IDE color: #0080FF (Azure Radiance)
@@ -17983,12 +17865,10 @@ function purebasic(hljs) {
   return {
     name: 'PureBASIC',
     aliases: ['pb', 'pbi'],
-    keywords:
-    // PB IDE color: #006666 (Blue Stone) + Bold
+    keywords: // PB IDE color: #006666 (Blue Stone) + Bold
     // Keywords from all version of PureBASIC 5.00 upward ...
     'Align And Array As Break CallDebugger Case CompilerCase CompilerDefault ' + 'CompilerElse CompilerElseIf CompilerEndIf CompilerEndSelect CompilerError ' + 'CompilerIf CompilerSelect CompilerWarning Continue Data DataSection Debug ' + 'DebugLevel Declare DeclareC DeclareCDLL DeclareDLL DeclareModule Default ' + 'Define Dim DisableASM DisableDebugger DisableExplicit Else ElseIf EnableASM ' + 'EnableDebugger EnableExplicit End EndDataSection EndDeclareModule EndEnumeration ' + 'EndIf EndImport EndInterface EndMacro EndModule EndProcedure EndSelect ' + 'EndStructure EndStructureUnion EndWith Enumeration EnumerationBinary Extends ' + 'FakeReturn For ForEach ForEver Global Gosub Goto If Import ImportC ' + 'IncludeBinary IncludeFile IncludePath Interface List Macro MacroExpandedCount ' + 'Map Module NewList NewMap Next Not Or Procedure ProcedureC ' + 'ProcedureCDLL ProcedureDLL ProcedureReturn Protected Prototype PrototypeC ReDim ' + 'Read Repeat Restore Return Runtime Select Shared Static Step Structure ' + 'StructureUnion Swap Threaded To UndefineMacro Until Until  UnuseModule ' + 'UseModule Wend While With XIncludeFile XOr',
-    contains: [
-    // COMMENTS | PB IDE color: #00AAAA (Persian Green)
+    contains: [// COMMENTS | PB IDE color: #00AAAA (Persian Green)
     hljs.COMMENT(';', '$', {
       relevance: 0
     }), {
@@ -18006,14 +17886,13 @@ function purebasic(hljs) {
       }, {
         // PROCEDURE RETURN TYPE SETTING | PB IDE color: #000000 (Black)
         className: 'type',
-        begin: '\\.\\w*'
-        // end: ' ',
+        begin: '\\.\\w*' // end: ' ',
+
       }, hljs.UNDERSCORE_TITLE_MODE // PROCEDURE NAME | PB IDE color: #006666 (Blue Stone)
       ]
     }, STRINGS, CONSTANTS]
   };
 }
-
 /*  ==============================================================================
                                       CHANGELOG
     ==============================================================================
@@ -18036,6 +17915,7 @@ function purebasic(hljs) {
            -- https://github.com/easybook/geshi/blob/master/geshi/purebasic.php
 */
 
+
 module.exports = purebasic;
 
 /***/ }),
@@ -18052,7 +17932,6 @@ Requires: python.js
 Author: Josh Goebel <hello@joshgoebel.com>
 Category: common
 */
-
 function pythonRepl(hljs) {
   return {
     aliases: ['pycon'],
@@ -18075,6 +17954,7 @@ function pythonRepl(hljs) {
     }]
   };
 }
+
 module.exports = pythonRepl;
 
 /***/ }),
@@ -18099,24 +17979,25 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Python
 Description: Python is an interpreted, object-oriented, high-level programming language with dynamic semantics.
@@ -18124,14 +18005,14 @@ Website: https://www.python.org
 Category: common
 */
 
+
 function python(hljs) {
   const RESERVED_WORDS = ['and', 'as', 'assert', 'async', 'await', 'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except', 'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is', 'lambda', 'nonlocal|10', 'not', 'or', 'pass', 'raise', 'return', 'try', 'while', 'with', 'yield'];
   const BUILT_INS = ['__import__', 'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'breakpoint', 'bytearray', 'bytes', 'callable', 'chr', 'classmethod', 'compile', 'complex', 'delattr', 'dict', 'dir', 'divmod', 'enumerate', 'eval', 'exec', 'filter', 'float', 'format', 'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id', 'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals', 'map', 'max', 'memoryview', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow', 'print', 'property', 'range', 'repr', 'reversed', 'round', 'set', 'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple', 'type', 'vars', 'zip'];
-  const LITERALS = ['__debug__', 'Ellipsis', 'False', 'None', 'NotImplemented', 'True'];
-
-  // https://docs.python.org/3/library/typing.html
+  const LITERALS = ['__debug__', 'Ellipsis', 'False', 'None', 'NotImplemented', 'True']; // https://docs.python.org/3/library/typing.html
   // TODO: Could these be supplemented by a CamelCase matcher in certain
   // contexts, leaving these remaining only for relevance hinting?
+
   const TYPES = ["Any", "Callable", "Coroutine", "Dict", "List", "Literal", "Generic", "Optional", "Sequence", "Set", "Tuple", "Type", "Union"];
   const KEYWORDS = {
     $pattern: /[A-Za-z]\w+|__\w+__/,
@@ -18199,16 +18080,14 @@ function python(hljs) {
       end: /"/,
       contains: [hljs.BACKSLASH_ESCAPE, LITERAL_BRACKET, SUBST]
     }, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE]
-  };
+  }; // https://docs.python.org/3.9/reference/lexical_analysis.html#numeric-literals
 
-  // https://docs.python.org/3.9/reference/lexical_analysis.html#numeric-literals
   const digitpart = '[0-9](_?[0-9])*';
   const pointfloat = `(\\b(${digitpart}))?\\.(${digitpart})|\\b(${digitpart})\\.`;
   const NUMBER = {
     className: 'number',
     relevance: 0,
-    variants: [
-    // exponentfloat, pointfloat
+    variants: [// exponentfloat, pointfloat
     // https://docs.python.org/3.9/reference/lexical_analysis.html#floating-point-literals
     // optionally imaginary
     // https://docs.python.org/3.9/reference/lexical_analysis.html#imaginary-literals
@@ -18222,8 +18101,7 @@ function python(hljs) {
       begin: `(\\b(${digitpart})|(${pointfloat}))[eE][+-]?(${digitpart})[jJ]?\\b`
     }, {
       begin: `(${pointfloat})[jJ]?`
-    },
-    // decinteger, bininteger, octinteger, hexinteger
+    }, // decinteger, bininteger, octinteger, hexinteger
     // https://docs.python.org/3.9/reference/lexical_analysis.html#integer-literals
     // optionally "long" in Python 2
     // https://docs.python.org/2.7/reference/lexical_analysis.html#integer-and-long-integer-literals
@@ -18237,8 +18115,7 @@ function python(hljs) {
       begin: '\\b0[oO](_?[0-7])+[lL]?\\b'
     }, {
       begin: '\\b0[xX](_?[0-9a-fA-F])+[lL]?\\b'
-    },
-    // imagnumber (digitpart-based)
+    }, // imagnumber (digitpart-based)
     // https://docs.python.org/3.9/reference/lexical_analysis.html#imaginary-literals
     {
       begin: `\\b(${digitpart})[jJ]\\b`
@@ -18252,8 +18129,7 @@ function python(hljs) {
     contains: [{
       // prevent keywords from coloring `type`
       begin: /# type:/
-    },
-    // comment within a datatype comment includes no keywords
+    }, // comment within a datatype comment includes no keywords
     {
       begin: /#/,
       end: /\b\B/,
@@ -18262,8 +18138,7 @@ function python(hljs) {
   };
   const PARAMS = {
     className: 'params',
-    variants: [
-    // Exclude params in functions without params
+    variants: [// Exclude params in functions without params
     {
       className: "",
       begin: /\(\s*\)/,
@@ -18314,6 +18189,7 @@ function python(hljs) {
     }]
   };
 }
+
 module.exports = python;
 
 /***/ }),
@@ -18331,7 +18207,6 @@ Description: Q is a vector-based functional paradigm programming language built 
 Author: Sergey Vidyuk <svidyuk@gmail.com>
 Website: https://kx.com/connect-with-us/developers/
 */
-
 function q(hljs) {
   const KEYWORDS = {
     $pattern: /(`?)[A-Za-z0-9_]+\b/,
@@ -18347,6 +18222,7 @@ function q(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.QUOTE_STRING_MODE, hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = q;
 
 /***/ }),
@@ -18371,16 +18247,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: QML
 Requires: javascript.js, xml.js
@@ -18391,16 +18267,16 @@ Website: https://doc.qt.io/qt-5/qmlapplications.html
 Category: scripting
 */
 
+
 function qml(hljs) {
   const KEYWORDS = {
     keyword: 'in of on if for while finally var new function do return void else break catch ' + 'instanceof with throw case default try this switch continue typeof delete ' + 'let yield const export super debugger as async await import',
     literal: 'true false null undefined NaN Infinity',
     built_in: 'eval isFinite isNaN parseFloat parseInt decodeURI decodeURIComponent ' + 'encodeURI encodeURIComponent escape unescape Object Function Boolean Error ' + 'EvalError InternalError RangeError ReferenceError StopIteration SyntaxError ' + 'TypeError URIError Number Math Date String RegExp Array Float32Array ' + 'Float64Array Int16Array Int32Array Int8Array Uint16Array Uint32Array ' + 'Uint8Array Uint8ClampedArray ArrayBuffer DataView JSON Intl arguments require ' + 'module console window document Symbol Set Map WeakSet WeakMap Proxy Reflect ' + 'Behavior bool color coordinate date double enumeration font geocircle georectangle ' + 'geoshape int list matrix4x4 parent point quaternion real rect ' + 'size string url variant vector2d vector3d vector4d ' + 'Promise'
   };
-  const QML_IDENT_RE = '[a-zA-Z_][a-zA-Z0-9\\._]*';
-
-  // Isolate property statements. Ends at a :, =, ;, ,, a comment or end of line.
+  const QML_IDENT_RE = '[a-zA-Z_][a-zA-Z0-9\\._]*'; // Isolate property statements. Ends at a :, =, ;, ,, a comment or end of line.
   // Use property class.
+
   const PROPERTY = {
     className: 'keyword',
     begin: '\\bproperty\\b',
@@ -18409,10 +18285,9 @@ function qml(hljs) {
       end: '(:|=|;|,|//|/\\*|$)',
       returnEnd: true
     }
-  };
-
-  // Isolate signal statements. Ends at a ) a comment or end of line.
+  }; // Isolate signal statements. Ends at a ) a comment or end of line.
   // Use property class.
+
   const SIGNAL = {
     className: 'keyword',
     begin: '\\bsignal\\b',
@@ -18421,10 +18296,9 @@ function qml(hljs) {
       end: '(\\(|:|=|;|,|//|/\\*|$)',
       returnEnd: true
     }
-  };
-
-  // id: is special in QML. When we see id: we want to mark the id: as attribute and
+  }; // id: is special in QML. When we see id: we want to mark the id: as attribute and
   // emphasize the token following.
+
   const ID_ID = {
     className: 'attribute',
     begin: '\\bid\\s*:',
@@ -18433,12 +18307,11 @@ function qml(hljs) {
       end: QML_IDENT_RE,
       returnEnd: false
     }
-  };
-
-  // Find QML object attribute. An attribute is a QML identifier followed by :.
+  }; // Find QML object attribute. An attribute is a QML identifier followed by :.
   // Unfortunately it's hard to know where it ends, as it may contain scalars,
   // objects, object definitions, or javascript. The true end is either when the parent
   // ends or the next attribute is detected.
+
   const QML_ATTRIBUTE = {
     begin: QML_IDENT_RE + '\\s*:',
     returnBegin: true,
@@ -18450,10 +18323,9 @@ function qml(hljs) {
       relevance: 0
     }],
     relevance: 0
-  };
-
-  // Find QML object. A QML object is a QML identifier followed by { and ends at the matching }.
+  }; // Find QML object. A QML object is a QML identifier followed by { and ends at the matching }.
   // All we really care about is finding IDENT followed by { and just mark up the IDENT and ignore the {.
+
   const QML_OBJECT = {
     begin: concat(QML_IDENT_RE, /\s*\{/),
     end: /\{/,
@@ -18527,6 +18399,7 @@ function qml(hljs) {
     illegal: /#/
   };
 }
+
 module.exports = qml;
 
 /***/ }),
@@ -18551,24 +18424,25 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: R
 Description: R is a free software environment for statistical computing and graphics.
@@ -18579,6 +18453,8 @@ Category: common,scientific
 */
 
 /** @type LanguageFn */
+
+
 function r(hljs) {
   // Identifiers in R cannot start with `_`, but they can start with `.` if it
   // is not immediately followed by a digit.
@@ -18596,21 +18472,18 @@ function r(hljs) {
       $pattern: IDENT_RE,
       keyword: 'function if in break next repeat else for while',
       literal: 'NULL NA TRUE FALSE Inf NaN NA_integer_|10 NA_real_|10 ' + 'NA_character_|10 NA_complex_|10',
-      built_in:
-      // Builtin constants
-      'LETTERS letters month.abb month.name pi T F ' +
-      // Primitive functions
+      built_in: // Builtin constants
+      'LETTERS letters month.abb month.name pi T F ' + // Primitive functions
       // These are all the functions in `base` that are implemented as a
       // `.Primitive`, minus those functions that are also keywords.
       'abs acos acosh all any anyNA Arg as.call as.character ' + 'as.complex as.double as.environment as.integer as.logical ' + 'as.null.default as.numeric as.raw asin asinh atan atanh attr ' + 'attributes baseenv browser c call ceiling class Conj cos cosh ' + 'cospi cummax cummin cumprod cumsum digamma dim dimnames ' + 'emptyenv exp expression floor forceAndCall gamma gc.time ' + 'globalenv Im interactive invisible is.array is.atomic is.call ' + 'is.character is.complex is.double is.environment is.expression ' + 'is.finite is.function is.infinite is.integer is.language ' + 'is.list is.logical is.matrix is.na is.name is.nan is.null ' + 'is.numeric is.object is.pairlist is.raw is.recursive is.single ' + 'is.symbol lazyLoadDBfetch length lgamma list log max min ' + 'missing Mod names nargs nzchar oldClass on.exit pos.to.env ' + 'proc.time prod quote range Re rep retracemem return round ' + 'seq_along seq_len seq.int sign signif sin sinh sinpi sqrt ' + 'standardGeneric substitute sum switch tan tanh tanpi tracemem ' + 'trigamma trunc unclass untracemem UseMethod xtfrm'
     },
-    compilerExtensions: [
-    // allow beforeMatch to act as a "qualifier" for the match
+    compilerExtensions: [// allow beforeMatch to act as a "qualifier" for the match
     // the full match begin must be [beforeMatch][begin]
     (mode, parent) => {
-      if (!mode.beforeMatch) return;
-      // starts conflicts with endsParent which we need to make sure the child
+      if (!mode.beforeMatch) return; // starts conflicts with endsParent which we need to make sure the child
       // rule is not matched multiple times
+
       if (mode.starts) throw new Error("beforeMatch cannot be used with starts");
       const originalMode = Object.assign({}, mode);
       Object.keys(mode).forEach(key => {
@@ -18626,8 +18499,7 @@ function r(hljs) {
       mode.relevance = 0;
       delete originalMode.beforeMatch;
     }],
-    contains: [
-    // Roxygen comments
+    contains: [// Roxygen comments
     hljs.COMMENT(/#'/, /$/, {
       contains: [{
         // Handle `@examples` separately to cause all subsequent code
@@ -18706,8 +18578,7 @@ function r(hljs) {
       relevance: 0,
       beforeMatch: /([^a-zA-Z0-9._])/,
       // not part of an identifier
-      variants: [
-      // TODO: replace with negative look-behind when available
+      variants: [// TODO: replace with negative look-behind when available
       // { begin: /(?<![a-zA-Z0-9._])0[xX][0-9a-fA-F]+\.[0-9a-fA-F]*[pP][+-]?\d+i?/ },
       // { begin: /(?<![a-zA-Z0-9._])0[xX][0-9a-fA-F]+([pP][+-]?\d+)?[Li]?/ },
       // { begin: /(?<![a-zA-Z0-9._])(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?[Li]?/ }
@@ -18723,8 +18594,7 @@ function r(hljs) {
       // infix operator
       begin: '%',
       end: '%'
-    },
-    // relevance boost for assignment
+    }, // relevance boost for assignment
     {
       begin: concat(SIMPLE_IDENT, "\\s+<-\\s+")
     }, {
@@ -18737,6 +18607,7 @@ function r(hljs) {
     }]
   };
 }
+
 module.exports = r;
 
 /***/ }),
@@ -18762,6 +18633,7 @@ function reasonml(hljs) {
       }).join('');
     }).join('|');
   }
+
   const RE_IDENT = '~?[a-z$_][0-9a-zA-Z$_]*';
   const RE_MODULE_IDENT = '`?[A-Z$_][0-9a-zA-Z$_]*';
   const RE_PARAM_TYPEPARAM = '\'?[a-z$_][0-9a-z$_]*';
@@ -18962,6 +18834,7 @@ function reasonml(hljs) {
     }, MODULE_ACCESS_MODE]
   };
 }
+
 module.exports = reasonml;
 
 /***/ }),
@@ -18979,7 +18852,6 @@ Contributors: Shuen-Huei Guan <drake.guan@gmail.com>
 Website: https://renderman.pixar.com/resources/RenderMan_20/ribBinding.html
 Category: graphics
 */
-
 function rib(hljs) {
   return {
     name: 'RenderMan RIB',
@@ -18988,6 +18860,7 @@ function rib(hljs) {
     contains: [hljs.HASH_COMMENT_MODE, hljs.C_NUMBER_MODE, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE]
   };
 }
+
 module.exports = rib;
 
 /***/ }),
@@ -19005,7 +18878,6 @@ Description: Syntax highlighting for Roboconf's DSL
 Website: http://roboconf.net
 Category: config
 */
-
 function roboconf(hljs) {
   const IDENTIFIER = '[a-zA-Z-_][^\\n{]+\\{';
   const PROPERTY = {
@@ -19030,32 +18902,29 @@ function roboconf(hljs) {
     aliases: ['graph', 'instances'],
     case_insensitive: true,
     keywords: 'import',
-    contains: [
-    // Facet sections
+    contains: [// Facet sections
     {
       begin: '^facet ' + IDENTIFIER,
       end: /\}/,
       keywords: 'facet',
       contains: [PROPERTY, hljs.HASH_COMMENT_MODE]
-    },
-    // Instance sections
+    }, // Instance sections
     {
       begin: '^\\s*instance of ' + IDENTIFIER,
       end: /\}/,
       keywords: 'name count channels instance-data instance-state instance of',
       illegal: /\S/,
       contains: ['self', PROPERTY, hljs.HASH_COMMENT_MODE]
-    },
-    // Component sections
+    }, // Component sections
     {
       begin: '^' + IDENTIFIER,
       end: /\}/,
       contains: [PROPERTY, hljs.HASH_COMMENT_MODE]
-    },
-    // Comments
+    }, // Comments
     hljs.HASH_COMMENT_MODE]
   };
 }
+
 module.exports = roboconf;
 
 /***/ }),
@@ -19072,20 +18941,16 @@ Author: Ivan Dementev <ivan_div@mail.ru>
 Description: Scripting host provides a way to automate some router maintenance tasks by means of executing user-defined scripts bounded to some event occurrence
 Website: https://wiki.mikrotik.com/wiki/Manual:Scripting
 */
-
 // Colors from RouterOS terminal:
 //   green        - #0E9A00
 //   teal         - #0C9A9A
 //   purple       - #99069A
 //   light-brown  - #9A9900
-
 function routeros(hljs) {
-  const STATEMENTS = 'foreach do while for if from to step else on-error and or not in';
+  const STATEMENTS = 'foreach do while for if from to step else on-error and or not in'; // Global commands: Every global command should start with ":" token, otherwise it will be treated as variable.
 
-  // Global commands: Every global command should start with ":" token, otherwise it will be treated as variable.
-  const GLOBAL_COMMANDS = 'global local beep delay put len typeof pick log time set find environment terminal error execute parse resolve toarray tobool toid toip toip6 tonum tostr totime';
+  const GLOBAL_COMMANDS = 'global local beep delay put len typeof pick log time set find environment terminal error execute parse resolve toarray tobool toid toip toip6 tonum tostr totime'; // Common commands: Following commands available from most sub-menus:
 
-  // Common commands: Following commands available from most sub-menus:
   const COMMON_COMMANDS = 'add remove enable disable set get print export edit find run debug error info warning';
   const LITERALS = 'true false yes no nothing nil null';
   const OBJECTS = 'traffic-flow traffic-generator firewall scheduler aaa accounting address-list address align area bandwidth-server bfd bgp bridge client clock community config connection console customer default dhcp-client dhcp-server discovery dns e-mail ethernet filter firmware gps graphing group hardware health hotspot identity igmp-proxy incoming instance interface ip ipsec ipv6 irq l2tp-server lcd ldp logging mac-server mac-winbox mangle manual mirror mme mpls nat nd neighbor network note ntp ospf ospf-v3 ovpn-server page peer pim ping policy pool port ppp pppoe-client pptp-server prefix profile proposal proxy queue radius resource rip ripng route routing screen script security-profiles server service service-port settings shares smb sms sniffer snmp snooper socks sstp-server system tool tracking type upgrade upnp user-manager users user vlan secret vrrp watchdog web-access wireless pptp pppoe lan wan layer7-protocol lease simple raw';
@@ -19138,8 +19003,7 @@ function routeros(hljs) {
         end: />/
       }],
       illegal: /./
-    }, hljs.COMMENT('^#', '$'), QUOTE_STRING, APOS_STRING, VAR,
-    // attribute=value
+    }, hljs.COMMENT('^#', '$'), QUOTE_STRING, APOS_STRING, VAR, // attribute=value
     {
       // > is to avoid matches with => in other grammars
       begin: /[\w-]+=([^\s{}[\]()>]+)/,
@@ -19174,7 +19038,8 @@ function routeros(hljs) {
           className: 'number',
           begin: /\b(1:)?([0-9A-Fa-f]{1,2}[:-]){5}([0-9A-Fa-f]){1,2}\b/,
         },
-        */]
+        */
+        ]
       }]
     }, {
       // HEX values
@@ -19199,6 +19064,7 @@ function routeros(hljs) {
     }]
   };
 }
+
 module.exports = routeros;
 
 /***/ }),
@@ -19216,7 +19082,6 @@ Contributors: Shuen-Huei Guan <drake.guan@gmail.com>
 Website: https://renderman.pixar.com/resources/RenderMan_20/shadingLanguage.html
 Category: graphics
 */
-
 function rsl(hljs) {
   return {
     name: 'RenderMan RSL',
@@ -19239,6 +19104,7 @@ function rsl(hljs) {
     }]
   };
 }
+
 module.exports = rsl;
 
 /***/ }),
@@ -19263,24 +19129,25 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Ruby
 Description: Ruby is a dynamic, open source programming language with a focus on simplicity and productivity.
@@ -19289,6 +19156,7 @@ Author: Anton Kovalyov <anton@kovalyov.net>
 Contributors: Peter Leonov <gojpeg@yandex.ru>, Vasily Polovnyov <vast@whiteants.net>, Loren Segal <lsegal@soen.ca>, Pascal Hurni <phi@ruby-reactive.org>, Cedric Sohrauer <sohrauer@googlemail.com>
 Category: common
 */
+
 
 function ruby(hljs) {
   const RUBY_METHOD_RE = '([a-zA-Z_]\\w*[!?=]?|[-+~]@|<<|>>|=~|===?|<=>|[<>]=?|\\*\\*|[-/+%^&*~`|]|\\[\\]=?)';
@@ -19353,8 +19221,7 @@ function ruby(hljs) {
     }, {
       begin: /%[qQwWx]?\|/,
       end: /\|/
-    },
-    // in the following expressions, \B in the beginning suppresses recognition of ?-sequences
+    }, // in the following expressions, \B in the beginning suppresses recognition of ?-sequences
     // where ? is the last character of a preceding identifier, as in: `func?4`
     {
       begin: /\B\?(\\\d{1,3})/
@@ -19380,22 +19247,19 @@ function ruby(hljs) {
         contains: [hljs.BACKSLASH_ESCAPE, SUBST]
       })]
     }]
-  };
-
-  // Ruby syntax is underdocumented, but this grammar seems to be accurate
+  }; // Ruby syntax is underdocumented, but this grammar seems to be accurate
   // as of version 2.7.2 (confirmed with (irb and `Ripper.sexp(...)`)
   // https://docs.ruby-lang.org/en/2.7.0/doc/syntax/literals_rdoc.html#label-Numbers
+
   const decimal = '[1-9](_?[0-9])*|0';
   const digits = '[0-9](_?[0-9])*';
   const NUMBER = {
     className: 'number',
     relevance: 0,
-    variants: [
-    // decimal integer/float, optionally exponential or rational, optionally imaginary
+    variants: [// decimal integer/float, optionally exponential or rational, optionally imaginary
     {
       begin: `\\b(${decimal})(\\.(${digits}))?([eE][+-]?(${digits})|r)?i?\\b`
-    },
-    // explicit decimal/binary/octal/hexadecimal integer,
+    }, // explicit decimal/binary/octal/hexadecimal integer,
     // optionally rational and/or imaginary
     {
       begin: "\\b0[dD][0-9](_?[0-9])*r?i?\\b"
@@ -19405,8 +19269,7 @@ function ruby(hljs) {
       begin: "\\b0[oO][0-7](_?[0-7])*r?i?\\b"
     }, {
       begin: "\\b0[xX][0-9a-fA-F](_?[0-9a-fA-F])*r?i?\\b"
-    },
-    // 0-prefixed implicit octal integer, optionally rational and/or imaginary
+    }, // 0-prefixed implicit octal integer, optionally rational and/or imaginary
     {
       begin: "\\b0(_?[0-7])+r?i?\\b"
     }]
@@ -19501,12 +19364,11 @@ function ruby(hljs) {
     relevance: 0
   }].concat(IRB_OBJECT, COMMENT_MODES);
   SUBST.contains = RUBY_DEFAULT_CONTAINS;
-  PARAMS.contains = RUBY_DEFAULT_CONTAINS;
-
-  // >>
+  PARAMS.contains = RUBY_DEFAULT_CONTAINS; // >>
   // ?>
-  const SIMPLE_PROMPT = "[>?]>";
-  // irb(main):001:0>
+
+  const SIMPLE_PROMPT = "[>?]>"; // irb(main):001:0>
+
   const DEFAULT_PROMPT = "[\\w#]+\\(\\w+\\):\\d+:\\d+>";
   const RVM_PROMPT = "(\\w+-)?\\d+\\.\\d+\\.\\d+(p\\d+)?[^\\d][^>]+>";
   const IRB_DEFAULT = [{
@@ -19534,6 +19396,7 @@ function ruby(hljs) {
     })].concat(IRB_DEFAULT).concat(COMMENT_MODES).concat(RUBY_DEFAULT_CONTAINS)
   };
 }
+
 module.exports = ruby;
 
 /***/ }),
@@ -19551,7 +19414,6 @@ Description: The Oracle Utilities Rules Language is used to program the Oracle U
 Website: https://docs.oracle.com/cd/E17904_01/dev.1111/e10227/rlref.htm
 Category: enterprise
 */
-
 function ruleslanguage(hljs) {
   return {
     name: 'Oracle Rules Language',
@@ -19571,6 +19433,7 @@ function ruleslanguage(hljs) {
     }]
   };
 }
+
 module.exports = ruleslanguage;
 
 /***/ }),
@@ -19588,18 +19451,13 @@ Contributors: Roman Shmatov <romanshmatov@gmail.com>, Kasper Andersen <kma_untru
 Website: https://www.rust-lang.org
 Category: common, system
 */
-
 function rust(hljs) {
   const NUM_SUFFIX = '([ui](8|16|32|64|128|size)|f(32|64))\?';
   const KEYWORDS = 'abstract as async await become box break const continue crate do dyn ' + 'else enum extern false final fn for if impl in let loop macro match mod ' + 'move mut override priv pub ref return self Self static struct super ' + 'trait true try type typeof unsafe unsized use virtual where while yield';
-  const BUILTINS =
-  // functions
-  'drop ' +
-  // types
-  'i8 i16 i32 i64 i128 isize ' + 'u8 u16 u32 u64 u128 usize ' + 'f32 f64 ' + 'str char bool ' + 'Box Option Result String Vec ' +
-  // traits
-  'Copy Send Sized Sync Drop Fn FnMut FnOnce ToOwned Clone Debug ' + 'PartialEq PartialOrd Eq Ord AsRef AsMut Into From Default Iterator ' + 'Extend IntoIterator DoubleEndedIterator ExactSizeIterator ' + 'SliceConcatExt ToString ' +
-  // macros
+  const BUILTINS = // functions
+  'drop ' + // types
+  'i8 i16 i32 i64 i128 isize ' + 'u8 u16 u32 u64 u128 usize ' + 'f32 f64 ' + 'str char bool ' + 'Box Option Result String Vec ' + // traits
+  'Copy Send Sized Sync Drop Fn FnMut FnOnce ToOwned Clone Debug ' + 'PartialEq PartialOrd Eq Ord AsRef AsMut Into From Default Iterator ' + 'Extend IntoIterator DoubleEndedIterator ExactSizeIterator ' + 'SliceConcatExt ToString ' + // macros
   'assert! assert_eq! bitflags! bytes! cfg! col! concat! concat_idents! ' + 'debug_assert! debug_assert_eq! env! panic! file! format! format_args! ' + 'include_bin! include_str! line! local_data_key! module_path! ' + 'option_env! print! println! select! stringify! try! unimplemented! ' + 'unreachable! vec! write! writeln! macro_rules! assert_ne! debug_assert_ne!';
   return {
     name: 'Rust',
@@ -19679,6 +19537,7 @@ function rust(hljs) {
     }]
   };
 }
+
 module.exports = rust;
 
 /***/ }),
@@ -19694,15 +19553,12 @@ Language: SAS
 Author: Mauricio Caceres <mauricio.caceres.bravo@gmail.com>
 Description: Syntax Highlighting for SAS
 */
-
 function sas(hljs) {
   // Data step and PROC SQL statements
-  const SAS_KEYWORDS = 'do if then else end until while ' + '' + 'abort array attrib by call cards cards4 catname continue ' + 'datalines datalines4 delete delim delimiter display dm drop ' + 'endsas error file filename footnote format goto in infile ' + 'informat input keep label leave length libname link list ' + 'lostcard merge missing modify options output out page put ' + 'redirect remove rename replace retain return select set skip ' + 'startsas stop title update waitsas where window x systask ' + '' + 'add and alter as cascade check create delete describe ' + 'distinct drop foreign from group having index insert into in ' + 'key like message modify msgtype not null on or order primary ' + 'references reset restrict select set table unique update ' + 'validate view where';
+  const SAS_KEYWORDS = 'do if then else end until while ' + '' + 'abort array attrib by call cards cards4 catname continue ' + 'datalines datalines4 delete delim delimiter display dm drop ' + 'endsas error file filename footnote format goto in infile ' + 'informat input keep label leave length libname link list ' + 'lostcard merge missing modify options output out page put ' + 'redirect remove rename replace retain return select set skip ' + 'startsas stop title update waitsas where window x systask ' + '' + 'add and alter as cascade check create delete describe ' + 'distinct drop foreign from group having index insert into in ' + 'key like message modify msgtype not null on or order primary ' + 'references reset restrict select set table unique update ' + 'validate view where'; // Built-in SAS functions
 
-  // Built-in SAS functions
-  const SAS_FUN = 'abs|addr|airy|arcos|arsin|atan|attrc|attrn|band|' + 'betainv|blshift|bnot|bor|brshift|bxor|byte|cdf|ceil|' + 'cexist|cinv|close|cnonct|collate|compbl|compound|' + 'compress|cos|cosh|css|curobs|cv|daccdb|daccdbsl|' + 'daccsl|daccsyd|dacctab|dairy|date|datejul|datepart|' + 'datetime|day|dclose|depdb|depdbsl|depdbsl|depsl|' + 'depsl|depsyd|depsyd|deptab|deptab|dequote|dhms|dif|' + 'digamma|dim|dinfo|dnum|dopen|doptname|doptnum|dread|' + 'dropnote|dsname|erf|erfc|exist|exp|fappend|fclose|' + 'fcol|fdelete|fetch|fetchobs|fexist|fget|fileexist|' + 'filename|fileref|finfo|finv|fipname|fipnamel|' + 'fipstate|floor|fnonct|fnote|fopen|foptname|foptnum|' + 'fpoint|fpos|fput|fread|frewind|frlen|fsep|fuzz|' + 'fwrite|gaminv|gamma|getoption|getvarc|getvarn|hbound|' + 'hms|hosthelp|hour|ibessel|index|indexc|indexw|input|' + 'inputc|inputn|int|intck|intnx|intrr|irr|jbessel|' + 'juldate|kurtosis|lag|lbound|left|length|lgamma|' + 'libname|libref|log|log10|log2|logpdf|logpmf|logsdf|' + 'lowcase|max|mdy|mean|min|minute|mod|month|mopen|' + 'mort|n|netpv|nmiss|normal|note|npv|open|ordinal|' + 'pathname|pdf|peek|peekc|pmf|point|poisson|poke|' + 'probbeta|probbnml|probchi|probf|probgam|probhypr|' + 'probit|probnegb|probnorm|probt|put|putc|putn|qtr|' + 'quote|ranbin|rancau|ranexp|rangam|range|rank|rannor|' + 'ranpoi|rantbl|rantri|ranuni|repeat|resolve|reverse|' + 'rewind|right|round|saving|scan|sdf|second|sign|' + 'sin|sinh|skewness|soundex|spedis|sqrt|std|stderr|' + 'stfips|stname|stnamel|substr|sum|symget|sysget|' + 'sysmsg|sysprod|sysrc|system|tan|tanh|time|timepart|' + 'tinv|tnonct|today|translate|tranwrd|trigamma|' + 'trim|trimn|trunc|uniform|upcase|uss|var|varfmt|' + 'varinfmt|varlabel|varlen|varname|varnum|varray|' + 'varrayx|vartype|verify|vformat|vformatd|vformatdx|' + 'vformatn|vformatnx|vformatw|vformatwx|vformatx|' + 'vinarray|vinarrayx|vinformat|vinformatd|vinformatdx|' + 'vinformatn|vinformatnx|vinformatw|vinformatwx|' + 'vinformatx|vlabel|vlabelx|vlength|vlengthx|vname|' + 'vnamex|vtype|vtypex|weekday|year|yyq|zipfips|zipname|' + 'zipnamel|zipstate';
+  const SAS_FUN = 'abs|addr|airy|arcos|arsin|atan|attrc|attrn|band|' + 'betainv|blshift|bnot|bor|brshift|bxor|byte|cdf|ceil|' + 'cexist|cinv|close|cnonct|collate|compbl|compound|' + 'compress|cos|cosh|css|curobs|cv|daccdb|daccdbsl|' + 'daccsl|daccsyd|dacctab|dairy|date|datejul|datepart|' + 'datetime|day|dclose|depdb|depdbsl|depdbsl|depsl|' + 'depsl|depsyd|depsyd|deptab|deptab|dequote|dhms|dif|' + 'digamma|dim|dinfo|dnum|dopen|doptname|doptnum|dread|' + 'dropnote|dsname|erf|erfc|exist|exp|fappend|fclose|' + 'fcol|fdelete|fetch|fetchobs|fexist|fget|fileexist|' + 'filename|fileref|finfo|finv|fipname|fipnamel|' + 'fipstate|floor|fnonct|fnote|fopen|foptname|foptnum|' + 'fpoint|fpos|fput|fread|frewind|frlen|fsep|fuzz|' + 'fwrite|gaminv|gamma|getoption|getvarc|getvarn|hbound|' + 'hms|hosthelp|hour|ibessel|index|indexc|indexw|input|' + 'inputc|inputn|int|intck|intnx|intrr|irr|jbessel|' + 'juldate|kurtosis|lag|lbound|left|length|lgamma|' + 'libname|libref|log|log10|log2|logpdf|logpmf|logsdf|' + 'lowcase|max|mdy|mean|min|minute|mod|month|mopen|' + 'mort|n|netpv|nmiss|normal|note|npv|open|ordinal|' + 'pathname|pdf|peek|peekc|pmf|point|poisson|poke|' + 'probbeta|probbnml|probchi|probf|probgam|probhypr|' + 'probit|probnegb|probnorm|probt|put|putc|putn|qtr|' + 'quote|ranbin|rancau|ranexp|rangam|range|rank|rannor|' + 'ranpoi|rantbl|rantri|ranuni|repeat|resolve|reverse|' + 'rewind|right|round|saving|scan|sdf|second|sign|' + 'sin|sinh|skewness|soundex|spedis|sqrt|std|stderr|' + 'stfips|stname|stnamel|substr|sum|symget|sysget|' + 'sysmsg|sysprod|sysrc|system|tan|tanh|time|timepart|' + 'tinv|tnonct|today|translate|tranwrd|trigamma|' + 'trim|trimn|trunc|uniform|upcase|uss|var|varfmt|' + 'varinfmt|varlabel|varlen|varname|varnum|varray|' + 'varrayx|vartype|verify|vformat|vformatd|vformatdx|' + 'vformatn|vformatnx|vformatw|vformatwx|vformatx|' + 'vinarray|vinarrayx|vinformat|vinformatd|vinformatdx|' + 'vinformatn|vinformatnx|vinformatw|vinformatwx|' + 'vinformatx|vlabel|vlabelx|vlength|vlengthx|vname|' + 'vnamex|vtype|vtypex|weekday|year|yyq|zipfips|zipname|' + 'zipnamel|zipstate'; // Built-in macro functions
 
-  // Built-in macro functions
   const SAS_MACRO_FUN = 'bquote|nrbquote|cmpres|qcmpres|compstor|' + 'datatyp|display|do|else|end|eval|global|goto|' + 'if|index|input|keydef|label|left|length|let|' + 'local|lowcase|macro|mend|nrbquote|nrquote|' + 'nrstr|put|qcmpres|qleft|qlowcase|qscan|' + 'qsubstr|qsysfunc|qtrim|quote|qupcase|scan|str|' + 'substr|superq|syscall|sysevalf|sysexec|sysfunc|' + 'sysget|syslput|sysprod|sysrc|sysrput|then|to|' + 'trim|unquote|until|upcase|verify|while|window';
   return {
     name: 'SAS',
@@ -19742,6 +19598,7 @@ function sas(hljs) {
     }, hljs.COMMENT('\\*', ';'), hljs.C_BLOCK_COMMENT_MODE]
   };
 }
+
 module.exports = sas;
 
 /***/ }),
@@ -19759,14 +19616,12 @@ Author: Jan Berkel <jan.berkel@gmail.com>
 Contributors: Erik Osheim <d_m@plastic-idolatry.com>
 Website: https://www.scala-lang.org
 */
-
 function scala(hljs) {
   const ANNOTATION = {
     className: 'meta',
     begin: '@[A-Za-z]+'
-  };
+  }; // used in strings for escaping/interpolation/substitution
 
-  // used in strings for escaping/interpolation/substitution
   const SUBST = {
     className: 'subst',
     variants: [{
@@ -19854,6 +19709,7 @@ function scala(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, STRING, SYMBOL, TYPE, METHOD, CLASS, hljs.C_NUMBER_MODE, ANNOTATION]
   };
 }
+
 module.exports = scala;
 
 /***/ }),
@@ -19874,7 +19730,6 @@ Origin: clojure.js
 Website: http://community.schemewiki.org/?what-is-scheme
 Category: lisp
 */
-
 function scheme(hljs) {
   const SCHEME_IDENT_RE = '[^\\(\\)\\[\\]\\{\\}",\'`;#|\\\\\\s]+';
   const SCHEME_SIMPLE_NUMBER_RE = '(-|\\+)?\\d+([./]\\d+)?';
@@ -19970,6 +19825,7 @@ function scheme(hljs) {
     contains: [hljs.SHEBANG(), NUMBER, STRING, QUOTED_IDENT, QUOTED_LIST, LIST].concat(COMMENT_MODES)
   };
 }
+
 module.exports = scheme;
 
 /***/ }),
@@ -19988,7 +19844,6 @@ Description: Scilab is a port from Matlab
 Website: https://www.scilab.org
 Category: scientific
 */
-
 function scilab(hljs) {
   const COMMON_CONTAINS = [hljs.C_NUMBER_MODE, {
     className: 'string',
@@ -20005,8 +19860,7 @@ function scilab(hljs) {
       $pattern: /%?\w+/,
       keyword: 'abort break case clear catch continue do elseif else endfunction end for function ' + 'global if pause return resume select try then while',
       literal: '%f %F %t %T %pi %eps %inf %nan %e %i %z %s',
-      built_in:
-      // Scilab has more than 2000 functions. Just list the most commons
+      built_in: // Scilab has more than 2000 functions. Just list the most commons
       'abs and acos asin atan ceil cd chdir clearglobal cosh cos cumprod deff disp error ' + 'exec execstr exists exp eye gettext floor fprintf fread fsolve imag isdef isempty ' + 'isinfisnan isvector lasterror length load linspace list listfiles log10 log2 log ' + 'max min msprintf mclose mopen ones or pathconvert poly printf prod pwd rand real ' + 'round sinh sin size gsort sprintf sqrt strcat strcmps tring sum system tanh tan ' + 'type typename warning zeros matrix'
     },
     illegal: '("|#|/\\*|\\s+/\\w+)',
@@ -20019,8 +19873,7 @@ function scilab(hljs) {
         begin: '\\(',
         end: '\\)'
       }]
-    },
-    // seems to be a guard against [ident]' or [ident].
+    }, // seems to be a guard against [ident]' or [ident].
     // perhaps to prevent attributes from flagging as keywords?
     {
       begin: '[a-zA-Z_][a-zA-Z_0-9]*[\\.\']+',
@@ -20033,6 +19886,7 @@ function scilab(hljs) {
     }, hljs.COMMENT('//', '$')].concat(COMMON_CONTAINS)
   };
 }
+
 module.exports = scilab;
 
 /***/ }),
@@ -20062,50 +19916,32 @@ const MODES = hljs => {
     }
   };
 };
+
 const TAGS = ['a', 'abbr', 'address', 'article', 'aside', 'audio', 'b', 'blockquote', 'body', 'button', 'canvas', 'caption', 'cite', 'code', 'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'mark', 'menu', 'nav', 'object', 'ol', 'p', 'q', 'quote', 'samp', 'section', 'span', 'strong', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'ul', 'var', 'video'];
-const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width',
-// TODO: find a better solution?
-'min-width', 'max-width', 'min-height', 'max-height'];
+const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width', // TODO: find a better solution?
+'min-width', 'max-width', 'min-height', 'max-height']; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
-const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir',
-// dir()
-'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has',
-// has()
-'host',
-// host or host()
-'host-context',
-// host-context()
-'hover', 'indeterminate', 'in-range', 'invalid', 'is',
-// is()
-'lang',
-// lang()
-'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not',
-// not()
-'nth-child',
-// nth-child()
-'nth-col',
-// nth-col()
-'nth-last-child',
-// nth-last-child()
-'nth-last-col',
-// nth-last-col()
-'nth-last-of-type',
-//nth-last-of-type()
-'nth-of-type',
-//nth-of-type()
+const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir', // dir()
+'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has', // has()
+'host', // host or host()
+'host-context', // host-context()
+'hover', 'indeterminate', 'in-range', 'invalid', 'is', // is()
+'lang', // lang()
+'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not', // not()
+'nth-child', // nth-child()
+'nth-col', // nth-col()
+'nth-last-child', // nth-last-child()
+'nth-last-col', // nth-last-col()
+'nth-last-of-type', //nth-last-of-type()
+'nth-of-type', //nth-of-type()
 'only-child', 'only-of-type', 'optional', 'out-of-range', 'past', 'placeholder-shown', 'read-only', 'read-write', 'required', 'right', 'root', 'scope', 'target', 'target-within', 'user-invalid', 'valid', 'visited', 'where' // where()
-];
+]; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 const PSEUDO_ELEMENTS = ['after', 'backdrop', 'before', 'cue', 'cue-region', 'first-letter', 'first-line', 'grammar-error', 'marker', 'part', 'placeholder', 'selection', 'slotted', 'spelling-error'];
-const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src',
-// @font-face
-'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index'
-// reverse makes sure longer attributes `font-weight` are matched fully
+const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src', // @font-face
+'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index' // reverse makes sure longer attributes `font-weight` are matched fully
 // instead of getting false positives on say `font`
 ].reverse();
-
 /*
 Language: SCSS
 Description: Scss is an extension of the syntax of CSS.
@@ -20115,11 +19951,13 @@ Category: common, css
 */
 
 /** @type LanguageFn */
+
 function scss(hljs) {
   const modes = MODES(hljs);
   const PSEUDO_ELEMENTS$1 = PSEUDO_ELEMENTS;
   const PSEUDO_CLASSES$1 = PSEUDO_CLASSES;
   const AT_IDENTIFIER = '@[a-z-]+'; // @font-face
+
   const AT_MODIFIERS = "and or not only";
   const IDENT_RE = '[a-zA-Z-][a-zA-Z0-9_-]*';
   const VARIABLE = {
@@ -20163,8 +20001,7 @@ function scss(hljs) {
       begin: ':',
       end: ';',
       contains: [VARIABLE, modes.HEXCOLOR, hljs.CSS_NUMBER_MODE, hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE, modes.IMPORTANT]
-    },
-    // matching these here allows us to treat them more like regular CSS
+    }, // matching these here allows us to treat them more like regular CSS
     // rules so everything between the {} gets regular rule highlighting,
     // which is what we want for page and font-face
     {
@@ -20190,6 +20027,7 @@ function scss(hljs) {
     }]
   };
 }
+
 module.exports = scss;
 
 /***/ }),
@@ -20226,6 +20064,7 @@ function shell(hljs) {
     }]
   };
 }
+
 module.exports = shell;
 
 /***/ }),
@@ -20242,7 +20081,6 @@ Author: Dennis Titze <dennis.titze@gmail.com>
 Description: Basic Smali highlighting
 Website: https://github.com/JesusFreke/smali
 */
-
 function smali(hljs) {
   const smali_instr_low_prio = ['add', 'and', 'cmp', 'cmpg', 'cmpl', 'const', 'div', 'double', 'float', 'goto', 'if', 'int', 'long', 'move', 'mul', 'neg', 'new', 'nop', 'not', 'or', 'rem', 'return', 'shl', 'shr', 'sput', 'sub', 'throw', 'ushr', 'xor'];
   const smali_instr_high_prio = ['aget', 'aput', 'array', 'check', 'execute', 'fill', 'filled', 'goto/16', 'goto/32', 'iget', 'instance', 'invoke', 'iput', 'monitor', 'packed', 'sget', 'sparse'];
@@ -20289,6 +20127,7 @@ function smali(hljs) {
     }]
   };
 }
+
 module.exports = smali;
 
 /***/ }),
@@ -20305,7 +20144,6 @@ Description: Smalltalk is an object-oriented, dynamically typed reflective progr
 Author: Vladimir Gubarkov <xonixx@gmail.com>
 Website: https://en.wikipedia.org/wiki/Smalltalk
 */
-
 function smalltalk(hljs) {
   const VAR_IDENT_RE = '[a-z][a-zA-Z0-9_]*';
   const CHAR = {
@@ -20346,6 +20184,7 @@ function smalltalk(hljs) {
     }]
   };
 }
+
 module.exports = smalltalk;
 
 /***/ }),
@@ -20370,9 +20209,11 @@ function sml(hljs) {
     aliases: ['ml'],
     keywords: {
       $pattern: '[a-z_]\\w*!?',
-      keyword: /* according to Definition of Standard ML 97  */
+      keyword:
+      /* according to Definition of Standard ML 97  */
       'abstype and andalso as case datatype do else end eqtype ' + 'exception fn fun functor handle if in include infix infixr ' + 'let local nonfix of op open orelse raise rec sharing sig ' + 'signature struct structure then type val with withtype where while',
-      built_in: /* built-in types according to basis library */
+      built_in:
+      /* built-in types according to basis library */
       'array bool char exn int list option order real ref string substring vector unit word',
       literal: 'true false NONE SOME LESS EQUAL GREATER nil'
     },
@@ -20388,6 +20229,7 @@ function sml(hljs) {
       className: 'symbol',
       begin: '\'[A-Za-z_](?!\')[\\w\']*'
       /* the grammar is ambiguous on how 'a'b should be interpreted but not the compiler */
+
     }, {
       /* polymorphic variant */
       className: 'type',
@@ -20411,9 +20253,11 @@ function sml(hljs) {
       relevance: 0
     }, {
       begin: /[-=]>/ // relevance booster
+
     }]
   };
 }
+
 module.exports = sml;
 
 /***/ }),
@@ -20432,23 +20276,20 @@ Description: Scripting language for the Arma game series
 Website: https://community.bistudio.com/wiki/SQF_syntax
 Category: scripting
 */
-
 function sqf(hljs) {
   // In SQF, a variable start with _
   const VARIABLE = {
     className: 'variable',
     begin: /\b_+[a-zA-Z]\w*/
-  };
-
-  // In SQF, a function should fit myTag_fnc_myFunction pattern
+  }; // In SQF, a function should fit myTag_fnc_myFunction pattern
   // https://community.bistudio.com/wiki/Functions_Library_(Arma_3)#Adding_a_Function
+
   const FUNCTION = {
     className: 'title',
     begin: /[a-zA-Z][a-zA-Z0-9]+_fnc_\w*/
-  };
-
-  // In SQF strings, quotes matching the start are escaped by adding a consecutive.
+  }; // In SQF strings, quotes matching the start are escaped by adding a consecutive.
   // Example of single escaped quotes: " "" " and  ' '' '.
+
   const STRINGS = {
     className: 'string',
     variants: [{
@@ -20466,10 +20307,9 @@ function sqf(hljs) {
         relevance: 0
       }]
     }]
-  };
-
-  // list of keywords from:
+  }; // list of keywords from:
   // https://community.bistudio.com/wiki/PreProcessor_Commands
+
   const PREPROCESSOR = {
     className: 'meta',
     begin: /#\s*[a-z]+\b/,
@@ -20501,6 +20341,7 @@ function sqf(hljs) {
     illegal: /#|^\$ /
   };
 }
+
 module.exports = sqf;
 
 /***/ }),
@@ -20525,16 +20366,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -20542,16 +20383,18 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
  Language: SQL
  Website: https://en.wikipedia.org/wiki/SQL
  Category: common, database
  */
+
 
 function sql(hljs) {
   const COMMENT_MODE = hljs.COMMENT('--', '$');
@@ -20572,29 +20415,23 @@ function sql(hljs) {
       begin: /""/
     }]
   };
-  const LITERALS = ["true", "false",
-  // Not sure it's correct to call NULL literal, and clauses like IS [NOT] NULL look strange that way.
+  const LITERALS = ["true", "false", // Not sure it's correct to call NULL literal, and clauses like IS [NOT] NULL look strange that way.
   // "null",
   "unknown"];
   const MULTI_WORD_TYPES = ["double precision", "large object", "with timezone", "without timezone"];
-  const TYPES = ['bigint', 'binary', 'blob', 'boolean', 'char', 'character', 'clob', 'date', 'dec', 'decfloat', 'decimal', 'float', 'int', 'integer', 'interval', 'nchar', 'nclob', 'national', 'numeric', 'real', 'row', 'smallint', 'time', 'timestamp', 'varchar', 'varying',
-  // modifier (character varying)
+  const TYPES = ['bigint', 'binary', 'blob', 'boolean', 'char', 'character', 'clob', 'date', 'dec', 'decfloat', 'decimal', 'float', 'int', 'integer', 'interval', 'nchar', 'nclob', 'national', 'numeric', 'real', 'row', 'smallint', 'time', 'timestamp', 'varchar', 'varying', // modifier (character varying)
   'varbinary'];
-  const NON_RESERVED_WORDS = ["add", "asc", "collation", "desc", "final", "first", "last", "view"];
+  const NON_RESERVED_WORDS = ["add", "asc", "collation", "desc", "final", "first", "last", "view"]; // https://jakewheat.github.io/sql-overview/sql-2016-foundation-grammar.html#reserved-word
 
-  // https://jakewheat.github.io/sql-overview/sql-2016-foundation-grammar.html#reserved-word
-  const RESERVED_WORDS = ["abs", "acos", "all", "allocate", "alter", "and", "any", "are", "array", "array_agg", "array_max_cardinality", "as", "asensitive", "asin", "asymmetric", "at", "atan", "atomic", "authorization", "avg", "begin", "begin_frame", "begin_partition", "between", "bigint", "binary", "blob", "boolean", "both", "by", "call", "called", "cardinality", "cascaded", "case", "cast", "ceil", "ceiling", "char", "char_length", "character", "character_length", "check", "classifier", "clob", "close", "coalesce", "collate", "collect", "column", "commit", "condition", "connect", "constraint", "contains", "convert", "copy", "corr", "corresponding", "cos", "cosh", "count", "covar_pop", "covar_samp", "create", "cross", "cube", "cume_dist", "current", "current_catalog", "current_date", "current_default_transform_group", "current_path", "current_role", "current_row", "current_schema", "current_time", "current_timestamp", "current_path", "current_role", "current_transform_group_for_type", "current_user", "cursor", "cycle", "date", "day", "deallocate", "dec", "decimal", "decfloat", "declare", "default", "define", "delete", "dense_rank", "deref", "describe", "deterministic", "disconnect", "distinct", "double", "drop", "dynamic", "each", "element", "else", "empty", "end", "end_frame", "end_partition", "end-exec", "equals", "escape", "every", "except", "exec", "execute", "exists", "exp", "external", "extract", "false", "fetch", "filter", "first_value", "float", "floor", "for", "foreign", "frame_row", "free", "from", "full", "function", "fusion", "get", "global", "grant", "group", "grouping", "groups", "having", "hold", "hour", "identity", "in", "indicator", "initial", "inner", "inout", "insensitive", "insert", "int", "integer", "intersect", "intersection", "interval", "into", "is", "join", "json_array", "json_arrayagg", "json_exists", "json_object", "json_objectagg", "json_query", "json_table", "json_table_primitive", "json_value", "lag", "language", "large", "last_value", "lateral", "lead", "leading", "left", "like", "like_regex", "listagg", "ln", "local", "localtime", "localtimestamp", "log", "log10", "lower", "match", "match_number", "match_recognize", "matches", "max", "member", "merge", "method", "min", "minute", "mod", "modifies", "module", "month", "multiset", "national", "natural", "nchar", "nclob", "new", "no", "none", "normalize", "not", "nth_value", "ntile", "null", "nullif", "numeric", "octet_length", "occurrences_regex", "of", "offset", "old", "omit", "on", "one", "only", "open", "or", "order", "out", "outer", "over", "overlaps", "overlay", "parameter", "partition", "pattern", "per", "percent", "percent_rank", "percentile_cont", "percentile_disc", "period", "portion", "position", "position_regex", "power", "precedes", "precision", "prepare", "primary", "procedure", "ptf", "range", "rank", "reads", "real", "recursive", "ref", "references", "referencing", "regr_avgx", "regr_avgy", "regr_count", "regr_intercept", "regr_r2", "regr_slope", "regr_sxx", "regr_sxy", "regr_syy", "release", "result", "return", "returns", "revoke", "right", "rollback", "rollup", "row", "row_number", "rows", "running", "savepoint", "scope", "scroll", "search", "second", "seek", "select", "sensitive", "session_user", "set", "show", "similar", "sin", "sinh", "skip", "smallint", "some", "specific", "specifictype", "sql", "sqlexception", "sqlstate", "sqlwarning", "sqrt", "start", "static", "stddev_pop", "stddev_samp", "submultiset", "subset", "substring", "substring_regex", "succeeds", "sum", "symmetric", "system", "system_time", "system_user", "table", "tablesample", "tan", "tanh", "then", "time", "timestamp", "timezone_hour", "timezone_minute", "to", "trailing", "translate", "translate_regex", "translation", "treat", "trigger", "trim", "trim_array", "true", "truncate", "uescape", "union", "unique", "unknown", "unnest", "update   ", "upper", "user", "using", "value", "values", "value_of", "var_pop", "var_samp", "varbinary", "varchar", "varying", "versioning", "when", "whenever", "where", "width_bucket", "window", "with", "within", "without", "year"];
-
-  // these are reserved words we have identified to be functions
+  const RESERVED_WORDS = ["abs", "acos", "all", "allocate", "alter", "and", "any", "are", "array", "array_agg", "array_max_cardinality", "as", "asensitive", "asin", "asymmetric", "at", "atan", "atomic", "authorization", "avg", "begin", "begin_frame", "begin_partition", "between", "bigint", "binary", "blob", "boolean", "both", "by", "call", "called", "cardinality", "cascaded", "case", "cast", "ceil", "ceiling", "char", "char_length", "character", "character_length", "check", "classifier", "clob", "close", "coalesce", "collate", "collect", "column", "commit", "condition", "connect", "constraint", "contains", "convert", "copy", "corr", "corresponding", "cos", "cosh", "count", "covar_pop", "covar_samp", "create", "cross", "cube", "cume_dist", "current", "current_catalog", "current_date", "current_default_transform_group", "current_path", "current_role", "current_row", "current_schema", "current_time", "current_timestamp", "current_path", "current_role", "current_transform_group_for_type", "current_user", "cursor", "cycle", "date", "day", "deallocate", "dec", "decimal", "decfloat", "declare", "default", "define", "delete", "dense_rank", "deref", "describe", "deterministic", "disconnect", "distinct", "double", "drop", "dynamic", "each", "element", "else", "empty", "end", "end_frame", "end_partition", "end-exec", "equals", "escape", "every", "except", "exec", "execute", "exists", "exp", "external", "extract", "false", "fetch", "filter", "first_value", "float", "floor", "for", "foreign", "frame_row", "free", "from", "full", "function", "fusion", "get", "global", "grant", "group", "grouping", "groups", "having", "hold", "hour", "identity", "in", "indicator", "initial", "inner", "inout", "insensitive", "insert", "int", "integer", "intersect", "intersection", "interval", "into", "is", "join", "json_array", "json_arrayagg", "json_exists", "json_object", "json_objectagg", "json_query", "json_table", "json_table_primitive", "json_value", "lag", "language", "large", "last_value", "lateral", "lead", "leading", "left", "like", "like_regex", "listagg", "ln", "local", "localtime", "localtimestamp", "log", "log10", "lower", "match", "match_number", "match_recognize", "matches", "max", "member", "merge", "method", "min", "minute", "mod", "modifies", "module", "month", "multiset", "national", "natural", "nchar", "nclob", "new", "no", "none", "normalize", "not", "nth_value", "ntile", "null", "nullif", "numeric", "octet_length", "occurrences_regex", "of", "offset", "old", "omit", "on", "one", "only", "open", "or", "order", "out", "outer", "over", "overlaps", "overlay", "parameter", "partition", "pattern", "per", "percent", "percent_rank", "percentile_cont", "percentile_disc", "period", "portion", "position", "position_regex", "power", "precedes", "precision", "prepare", "primary", "procedure", "ptf", "range", "rank", "reads", "real", "recursive", "ref", "references", "referencing", "regr_avgx", "regr_avgy", "regr_count", "regr_intercept", "regr_r2", "regr_slope", "regr_sxx", "regr_sxy", "regr_syy", "release", "result", "return", "returns", "revoke", "right", "rollback", "rollup", "row", "row_number", "rows", "running", "savepoint", "scope", "scroll", "search", "second", "seek", "select", "sensitive", "session_user", "set", "show", "similar", "sin", "sinh", "skip", "smallint", "some", "specific", "specifictype", "sql", "sqlexception", "sqlstate", "sqlwarning", "sqrt", "start", "static", "stddev_pop", "stddev_samp", "submultiset", "subset", "substring", "substring_regex", "succeeds", "sum", "symmetric", "system", "system_time", "system_user", "table", "tablesample", "tan", "tanh", "then", "time", "timestamp", "timezone_hour", "timezone_minute", "to", "trailing", "translate", "translate_regex", "translation", "treat", "trigger", "trim", "trim_array", "true", "truncate", "uescape", "union", "unique", "unknown", "unnest", "update   ", "upper", "user", "using", "value", "values", "value_of", "var_pop", "var_samp", "varbinary", "varchar", "varying", "versioning", "when", "whenever", "where", "width_bucket", "window", "with", "within", "without", "year"]; // these are reserved words we have identified to be functions
   // and should only be highlighted in a dispatch-like context
   // ie, array_agg(...), etc.
-  const RESERVED_FUNCTIONS = ["abs", "acos", "array_agg", "asin", "atan", "avg", "cast", "ceil", "ceiling", "coalesce", "corr", "cos", "cosh", "count", "covar_pop", "covar_samp", "cume_dist", "dense_rank", "deref", "element", "exp", "extract", "first_value", "floor", "json_array", "json_arrayagg", "json_exists", "json_object", "json_objectagg", "json_query", "json_table", "json_table_primitive", "json_value", "lag", "last_value", "lead", "listagg", "ln", "log", "log10", "lower", "max", "min", "mod", "nth_value", "ntile", "nullif", "percent_rank", "percentile_cont", "percentile_disc", "position", "position_regex", "power", "rank", "regr_avgx", "regr_avgy", "regr_count", "regr_intercept", "regr_r2", "regr_slope", "regr_sxx", "regr_sxy", "regr_syy", "row_number", "sin", "sinh", "sqrt", "stddev_pop", "stddev_samp", "substring", "substring_regex", "sum", "tan", "tanh", "translate", "translate_regex", "treat", "trim", "trim_array", "unnest", "upper", "value_of", "var_pop", "var_samp", "width_bucket"];
 
-  // these functions can
-  const POSSIBLE_WITHOUT_PARENS = ["current_catalog", "current_date", "current_default_transform_group", "current_path", "current_role", "current_schema", "current_transform_group_for_type", "current_user", "session_user", "system_time", "system_user", "current_time", "localtime", "current_timestamp", "localtimestamp"];
+  const RESERVED_FUNCTIONS = ["abs", "acos", "array_agg", "asin", "atan", "avg", "cast", "ceil", "ceiling", "coalesce", "corr", "cos", "cosh", "count", "covar_pop", "covar_samp", "cume_dist", "dense_rank", "deref", "element", "exp", "extract", "first_value", "floor", "json_array", "json_arrayagg", "json_exists", "json_object", "json_objectagg", "json_query", "json_table", "json_table_primitive", "json_value", "lag", "last_value", "lead", "listagg", "ln", "log", "log10", "lower", "max", "min", "mod", "nth_value", "ntile", "nullif", "percent_rank", "percentile_cont", "percentile_disc", "position", "position_regex", "power", "rank", "regr_avgx", "regr_avgy", "regr_count", "regr_intercept", "regr_r2", "regr_slope", "regr_sxx", "regr_sxy", "regr_syy", "row_number", "sin", "sinh", "sqrt", "stddev_pop", "stddev_samp", "substring", "substring_regex", "sum", "tan", "tanh", "translate", "translate_regex", "treat", "trim", "trim_array", "unnest", "upper", "value_of", "var_pop", "var_samp", "width_bucket"]; // these functions can
 
-  // those exist to boost relevance making these very
+  const POSSIBLE_WITHOUT_PARENS = ["current_catalog", "current_date", "current_default_transform_group", "current_path", "current_role", "current_schema", "current_transform_group_for_type", "current_user", "session_user", "system_time", "system_user", "current_time", "localtime", "current_timestamp", "localtimestamp"]; // those exist to boost relevance making these very
   // "SQL like" keyword combos worth +1 extra relevance
+
   const COMBOS = ["create table", "insert into", "primary key", "foreign key", "not null", "alter table", "add constraint", "grouping sets", "on overflow", "character set", "respect nulls", "ignore nulls", "nulls first", "nulls last", "depth first", "breadth first"];
   const FUNCTIONS = RESERVED_FUNCTIONS;
   const KEYWORDS = [...RESERVED_WORDS, ...NON_RESERVED_WORDS].filter(keyword => {
@@ -20614,9 +20451,8 @@ function sql(hljs) {
     keywords: {
       built_in: FUNCTIONS
     }
-  };
+  }; // keywords with less than 3 letters are reduced in relevancy
 
-  // keywords with less than 3 letters are reduced in relevancy
   function reduceRelevancy(list, {
     exceptions,
     when
@@ -20633,6 +20469,7 @@ function sql(hljs) {
       }
     });
   }
+
   return {
     name: 'SQL',
     case_insensitive: true,
@@ -20661,6 +20498,7 @@ function sql(hljs) {
     }, FUNCTION_CALL, VARIABLE, STRING, QUOTED_IDENTIFIER, hljs.C_NUMBER_MODE, hljs.C_BLOCK_COMMENT_MODE, COMMENT_MODE, OPERATOR]
   };
 }
+
 module.exports = sql;
 
 /***/ }),
@@ -20688,7 +20526,6 @@ which databases.  This is likely to be removed in the future.
 - MySQL should be factored out into it's own 3rd party grammar.
 
 */
-
 function sql_more(hljs) {
   var COMMENT_MODE = hljs.COMMENT('--', '$');
   return {
@@ -20729,6 +20566,7 @@ function sql_more(hljs) {
     }, hljs.C_BLOCK_COMMENT_MODE, COMMENT_MODE, hljs.HASH_COMMENT_MODE]
   };
 }
+
 module.exports = sql_more;
 
 /***/ }),
@@ -20746,7 +20584,6 @@ Author: Jeffrey B. Arnold <jeffrey.arnold@gmail.com>
 Website: http://mc-stan.org/
 Category: scientific
 */
-
 function stan(hljs) {
   // variable names cannot conflict with block identifiers
   const BLOCKS = ['functions', 'model', 'data', 'parameters', 'quantities', 'transformed', 'generated'];
@@ -20808,6 +20645,7 @@ function stan(hljs) {
     }]
   };
 }
+
 module.exports = stan;
 
 /***/ }),
@@ -20830,7 +20668,6 @@ Category: scientific
 /*
   This is a fork and modification of Drew McDonald's file (https://github.com/drewmcdonald/stata-highlighting). I have also included a list of builtin commands from https://bugs.kde.org/show_bug.cgi?id=135646.
 */
-
 function stata(hljs) {
   return {
     name: 'Stata',
@@ -20858,6 +20695,7 @@ function stata(hljs) {
     }, hljs.COMMENT('^[ \t]*\\*.*$', false), hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE]
   };
 }
+
 module.exports = stata;
 
 /***/ }),
@@ -20874,7 +20712,6 @@ Contributors: Adam Joseph Cook <adam.joseph.cook@gmail.com>
 Description: Syntax highlighter for STEP Part 21 files (ISO 10303-21).
 Website: https://en.wikipedia.org/wiki/ISO_10303-21
 */
-
 function step21(hljs) {
   const STEP21_IDENT_RE = '[A-Z_][A-Z0-9_.]*';
   const STEP21_KEYWORDS = {
@@ -20915,6 +20752,7 @@ function step21(hljs) {
     }]
   };
 }
+
 module.exports = step21;
 
 /***/ }),
@@ -20944,50 +20782,32 @@ const MODES = hljs => {
     }
   };
 };
+
 const TAGS = ['a', 'abbr', 'address', 'article', 'aside', 'audio', 'b', 'blockquote', 'body', 'button', 'canvas', 'caption', 'cite', 'code', 'dd', 'del', 'details', 'dfn', 'div', 'dl', 'dt', 'em', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'html', 'i', 'iframe', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'main', 'mark', 'menu', 'nav', 'object', 'ol', 'p', 'q', 'quote', 'samp', 'section', 'span', 'strong', 'summary', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'time', 'tr', 'ul', 'var', 'video'];
-const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width',
-// TODO: find a better solution?
-'min-width', 'max-width', 'min-height', 'max-height'];
+const MEDIA_FEATURES = ['any-hover', 'any-pointer', 'aspect-ratio', 'color', 'color-gamut', 'color-index', 'device-aspect-ratio', 'device-height', 'device-width', 'display-mode', 'forced-colors', 'grid', 'height', 'hover', 'inverted-colors', 'monochrome', 'orientation', 'overflow-block', 'overflow-inline', 'pointer', 'prefers-color-scheme', 'prefers-contrast', 'prefers-reduced-motion', 'prefers-reduced-transparency', 'resolution', 'scan', 'scripting', 'update', 'width', // TODO: find a better solution?
+'min-width', 'max-width', 'min-height', 'max-height']; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-classes
-const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir',
-// dir()
-'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has',
-// has()
-'host',
-// host or host()
-'host-context',
-// host-context()
-'hover', 'indeterminate', 'in-range', 'invalid', 'is',
-// is()
-'lang',
-// lang()
-'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not',
-// not()
-'nth-child',
-// nth-child()
-'nth-col',
-// nth-col()
-'nth-last-child',
-// nth-last-child()
-'nth-last-col',
-// nth-last-col()
-'nth-last-of-type',
-//nth-last-of-type()
-'nth-of-type',
-//nth-of-type()
+const PSEUDO_CLASSES = ['active', 'any-link', 'blank', 'checked', 'current', 'default', 'defined', 'dir', // dir()
+'disabled', 'drop', 'empty', 'enabled', 'first', 'first-child', 'first-of-type', 'fullscreen', 'future', 'focus', 'focus-visible', 'focus-within', 'has', // has()
+'host', // host or host()
+'host-context', // host-context()
+'hover', 'indeterminate', 'in-range', 'invalid', 'is', // is()
+'lang', // lang()
+'last-child', 'last-of-type', 'left', 'link', 'local-link', 'not', // not()
+'nth-child', // nth-child()
+'nth-col', // nth-col()
+'nth-last-child', // nth-last-child()
+'nth-last-col', // nth-last-col()
+'nth-last-of-type', //nth-last-of-type()
+'nth-of-type', //nth-of-type()
 'only-child', 'only-of-type', 'optional', 'out-of-range', 'past', 'placeholder-shown', 'read-only', 'read-write', 'required', 'right', 'root', 'scope', 'target', 'target-within', 'user-invalid', 'valid', 'visited', 'where' // where()
-];
+]; // https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 
-// https://developer.mozilla.org/en-US/docs/Web/CSS/Pseudo-elements
 const PSEUDO_ELEMENTS = ['after', 'backdrop', 'before', 'cue', 'cue-region', 'first-letter', 'first-line', 'grammar-error', 'marker', 'part', 'placeholder', 'selection', 'slotted', 'spelling-error'];
-const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src',
-// @font-face
-'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index'
-// reverse makes sure longer attributes `font-weight` are matched fully
+const ATTRIBUTES = ['align-content', 'align-items', 'align-self', 'animation', 'animation-delay', 'animation-direction', 'animation-duration', 'animation-fill-mode', 'animation-iteration-count', 'animation-name', 'animation-play-state', 'animation-timing-function', 'auto', 'backface-visibility', 'background', 'background-attachment', 'background-clip', 'background-color', 'background-image', 'background-origin', 'background-position', 'background-repeat', 'background-size', 'border', 'border-bottom', 'border-bottom-color', 'border-bottom-left-radius', 'border-bottom-right-radius', 'border-bottom-style', 'border-bottom-width', 'border-collapse', 'border-color', 'border-image', 'border-image-outset', 'border-image-repeat', 'border-image-slice', 'border-image-source', 'border-image-width', 'border-left', 'border-left-color', 'border-left-style', 'border-left-width', 'border-radius', 'border-right', 'border-right-color', 'border-right-style', 'border-right-width', 'border-spacing', 'border-style', 'border-top', 'border-top-color', 'border-top-left-radius', 'border-top-right-radius', 'border-top-style', 'border-top-width', 'border-width', 'bottom', 'box-decoration-break', 'box-shadow', 'box-sizing', 'break-after', 'break-before', 'break-inside', 'caption-side', 'clear', 'clip', 'clip-path', 'color', 'column-count', 'column-fill', 'column-gap', 'column-rule', 'column-rule-color', 'column-rule-style', 'column-rule-width', 'column-span', 'column-width', 'columns', 'content', 'counter-increment', 'counter-reset', 'cursor', 'direction', 'display', 'empty-cells', 'filter', 'flex', 'flex-basis', 'flex-direction', 'flex-flow', 'flex-grow', 'flex-shrink', 'flex-wrap', 'float', 'font', 'font-display', 'font-family', 'font-feature-settings', 'font-kerning', 'font-language-override', 'font-size', 'font-size-adjust', 'font-smoothing', 'font-stretch', 'font-style', 'font-variant', 'font-variant-ligatures', 'font-variation-settings', 'font-weight', 'height', 'hyphens', 'icon', 'image-orientation', 'image-rendering', 'image-resolution', 'ime-mode', 'inherit', 'initial', 'justify-content', 'left', 'letter-spacing', 'line-height', 'list-style', 'list-style-image', 'list-style-position', 'list-style-type', 'margin', 'margin-bottom', 'margin-left', 'margin-right', 'margin-top', 'marks', 'mask', 'max-height', 'max-width', 'min-height', 'min-width', 'nav-down', 'nav-index', 'nav-left', 'nav-right', 'nav-up', 'none', 'normal', 'object-fit', 'object-position', 'opacity', 'order', 'orphans', 'outline', 'outline-color', 'outline-offset', 'outline-style', 'outline-width', 'overflow', 'overflow-wrap', 'overflow-x', 'overflow-y', 'padding', 'padding-bottom', 'padding-left', 'padding-right', 'padding-top', 'page-break-after', 'page-break-before', 'page-break-inside', 'perspective', 'perspective-origin', 'pointer-events', 'position', 'quotes', 'resize', 'right', 'src', // @font-face
+'tab-size', 'table-layout', 'text-align', 'text-align-last', 'text-decoration', 'text-decoration-color', 'text-decoration-line', 'text-decoration-style', 'text-indent', 'text-overflow', 'text-rendering', 'text-shadow', 'text-transform', 'text-underline-position', 'top', 'transform', 'transform-origin', 'transform-style', 'transition', 'transition-delay', 'transition-duration', 'transition-property', 'transition-timing-function', 'unicode-bidi', 'vertical-align', 'visibility', 'white-space', 'widows', 'width', 'word-break', 'word-spacing', 'word-wrap', 'z-index' // reverse makes sure longer attributes `font-weight` are matched fully
 // instead of getting false positives on say `font`
 ].reverse();
-
 /*
 Language: Stylus
 Author: Bryant Williams <b.n.williams@gmail.com>
@@ -20997,6 +20817,7 @@ Category: css
 */
 
 /** @type LanguageFn */
+
 function stylus(hljs) {
   const modes = MODES(hljs);
   const AT_MODIFIERS = "and or not only";
@@ -21005,25 +20826,16 @@ function stylus(hljs) {
     begin: '\\$' + hljs.IDENT_RE
   };
   const AT_KEYWORDS = ['charset', 'css', 'debug', 'extend', 'font-face', 'for', 'import', 'include', 'keyframes', 'media', 'mixin', 'page', 'warn', 'while'];
-  const LOOKAHEAD_TAG_END = '(?=[.\\s\\n[:,(])';
+  const LOOKAHEAD_TAG_END = '(?=[.\\s\\n[:,(])'; // illegals
 
-  // illegals
-  const ILLEGAL = ['\\?', '(\\bReturn\\b)',
-  // monkey
-  '(\\bEnd\\b)',
-  // monkey
-  '(\\bend\\b)',
-  // vbscript
-  '(\\bdef\\b)',
-  // gradle
-  ';',
-  // a whole lot of languages
-  '#\\s',
-  // markdown
-  '\\*\\s',
-  // markdown
-  '===\\s',
-  // markdown
+  const ILLEGAL = ['\\?', '(\\bReturn\\b)', // monkey
+  '(\\bEnd\\b)', // monkey
+  '(\\bend\\b)', // vbscript
+  '(\\bdef\\b)', // gradle
+  ';', // a whole lot of languages
+  '#\\s', // markdown
+  '\\*\\s', // markdown
+  '===\\s', // markdown
   '\\|', '%' // prolog
   ];
   return {
@@ -21032,29 +20844,22 @@ function stylus(hljs) {
     case_insensitive: false,
     keywords: 'if else for in',
     illegal: '(' + ILLEGAL.join('|') + ')',
-    contains: [
-    // strings
-    hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE,
-    // comments
-    hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE,
-    // hex colors
-    modes.HEXCOLOR,
-    // class tag
+    contains: [// strings
+    hljs.QUOTE_STRING_MODE, hljs.APOS_STRING_MODE, // comments
+    hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, // hex colors
+    modes.HEXCOLOR, // class tag
     {
       begin: '\\.[a-zA-Z][a-zA-Z0-9_-]*' + LOOKAHEAD_TAG_END,
       className: 'selector-class'
-    },
-    // id tag
+    }, // id tag
     {
       begin: '#[a-zA-Z][a-zA-Z0-9_-]*' + LOOKAHEAD_TAG_END,
       className: 'selector-id'
-    },
-    // tags
+    }, // tags
     {
       begin: '\\b(' + TAGS.join('|') + ')' + LOOKAHEAD_TAG_END,
       className: 'selector-tag'
-    },
-    // psuedo selectors
+    }, // psuedo selectors
     {
       className: 'selector-pseudo',
       begin: '&?:(' + PSEUDO_CLASSES.join('|') + ')' + LOOKAHEAD_TAG_END
@@ -21073,17 +20878,13 @@ function stylus(hljs) {
         },
         contains: [hljs.CSS_NUMBER_MODE]
       }
-    },
-    // @ keywords
+    }, // @ keywords
     {
       className: 'keyword',
       begin: '\@((-(o|moz|ms|webkit)-)?(' + AT_KEYWORDS.join('|') + '))\\b'
-    },
-    // variables
-    VARIABLE,
-    // dimension
-    hljs.CSS_NUMBER_MODE,
-    // functions
+    }, // variables
+    VARIABLE, // dimension
+    hljs.CSS_NUMBER_MODE, // functions
     //  - only from beginning of line + whitespace
     {
       className: 'function',
@@ -21099,8 +20900,7 @@ function stylus(hljs) {
         end: /\)/,
         contains: [modes.HEXCOLOR, VARIABLE, hljs.APOS_STRING_MODE, hljs.CSS_NUMBER_MODE, hljs.QUOTE_STRING_MODE]
       }]
-    },
-    // attributes
+    }, // attributes
     //  - only from beginning of line + whitespace
     //  - must have whitespace after it
     {
@@ -21116,6 +20916,7 @@ function stylus(hljs) {
     }]
   };
 }
+
 module.exports = stylus;
 
 /***/ }),
@@ -21131,7 +20932,6 @@ Language: SubUnit
 Author: Sergey Bronnikov <sergeyb@bronevichok.ru>
 Website: https://pypi.org/project/python-subunit/
 */
-
 function subunit(hljs) {
   const DETAILS = {
     className: 'string',
@@ -21165,6 +20965,7 @@ function subunit(hljs) {
     contains: [DETAILS, TIME, PROGRESSVALUE, KEYWORDS]
   };
 }
+
 module.exports = subunit;
 
 /***/ }),
@@ -21189,24 +20990,25 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -21214,145 +21016,97 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-const keywordWrapper = keyword => concat(/\b/, keyword, /\w$/.test(keyword) ? /\b/ : /\B/);
 
-// Keywords that require a leading dot.
-const dotKeywords = ['Protocol',
-// contextual
+const keywordWrapper = keyword => concat(/\b/, keyword, /\w$/.test(keyword) ? /\b/ : /\B/); // Keywords that require a leading dot.
+
+
+const dotKeywords = ['Protocol', // contextual
 'Type' // contextual
-].map(keywordWrapper);
+].map(keywordWrapper); // Keywords that may have a leading dot.
 
-// Keywords that may have a leading dot.
-const optionalDotKeywords = ['init', 'self'].map(keywordWrapper);
+const optionalDotKeywords = ['init', 'self'].map(keywordWrapper); // should register as keyword, not type
 
-// should register as keyword, not type
-const keywordTypes = ['Any', 'Self'];
+const keywordTypes = ['Any', 'Self']; // Regular keywords and literals.
 
-// Regular keywords and literals.
-const keywords = [
-// strings below will be fed into the regular `keywords` engine while regex
+const keywords = [// strings below will be fed into the regular `keywords` engine while regex
 // will result in additional modes being created to scan for those keywords to
 // avoid conflicts with other rules
-'associatedtype', 'async', 'await', /as\?/,
-// operator
-/as!/,
-// operator
-'as',
-// operator
-'break', 'case', 'catch', 'class', 'continue', 'convenience',
-// contextual
-'default', 'defer', 'deinit', 'didSet',
-// contextual
-'do', 'dynamic',
-// contextual
-'else', 'enum', 'extension', 'fallthrough', /fileprivate\(set\)/, 'fileprivate', 'final',
-// contextual
-'for', 'func', 'get',
-// contextual
-'guard', 'if', 'import', 'indirect',
-// contextual
-'infix',
-// contextual
-/init\?/, /init!/, 'inout', /internal\(set\)/, 'internal', 'in', 'is',
-// operator
-'lazy',
-// contextual
-'let', 'mutating',
-// contextual
-'nonmutating',
-// contextual
-/open\(set\)/,
-// contextual
-'open',
-// contextual
-'operator', 'optional',
-// contextual
-'override',
-// contextual
-'postfix',
-// contextual
-'precedencegroup', 'prefix',
-// contextual
-/private\(set\)/, 'private', 'protocol', /public\(set\)/, 'public', 'repeat', 'required',
-// contextual
-'rethrows', 'return', 'set',
-// contextual
-'some',
-// contextual
-'static', 'struct', 'subscript', 'super', 'switch', 'throws', 'throw', /try\?/,
-// operator
-/try!/,
-// operator
-'try',
-// operator
-'typealias', /unowned\(safe\)/,
-// contextual
-/unowned\(unsafe\)/,
-// contextual
-'unowned',
-// contextual
-'var', 'weak',
-// contextual
+'associatedtype', 'async', 'await', /as\?/, // operator
+/as!/, // operator
+'as', // operator
+'break', 'case', 'catch', 'class', 'continue', 'convenience', // contextual
+'default', 'defer', 'deinit', 'didSet', // contextual
+'do', 'dynamic', // contextual
+'else', 'enum', 'extension', 'fallthrough', /fileprivate\(set\)/, 'fileprivate', 'final', // contextual
+'for', 'func', 'get', // contextual
+'guard', 'if', 'import', 'indirect', // contextual
+'infix', // contextual
+/init\?/, /init!/, 'inout', /internal\(set\)/, 'internal', 'in', 'is', // operator
+'lazy', // contextual
+'let', 'mutating', // contextual
+'nonmutating', // contextual
+/open\(set\)/, // contextual
+'open', // contextual
+'operator', 'optional', // contextual
+'override', // contextual
+'postfix', // contextual
+'precedencegroup', 'prefix', // contextual
+/private\(set\)/, 'private', 'protocol', /public\(set\)/, 'public', 'repeat', 'required', // contextual
+'rethrows', 'return', 'set', // contextual
+'some', // contextual
+'static', 'struct', 'subscript', 'super', 'switch', 'throws', 'throw', /try\?/, // operator
+/try!/, // operator
+'try', // operator
+'typealias', /unowned\(safe\)/, // contextual
+/unowned\(unsafe\)/, // contextual
+'unowned', // contextual
+'var', 'weak', // contextual
 'where', 'while', 'willSet' // contextual
-];
-
-// NOTE: Contextual keywords are reserved only in specific contexts.
+]; // NOTE: Contextual keywords are reserved only in specific contexts.
 // Ideally, these should be matched using modes to avoid false positives.
-
 // Literals.
-const literals = ['false', 'nil', 'true'];
 
-// Keywords used in precedence groups.
-const precedencegroupKeywords = ['assignment', 'associativity', 'higherThan', 'left', 'lowerThan', 'none', 'right'];
+const literals = ['false', 'nil', 'true']; // Keywords used in precedence groups.
 
-// Keywords that start with a number sign (#).
+const precedencegroupKeywords = ['assignment', 'associativity', 'higherThan', 'left', 'lowerThan', 'none', 'right']; // Keywords that start with a number sign (#).
 // #available is handled separately.
-const numberSignKeywords = ['#colorLiteral', '#column', '#dsohandle', '#else', '#elseif', '#endif', '#error', '#file', '#fileID', '#fileLiteral', '#filePath', '#function', '#if', '#imageLiteral', '#keyPath', '#line', '#selector', '#sourceLocation', '#warn_unqualified_access', '#warning'];
 
-// Global functions in the Standard Library.
-const builtIns = ['abs', 'all', 'any', 'assert', 'assertionFailure', 'debugPrint', 'dump', 'fatalError', 'getVaList', 'isKnownUniquelyReferenced', 'max', 'min', 'numericCast', 'pointwiseMax', 'pointwiseMin', 'precondition', 'preconditionFailure', 'print', 'readLine', 'repeatElement', 'sequence', 'stride', 'swap', 'swift_unboxFromSwiftValueWithType', 'transcode', 'type', 'unsafeBitCast', 'unsafeDowncast', 'withExtendedLifetime', 'withUnsafeMutablePointer', 'withUnsafePointer', 'withVaList', 'withoutActuallyEscaping', 'zip'];
+const numberSignKeywords = ['#colorLiteral', '#column', '#dsohandle', '#else', '#elseif', '#endif', '#error', '#file', '#fileID', '#fileLiteral', '#filePath', '#function', '#if', '#imageLiteral', '#keyPath', '#line', '#selector', '#sourceLocation', '#warn_unqualified_access', '#warning']; // Global functions in the Standard Library.
 
-// Valid first characters for operators.
-const operatorHead = either(/[/=\-+!*%<>&|^~?]/, /[\u00A1-\u00A7]/, /[\u00A9\u00AB]/, /[\u00AC\u00AE]/, /[\u00B0\u00B1]/, /[\u00B6\u00BB\u00BF\u00D7\u00F7]/, /[\u2016-\u2017]/, /[\u2020-\u2027]/, /[\u2030-\u203E]/, /[\u2041-\u2053]/, /[\u2055-\u205E]/, /[\u2190-\u23FF]/, /[\u2500-\u2775]/, /[\u2794-\u2BFF]/, /[\u2E00-\u2E7F]/, /[\u3001-\u3003]/, /[\u3008-\u3020]/, /[\u3030]/);
+const builtIns = ['abs', 'all', 'any', 'assert', 'assertionFailure', 'debugPrint', 'dump', 'fatalError', 'getVaList', 'isKnownUniquelyReferenced', 'max', 'min', 'numericCast', 'pointwiseMax', 'pointwiseMin', 'precondition', 'preconditionFailure', 'print', 'readLine', 'repeatElement', 'sequence', 'stride', 'swap', 'swift_unboxFromSwiftValueWithType', 'transcode', 'type', 'unsafeBitCast', 'unsafeDowncast', 'withExtendedLifetime', 'withUnsafeMutablePointer', 'withUnsafePointer', 'withVaList', 'withoutActuallyEscaping', 'zip']; // Valid first characters for operators.
 
-// Valid characters for operators.
-const operatorCharacter = either(operatorHead, /[\u0300-\u036F]/, /[\u1DC0-\u1DFF]/, /[\u20D0-\u20FF]/, /[\uFE00-\uFE0F]/, /[\uFE20-\uFE2F]/
-// TODO: The following characters are also allowed, but the regex isn't supported yet.
+const operatorHead = either(/[/=\-+!*%<>&|^~?]/, /[\u00A1-\u00A7]/, /[\u00A9\u00AB]/, /[\u00AC\u00AE]/, /[\u00B0\u00B1]/, /[\u00B6\u00BB\u00BF\u00D7\u00F7]/, /[\u2016-\u2017]/, /[\u2020-\u2027]/, /[\u2030-\u203E]/, /[\u2041-\u2053]/, /[\u2055-\u205E]/, /[\u2190-\u23FF]/, /[\u2500-\u2775]/, /[\u2794-\u2BFF]/, /[\u2E00-\u2E7F]/, /[\u3001-\u3003]/, /[\u3008-\u3020]/, /[\u3030]/); // Valid characters for operators.
+
+const operatorCharacter = either(operatorHead, /[\u0300-\u036F]/, /[\u1DC0-\u1DFF]/, /[\u20D0-\u20FF]/, /[\uFE00-\uFE0F]/, /[\uFE20-\uFE2F]/ // TODO: The following characters are also allowed, but the regex isn't supported yet.
 // /[\u{E0100}-\u{E01EF}]/u
-);
+); // Valid operator.
 
-// Valid operator.
-const operator = concat(operatorHead, operatorCharacter, '*');
+const operator = concat(operatorHead, operatorCharacter, '*'); // Valid first characters for identifiers.
 
-// Valid first characters for identifiers.
 const identifierHead = either(/[a-zA-Z_]/, /[\u00A8\u00AA\u00AD\u00AF\u00B2-\u00B5\u00B7-\u00BA]/, /[\u00BC-\u00BE\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u00FF]/, /[\u0100-\u02FF\u0370-\u167F\u1681-\u180D\u180F-\u1DBF]/, /[\u1E00-\u1FFF]/, /[\u200B-\u200D\u202A-\u202E\u203F-\u2040\u2054\u2060-\u206F]/, /[\u2070-\u20CF\u2100-\u218F\u2460-\u24FF\u2776-\u2793]/, /[\u2C00-\u2DFF\u2E80-\u2FFF]/, /[\u3004-\u3007\u3021-\u302F\u3031-\u303F\u3040-\uD7FF]/, /[\uF900-\uFD3D\uFD40-\uFDCF\uFDF0-\uFE1F\uFE30-\uFE44]/, /[\uFE47-\uFEFE\uFF00-\uFFFD]/ // Should be /[\uFE47-\uFFFD]/, but we have to exclude FEFF.
 // The following characters are also allowed, but the regexes aren't supported yet.
 // /[\u{10000}-\u{1FFFD}\u{20000-\u{2FFFD}\u{30000}-\u{3FFFD}\u{40000}-\u{4FFFD}]/u,
 // /[\u{50000}-\u{5FFFD}\u{60000-\u{6FFFD}\u{70000}-\u{7FFFD}\u{80000}-\u{8FFFD}]/u,
 // /[\u{90000}-\u{9FFFD}\u{A0000-\u{AFFFD}\u{B0000}-\u{BFFFD}\u{C0000}-\u{CFFFD}]/u,
 // /[\u{D0000}-\u{DFFFD}\u{E0000-\u{EFFFD}]/u
-);
+); // Valid characters for identifiers.
 
-// Valid characters for identifiers.
-const identifierCharacter = either(identifierHead, /\d/, /[\u0300-\u036F\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/);
+const identifierCharacter = either(identifierHead, /\d/, /[\u0300-\u036F\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]/); // Valid identifier.
 
-// Valid identifier.
-const identifier = concat(identifierHead, identifierCharacter, '*');
+const identifier = concat(identifierHead, identifierCharacter, '*'); // Valid type identifier.
 
-// Valid type identifier.
-const typeIdentifier = concat(/[A-Z]/, identifierCharacter, '*');
-
-// Built-in attributes, which are highlighted as keywords.
+const typeIdentifier = concat(/[A-Z]/, identifierCharacter, '*'); // Built-in attributes, which are highlighted as keywords.
 // @available is handled separately.
-const keywordAttributes = ['autoclosure', concat(/convention\(/, either('swift', 'block', 'c'), /\)/), 'discardableResult', 'dynamicCallable', 'dynamicMemberLookup', 'escaping', 'frozen', 'GKInspectable', 'IBAction', 'IBDesignable', 'IBInspectable', 'IBOutlet', 'IBSegueAction', 'inlinable', 'main', 'nonobjc', 'NSApplicationMain', 'NSCopying', 'NSManaged', concat(/objc\(/, identifier, /\)/), 'objc', 'objcMembers', 'propertyWrapper', 'requires_stored_property_inits', 'testable', 'UIApplicationMain', 'unknown', 'usableFromInline'];
 
-// Contextual keywords used in @available and #available.
+const keywordAttributes = ['autoclosure', concat(/convention\(/, either('swift', 'block', 'c'), /\)/), 'discardableResult', 'dynamicCallable', 'dynamicMemberLookup', 'escaping', 'frozen', 'GKInspectable', 'IBAction', 'IBDesignable', 'IBInspectable', 'IBOutlet', 'IBSegueAction', 'inlinable', 'main', 'nonobjc', 'NSApplicationMain', 'NSCopying', 'NSManaged', concat(/objc\(/, identifier, /\)/), 'objc', 'objcMembers', 'propertyWrapper', 'requires_stored_property_inits', 'testable', 'UIApplicationMain', 'unknown', 'usableFromInline']; // Contextual keywords used in @available and #available.
+
 const availabilityKeywords = ['iOS', 'iOSApplicationExtension', 'macOS', 'macOSApplicationExtension', 'macCatalyst', 'macCatalystApplicationExtension', 'watchOS', 'watchOSApplicationExtension', 'tvOS', 'tvOSApplicationExtension', 'swift'];
-
 /*
 Language: Swift
 Description: Swift is a general-purpose programming language built using a modern approach to safety, performance, and software design patterns.
@@ -21363,19 +21117,19 @@ Category: common, system
 */
 
 /** @type LanguageFn */
+
 function swift(hljs) {
   const WHITESPACE = {
     match: /\s+/,
     relevance: 0
-  };
-  // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID411
+  }; // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID411
+
   const BLOCK_COMMENT = hljs.COMMENT('/\\*', '\\*/', {
     contains: ['self']
   });
-  const COMMENTS = [hljs.C_LINE_COMMENT_MODE, BLOCK_COMMENT];
-
-  // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID413
+  const COMMENTS = [hljs.C_LINE_COMMENT_MODE, BLOCK_COMMENT]; // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID413
   // https://docs.swift.org/swift-book/ReferenceManual/zzSummaryOfTheGrammar.html
+
   const DOT_KEYWORD = {
     className: 'keyword',
     begin: concat(/\./, lookahead(either(...dotKeywords, ...optionalDotKeywords))),
@@ -21388,6 +21142,7 @@ function swift(hljs) {
     relevance: 0
   };
   const PLAIN_KEYWORDS = keywords.filter(kw => typeof kw === 'string').concat(["_|0"]); // seems common, so 0 relevance
+
   const REGEX_KEYWORDS = keywords.filter(kw => typeof kw !== 'string') // find regex
   .concat(keywordTypes).map(keywordWrapper);
   const KEYWORD = {
@@ -21395,19 +21150,17 @@ function swift(hljs) {
       className: 'keyword',
       match: either(...REGEX_KEYWORDS, ...optionalDotKeywords)
     }]
-  };
-  // find all the regular keywords
+  }; // find all the regular keywords
+
   const KEYWORDS = {
-    $pattern: either(/\b\w+/,
-    // regular keywords
+    $pattern: either(/\b\w+/, // regular keywords
     /#\w+/ // number keywords
     ),
     keyword: PLAIN_KEYWORDS.concat(numberSignKeywords),
     literal: literals
   };
-  const KEYWORD_MODES = [DOT_KEYWORD, KEYWORD_GUARD, KEYWORD];
+  const KEYWORD_MODES = [DOT_KEYWORD, KEYWORD_GUARD, KEYWORD]; // https://github.com/apple/swift/tree/main/stdlib/public/core
 
-  // https://github.com/apple/swift/tree/main/stdlib/public/core
   const BUILT_IN_GUARD = {
     // Consume .built_in to prevent highlighting properties and methods.
     match: concat(/\./, either(...builtIns)),
@@ -21417,9 +21170,8 @@ function swift(hljs) {
     className: 'built_in',
     match: concat(/\b/, either(...builtIns), /(?=\()/)
   };
-  const BUILT_INS = [BUILT_IN_GUARD, BUILT_IN];
+  const BUILT_INS = [BUILT_IN_GUARD, BUILT_IN]; // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID418
 
-  // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID418
   const OPERATOR_GUARD = {
     // Prevent -> from being highlighting as an operator.
     match: /->/,
@@ -21437,35 +21189,29 @@ function swift(hljs) {
       match: `\\.(\\.|${operatorCharacter})+`
     }]
   };
-  const OPERATORS = [OPERATOR_GUARD, OPERATOR];
-
-  // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#grammar_numeric-literal
+  const OPERATORS = [OPERATOR_GUARD, OPERATOR]; // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#grammar_numeric-literal
   // TODO: Update for leading `-` after lookbehind is supported everywhere
+
   const decimalDigits = '([0-9]_*)+';
   const hexDigits = '([0-9a-fA-F]_*)+';
   const NUMBER = {
     className: 'number',
     relevance: 0,
-    variants: [
-    // decimal floating-point-literal (subsumes decimal-literal)
+    variants: [// decimal floating-point-literal (subsumes decimal-literal)
     {
       match: `\\b(${decimalDigits})(\\.(${decimalDigits}))?` + `([eE][+-]?(${decimalDigits}))?\\b`
-    },
-    // hexadecimal floating-point-literal (subsumes hexadecimal-literal)
+    }, // hexadecimal floating-point-literal (subsumes hexadecimal-literal)
     {
       match: `\\b0x(${hexDigits})(\\.(${hexDigits}))?` + `([pP][+-]?(${decimalDigits}))?\\b`
-    },
-    // octal-literal
+    }, // octal-literal
     {
       match: /\b0o([0-7]_*)+\b/
-    },
-    // binary-literal
+    }, // binary-literal
     {
       match: /\b0b([01]_*)+\b/
     }]
-  };
+  }; // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#grammar_string-literal
 
-  // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#grammar_string-literal
   const ESCAPED_CHARACTER = (rawDelimiter = "") => ({
     className: 'subst',
     variants: [{
@@ -21474,32 +21220,36 @@ function swift(hljs) {
       match: concat(/\\/, rawDelimiter, /u\{[0-9a-fA-F]{1,8}\}/)
     }]
   });
+
   const ESCAPED_NEWLINE = (rawDelimiter = "") => ({
     className: 'subst',
     match: concat(/\\/, rawDelimiter, /[\t ]*(?:[\r\n]|\r\n)/)
   });
+
   const INTERPOLATION = (rawDelimiter = "") => ({
     className: 'subst',
     label: "interpol",
     begin: concat(/\\/, rawDelimiter, /\(/),
     end: /\)/
   });
+
   const MULTILINE_STRING = (rawDelimiter = "") => ({
     begin: concat(rawDelimiter, /"""/),
     end: concat(/"""/, rawDelimiter),
     contains: [ESCAPED_CHARACTER(rawDelimiter), ESCAPED_NEWLINE(rawDelimiter), INTERPOLATION(rawDelimiter)]
   });
+
   const SINGLE_LINE_STRING = (rawDelimiter = "") => ({
     begin: concat(rawDelimiter, /"/),
     end: concat(/"/, rawDelimiter),
     contains: [ESCAPED_CHARACTER(rawDelimiter), INTERPOLATION(rawDelimiter)]
   });
+
   const STRING = {
     className: 'string',
     variants: [MULTILINE_STRING(), MULTILINE_STRING("#"), MULTILINE_STRING("##"), MULTILINE_STRING("###"), SINGLE_LINE_STRING(), SINGLE_LINE_STRING("#"), SINGLE_LINE_STRING("##"), SINGLE_LINE_STRING("###")]
-  };
+  }; // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID412
 
-  // https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html#ID412
   const QUOTED_IDENTIFIER = {
     match: concat(/`/, identifier, /`/)
   };
@@ -21511,9 +21261,8 @@ function swift(hljs) {
     className: 'variable',
     match: `\\$${identifierCharacter}+`
   };
-  const IDENTIFIERS = [QUOTED_IDENTIFIER, IMPLICIT_PARAMETER, PROPERTY_WRAPPER_PROJECTION];
+  const IDENTIFIERS = [QUOTED_IDENTIFIER, IMPLICIT_PARAMETER, PROPERTY_WRAPPER_PROJECTION]; // https://docs.swift.org/swift-book/ReferenceManual/Attributes.html
 
-  // https://docs.swift.org/swift-book/ReferenceManual/Attributes.html
   const AVAILABLE_ATTRIBUTE = {
     match: /(@|#)available/,
     className: "keyword",
@@ -21534,9 +21283,8 @@ function swift(hljs) {
     className: 'meta',
     match: concat(/@/, identifier)
   };
-  const ATTRIBUTES = [AVAILABLE_ATTRIBUTE, KEYWORD_ATTRIBUTE, USER_DEFINED_ATTRIBUTE];
+  const ATTRIBUTES = [AVAILABLE_ATTRIBUTE, KEYWORD_ATTRIBUTE, USER_DEFINED_ATTRIBUTE]; // https://docs.swift.org/swift-book/ReferenceManual/Types.html
 
-  // https://docs.swift.org/swift-book/ReferenceManual/Types.html
   const TYPE = {
     match: lookahead(/\b[A-Z]/),
     relevance: 0,
@@ -21569,28 +21317,26 @@ function swift(hljs) {
     keywords: KEYWORDS,
     contains: [...COMMENTS, ...KEYWORD_MODES, ...ATTRIBUTES, OPERATOR_GUARD, TYPE]
   };
-  TYPE.contains.push(GENERIC_ARGUMENTS);
-
-  // https://docs.swift.org/swift-book/ReferenceManual/Expressions.html#ID552
+  TYPE.contains.push(GENERIC_ARGUMENTS); // https://docs.swift.org/swift-book/ReferenceManual/Expressions.html#ID552
   // Prevents element names from being highlighted as keywords.
+
   const TUPLE_ELEMENT_NAME = {
     match: concat(identifier, /\s*:/),
     keywords: "_|0",
     relevance: 0
-  };
-  // Matches tuples as well as the parameter list of a function type.
+  }; // Matches tuples as well as the parameter list of a function type.
+
   const TUPLE = {
     begin: /\(/,
     end: /\)/,
     relevance: 0,
     keywords: KEYWORDS,
     contains: ['self', TUPLE_ELEMENT_NAME, ...COMMENTS, ...KEYWORD_MODES, ...BUILT_INS, ...OPERATORS, NUMBER, STRING, ...IDENTIFIERS, ...ATTRIBUTES, TYPE]
-  };
-
-  // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID362
+  }; // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID362
   // Matches both the keyword func and the function title.
   // Grouping these lets us differentiate between the operator function <
   // and the start of the generic parameter clause (also <).
+
   const FUNC_PLUS_TITLE = {
     beginKeywords: 'func',
     contains: [{
@@ -21632,10 +21378,9 @@ function swift(hljs) {
     match: lookahead(/\bfunc\b/),
     contains: [FUNC_PLUS_TITLE, GENERIC_PARAMETERS, FUNCTION_PARAMETERS, WHITESPACE],
     illegal: [/\[/, /%/]
-  };
-
-  // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID375
+  }; // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID375
   // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID379
+
   const INIT_SUBSCRIPT = {
     className: 'function',
     match: /\b(subscript|init[?!]?)\s*(?=[<(])/,
@@ -21645,8 +21390,8 @@ function swift(hljs) {
     },
     contains: [GENERIC_PARAMETERS, FUNCTION_PARAMETERS, WHITESPACE],
     illegal: /\[|%/
-  };
-  // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID380
+  }; // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID380
+
   const OPERATOR_DECLARATION = {
     beginKeywords: 'operator',
     end: hljs.MATCH_NOTHING_RE,
@@ -21656,9 +21401,8 @@ function swift(hljs) {
       endsParent: true,
       relevance: 0
     }]
-  };
+  }; // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID550
 
-  // https://docs.swift.org/swift-book/ReferenceManual/Declarations.html#ID550
   const PRECEDENCEGROUP = {
     beginKeywords: 'precedencegroup',
     end: hljs.MATCH_NOTHING_RE,
@@ -21674,12 +21418,11 @@ function swift(hljs) {
       keywords: [...precedencegroupKeywords, ...literals],
       contains: [TYPE]
     }]
-  };
+  }; // Add supported submodes to string interpolation.
 
-  // Add supported submodes to string interpolation.
   for (const variant of STRING.variants) {
-    const interpolation = variant.contains.find(mode => mode.label === "interpol");
-    // TODO: Interpolation can contain any expression, so there's room for improvement here.
+    const interpolation = variant.contains.find(mode => mode.label === "interpol"); // TODO: Interpolation can contain any expression, so there's room for improvement here.
+
     interpolation.keywords = KEYWORDS;
     const submodes = [...KEYWORD_MODES, ...BUILT_INS, ...OPERATORS, NUMBER, STRING, ...IDENTIFIERS];
     interpolation.contains = [...submodes, {
@@ -21688,6 +21431,7 @@ function swift(hljs) {
       contains: ['self', ...submodes]
     }];
   }
+
   return {
     name: 'Swift',
     keywords: KEYWORDS,
@@ -21708,6 +21452,7 @@ function swift(hljs) {
     }, ...KEYWORD_MODES, ...BUILT_INS, ...OPERATORS, NUMBER, STRING, ...IDENTIFIERS, ...ATTRIBUTES, TYPE, TUPLE]
   };
 }
+
 module.exports = swift;
 
 /***/ }),
@@ -21758,6 +21503,7 @@ function taggerscript(hljs) {
     contains: [COMMENT, FUNCTION, VARIABLE, ESCAPE_SEQUENCE]
   };
 }
+
 module.exports = taggerscript;
 
 /***/ }),
@@ -21775,13 +21521,11 @@ Requires: yaml.js
 Author: Sergey Bronnikov <sergeyb@bronevichok.ru>
 Website: https://testanything.org
 */
-
 function tap(hljs) {
   return {
     name: 'Test Anything Protocol',
     case_insensitive: true,
-    contains: [hljs.HASH_COMMENT_MODE,
-    // version of format and total amount of testcases
+    contains: [hljs.HASH_COMMENT_MODE, // version of format and total amount of testcases
     {
       className: 'meta',
       variants: [{
@@ -21789,20 +21533,17 @@ function tap(hljs) {
       }, {
         begin: '^1\\.\\.(\\d+)$'
       }]
-    },
-    // YAML block
+    }, // YAML block
     {
       begin: /---$/,
       end: '\\.\\.\\.$',
       subLanguage: 'yaml',
       relevance: 0
-    },
-    // testcase number
+    }, // testcase number
     {
       className: 'number',
       begin: ' (\\d+) '
-    },
-    // testcase status and description
+    }, // testcase status and description
     {
       className: 'symbol',
       variants: [{
@@ -21813,6 +21554,7 @@ function tap(hljs) {
     }]
   };
 }
+
 module.exports = tap;
 
 /***/ }),
@@ -21837,30 +21579,32 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: Tcl
 Description: Tcl is a very simple programming language.
 Author: Radek Liska <radekliska@gmail.com>
 Website: https://www.tcl.tk/about/language.html
 */
+
 
 function tcl(hljs) {
   const TCL_IDENT = /[a-zA-Z_][a-zA-Z0-9_]*/;
@@ -21901,6 +21645,7 @@ function tcl(hljs) {
     }, NUMBER]
   };
 }
+
 module.exports = tcl;
 
 /***/ }),
@@ -21918,7 +21663,6 @@ Description: Thrift message definition format
 Website: https://thrift.apache.org
 Category: protocols
 */
-
 function thrift(hljs) {
   const BUILT_IN_TYPES = 'bool byte i16 i32 i64 double string binary';
   return {
@@ -21948,6 +21692,7 @@ function thrift(hljs) {
     }]
   };
 }
+
 module.exports = thrift;
 
 /***/ }),
@@ -21963,11 +21708,11 @@ Language: TP
 Author: Jay Strybis <jay.strybis@gmail.com>
 Description: FANUC TP programming language (TPP).
 */
-
 function tp(hljs) {
   const TPID = {
     className: 'number',
     begin: '[1-9][0-9]*',
+
     /* no leading zeros */
     relevance: 0
   };
@@ -21985,7 +21730,8 @@ function tp(hljs) {
     className: 'built_in',
     begin: '(AI|AO|DI|DO|F|RI|RO|UI|UO|GI|GO|SI|SO)\\[',
     end: '\\]',
-    contains: ['self', TPID, hljs.QUOTE_STRING_MODE, /* for pos section at bottom */
+    contains: ['self', TPID, hljs.QUOTE_STRING_MODE,
+    /* for pos section at bottom */
     TPLABEL]
   };
   return {
@@ -22021,6 +21767,7 @@ function tp(hljs) {
     }]
   };
 }
+
 module.exports = tp;
 
 /***/ }),
@@ -22039,7 +21786,6 @@ Description: Twig is a templating language for PHP
 Website: https://twig.symfony.com
 Category: template
 */
-
 function twig(hljs) {
   var PARAMS = {
     className: 'params',
@@ -22091,6 +21837,7 @@ function twig(hljs) {
     }]
   };
 }
+
 module.exports = twig;
 
 /***/ }),
@@ -22102,10 +21849,8 @@ module.exports = twig;
 /***/ ((module) => {
 
 const IDENT_RE = '[A-Za-z$_][0-9A-Za-z$_]*';
-const KEYWORDS = ["as",
-// for exports
-"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class",
-// JS handles these with a special rule
+const KEYWORDS = ["as", // for exports
+"in", "of", "if", "for", "while", "finally", "var", "new", "function", "do", "return", "void", "else", "break", "catch", "instanceof", "with", "throw", "case", "default", "try", "switch", "continue", "typeof", "delete", "let", "yield", "const", "class", // JS handles these with a special rule
 // "get",
 // "set",
 "debugger", "async", "await", "static", "import", "from", "export", "extends"];
@@ -22116,7 +21861,6 @@ const BUILT_IN_GLOBALS = ["setInterval", "setTimeout", "clearInterval", "clearTi
 const BUILT_IN_VARIABLES = ["arguments", "this", "super", "console", "window", "document", "localStorage", "module", "global" // Node.js
 ];
 const BUILT_INS = [].concat(BUILT_IN_GLOBALS, BUILT_IN_VARIABLES, TYPES, ERROR_TYPES);
-
 /**
  * @param {string} value
  * @returns {RegExp}
@@ -22126,29 +21870,31 @@ const BUILT_INS = [].concat(BUILT_IN_GLOBALS, BUILT_IN_VARIABLES, TYPES, ERROR_T
  * @param {RegExp | string } re
  * @returns {string}
  */
+
 function source(re) {
   if (!re) return null;
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /*
 Language: JavaScript
 Description: JavaScript (JS) is a lightweight, interpreted, or just-in-time compiled programming language with first-class functions.
@@ -22157,6 +21903,8 @@ Website: https://developer.mozilla.org/en-US/docs/Web/JavaScript
 */
 
 /** @type LanguageFn */
+
+
 function javascript(hljs) {
   /**
    * Takes a string like "<Booger" and checks to see
@@ -22172,6 +21920,7 @@ function javascript(hljs) {
     const pos = match.input.indexOf(tag, after);
     return pos !== -1;
   };
+
   const IDENT_RE$1 = IDENT_RE;
   const FRAGMENT = {
     begin: '<>',
@@ -22180,22 +21929,24 @@ function javascript(hljs) {
   const XML_TAG = {
     begin: /<[A-Za-z0-9\\._:-]+/,
     end: /\/[A-Za-z0-9\\._:-]+>|\/>/,
+
     /**
      * @param {RegExpMatchArray} match
      * @param {CallbackResponse} response
      */
     isTrulyOpeningTag: (match, response) => {
       const afterMatchIndex = match[0].length + match.index;
-      const nextChar = match.input[afterMatchIndex];
-      // nested type?
+      const nextChar = match.input[afterMatchIndex]; // nested type?
       // HTML should not include another raw `<` inside a tag
       // But a type might: `<Array<Array<number>>`, etc.
+
       if (nextChar === "<") {
         response.ignoreMatch();
         return;
-      }
-      // <something>
+      } // <something>
       // This is now either a tag or a type.
+
+
       if (nextChar === ">") {
         // if we cannot find a matching closing tag, then we
         // will ignore it
@@ -22212,36 +21963,31 @@ function javascript(hljs) {
     keyword: KEYWORDS,
     literal: LITERALS,
     built_in: BUILT_INS
-  };
+  }; // https://tc39.es/ecma262/#sec-literals-numeric-literals
 
-  // https://tc39.es/ecma262/#sec-literals-numeric-literals
   const decimalDigits = '[0-9](_?[0-9])*';
-  const frac = `\\.(${decimalDigits})`;
-  // DecimalIntegerLiteral, including Annex B NonOctalDecimalIntegerLiteral
+  const frac = `\\.(${decimalDigits})`; // DecimalIntegerLiteral, including Annex B NonOctalDecimalIntegerLiteral
   // https://tc39.es/ecma262/#sec-additional-syntax-numeric-literals
+
   const decimalInteger = `0|[1-9](_?[0-9])*|0[0-7]*[89][0-9]*`;
   const NUMBER = {
     className: 'number',
-    variants: [
-    // DecimalLiteral
+    variants: [// DecimalLiteral
     {
       begin: `(\\b(${decimalInteger})((${frac})|\\.)?|(${frac}))` + `[eE][+-]?(${decimalDigits})\\b`
     }, {
       begin: `\\b(${decimalInteger})\\b((${frac})\\b|\\.)?|(${frac})\\b`
-    },
-    // DecimalBigIntegerLiteral
+    }, // DecimalBigIntegerLiteral
     {
       begin: `\\b(0|[1-9](_?[0-9])*)n\\b`
-    },
-    // NonDecimalIntegerLiteral
+    }, // NonDecimalIntegerLiteral
     {
       begin: "\\b0[xX][0-9a-fA-F](_?[0-9a-fA-F])*n?\\b"
     }, {
       begin: "\\b0[bB][0-1](_?[0-1])*n?\\b"
     }, {
       begin: "\\b0[oO][0-7](_?[0-7])*n?\\b"
-    },
-    // LegacyOctalIntegerLiteral (does not include underscore separators)
+    }, // LegacyOctalIntegerLiteral (does not include underscore separators)
     // https://tc39.es/ecma262/#sec-additional-syntax-numeric-literals
     {
       begin: "\\b0[0-7]+n?\\b"
@@ -22254,6 +22000,7 @@ function javascript(hljs) {
     end: '\\}',
     keywords: KEYWORDS$1,
     contains: [] // defined later
+
   };
   const HTML_TEMPLATE = {
     begin: 'html`',
@@ -22296,8 +22043,7 @@ function javascript(hljs) {
         begin: IDENT_RE$1 + '(?=\\s*(-)|$)',
         endsParent: true,
         relevance: 0
-      },
-      // eat spaces (not newlines) so we can find
+      }, // eat spaces (not newlines) so we can find
       // types or variables
       {
         begin: /(?=[^\n])\s/,
@@ -22319,8 +22065,7 @@ function javascript(hljs) {
     contains: ["self"].concat(SUBST_INTERNALS)
   });
   const SUBST_AND_COMMENTS = [].concat(COMMENT, SUBST.contains);
-  const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([
-  // eat recursive parens in sub expressions
+  const PARAMS_CONTAINS = SUBST_AND_COMMENTS.concat([// eat recursive parens in sub expressions
   {
     begin: /\(/,
     end: /\)/,
@@ -22356,8 +22101,7 @@ function javascript(hljs) {
       begin: /^\s*['"]use (strict|asm)['"]/
     }, hljs.APOS_STRING_MODE, hljs.QUOTE_STRING_MODE, HTML_TEMPLATE, CSS_TEMPLATE, TEMPLATE_STRING, COMMENT, NUMBER, {
       // object attr container
-      begin: concat(/[{,\n]\s*/,
-      // we need to look ahead to make sure that we actually have an
+      begin: concat(/[{,\n]\s*/, // we need to look ahead to make sure that we actually have an
       // attribute coming up so we don't steal a comma from a potential
       // "value" container
       //
@@ -22367,8 +22111,7 @@ function javascript(hljs) {
       // fails to find any actual attrs. But this still does the job because
       // it prevents the value contain rule from grabbing this instead and
       // prevening this rule from firing when we actually DO have keys.
-      lookahead(concat(
-      // we also need to allow for multiple possible comments inbetween
+      lookahead(concat( // we also need to allow for multiple possible comments inbetween
       // the first key:value pairing
       /(((\/\/.*$)|(\/\*(\*[^/]|[^*])*\*\/))\s*)*/, IDENT_RE$1 + '\\s*:'))),
       relevance: 0,
@@ -22456,16 +22199,14 @@ function javascript(hljs) {
       // we have to count the parens to make sure we actually have the correct
       // bounding ( ).  There could be any number of sub-expressions inside
       // also surrounded by parens.
-      begin: hljs.UNDERSCORE_IDENT_RE + '\\(' +
-      // first parens
+      begin: hljs.UNDERSCORE_IDENT_RE + '\\(' + // first parens
       '[^()]*(\\(' + '[^()]*(\\(' + '[^()]*' + '\\)[^()]*)*' + '\\)[^()]*)*' + '\\)\\s*\\{',
       // end parens
       returnBegin: true,
       contains: [PARAMS, hljs.inherit(hljs.TITLE_MODE, {
         begin: IDENT_RE$1
       })]
-    },
-    // hack: prevents detection of keywords in some circumstances
+    }, // hack: prevents detection of keywords in some circumstances
     // .keyword()
     // $keyword = x
     {
@@ -22500,15 +22241,14 @@ function javascript(hljs) {
         begin: IDENT_RE$1
       }), {
         begin: /\(\)/
-      },
-      // eat to avoid empty params
+      }, // eat to avoid empty params
       PARAMS]
     }, {
       begin: /\$[(.]/ // relevance booster for a pattern common to JS libs: `$(something)` and `$.something`
+
     }]
   };
 }
-
 /*
 Language: TypeScript
 Author: Panu Horsmalahti <panu.horsmalahti@iki.fi>
@@ -22519,6 +22259,8 @@ Category: common, scripting
 */
 
 /** @type LanguageFn */
+
+
 function typescript(hljs) {
   const IDENT_RE$1 = IDENT_RE;
   const NAMESPACE = {
@@ -22549,24 +22291,26 @@ function typescript(hljs) {
     className: 'meta',
     begin: '@' + IDENT_RE$1
   };
+
   const swapMode = (mode, label, replacement) => {
     const indx = mode.contains.findIndex(m => m.label === label);
+
     if (indx === -1) {
       throw new Error("can not find mode to replace");
     }
+
     mode.contains.splice(indx, 1, replacement);
   };
-  const tsLanguage = javascript(hljs);
 
-  // this should update anywhere keywords is used since
+  const tsLanguage = javascript(hljs); // this should update anywhere keywords is used since
   // it will be the same actual JS object
+
   Object.assign(tsLanguage.keywords, KEYWORDS$1);
   tsLanguage.exports.PARAMS_CONTAINS.push(DECORATOR);
-  tsLanguage.contains = tsLanguage.contains.concat([DECORATOR, NAMESPACE, INTERFACE]);
+  tsLanguage.contains = tsLanguage.contains.concat([DECORATOR, NAMESPACE, INTERFACE]); // TS gets a simpler shebang rule than JS
 
-  // TS gets a simpler shebang rule than JS
-  swapMode(tsLanguage, "shebang", hljs.SHEBANG());
-  // JS use strict rule purposely excludes `asm` which makes no sense
+  swapMode(tsLanguage, "shebang", hljs.SHEBANG()); // JS use strict rule purposely excludes `asm` which makes no sense
+
   swapMode(tsLanguage, "use_strict", USE_STRICT);
   const functionDeclaration = tsLanguage.contains.find(m => m.className === "function");
   functionDeclaration.relevance = 0; // () => {} is more typical in TypeScript
@@ -22577,6 +22321,7 @@ function typescript(hljs) {
   });
   return tsLanguage;
 }
+
 module.exports = typescript;
 
 /***/ }),
@@ -22593,23 +22338,16 @@ Author: Antono Vasiljev <antono.vasiljev@gmail.com>
 Description: Vala is a new programming language that aims to bring modern programming language features to GNOME developers without imposing any additional runtime requirements and without using a different ABI compared to applications and libraries written in C.
 Website: https://wiki.gnome.org/Projects/Vala
 */
-
 function vala(hljs) {
   return {
     name: 'Vala',
     keywords: {
-      keyword:
-      // Value types
-      'char uchar unichar int uint long ulong short ushort int8 int16 int32 int64 uint8 ' + 'uint16 uint32 uint64 float double bool struct enum string void ' +
-      // Reference types
-      'weak unowned owned ' +
-      // Modifiers
-      'async signal static abstract interface override virtual delegate ' +
-      // Control Structures
-      'if while do for foreach else switch case break default return try catch ' +
-      // Visibility
-      'public private protected internal ' +
-      // Other
+      keyword: // Value types
+      'char uchar unichar int uint long ulong short ushort int8 int16 int32 int64 uint8 ' + 'uint16 uint32 uint64 float double bool struct enum string void ' + // Reference types
+      'weak unowned owned ' + // Modifiers
+      'async signal static abstract interface override virtual delegate ' + // Control Structures
+      'if while do for foreach else switch case break default return try catch ' + // Visibility
+      'public private protected internal ' + // Other
       'using new this get set const stdout stdin stderr var',
       built_in: 'DBus GLib CCode Gee Object Gtk Posix',
       literal: 'false true null'
@@ -22634,6 +22372,7 @@ function vala(hljs) {
     }]
   };
 }
+
 module.exports = vala;
 
 /***/ }),
@@ -22658,16 +22397,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -22675,11 +22414,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: Visual Basic .NET
 Description: Visual Basic .NET (VB.NET) is a multi-paradigm, object-oriented programming language, implemented on the .NET Framework.
@@ -22689,6 +22429,8 @@ Category: common
 */
 
 /** @type LanguageFn */
+
+
 function vbnet(hljs) {
   /**
    * Character Literal
@@ -22708,8 +22450,8 @@ function vbnet(hljs) {
       begin: /""/
     }]
   };
-
   /** Date Literals consist of a date, a time, or both separated by whitespace, surrounded by # */
+
   const MM_DD_YYYY = /\d{1,2}\/\d{1,2}\/\d{4}/;
   const YYYY_MM_DD = /\d{4}-\d{1,2}-\d{1,2}/;
   const TIME_12H = /(\d|1[012])(:\d+){0,2} *(AM|PM)/;
@@ -22787,31 +22529,43 @@ function vbnet(hljs) {
       label: 'symbol'
     },
     keywords: {
-      keyword: 'addhandler alias aggregate ansi as async assembly auto binary by byref byval ' + /* a-b */
-      'call case catch class compare const continue custom declare default delegate dim distinct do ' + /* c-d */
-      'each equals else elseif end enum erase error event exit explicit finally for friend from function ' + /* e-f */
-      'get global goto group handles if implements imports in inherits interface into iterator ' + /* g-i */
-      'join key let lib loop me mid module mustinherit mustoverride mybase myclass ' + /* j-m */
-      'namespace narrowing new next notinheritable notoverridable ' + /* n */
-      'of off on operator option optional order overloads overridable overrides ' + /* o */
-      'paramarray partial preserve private property protected public ' + /* p */
-      'raiseevent readonly redim removehandler resume return ' + /* r */
-      'select set shadows shared skip static step stop structure strict sub synclock ' + /* s */
-      'take text then throw to try unicode until using when where while widening with withevents writeonly yield' /* t-y */,
-      built_in:
-      // Operators https://docs.microsoft.com/dotnet/visual-basic/language-reference/operators
-      'addressof and andalso await directcast gettype getxmlnamespace is isfalse isnot istrue like mod nameof new not or orelse trycast typeof xor ' +
-      // Type Conversion Functions https://docs.microsoft.com/dotnet/visual-basic/language-reference/functions/type-conversion-functions
+      keyword: 'addhandler alias aggregate ansi as async assembly auto binary by byref byval ' +
+      /* a-b */
+      'call case catch class compare const continue custom declare default delegate dim distinct do ' +
+      /* c-d */
+      'each equals else elseif end enum erase error event exit explicit finally for friend from function ' +
+      /* e-f */
+      'get global goto group handles if implements imports in inherits interface into iterator ' +
+      /* g-i */
+      'join key let lib loop me mid module mustinherit mustoverride mybase myclass ' +
+      /* j-m */
+      'namespace narrowing new next notinheritable notoverridable ' +
+      /* n */
+      'of off on operator option optional order overloads overridable overrides ' +
+      /* o */
+      'paramarray partial preserve private property protected public ' +
+      /* p */
+      'raiseevent readonly redim removehandler resume return ' +
+      /* r */
+      'select set shadows shared skip static step stop structure strict sub synclock ' +
+      /* s */
+      'take text then throw to try unicode until using when where while widening with withevents writeonly yield'
+      /* t-y */
+      ,
+      built_in: // Operators https://docs.microsoft.com/dotnet/visual-basic/language-reference/operators
+      'addressof and andalso await directcast gettype getxmlnamespace is isfalse isnot istrue like mod nameof new not or orelse trycast typeof xor ' + // Type Conversion Functions https://docs.microsoft.com/dotnet/visual-basic/language-reference/functions/type-conversion-functions
       'cbool cbyte cchar cdate cdbl cdec cint clng cobj csbyte cshort csng cstr cuint culng cushort',
-      type:
-      // Data types https://docs.microsoft.com/dotnet/visual-basic/language-reference/data-types
+      type: // Data types https://docs.microsoft.com/dotnet/visual-basic/language-reference/data-types
       'boolean byte char date decimal double integer long object sbyte short single string uinteger ulong ushort',
       literal: 'true false nothing'
     },
-    illegal: '//|\\{|\\}|endif|gosub|variant|wend|^\\$ ' /* reserved deprecated keywords */,
+    illegal: '//|\\{|\\}|endif|gosub|variant|wend|^\\$ '
+    /* reserved deprecated keywords */
+    ,
     contains: [CHARACTER, STRING, DATE, NUMBER, LABEL, DOC_COMMENT, COMMENT, DIRECTIVES]
   };
 }
+
 module.exports = vbnet;
 
 /***/ }),
@@ -22830,7 +22584,6 @@ Description: "Bridge" language defining fragments of VBScript in HTML within <% 
 Website: https://en.wikipedia.org/wiki/VBScript
 Category: scripting
 */
-
 function vbscriptHtml(hljs) {
   return {
     name: 'VBScript in HTML',
@@ -22842,6 +22595,7 @@ function vbscriptHtml(hljs) {
     }]
   };
 }
+
 module.exports = vbscriptHtml;
 
 /***/ }),
@@ -22866,16 +22620,16 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -22883,11 +22637,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: VBScript
 Description: VBScript ("Microsoft Visual Basic Scripting Edition") is an Active Scripting language developed by Microsoft that is modeled on Visual Basic.
@@ -22898,10 +22653,11 @@ Category: scripting
 */
 
 /** @type LanguageFn */
+
+
 function vbscript(hljs) {
   const BUILT_IN_FUNCTIONS = ('lcase month vartype instrrev ubound setlocale getobject rgb getref string ' + 'weekdayname rnd dateadd monthname now day minute isarray cbool round formatcurrency ' + 'conversions csng timevalue second year space abs clng timeserial fixs len asc ' + 'isempty maths dateserial atn timer isobject filter weekday datevalue ccur isdate ' + 'instr datediff formatdatetime replace isnull right sgn array snumeric log cdbl hex ' + 'chr lbound msgbox ucase getlocale cos cdate cbyte rtrim join hour oct typename trim ' + 'strcomp int createobject loadpicture tan formatnumber mid ' + 'split  cint sin datepart ltrim sqr ' + 'time derived eval date formatpercent exp inputbox left ascw ' + 'chrw regexp cstr err').split(" ");
-  const BUILT_IN_OBJECTS = ["server", "response", "request",
-  // take no arguments so can be called without ()
+  const BUILT_IN_OBJECTS = ["server", "response", "request", // take no arguments so can be called without ()
   "scriptengine", "scriptenginebuildversion", "scriptengineminorversion", "scriptenginemajorversion"];
   const BUILT_IN_CALL = {
     begin: concat(either(...BUILT_IN_FUNCTIONS), "\\s*\\("),
@@ -22930,6 +22686,7 @@ function vbscript(hljs) {
     }), hljs.C_NUMBER_MODE]
   };
 }
+
 module.exports = vbscript;
 
 /***/ }),
@@ -22947,7 +22704,6 @@ Contributors: Boone Severson <boone.severson@gmail.com>
 Description: Verilog is a hardware description language used in electronic design automation to describe digital and mixed-signal systems. This highlighter supports Verilog and SystemVerilog through IEEE 1800-2012.
 Website: http://www.verilog.com
 */
-
 function verilog(hljs) {
   const SV_KEYWORDS = {
     $pattern: /[\w\$]+/,
@@ -22971,7 +22727,8 @@ function verilog(hljs) {
         begin: '\\b([0-9_])+',
         relevance: 0
       }]
-    }, /* parameters to instances */
+    },
+    /* parameters to instances */
     {
       className: 'variable',
       variants: [{
@@ -22991,6 +22748,7 @@ function verilog(hljs) {
     }]
   };
 }
+
 module.exports = verilog;
 
 /***/ }),
@@ -23008,15 +22766,13 @@ Contributors: Daniel C.K. Kho <daniel.kho@tauhop.com>, Guillaume Savaton <guilla
 Description: VHDL is a hardware description language used in electronic design automation to describe digital and mixed-signal systems.
 Website: https://en.wikipedia.org/wiki/VHDL
 */
-
 function vhdl(hljs) {
   // Regular expression for VHDL numeric literals.
-
   // Decimal literal:
   const INTEGER_RE = '\\d(_|\\d)*';
   const EXPONENT_RE = '[eE][-+]?' + INTEGER_RE;
-  const DECIMAL_LITERAL_RE = INTEGER_RE + '(\\.' + INTEGER_RE + ')?' + '(' + EXPONENT_RE + ')?';
-  // Based literal:
+  const DECIMAL_LITERAL_RE = INTEGER_RE + '(\\.' + INTEGER_RE + ')?' + '(' + EXPONENT_RE + ')?'; // Based literal:
+
   const BASED_INTEGER_RE = '\\w+';
   const BASED_LITERAL_RE = INTEGER_RE + '#' + BASED_INTEGER_RE + '(\\.' + BASED_INTEGER_RE + ')?' + '#' + '(' + EXPONENT_RE + ')?';
   const NUMBER_RE = '\\b(' + BASED_LITERAL_RE + '|' + DECIMAL_LITERAL_RE + ')';
@@ -23026,13 +22782,12 @@ function vhdl(hljs) {
     keywords: {
       keyword: 'abs access after alias all and architecture array assert assume assume_guarantee attribute ' + 'begin block body buffer bus case component configuration constant context cover disconnect ' + 'downto default else elsif end entity exit fairness file for force function generate ' + 'generic group guarded if impure in inertial inout is label library linkage literal ' + 'loop map mod nand new next nor not null of on open or others out package parameter port ' + 'postponed procedure process property protected pure range record register reject ' + 'release rem report restrict restrict_guarantee return rol ror select sequence ' + 'severity shared signal sla sll sra srl strong subtype then to transport type ' + 'unaffected units until use variable view vmode vprop vunit wait when while with xnor xor',
       built_in: 'boolean bit character ' + 'integer time delay_length natural positive ' + 'string bit_vector file_open_kind file_open_status ' + 'std_logic std_logic_vector unsigned signed boolean_vector integer_vector ' + 'std_ulogic std_ulogic_vector unresolved_unsigned u_unsigned unresolved_signed u_signed ' + 'real_vector time_vector',
-      literal: 'false true note warning error failure ' +
-      // severity_level
+      literal: 'false true note warning error failure ' + // severity_level
       'line text side width' // textio
+
     },
     illegal: /\{/,
-    contains: [hljs.C_BLOCK_COMMENT_MODE,
-    // VHDL-2008 block commenting.
+    contains: [hljs.C_BLOCK_COMMENT_MODE, // VHDL-2008 block commenting.
     hljs.COMMENT('--', '$'), hljs.QUOTE_STRING_MODE, {
       className: 'number',
       begin: NUMBER_RE,
@@ -23048,6 +22803,7 @@ function vhdl(hljs) {
     }]
   };
 }
+
 module.exports = vhdl;
 
 /***/ }),
@@ -23065,19 +22821,15 @@ Description: full keyword and built-in from http://vimdoc.sourceforge.net/htmldo
 Website: https://www.vim.org
 Category: scripting
 */
-
 function vim(hljs) {
   return {
     name: 'Vim Script',
     keywords: {
       $pattern: /[!#@\w]+/,
-      keyword:
-      // express version except: ! & * < = > !! # @ @@
-      'N|0 P|0 X|0 a|0 ab abc abo al am an|0 ar arga argd arge argdo argg argl argu as au aug aun b|0 bN ba bad bd be bel bf bl bm bn bo bp br brea breaka breakd breakl bro bufdo buffers bun bw c|0 cN cNf ca cabc caddb cad caddf cal cat cb cc ccl cd ce cex cf cfir cgetb cgete cg changes chd che checkt cl cla clo cm cmapc cme cn cnew cnf cno cnorea cnoreme co col colo com comc comp con conf cope ' + 'cp cpf cq cr cs cst cu cuna cunme cw delm deb debugg delc delf dif diffg diffo diffp diffpu diffs diffthis dig di dl dell dj dli do doautoa dp dr ds dsp e|0 ea ec echoe echoh echom echon el elsei em en endfo endf endt endw ene ex exe exi exu f|0 files filet fin fina fini fir fix fo foldc foldd folddoc foldo for fu go gr grepa gu gv ha helpf helpg helpt hi hid his ia iabc if ij il im imapc ' + 'ime ino inorea inoreme int is isp iu iuna iunme j|0 ju k|0 keepa kee keepj lN lNf l|0 lad laddb laddf la lan lat lb lc lch lcl lcs le lefta let lex lf lfir lgetb lgete lg lgr lgrepa lh ll lla lli lmak lm lmapc lne lnew lnf ln loadk lo loc lockv lol lope lp lpf lr ls lt lu lua luad luaf lv lvimgrepa lw m|0 ma mak map mapc marks mat me menut mes mk mks mksp mkv mkvie mod mz mzf nbc nb nbs new nm nmapc nme nn nnoreme noa no noh norea noreme norm nu nun nunme ol o|0 om omapc ome on ono onoreme opt ou ounme ow p|0 ' + 'profd prof pro promptr pc ped pe perld po popu pp pre prev ps pt ptN ptf ptj ptl ptn ptp ptr pts pu pw py3 python3 py3d py3f py pyd pyf quita qa rec red redi redr redraws reg res ret retu rew ri rightb rub rubyd rubyf rund ru rv sN san sa sal sav sb sbN sba sbf sbl sbm sbn sbp sbr scrip scripte scs se setf setg setl sf sfir sh sim sig sil sl sla sm smap smapc sme sn sni sno snor snoreme sor ' + 'so spelld spe spelli spellr spellu spellw sp spr sre st sta startg startr star stopi stj sts sun sunm sunme sus sv sw sy synti sync tN tabN tabc tabdo tabe tabf tabfir tabl tabm tabnew ' + 'tabn tabo tabp tabr tabs tab ta tags tc tcld tclf te tf th tj tl tm tn to tp tr try ts tu u|0 undoj undol una unh unl unlo unm unme uns up ve verb vert vim vimgrepa vi viu vie vm vmapc vme vne vn vnoreme vs vu vunme windo w|0 wN wa wh wi winc winp wn wp wq wqa ws wu wv x|0 xa xmapc xm xme xn xnoreme xu xunme y|0 z|0 ~ ' +
-      // full version
+      keyword: // express version except: ! & * < = > !! # @ @@
+      'N|0 P|0 X|0 a|0 ab abc abo al am an|0 ar arga argd arge argdo argg argl argu as au aug aun b|0 bN ba bad bd be bel bf bl bm bn bo bp br brea breaka breakd breakl bro bufdo buffers bun bw c|0 cN cNf ca cabc caddb cad caddf cal cat cb cc ccl cd ce cex cf cfir cgetb cgete cg changes chd che checkt cl cla clo cm cmapc cme cn cnew cnf cno cnorea cnoreme co col colo com comc comp con conf cope ' + 'cp cpf cq cr cs cst cu cuna cunme cw delm deb debugg delc delf dif diffg diffo diffp diffpu diffs diffthis dig di dl dell dj dli do doautoa dp dr ds dsp e|0 ea ec echoe echoh echom echon el elsei em en endfo endf endt endw ene ex exe exi exu f|0 files filet fin fina fini fir fix fo foldc foldd folddoc foldo for fu go gr grepa gu gv ha helpf helpg helpt hi hid his ia iabc if ij il im imapc ' + 'ime ino inorea inoreme int is isp iu iuna iunme j|0 ju k|0 keepa kee keepj lN lNf l|0 lad laddb laddf la lan lat lb lc lch lcl lcs le lefta let lex lf lfir lgetb lgete lg lgr lgrepa lh ll lla lli lmak lm lmapc lne lnew lnf ln loadk lo loc lockv lol lope lp lpf lr ls lt lu lua luad luaf lv lvimgrepa lw m|0 ma mak map mapc marks mat me menut mes mk mks mksp mkv mkvie mod mz mzf nbc nb nbs new nm nmapc nme nn nnoreme noa no noh norea noreme norm nu nun nunme ol o|0 om omapc ome on ono onoreme opt ou ounme ow p|0 ' + 'profd prof pro promptr pc ped pe perld po popu pp pre prev ps pt ptN ptf ptj ptl ptn ptp ptr pts pu pw py3 python3 py3d py3f py pyd pyf quita qa rec red redi redr redraws reg res ret retu rew ri rightb rub rubyd rubyf rund ru rv sN san sa sal sav sb sbN sba sbf sbl sbm sbn sbp sbr scrip scripte scs se setf setg setl sf sfir sh sim sig sil sl sla sm smap smapc sme sn sni sno snor snoreme sor ' + 'so spelld spe spelli spellr spellu spellw sp spr sre st sta startg startr star stopi stj sts sun sunm sunme sus sv sw sy synti sync tN tabN tabc tabdo tabe tabf tabfir tabl tabm tabnew ' + 'tabn tabo tabp tabr tabs tab ta tags tc tcld tclf te tf th tj tl tm tn to tp tr try ts tu u|0 undoj undol una unh unl unlo unm unme uns up ve verb vert vim vimgrepa vi viu vie vm vmapc vme vne vn vnoreme vs vu vunme windo w|0 wN wa wh wi winc winp wn wp wq wqa ws wu wv x|0 xa xmapc xm xme xn xnoreme xu xunme y|0 z|0 ~ ' + // full version
       'Next Print append abbreviate abclear aboveleft all amenu anoremenu args argadd argdelete argedit argglobal arglocal argument ascii autocmd augroup aunmenu buffer bNext ball badd bdelete behave belowright bfirst blast bmodified bnext botright bprevious brewind break breakadd breakdel breaklist browse bunload ' + 'bwipeout change cNext cNfile cabbrev cabclear caddbuffer caddexpr caddfile call catch cbuffer cclose center cexpr cfile cfirst cgetbuffer cgetexpr cgetfile chdir checkpath checktime clist clast close cmap cmapclear cmenu cnext cnewer cnfile cnoremap cnoreabbrev cnoremenu copy colder colorscheme command comclear compiler continue confirm copen cprevious cpfile cquit crewind cscope cstag cunmap ' + 'cunabbrev cunmenu cwindow delete delmarks debug debuggreedy delcommand delfunction diffupdate diffget diffoff diffpatch diffput diffsplit digraphs display deletel djump dlist doautocmd doautoall deletep drop dsearch dsplit edit earlier echo echoerr echohl echomsg else elseif emenu endif endfor ' + 'endfunction endtry endwhile enew execute exit exusage file filetype find finally finish first fixdel fold foldclose folddoopen folddoclosed foldopen function global goto grep grepadd gui gvim hardcopy help helpfind helpgrep helptags highlight hide history insert iabbrev iabclear ijump ilist imap ' + 'imapclear imenu inoremap inoreabbrev inoremenu intro isearch isplit iunmap iunabbrev iunmenu join jumps keepalt keepmarks keepjumps lNext lNfile list laddexpr laddbuffer laddfile last language later lbuffer lcd lchdir lclose lcscope left leftabove lexpr lfile lfirst lgetbuffer lgetexpr lgetfile lgrep lgrepadd lhelpgrep llast llist lmake lmap lmapclear lnext lnewer lnfile lnoremap loadkeymap loadview ' + 'lockmarks lockvar lolder lopen lprevious lpfile lrewind ltag lunmap luado luafile lvimgrep lvimgrepadd lwindow move mark make mapclear match menu menutranslate messages mkexrc mksession mkspell mkvimrc mkview mode mzscheme mzfile nbclose nbkey nbsart next nmap nmapclear nmenu nnoremap ' + 'nnoremenu noautocmd noremap nohlsearch noreabbrev noremenu normal number nunmap nunmenu oldfiles open omap omapclear omenu only onoremap onoremenu options ounmap ounmenu ownsyntax print profdel profile promptfind promptrepl pclose pedit perl perldo pop popup ppop preserve previous psearch ptag ptNext ' + 'ptfirst ptjump ptlast ptnext ptprevious ptrewind ptselect put pwd py3do py3file python pydo pyfile quit quitall qall read recover redo redir redraw redrawstatus registers resize retab return rewind right rightbelow ruby rubydo rubyfile rundo runtime rviminfo substitute sNext sandbox sargument sall saveas sbuffer sbNext sball sbfirst sblast sbmodified sbnext sbprevious sbrewind scriptnames scriptencoding ' + 'scscope set setfiletype setglobal setlocal sfind sfirst shell simalt sign silent sleep slast smagic smapclear smenu snext sniff snomagic snoremap snoremenu sort source spelldump spellgood spellinfo spellrepall spellundo spellwrong split sprevious srewind stop stag startgreplace startreplace ' + 'startinsert stopinsert stjump stselect sunhide sunmap sunmenu suspend sview swapname syntax syntime syncbind tNext tabNext tabclose tabedit tabfind tabfirst tablast tabmove tabnext tabonly tabprevious tabrewind tag tcl tcldo tclfile tearoff tfirst throw tjump tlast tmenu tnext topleft tprevious ' + 'trewind tselect tunmenu undo undojoin undolist unabbreviate unhide unlet unlockvar unmap unmenu unsilent update vglobal version verbose vertical vimgrep vimgrepadd visual viusage view vmap vmapclear vmenu vnew ' + 'vnoremap vnoremenu vsplit vunmap vunmenu write wNext wall while winsize wincmd winpos wnext wprevious wqall wsverb wundo wviminfo xit xall xmapclear xmap xmenu xnoremap xnoremenu xunmap xunmenu yank',
-      built_in:
-      // built in func
+      built_in: // built in func
       'synIDtrans atan2 range matcharg did_filetype asin feedkeys xor argv ' + 'complete_check add getwinposx getqflist getwinposy screencol ' + 'clearmatches empty extend getcmdpos mzeval garbagecollect setreg ' + 'ceil sqrt diff_hlID inputsecret get getfperm getpid filewritable ' + 'shiftwidth max sinh isdirectory synID system inputrestore winline ' + 'atan visualmode inputlist tabpagewinnr round getregtype mapcheck ' + 'hasmapto histdel argidx findfile sha256 exists toupper getcmdline ' + 'taglist string getmatches bufnr strftime winwidth bufexists ' + 'strtrans tabpagebuflist setcmdpos remote_read printf setloclist ' + 'getpos getline bufwinnr float2nr len getcmdtype diff_filler luaeval ' + 'resolve libcallnr foldclosedend reverse filter has_key bufname ' + 'str2float strlen setline getcharmod setbufvar index searchpos ' + 'shellescape undofile foldclosed setqflist buflisted strchars str2nr ' + 'virtcol floor remove undotree remote_expr winheight gettabwinvar ' + 'reltime cursor tabpagenr finddir localtime acos getloclist search ' + 'tanh matchend rename gettabvar strdisplaywidth type abs py3eval ' + 'setwinvar tolower wildmenumode log10 spellsuggest bufloaded ' + 'synconcealed nextnonblank server2client complete settabwinvar ' + 'executable input wincol setmatches getftype hlID inputsave ' + 'searchpair or screenrow line settabvar histadd deepcopy strpart ' + 'remote_peek and eval getftime submatch screenchar winsaveview ' + 'matchadd mkdir screenattr getfontname libcall reltimestr getfsize ' + 'winnr invert pow getbufline byte2line soundfold repeat fnameescape ' + 'tagfiles sin strwidth spellbadword trunc maparg log lispindent ' + 'hostname setpos globpath remote_foreground getchar synIDattr ' + 'fnamemodify cscope_connection stridx winbufnr indent min ' + 'complete_add nr2char searchpairpos inputdialog values matchlist ' + 'items hlexists strridx browsedir expand fmod pathshorten line2byte ' + 'argc count getwinvar glob foldtextresult getreg foreground cosh ' + 'matchdelete has char2nr simplify histget searchdecl iconv ' + 'winrestcmd pumvisible writefile foldlevel haslocaldir keys cos ' + 'matchstr foldtext histnr tan tempname getcwd byteidx getbufvar ' + 'islocked escape eventhandler remote_send serverlist winrestview ' + 'synstack pyeval prevnonblank readfile cindent filereadable changenr ' + 'exp'
     },
     illegal: /;/,
@@ -23118,6 +22870,7 @@ function vim(hljs) {
     }]
   };
 }
+
 module.exports = vim;
 
 /***/ }),
@@ -23135,7 +22888,6 @@ Description: x86 assembly language using Intel's mnemonic and NASM syntax
 Website: https://en.wikipedia.org/wiki/X86_assembly_language
 Category: assembler
 */
-
 function x86asm(hljs) {
   return {
     name: 'Intel x86 Assembly',
@@ -23143,36 +22895,21 @@ function x86asm(hljs) {
     keywords: {
       $pattern: '[.%]?' + hljs.IDENT_RE,
       keyword: 'lock rep repe repz repne repnz xaquire xrelease bnd nobnd ' + 'aaa aad aam aas adc add and arpl bb0_reset bb1_reset bound bsf bsr bswap bt btc btr bts call cbw cdq cdqe clc cld cli clts cmc cmp cmpsb cmpsd cmpsq cmpsw cmpxchg cmpxchg486 cmpxchg8b cmpxchg16b cpuid cpu_read cpu_write cqo cwd cwde daa das dec div dmint emms enter equ f2xm1 fabs fadd faddp fbld fbstp fchs fclex fcmovb fcmovbe fcmove fcmovnb fcmovnbe fcmovne fcmovnu fcmovu fcom fcomi fcomip fcomp fcompp fcos fdecstp fdisi fdiv fdivp fdivr fdivrp femms feni ffree ffreep fiadd ficom ficomp fidiv fidivr fild fimul fincstp finit fist fistp fisttp fisub fisubr fld fld1 fldcw fldenv fldl2e fldl2t fldlg2 fldln2 fldpi fldz fmul fmulp fnclex fndisi fneni fninit fnop fnsave fnstcw fnstenv fnstsw fpatan fprem fprem1 fptan frndint frstor fsave fscale fsetpm fsin fsincos fsqrt fst fstcw fstenv fstp fstsw fsub fsubp fsubr fsubrp ftst fucom fucomi fucomip fucomp fucompp fxam fxch fxtract fyl2x fyl2xp1 hlt ibts icebp idiv imul in inc incbin insb insd insw int int01 int1 int03 int3 into invd invpcid invlpg invlpga iret iretd iretq iretw jcxz jecxz jrcxz jmp jmpe lahf lar lds lea leave les lfence lfs lgdt lgs lidt lldt lmsw loadall loadall286 lodsb lodsd lodsq lodsw loop loope loopne loopnz loopz lsl lss ltr mfence monitor mov movd movq movsb movsd movsq movsw movsx movsxd movzx mul mwait neg nop not or out outsb outsd outsw packssdw packsswb packuswb paddb paddd paddsb paddsiw paddsw paddusb paddusw paddw pand pandn pause paveb pavgusb pcmpeqb pcmpeqd pcmpeqw pcmpgtb pcmpgtd pcmpgtw pdistib pf2id pfacc pfadd pfcmpeq pfcmpge pfcmpgt pfmax pfmin pfmul pfrcp pfrcpit1 pfrcpit2 pfrsqit1 pfrsqrt pfsub pfsubr pi2fd pmachriw pmaddwd pmagw pmulhriw pmulhrwa pmulhrwc pmulhw pmullw pmvgezb pmvlzb pmvnzb pmvzb pop popa popad popaw popf popfd popfq popfw por prefetch prefetchw pslld psllq psllw psrad psraw psrld psrlq psrlw psubb psubd psubsb psubsiw psubsw psubusb psubusw psubw punpckhbw punpckhdq punpckhwd punpcklbw punpckldq punpcklwd push pusha pushad pushaw pushf pushfd pushfq pushfw pxor rcl rcr rdshr rdmsr rdpmc rdtsc rdtscp ret retf retn rol ror rdm rsdc rsldt rsm rsts sahf sal salc sar sbb scasb scasd scasq scasw sfence sgdt shl shld shr shrd sidt sldt skinit smi smint smintold smsw stc std sti stosb stosd stosq stosw str sub svdc svldt svts swapgs syscall sysenter sysexit sysret test ud0 ud1 ud2b ud2 ud2a umov verr verw fwait wbinvd wrshr wrmsr xadd xbts xchg xlatb xlat xor cmove cmovz cmovne cmovnz cmova cmovnbe cmovae cmovnb cmovb cmovnae cmovbe cmovna cmovg cmovnle cmovge cmovnl cmovl cmovnge cmovle cmovng cmovc cmovnc cmovo cmovno cmovs cmovns cmovp cmovpe cmovnp cmovpo je jz jne jnz ja jnbe jae jnb jb jnae jbe jna jg jnle jge jnl jl jnge jle jng jc jnc jo jno js jns jpo jnp jpe jp sete setz setne setnz seta setnbe setae setnb setnc setb setnae setcset setbe setna setg setnle setge setnl setl setnge setle setng sets setns seto setno setpe setp setpo setnp addps addss andnps andps cmpeqps cmpeqss cmpleps cmpless cmpltps cmpltss cmpneqps cmpneqss cmpnleps cmpnless cmpnltps cmpnltss cmpordps cmpordss cmpunordps cmpunordss cmpps cmpss comiss cvtpi2ps cvtps2pi cvtsi2ss cvtss2si cvttps2pi cvttss2si divps divss ldmxcsr maxps maxss minps minss movaps movhps movlhps movlps movhlps movmskps movntps movss movups mulps mulss orps rcpps rcpss rsqrtps rsqrtss shufps sqrtps sqrtss stmxcsr subps subss ucomiss unpckhps unpcklps xorps fxrstor fxrstor64 fxsave fxsave64 xgetbv xsetbv xsave xsave64 xsaveopt xsaveopt64 xrstor xrstor64 prefetchnta prefetcht0 prefetcht1 prefetcht2 maskmovq movntq pavgb pavgw pextrw pinsrw pmaxsw pmaxub pminsw pminub pmovmskb pmulhuw psadbw pshufw pf2iw pfnacc pfpnacc pi2fw pswapd maskmovdqu clflush movntdq movnti movntpd movdqa movdqu movdq2q movq2dq paddq pmuludq pshufd pshufhw pshuflw pslldq psrldq psubq punpckhqdq punpcklqdq addpd addsd andnpd andpd cmpeqpd cmpeqsd cmplepd cmplesd cmpltpd cmpltsd cmpneqpd cmpneqsd cmpnlepd cmpnlesd cmpnltpd cmpnltsd cmpordpd cmpordsd cmpunordpd cmpunordsd cmppd comisd cvtdq2pd cvtdq2ps cvtpd2dq cvtpd2pi cvtpd2ps cvtpi2pd cvtps2dq cvtps2pd cvtsd2si cvtsd2ss cvtsi2sd cvtss2sd cvttpd2pi cvttpd2dq cvttps2dq cvttsd2si divpd divsd maxpd maxsd minpd minsd movapd movhpd movlpd movmskpd movupd mulpd mulsd orpd shufpd sqrtpd sqrtsd subpd subsd ucomisd unpckhpd unpcklpd xorpd addsubpd addsubps haddpd haddps hsubpd hsubps lddqu movddup movshdup movsldup clgi stgi vmcall vmclear vmfunc vmlaunch vmload vmmcall vmptrld vmptrst vmread vmresume vmrun vmsave vmwrite vmxoff vmxon invept invvpid pabsb pabsw pabsd palignr phaddw phaddd phaddsw phsubw phsubd phsubsw pmaddubsw pmulhrsw pshufb psignb psignw psignd extrq insertq movntsd movntss lzcnt blendpd blendps blendvpd blendvps dppd dpps extractps insertps movntdqa mpsadbw packusdw pblendvb pblendw pcmpeqq pextrb pextrd pextrq phminposuw pinsrb pinsrd pinsrq pmaxsb pmaxsd pmaxud pmaxuw pminsb pminsd pminud pminuw pmovsxbw pmovsxbd pmovsxbq pmovsxwd pmovsxwq pmovsxdq pmovzxbw pmovzxbd pmovzxbq pmovzxwd pmovzxwq pmovzxdq pmuldq pmulld ptest roundpd roundps roundsd roundss crc32 pcmpestri pcmpestrm pcmpistri pcmpistrm pcmpgtq popcnt getsec pfrcpv pfrsqrtv movbe aesenc aesenclast aesdec aesdeclast aesimc aeskeygenassist vaesenc vaesenclast vaesdec vaesdeclast vaesimc vaeskeygenassist vaddpd vaddps vaddsd vaddss vaddsubpd vaddsubps vandpd vandps vandnpd vandnps vblendpd vblendps vblendvpd vblendvps vbroadcastss vbroadcastsd vbroadcastf128 vcmpeq_ospd vcmpeqpd vcmplt_ospd vcmpltpd vcmple_ospd vcmplepd vcmpunord_qpd vcmpunordpd vcmpneq_uqpd vcmpneqpd vcmpnlt_uspd vcmpnltpd vcmpnle_uspd vcmpnlepd vcmpord_qpd vcmpordpd vcmpeq_uqpd vcmpnge_uspd vcmpngepd vcmpngt_uspd vcmpngtpd vcmpfalse_oqpd vcmpfalsepd vcmpneq_oqpd vcmpge_ospd vcmpgepd vcmpgt_ospd vcmpgtpd vcmptrue_uqpd vcmptruepd vcmplt_oqpd vcmple_oqpd vcmpunord_spd vcmpneq_uspd vcmpnlt_uqpd vcmpnle_uqpd vcmpord_spd vcmpeq_uspd vcmpnge_uqpd vcmpngt_uqpd vcmpfalse_ospd vcmpneq_ospd vcmpge_oqpd vcmpgt_oqpd vcmptrue_uspd vcmppd vcmpeq_osps vcmpeqps vcmplt_osps vcmpltps vcmple_osps vcmpleps vcmpunord_qps vcmpunordps vcmpneq_uqps vcmpneqps vcmpnlt_usps vcmpnltps vcmpnle_usps vcmpnleps vcmpord_qps vcmpordps vcmpeq_uqps vcmpnge_usps vcmpngeps vcmpngt_usps vcmpngtps vcmpfalse_oqps vcmpfalseps vcmpneq_oqps vcmpge_osps vcmpgeps vcmpgt_osps vcmpgtps vcmptrue_uqps vcmptrueps vcmplt_oqps vcmple_oqps vcmpunord_sps vcmpneq_usps vcmpnlt_uqps vcmpnle_uqps vcmpord_sps vcmpeq_usps vcmpnge_uqps vcmpngt_uqps vcmpfalse_osps vcmpneq_osps vcmpge_oqps vcmpgt_oqps vcmptrue_usps vcmpps vcmpeq_ossd vcmpeqsd vcmplt_ossd vcmpltsd vcmple_ossd vcmplesd vcmpunord_qsd vcmpunordsd vcmpneq_uqsd vcmpneqsd vcmpnlt_ussd vcmpnltsd vcmpnle_ussd vcmpnlesd vcmpord_qsd vcmpordsd vcmpeq_uqsd vcmpnge_ussd vcmpngesd vcmpngt_ussd vcmpngtsd vcmpfalse_oqsd vcmpfalsesd vcmpneq_oqsd vcmpge_ossd vcmpgesd vcmpgt_ossd vcmpgtsd vcmptrue_uqsd vcmptruesd vcmplt_oqsd vcmple_oqsd vcmpunord_ssd vcmpneq_ussd vcmpnlt_uqsd vcmpnle_uqsd vcmpord_ssd vcmpeq_ussd vcmpnge_uqsd vcmpngt_uqsd vcmpfalse_ossd vcmpneq_ossd vcmpge_oqsd vcmpgt_oqsd vcmptrue_ussd vcmpsd vcmpeq_osss vcmpeqss vcmplt_osss vcmpltss vcmple_osss vcmpless vcmpunord_qss vcmpunordss vcmpneq_uqss vcmpneqss vcmpnlt_usss vcmpnltss vcmpnle_usss vcmpnless vcmpord_qss vcmpordss vcmpeq_uqss vcmpnge_usss vcmpngess vcmpngt_usss vcmpngtss vcmpfalse_oqss vcmpfalsess vcmpneq_oqss vcmpge_osss vcmpgess vcmpgt_osss vcmpgtss vcmptrue_uqss vcmptruess vcmplt_oqss vcmple_oqss vcmpunord_sss vcmpneq_usss vcmpnlt_uqss vcmpnle_uqss vcmpord_sss vcmpeq_usss vcmpnge_uqss vcmpngt_uqss vcmpfalse_osss vcmpneq_osss vcmpge_oqss vcmpgt_oqss vcmptrue_usss vcmpss vcomisd vcomiss vcvtdq2pd vcvtdq2ps vcvtpd2dq vcvtpd2ps vcvtps2dq vcvtps2pd vcvtsd2si vcvtsd2ss vcvtsi2sd vcvtsi2ss vcvtss2sd vcvtss2si vcvttpd2dq vcvttps2dq vcvttsd2si vcvttss2si vdivpd vdivps vdivsd vdivss vdppd vdpps vextractf128 vextractps vhaddpd vhaddps vhsubpd vhsubps vinsertf128 vinsertps vlddqu vldqqu vldmxcsr vmaskmovdqu vmaskmovps vmaskmovpd vmaxpd vmaxps vmaxsd vmaxss vminpd vminps vminsd vminss vmovapd vmovaps vmovd vmovq vmovddup vmovdqa vmovqqa vmovdqu vmovqqu vmovhlps vmovhpd vmovhps vmovlhps vmovlpd vmovlps vmovmskpd vmovmskps vmovntdq vmovntqq vmovntdqa vmovntpd vmovntps vmovsd vmovshdup vmovsldup vmovss vmovupd vmovups vmpsadbw vmulpd vmulps vmulsd vmulss vorpd vorps vpabsb vpabsw vpabsd vpacksswb vpackssdw vpackuswb vpackusdw vpaddb vpaddw vpaddd vpaddq vpaddsb vpaddsw vpaddusb vpaddusw vpalignr vpand vpandn vpavgb vpavgw vpblendvb vpblendw vpcmpestri vpcmpestrm vpcmpistri vpcmpistrm vpcmpeqb vpcmpeqw vpcmpeqd vpcmpeqq vpcmpgtb vpcmpgtw vpcmpgtd vpcmpgtq vpermilpd vpermilps vperm2f128 vpextrb vpextrw vpextrd vpextrq vphaddw vphaddd vphaddsw vphminposuw vphsubw vphsubd vphsubsw vpinsrb vpinsrw vpinsrd vpinsrq vpmaddwd vpmaddubsw vpmaxsb vpmaxsw vpmaxsd vpmaxub vpmaxuw vpmaxud vpminsb vpminsw vpminsd vpminub vpminuw vpminud vpmovmskb vpmovsxbw vpmovsxbd vpmovsxbq vpmovsxwd vpmovsxwq vpmovsxdq vpmovzxbw vpmovzxbd vpmovzxbq vpmovzxwd vpmovzxwq vpmovzxdq vpmulhuw vpmulhrsw vpmulhw vpmullw vpmulld vpmuludq vpmuldq vpor vpsadbw vpshufb vpshufd vpshufhw vpshuflw vpsignb vpsignw vpsignd vpslldq vpsrldq vpsllw vpslld vpsllq vpsraw vpsrad vpsrlw vpsrld vpsrlq vptest vpsubb vpsubw vpsubd vpsubq vpsubsb vpsubsw vpsubusb vpsubusw vpunpckhbw vpunpckhwd vpunpckhdq vpunpckhqdq vpunpcklbw vpunpcklwd vpunpckldq vpunpcklqdq vpxor vrcpps vrcpss vrsqrtps vrsqrtss vroundpd vroundps vroundsd vroundss vshufpd vshufps vsqrtpd vsqrtps vsqrtsd vsqrtss vstmxcsr vsubpd vsubps vsubsd vsubss vtestps vtestpd vucomisd vucomiss vunpckhpd vunpckhps vunpcklpd vunpcklps vxorpd vxorps vzeroall vzeroupper pclmullqlqdq pclmulhqlqdq pclmullqhqdq pclmulhqhqdq pclmulqdq vpclmullqlqdq vpclmulhqlqdq vpclmullqhqdq vpclmulhqhqdq vpclmulqdq vfmadd132ps vfmadd132pd vfmadd312ps vfmadd312pd vfmadd213ps vfmadd213pd vfmadd123ps vfmadd123pd vfmadd231ps vfmadd231pd vfmadd321ps vfmadd321pd vfmaddsub132ps vfmaddsub132pd vfmaddsub312ps vfmaddsub312pd vfmaddsub213ps vfmaddsub213pd vfmaddsub123ps vfmaddsub123pd vfmaddsub231ps vfmaddsub231pd vfmaddsub321ps vfmaddsub321pd vfmsub132ps vfmsub132pd vfmsub312ps vfmsub312pd vfmsub213ps vfmsub213pd vfmsub123ps vfmsub123pd vfmsub231ps vfmsub231pd vfmsub321ps vfmsub321pd vfmsubadd132ps vfmsubadd132pd vfmsubadd312ps vfmsubadd312pd vfmsubadd213ps vfmsubadd213pd vfmsubadd123ps vfmsubadd123pd vfmsubadd231ps vfmsubadd231pd vfmsubadd321ps vfmsubadd321pd vfnmadd132ps vfnmadd132pd vfnmadd312ps vfnmadd312pd vfnmadd213ps vfnmadd213pd vfnmadd123ps vfnmadd123pd vfnmadd231ps vfnmadd231pd vfnmadd321ps vfnmadd321pd vfnmsub132ps vfnmsub132pd vfnmsub312ps vfnmsub312pd vfnmsub213ps vfnmsub213pd vfnmsub123ps vfnmsub123pd vfnmsub231ps vfnmsub231pd vfnmsub321ps vfnmsub321pd vfmadd132ss vfmadd132sd vfmadd312ss vfmadd312sd vfmadd213ss vfmadd213sd vfmadd123ss vfmadd123sd vfmadd231ss vfmadd231sd vfmadd321ss vfmadd321sd vfmsub132ss vfmsub132sd vfmsub312ss vfmsub312sd vfmsub213ss vfmsub213sd vfmsub123ss vfmsub123sd vfmsub231ss vfmsub231sd vfmsub321ss vfmsub321sd vfnmadd132ss vfnmadd132sd vfnmadd312ss vfnmadd312sd vfnmadd213ss vfnmadd213sd vfnmadd123ss vfnmadd123sd vfnmadd231ss vfnmadd231sd vfnmadd321ss vfnmadd321sd vfnmsub132ss vfnmsub132sd vfnmsub312ss vfnmsub312sd vfnmsub213ss vfnmsub213sd vfnmsub123ss vfnmsub123sd vfnmsub231ss vfnmsub231sd vfnmsub321ss vfnmsub321sd rdfsbase rdgsbase rdrand wrfsbase wrgsbase vcvtph2ps vcvtps2ph adcx adox rdseed clac stac xstore xcryptecb xcryptcbc xcryptctr xcryptcfb xcryptofb montmul xsha1 xsha256 llwpcb slwpcb lwpval lwpins vfmaddpd vfmaddps vfmaddsd vfmaddss vfmaddsubpd vfmaddsubps vfmsubaddpd vfmsubaddps vfmsubpd vfmsubps vfmsubsd vfmsubss vfnmaddpd vfnmaddps vfnmaddsd vfnmaddss vfnmsubpd vfnmsubps vfnmsubsd vfnmsubss vfrczpd vfrczps vfrczsd vfrczss vpcmov vpcomb vpcomd vpcomq vpcomub vpcomud vpcomuq vpcomuw vpcomw vphaddbd vphaddbq vphaddbw vphadddq vphaddubd vphaddubq vphaddubw vphaddudq vphadduwd vphadduwq vphaddwd vphaddwq vphsubbw vphsubdq vphsubwd vpmacsdd vpmacsdqh vpmacsdql vpmacssdd vpmacssdqh vpmacssdql vpmacsswd vpmacssww vpmacswd vpmacsww vpmadcsswd vpmadcswd vpperm vprotb vprotd vprotq vprotw vpshab vpshad vpshaq vpshaw vpshlb vpshld vpshlq vpshlw vbroadcasti128 vpblendd vpbroadcastb vpbroadcastw vpbroadcastd vpbroadcastq vpermd vpermpd vpermps vpermq vperm2i128 vextracti128 vinserti128 vpmaskmovd vpmaskmovq vpsllvd vpsllvq vpsravd vpsrlvd vpsrlvq vgatherdpd vgatherqpd vgatherdps vgatherqps vpgatherdd vpgatherqd vpgatherdq vpgatherqq xabort xbegin xend xtest andn bextr blci blcic blsi blsic blcfill blsfill blcmsk blsmsk blsr blcs bzhi mulx pdep pext rorx sarx shlx shrx tzcnt tzmsk t1mskc valignd valignq vblendmpd vblendmps vbroadcastf32x4 vbroadcastf64x4 vbroadcasti32x4 vbroadcasti64x4 vcompresspd vcompressps vcvtpd2udq vcvtps2udq vcvtsd2usi vcvtss2usi vcvttpd2udq vcvttps2udq vcvttsd2usi vcvttss2usi vcvtudq2pd vcvtudq2ps vcvtusi2sd vcvtusi2ss vexpandpd vexpandps vextractf32x4 vextractf64x4 vextracti32x4 vextracti64x4 vfixupimmpd vfixupimmps vfixupimmsd vfixupimmss vgetexppd vgetexpps vgetexpsd vgetexpss vgetmantpd vgetmantps vgetmantsd vgetmantss vinsertf32x4 vinsertf64x4 vinserti32x4 vinserti64x4 vmovdqa32 vmovdqa64 vmovdqu32 vmovdqu64 vpabsq vpandd vpandnd vpandnq vpandq vpblendmd vpblendmq vpcmpltd vpcmpled vpcmpneqd vpcmpnltd vpcmpnled vpcmpd vpcmpltq vpcmpleq vpcmpneqq vpcmpnltq vpcmpnleq vpcmpq vpcmpequd vpcmpltud vpcmpleud vpcmpnequd vpcmpnltud vpcmpnleud vpcmpud vpcmpequq vpcmpltuq vpcmpleuq vpcmpnequq vpcmpnltuq vpcmpnleuq vpcmpuq vpcompressd vpcompressq vpermi2d vpermi2pd vpermi2ps vpermi2q vpermt2d vpermt2pd vpermt2ps vpermt2q vpexpandd vpexpandq vpmaxsq vpmaxuq vpminsq vpminuq vpmovdb vpmovdw vpmovqb vpmovqd vpmovqw vpmovsdb vpmovsdw vpmovsqb vpmovsqd vpmovsqw vpmovusdb vpmovusdw vpmovusqb vpmovusqd vpmovusqw vpord vporq vprold vprolq vprolvd vprolvq vprord vprorq vprorvd vprorvq vpscatterdd vpscatterdq vpscatterqd vpscatterqq vpsraq vpsravq vpternlogd vpternlogq vptestmd vptestmq vptestnmd vptestnmq vpxord vpxorq vrcp14pd vrcp14ps vrcp14sd vrcp14ss vrndscalepd vrndscaleps vrndscalesd vrndscaless vrsqrt14pd vrsqrt14ps vrsqrt14sd vrsqrt14ss vscalefpd vscalefps vscalefsd vscalefss vscatterdpd vscatterdps vscatterqpd vscatterqps vshuff32x4 vshuff64x2 vshufi32x4 vshufi64x2 kandnw kandw kmovw knotw kortestw korw kshiftlw kshiftrw kunpckbw kxnorw kxorw vpbroadcastmb2q vpbroadcastmw2d vpconflictd vpconflictq vplzcntd vplzcntq vexp2pd vexp2ps vrcp28pd vrcp28ps vrcp28sd vrcp28ss vrsqrt28pd vrsqrt28ps vrsqrt28sd vrsqrt28ss vgatherpf0dpd vgatherpf0dps vgatherpf0qpd vgatherpf0qps vgatherpf1dpd vgatherpf1dps vgatherpf1qpd vgatherpf1qps vscatterpf0dpd vscatterpf0dps vscatterpf0qpd vscatterpf0qps vscatterpf1dpd vscatterpf1dps vscatterpf1qpd vscatterpf1qps prefetchwt1 bndmk bndcl bndcu bndcn bndmov bndldx bndstx sha1rnds4 sha1nexte sha1msg1 sha1msg2 sha256rnds2 sha256msg1 sha256msg2 hint_nop0 hint_nop1 hint_nop2 hint_nop3 hint_nop4 hint_nop5 hint_nop6 hint_nop7 hint_nop8 hint_nop9 hint_nop10 hint_nop11 hint_nop12 hint_nop13 hint_nop14 hint_nop15 hint_nop16 hint_nop17 hint_nop18 hint_nop19 hint_nop20 hint_nop21 hint_nop22 hint_nop23 hint_nop24 hint_nop25 hint_nop26 hint_nop27 hint_nop28 hint_nop29 hint_nop30 hint_nop31 hint_nop32 hint_nop33 hint_nop34 hint_nop35 hint_nop36 hint_nop37 hint_nop38 hint_nop39 hint_nop40 hint_nop41 hint_nop42 hint_nop43 hint_nop44 hint_nop45 hint_nop46 hint_nop47 hint_nop48 hint_nop49 hint_nop50 hint_nop51 hint_nop52 hint_nop53 hint_nop54 hint_nop55 hint_nop56 hint_nop57 hint_nop58 hint_nop59 hint_nop60 hint_nop61 hint_nop62 hint_nop63',
-      built_in:
-      // Instruction pointer
-      'ip eip rip ' +
-      // 8-bit registers
-      'al ah bl bh cl ch dl dh sil dil bpl spl r8b r9b r10b r11b r12b r13b r14b r15b ' +
-      // 16-bit registers
-      'ax bx cx dx si di bp sp r8w r9w r10w r11w r12w r13w r14w r15w ' +
-      // 32-bit registers
-      'eax ebx ecx edx esi edi ebp esp eip r8d r9d r10d r11d r12d r13d r14d r15d ' +
-      // 64-bit registers
-      'rax rbx rcx rdx rsi rdi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15 ' +
-      // Segment registers
-      'cs ds es fs gs ss ' +
-      // Floating point stack registers
-      'st st0 st1 st2 st3 st4 st5 st6 st7 ' +
-      // MMX Registers
-      'mm0 mm1 mm2 mm3 mm4 mm5 mm6 mm7 ' +
-      // SSE registers
-      'xmm0  xmm1  xmm2  xmm3  xmm4  xmm5  xmm6  xmm7  xmm8  xmm9 xmm10  xmm11 xmm12 xmm13 xmm14 xmm15 ' + 'xmm16 xmm17 xmm18 xmm19 xmm20 xmm21 xmm22 xmm23 xmm24 xmm25 xmm26 xmm27 xmm28 xmm29 xmm30 xmm31 ' +
-      // AVX registers
-      'ymm0  ymm1  ymm2  ymm3  ymm4  ymm5  ymm6  ymm7  ymm8  ymm9 ymm10  ymm11 ymm12 ymm13 ymm14 ymm15 ' + 'ymm16 ymm17 ymm18 ymm19 ymm20 ymm21 ymm22 ymm23 ymm24 ymm25 ymm26 ymm27 ymm28 ymm29 ymm30 ymm31 ' +
-      // AVX-512F registers
-      'zmm0  zmm1  zmm2  zmm3  zmm4  zmm5  zmm6  zmm7  zmm8  zmm9 zmm10  zmm11 zmm12 zmm13 zmm14 zmm15 ' + 'zmm16 zmm17 zmm18 zmm19 zmm20 zmm21 zmm22 zmm23 zmm24 zmm25 zmm26 zmm27 zmm28 zmm29 zmm30 zmm31 ' +
-      // AVX-512F mask registers
-      'k0 k1 k2 k3 k4 k5 k6 k7 ' +
-      // Bound (MPX) register
-      'bnd0 bnd1 bnd2 bnd3 ' +
-      // Special register
-      'cr0 cr1 cr2 cr3 cr4 cr8 dr0 dr1 dr2 dr3 dr8 tr3 tr4 tr5 tr6 tr7 ' +
-      // NASM altreg package
+      built_in: // Instruction pointer
+      'ip eip rip ' + // 8-bit registers
+      'al ah bl bh cl ch dl dh sil dil bpl spl r8b r9b r10b r11b r12b r13b r14b r15b ' + // 16-bit registers
+      'ax bx cx dx si di bp sp r8w r9w r10w r11w r12w r13w r14w r15w ' + // 32-bit registers
+      'eax ebx ecx edx esi edi ebp esp eip r8d r9d r10d r11d r12d r13d r14d r15d ' + // 64-bit registers
+      'rax rbx rcx rdx rsi rdi rbp rsp r8 r9 r10 r11 r12 r13 r14 r15 ' + // Segment registers
+      'cs ds es fs gs ss ' + // Floating point stack registers
+      'st st0 st1 st2 st3 st4 st5 st6 st7 ' + // MMX Registers
+      'mm0 mm1 mm2 mm3 mm4 mm5 mm6 mm7 ' + // SSE registers
+      'xmm0  xmm1  xmm2  xmm3  xmm4  xmm5  xmm6  xmm7  xmm8  xmm9 xmm10  xmm11 xmm12 xmm13 xmm14 xmm15 ' + 'xmm16 xmm17 xmm18 xmm19 xmm20 xmm21 xmm22 xmm23 xmm24 xmm25 xmm26 xmm27 xmm28 xmm29 xmm30 xmm31 ' + // AVX registers
+      'ymm0  ymm1  ymm2  ymm3  ymm4  ymm5  ymm6  ymm7  ymm8  ymm9 ymm10  ymm11 ymm12 ymm13 ymm14 ymm15 ' + 'ymm16 ymm17 ymm18 ymm19 ymm20 ymm21 ymm22 ymm23 ymm24 ymm25 ymm26 ymm27 ymm28 ymm29 ymm30 ymm31 ' + // AVX-512F registers
+      'zmm0  zmm1  zmm2  zmm3  zmm4  zmm5  zmm6  zmm7  zmm8  zmm9 zmm10  zmm11 zmm12 zmm13 zmm14 zmm15 ' + 'zmm16 zmm17 zmm18 zmm19 zmm20 zmm21 zmm22 zmm23 zmm24 zmm25 zmm26 zmm27 zmm28 zmm29 zmm30 zmm31 ' + // AVX-512F mask registers
+      'k0 k1 k2 k3 k4 k5 k6 k7 ' + // Bound (MPX) register
+      'bnd0 bnd1 bnd2 bnd3 ' + // Special register
+      'cr0 cr1 cr2 cr3 cr4 cr8 dr0 dr1 dr2 dr3 dr8 tr3 tr4 tr5 tr6 tr7 ' + // NASM altreg package
       'r0 r1 r2 r3 r4 r5 r6 r7 r0b r1b r2b r3b r4b r5b r6b r7b ' + 'r0w r1w r2w r3w r4w r5w r6w r7w r0d r1d r2d r3d r4d r5d r6d r7d ' + 'r0h r1h r2h r3h ' + 'r0l r1l r2l r3l r4l r5l r6l r7l r8l r9l r10l r11l r12l r13l r14l r15l ' + 'db dw dd dq dt ddq do dy dz ' + 'resb resw resd resq rest resdq reso resy resz ' + 'incbin equ times ' + 'byte word dword qword nosplit rel abs seg wrt strict near far a32 ptr',
       meta: '%define %xdefine %+ %undef %defstr %deftok %assign %strcat %strlen %substr %rotate %elif %else %endif ' + '%if %ifmacro %ifctx %ifidn %ifidni %ifid %ifnum %ifstr %iftoken %ifempty %ifenv %error %warning %fatal %rep ' + '%endrep %include %push %pop %repl %pathsearch %depend %use %arg %stacksize %local %line %comment %endcomment ' + '.nolist ' + '__FILE__ __LINE__ __SECT__  __BITS__ __OUTPUT_FORMAT__ __DATE__ __TIME__ __DATE_NUM__ __TIME_NUM__ ' + '__UTC_DATE__ __UTC_TIME__ __UTC_DATE_NUM__ __UTC_TIME_NUM__  __PASS__ struc endstruc istruc at iend ' + 'align alignb sectalign daz nodaz up down zero default option assume public ' + 'bits use16 use32 use64 default section segment absolute extern global common cpu float ' + '__utf16__ __utf16le__ __utf16be__ __utf32__ __utf32le__ __utf32be__ ' + '__float8__ __float16__ __float32__ __float64__ __float80m__ __float80e__ __float128l__ __float128h__ ' + '__Infinity__ __QNaN__ __SNaN__ Inf NaN QNaN SNaN float8 float16 float32 float64 float80m float80e ' + 'float128l float128h __FLOAT_DAZ__ __FLOAT_ROUND__ __FLOAT__'
     },
@@ -23180,36 +22917,29 @@ function x86asm(hljs) {
       relevance: 0
     }), {
       className: 'number',
-      variants: [
-      // Float number and x87 BCD
+      variants: [// Float number and x87 BCD
       {
         begin: '\\b(?:([0-9][0-9_]*)?\\.[0-9_]*(?:[eE][+-]?[0-9_]+)?|' + '(0[Xx])?[0-9][0-9_]*(\\.[0-9_]*)?(?:[pP](?:[+-]?[0-9_]+)?)?)\\b',
         relevance: 0
-      },
-      // Hex number in $
+      }, // Hex number in $
       {
         begin: '\\$[0-9][0-9A-Fa-f]*',
         relevance: 0
-      },
-      // Number in H,D,T,Q,O,B,Y suffix
+      }, // Number in H,D,T,Q,O,B,Y suffix
       {
         begin: '\\b(?:[0-9A-Fa-f][0-9A-Fa-f_]*[Hh]|[0-9][0-9_]*[DdTt]?|[0-7][0-7_]*[QqOo]|[0-1][0-1_]*[BbYy])\\b'
-      },
-      // Number in X,D,T,Q,O,B,Y prefix
+      }, // Number in X,D,T,Q,O,B,Y prefix
       {
         begin: '\\b(?:0[Xx][0-9A-Fa-f_]+|0[DdTt][0-9_]+|0[QqOo][0-7_]+|0[BbYy][0-1_]+)\\b'
       }]
-    },
-    // Double quote string
+    }, // Double quote string
     hljs.QUOTE_STRING_MODE, {
       className: 'string',
-      variants: [
-      // Single-quoted string
+      variants: [// Single-quoted string
       {
         begin: '\'',
         end: '[^\\\\]\''
-      },
-      // Backquoted string
+      }, // Backquoted string
       {
         begin: '`',
         end: '[^\\\\]`'
@@ -23217,24 +22947,20 @@ function x86asm(hljs) {
       relevance: 0
     }, {
       className: 'symbol',
-      variants: [
-      // Global label and local label
+      variants: [// Global label and local label
       {
         begin: '^\\s*[A-Za-z._?][A-Za-z0-9_$#@~.?]*(:|\\s+label)'
-      },
-      // Macro-local label
+      }, // Macro-local label
       {
         begin: '^\\s*%%[A-Za-z0-9_$#@~.?]*:'
       }],
       relevance: 0
-    },
-    // Macro parameter
+    }, // Macro parameter
     {
       className: 'subst',
       begin: '%[0-9]+',
       relevance: 0
-    },
-    // Macro parameter
+    }, // Macro parameter
     {
       className: 'subst',
       begin: '%!\S+',
@@ -23245,6 +22971,7 @@ function x86asm(hljs) {
     }]
   };
 }
+
 module.exports = x86asm;
 
 /***/ }),
@@ -23261,7 +22988,6 @@ Author: Christophe de Dinechin <christophe@taodyne.com>
 Description: An extensible programming language, based on parse tree rewriting
 Website: http://xlr.sf.net
 */
-
 function xl(hljs) {
   const BUILTIN_MODULES = 'ObjectLoader Animate MovieCredits Slides Filters Shading Materials LensFlare Mapping VLCAudioVideo ' + 'StereoDecoder PointCloud NetworkAccess RemoteControl RegExp ChromaKey Snowfall NodeJS Speech Charts';
   const XL_KEYWORDS = {
@@ -23316,6 +23042,7 @@ function xl(hljs) {
     contains: [hljs.C_LINE_COMMENT_MODE, hljs.C_BLOCK_COMMENT_MODE, DOUBLE_QUOTE_TEXT, SINGLE_QUOTE_TEXT, LONG_TEXT, FUNCTION_DEFINITION, IMPORT, BASED_NUMBER, hljs.NUMBER_MODE]
   };
 }
+
 module.exports = xl;
 
 /***/ }),
@@ -23340,32 +23067,34 @@ function source(re) {
   if (typeof re === "string") return re;
   return re.source;
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function lookahead(re) {
   return concat('(?=', re, ')');
 }
-
 /**
  * @param {RegExp | string } re
  * @returns {string}
  */
+
+
 function optional(re) {
   return concat('(', re, ')?');
 }
-
 /**
  * @param {...(RegExp | string) } args
  * @returns {string}
  */
+
+
 function concat(...args) {
   const joined = args.map(x => source(x)).join("");
   return joined;
 }
-
 /**
  * Any of the passed expresssions may match
  *
@@ -23373,11 +23102,12 @@ function concat(...args) {
  * @param {(RegExp | string)[] } args
  * @returns {string}
  */
+
+
 function either(...args) {
   const joined = '(' + args.map(x => source(x)).join("|") + ")";
   return joined;
 }
-
 /*
 Language: HTML, XML
 Website: https://www.w3.org/XML/
@@ -23386,6 +23116,8 @@ Audit: 2020
 */
 
 /** @type LanguageFn */
+
+
 function xml(hljs) {
   // Element names can contain letters, digits, hyphens, underscores, and periods
   const TAG_NAME_RE = concat(/[A-Z_]/, optional(/[A-Z0-9_.-]*:/), /[A-Z0-9_.-]*/);
@@ -23472,6 +23204,7 @@ function xml(hljs) {
       relevance: 10
     }, {
       className: 'tag',
+
       /*
       The lookahead pattern (?=...) ensures that 'begin' only matches
       '<style' as a single word, followed by a whitespace or an
@@ -23503,17 +23236,14 @@ function xml(hljs) {
         returnEnd: true,
         subLanguage: ['javascript', 'handlebars', 'xml']
       }
-    },
-    // we need this for now for jSX
+    }, // we need this for now for jSX
     {
       className: 'tag',
       begin: /<>|<\/>/
-    },
-    // open tag
+    }, // open tag
     {
       className: 'tag',
-      begin: concat(/</, lookahead(concat(TAG_NAME_RE,
-      // <tag/>
+      begin: concat(/</, lookahead(concat(TAG_NAME_RE, // <tag/>
       // <tag>
       // <tag ...
       either(/\/>/, />/, /\s/)))),
@@ -23524,8 +23254,7 @@ function xml(hljs) {
         relevance: 0,
         starts: TAG_INTERNALS
       }]
-    },
-    // close tag
+    }, // close tag
     {
       className: 'tag',
       begin: concat(/<\//, lookahead(concat(TAG_NAME_RE, />/))),
@@ -23541,6 +23270,7 @@ function xml(hljs) {
     }]
   };
 }
+
 module.exports = xml;
 
 /***/ }),
@@ -23565,14 +23295,12 @@ Audit: 2020
 /** @type LanguageFn */
 function xquery(_hljs) {
   // see https://www.w3.org/TR/xquery/#id-terminal-delimitation
-  const KEYWORDS = 'module schema namespace boundary-space preserve no-preserve strip default collation base-uri ordering context decimal-format decimal-separator copy-namespaces empty-sequence except exponent-separator external grouping-separator inherit no-inherit lax minus-sign per-mille percent schema-attribute schema-element strict unordered zero-digit ' + 'declare import option function validate variable ' + 'for at in let where order group by return if then else ' + 'tumbling sliding window start when only end previous next stable ' + 'ascending descending allowing empty greatest least some every satisfies switch case typeswitch try catch ' + 'and or to union intersect instance of treat as castable cast map array ' + 'delete insert into replace value rename copy modify update';
-
-  // Node Types (sorted by inheritance)
+  const KEYWORDS = 'module schema namespace boundary-space preserve no-preserve strip default collation base-uri ordering context decimal-format decimal-separator copy-namespaces empty-sequence except exponent-separator external grouping-separator inherit no-inherit lax minus-sign per-mille percent schema-attribute schema-element strict unordered zero-digit ' + 'declare import option function validate variable ' + 'for at in let where order group by return if then else ' + 'tumbling sliding window start when only end previous next stable ' + 'ascending descending allowing empty greatest least some every satisfies switch case typeswitch try catch ' + 'and or to union intersect instance of treat as castable cast map array ' + 'delete insert into replace value rename copy modify update'; // Node Types (sorted by inheritance)
   // atomic types (sorted by inheritance)
-  const TYPE = 'item document-node node attribute document element comment namespace namespace-node processing-instruction text construction ' + 'xs:anyAtomicType xs:untypedAtomic xs:duration xs:time xs:decimal xs:float xs:double xs:gYearMonth xs:gYear xs:gMonthDay xs:gMonth xs:gDay xs:boolean xs:base64Binary xs:hexBinary xs:anyURI xs:QName xs:NOTATION xs:dateTime xs:dateTimeStamp xs:date xs:string xs:normalizedString xs:token xs:language xs:NMTOKEN xs:Name xs:NCName xs:ID xs:IDREF xs:ENTITY xs:integer xs:nonPositiveInteger xs:negativeInteger xs:long xs:int xs:short xs:byte xs:nonNegativeInteger xs:unisignedLong xs:unsignedInt xs:unsignedShort xs:unsignedByte xs:positiveInteger xs:yearMonthDuration xs:dayTimeDuration';
-  const LITERAL = 'eq ne lt le gt ge is ' + 'self:: child:: descendant:: descendant-or-self:: attribute:: following:: following-sibling:: parent:: ancestor:: ancestor-or-self:: preceding:: preceding-sibling:: ' + 'NaN';
 
-  // functions (TODO: find regex for op: without breaking build)
+  const TYPE = 'item document-node node attribute document element comment namespace namespace-node processing-instruction text construction ' + 'xs:anyAtomicType xs:untypedAtomic xs:duration xs:time xs:decimal xs:float xs:double xs:gYearMonth xs:gYear xs:gMonthDay xs:gMonth xs:gDay xs:boolean xs:base64Binary xs:hexBinary xs:anyURI xs:QName xs:NOTATION xs:dateTime xs:dateTimeStamp xs:date xs:string xs:normalizedString xs:token xs:language xs:NMTOKEN xs:Name xs:NCName xs:ID xs:IDREF xs:ENTITY xs:integer xs:nonPositiveInteger xs:negativeInteger xs:long xs:int xs:short xs:byte xs:nonNegativeInteger xs:unisignedLong xs:unsignedInt xs:unsignedShort xs:unsignedByte xs:positiveInteger xs:yearMonthDuration xs:dayTimeDuration';
+  const LITERAL = 'eq ne lt le gt ge is ' + 'self:: child:: descendant:: descendant-or-self:: attribute:: following:: following-sibling:: parent:: ancestor:: ancestor-or-self:: preceding:: preceding-sibling:: ' + 'NaN'; // functions (TODO: find regex for op: without breaking build)
+
   const BUILT_IN = {
     className: 'built_in',
     variants: [{
@@ -23592,8 +23320,7 @@ function xquery(_hljs) {
       begin: /\bfn:/,
       end: /\(/,
       excludeEnd: true
-    },
-    // do not highlight inbuilt strings as variable or xml element names
+    }, // do not highlight inbuilt strings as variable or xml element names
     {
       begin: /[^</$:'"-]\b(?:abs|accumulator-(?:after|before)|adjust-(?:date(?:Time)?|time)-to-timezone|analyze-string|apply|available-(?:environment-variables|system-properties)|avg|base-uri|boolean|ceiling|codepoints?-(?:equal|to-string)|collation-key|collection|compare|concat|contains(?:-token)?|copy-of|count|current(?:-)?(?:date(?:Time)?|time|group(?:ing-key)?|output-uri|merge-(?:group|key))?data|dateTime|days?-from-(?:date(?:Time)?|duration)|deep-equal|default-(?:collation|language)|distinct-values|document(?:-uri)?|doc(?:-available)?|element-(?:available|with-id)|empty|encode-for-uri|ends-with|environment-variable|error|escape-html-uri|exactly-one|exists|false|filter|floor|fold-(?:left|right)|for-each(?:-pair)?|format-(?:date(?:Time)?|time|integer|number)|function-(?:arity|available|lookup|name)|generate-id|has-children|head|hours-from-(?:dateTime|duration|time)|id(?:ref)?|implicit-timezone|in-scope-prefixes|index-of|innermost|insert-before|iri-to-uri|json-(?:doc|to-xml)|key|lang|last|load-xquery-module|local-name(?:-from-QName)?|(?:lower|upper)-case|matches|max|minutes-from-(?:dateTime|duration|time)|min|months?-from-(?:date(?:Time)?|duration)|name(?:space-uri-?(?:for-prefix|from-QName)?)?|nilled|node-name|normalize-(?:space|unicode)|not|number|one-or-more|outermost|parse-(?:ietf-date|json)|path|position|(?:prefix-from-)?QName|random-number-generator|regex-group|remove|replace|resolve-(?:QName|uri)|reverse|root|round(?:-half-to-even)?|seconds-from-(?:dateTime|duration|time)|snapshot|sort|starts-with|static-base-uri|stream-available|string-?(?:join|length|to-codepoints)?|subsequence|substring-?(?:after|before)?|sum|system-property|tail|timezone-from-(?:date(?:Time)?|time)|tokenize|trace|trans(?:form|late)|true|type-available|unordered|unparsed-(?:entity|text)?-?(?:public-id|uri|available|lines)?|uri-collection|xml-to-json|years?-from-(?:date(?:Time)?|duration)|zero-or-one)\b/
     }, {
@@ -23654,18 +23381,16 @@ function xquery(_hljs) {
       className: 'doctag',
       begin: /@\w+/
     }]
-  };
-
-  // see https://www.w3.org/TR/xquery/#id-computedConstructors
+  }; // see https://www.w3.org/TR/xquery/#id-computedConstructors
   // mocha: computed_inbuilt
   // see https://www.regexpal.com/?fam=99749
+
   const COMPUTED = {
     beginKeywords: 'element attribute comment document processing-instruction',
     end: /\{/,
     excludeEnd: true
-  };
+  }; // mocha: direct_method
 
-  // mocha: direct_method
   const DIRECT = {
     begin: /<([\w._:-]+)(\s+\S*=('|").*('|"))?>/,
     end: /(\/[\w._:-]+>)/,
@@ -23691,6 +23416,7 @@ function xquery(_hljs) {
     contains: CONTAINS
   };
 }
+
 module.exports = xquery;
 
 /***/ }),
@@ -23711,23 +23437,20 @@ Website: https://yaml.org
 Category: common, config
 */
 function yaml(hljs) {
-  var LITERALS = 'true false yes no null';
+  var LITERALS = 'true false yes no null'; // YAML spec allows non-reserved URI characters in tags.
 
-  // YAML spec allows non-reserved URI characters in tags.
-  var URI_CHARACTERS = '[\\w#;/?:@&=+$,.~*\'()[\\]]+';
-
-  // Define keys as starting with a word character
+  var URI_CHARACTERS = '[\\w#;/?:@&=+$,.~*\'()[\\]]+'; // Define keys as starting with a word character
   // ...containing word chars, spaces, colons, forward-slashes, hyphens and periods
   // ...and ending with a colon followed immediately by a space, tab or newline.
   // The YAML spec allows for much more than this, but this covers most use-cases.
+
   var KEY = {
     className: 'attr',
     variants: [{
       begin: '\\w[\\w :\\/.-]*:(?=[ \t]|$)'
     }, {
       begin: '"\\w[\\w :\\/.-]*":(?=[ \t]|$)'
-    },
-    // double quoted keys
+    }, // double quoted keys
     {
       begin: '\'\\w[\\w :\\/.-]*\':(?=[ \t]|$)'
     } // single quoted keys
@@ -23738,8 +23461,7 @@ function yaml(hljs) {
     variants: [{
       begin: /\{\{/,
       end: /\}\}/
-    },
-    // jinja templates Ansible
+    }, // jinja templates Ansible
     {
       begin: /%\{/,
       end: /\}/
@@ -23759,10 +23481,9 @@ function yaml(hljs) {
       begin: /\S+/
     }],
     contains: [hljs.BACKSLASH_ESCAPE, TEMPLATE_VARIABLES]
-  };
-
-  // Strings inside of value containers (objects) can't contain braces,
+  }; // Strings inside of value containers (objects) can't contain braces,
   // brackets, or commas
+
   var CONTAINER_STRING = hljs.inherit(STRING, {
     variants: [{
       begin: /'/,
@@ -23827,8 +23548,7 @@ function yaml(hljs) {
     // named tags
     className: 'type',
     begin: '!\\w+!' + URI_CHARACTERS
-  },
-  // https://yaml.org/spec/1.2/spec.html#id2784064
+  }, // https://yaml.org/spec/1.2/spec.html#id2784064
   {
     // verbatim tags
     className: 'type',
@@ -23860,8 +23580,7 @@ function yaml(hljs) {
     keywords: {
       literal: LITERALS
     }
-  }, TIMESTAMP,
-  // numbers are any valid C-style number that
+  }, TIMESTAMP, // numbers are any valid C-style number that
   // sit isolated from other words
   {
     className: 'number',
@@ -23879,6 +23598,7 @@ function yaml(hljs) {
     contains: MODES
   };
 }
+
 module.exports = yaml;
 
 /***/ }),
@@ -23912,25 +23632,17 @@ function zephir(hljs) {
   const NUMBER = {
     variants: [hljs.BINARY_NUMBER_MODE, hljs.C_NUMBER_MODE]
   };
-  const KEYWORDS =
-  // classes and objects
-  'namespace class interface use extends ' + 'function return ' + 'abstract final public protected private static deprecated ' +
-  // error handling
-  'throw try catch Exception ' +
-  // keyword-ish things their website does NOT seem to highlight (in their own snippets)
+  const KEYWORDS = // classes and objects
+  'namespace class interface use extends ' + 'function return ' + 'abstract final public protected private static deprecated ' + // error handling
+  'throw try catch Exception ' + // keyword-ish things their website does NOT seem to highlight (in their own snippets)
   // 'typeof fetch in ' +
   // operators/helpers
-  'echo empty isset instanceof unset ' +
-  // assignment/variables
-  'let var new const self ' +
-  // control
-  'require ' + 'if else elseif switch case default ' + 'do while loop for continue break ' + 'likely unlikely ' +
-  // magic constants
+  'echo empty isset instanceof unset ' + // assignment/variables
+  'let var new const self ' + // control
+  'require ' + 'if else elseif switch case default ' + 'do while loop for continue break ' + 'likely unlikely ' + // magic constants
   // https://github.com/phalcon/zephir/blob/master/Library/Expression/Constants.php
-  '__LINE__ __FILE__ __DIR__ __FUNCTION__ __CLASS__ __TRAIT__ __METHOD__ __NAMESPACE__ ' +
-  // types - https://docs.zephir-lang.com/0.12/en/types
-  'array boolean float double integer object resource string ' + 'char long unsigned bool int uint ulong uchar ' +
-  // built-ins
+  '__LINE__ __FILE__ __DIR__ __FUNCTION__ __CLASS__ __TRAIT__ __METHOD__ __NAMESPACE__ ' + // types - https://docs.zephir-lang.com/0.12/en/types
+  'array boolean float double integer object resource string ' + 'char long unsigned bool int uint ulong uchar ' + // built-ins
   'true false null undefined';
   return {
     name: 'Zephir',
@@ -23982,9 +23694,11 @@ function zephir(hljs) {
       contains: [TITLE_MODE]
     }, {
       begin: /=>/ // No markup, just a relevance booster
+
     }, STRING, NUMBER]
   };
 }
+
 module.exports = zephir;
 
 /***/ })
