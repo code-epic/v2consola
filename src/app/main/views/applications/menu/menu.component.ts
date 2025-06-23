@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { UtilService } from '@services/util/util.service';
-import {  DatatableComponent } from '@swimlane/ngx-datatable';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { environment } from 'environments/environment';
 
 
@@ -54,7 +54,7 @@ export class MenuComponent implements OnInit {
     accionid: 0
   }
 
-  public IAddSubMenu : AddSubMenu = {
+  public IAddSubMenu: AddSubMenu = {
     url: '',
     js: '',
     icon: '',
@@ -176,13 +176,13 @@ export class MenuComponent implements OnInit {
     this.xAPI.parametros = event;
     this.xAPI.valores = ''
     this.dataModulo = [];
-    console.log(this.xAPI)
+    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.dataModulo = data.Cuerpo.map(e => {
-            e.name = e.nomb
-            return e
-          });
+        this.dataModulo = data.Cuerpo.map(e => {
+          e.name = e.nomb
+          return e
+        });
       },
       (error) => {
         console.log(error)
@@ -230,33 +230,35 @@ export class MenuComponent implements OnInit {
   }
 
   onFocusedMenu(item) {
-    if( this.moduloid == undefined ) this.guardarModulo()
+    if (this.moduloid == undefined) this.guardarModulo()
   }
 
-  guardarModulo(){
+  guardarModulo() {
     if (this.menu != '') {
-    this.xAPI.funcion = "AgregarModulo"
-    this.xAPI.parametros =  ''
-    this.xAPI.valores = JSON.stringify(this.IAddModulo)
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        this.dataModulo = []
-       if (data.tipo == 1) {
-        this.moduloid = data.msj
-        this.utilservice.AlertMini('top-end', 'success', 'Modulo Registrado!', 3000)
-        this.selModulo(this.aplicacion)
-       } else {
-        this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
-       }
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
+      this.xAPI.funcion = "AgregarModulo"
+      this.xAPI.parametros = ''
+      this.xAPI.valores = JSON.stringify(this.IAddModulo)
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.dataModulo = []
+          if (data.tipo == 1) {
+            console.log('MenuID, ', data)
+            this.moduloid = data.msj
+            this.xmodulo.id = data.msj
+            this.utilservice.AlertMini('top-end', 'success', 'Modulo Registrado!', 3000)
+            this.selModulo(this.aplicacion)
+          } else {
+            this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
+          }
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
     }
   }
 
-  Limpiar(){
+  Limpiar() {
     this.LimpiarMenu()
     this.aplicacion = undefined
     this.xmodulo = undefined
@@ -265,7 +267,7 @@ export class MenuComponent implements OnInit {
     this.rowDataAcc = []
   }
 
-  procesar(){
+  procesar() {
     this.showDiv = true
     this.listarAcciones(this.menuid)
     this.listarSubmenu(this.menuid)
@@ -282,7 +284,7 @@ export class MenuComponent implements OnInit {
           var i = 0
           this.lista = []
           if (data.Cuerpo != undefined) {
-            
+
             data.Cuerpo.map(e => {
               if (i == 0) {
                 this.btnMenu = true
@@ -301,9 +303,9 @@ export class MenuComponent implements OnInit {
             })
             this.rowDataAcc = this.lista;
           }
-          
-  
-          
+
+
+
         },
         (error) => {
           console.log(error)
@@ -329,7 +331,7 @@ export class MenuComponent implements OnInit {
         var i = 0
         var lista = []
         data.Cuerpo.map(e => {
-            lista.push(e)
+          lista.push(e)
         });
         this.ListarowSubMenu = lista;
       },
@@ -370,7 +372,7 @@ export class MenuComponent implements OnInit {
     console.log(this.IDefinirMenu)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        // console.log(data)
         if (data.tipo == 1) {
           this.LimpiarMenu()
           this.utilservice.AlertMini('top-end', 'success', 'Menu Actualizado Exitosamente!', 3000)
@@ -399,7 +401,7 @@ export class MenuComponent implements OnInit {
     }
   }
 
-  limpiarModalAcciones(){
+  limpiarModalAcciones() {
     this.IAccion = {
       endpoint: '',
       nomb: '',
@@ -492,7 +494,7 @@ export class MenuComponent implements OnInit {
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.IAccionMenu)
     this.apiService.Ejecutar(this.xAPI).subscribe(
-       (data) => {
+      (data) => {
         if (data.tipo == 1) {
           this.listarAcciones(this.menuid)
           this.utilservice.AlertMini('top-end', 'success', 'Accion Registrada Exitosamente', 3000)
@@ -527,7 +529,7 @@ export class MenuComponent implements OnInit {
     )
   }
 
-  LimpiarSubMenu(){
+  LimpiarSubMenu() {
     this.IAddSubMenu = {
       url: '',
       js: '',
