@@ -196,8 +196,8 @@ export class UserComponent implements OnInit {
   public xperfil = ''
   public xtraza = '1|BAJA'
 
-  public xoficina = 'TODAS'
-  public xregional = 'TODAS'
+  public xoficina: any = 'TODAS'
+  public xregional: any = 'TODAS'
 
   public bEndPoint = false
 
@@ -280,6 +280,14 @@ export class UserComponent implements OnInit {
   //     }
   //   )
   // }
+
+  onFocusedRegional(item) {
+    // this.moduloid = '';
+    // this.modulo = '';
+    // this.IAddModulo.nomb = item.target.value
+    // this.IAddModulo.idapp = this.aplicacion
+  }
+
 
 
   async CargarListaEndPoint() {
@@ -446,8 +454,8 @@ export class UserComponent implements OnInit {
     this.usuario.correo = this.iUser.correo
     this.usuario.cargo = this.iUser.descripcion
     this.usuario.endpoint = this.iUser.endpoint
-    this.usuario.sucursal = this.xoficina
-    this.usuario.direccion = this.xregional
+    this.usuario.sucursal = this.xoficina.name!=undefined?this.xoficina.name: this.xoficina
+    this.usuario.direccion = this.xregional!=undefined?this.xregional.name: this.xregional
     // this.usuario.clave = await this.utilservice.generateSHA256Hash(
     //   this.iUser.clave
     // )
