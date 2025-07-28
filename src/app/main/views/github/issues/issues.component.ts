@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ColumnMode } from '@swimlane/ngx-datatable';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-issues',
@@ -18,11 +19,14 @@ export class IssuesComponent implements OnInit {
   public searchValue: string = '';
   public basicSelectedOption: number = 10;
   public showIssuesTable: boolean = false;
+  public selectedIssue: any = null;
+
+  @ViewChild('modalIssueDetail') modalIssueDetail: TemplateRef<any>;
 
   // Datatable
   public ColumnMode = ColumnMode;
 
-  constructor() {
+  constructor(private modalService: NgbModal) {
     // Mock data for applications
     this.lstAplicaciones = [
       { id: 1, name: 'Sistema de Inventario', repository: 'inventory-system', owner: 'empresa' },
@@ -251,11 +255,14 @@ export class IssuesComponent implements OnInit {
   }
 
   /**
-   * View issue details
+   * View issue details in modal
    */
   verDetalle(issue: any): void {
-    console.log('Ver detalle de issue:', issue);
-    // Implement navigation to issue detail
+    this.selectedIssue = issue;
+    this.modalService.open(this.modalIssueDetail, {
+      size: 'xl',
+      scrollable: true
+    });
   }
 
   /**
@@ -264,6 +271,14 @@ export class IssuesComponent implements OnInit {
   editarIssue(issue: any): void {
     console.log('Editar issue:', issue);
     // Implement edit functionality
+  }
+
+  /**
+   * Open issue in GitHub
+   */
+  verEnGitHub(issue: any): void {
+    const githubUrl = `https://github.com/${this.aplicacionSeleccionada?.owner}/${this.aplicacionSeleccionada?.repository}/issues/${issue.id}`;
+    window.open(githubUrl, '_blank');
   }
 
 }

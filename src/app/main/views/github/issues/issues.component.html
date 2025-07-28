@@ -166,7 +166,7 @@
                          [limit]="basicSelectedOption">
 
             <!-- Issue Title & Info Column -->
-            <ngx-datatable-column name="ISSUE" [width]="400">
+            <ngx-datatable-column name="ISSUE" [width]="450">
               <ng-template let-row="row" ngx-datatable-cell-template>
                 <div class="d-flex align-items-center">
                   <div class="avatar mr-1 flex-shrink-0" 
@@ -180,7 +180,7 @@
                   </div>
                   <div class="cell-line-height flex-grow-1" style="min-width: 0;">
                     <span class="font-weight-bold d-block font-medium-1" 
-                          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 320px;"
+                          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px;"
                           [title]="row.title">{{ row.title }}</span>
                     <small class="text-muted d-block" 
                            style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -191,34 +191,30 @@
               </ng-template>
             </ngx-datatable-column>
 
-            <!-- Type Column -->
-            <ngx-datatable-column name="TIPO" [width]="120">
+            <!-- Type & Priority Column -->
+            <ngx-datatable-column name="TIPO / PRIORIDAD" [width]="180">
               <ng-template let-row="row" ngx-datatable-cell-template>
-                <span class="badge" 
-                      [ngClass]="{
-                        'badge-light-danger': row.tipo === 'Bug',
-                        'badge-light-success': row.tipo === 'Feature',
-                        'badge-light-warning': row.tipo === 'Enhancement',
-                        'badge-light-info': row.tipo === 'Documentation',
-                        'badge-light-primary': row.tipo === 'Security',
-                        'badge-light-secondary': row.tipo === 'Task' || row.tipo === 'Improvement'
-                      }">
-                  {{ row.tipo }}
-                </span>
-              </ng-template>
-            </ngx-datatable-column>
-
-            <!-- Priority Column -->
-            <ngx-datatable-column name="PRIORIDAD" [width]="100">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <span class="badge" [ngClass]="getPriorityClass(row.priority)">
-                  {{ row.priority === 'high' ? 'Alta' : row.priority === 'medium' ? 'Media' : 'Baja' }}
-                </span>
+                <div class="d-flex flex-column">
+                  <span class="badge mb-25" 
+                        [ngClass]="{
+                          'badge-light-danger': row.tipo === 'Bug',
+                          'badge-light-success': row.tipo === 'Feature',
+                          'badge-light-warning': row.tipo === 'Enhancement',
+                          'badge-light-info': row.tipo === 'Documentation',
+                          'badge-light-primary': row.tipo === 'Security',
+                          'badge-light-secondary': row.tipo === 'Task' || row.tipo === 'Improvement'
+                        }">
+                    {{ row.tipo }}
+                  </span>
+                  <span class="badge" [ngClass]="getPriorityClass(row.priority)">
+                    {{ row.priority === 'high' ? 'Alta' : row.priority === 'medium' ? 'Media' : 'Baja' }}
+                  </span>
+                </div>
               </ng-template>
             </ngx-datatable-column>
 
             <!-- State Column -->
-            <ngx-datatable-column name="ESTADO" [width]="100">
+            <ngx-datatable-column name="ESTADO" [width]="120">
               <ng-template let-row="row" ngx-datatable-cell-template>
                 <span class="badge" [ngClass]="getStateClass(row.state)">
                   {{ row.state === 'open' ? 'Abierto' : 'Cerrado' }}
@@ -227,7 +223,7 @@
             </ngx-datatable-column>
 
             <!-- Assignee Column -->
-            <ngx-datatable-column name="ASIGNADO" [width]="150">
+            <ngx-datatable-column name="ASIGNADO" [width]="180">
               <ng-template let-row="row" ngx-datatable-cell-template>
                 <div class="d-flex align-items-center" *ngIf="row.assignee; else noAssignee">
                   <div class="avatar mr-1 bg-light-primary">
@@ -241,38 +237,15 @@
               </ng-template>
             </ngx-datatable-column>
 
-            <!-- Milestone Column -->
-            <ngx-datatable-column name="MILESTONE" [width]="120">
+            <!-- Activity Summary Column -->
+            <ngx-datatable-column name="ACTIVIDAD" [width]="150">
               <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="d-flex align-items-center" *ngIf="row.milestone">
-                  <span [data-feather]="'flag'" [size]="14" class="mr-25"></span>
-                  <span class="font-weight-bold">{{ row.milestone }}</span>
-                </div>
-                <span class="text-muted" *ngIf="!row.milestone">Sin milestone</span>
-              </ng-template>
-            </ngx-datatable-column>
-
-            <!-- Labels Column -->
-            <ngx-datatable-column name="ETIQUETAS" [width]="200">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="d-flex flex-wrap">
-                  <span *ngFor="let label of row.labels.slice(0, 3)" 
-                        class="badge badge-light-secondary mr-25 mb-25">{{ label }}</span>
-                  <span *ngIf="row.labels.length > 3" 
-                        class="badge badge-light-dark mr-25 mb-25">+{{ row.labels.length - 3 }}</span>
-                </div>
-              </ng-template>
-            </ngx-datatable-column>
-
-            <!-- Comments & Activity Column -->
-            <ngx-datatable-column name="ACTIVIDAD" [width]="120">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="d-flex align-items-center justify-content-between">
-                  <div class="d-flex align-items-center">
+                <div class="text-center">
+                  <div class="d-flex align-items-center justify-content-center mb-25">
                     <span [data-feather]="'message-circle'" [size]="14" class="mr-25"></span>
                     <span class="font-weight-bold">{{ row.comments }}</span>
                   </div>
-                  <small class="text-muted">{{ row.updated_at | date:'dd/MM' }}</small>
+                  <small class="text-muted">{{ row.updated_at | date:'dd/MM/yyyy' }}</small>
                 </div>
               </ng-template>
             </ngx-datatable-column>
@@ -306,7 +279,183 @@
           </ngx-datatable>
         </div>
 
+
+
       </div>
     </section>
   </div>
 </div>
+
+<!-- Modal for Issue Detail -->
+<ng-template #modalIssueDetail let-modal>
+  <div class="modal-header">
+    <div class="d-flex align-items-center w-100">
+      <div class="avatar mr-2" 
+           [ngClass]="{
+             'bg-light-success': selectedIssue?.state === 'open',
+             'bg-light-secondary': selectedIssue?.state === 'closed'
+           }">
+        <div class="avatar-content">
+          <span [data-feather]="selectedIssue?.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="18"></span>
+        </div>
+      </div>
+      <div class="flex-grow-1">
+        <h4 class="modal-title mb-0">{{ selectedIssue?.title }}</h4>
+        <small class="text-muted">
+          #{{ selectedIssue?.id }} • {{ selectedIssue?.created_at | date:'dd/MM/yyyy' }} • por {{ selectedIssue?.author }}
+        </small>
+      </div>
+      <div class="d-flex align-items-center">
+        <span class="badge mr-2" [ngClass]="getStateClass(selectedIssue?.state)">
+          {{ selectedIssue?.state === 'open' ? 'Abierto' : 'Cerrado' }}
+        </span>
+      </div>
+    </div>
+    <button type="button" class="close" (click)="modal.close('close')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+    <div class="row">
+      <!-- Main Content -->
+      <div class="col-md-8">
+        <!-- Description -->
+        <div class="mb-4">
+          <h6 class="mb-2">
+            <span [data-feather]="'file-text'" [size]="16" class="mr-25"></span>
+            Descripción
+          </h6>
+          <div class="p-3 bg-light rounded">
+            <p class="mb-0 text-justify">{{ selectedIssue?.description }}</p>
+          </div>
+        </div>
+
+        <!-- Labels -->
+        <div class="mb-4" *ngIf="selectedIssue?.labels?.length > 0">
+          <h6 class="mb-2">
+            <span [data-feather]="'tag'" [size]="16" class="mr-25"></span>
+            Etiquetas
+          </h6>
+          <div class="d-flex flex-wrap">
+            <span *ngFor="let label of selectedIssue?.labels" 
+                  class="badge badge-light-secondary mr-50 mb-25">{{ label }}</span>
+          </div>
+        </div>
+
+        <!-- Activity Summary -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card border-left-primary">
+              <div class="card-body text-center">
+                <span [data-feather]="'message-circle'" [size]="24" class="text-primary mb-2"></span>
+                <h5 class="card-title mb-0">{{ selectedIssue?.comments }}</h5>
+                <small class="text-muted">Comentarios</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card border-left-info">
+              <div class="card-body text-center">
+                <span [data-feather]="'clock'" [size]="24" class="text-info mb-2"></span>
+                <h6 class="card-title mb-0">{{ selectedIssue?.updated_at | date:'dd/MM/yyyy' }}</h6>
+                <small class="text-muted">Última actualización</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-header">
+            <h6 class="card-title mb-0">
+              <span [data-feather]="'info'" [size]="16" class="mr-25"></span>
+              Detalles
+            </h6>
+          </div>
+          <div class="card-body">
+            
+            <!-- Type -->
+            <div class="mb-3">
+              <label class="form-label font-weight-bold small">Tipo</label>
+              <div>
+                <span class="badge" 
+                      [ngClass]="{
+                        'badge-light-danger': selectedIssue?.tipo === 'Bug',
+                        'badge-light-success': selectedIssue?.tipo === 'Feature',
+                        'badge-light-warning': selectedIssue?.tipo === 'Enhancement',
+                        'badge-light-info': selectedIssue?.tipo === 'Documentation',
+                        'badge-light-primary': selectedIssue?.tipo === 'Security',
+                        'badge-light-secondary': selectedIssue?.tipo === 'Task' || selectedIssue?.tipo === 'Improvement'
+                      }">
+                  {{ selectedIssue?.tipo }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Priority -->
+            <div class="mb-3">
+              <label class="form-label font-weight-bold small">Prioridad</label>
+              <div>
+                <span class="badge" [ngClass]="getPriorityClass(selectedIssue?.priority)">
+                  {{ selectedIssue?.priority === 'high' ? 'Alta' : selectedIssue?.priority === 'medium' ? 'Media' : 'Baja' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Assignee -->
+            <div class="mb-3">
+              <label class="form-label font-weight-bold small">Asignado a</label>
+              <div *ngIf="selectedIssue?.assignee; else noAssigneeModal">
+                <div class="d-flex align-items-center">
+                  <div class="avatar avatar-sm mr-1 bg-light-primary">
+                    <div class="avatar-content">{{ selectedIssue?.assignee | initials }}</div>
+                  </div>
+                  <span class="font-weight-bold">{{ selectedIssue?.assignee }}</span>
+                </div>
+              </div>
+              <ng-template #noAssigneeModal>
+                <span class="text-muted">Sin asignar</span>
+              </ng-template>
+            </div>
+
+            <!-- Milestone -->
+            <div class="mb-3" *ngIf="selectedIssue?.milestone">
+              <label class="form-label font-weight-bold small">Milestone</label>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'flag'" [size]="14" class="mr-25"></span>
+                <span class="font-weight-bold">{{ selectedIssue?.milestone }}</span>
+              </div>
+            </div>
+
+            <!-- Repository -->
+            <div class="mb-3">
+              <label class="form-label font-weight-bold small">Repositorio</label>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'git-branch'" [size]="14" class="mr-25"></span>
+                <small>{{ aplicacionSeleccionada?.owner }}/{{ aplicacionSeleccionada?.repository }}</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.close('cancel')">
+      <span [data-feather]="'x'" [size]="16" class="mr-25"></span>
+      Cerrar
+    </button>
+    <button type="button" class="btn btn-primary" (click)="editarIssue(selectedIssue); modal.close('edit')" *ngIf="selectedIssue?.state === 'open'">
+      <span [data-feather]="'edit'" [size]="16" class="mr-25"></span>
+      Editar Issue
+    </button>
+    <button type="button" class="btn btn-outline-primary" (click)="verEnGitHub(selectedIssue)">
+      <span [data-feather]="'external-link'" [size]="16" class="mr-25"></span>
+      Ver en GitHub
+    </button>
+  </div>
+</ng-template>
