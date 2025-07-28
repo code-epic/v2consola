@@ -1,7 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
 
 import { CoreCommonModule } from '@core/common.module';
@@ -22,6 +26,16 @@ const routes = [
   declarations: [
     IssuesComponent
   ],
-  imports: [RouterModule.forChild(routes), CommonModule, ContentHeaderModule, TranslateModule, CoreCommonModule],
+  imports: [
+    RouterModule.forChild(routes), 
+    CommonModule, 
+    FormsModule,
+    ContentHeaderModule, 
+    TranslateModule, 
+    CoreCommonModule,
+    NgSelectModule,
+    NgxDatatableModule,
+    NgbModule
+  ],
 })
 export class GithubModule { }
