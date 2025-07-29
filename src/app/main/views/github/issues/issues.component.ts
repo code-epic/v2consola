@@ -1,7 +1,9 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ColumnMode } from '@swimlane/ngx-datatable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-
+import { Observable, Subscription } from 'rxjs';
+import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { SessionService } from '@services/util/session.service';
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
@@ -11,7 +13,8 @@ export class IssuesComponent implements OnInit {
 
   // Content Header
   public contentHeader: object;
-
+  private sessionMessagesSub: Subscription | undefined;
+  private sessionStatusSub: Subscription | undefined;
   // Data
   public lstAplicaciones: any[] = [];
   public aplicacionSeleccionada: any = null;
@@ -20,13 +23,13 @@ export class IssuesComponent implements OnInit {
   public basicSelectedOption: number = 10;
   public showIssuesTable: boolean = false;
   public selectedIssue: any = null;
-
-  @ViewChild('modalIssueDetail') modalIssueDetail: TemplateRef<any>;
+  public showDetailView: boolean = false;
+  userId: string = '';
 
   // Datatable
   public ColumnMode = ColumnMode;
 
-  constructor(private modalService: NgbModal) {
+  constructor(private modalService: NgbModal, private apiService: ApiService, private sessionService: SessionService) {
     // Mock data for applications
     this.lstAplicaciones = [
       { id: 1, name: 'Sistema de Inventario', repository: 'inventory-system', owner: 'empresa' },
@@ -37,6 +40,38 @@ export class IssuesComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+
+    this.userId = this.getUserId();
+console.log("llego");
+    // Connect to WebSocket with userId
+    this.sessionService.connect(this.userId);
+
+    // Subscribe to WebSocket messages
+    this.sessionMessagesSub = this.sessionService.messages$.subscribe((msg) => {
+      console.log("WebSocket message received:", msg);
+      let parsedMsg: any;
+      try {
+        parsedMsg = typeof msg === 'string' ? JSON.parse(msg) : msg;
+      } catch (e) {
+        console.error('WebSocket message is not valid JSON:', msg);
+        return;
+      }
+
+      console.log('Parsed WebSocket message:', parsedMsg);
+      
+      if (parsedMsg && parsedMsg.message) {
+        // Parsear el mensaje interno que viene como string JSON
+        let innerMessage: any;
+        try {
+          innerMessage = typeof parsedMsg.message === 'string' ? JSON.parse(parsedMsg.message) : parsedMsg.message;
+        } catch (e) {
+          console.error('Inner message is not valid JSON:', parsedMsg.message);
+          // Si no es JSON, tratarlo como texto plano para compatibilidad
+          innerMessage = { mensaje: parsedMsg.message };
+        }
+      }
+    });
     // Content header configuration
     this.contentHeader = {
       headerTitle: 'GitHub Issues',
@@ -255,14 +290,19 @@ export class IssuesComponent implements OnInit {
   }
 
   /**
-   * View issue details in modal
+   * View issue details
    */
   verDetalle(issue: any): void {
     this.selectedIssue = issue;
-    this.modalService.open(this.modalIssueDetail, {
-      size: 'xl',
-      scrollable: true
-    });
+    this.showDetailView = true;
+  }
+
+  /**
+   * Close detail view
+   */
+  cerrarDetalle(): void {
+    this.showDetailView = false;
+    this.selectedIssue = null;
   }
 
   /**
@@ -270,6 +310,7 @@ export class IssuesComponent implements OnInit {
    */
   editarIssue(issue: any): void {
     console.log('Editar issue:', issue);
+    this.cerrarDetalle();
     // Implement edit functionality
   }
 
@@ -279,6 +320,44 @@ export class IssuesComponent implements OnInit {
   verEnGitHub(issue: any): void {
     const githubUrl = `https://github.com/${this.aplicacionSeleccionada?.owner}/${this.aplicacionSeleccionada?.repository}/issues/${issue.id}`;
     window.open(githubUrl, '_blank');
+  }
+
+
+  getListIssues(): Observable<any> {
+    const fnx = {
+      funcion: "Fnx_DatosServidorGitHub",
+      id_cliente: this.userId
+    };
+  
+    return new Observable(observer => {
+      this.apiService.ExecFnx(fnx).subscribe(
+        (data) => {
+         console.log(data);
+        },
+        (error) => {
+          console.log(error);
+          observer.error(error);
+        }
+      );
+    });
+  }
+
+   // Nuevo método para obtener un ID único o recuperar uno existente.
+   private getUserId(): string {
+    let id = localStorage.getItem('userId');
+    if (!id) {
+      id = this.uuidv4(); // Genera un ID universal único
+      localStorage.setItem('userId', id);
+    }
+    return id;
+  }
+
+  // Generador UUID v4 compatible con navegadores
+  private uuidv4(): string {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
   }
 
 }

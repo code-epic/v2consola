@@ -19,7 +19,7 @@
               </div>
             </div>
           </div>
-
+<button type="button" class="btn btn-primary" (click)="getListIssues()">Listar Issues</button>
           <!-- Applications Grid -->
           <div class="row">
             <div class="col-md-6 col-lg-4 mb-3" *ngFor="let app of lstAplicaciones">
@@ -97,7 +97,7 @@
         </div>
 
         <!-- Issues Table Panel -->
-        <div *ngIf="showIssuesTable">
+        <div *ngIf="showIssuesTable && !showDetailView">
           
           <!-- Header with Back Button and Search -->
           <div class="row">
@@ -286,37 +286,39 @@
   </div>
 </div>
 
-<!-- Modal for Issue Detail -->
-<ng-template #modalIssueDetail let-modal>
-  <div class="modal-header">
-    <div class="d-flex align-items-center w-100">
-      <div class="avatar mr-2" 
-           [ngClass]="{
-             'bg-light-success': selectedIssue?.state === 'open',
-             'bg-light-secondary': selectedIssue?.state === 'closed'
-           }">
-        <div class="avatar-content">
-          <span [data-feather]="selectedIssue?.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="18"></span>
+<!-- Issue Detail View -->
+<div class="card" *ngIf="showDetailView && selectedIssue">
+  <div class="card-header">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <div class="avatar mr-2" 
+             [ngClass]="{
+               'bg-light-success': selectedIssue?.state === 'open',
+               'bg-light-secondary': selectedIssue?.state === 'closed'
+             }">
+          <div class="avatar-content">
+            <span [data-feather]="selectedIssue?.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="18"></span>
+          </div>
         </div>
-      </div>
-      <div class="flex-grow-1">
-        <h4 class="modal-title mb-0">{{ selectedIssue?.title }}</h4>
-        <small class="text-muted">
-          #{{ selectedIssue?.id }} • {{ selectedIssue?.created_at | date:'dd/MM/yyyy' }} • por {{ selectedIssue?.author }}
-        </small>
+        <div>
+          <h4 class="mb-0">{{ selectedIssue?.title }}</h4>
+          <small class="text-muted">
+            #{{ selectedIssue?.id }} • {{ selectedIssue?.created_at | date:'dd/MM/yyyy' }} • por {{ selectedIssue?.author }}
+          </small>
+        </div>
       </div>
       <div class="d-flex align-items-center">
         <span class="badge mr-2" [ngClass]="getStateClass(selectedIssue?.state)">
           {{ selectedIssue?.state === 'open' ? 'Abierto' : 'Cerrado' }}
         </span>
+        <button type="button" class="btn btn-icon btn-outline-secondary" (click)="cerrarDetalle()">
+          <span [data-feather]="'x'" [size]="16"></span>
+        </button>
       </div>
     </div>
-    <button type="button" class="close" (click)="modal.close('close')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
   </div>
 
-  <div class="modal-body" style="max-height: 70vh; overflow-y: auto;">
+  <div class="card-body">
     <div class="row">
       <!-- Main Content -->
       <div class="col-md-8">
@@ -408,7 +410,7 @@
             <!-- Assignee -->
             <div class="mb-3">
               <label class="form-label font-weight-bold small">Asignado a</label>
-              <div *ngIf="selectedIssue?.assignee; else noAssigneeModal">
+              <div *ngIf="selectedIssue?.assignee; else noAssigneeDetail">
                 <div class="d-flex align-items-center">
                   <div class="avatar avatar-sm mr-1 bg-light-primary">
                     <div class="avatar-content">{{ selectedIssue?.assignee | initials }}</div>
@@ -416,7 +418,7 @@
                   <span class="font-weight-bold">{{ selectedIssue?.assignee }}</span>
                 </div>
               </div>
-              <ng-template #noAssigneeModal>
+              <ng-template #noAssigneeDetail>
                 <span class="text-muted">Sin asignar</span>
               </ng-template>
             </div>
@@ -444,18 +446,22 @@
     </div>
   </div>
 
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="modal.close('cancel')">
-      <span [data-feather]="'x'" [size]="16" class="mr-25"></span>
-      Cerrar
-    </button>
-    <button type="button" class="btn btn-primary" (click)="editarIssue(selectedIssue); modal.close('edit')" *ngIf="selectedIssue?.state === 'open'">
-      <span [data-feather]="'edit'" [size]="16" class="mr-25"></span>
-      Editar Issue
-    </button>
-    <button type="button" class="btn btn-outline-primary" (click)="verEnGitHub(selectedIssue)">
-      <span [data-feather]="'external-link'" [size]="16" class="mr-25"></span>
-      Ver en GitHub
-    </button>
+  <div class="card-footer">
+    <div class="d-flex justify-content-between">
+      <button type="button" class="btn btn-outline-secondary" (click)="cerrarDetalle()">
+        <span [data-feather]="'arrow-left'" [size]="16" class="mr-25"></span>
+        Volver a la Lista
+      </button>
+      <div>
+        <button type="button" class="btn btn-primary mr-1" (click)="editarIssue(selectedIssue)" *ngIf="selectedIssue?.state === 'open'">
+          <span [data-feather]="'edit'" [size]="16" class="mr-25"></span>
+          Editar Issue
+        </button>
+        <button type="button" class="btn btn-outline-primary" (click)="verEnGitHub(selectedIssue)">
+          <span [data-feather]="'external-link'" [size]="16" class="mr-25"></span>
+          Ver en GitHub
+        </button>
+      </div>
+    </div>
   </div>
-</ng-template>
+</div>
