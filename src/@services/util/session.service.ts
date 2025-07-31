@@ -83,7 +83,7 @@ export class SessionService implements OnDestroy {
 
     // Tu URL WebSocket, ahora con el userId en la query
     //const serverUrl = `wss://code-epic.com:8443/sandra_ws?userId=${this.userId}`;
-    const serverUrl = `wss://localhost:8443/sandra_ws?userId=${this.userId}`;
+    const serverUrl = `wss://localhost:3000/sandra_ws?userId=${this.userId}`;
 
     // console.log(`WebSocketService: Intentando conectar a ${serverUrl} (Intento ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
 
