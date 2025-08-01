@@ -67,6 +67,8 @@ export class IssuesComponent implements OnInit {
   // Estados de carga
   loadingAplicaciones = false;
   errorLoadingAplicaciones = false;
+  loadingIssues = false;
+  errorLoadingIssues = false;
 
   constructor(private modalService: NgbModal, private apiService: ApiService, private sessionService: SessionService) {
   }
@@ -110,6 +112,7 @@ export class IssuesComponent implements OnInit {
             const firstItem = innerMessage[0];
             if (firstItem && this.isApplicationData(firstItem)) {
               console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.length);
+              console.log('🔄 Reemplazando datos mock con datos reales del WebSocket');
               this.processAplicaciones(innerMessage);
             } else {
               console.log('🎯 Issues recibidas del servidor:', innerMessage.length);
@@ -133,11 +136,21 @@ export class IssuesComponent implements OnInit {
           if (jsonMatch) {
             console.log('🔧 JSON extraído de mensaje mixto');
             if (Array.isArray(jsonMatch)) {
-              console.log('🎯 Issues extraídas del mensaje:', jsonMatch.length);
-              this.processGitHubIssues(jsonMatch);
+              // Detectar si son aplicaciones o issues también en el JSON extraído
+              const firstItem = jsonMatch[0];
+              if (firstItem && this.isApplicationData(firstItem)) {
+                console.log('🏢 Aplicaciones extraídas del mensaje:', jsonMatch.length);
+                this.processAplicaciones(jsonMatch);
+              } else {
+                console.log('🎯 Issues extraídas del mensaje:', jsonMatch.length);
+                this.processGitHubIssues(jsonMatch);
+              }
             } else if (jsonMatch.issues && Array.isArray(jsonMatch.issues)) {
               console.log('🎯 Issues extraídas del mensaje:', jsonMatch.issues.length);
               this.processGitHubIssues(jsonMatch.issues);
+            } else if (jsonMatch.aplicaciones && Array.isArray(jsonMatch.aplicaciones)) {
+              console.log('🏢 Aplicaciones extraídas del mensaje:', jsonMatch.aplicaciones.length);
+              this.processAplicaciones(jsonMatch.aplicaciones);
             }
           } else {
             // Si no es JSON, tratarlo como texto plano para compatibilidad
@@ -174,8 +187,18 @@ export class IssuesComponent implements OnInit {
     console.log('🎨 Aplicación seleccionada:', aplicacion.name);
     this.aplicacionSeleccionada = aplicacion;
     
-    // Siempre cargar issues al seleccionar una aplicación
+    // Mostrar estado de carga
+    this.loadingIssues = true;
+    this.errorLoadingIssues = false;
+    this.showIssuesTable = true; // Mostrar la tabla inmediatamente con loading
+    
+    // Limpiar issues anteriores
+    this.issuesData = [];
+    
     console.log('🚀 Cargando issues para la aplicación seleccionada...');
+    console.log('⏳ Estado de carga activado');
+    
+    // Cargar issues
     this.getListIssues();
   }
 
@@ -441,6 +464,10 @@ export class IssuesComponent implements OnInit {
       (data) => {
         console.log('Respuesta del servicio:', data);
         
+        // Finalizar estado de carga exitoso
+        this.loadingIssues = false;
+        this.errorLoadingIssues = false;
+        
         // Verificar si la respuesta contiene datos válidos
         if (data && Array.isArray(data)) {
           console.log('🎯 Issues recibidas del servicio (array directo):', data.length);
@@ -488,6 +515,11 @@ export class IssuesComponent implements OnInit {
       },
       (error) => {
         console.error('❌ Error al obtener issues del servicio:', error);
+        
+        // Establecer estado de error
+        this.loadingIssues = false;
+        this.errorLoadingIssues = true;
+        
         // En caso de error, cargar datos mock como fallback
         this.cargarIssues();
       }
@@ -567,6 +599,10 @@ export class IssuesComponent implements OnInit {
         // En caso de error, cargar datos mock como fallback
         this.loadMockAplicaciones();
         
+        // Intentar obtener aplicaciones por WebSocket como último recurso
+        console.log('🔌 Intentando obtener aplicaciones por WebSocket...');
+        this.requestApplicationsViaWebSocket();
+        
         // Establecer estado de error
         this.loadingAplicaciones = false;
         this.errorLoadingAplicaciones = true;
@@ -593,23 +629,51 @@ export class IssuesComponent implements OnInit {
   }
 
   /**
+   * Request applications via WebSocket as fallback
+   */
+  private requestApplicationsViaWebSocket(): void {
+    console.log('🔌 Solicitando aplicaciones por WebSocket...');
+    
+    // Enviar comando simple para obtener lista de aplicaciones
+    const message = 'gitea_repos';
+    
+    try {
+      this.sessionService.sendMessage(message);
+      console.log('📤 Comando enviado por WebSocket:', message);
+      
+      // Dar tiempo para que llegue la respuesta
+      setTimeout(() => {
+        if (this.aplicaciones.length <= 6) { // Si solo tiene datos mock
+          console.log('⚠️ WebSocket no respondió, manteniendo datos mock');
+        }
+      }, 3000);
+      
+    } catch (error) {
+      console.error('❌ Error enviando comando por WebSocket:', error);
+    }
+  }
+
+  /**
    * Detect if data represents applications or issues
    */
   private isApplicationData(item: any): boolean {
-    // Las aplicaciones tienen: id, name, full_name
-    // Los issues tienen: title, body, state, number
+    // Las aplicaciones tienen: id, name, full_name (y NO tienen title, body, state)
+    // Los issues tienen: title, body, state, number (y NO tienen full_name)
     
     const hasAppFields = item.hasOwnProperty('name') && item.hasOwnProperty('full_name');
     const hasIssueFields = item.hasOwnProperty('title') || item.hasOwnProperty('body') || item.hasOwnProperty('state') || item.hasOwnProperty('number');
     
+    // Criterio más estricto: debe tener campos de aplicación Y NO tener campos de issue
+    const isApplication = hasAppFields && !hasIssueFields;
+    
     console.log('🔍 Detectando tipo de datos:', {
-      item: { id: item.id, name: item.name, full_name: item.full_name, title: item.title },
+      item: { id: item.id, name: item.name, full_name: item.full_name, title: item.title, body: item.body, state: item.state },
       hasAppFields,
       hasIssueFields,
-      esAplicacion: hasAppFields && !hasIssueFields
+      esAplicacion: isApplication
     });
     
-    return hasAppFields && !hasIssueFields;
+    return isApplication;
   }
 
   /**
@@ -663,9 +727,9 @@ export class IssuesComponent implements OnInit {
    * Load mock applications data as fallback
    */
   private loadMockAplicaciones(): void {
-    console.log('📝 Cargando datos mock de aplicaciones como fallback');
+    console.log('📏 Cargando datos mock de aplicaciones como fallback');
     
-    this.aplicaciones = [
+    const mockData = [
       { id: 1, name: 'Fideicomiso - Code Epic', repository: 'fideicomiso', owner: 'code-epic', full_name: 'code-epic/fideicomiso' },
       { id: 2, name: 'Sistema de Inventario', repository: 'inventario', owner: 'code-epic', full_name: 'code-epic/inventario' },
       { id: 3, name: 'Gestión de Documentos', repository: 'gdoc', owner: 'code-epic', full_name: 'code-epic/gdoc' },
@@ -673,6 +737,12 @@ export class IssuesComponent implements OnInit {
       { id: 5, name: 'Sandra CLI', repository: 'sandra_cli', owner: 'code-epic', full_name: 'code-epic/sandra_cli' },
       { id: 6, name: 'V2 Consola', repository: 'v2consola', owner: 'code-epic', full_name: 'code-epic/v2consola' }
     ];
+    
+    // Actualizar AMBAS listas como hace processAplicaciones
+    this.aplicaciones = mockData;
+    this.lstAplicaciones = mockData; // Esta es la que usa el template para las cards
+    
+    console.log('🏠 Cards mock cargadas, esperando datos reales del WebSocket...');
   }
 
   /**
@@ -857,7 +927,11 @@ export class IssuesComponent implements OnInit {
     // SOLO mostrar la tabla si ya hay una aplicación seleccionada
     if (this.aplicacionSeleccionada) {
       this.showIssuesTable = true;
+      // Finalizar estado de carga cuando se reciben issues
+      this.loadingIssues = false;
+      this.errorLoadingIssues = false;
       console.log('👁️ Aplicación ya seleccionada, mostrando tabla de issues');
+      console.log('✅ Estado de carga finalizado - issues cargadas');
     } else {
       console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
     }
