@@ -19,10 +19,29 @@
               </div>
             </div>
           </div>
-<button type="button" class="btn btn-primary" (click)="getListIssues()">Listar Issues</button>
+          
+          <!-- Loading State -->
+          <div class="row" *ngIf="loadingAplicaciones">
+            <div class="col-12 text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="sr-only">Cargando...</span>
+              </div>
+              <p class="mt-3 text-muted">Cargando aplicaciones...</p>
+            </div>
+          </div>
+
+          <!-- Error State -->
+          <div class="row" *ngIf="errorLoadingAplicaciones && !loadingAplicaciones">
+            <div class="col-12 text-center py-5">
+              <i data-feather="alert-circle" class="text-danger mb-3" style="width: 48px; height: 48px;"></i>
+              <p class="text-danger">Error al cargar las aplicaciones</p>
+              <button class="btn btn-outline-primary" (click)="getListAplicaciones()">Reintentar</button>
+            </div>
+          </div>
+
           <!-- Applications Grid -->
-          <div class="row">
-            <div class="col-md-6 col-lg-4 mb-3" *ngFor="let app of lstAplicaciones">
+          <div class="row" *ngIf="!loadingAplicaciones && !errorLoadingAplicaciones">
+            <div class="col-md-6 col-lg-4 mb-3" *ngFor="let app of aplicaciones">
               <div class="card cursor-pointer h-100" 
                    [ngClass]="{'border-primary': aplicacionSeleccionada?.id === app.id}"
                    (click)="seleccionarAplicacion(app)">

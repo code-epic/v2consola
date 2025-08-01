@@ -7,9 +7,32 @@ import { SessionService } from '@services/util/session.service';
 
 // Interface for GitHub Issues
 export interface Issue {
+  // Core fields
+  id: number;
   number: number;
   title: string;
+  description: string;
   state: 'open' | 'closed';
+  
+  // Priority and type
+  priority: 'high' | 'medium' | 'low';
+  tipo: string;
+  
+  // Assignment
+  assignee: string | null;
+  assignee_avatar: string;
+  author: string;
+  
+  // Timestamps
+  created_at: string;
+  updated_at: string;
+  
+  // Metadata
+  labels: string[];
+  comments: number;
+  milestone: string | null;
+  
+  // Legacy fields for compatibility
   body: string;
   user: { login: string };
 }
@@ -38,25 +61,30 @@ export class IssuesComponent implements OnInit {
   // Datatable
   public ColumnMode = ColumnMode;
 
+  // Lista de aplicaciones (datos reales del servicio)
+  aplicaciones: any[] = [];
+  
+  // Estados de carga
+  loadingAplicaciones = false;
+  errorLoadingAplicaciones = false;
+
   constructor(private modalService: NgbModal, private apiService: ApiService, private sessionService: SessionService) {
-    // Mock data for applications
-    this.lstAplicaciones = [
-      { id: 1, name: 'Sistema de Inventario', repository: 'inventory-system', owner: 'empresa' },
-      { id: 2, name: 'Portal Web', repository: 'web-portal', owner: 'empresa' },
-      { id: 3, name: 'API de Servicios', repository: 'services-api', owner: 'empresa' },
-      { id: 4, name: 'Dashboard Analytics', repository: 'analytics-dashboard', owner: 'empresa' }
-    ];
   }
 
   ngOnInit(): void {
     this.userId = this.getUserId();
     console.log("llego");
     
-    
     // Connect to WebSocket with userId
     this.sessionService.connect(this.userId);
-// Cargar issues del servicio al inicializar
-this.getListIssues();
+    
+    // Esperar 2 segundos para que se establezca la conexión WebSocket antes de cargar aplicaciones
+    setTimeout(() => {
+      console.log('🔌 Conexión WebSocket establecida, cargando aplicaciones...');
+      this.getListAplicaciones();
+    }, 2000);
+    
+    // No cargar issues automáticamente - solo mostrar cards
     // Subscribe to WebSocket messages
     this.sessionMessagesSub = this.sessionService.messages$.subscribe((msg) => {
       console.log("WebSocket message received:", msg);
@@ -76,13 +104,23 @@ this.getListIssues();
         try {
           innerMessage = typeof parsedMsg.message === 'string' ? JSON.parse(parsedMsg.message) : parsedMsg.message;
           
-          // Procesar si es respuesta de GitHub Issues
+          // Detectar si son aplicaciones o issues
           if (innerMessage && Array.isArray(innerMessage)) {
-            console.log('🎯 Issues recibidas del servidor:', innerMessage.length);
-            this.processGitHubIssues(innerMessage);
+            // Verificar si el primer elemento parece una aplicación o un issue
+            const firstItem = innerMessage[0];
+            if (firstItem && this.isApplicationData(firstItem)) {
+              console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.length);
+              this.processAplicaciones(innerMessage);
+            } else {
+              console.log('🎯 Issues recibidas del servidor:', innerMessage.length);
+              this.processGitHubIssues(innerMessage);
+            }
           } else if (innerMessage && innerMessage.issues && Array.isArray(innerMessage.issues)) {
             console.log('🎯 Issues recibidas del servidor:', innerMessage.issues.length);
             this.processGitHubIssues(innerMessage.issues);
+          } else if (innerMessage && innerMessage.aplicaciones && Array.isArray(innerMessage.aplicaciones)) {
+            console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.aplicaciones.length);
+            this.processAplicaciones(innerMessage.aplicaciones);
           } else {
             console.log('📄 Mensaje del servidor:', innerMessage);
           }
@@ -112,40 +150,33 @@ this.getListIssues();
     // Content header configuration
     this.contentHeader = {
       headerTitle: 'GitHub Issues',
-      actionButton: false,
+      actionText: '',
       breadcrumb: {
         type: '',
         links: [
           {
             name: 'Inicio',
-            isLink: true,
-            link: '/'
-          },
-          {
-            name: 'GitHub',
-            isLink: false
-          },
-          {
-            name: 'Issues',
             isLink: false
           }
         ]
       }
     };
+
+    // Inicializar en modo cards (no cargar tabla automáticamente)
+    this.showIssuesTable = false;
+    console.log('🏠 Módulo iniciado - Mostrando cards de aplicaciones');
   }
 
   /**
    * Select Application
    */
   seleccionarAplicacion(aplicacion: any): void {
+    console.log('🎨 Aplicación seleccionada:', aplicacion.name);
     this.aplicacionSeleccionada = aplicacion;
-    // Mostrar la tabla inmediatamente si ya hay datos del servicio
-    if (this.issuesData.length > 0) {
-      this.showIssuesTable = true;
-    } else {
-      // Si no hay datos, cargar del servicio
-      this.getListIssues();
-    }
+    
+    // Siempre cargar issues al seleccionar una aplicación
+    console.log('🚀 Cargando issues para la aplicación seleccionada...');
+    this.getListIssues();
   }
 
   /**
@@ -338,6 +369,30 @@ this.getListIssues();
   }
 
   /**
+   * Map priority from label or priority field
+   */
+  private mapPriorityFromLabel(labelOrPriority: string): string {
+    if (!labelOrPriority) return 'medium';
+    
+    const priority = labelOrPriority.toLowerCase();
+    
+    // Mapear desde etiquetas en español
+    if (priority.includes('alta') || priority.includes('high')) {
+      return 'high';
+    } else if (priority.includes('baja') || priority.includes('low')) {
+      return 'low';
+    } else if (priority.includes('media') || priority.includes('medium')) {
+      return 'medium';
+    }
+    
+    // Mapear desde valores directos
+    if (priority === 'high' || priority === 'alta') return 'high';
+    if (priority === 'low' || priority === 'baja') return 'low';
+    
+    return 'medium'; // Default
+  }
+
+  /**
    * View issue details
    */
   verDetalle(issue: any): void {
@@ -439,6 +494,86 @@ this.getListIssues();
     );
   }
 
+  /**
+   * Get list of applications from service
+   */
+  getListAplicaciones(): void {
+    console.log('🚀 INICIANDO getListAplicaciones()');
+    console.log('📋 userId:', this.userId);
+    console.log('📊 aplicaciones actual length:', this.aplicaciones.length);
+    
+    // Establecer estado de carga
+    this.loadingAplicaciones = true;
+    this.errorLoadingAplicaciones = false;
+    
+    const fnx = {
+      funcion: "Fnx_ListaAplicacionGitea",
+      id_cliente: this.userId
+    };
+    console.log('📤 Enviando al servicio:', fnx);
+    console.log('aaaaaaaaaaaaaaaaaaa');
+    this.apiService.ExecFnx(fnx).subscribe(
+      (data) => {
+        console.log('Respuesta del servicio aplicaciones:', data);
+        
+        // Verificar si la respuesta contiene datos válidos
+        if (data && Array.isArray(data)) {
+          console.log('🎯 Aplicaciones recibidas del servicio (array directo):', data.length);
+          this.processAplicaciones(data);
+        } else if (data && data.contenido) {
+          // El contenido puede ser un array o un objeto con un array
+          if (Array.isArray(data.contenido)) {
+            console.log('🎯 Aplicaciones recibidas del servicio (data.contenido array):', data.contenido.length);
+            this.processAplicaciones(data.contenido);
+          } else if (data.contenido.aplicaciones && Array.isArray(data.contenido.aplicaciones)) {
+            console.log('🎯 Aplicaciones recibidas del servicio (data.contenido.aplicaciones):', data.contenido.aplicaciones.length);
+            this.processAplicaciones(data.contenido.aplicaciones);
+          } else {
+            console.log('🔍 Contenido del servicio:', data.contenido);
+            // Si contenido no es array, intentar extraer las aplicaciones
+            const keys = Object.keys(data.contenido || {});
+            console.log('🔍 Claves en contenido:', keys);
+            
+            // Buscar la primera clave que contenga un array
+            for (const key of keys) {
+              if (Array.isArray(data.contenido[key])) {
+                console.log(`🎯 Aplicaciones encontradas en data.contenido.${key}:`, data.contenido[key].length);
+                this.processAplicaciones(data.contenido[key]);
+                return;
+              }
+            }
+            
+            console.warn('⚠️ No se encontraron aplicaciones en el contenido');
+            this.loadMockAplicaciones();
+          }
+        } else if (data && data.data && Array.isArray(data.data)) {
+          console.log('🎯 Aplicaciones recibidas del servicio (data.data):', data.data.length);
+          this.processAplicaciones(data.data);
+        } else {
+          console.warn('⚠️ Respuesta del servicio no contiene aplicaciones válidas:', data);
+          console.log('🔍 Estructura de la respuesta:', Object.keys(data || {}));
+          
+          // Cargar datos mock como fallback
+          this.loadMockAplicaciones();
+        }
+        
+        // Finalizar estado de carga
+        this.loadingAplicaciones = false;
+      },
+      (error) => {
+        console.log('errooooooor muestro datos mockkkkkkkk');
+        console.error('❌ Error al obtener aplicaciones del servicio:', error);
+        
+        // En caso de error, cargar datos mock como fallback
+        this.loadMockAplicaciones();
+        
+        // Establecer estado de error
+        this.loadingAplicaciones = false;
+        this.errorLoadingAplicaciones = true;
+      }
+    );
+  }
+
   // Nuevo método para obtener un ID único o recuperar uno existente.
   private getUserId(): string {
     let id = localStorage.getItem('userId');
@@ -455,6 +590,89 @@ this.getListIssues();
       const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
+  }
+
+  /**
+   * Detect if data represents applications or issues
+   */
+  private isApplicationData(item: any): boolean {
+    // Las aplicaciones tienen: id, name, full_name
+    // Los issues tienen: title, body, state, number
+    
+    const hasAppFields = item.hasOwnProperty('name') && item.hasOwnProperty('full_name');
+    const hasIssueFields = item.hasOwnProperty('title') || item.hasOwnProperty('body') || item.hasOwnProperty('state') || item.hasOwnProperty('number');
+    
+    console.log('🔍 Detectando tipo de datos:', {
+      item: { id: item.id, name: item.name, full_name: item.full_name, title: item.title },
+      hasAppFields,
+      hasIssueFields,
+      esAplicacion: hasAppFields && !hasIssueFields
+    });
+    
+    return hasAppFields && !hasIssueFields;
+  }
+
+  /**
+   * Process applications received from service
+   */
+  private processAplicaciones(rawAplicaciones: any[]): void {
+    console.log('🔄 Procesando aplicaciones recibidas:', rawAplicaciones);
+    
+    // Crear nombres más amigables para mostrar en las cards
+    const friendlyNames: { [key: string]: string } = {
+      'fideicomiso': 'Fideicomiso - Code Epic',
+      'gdoc': 'Gestión de Documentos', 
+      'nomina': 'Nómina Empresarial',
+      'sandra_cli': 'Sandra CLI',
+      'v2consola': 'V2 Consola',
+      'inventario': 'Sistema de Inventario',
+      'cmpdivisas': 'Componente Divisas',
+      'cmpfood': 'Componente Food',
+      'sandra-enterprise': 'Sandra Enterprise',
+      'wkfsolicitudes': 'Workflow Solicitudes',
+      'ipostel': 'Sistema Ipostel',
+      'app.te-escucha': 'App Te Escucha',
+      'inea.app.movil': 'INEA App Móvil'
+    };
+    
+    const processedAplicaciones = rawAplicaciones.map(app => ({
+      id: app.id,
+      name: friendlyNames[app.name] || app.name, // Usar nombre amigable si existe
+      repository: app.name, // usar name como repository
+      owner: app.full_name ? app.full_name.split('/')[0] : 'code-epic', // extraer owner de full_name
+      full_name: app.full_name
+    }));
+    
+    console.log('✅ Aplicaciones procesadas:', processedAplicaciones.length);
+    console.log('📋 Primeras 3 aplicaciones:', processedAplicaciones.slice(0, 3));
+    
+    // Actualizar AMBAS listas para asegurar compatibilidad con el template
+    this.aplicaciones = processedAplicaciones;
+    this.lstAplicaciones = processedAplicaciones; // Esta es la que usa el template para las cards
+    
+    console.log('🎯 Cards de aplicaciones listas para mostrar:', this.lstAplicaciones.length);
+    
+    // Asegurar que NO se muestre la tabla de issues automáticamente
+    this.showIssuesTable = false;
+    this.aplicacionSeleccionada = null;
+    
+    console.log('🏠 Mostrando cards de aplicaciones - tabla oculta');
+  }
+
+  /**
+   * Load mock applications data as fallback
+   */
+  private loadMockAplicaciones(): void {
+    console.log('📝 Cargando datos mock de aplicaciones como fallback');
+    
+    this.aplicaciones = [
+      { id: 1, name: 'Fideicomiso - Code Epic', repository: 'fideicomiso', owner: 'code-epic', full_name: 'code-epic/fideicomiso' },
+      { id: 2, name: 'Sistema de Inventario', repository: 'inventario', owner: 'code-epic', full_name: 'code-epic/inventario' },
+      { id: 3, name: 'Gestión de Documentos', repository: 'gdoc', owner: 'code-epic', full_name: 'code-epic/gdoc' },
+      { id: 4, name: 'Nómina Empresarial', repository: 'nomina', owner: 'code-epic', full_name: 'code-epic/nomina' },
+      { id: 5, name: 'Sandra CLI', repository: 'sandra_cli', owner: 'code-epic', full_name: 'code-epic/sandra_cli' },
+      { id: 6, name: 'V2 Consola', repository: 'v2consola', owner: 'code-epic', full_name: 'code-epic/v2consola' }
+    ];
   }
 
   /**
@@ -496,28 +714,6 @@ this.getListIssues();
   }
 
   /**
-   * Extract labels from module information
-   */
-  private extractLabels(moduleInfo: string): string[] {
-    if (!moduleInfo) return [];
-    
-    const labels: string[] = [];
-    
-    // Extraer módulo principal
-    const parts = moduleInfo.split(' - ');
-    if (parts.length > 0) {
-      labels.push(parts[0].trim().toLowerCase());
-    }
-    
-    // Agregar submódulo si existe
-    if (parts.length > 1) {
-      labels.push(parts[1].trim().toLowerCase());
-    }
-    
-    return labels.slice(0, 3); // Máximo 3 labels
-  }
-
-  /**
    * Extract JSON from mixed text/JSON messages
    */
   private extractJSONFromMessage(message: string): any | null {
@@ -528,12 +724,21 @@ this.getListIssues();
       console.log('🔍 Mensaje no es JSON directo, intentando extraer...');
       
       try {
-        // Buscar un array JSON usando regex más específico
-        // Buscar desde [ hasta ] que contenga objetos con "number", "title", etc.
-        const jsonMatch = message.match(/\[\s*\{[\s\S]*?"number"[\s\S]*?\}\s*\]/g);
+        // Buscar un array JSON usando regex mejorado
+        // Buscar desde [ hasta ] que contenga objetos con "id", "title", etc.
+        const jsonMatch = message.match(/\[\s*\{[\s\S]*?"id"[\s\S]*?\}\s*\]/g);
         if (jsonMatch && jsonMatch.length > 0) {
-          console.log('✅ JSON extraído con regex, parseando...');
+          console.log('✅ JSON extraído con regex (id), parseando...');
           const extractedJson = jsonMatch[0];
+          console.log('📄 JSON extraído:', extractedJson.substring(0, 200) + '...');
+          return JSON.parse(extractedJson);
+        }
+        
+        // Regex alternativo para buscar arrays con "title"
+        const titleMatch = message.match(/\[\s*\{[\s\S]*?"title"[\s\S]*?\}\s*\]/g);
+        if (titleMatch && titleMatch.length > 0) {
+          console.log('✅ JSON extraído con regex (title), parseando...');
+          const extractedJson = titleMatch[0];
           console.log('📄 JSON extraído:', extractedJson.substring(0, 200) + '...');
           return JSON.parse(extractedJson);
         }
@@ -579,44 +784,51 @@ this.getListIssues();
     
     rawIssues.forEach((rawIssue, index) => {
       try {
-        // Extraer información adicional del body para la tabla
-        const bodyText = rawIssue.body || rawIssue.description || '';
-        const moduleMatch = bodyText.match(/\*\*Módulo - Funcionalidad\*\*\s*([^\n]+)/i);
-        const reportedByMatch = bodyText.match(/\*\*Reportado\*\*\s*([^\n]+)/i);
-        const typeMatch = bodyText.match(/\*\*Tipo de Hallazgo\*\*\s*([^\n]+)/i);
-        const priorityMatch = bodyText.match(/\*\*Prioridad\*\*\s*([^\n]+)/i);
-        
-        // Mapear los datos recibidos a la interfaz Issue con campos adicionales para la tabla
+        // ✨ NUEVA ESTRUCTURA: Usar directamente los campos del servicio enriquecido
         const issue: any = {
-          // Campos de la interfaz Issue
-          number: rawIssue.number || index + 1,
+          // Campos principales
+          id: rawIssue.id || index + 1,
+          number: rawIssue.id || index + 1, // Usar id como number
           title: rawIssue.title || 'Sin título',
-          state: (rawIssue.state === 'open' || rawIssue.state === 'closed') ? rawIssue.state : 'open',
-          body: bodyText,
+          description: rawIssue.description || '',
+          state: rawIssue.state || 'open',
+          
+          // Campos de prioridad y tipo
+          priority: this.mapPriorityFromLabel(rawIssue.labels?.[0] || rawIssue.priority || 'medium'),
+          tipo: rawIssue.tipo || 'Bug',
+          
+          // Campos de asignación
+          assignee: rawIssue.assignee || null,
+          assignee_avatar: rawIssue.assignee_avatar || '',
+          author: rawIssue.author || 'externosandra',
+          
+          // Fechas (usar las reales del servicio)
+          created_at: rawIssue.created_at || new Date().toISOString(),
+          updated_at: rawIssue.updated_at || new Date().toISOString(),
+          
+          // Metadatos
+          labels: rawIssue.labels || [],
+          comments: rawIssue.comments || 0,
+          milestone: rawIssue.milestone || null,
+          
+          // Campos legacy para compatibilidad
+          body: rawIssue.description || '',
           user: {
-            login: rawIssue.user?.login || rawIssue.author || 'usuario-desconocido'
-          },
-          // Campos adicionales para la tabla
-          id: rawIssue.number || index + 1,
-          tipo: this.mapIssueType(typeMatch?.[1] || 'Solicitud del usuario'),
-          priority: this.mapPriority(priorityMatch?.[1] || 'medium'),
-          assignee: rawIssue.assignee?.login || null,
-          author: rawIssue.user?.login || 'externosandra',
-          labels: this.extractLabels(moduleMatch?.[1] || 'General'),
-          created_at: new Date().toISOString(), // Gitea no envía fecha, usar actual
-          updated_at: new Date().toISOString(),
-          comments: Math.floor(Math.random() * 5), // Simular comentarios
-          milestone: null
+            login: rawIssue.author || 'externosandra'
+          }
         };
         
         processedIssues.push(issue);
         
         // Mostrar cada issue en consola con formato legible
-        console.log(`📋 Issue #${issue.number}:`, {
+        console.log(`📋 Issue #${issue.id}:`, {
           título: issue.title,
           estado: issue.state,
-          autor: issue.user.login,
-          descripción: issue.body.substring(0, 100) + (issue.body.length > 100 ? '...' : '')
+          prioridad: issue.priority,
+          asignado: issue.assignee,
+          autor: issue.author,
+          tipo: issue.tipo,
+          comentarios: issue.comments
         });
         
       } catch (error) {
@@ -630,26 +842,24 @@ this.getListIssues();
       abiertas: processedIssues.filter(i => i.state === 'open').length,
       cerradas: processedIssues.filter(i => i.state === 'closed').length
     });
+    console.log('📊 Resumen por prioridad:', {
+      alta: processedIssues.filter(i => i.priority === 'high').length,
+      media: processedIssues.filter(i => i.priority === 'medium').length,
+      baja: processedIssues.filter(i => i.priority === 'low').length
+    });
     
     // Actualizar los datos del componente con las issues reales
     console.log('🔄 ANTES de actualizar issuesData. Length actual:', this.issuesData.length);
     this.issuesData = processedIssues;
     console.log('✅ DESPUÉS de actualizar issuesData. Nuevo length:', this.issuesData.length);
-    console.log('📋 Primeras 3 issues procesadas:', this.issuesData.slice(0, 3).map(i => ({id: i.id, title: i.title})));
+    console.log('📋 Primeras 3 issues procesadas:', this.issuesData.slice(0, 3).map(i => ({id: i.id, title: i.title, priority: i.priority})));
     
-    // Mostrar la tabla automáticamente cuando se reciben las issues
-    this.showIssuesTable = true;
-    console.log('👁️ showIssuesTable establecido a:', this.showIssuesTable);
-    
-    // Simular que se seleccionó una aplicación para mostrar la tabla correctamente
-    if (!this.aplicacionSeleccionada) {
-      this.aplicacionSeleccionada = {
-        id: 1,
-        name: 'Fideicomiso - Code Epic',
-        repository: 'fideicomiso',
-        owner: 'code-epic'
-      };
-      console.log('🏢 aplicacionSeleccionada establecida:', this.aplicacionSeleccionada.name);
+    // SOLO mostrar la tabla si ya hay una aplicación seleccionada
+    if (this.aplicacionSeleccionada) {
+      this.showIssuesTable = true;
+      console.log('👁️ Aplicación ya seleccionada, mostrando tabla de issues');
+    } else {
+      console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
     }
   }
 
