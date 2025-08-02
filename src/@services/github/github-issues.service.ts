@@ -257,4 +257,66 @@ export class GitHubIssuesService {
       })
     );
   }
+
+  /**
+   * Extract JSON from mixed text/JSON messages
+   * Extracted from IssuesComponent.extractJSONFromMessage()
+   */
+  parseWebSocketMessage(message: string): any | null {
+    try {
+      // Intentar parsear directamente como JSON
+      return JSON.parse(message);
+    } catch (e) {
+      console.log('🔍 Mensaje no es JSON directo, intentando extraer...');
+      
+      try {
+        // Buscar un array JSON usando regex mejorado
+        // Buscar desde [ hasta ] que contenga objetos con "id", "title", etc.
+        const jsonMatch = message.match(/\[\s*\{[\s\S]*?"id"[\s\S]*?\}\s*\]/g);
+        if (jsonMatch && jsonMatch.length > 0) {
+          console.log('✅ JSON extraído con regex (id), parseando...');
+          const extractedJson = jsonMatch[0];
+          console.log('📄 JSON extraído:', extractedJson.substring(0, 200) + '...');
+          return JSON.parse(extractedJson);
+        }
+        
+        // Regex alternativo para buscar arrays con "title"
+        const titleMatch = message.match(/\[\s*\{[\s\S]*?"title"[\s\S]*?\}\s*\]/g);
+        if (titleMatch && titleMatch.length > 0) {
+          console.log('✅ JSON extraído con regex (title), parseando...');
+          const extractedJson = titleMatch[0];
+          console.log('📄 JSON extraído:', extractedJson.substring(0, 200) + '...');
+          return JSON.parse(extractedJson);
+        }
+        
+        // Método alternativo: buscar líneas que empiecen con [ y terminen con ]
+        const lines = message.split('\n');
+        let jsonStartLine = -1;
+        let jsonEndLine = -1;
+        
+        for (let i = 0; i < lines.length; i++) {
+          if (lines[i].trim().startsWith('[') && jsonStartLine === -1) {
+            jsonStartLine = i;
+          }
+          if (lines[i].trim().endsWith(']') && jsonStartLine !== -1) {
+            jsonEndLine = i;
+            break;
+          }
+        }
+        
+        if (jsonStartLine !== -1 && jsonEndLine !== -1) {
+          const jsonLines = lines.slice(jsonStartLine, jsonEndLine + 1);
+          const jsonString = jsonLines.join('\n');
+          console.log('✅ JSON extraído por líneas, parseando...');
+          console.log('📄 JSON extraído:', jsonString.substring(0, 200) + '...');
+          return JSON.parse(jsonString);
+        }
+        
+      } catch (regexError) {
+        console.log('❌ Error con extracción por regex:', regexError);
+      }
+      
+      return null;
+    }
+  }
 }
