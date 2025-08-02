@@ -24,15 +24,14 @@ export class IssuesComponent implements OnInit, OnDestroy {
   private sessionMessagesSub: Subscription | undefined;
   private sessionStatusSub: Subscription | undefined;
   
-  // Data
-  public lstAplicaciones: any[] = [];
-  public aplicacionSeleccionada: any = null;
+  // Component state
+  public aplicacionSeleccionada: Application | null = null;
   public searchValue: string = '';
   public basicSelectedOption: number = 10;
   public showIssuesTable: boolean = false;
-  public selectedIssue: any = null;
+  public selectedIssue: Issue | null = null;
   public showDetailView: boolean = false;
-  userId: string = '';
+  private userId: string = '';
 
   // Reactive observables from services
   public issues$: Observable<Issue[]>;
@@ -46,14 +45,9 @@ export class IssuesComponent implements OnInit, OnDestroy {
   // Datatable
   public ColumnMode = ColumnMode;
 
-  // Lista de aplicaciones (datos reales del servicio)
-  aplicaciones: any[] = [];
-  
-  // Estados de carga
-  loadingAplicaciones = false;
-  errorLoadingAplicaciones = false;
-  loadingIssues = false;
-  errorLoadingIssues = false;
+  // Local state for template compatibility (updated by observables)
+  public aplicaciones: Application[] = [];
+  public loadingIssues = false;
 
   constructor(
     private modalService: NgbModal, 
@@ -77,7 +71,6 @@ export class IssuesComponent implements OnInit, OnDestroy {
       console.log(`🔄 Aplicaciones actualizadas automáticamente: ${applications.length}`);
       // Update local arrays for template compatibility
       this.aplicaciones = applications;
-      this.lstAplicaciones = applications;
       console.log('🎯 UI actualizada con aplicaciones:', applications.slice(0, 3).map(app => app.name));
     });
   }
@@ -207,7 +200,6 @@ export class IssuesComponent implements OnInit, OnDestroy {
     
     // Mostrar estado de carga
     this.loadingIssues = true;
-    this.errorLoadingIssues = false;
     this.showIssuesTable = true; // Mostrar la tabla inmediatamente con loading
     
     console.log('🔍 DEBUG - Estado después de selección:');
@@ -225,153 +217,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     this.getListIssues();
   }
 
-  /**
-   * Load Issues (Mock data for now)
-   */
-  cargarIssues(): void {
-    console.log('⚠️ cargarIssues() llamado - Cargando datos mock como fallback');
-    
-    // Solo cargar mock si NO hay datos del servicio
-    const currentIssues = this.githubIssuesService.getCurrentIssues();
-    if (currentIssues.length === 0) {
-      console.log('📝 Cargando datos mock como fallback');
-      // Mock issues data - More realistic and complete
-      const mockIssues = [
-      {
-        id: 1,
-        title: 'Error en el login de usuarios - Validación de credenciales falla',
-        description: 'Los usuarios no pueden iniciar sesión cuando ingresan credenciales válidas. El sistema devuelve error 401 incluso con datos correctos.',
-        state: 'open',
-        priority: 'high',
-        assignee: 'Juan Pérez',
-        assignee_avatar: '',
-        created_at: '2024-01-15T10:00:00Z',
-        updated_at: '2024-01-20T15:30:00Z',
-        labels: ['bug', 'frontend', 'critical'],
-        comments: 12,
-        milestone: 'v2.1.0',
-        author: 'María González',
-        tipo: 'Bug'
-      },
-      {
-        id: 2,
-        title: 'Implementar nueva funcionalidad de reportes avanzados',
-        description: 'Agregar capacidad de generar reportes personalizados con filtros dinámicos y exportación a PDF/Excel.',
-        state: 'open',
-        priority: 'medium',
-        assignee: 'María García',
-        assignee_avatar: '',
-        created_at: '2024-01-10T09:00:00Z',
-        updated_at: '2024-01-18T14:20:00Z',
-        labels: ['enhancement', 'backend', 'feature'],
-        comments: 8,
-        milestone: 'v2.2.0',
-        author: 'Carlos Ruiz',
-        tipo: 'Feature'
-      },
-      {
-        id: 3,
-        title: 'Optimizar consultas de base de datos en módulo de inventario',
-        description: 'Las consultas del inventario están tardando más de 5 segundos. Necesita optimización de índices y queries.',
-        state: 'closed',
-        priority: 'medium',
-        assignee: 'Carlos López',
-        assignee_avatar: '',
-        created_at: '2024-01-05T08:30:00Z',
-        updated_at: '2024-01-15T16:45:00Z',
-        labels: ['performance', 'database', 'optimization'],
-        comments: 15,
-        milestone: 'v2.0.1',
-        author: 'Ana Martínez',
-        tipo: 'Improvement'
-      },
-      {
-        id: 4,
-        title: 'Actualizar documentación de API REST v2',
-        description: 'La documentación actual no refleja los cambios realizados en la API v2. Actualizar Swagger y ejemplos.',
-        state: 'open',
-        priority: 'low',
-        assignee: 'Ana Martínez',
-        assignee_avatar: '',
-        created_at: '2024-01-12T11:15:00Z',
-        updated_at: '2024-01-19T13:25:00Z',
-        labels: ['documentation', 'api'],
-        comments: 3,
-        milestone: 'v2.1.0',
-        author: 'Juan Pérez',
-        tipo: 'Documentation'
-      },
-      {
-        id: 5,
-        title: 'Implementar autenticación de dos factores (2FA)',
-        description: 'Agregar soporte para 2FA usando Google Authenticator o SMS para mejorar la seguridad del sistema.',
-        state: 'open',
-        priority: 'high',
-        assignee: 'Roberto Silva',
-        assignee_avatar: '',
-        created_at: '2024-01-08T07:45:00Z',
-        updated_at: '2024-01-22T17:10:00Z',
-        labels: ['security', 'authentication', 'enhancement'],
-        comments: 6,
-        milestone: 'v2.2.0',
-        author: 'Laura Fernández',
-        tipo: 'Security'
-      },
-      {
-        id: 6,
-        title: 'Error de memoria en procesamiento de archivos grandes',
-        description: 'El sistema se queda sin memoria al procesar archivos superiores a 100MB. Implementar procesamiento por chunks.',
-        state: 'open',
-        priority: 'medium',
-        assignee: 'Diego Torres',
-        assignee_avatar: '',
-        created_at: '2024-01-14T12:30:00Z',
-        updated_at: '2024-01-21T18:15:00Z',
-        labels: ['bug', 'performance', 'memory'],
-        comments: 9,
-        milestone: 'v2.1.1',
-        author: 'Pedro Morales',
-        tipo: 'Bug'
-      },
-      {
-        id: 7,
-        title: 'Mejorar interfaz de usuario del dashboard principal',
-        description: 'Rediseñar el dashboard para mejorar la experiencia de usuario con gráficos más interactivos y mejor organización.',
-        state: 'closed',
-        priority: 'low',
-        assignee: 'Sofía Ramírez',
-        assignee_avatar: '',
-        created_at: '2024-01-03T06:20:00Z',
-        updated_at: '2024-01-17T19:40:00Z',
-        labels: ['ui', 'ux', 'enhancement'],
-        comments: 11,
-        milestone: 'v2.0.0',
-        author: 'Miguel Ángel',
-        tipo: 'Enhancement'
-      },
-      {
-        id: 8,
-        title: 'Configurar backup automático de base de datos',
-        description: 'Implementar sistema de backup automático diario con retención de 30 días y notificaciones de estado.',
-        state: 'open',
-        priority: 'high',
-        assignee: '',
-        assignee_avatar: '',
-        created_at: '2024-01-16T14:00:00Z',
-        updated_at: '2024-01-16T14:00:00Z',
-        labels: ['infrastructure', 'backup', 'automation'],
-        comments: 2,
-        milestone: 'v2.1.0',
-        author: 'Elena Vargas',
-        tipo: 'Task'
-      }
-    ];
-    
-    // Usar el servicio para procesar los datos mock
-    this.githubIssuesService.processIssues(mockIssues);
-    this.showIssuesTable = true;
-    }
-  }
+
 
   /**
    * Filter issues by search
@@ -463,7 +309,6 @@ export class IssuesComponent implements OnInit, OnDestroy {
           
           // Actualizar estados locales
           this.loadingIssues = false;
-          this.errorLoadingIssues = false;
           
           // Mostrar tabla si hay aplicación seleccionada
           if (this.aplicacionSeleccionada) {
@@ -476,10 +321,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
           
           // Establecer estado de error
           this.loadingIssues = false;
-          this.errorLoadingIssues = true;
           
-          // En caso de error, cargar datos mock como fallback
-          this.cargarIssues();
+          // En caso de error, el servicio ya maneja el fallback automáticamente
         }
       });
   }
@@ -499,11 +342,10 @@ export class IssuesComponent implements OnInit, OnDestroy {
           console.log(`✅ Aplicaciones cargadas desde el servicio: ${applications.length}`);
           console.log('📋 Primeras 3 aplicaciones:', applications.slice(0, 3).map(app => ({id: app.id, name: app.name})));
           
-          // Actualizar AMBAS listas para compatibilidad con el template
+          // Actualizar lista para compatibilidad con el template
           this.aplicaciones = applications;
-          this.lstAplicaciones = applications; // Esta es la que usa el template para las cards
           
-          console.log('🎯 Cards de aplicaciones listas para mostrar:', this.lstAplicaciones.length);
+          console.log('🎯 Cards de aplicaciones listas para mostrar:', this.aplicaciones.length);
           
           // Asegurar que NO se muestre la tabla de issues automáticamente
           this.showIssuesTable = false;
@@ -511,14 +353,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
           
           console.log('🏠 Mostrando cards de aplicaciones - tabla oculta');
           
-          // Finalizar estado de carga
-          this.loadingAplicaciones = false;
-          this.errorLoadingAplicaciones = false;
+          // Estado de carga manejado por el servicio
         },
         error: (error) => {
           console.error('❌ Error al cargar aplicaciones:', error);
-          this.loadingAplicaciones = false;
-          this.errorLoadingAplicaciones = true;
+          // Estado de error manejado por el servicio
         }
       });
   }
@@ -566,70 +405,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * Detect if data represents applications or issues
-   */
-  private isApplicationData(item: any): boolean {
-    // Las aplicaciones tienen: id, name, full_name (y NO tienen title, body, state)
-    // Los issues tienen: title, body, state, number (y NO tienen full_name)
-    
-    const hasAppFields = item.hasOwnProperty('name') && item.hasOwnProperty('full_name');
-    const hasIssueFields = item.hasOwnProperty('title') || item.hasOwnProperty('body') || item.hasOwnProperty('state') || item.hasOwnProperty('number');
-    
-    // Criterio más estricto: debe tener campos de aplicación Y NO tener campos de issue
-    const isApplication = hasAppFields && !hasIssueFields;
-    
-    console.log('🔍 Detectando tipo de datos:', {
-      item: { id: item.id, name: item.name, full_name: item.full_name, title: item.title, body: item.body, state: item.state },
-      hasAppFields,
-      hasIssueFields,
-      esAplicacion: isApplication
-    });
-    
-    return isApplication;
-  }
 
-
-
-
-
-  /**
-   * Map issue type from Spanish to English categories
-   */
-  private mapIssueType(spanishType: string): string {
-    const typeMap: { [key: string]: string } = {
-      'Solicitud del usuario calidad': 'Enhancement',
-      'Solicitud del usuario': 'Feature',
-      'Error de calculo': 'Bug',
-      'Error de validaciones': 'Bug',
-      'Error de Conexión': 'Bug'
-    };
-    
-    // Buscar coincidencias parciales
-    for (const [spanish, english] of Object.entries(typeMap)) {
-      if (spanishType.toLowerCase().includes(spanish.toLowerCase())) {
-        return english;
-      }
-    }
-    
-    return 'Task'; // Default
-  }
-
-  /**
-   * Map priority from Spanish to standard levels
-   */
-  private mapPriority(spanishPriority: string): string {
-    const priorityMap: { [key: string]: string } = {
-      'ALTA': 'high',
-      'MEDIA': 'medium',
-      'BAJA': 'low',
-      'Alta': 'high',
-      'Media': 'medium',
-      'Baja': 'low'
-    };
-    
-    return priorityMap[spanishPriority] || 'medium';
-  }
 
 
 
@@ -650,7 +426,6 @@ export class IssuesComponent implements OnInit, OnDestroy {
       this.showIssuesTable = true;
       // Finalizar estado de carga cuando se reciben issues
       this.loadingIssues = false;
-      this.errorLoadingIssues = false;
       console.log('👁️ Aplicación ya seleccionada, mostrando tabla de issues');
       console.log('✅ Estado de carga finalizado - issues cargadas');
     } else {
