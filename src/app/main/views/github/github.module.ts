@@ -12,6 +12,11 @@ import { CoreCommonModule } from '@core/common.module';
 
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
 
+// GitHub Services
+import { GitHubIssuesService } from '@services/github/github-issues.service';
+import { ApplicationsService } from '@services/github/applications.service';
+import { ErrorHandlerService } from '@services/github/error-handler.service';
+
 import { IssuesComponent } from './issues/issues.component';
 
 const routes = [
@@ -37,5 +42,10 @@ const routes = [
     NgxDatatableModule,
     NgbModule
   ],
+  providers: [
+    GitHubIssuesService,
+    ApplicationsService,
+    ErrorHandlerService
+  ]
 })
 export class GithubModule { }

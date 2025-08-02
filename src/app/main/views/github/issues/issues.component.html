@@ -4,6 +4,53 @@
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
     <!-- ========================================= -->
+    <!-- PROFESSIONAL TOAST NOTIFICATIONS -->
+    <!-- ========================================= -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
+      <div *ngFor="let toast of toastNotifications$ | async; trackBy: trackByToastId" 
+           class="toast show" 
+           [ngClass]="{
+             'bg-success': toast.type === 'success',
+             'bg-danger': toast.type === 'error', 
+             'bg-warning': toast.type === 'warning',
+             'bg-info': toast.type === 'info'
+           }"
+           role="alert" 
+           aria-live="assertive" 
+           aria-atomic="true">
+        <div class="toast-header">
+          <i class="me-2" [ngClass]="{
+            'feather icon-check-circle text-success': toast.type === 'success',
+            'feather icon-alert-circle text-danger': toast.type === 'error',
+            'feather icon-alert-triangle text-warning': toast.type === 'warning', 
+            'feather icon-info text-info': toast.type === 'info'
+          }"></i>
+          <strong class="me-auto text-white">{{ toast.title }}</strong>
+          <button *ngIf="toast.dismissible" 
+                  type="button" 
+                  class="btn-close btn-close-white" 
+                  (click)="dismissToast(toast.id)"
+                  aria-label="Close"></button>
+        </div>
+        <div class="toast-body text-white">
+          {{ toast.message }}
+          <div *ngIf="toast.actions && toast.actions.length > 0" class="mt-2">
+            <button *ngFor="let action of toast.actions" 
+                    type="button" 
+                    class="btn btn-sm me-2"
+                    [ngClass]="{
+                      'btn-outline-light': action.style === 'primary',
+                      'btn-outline-secondary': action.style !== 'primary'
+                    }"
+                    (click)="executeToastAction(action)">
+              {{ action.label }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================= -->
     <!-- BLOCKING LOADING SCREEN - APPLICATIONS -->
     <!-- ========================================= -->
     <div *ngIf="showApplicationsLoadingScreen" class="d-flex justify-content-center align-items-center" 

@@ -7,6 +7,7 @@ import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { SessionService } from '@services/util/session.service';
 import { GitHubIssuesService } from '@services/github/github-issues.service';
 import { ApplicationsService } from '@services/github/applications.service';
+import { ErrorHandlerService } from '@services/github/error-handler.service';
 import { Issue } from '@services/github/interfaces/issue.interface';
 import { Application } from '@services/github/interfaces/application.interface';
 @Component({
@@ -34,7 +35,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
   public showDetailView: boolean = false;
   private userId: string = '';
 
-  // Reactive observables from services
+  // Reactive observables from services (initialized in constructor)
   public issues$: Observable<Issue[]>;
   public loadingIssues$: Observable<boolean>;
   public errorIssues$: Observable<string | null>;
@@ -42,6 +43,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
   public applications$: Observable<Application[]>;
   public loadingApplications$: Observable<boolean>;
   public errorApplications$: Observable<string | null>;
+  
+  // Error and connection state observables (initialized in constructor)
+  public errors$: Observable<any>;
+  public connectionState$: Observable<any>;
+  public toastNotifications$: Observable<any>;
 
   // Datatable
   public ColumnMode = ColumnMode;
@@ -91,6 +97,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     private sessionService: SessionService,
     private githubIssuesService: GitHubIssuesService,
     private applicationsService: ApplicationsService,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef
   ) {
     // Initialize reactive observables from services
@@ -102,6 +109,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
     this.applications$ = this.applicationsService.applications$;
     this.loadingApplications$ = this.applicationsService.loading$;
     this.errorApplications$ = this.applicationsService.error$;
+    
+    // Initialize ErrorHandlerService observables for professional error handling
+    this.errors$ = this.errorHandler.errorState$;
+    this.connectionState$ = this.errorHandler.connectionState$;
+    this.toastNotifications$ = this.errorHandler.toastNotifications$;
     
     // Subscribe to applications changes for automatic UI updates
     this.applications$.pipe(takeUntil(this.destroy$)).subscribe(applications => {
@@ -135,20 +147,25 @@ export class IssuesComponent implements OnInit, OnDestroy {
     }, 2000);
     
     // No cargar issues automáticamente - solo mostrar cards
-    // Subscribe to WebSocket messages
-    this.sessionMessagesSub = this.sessionService.messages$.subscribe((msg) => {
-      console.log("WebSocket message received:", msg);
-      let parsedMsg: any;
-      try {
-        parsedMsg = typeof msg === 'string' ? JSON.parse(msg) : msg;
-      } catch (e) {
-        console.error('WebSocket message is not valid JSON:', msg);
-        return;
-      }
+    // Subscribe to WebSocket messages with professional error handling
+    this.sessionMessagesSub = this.sessionService.messages$.subscribe({
+      next: (msg) => {
+        console.log("WebSocket message received:", msg);
+        // Update connection state to connected
+        this.errorHandler.updateConnectionState(true, false);
+        
+        let parsedMsg: any;
+        try {
+          parsedMsg = typeof msg === 'string' ? JSON.parse(msg) : msg;
+        } catch (e) {
+          console.error('WebSocket message is not valid JSON:', msg);
+          this.errorHandler.handleError(e, 'WebSocket - JSON Parsing');
+          return;
+        }
 
-      console.log('Parsed WebSocket message:', parsedMsg);
-      
-      if (parsedMsg && parsedMsg.message) {
+        console.log('Parsed WebSocket message:', parsedMsg);
+        
+        if (parsedMsg && parsedMsg.message) {
         // Parsear el mensaje interno que viene como string JSON
         let innerMessage: any;
         try {
@@ -225,6 +242,16 @@ export class IssuesComponent implements OnInit, OnDestroy {
             console.log('📄 Mensaje de texto:', innerMessage.mensaje);
           }
         }
+        }
+      },
+      error: (error) => {
+        console.error('❌ WebSocket error:', error);
+        this.errorHandler.updateConnectionState(false, false);
+        this.errorHandler.handleError(error, 'WebSocket - Conexión');
+      },
+      complete: () => {
+        console.log('🔌 WebSocket connection closed');
+        this.errorHandler.updateConnectionState(false, false);
       }
     });
     // Content header configuration
@@ -414,6 +441,39 @@ export class IssuesComponent implements OnInit, OnDestroy {
     return label;
   }
 
+  /**
+   * TrackBy function for toast notifications - optimizes *ngFor performance
+   */
+  trackByToastId(index: number, toast: any): string {
+    return toast.id;
+  }
+
+  // ========================================
+  // TOAST NOTIFICATION METHODS
+  // ========================================
+
+  /**
+   * Dismiss a toast notification
+   */
+  dismissToast(toastId: string): void {
+    this.errorHandler.removeToast(toastId);
+  }
+
+  /**
+   * Execute a toast action (like retry button)
+   */
+  executeToastAction(action: any): void {
+    if (action.callback && typeof action.callback === 'function') {
+      try {
+        action.callback();
+        console.log('✅ Toast action executed:', action.label);
+      } catch (error) {
+        console.error('❌ Error executing toast action:', error);
+        this.errorHandler.handleError(error, 'Toast Action');
+      }
+    }
+  }
+
   // ========================================
   // ENHANCED UX STATE MANAGEMENT
   // ========================================
@@ -565,6 +625,14 @@ export class IssuesComponent implements OnInit, OnDestroy {
         next: (issues) => {
           console.log('✅ Issues cargadas desde el servicio:', issues.length);
           
+          // Show success message for API fallback data
+          if (issues.length > 0) {
+            this.errorHandler.showInfoToast(
+              'Datos de respaldo cargados',
+              `${issues.length} issues cargadas desde cache. Esperando datos actualizados...`
+            );
+          }
+          
           // IMPORTANTE: NO ocultar la pantalla de carga aquí
           // porque estas pueden ser datos mock. La pantalla se ocultará
           // cuando lleguen las issues reales por WebSocket en processGitHubIssues()
@@ -583,13 +651,23 @@ export class IssuesComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('❌ Error al cargar issues:', error);
           
+          // Use ErrorHandlerService for professional error handling
+          const appError = this.errorHandler.handleError(error, 'Issues - API');
+          
+          // Show user-friendly error message
+          this.errorHandler.showErrorToast({
+            id: appError.id,
+            type: 'error',
+            title: 'Error cargando issues',
+            message: 'No se pudieron cargar las issues desde la API. Esperando datos por WebSocket...',
+            duration: 0,
+            dismissible: true
+          });
+          
           // Establecer estado de error pero mantener pantalla de carga
-          // Las issues reales pueden llegar por WebSocket aún después del error de API
           this.setIssuesLoading(false, 'Error al cargar issues. Esperando datos por WebSocket...');
           
           console.log('🔄 Manteniendo pantalla de carga - WebSocket puede traer datos reales');
-          
-          // En caso de error, el servicio ya maneja el fallback automáticamente
         }
       });
   }
@@ -611,6 +689,14 @@ export class IssuesComponent implements OnInit, OnDestroy {
         next: (applications: Application[]) => {
           console.log(`✅ Aplicaciones cargadas desde el servicio: ${applications.length}`);
           console.log('📋 Primeras 3 aplicaciones:', applications.slice(0, 3).map(app => ({id: app.id, name: app.name})));
+          
+          // Show success message for API fallback data
+          if (applications.length > 0) {
+            this.errorHandler.showInfoToast(
+              'Aplicaciones de respaldo cargadas',
+              `${applications.length} aplicaciones cargadas desde cache. Esperando datos actualizados...`
+            );
+          }
           
           // Actualizar lista para compatibilidad con el template
           this.aplicaciones = applications;
@@ -635,14 +721,28 @@ export class IssuesComponent implements OnInit, OnDestroy {
         error: (error) => {
           console.error('❌ Error al cargar aplicaciones:', error);
           
+          // Use ErrorHandlerService for professional error handling
+          const appError = this.errorHandler.handleError(error, 'Aplicaciones - API');
+          
+          // Show user-friendly error message
+          this.errorHandler.showErrorToast({
+            id: appError.id,
+            type: 'error',
+            title: 'Error cargando aplicaciones',
+            message: 'No se pudieron cargar las aplicaciones desde la API. Esperando datos por WebSocket...',
+            duration: 0,
+            dismissible: true,
+            actions: [{
+              label: 'Reintentar',
+              callback: () => this.getListAplicaciones(),
+              style: 'primary'
+            }]
+          });
+          
           // Establecer estado de error pero mantener pantalla de carga
-          // Las aplicaciones reales pueden llegar por WebSocket aún después del error de API
           this.setApplicationsLoading(false, 'Error al cargar aplicaciones. Esperando datos por WebSocket...');
           
           console.log('🔄 Manteniendo pantalla de carga - WebSocket puede traer aplicaciones reales');
-          
-          // En caso de error, el servicio ya maneja el fallback automáticamente
-          // NO ocultar pantalla ni completar carga inicial aquí
         }
       });
   }
@@ -696,34 +796,82 @@ export class IssuesComponent implements OnInit, OnDestroy {
 
   /**
    * Process GitHub Issues received from WebSocket
-   * Now uses GitHubIssuesService for processing
+   * Now uses GitHubIssuesService for processing with professional error handling
    */
   private processGitHubIssues(rawIssues: any[]): void {
     console.log('🔄 Componente: Delegando procesamiento de issues al servicio');
     
-    // Usar el servicio para procesar las issues - el servicio maneja el estado automáticamente
-    this.githubIssuesService.processIssues(rawIssues);
+    try {
+      // Validate input data
+      if (!Array.isArray(rawIssues) || rawIssues.length === 0) {
+        console.warn('⚠️ Issues vacías o inválidas recibidas');
+        this.errorHandler.showWarningToast(
+          'Sin datos de issues',
+          'No se recibieron issues válidas del servidor'
+        );
+        return;
+      }
     
-    console.log('✅ Issues procesadas y estado actualizado en el servicio');
-    
-    // SOLO mostrar la tabla si ya hay una aplicación seleccionada
-    if (this.aplicacionSeleccionada) {
-      this.showIssuesTable = true;
-      // Finalizar estado de carga con UX mejorado
-      this.setIssuesLoading(false);
+      // Usar el servicio para procesar las issues - el servicio maneja el estado automáticamente
+      this.githubIssuesService.processIssues(rawIssues);
       
-      // Ocultar pantalla de carga de issues
+      console.log('✅ Issues procesadas y estado actualizado en el servicio');
+      
+      // SOLO mostrar la tabla si ya hay una aplicación seleccionada
+      if (this.aplicacionSeleccionada) {
+        this.showIssuesTable = true;
+        // Finalizar estado de carga con UX mejorado
+        this.setIssuesLoading(false);
+        
+        // Ocultar pantalla de carga de issues
+        this.hideIssuesLoading();
+        
+        console.log('👁️ Aplicación ya seleccionada, mostrando tabla de issues');
+        console.log('✅ Estado de carga finalizado - issues cargadas');
+        
+        // Show professional success message
+        this.errorHandler.showSuccessToast(
+          'Issues cargadas exitosamente',
+          `${rawIssues.length} issues de ${this.aplicacionSeleccionada.name} cargadas desde el servidor`
+        );
+        
+        // Legacy success message for template compatibility
+        this.showSuccessMessage = true;
+        this.successMessage = `${rawIssues.length} issues cargadas exitosamente`;
+        this.hideSuccessMessage();
+      } else {
+        console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
+        
+        // Still show success for background processing
+        this.errorHandler.showInfoToast(
+          'Issues procesadas',
+          `${rawIssues.length} issues procesadas y almacenadas en cache`
+        );
+      }
+    } catch (error) {
+      console.error('❌ Error procesando issues:', error);
+      
+      // Use ErrorHandlerService for professional error handling
+      const appError = this.errorHandler.handleError(error, 'Issues - Procesamiento');
+      
+      // Show user-friendly error message
+      this.errorHandler.showErrorToast({
+        id: appError.id,
+        type: 'error',
+        title: 'Error procesando issues',
+        message: 'Hubo un problema al procesar las issues recibidas del servidor.',
+        duration: 0,
+        dismissible: true,
+        actions: [{
+          label: 'Reintentar',
+          callback: () => this.getListIssues(),
+          style: 'primary'
+        }]
+      });
+      
+      // Ensure loading states are cleared on error
+      this.setIssuesLoading(false, 'Error procesando issues');
       this.hideIssuesLoading();
-      
-      console.log('👁️ Aplicación ya seleccionada, mostrando tabla de issues');
-      console.log('✅ Estado de carga finalizado - issues cargadas');
-      
-      // Mostrar mensaje de éxito
-      this.showSuccessMessage = true;
-      this.successMessage = `${rawIssues.length} issues cargadas exitosamente`;
-      this.hideSuccessMessage();
-    } else {
-      console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
     }
   }
 
