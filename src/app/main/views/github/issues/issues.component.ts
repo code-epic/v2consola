@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ColumnMode } from '@swimlane/ngx-datatable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription, Subject } from 'rxjs';
@@ -12,7 +12,8 @@ import { Application } from '@services/github/interfaces/application.interface';
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
-  styleUrls: ['./issues.component.scss']
+  styleUrls: ['./issues.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IssuesComponent implements OnInit, OnDestroy {
 
@@ -54,7 +55,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
     private apiService: ApiService, 
     private sessionService: SessionService,
     private githubIssuesService: GitHubIssuesService,
-    private applicationsService: ApplicationsService
+    private applicationsService: ApplicationsService,
+    private cdr: ChangeDetectorRef
   ) {
     // Initialize reactive observables from services
     this.issues$ = this.githubIssuesService.issues$;
@@ -72,6 +74,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
       // Update local arrays for template compatibility
       this.aplicaciones = applications;
       console.log('🎯 UI actualizada con aplicaciones:', applications.slice(0, 3).map(app => app.name));
+      // Trigger change detection for OnPush
+      this.cdr.markForCheck();
     });
   }
 
@@ -189,14 +193,19 @@ export class IssuesComponent implements OnInit, OnDestroy {
   /**
    * Select Application
    */
-  seleccionarAplicacion(aplicacion: any): void {
-    console.log('🎨 Aplicación seleccionada:', aplicacion.name);
+  seleccionarAplicacion(aplicacion: Application): void {
+    console.log('Aplicación seleccionada:', aplicacion.name);
+    
     console.log('🔍 DEBUG - Estado antes de selección:');
     console.log('  - showIssuesTable:', this.showIssuesTable);
     console.log('  - loadingIssues:', this.loadingIssues);
     console.log('  - aplicacionSeleccionada:', this.aplicacionSeleccionada?.name || 'ninguna');
     
+    // Establecer la aplicación seleccionada
     this.aplicacionSeleccionada = aplicacion;
+    
+    // Limpiar issues anteriores usando el servicio
+    this.githubIssuesService.clearIssues();
     
     // Mostrar estado de carga
     this.loadingIssues = true;
@@ -207,25 +216,29 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log('  - loadingIssues:', this.loadingIssues);
     console.log('  - aplicacionSeleccionada:', this.aplicacionSeleccionada?.name);
     
-    // Limpiar issues anteriores usando el servicio
-    this.githubIssuesService.clearIssues();
-    
     console.log('🚀 Cargando issues para la aplicación seleccionada...');
     console.log('⏳ Estado de carga activado');
+    
+    // Trigger change detection for OnPush
+    this.cdr.markForCheck();
     
     // Cargar issues
     this.getListIssues();
   }
 
 
-
   /**
-   * Filter issues by search
+   * Filter issues by search - Optimized for OnPush
    */
   filterUpdate(event: any): void {
     const searchTerm = event.target.value;
-    // Implement search filtering logic here
-    console.log('Searching for:', searchTerm);
+    this.searchValue = searchTerm;
+    
+    console.log('🔍 Filtering issues with term:', searchTerm);
+    // TODO: Implement reactive filtering in future iteration
+    
+    // Trigger change detection for OnPush
+    this.cdr.markForCheck();
   }
 
   /**
@@ -236,6 +249,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
     this.showIssuesTable = false;
     this.githubIssuesService.clearIssues(); // Usar servicio en lugar de array local
     this.searchValue = '';
+    // Trigger change detection for OnPush
+    this.cdr.markForCheck();
   }
 
   /**
@@ -266,9 +281,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
   /**
    * View issue details
    */
-  verDetalle(issue: any): void {
+  verDetalle(issue: Issue): void {
     this.selectedIssue = issue;
     this.showDetailView = true;
+    // Trigger change detection for OnPush
+    this.cdr.markForCheck();
   }
 
   /**
@@ -277,23 +294,57 @@ export class IssuesComponent implements OnInit, OnDestroy {
   cerrarDetalle(): void {
     this.showDetailView = false;
     this.selectedIssue = null;
+    // Trigger change detection for OnPush
+    this.cdr.markForCheck();
   }
 
   /**
-   * Edit issue
+   * Edit issue - Optimized for OnPush
    */
-  editarIssue(issue: any): void {
+  editarIssue(issue: Issue): void {
     console.log('Editar issue:', issue);
     this.cerrarDetalle();
     // Implement edit functionality
+    // Future: Open edit modal or navigate to edit view
   }
 
   /**
-   * Open issue in GitHub
+   * Open issue in GitHub - Optimized for OnPush
    */
-  verEnGitHub(issue: any): void {
-    const githubUrl = `https://github.com/${this.aplicacionSeleccionada?.owner}/${this.aplicacionSeleccionada?.repository}/issues/${issue.id}`;
+  verEnGitHub(issue: Issue): void {
+    if (!this.aplicacionSeleccionada) {
+      console.warn('No application selected');
+      return;
+    }
+    
+    const githubUrl = `https://github.com/${this.aplicacionSeleccionada.owner}/${this.aplicacionSeleccionada.repository}/issues/${issue.id}`;
     window.open(githubUrl, '_blank');
+    console.log('🔗 Opening GitHub issue:', githubUrl);
+  }
+
+  // ========================================
+  // PERFORMANCE OPTIMIZATION METHODS
+  // ========================================
+
+  /**
+   * TrackBy function for applications list - optimizes *ngFor performance
+   */
+  trackByApplicationId(index: number, application: Application): string | number {
+    return application.id;
+  }
+
+  /**
+   * TrackBy function for issues list - optimizes *ngFor performance
+   */
+  trackByIssueId(index: number, issue: Issue): number {
+    return issue.id;
+  }
+
+  /**
+   * TrackBy function for labels list - optimizes *ngFor performance
+   */
+  trackByLabel(index: number, label: string): string {
+    return label;
   }
 
 
@@ -315,6 +366,9 @@ export class IssuesComponent implements OnInit, OnDestroy {
             this.showIssuesTable = true;
             console.log('👁️ Aplicación seleccionada, mostrando tabla de issues');
           }
+          
+          // Trigger change detection for OnPush
+          this.cdr.markForCheck();
         },
         error: (error) => {
           console.error('❌ Error al cargar issues desde el servicio:', error);
@@ -323,6 +377,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
           this.loadingIssues = false;
           
           // En caso de error, el servicio ya maneja el fallback automáticamente
+          // Trigger change detection for OnPush
+          this.cdr.markForCheck();
         }
       });
   }
@@ -428,6 +484,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
       this.loadingIssues = false;
       console.log('👁️ Aplicación ya seleccionada, mostrando tabla de issues');
       console.log('✅ Estado de carga finalizado - issues cargadas');
+      // Trigger change detection for OnPush
+      this.cdr.markForCheck();
     } else {
       console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
     }
