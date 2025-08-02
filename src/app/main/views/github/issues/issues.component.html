@@ -139,56 +139,70 @@
           </div>
 
           <!-- Applications Grid -->
-          <div class="row" *ngIf="!applicationsLoading && !applicationsError">
-            <div class="col-md-6 col-lg-4 mb-3" *ngFor="let app of aplicaciones">
-              <div class="card cursor-pointer h-100" 
-                   [ngClass]="{'border-primary': aplicacionSeleccionada?.id === app.id}"
-                   (click)="seleccionarAplicacion(app)">
-                <div class="card-body text-center">
-                  <!-- App Icon -->
-                  <div class="avatar avatar-xl mx-auto mb-2" 
-                       [ngClass]="{
-                         'bg-light-primary': aplicacionSeleccionada?.id !== app.id,
-                         'bg-primary': aplicacionSeleccionada?.id === app.id
-                       }">
-                    <div class="avatar-content">
-                      <span [data-feather]="'git-branch'" 
-                            [size]="32" 
-                            [ngClass]="{
-                              'text-primary': aplicacionSeleccionada?.id !== app.id,
-                              'text-white': aplicacionSeleccionada?.id === app.id
-                            }"></span>
+          <div class="row g-4" *ngIf="!applicationsLoading && !applicationsError">
+            <div class="col-md-6 col-lg-4" *ngFor="let app of aplicaciones; trackBy: trackByApplicationId">
+              <div class="application-card h-100" 
+                   [class.selected]="aplicacionSeleccionada?.id === app.id"
+                   (click)="seleccionarAplicacion(app)"
+                   tabindex="0"
+                   role="button"
+                   [attr.aria-label]="'Seleccionar aplicación ' + app.name"
+                   (keydown.enter)="seleccionarAplicacion(app)"
+                   (keydown.space)="seleccionarAplicacion(app); $event.preventDefault()">
+                
+                <!-- Card Header with Gradient -->
+                <div class="card-header-gradient">
+                  <div class="app-icon-container">
+                    <div class="app-icon" 
+                         [class.selected]="aplicacionSeleccionada?.id === app.id">
+                      <i data-feather="git-branch" class="feather-icon"></i>
                     </div>
-                  </div>
-                  
-                  <!-- App Info -->
-                  <h5 class="card-title mb-1">{{ app.name }}</h5>
-                  <p class="card-text">
-                    <small class="text-muted d-block">{{ app.owner }}/{{ app.repository }}</small>
-                  </p>
-                  
-                  <!-- Selection Indicator -->
-                  <div *ngIf="aplicacionSeleccionada?.id === app.id" class="mt-2">
-                    <span class="badge badge-primary">
-                      <span [data-feather]="'check'" [size]="14" class="mr-25"></span>
-                      Seleccionado
-                    </span>
                   </div>
                 </div>
                 
-                <!-- Hover Effect -->
-                <div class="card-footer text-center" 
-                     [ngClass]="{
-                       'bg-light': aplicacionSeleccionada?.id !== app.id,
-                       'bg-primary': aplicacionSeleccionada?.id === app.id
-                     }">
-                  <small [ngClass]="{
-                           'text-muted': aplicacionSeleccionada?.id !== app.id,
-                           'text-white': aplicacionSeleccionada?.id === app.id
-                         }">
-                    Click para seleccionar
-                  </small>
+                <!-- Card Body -->
+                <div class="card-body-modern">
+                  <!-- App Info -->
+                  <h5 class="app-title">{{ app.name }}</h5>
+                  <div class="app-details">
+                    <span class="owner-repo">
+                      <i data-feather="user" class="owner-icon"></i>
+                      {{ app.owner }}
+                    </span>
+                    <span class="repo-name">
+                      <i data-feather="folder" class="repo-icon"></i>
+                      {{ app.repository }}
+                    </span>
+                  </div>
+                  
+                  <!-- Stats or Additional Info -->
+                  <div class="app-stats">
+                    <div class="stat-item">
+                      <i data-feather="git-commit" class="stat-icon"></i>
+                      <span class="stat-text">Repository</span>
+                    </div>
+                  </div>
                 </div>
+                
+                <!-- Selection Indicator -->
+                <div class="selection-indicator" 
+                     [class.visible]="aplicacionSeleccionada?.id === app.id">
+                  <div class="selection-badge">
+                    <i data-feather="check-circle" class="check-icon"></i>
+                    <span>Seleccionado</span>
+                  </div>
+                </div>
+                
+                <!-- Hover Overlay -->
+                <div class="hover-overlay">
+                  <div class="hover-content">
+                    <i data-feather="mouse-pointer" class="hover-icon"></i>
+                    <span class="hover-text">Click para seleccionar</span>
+                  </div>
+                </div>
+                
+                <!-- Focus Ring -->
+                <div class="focus-ring"></div>
               </div>
             </div>
           </div>
