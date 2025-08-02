@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { Issue, RawIssue } from './interfaces/issue.interface';
+import { ApiService } from '@services/apicore/api.service';
 
 /**
  * Professional GitHub Issues Service
@@ -21,7 +24,7 @@ export class GitHubIssuesService {
   public loading$ = this.loadingSubject.asObservable();
   public error$ = this.errorSubject.asObservable();
 
-  constructor() {
+  constructor(private apiService: ApiService) {
     console.log('🚀 GitHubIssuesService initialized');
   }
 
@@ -167,5 +170,91 @@ export class GitHubIssuesService {
    */
   getIssuesCount(): number {
     return this.issuesSubject.value.length;
+  }
+
+  /**
+   * Load issues from API
+   * Extracted from IssuesComponent.getListIssues()
+   */
+  loadIssues(userId: string): Observable<Issue[]> {
+    console.log('🚀 GitHubIssuesService: INICIANDO loadIssues()');
+    console.log('📋 userId:', userId);
+    console.log('📊 issues actuales length:', this.getIssuesCount());
+    
+    // Set loading state
+    this.setLoading(true);
+    this.setError(null);
+    
+    const fnx = {
+      funcion: "Fnx_DatosServidorGitHub",
+      id_cliente: userId
+    };
+    console.log('📤 Enviando al servicio:', fnx);
+    
+    return this.apiService.ExecFnx(fnx).pipe(
+      map((data: any) => {
+        console.log('Respuesta del servicio:', data);
+        
+        // Extract issues from different possible response structures
+        let rawIssues: any[] = [];
+        
+        if (data && Array.isArray(data)) {
+          console.log('🎯 Issues recibidas del servicio (array directo):', data.length);
+          rawIssues = data;
+        } else if (data && data.issues && Array.isArray(data.issues)) {
+          console.log('🎯 Issues recibidas del servicio (data.issues):', data.issues.length);
+          rawIssues = data.issues;
+        } else if (data && data.contenido && Array.isArray(data.contenido)) {
+          console.log('🎯 Issues recibidas del servicio (data.contenido):', data.contenido.length);
+          rawIssues = data.contenido;
+        } else if (data && data.contenido && data.contenido.issues && Array.isArray(data.contenido.issues)) {
+          console.log('🎯 Issues recibidas del servicio (data.contenido.issues):', data.contenido.issues.length);
+          rawIssues = data.contenido.issues;
+        } else {
+          console.warn('⚠️ Respuesta del servicio no contiene issues válidas:', data);
+          console.log('🔍 Estructura de la respuesta:', Object.keys(data || {}));
+          
+          // Inspeccionar contenido en detalle
+          if (data && data.contenido) {
+            console.log('🔎 Inspeccionando data.contenido:', data.contenido);
+            console.log('🔎 Tipo de data.contenido:', typeof data.contenido);
+            console.log('🔎 Es array data.contenido:', Array.isArray(data.contenido));
+            console.log('🔎 Keys de data.contenido:', Object.keys(data.contenido));
+            
+            // Intentar extraer de diferentes propiedades del contenido
+            const contenido = data.contenido;
+            if (contenido.issues && Array.isArray(contenido.issues)) {
+              console.log('🎯 Issues encontradas en contenido.issues:', contenido.issues.length);
+              rawIssues = contenido.issues;
+            } else if (contenido.data && Array.isArray(contenido.data)) {
+              console.log('🎯 Issues encontradas en contenido.data:', contenido.data.length);
+              rawIssues = contenido.data;
+            } else if (contenido.result && Array.isArray(contenido.result)) {
+              console.log('🎯 Issues encontradas en contenido.result:', contenido.result.length);
+              rawIssues = contenido.result;
+            }
+          }
+        }
+        
+        // Process the issues if we found any
+        if (rawIssues.length > 0) {
+          return this.processIssues(rawIssues);
+        } else {
+          console.warn('⚠️ No se encontraron issues válidas, retornando array vacío');
+          this.setLoading(false);
+          return [];
+        }
+      }),
+      catchError((error) => {
+        console.error('❌ Error al obtener issues del servicio:', error);
+        
+        // Set error state
+        this.setLoading(false);
+        this.setError('Error al cargar issues: ' + error.message);
+        
+        // Return empty array on error
+        return of([]);
+      })
+    );
   }
 }

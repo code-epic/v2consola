@@ -403,71 +403,28 @@ export class IssuesComponent implements OnInit {
 
 
   getListIssues(): void {
-    console.log('🚀 INICIANDO getListIssues()');
-    console.log('📋 userId:', this.userId);
-    console.log('📊 issuesData actual length:', this.issuesData.length);
+    console.log('🔄 Componente: Delegando carga de issues al servicio');
     
-    const fnx = {
-      funcion: "Fnx_DatosServidorGitHub",
-      id_cliente: this.userId
-    };
-    console.log('📤 Enviando al servicio:', fnx);
- 
-    this.apiService.ExecFnx(fnx).subscribe(
-      (data) => {
-        console.log('Respuesta del servicio:', data);
+    // Usar el servicio para cargar las issues
+    this.githubIssuesService.loadIssues(this.userId).subscribe({
+      next: (issues) => {
+        console.log('✅ Issues cargadas desde el servicio:', issues.length);
         
-        // Finalizar estado de carga exitoso
+        // Actualizar los datos del componente
+        this.issuesData = issues;
+        
+        // Actualizar estados de carga
         this.loadingIssues = false;
         this.errorLoadingIssues = false;
         
-        // Verificar si la respuesta contiene datos válidos
-        if (data && Array.isArray(data)) {
-          console.log('🎯 Issues recibidas del servicio (array directo):', data.length);
-          this.processGitHubIssues(data);
-        } else if (data && data.issues && Array.isArray(data.issues)) {
-          console.log('🎯 Issues recibidas del servicio (data.issues):', data.issues.length);
-          this.processGitHubIssues(data.issues);
-        } else if (data && data.contenido && Array.isArray(data.contenido)) {
-          console.log('🎯 Issues recibidas del servicio (data.contenido):', data.contenido.length);
-          this.processGitHubIssues(data.contenido);
-        } else if (data && data.contenido && data.contenido.issues && Array.isArray(data.contenido.issues)) {
-          console.log('🎯 Issues recibidas del servicio (data.contenido.issues):', data.contenido.issues.length);
-          this.processGitHubIssues(data.contenido.issues);
-        } else {
-          console.warn('⚠️ Respuesta del servicio no contiene issues válidas:', data);
-          console.log('🔍 Estructura de la respuesta:', Object.keys(data || {}));
-          
-          // Inspeccionar contenido en detalle
-          if (data && data.contenido) {
-            console.log('🔎 Inspeccionando data.contenido:', data.contenido);
-            console.log('🔎 Tipo de data.contenido:', typeof data.contenido);
-            console.log('🔎 Es array data.contenido:', Array.isArray(data.contenido));
-            console.log('🔎 Keys de data.contenido:', Object.keys(data.contenido));
-            
-            // Intentar extraer de diferentes propiedades del contenido
-            const contenido = data.contenido;
-            if (contenido.issues && Array.isArray(contenido.issues)) {
-              console.log('🎯 Issues encontradas en contenido.issues:', contenido.issues.length);
-              this.processGitHubIssues(contenido.issues);
-              return;
-            } else if (contenido.data && Array.isArray(contenido.data)) {
-              console.log('🎯 Issues encontradas en contenido.data:', contenido.data.length);
-              this.processGitHubIssues(contenido.data);
-              return;
-            } else if (contenido.result && Array.isArray(contenido.result)) {
-              console.log('🎯 Issues encontradas en contenido.result:', contenido.result.length);
-              this.processGitHubIssues(contenido.result);
-              return;
-            }
-          }
-          
-          // Mantener datos mock si no hay respuesta válida
-          this.cargarIssues();
+        // Mostrar tabla si hay aplicación seleccionada
+        if (this.aplicacionSeleccionada) {
+          this.showIssuesTable = true;
+          console.log('👁️ Aplicación seleccionada, mostrando tabla de issues');
         }
       },
-      (error) => {
-        console.error('❌ Error al obtener issues del servicio:', error);
+      error: (error) => {
+        console.error('❌ Error al cargar issues desde el servicio:', error);
         
         // Establecer estado de error
         this.loadingIssues = false;
@@ -476,7 +433,7 @@ export class IssuesComponent implements OnInit {
         // En caso de error, cargar datos mock como fallback
         this.cargarIssues();
       }
-    );
+    });
   }
 
   /**
