@@ -6,7 +6,9 @@ import { takeUntil } from 'rxjs/operators';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { SessionService } from '@services/util/session.service';
 import { GitHubIssuesService } from '@services/github/github-issues.service';
+import { ApplicationsService } from '@services/github/applications.service';
 import { Issue } from '@services/github/interfaces/issue.interface';
+import { Application } from '@services/github/interfaces/application.interface';
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
@@ -32,10 +34,14 @@ export class IssuesComponent implements OnInit, OnDestroy {
   public showDetailView: boolean = false;
   userId: string = '';
 
-  // Reactive observables from service
+  // Reactive observables from services
   public issues$: Observable<Issue[]>;
   public loadingIssues$: Observable<boolean>;
   public errorIssues$: Observable<string | null>;
+  
+  public applications$: Observable<Application[]>;
+  public loadingApplications$: Observable<boolean>;
+  public errorApplications$: Observable<string | null>;
 
   // Datatable
   public ColumnMode = ColumnMode;
@@ -53,12 +59,18 @@ export class IssuesComponent implements OnInit, OnDestroy {
     private modalService: NgbModal, 
     private apiService: ApiService, 
     private sessionService: SessionService,
-    private githubIssuesService: GitHubIssuesService
+    private githubIssuesService: GitHubIssuesService,
+    private applicationsService: ApplicationsService
   ) {
-    // Initialize reactive observables from service
+    // Initialize reactive observables from services
     this.issues$ = this.githubIssuesService.issues$;
     this.loadingIssues$ = this.githubIssuesService.loading$;
     this.errorIssues$ = this.githubIssuesService.error$;
+    
+    // Initialize applications observables
+    this.applications$ = this.applicationsService.applications$;
+    this.loadingApplications$ = this.applicationsService.loading$;
+    this.errorApplications$ = this.applicationsService.error$;
   }
 
   ngOnInit(): void {
@@ -451,86 +463,32 @@ export class IssuesComponent implements OnInit, OnDestroy {
 
   /**
    * Get list of applications from service
+   * Now uses ApplicationsService for loading applications
    */
   getListAplicaciones(): void {
-    console.log('🚀 INICIANDO getListAplicaciones()');
-    console.log('📋 userId:', this.userId);
-    console.log('📊 aplicaciones actual length:', this.aplicaciones.length);
+    console.log('🚀 Componente: Delegando carga de aplicaciones al servicio');
     
-    // Establecer estado de carga
-    this.loadingAplicaciones = true;
-    this.errorLoadingAplicaciones = false;
-    
-    const fnx = {
-      funcion: "Fnx_ListaAplicacionGitea",
-      id_cliente: this.userId
-    };
-    console.log('📤 Enviando al servicio:', fnx);
-    console.log('aaaaaaaaaaaaaaaaaaa');
-    this.apiService.ExecFnx(fnx).subscribe(
-      (data) => {
-        console.log('Respuesta del servicio aplicaciones:', data);
-        
-        // Verificar si la respuesta contiene datos válidos
-        if (data && Array.isArray(data)) {
-          console.log('🎯 Aplicaciones recibidas del servicio (array directo):', data.length);
-          this.processAplicaciones(data);
-        } else if (data && data.contenido) {
-          // El contenido puede ser un array o un objeto con un array
-          if (Array.isArray(data.contenido)) {
-            console.log('🎯 Aplicaciones recibidas del servicio (data.contenido array):', data.contenido.length);
-            this.processAplicaciones(data.contenido);
-          } else if (data.contenido.aplicaciones && Array.isArray(data.contenido.aplicaciones)) {
-            console.log('🎯 Aplicaciones recibidas del servicio (data.contenido.aplicaciones):', data.contenido.aplicaciones.length);
-            this.processAplicaciones(data.contenido.aplicaciones);
-          } else {
-            console.log('🔍 Contenido del servicio:', data.contenido);
-            // Si contenido no es array, intentar extraer las aplicaciones
-            const keys = Object.keys(data.contenido || {});
-            console.log('🔍 Claves en contenido:', keys);
-            
-            // Buscar la primera clave que contenga un array
-            for (const key of keys) {
-              if (Array.isArray(data.contenido[key])) {
-                console.log(`🎯 Aplicaciones encontradas en data.contenido.${key}:`, data.contenido[key].length);
-                this.processAplicaciones(data.contenido[key]);
-                return;
-              }
-            }
-            
-            console.warn('⚠️ No se encontraron aplicaciones en el contenido');
-            this.loadMockAplicaciones();
-          }
-        } else if (data && data.data && Array.isArray(data.data)) {
-          console.log('🎯 Aplicaciones recibidas del servicio (data.data):', data.data.length);
-          this.processAplicaciones(data.data);
-        } else {
-          console.warn('⚠️ Respuesta del servicio no contiene aplicaciones válidas:', data);
-          console.log('🔍 Estructura de la respuesta:', Object.keys(data || {}));
+    // Usar el servicio para cargar aplicaciones
+    this.applicationsService.loadApplications(this.userId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (applications: Application[]) => {
+          console.log(`✅ Aplicaciones cargadas desde el servicio: ${applications.length}`);
           
-          // Cargar datos mock como fallback
-          this.loadMockAplicaciones();
+          // Actualizar la lista local para compatibilidad con código existente
+          this.aplicaciones = applications;
+          this.lstAplicaciones = applications;
+          
+          // Finalizar estado de carga
+          this.loadingAplicaciones = false;
+          this.errorLoadingAplicaciones = false;
+        },
+        error: (error) => {
+          console.error('❌ Error al cargar aplicaciones:', error);
+          this.loadingAplicaciones = false;
+          this.errorLoadingAplicaciones = true;
         }
-        
-        // Finalizar estado de carga
-        this.loadingAplicaciones = false;
-      },
-      (error) => {
-        console.log('errooooooor muestro datos mockkkkkkkk');
-        console.error('❌ Error al obtener aplicaciones del servicio:', error);
-        
-        // En caso de error, cargar datos mock como fallback
-        this.loadMockAplicaciones();
-        
-        // Intentar obtener aplicaciones por WebSocket como último recurso
-        console.log('🔌 Intentando obtener aplicaciones por WebSocket...');
-        this.requestApplicationsViaWebSocket();
-        
-        // Establecer estado de error
-        this.loadingAplicaciones = false;
-        this.errorLoadingAplicaciones = true;
-      }
-    );
+      });
   }
 
   // Nuevo método para obtener un ID único o recuperar uno existente.
