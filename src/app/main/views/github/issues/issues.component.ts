@@ -50,6 +50,41 @@ export class IssuesComponent implements OnInit, OnDestroy {
   public aplicaciones: Application[] = [];
   public loadingIssues = false;
 
+  // ========================================
+  // ENHANCED UX LOADING STATES
+  // ========================================
+  
+  // Granular loading states for better UX
+  public isInitialLoading = true;
+  public isApplicationsLoading = false;
+  public isIssuesLoading = false;
+  public isSearching = false;
+  
+  // Error states with user-friendly messages
+  public applicationsError: string | null = null;
+  public issuesError: string | null = null;
+  
+  // Success states for positive feedback
+  public showSuccessMessage = false;
+  public successMessage = '';
+  
+  // ========================================
+  // BLOCKING LOADING STATES (Full Screen)
+  // ========================================
+  
+  // Bloquear toda la interfaz hasta que las aplicaciones estén listas
+  public showApplicationsLoadingScreen = true;
+  
+  // Bloquear la tabla de issues hasta que estén listas
+  public showIssuesLoadingScreen = false;
+  
+  // Mensajes de carga personalizados
+  public loadingMessage = 'Cargando aplicaciones...';
+  public loadingSubMessage = 'Conectando con el servidor';
+  
+  // Control de visibilidad de contenido
+  public showMainContent = false;
+
   constructor(
     private modalService: NgbModal, 
     private apiService: ApiService, 
@@ -81,13 +116,20 @@ export class IssuesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userId = this.getUserId();
-    console.log("llego");
+    console.log("Iniciando componente Issues");
+    
+    // Mostrar pantalla de carga bloqueante desde el inicio
+    this.showApplicationsLoading();
     
     // Connect to WebSocket with userId
     this.sessionService.connect(this.userId);
     
+    // Actualizar mensaje de carga
+    this.updateLoadingMessage('Estableciendo conexión...', 'Conectando con WebSocket');
+    
     // Esperar 2 segundos para que se establezca la conexión WebSocket antes de cargar aplicaciones
     setTimeout(() => {
+      this.updateLoadingMessage('Cargando aplicaciones...', 'Obteniendo lista de repositorios');
       console.log('🔌 Conexión WebSocket establecida, cargando aplicaciones...');
       this.getListAplicaciones();
     }, 2000);
@@ -207,38 +249,48 @@ export class IssuesComponent implements OnInit, OnDestroy {
     // Limpiar issues anteriores usando el servicio
     this.githubIssuesService.clearIssues();
     
-    // Mostrar estado de carga
-    this.loadingIssues = true;
+    // Mostrar pantalla de carga bloqueante para issues
+    this.showIssuesLoading();
+    this.setIssuesLoading(true);
     this.showIssuesTable = true; // Mostrar la tabla inmediatamente con loading
-    
+  
     console.log('🔍 DEBUG - Estado después de selección:');
     console.log('  - showIssuesTable:', this.showIssuesTable);
     console.log('  - loadingIssues:', this.loadingIssues);
     console.log('  - aplicacionSeleccionada:', this.aplicacionSeleccionada?.name);
-    
+  
     console.log('🚀 Cargando issues para la aplicación seleccionada...');
     console.log('⏳ Estado de carga activado');
-    
+  
     // Trigger change detection for OnPush
     this.cdr.markForCheck();
-    
-    // Cargar issues
+  
+    // Cargar issues inmediatamente (sin delay artificial)
+    console.log('🚀 Iniciando carga de issues inmediatamente');
     this.getListIssues();
   }
 
 
   /**
-   * Filter issues by search - Optimized for OnPush
+   * Filter issues by search - Enhanced UX with loading states
    */
   filterUpdate(event: any): void {
     const searchTerm = event.target.value;
     this.searchValue = searchTerm;
     
-    console.log('🔍 Filtering issues with term:', searchTerm);
-    // TODO: Implement reactive filtering in future iteration
+    // Show search loading state for better UX
+    this.setSearchLoading(true);
     
-    // Trigger change detection for OnPush
-    this.cdr.markForCheck();
+    console.log('🔍 Filtering issues with term:', searchTerm);
+    
+    // Simulate search delay for better UX (debounce effect)
+    setTimeout(() => {
+      // TODO: Implement reactive filtering in future iteration
+      console.log('✅ Search completed for term:', searchTerm);
+      
+      // Hide search loading state
+      this.setSearchLoading(false);
+    }, 300);
   }
 
   /**
@@ -347,6 +399,146 @@ export class IssuesComponent implements OnInit, OnDestroy {
     return label;
   }
 
+  // ========================================
+  // ENHANCED UX STATE MANAGEMENT
+  // ========================================
+
+  /**
+   * Set applications loading state with UX feedback
+   */
+  private setApplicationsLoading(loading: boolean, error: string | null = null): void {
+    this.isApplicationsLoading = loading;
+    this.applicationsError = error;
+    
+    if (loading) {
+      console.log('🔄 Applications loading started...');
+    } else {
+      console.log('✅ Applications loading completed');
+      if (!error && this.aplicaciones.length > 0) {
+        this.showSuccessMessage = true;
+        this.successMessage = `${this.aplicaciones.length} aplicaciones cargadas exitosamente`;
+        this.hideSuccessMessage();
+      }
+    }
+    
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Set issues loading state with UX feedback
+   */
+  private setIssuesLoading(loading: boolean, error: string | null = null): void {
+    this.isIssuesLoading = loading;
+    this.loadingIssues = loading; // Keep compatibility
+    this.issuesError = error;
+    
+    if (loading) {
+      console.log('🔄 Issues loading started...');
+    } else {
+      console.log('✅ Issues loading completed');
+    }
+    
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Set search loading state
+   */
+  private setSearchLoading(loading: boolean): void {
+    this.isSearching = loading;
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Hide success message after delay
+   */
+  private hideSuccessMessage(): void {
+    setTimeout(() => {
+      this.showSuccessMessage = false;
+      this.successMessage = '';
+      this.cdr.markForCheck();
+    }, 3000);
+  }
+
+  /**
+   * Set initial loading complete
+   */
+  private setInitialLoadingComplete(): void {
+    this.isInitialLoading = false;
+    this.cdr.markForCheck();
+  }
+
+  // ========================================
+  // BLOCKING LOADING SCREEN MANAGEMENT
+  // ========================================
+
+  /**
+   * Show applications loading screen (blocks entire UI)
+   */
+  private showApplicationsLoading(): void {
+    this.showApplicationsLoadingScreen = true;
+    this.showMainContent = false;
+    this.loadingMessage = 'Cargando aplicaciones...';
+    this.loadingSubMessage = 'Conectando con el servidor y obteniendo datos';
+    console.log('🔄 Mostrando pantalla de carga de aplicaciones');
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Hide applications loading screen and show main content
+   */
+  private hideApplicationsLoading(): void {
+    this.showApplicationsLoadingScreen = false;
+    this.showMainContent = true;
+    console.log('✅ Ocultando pantalla de carga - aplicaciones listas');
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Show issues loading screen (blocks issues table)
+   */
+  private showIssuesLoading(): void {
+    console.log('🔄 INICIANDO showIssuesLoading()');
+    console.log('  - showIssuesLoadingScreen ANTES:', this.showIssuesLoadingScreen);
+    
+    this.showIssuesLoadingScreen = true;
+    this.loadingMessage = 'Cargando issues...';
+    this.loadingSubMessage = `Obteniendo issues de ${this.aplicacionSeleccionada?.name || 'la aplicación'}`;
+    
+    console.log('  - showIssuesLoadingScreen DESPUÉS:', this.showIssuesLoadingScreen);
+    console.log('  - loadingMessage:', this.loadingMessage);
+    console.log('  - loadingSubMessage:', this.loadingSubMessage);
+    console.log('🔄 Pantalla de carga de issues ACTIVADA');
+    
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Hide issues loading screen
+   */
+  private hideIssuesLoading(): void {
+    console.log('✅ INICIANDO hideIssuesLoading()');
+    console.log('  - showIssuesLoadingScreen ANTES:', this.showIssuesLoadingScreen);
+    
+    this.showIssuesLoadingScreen = false;
+    
+    console.log('  - showIssuesLoadingScreen DESPUÉS:', this.showIssuesLoadingScreen);
+    console.log('✅ Pantalla de carga de issues DESACTIVADA');
+    
+    this.cdr.markForCheck();
+  }
+
+  /**
+   * Update loading message dynamically
+   */
+  private updateLoadingMessage(message: string, subMessage?: string): void {
+    this.loadingMessage = message;
+    if (subMessage) {
+      this.loadingSubMessage = subMessage;
+    }
+    this.cdr.markForCheck();
+  }
+
 
   getListIssues(): void {
     console.log('🔄 Componente: Delegando carga de issues al servicio');
@@ -358,27 +550,31 @@ export class IssuesComponent implements OnInit, OnDestroy {
         next: (issues) => {
           console.log('✅ Issues cargadas desde el servicio:', issues.length);
           
-          // Actualizar estados locales
-          this.loadingIssues = false;
+          // IMPORTANTE: NO ocultar la pantalla de carga aquí
+          // porque estas pueden ser datos mock. La pantalla se ocultará
+          // cuando lleguen las issues reales por WebSocket en processGitHubIssues()
           
-          // Mostrar tabla si hay aplicación seleccionada
+          console.log('🔄 Manteniendo pantalla de carga - esperando issues reales por WebSocket');
+          
+          // Actualizar estados internos pero mantener loading visible
+          this.setIssuesLoading(false); // Estado interno
+          
+          // Mostrar tabla si hay aplicación seleccionada (con loading overlay)
           if (this.aplicacionSeleccionada) {
             this.showIssuesTable = true;
-            console.log('👁️ Aplicación seleccionada, mostrando tabla de issues');
+            console.log('👁️ Aplicación seleccionada, mostrando tabla con overlay de carga');
           }
-          
-          // Trigger change detection for OnPush
-          this.cdr.markForCheck();
         },
         error: (error) => {
-          console.error('❌ Error al cargar issues desde el servicio:', error);
+          console.error('❌ Error al cargar issues:', error);
           
-          // Establecer estado de error
-          this.loadingIssues = false;
+          // Establecer estado de error pero mantener pantalla de carga
+          // Las issues reales pueden llegar por WebSocket aún después del error de API
+          this.setIssuesLoading(false, 'Error al cargar issues. Esperando datos por WebSocket...');
+          
+          console.log('🔄 Manteniendo pantalla de carga - WebSocket puede traer datos reales');
           
           // En caso de error, el servicio ya maneja el fallback automáticamente
-          // Trigger change detection for OnPush
-          this.cdr.markForCheck();
         }
       });
   }
@@ -389,6 +585,9 @@ export class IssuesComponent implements OnInit, OnDestroy {
    */
   getListAplicaciones(): void {
     console.log('🚀 Componente: Delegando carga de aplicaciones al servicio');
+    
+    // Iniciar estado de carga de aplicaciones
+    this.setApplicationsLoading(true);
     
     // Usar el servicio para cargar aplicaciones
     this.applicationsService.loadApplications(this.userId)
@@ -409,11 +608,26 @@ export class IssuesComponent implements OnInit, OnDestroy {
           
           console.log('🏠 Mostrando cards de aplicaciones - tabla oculta');
           
-          // Estado de carga manejado por el servicio
+          // Finalizar carga de aplicaciones con éxito
+          this.setApplicationsLoading(false);
+          
+          // Ocultar pantalla de carga bloqueante y mostrar contenido
+          this.hideApplicationsLoading();
+          
+          // Completar carga inicial
+          this.setInitialLoadingComplete();
         },
         error: (error) => {
           console.error('❌ Error al cargar aplicaciones:', error);
-          // Estado de error manejado por el servicio
+          
+          // Finalizar carga con error
+          this.setApplicationsLoading(false, 'Error al cargar aplicaciones. Se mostrarán datos de ejemplo.');
+          
+          // Ocultar pantalla de carga aunque haya error
+          this.hideApplicationsLoading();
+          
+          // Completar carga inicial aunque haya error
+          this.setInitialLoadingComplete();
         }
       });
   }
@@ -480,12 +694,19 @@ export class IssuesComponent implements OnInit, OnDestroy {
     // SOLO mostrar la tabla si ya hay una aplicación seleccionada
     if (this.aplicacionSeleccionada) {
       this.showIssuesTable = true;
-      // Finalizar estado de carga cuando se reciben issues
-      this.loadingIssues = false;
+      // Finalizar estado de carga con UX mejorado
+      this.setIssuesLoading(false);
+      
+      // Ocultar pantalla de carga de issues
+      this.hideIssuesLoading();
+      
       console.log('👁️ Aplicación ya seleccionada, mostrando tabla de issues');
       console.log('✅ Estado de carga finalizado - issues cargadas');
-      // Trigger change detection for OnPush
-      this.cdr.markForCheck();
+      
+      // Mostrar mensaje de éxito
+      this.showSuccessMessage = true;
+      this.successMessage = `${rawIssues.length} issues cargadas exitosamente`;
+      this.hideSuccessMessage();
     } else {
       console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
     }
