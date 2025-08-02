@@ -174,6 +174,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
             console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.aplicaciones.length);
             const processedApps = this.applicationsService.processApplications(innerMessage.aplicaciones);
             this.applicationsService.setApplications(processedApps);
+            
+            // AHORA SÍ ocultar la pantalla de carga - aplicaciones reales llegaron
+            console.log('✅ Aplicaciones reales recibidas por WebSocket - ocultando pantalla de carga');
+            this.hideApplicationsLoading();
+            this.setInitialLoadingComplete();
           } else {
             console.log('📄 Mensaje del servidor:', innerMessage);
           }
@@ -192,6 +197,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
                 console.log('🏢 Aplicaciones extraídas del mensaje:', jsonMatch.length);
                 const processedApps = this.applicationsService.processApplications(jsonMatch);
                 this.applicationsService.setApplications(processedApps);
+                
+                // AHORA SÍ ocultar la pantalla de carga - aplicaciones reales llegaron
+                console.log('✅ Aplicaciones reales recibidas por WebSocket - ocultando pantalla de carga');
+                this.hideApplicationsLoading();
+                this.setInitialLoadingComplete();
               } else {
                 console.log('🎯 Issues extraídas del mensaje:', jsonMatch.length);
                 this.processGitHubIssues(jsonMatch);
@@ -203,6 +213,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
               console.log('🏢 Aplicaciones extraídas del mensaje:', jsonMatch.aplicaciones.length);
               const processedApps = this.applicationsService.processApplications(jsonMatch.aplicaciones);
               this.applicationsService.setApplications(processedApps);
+              
+              // AHORA SÍ ocultar la pantalla de carga - aplicaciones reales llegaron
+              console.log('✅ Aplicaciones reales extraídas por WebSocket - ocultando pantalla de carga');
+              this.hideApplicationsLoading();
+              this.setInitialLoadingComplete();
             }
           } else {
             // Si no es JSON, tratarlo como texto plano para compatibilidad
@@ -608,26 +623,26 @@ export class IssuesComponent implements OnInit, OnDestroy {
           
           console.log('🏠 Mostrando cards de aplicaciones - tabla oculta');
           
-          // Finalizar carga de aplicaciones con éxito
-          this.setApplicationsLoading(false);
+          // IMPORTANTE: NO ocultar la pantalla de carga aquí
+          // porque estas pueden ser datos del servicio. La pantalla se ocultará
+          // cuando lleguen las aplicaciones reales por WebSocket
+        
+          console.log('🔄 Manteniendo pantalla de carga - esperando aplicaciones reales por WebSocket');
           
-          // Ocultar pantalla de carga bloqueante y mostrar contenido
-          this.hideApplicationsLoading();
-          
-          // Completar carga inicial
-          this.setInitialLoadingComplete();
+          // Actualizar estados internos pero mantener loading visible
+          this.setApplicationsLoading(false); // Estado interno
         },
         error: (error) => {
           console.error('❌ Error al cargar aplicaciones:', error);
           
-          // Finalizar carga con error
-          this.setApplicationsLoading(false, 'Error al cargar aplicaciones. Se mostrarán datos de ejemplo.');
+          // Establecer estado de error pero mantener pantalla de carga
+          // Las aplicaciones reales pueden llegar por WebSocket aún después del error de API
+          this.setApplicationsLoading(false, 'Error al cargar aplicaciones. Esperando datos por WebSocket...');
           
-          // Ocultar pantalla de carga aunque haya error
-          this.hideApplicationsLoading();
+          console.log('🔄 Manteniendo pantalla de carga - WebSocket puede traer aplicaciones reales');
           
-          // Completar carga inicial aunque haya error
-          this.setInitialLoadingComplete();
+          // En caso de error, el servicio ya maneja el fallback automáticamente
+          // NO ocultar pantalla ni completar carga inicial aquí
         }
       });
   }
