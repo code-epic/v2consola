@@ -8,6 +8,7 @@ import { SessionService } from '@services/util/session.service';
 import { GitHubIssuesService } from '@services/github/github-issues.service';
 import { ApplicationsService } from '@services/github/applications.service';
 import { ErrorHandlerService } from '@services/github/error-handler.service';
+import { IssueStatusService, IssueStatusChangeResponse } from '@services/github/issue-status.service';
 import { Issue } from '@services/github/interfaces/issue.interface';
 import { Application } from '@services/github/interfaces/application.interface';
 @Component({
@@ -98,6 +99,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     private githubIssuesService: GitHubIssuesService,
     private applicationsService: ApplicationsService,
     private errorHandler: ErrorHandlerService,
+    private issueStatusService: IssueStatusService,
     private cdr: ChangeDetectorRef
   ) {
     // Initialize reactive observables from services
@@ -341,6 +343,114 @@ export class IssuesComponent implements OnInit, OnDestroy {
     this.searchValue = '';
     this.filterUpdate({ target: { value: '' } });
     console.log('🧹 Búsqueda limpiada');
+  }
+
+  /**
+   * Cambia el estatus de una issue (cerrar o reabrir)
+   * @param issue Issue a modificar
+   * @param open true para reabrir, false para cerrar
+   */
+  changeIssueStatus(issue: Issue, open?: boolean): void {
+    if (!issue || !issue.id) {
+      this.errorHandler.showErrorToast({
+        id: 'invalid-issue',
+        type: 'error',
+        title: 'Error',
+        message: 'Issue inválida para cambiar estatus',
+        duration: 5000,
+        dismissible: true
+      });
+      return;
+    }
+
+    const action = open ? 'reabrir' : 'cerrar';
+    console.log(`🔄 Iniciando ${action} de issue #${issue.id}`);
+
+    // Mostrar toast de progreso
+    this.errorHandler.showInfoToast(
+      `${action.charAt(0).toUpperCase() + action.slice(1)}ando issue`,
+      `Procesando cambio de estatus para issue #${issue.id}...`
+    );
+
+    this.issueStatusService.changeIssueStatus(issue.id, this.userId, open).subscribe({
+      next: (response: IssueStatusChangeResponse) => {
+        console.log('✅ Estatus cambiado exitosamente:', response);
+        
+        // Mostrar toast de éxito
+        this.errorHandler.showSuccessToast(
+          'Estatus actualizado',
+          `Issue #${issue.id} ${open ? 'reabierta' : 'cerrada'} exitosamente`
+        );
+
+        // Actualizar el issue en el servicio
+        this.updateIssueInService(issue.id, open ? 'open' : 'closed');
+        
+        // Refrescar la lista de issues
+        this.refreshIssuesList();
+      },
+      error: (error: any) => {
+        console.error(`❌ Error al ${action} issue:`, error);
+        
+        // Mostrar toast de error con opción de reintentar
+        this.errorHandler.showErrorToast({
+          id: `status-change-error-${issue.id}`,
+          type: 'error',
+          title: `Error al ${action} issue`,
+          message: error.message || `No se pudo ${action} la issue #${issue.id}`,
+          duration: 0,
+          dismissible: true,
+          actions: [{
+            label: 'Reintentar',
+            callback: () => this.changeIssueStatus(issue, open),
+            style: 'primary'
+          }]
+        });
+      }
+    });
+  }
+
+  /**
+   * Cierra una issue específica
+   * @param issue Issue a cerrar
+   */
+  closeIssue(issue: Issue): void {
+    console.log(`🔒 Cerrando issue #${issue.id}`);
+    this.changeIssueStatus(issue, false);
+  }
+
+  /**
+   * Reabre una issue específica
+   * @param issue Issue a reabrir
+   */
+  reopenIssue(issue: Issue): void {
+    console.log(`🔓 Reabriendo issue #${issue.id}`);
+    this.changeIssueStatus(issue, true);
+  }
+
+  /**
+   * Actualiza el estatus de una issue en el servicio
+   * @param issueId ID de la issue
+   * @param newStatus Nuevo estatus
+   */
+  private updateIssueInService(issueId: number, newStatus: 'open' | 'closed'): void {
+    // Usar el método optimizado del servicio para actualizar una issue específica
+    this.githubIssuesService.updateIssueById(issueId, { 
+      state: newStatus,
+      updated_at: new Date().toISOString() // Actualizar timestamp
+    });
+    
+    console.log(`🔄 Issue #${issueId} actualizada en el servicio con estatus: ${newStatus}`);
+  }
+
+  /**
+   * Refresca la lista de issues desde el servidor
+   */
+  private refreshIssuesList(): void {
+    if (this.aplicacionSeleccionada) {
+      console.log('🔄 Refrescando lista de issues...');
+      // Recargar issues para la aplicación seleccionada
+      this.getListIssues();
+    }
   }
   /**
    * Clear selection

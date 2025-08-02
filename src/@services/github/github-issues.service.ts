@@ -144,6 +144,33 @@ export class GitHubIssuesService {
   }
 
   /**
+   * Update issues array directly
+   * @param issues New issues array
+   */
+  updateIssues(issues: Issue[]): void {
+    this.issuesSubject.next(issues);
+    console.log(`🔄 Issues updated: ${issues.length} issues`);
+  }
+
+  /**
+   * Update a specific issue by ID
+   * @param issueId ID of the issue to update
+   * @param updates Partial issue object with updates
+   */
+  updateIssueById(issueId: number, updates: Partial<Issue>): void {
+    const currentIssues = this.getCurrentIssues();
+    const updatedIssues = currentIssues.map(issue => {
+      if (issue.id === issueId) {
+        return { ...issue, ...updates };
+      }
+      return issue;
+    });
+    
+    this.updateIssues(updatedIssues);
+    console.log(`🔄 Issue #${issueId} updated with:`, updates);
+  }
+
+  /**
    * Clear all issues
    */
   clearIssues(): void {

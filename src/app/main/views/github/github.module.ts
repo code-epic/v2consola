@@ -16,6 +16,7 @@ import { ContentHeaderModule } from 'app/layout/components/content-header/conten
 import { GitHubIssuesService } from '@services/github/github-issues.service';
 import { ApplicationsService } from '@services/github/applications.service';
 import { ErrorHandlerService } from '@services/github/error-handler.service';
+import { IssueStatusService } from '@services/github/issue-status.service';
 
 import { IssuesComponent } from './issues/issues.component';
 
@@ -45,7 +46,8 @@ const routes = [
   providers: [
     GitHubIssuesService,
     ApplicationsService,
-    ErrorHandlerService
+    ErrorHandlerService,
+    IssueStatusService
   ]
 })
 export class GithubModule { }

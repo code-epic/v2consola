@@ -647,6 +647,34 @@
           </div>
           <div class="card-content">
             <div class="actions-grid">
+              <!-- Botón para cerrar issue -->
+              <button type="button" 
+                      class="btn btn-danger btn-action" 
+                      (click)="closeIssue(selectedIssue)"
+                      [disabled]="(issueStatusService.loading$ | async)"
+                      *ngIf="selectedIssue?.state === 'open'"
+                      title="Cerrar esta issue">
+                <span [data-feather]="'x-circle'" [size]="16" class="mb-1"></span>
+                <span class="btn-label">Cerrar</span>
+                <div *ngIf="(issueStatusService.loading$ | async)" class="spinner-border spinner-border-sm ms-1" role="status">
+                  <span class="visually-hidden">Cargando...</span>
+                </div>
+              </button>
+              
+              <!-- Botón para reabrir issue -->
+              <button type="button" 
+                      class="btn btn-success btn-action" 
+                      (click)="reopenIssue(selectedIssue)"
+                      [disabled]="(issueStatusService.loading$ | async)"
+                      *ngIf="selectedIssue?.state === 'closed'"
+                      title="Reabrir esta issue">
+                <span [data-feather]="'check-circle'" [size]="16" class="mb-1"></span>
+                <span class="btn-label">Reabrir</span>
+                <div *ngIf="(issueStatusService.loading$ | async)" class="spinner-border spinner-border-sm ms-1" role="status">
+                  <span class="visually-hidden">Cargando...</span>
+                </div>
+              </button>
+              
               <button type="button" 
                       class="btn btn-primary btn-action" 
                       (click)="editarIssue(selectedIssue)" 
