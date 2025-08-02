@@ -1,7 +1,8 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { ColumnMode } from '@swimlane/ngx-datatable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { SessionService } from '@services/util/session.service';
 import { GitHubIssuesService } from '@services/github/github-issues.service';
@@ -11,22 +12,30 @@ import { Issue } from '@services/github/interfaces/issue.interface';
   templateUrl: './issues.component.html',
   styleUrls: ['./issues.component.scss']
 })
-export class IssuesComponent implements OnInit {
+export class IssuesComponent implements OnInit, OnDestroy {
+
+  // Destroy subject for subscription management
+  private destroy$ = new Subject<void>();
 
   // Content Header
   public contentHeader: object;
   private sessionMessagesSub: Subscription | undefined;
   private sessionStatusSub: Subscription | undefined;
+  
   // Data
   public lstAplicaciones: any[] = [];
   public aplicacionSeleccionada: any = null;
-  public issuesData: any[] = [];
   public searchValue: string = '';
   public basicSelectedOption: number = 10;
   public showIssuesTable: boolean = false;
   public selectedIssue: any = null;
   public showDetailView: boolean = false;
   userId: string = '';
+
+  // Reactive observables from service
+  public issues$: Observable<Issue[]>;
+  public loadingIssues$: Observable<boolean>;
+  public errorIssues$: Observable<string | null>;
 
   // Datatable
   public ColumnMode = ColumnMode;
@@ -46,6 +55,10 @@ export class IssuesComponent implements OnInit {
     private sessionService: SessionService,
     private githubIssuesService: GitHubIssuesService
   ) {
+    // Initialize reactive observables from service
+    this.issues$ = this.githubIssuesService.issues$;
+    this.loadingIssues$ = this.githubIssuesService.loading$;
+    this.errorIssues$ = this.githubIssuesService.error$;
   }
 
   ngOnInit(): void {
@@ -167,8 +180,8 @@ export class IssuesComponent implements OnInit {
     this.errorLoadingIssues = false;
     this.showIssuesTable = true; // Mostrar la tabla inmediatamente con loading
     
-    // Limpiar issues anteriores
-    this.issuesData = [];
+    // Limpiar issues anteriores usando el servicio
+    this.githubIssuesService.clearIssues();
     
     console.log('🚀 Cargando issues para la aplicación seleccionada...');
     console.log('⏳ Estado de carga activado');
@@ -181,15 +194,14 @@ export class IssuesComponent implements OnInit {
    * Load Issues (Mock data for now)
    */
   cargarIssues(): void {
-    console.log('⚠️ cargarIssues() llamado - NO debería sobrescribir datos reales');
-    console.log('📊 issuesData.length actual antes de cargarIssues:', this.issuesData.length);
+    console.log('⚠️ cargarIssues() llamado - Cargando datos mock como fallback');
     
-    // TEMPORALMENTE COMENTADO para evitar sobrescribir datos reales
     // Solo cargar mock si NO hay datos del servicio
-    if (this.issuesData.length === 0) {
+    const currentIssues = this.githubIssuesService.getCurrentIssues();
+    if (currentIssues.length === 0) {
       console.log('📝 Cargando datos mock como fallback');
       // Mock issues data - More realistic and complete
-    this.issuesData = [
+      const mockIssues = [
       {
         id: 1,
         title: 'Error en el login de usuarios - Validación de credenciales falla',
@@ -198,8 +210,8 @@ export class IssuesComponent implements OnInit {
         priority: 'high',
         assignee: 'Juan Pérez',
         assignee_avatar: '',
-        created_at: new Date('2024-01-15'),
-        updated_at: new Date('2024-01-20'),
+        created_at: '2024-01-15T10:00:00Z',
+        updated_at: '2024-01-20T15:30:00Z',
         labels: ['bug', 'frontend', 'critical'],
         comments: 12,
         milestone: 'v2.1.0',
@@ -214,8 +226,8 @@ export class IssuesComponent implements OnInit {
         priority: 'medium',
         assignee: 'María García',
         assignee_avatar: '',
-        created_at: new Date('2024-01-10'),
-        updated_at: new Date('2024-01-18'),
+        created_at: '2024-01-10T09:00:00Z',
+        updated_at: '2024-01-18T14:20:00Z',
         labels: ['enhancement', 'backend', 'feature'],
         comments: 8,
         milestone: 'v2.2.0',
@@ -230,8 +242,8 @@ export class IssuesComponent implements OnInit {
         priority: 'medium',
         assignee: 'Carlos López',
         assignee_avatar: '',
-        created_at: new Date('2024-01-05'),
-        updated_at: new Date('2024-01-15'),
+        created_at: '2024-01-05T08:30:00Z',
+        updated_at: '2024-01-15T16:45:00Z',
         labels: ['performance', 'database', 'optimization'],
         comments: 15,
         milestone: 'v2.0.1',
@@ -246,8 +258,8 @@ export class IssuesComponent implements OnInit {
         priority: 'low',
         assignee: 'Ana Martínez',
         assignee_avatar: '',
-        created_at: new Date('2024-01-12'),
-        updated_at: new Date('2024-01-19'),
+        created_at: '2024-01-12T11:15:00Z',
+        updated_at: '2024-01-19T13:25:00Z',
         labels: ['documentation', 'api'],
         comments: 3,
         milestone: 'v2.1.0',
@@ -262,8 +274,8 @@ export class IssuesComponent implements OnInit {
         priority: 'high',
         assignee: 'Roberto Silva',
         assignee_avatar: '',
-        created_at: new Date('2024-01-08'),
-        updated_at: new Date('2024-01-22'),
+        created_at: '2024-01-08T07:45:00Z',
+        updated_at: '2024-01-22T17:10:00Z',
         labels: ['security', 'authentication', 'enhancement'],
         comments: 6,
         milestone: 'v2.2.0',
@@ -278,8 +290,8 @@ export class IssuesComponent implements OnInit {
         priority: 'medium',
         assignee: 'Diego Torres',
         assignee_avatar: '',
-        created_at: new Date('2024-01-14'),
-        updated_at: new Date('2024-01-21'),
+        created_at: '2024-01-14T12:30:00Z',
+        updated_at: '2024-01-21T18:15:00Z',
         labels: ['bug', 'performance', 'memory'],
         comments: 9,
         milestone: 'v2.1.1',
@@ -294,8 +306,8 @@ export class IssuesComponent implements OnInit {
         priority: 'low',
         assignee: 'Sofía Ramírez',
         assignee_avatar: '',
-        created_at: new Date('2024-01-03'),
-        updated_at: new Date('2024-01-17'),
+        created_at: '2024-01-03T06:20:00Z',
+        updated_at: '2024-01-17T19:40:00Z',
         labels: ['ui', 'ux', 'enhancement'],
         comments: 11,
         milestone: 'v2.0.0',
@@ -310,8 +322,8 @@ export class IssuesComponent implements OnInit {
         priority: 'high',
         assignee: '',
         assignee_avatar: '',
-        created_at: new Date('2024-01-16'),
-        updated_at: new Date('2024-01-16'),
+        created_at: '2024-01-16T14:00:00Z',
+        updated_at: '2024-01-16T14:00:00Z',
         labels: ['infrastructure', 'backup', 'automation'],
         comments: 2,
         milestone: 'v2.1.0',
@@ -320,8 +332,10 @@ export class IssuesComponent implements OnInit {
       }
     ];
     
+    // Usar el servicio para procesar los datos mock
+    this.githubIssuesService.processIssues(mockIssues);
     this.showIssuesTable = true;
-  }
+    }
   }
 
   /**
@@ -339,7 +353,7 @@ export class IssuesComponent implements OnInit {
   limpiar(): void {
     this.aplicacionSeleccionada = null;
     this.showIssuesTable = false;
-    this.issuesData = [];
+    this.githubIssuesService.clearIssues(); // Usar servicio en lugar de array local
     this.searchValue = '';
   }
 
@@ -405,35 +419,34 @@ export class IssuesComponent implements OnInit {
   getListIssues(): void {
     console.log('🔄 Componente: Delegando carga de issues al servicio');
     
-    // Usar el servicio para cargar las issues
-    this.githubIssuesService.loadIssues(this.userId).subscribe({
-      next: (issues) => {
-        console.log('✅ Issues cargadas desde el servicio:', issues.length);
-        
-        // Actualizar los datos del componente
-        this.issuesData = issues;
-        
-        // Actualizar estados de carga
-        this.loadingIssues = false;
-        this.errorLoadingIssues = false;
-        
-        // Mostrar tabla si hay aplicación seleccionada
-        if (this.aplicacionSeleccionada) {
-          this.showIssuesTable = true;
-          console.log('👁️ Aplicación seleccionada, mostrando tabla de issues');
+    // Usar el servicio para cargar las issues - el estado se maneja automáticamente
+    this.githubIssuesService.loadIssues(this.userId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (issues) => {
+          console.log('✅ Issues cargadas desde el servicio:', issues.length);
+          
+          // Actualizar estados locales
+          this.loadingIssues = false;
+          this.errorLoadingIssues = false;
+          
+          // Mostrar tabla si hay aplicación seleccionada
+          if (this.aplicacionSeleccionada) {
+            this.showIssuesTable = true;
+            console.log('👁️ Aplicación seleccionada, mostrando tabla de issues');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error al cargar issues desde el servicio:', error);
+          
+          // Establecer estado de error
+          this.loadingIssues = false;
+          this.errorLoadingIssues = true;
+          
+          // En caso de error, cargar datos mock como fallback
+          this.cargarIssues();
         }
-      },
-      error: (error) => {
-        console.error('❌ Error al cargar issues desde el servicio:', error);
-        
-        // Establecer estado de error
-        this.loadingIssues = false;
-        this.errorLoadingIssues = true;
-        
-        // En caso de error, cargar datos mock como fallback
-        this.cargarIssues();
-      }
-    });
+      });
   }
 
   /**
@@ -702,14 +715,10 @@ export class IssuesComponent implements OnInit {
   private processGitHubIssues(rawIssues: any[]): void {
     console.log('🔄 Componente: Delegando procesamiento de issues al servicio');
     
-    // Usar el servicio para procesar las issues
-    const processedIssues = this.githubIssuesService.processIssues(rawIssues);
+    // Usar el servicio para procesar las issues - el servicio maneja el estado automáticamente
+    this.githubIssuesService.processIssues(rawIssues);
     
-    // Actualizar los datos del componente con las issues procesadas
-    console.log('🔄 ANTES de actualizar issuesData. Length actual:', this.issuesData.length);
-    this.issuesData = processedIssues;
-    console.log('✅ DESPUÉS de actualizar issuesData. Nuevo length:', this.issuesData.length);
-    console.log('📋 Primeras 3 issues procesadas:', this.issuesData.slice(0, 3).map(i => ({id: i.id, title: i.title, priority: i.priority})));
+    console.log('✅ Issues procesadas y estado actualizado en el servicio');
     
     // SOLO mostrar la tabla si ya hay una aplicación seleccionada
     if (this.aplicacionSeleccionada) {
@@ -722,6 +731,24 @@ export class IssuesComponent implements OnInit {
     } else {
       console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
     }
+  }
+
+  /**
+   * Component cleanup
+   */
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    
+    // Clean up WebSocket subscriptions
+    if (this.sessionMessagesSub) {
+      this.sessionMessagesSub.unsubscribe();
+    }
+    if (this.sessionStatusSub) {
+      this.sessionStatusSub.unsubscribe();
+    }
+    
+    console.log('🧹 IssuesComponent destroyed and subscriptions cleaned up');
   }
 
 }

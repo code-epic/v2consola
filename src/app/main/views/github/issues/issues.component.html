@@ -167,7 +167,7 @@
                     <small class="text-muted">{{ aplicacionSeleccionada?.owner || 'code-epic' }}/{{ aplicacionSeleccionada?.repository || 'fideicomiso' }}</small>
                   </div>
                   <div class="ml-auto">
-                    <span class="badge badge-light-info">{{ issuesData.length }} issues</span>
+                    <span class="badge badge-light-info">{{ (issues$ | async)?.length || 0 }} issues</span>
                   </div>
                 </div>
               </div>
@@ -195,7 +195,7 @@
 
           <!-- Issues DataTable -->
           <div *ngIf="!loadingIssues && !errorLoadingIssues">
-          <ngx-datatable [rows]="issuesData" 
+          <ngx-datatable [rows]="issues$ | async" 
                          [rowHeight]="65" 
                          class="bootstrap core-bootstrap" 
                          [columnMode]="ColumnMode.force" 

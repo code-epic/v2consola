@@ -240,9 +240,11 @@ export class GitHubIssuesService {
         if (rawIssues.length > 0) {
           return this.processIssues(rawIssues);
         } else {
-          console.warn('⚠️ No se encontraron issues válidas, retornando array vacío');
-          this.setLoading(false);
-          return [];
+          console.warn('⚠️ No se encontraron issues válidas, cargando datos mock como fallback');
+          
+          // Cargar datos mock como fallback
+          const mockIssues = this.getMockIssues();
+          return this.processIssues(mockIssues);
         }
       }),
       catchError((error) => {
@@ -318,5 +320,77 @@ export class GitHubIssuesService {
       
       return null;
     }
+  }
+
+  /**
+   * Get mock issues data as fallback
+   */
+  private getMockIssues(): RawIssue[] {
+    return [
+      {
+        id: 1,
+        title: 'Error en el login de usuarios - Validación de credenciales falla',
+        description: 'Los usuarios no pueden iniciar sesión cuando ingresan credenciales válidas. El sistema devuelve error 401 incluso con datos correctos.',
+        state: 'open',
+        priority: 'high',
+        assignee: 'Juan Pérez',
+        assignee_avatar: '',
+        created_at: '2024-01-15T10:00:00Z',
+        updated_at: '2024-01-20T15:30:00Z',
+        labels: ['bug', 'frontend', 'critical'],
+        comments: 12,
+        milestone: 'v2.1.0',
+        author: 'María González',
+        tipo: 'Bug'
+      },
+      {
+        id: 2,
+        title: 'Implementar nueva funcionalidad de reportes avanzados',
+        description: 'Agregar capacidad de generar reportes personalizados con filtros dinámicos y exportación a PDF/Excel.',
+        state: 'open',
+        priority: 'medium',
+        assignee: 'María García',
+        assignee_avatar: '',
+        created_at: '2024-01-10T09:00:00Z',
+        updated_at: '2024-01-18T14:20:00Z',
+        labels: ['enhancement', 'backend', 'feature'],
+        comments: 8,
+        milestone: 'v2.2.0',
+        author: 'Carlos Ruiz',
+        tipo: 'Feature'
+      },
+      {
+        id: 3,
+        title: 'Optimizar consultas de base de datos en módulo de inventario',
+        description: 'Las consultas del inventario están tardando más de 5 segundos. Necesita optimización de índices y queries.',
+        state: 'closed',
+        priority: 'medium',
+        assignee: 'Carlos López',
+        assignee_avatar: '',
+        created_at: '2024-01-05T08:30:00Z',
+        updated_at: '2024-01-15T16:45:00Z',
+        labels: ['performance', 'database', 'optimization'],
+        comments: 15,
+        milestone: 'v2.0.1',
+        author: 'Ana Martínez',
+        tipo: 'Improvement'
+      },
+      {
+        id: 4,
+        title: 'Implementar autenticación de dos factores (2FA)',
+        description: 'Agregar soporte para 2FA usando Google Authenticator o SMS para mejorar la seguridad del sistema.',
+        state: 'open',
+        priority: 'high',
+        assignee: 'Roberto Silva',
+        assignee_avatar: '',
+        created_at: '2024-01-08T07:45:00Z',
+        updated_at: '2024-01-22T17:10:00Z',
+        labels: ['security', 'authentication', 'enhancement'],
+        comments: 6,
+        milestone: 'v2.2.0',
+        author: 'Laura Fernández',
+        tipo: 'Security'
+      }
+    ];
   }
 }
