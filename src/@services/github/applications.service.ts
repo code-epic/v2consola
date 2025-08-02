@@ -125,9 +125,12 @@ export class ApplicationsService {
 
         // Process applications if found
         if (rawApplications.length > 0) {
+          console.log('✅ Aplicaciones válidas encontradas, procesando...');
           return this.processApplications(rawApplications);
         } else {
-          console.warn('⚠️ No se encontraron aplicaciones válidas, cargando datos mock como fallback');
+          console.warn('⚠️ No se encontraron aplicaciones válidas en la respuesta del servidor');
+          console.log('🔍 Estructura de la respuesta completa:', JSON.stringify(data, null, 2));
+          console.warn('📦 Cargando datos mock como fallback');
           const mockApplications = this.getMockApplications();
           return this.processApplications(mockApplications);
         }
@@ -143,11 +146,29 @@ export class ApplicationsService {
     console.log(`🔄 Procesando ${rawApplications.length} aplicaciones...`);
     const processedApplications: Application[] = [];
 
+    // Friendly names mapping for better UX
+    const friendlyNames: { [key: string]: string } = {
+      'fideicomiso': 'Fideicomiso - Code Epic',
+      'gdoc': 'Gestión de Documentos', 
+      'nomina': 'Nómina Empresarial',
+      'sandra_cli': 'Sandra CLI',
+      'v2consola': 'V2 Consola',
+      'inventario': 'Sistema de Inventario',
+      'cmpdivisas': 'Componente Divisas',
+      'cmpfood': 'Componente Food',
+      'sandra-enterprise': 'Sandra Enterprise',
+      'wkfsolicitudes': 'Workflow Solicitudes',
+      'ipostel': 'Sistema Ipostel',
+      'app.te-escucha': 'App Te Escucha',
+      'inea.app.movil': 'INEA App Móvil'
+    };
+
     rawApplications.forEach((rawApp, index) => {
       try {
+        const rawName = rawApp.name || rawApp.full_name || `App ${index + 1}`;
         const application: Application = {
           id: rawApp.id || index + 1,
-          name: rawApp.name || rawApp.full_name || `App ${index + 1}`,
+          name: friendlyNames[rawName] || rawName, // Use friendly name if available
           description: rawApp.description || 'Sin descripción',
           owner: rawApp.owner || 'code-epic',
           repository: rawApp.repository || rawApp.name || `repo-${index + 1}`,
@@ -189,19 +210,35 @@ export class ApplicationsService {
       return false;
     }
 
-    // Check for common application properties
-    const applicationFields = ['name', 'full_name', 'owner', 'repository', 'language', 'description'];
+    // FIRST: Check if it's clearly an ISSUE (not an application)
+    const issueFields = ['title', 'description', 'state', 'priority', 'assignee', 'labels', 'comments'];
+    const hasIssueFields = issueFields.some(field => 
+      item.hasOwnProperty(field) && item[field] !== null && item[field] !== undefined
+    );
+    
+    if (hasIssueFields) {
+      console.log(`🔍 isApplicationData result: false (detected as ISSUE)`, { item: Object.keys(item) });
+      return false; // It's an issue, not an application
+    }
+
+    // SECOND: Check for application-specific properties
+    const applicationFields = ['full_name', 'repository'];
     const hasApplicationFields = applicationFields.some(field => 
       item.hasOwnProperty(field) && item[field] !== null && item[field] !== undefined
     );
 
-    // Additional checks for GitHub-specific fields
-    const hasGitHubFields = item.hasOwnProperty('stargazers_count') || 
-                           item.hasOwnProperty('forks_count') || 
-                           item.hasOwnProperty('html_url');
+    // Additional checks for GitHub-specific repository fields
+    const hasGitHubRepoFields = item.hasOwnProperty('stargazers_count') || 
+                               item.hasOwnProperty('forks_count') || 
+                               (item.hasOwnProperty('html_url') && !item.hasOwnProperty('title'));
 
-    const result = hasApplicationFields || hasGitHubFields;
-    console.log(`🔍 isApplicationData result: ${result}`, { item: Object.keys(item) });
+    const result = hasApplicationFields || hasGitHubRepoFields;
+    console.log(`🔍 isApplicationData result: ${result}`, { 
+      item: Object.keys(item),
+      hasApplicationFields,
+      hasGitHubRepoFields,
+      hasIssueFields
+    });
     return result;
   }
 
@@ -215,6 +252,15 @@ export class ApplicationsService {
     if (statusStr.includes('archive')) return 'archived';
     if (statusStr.includes('inactive') || statusStr.includes('disabled')) return 'inactive';
     return 'active';
+  }
+
+  /**
+   * Set applications directly (for WebSocket updates)
+   */
+  setApplications(applications: Application[]): void {
+    console.log(`📝 Actualizando aplicaciones directamente: ${applications.length}`);
+    this.applicationsSubject.next(applications);
+    this.lastFetchTime = Date.now(); // Update cache timestamp
   }
 
   /**

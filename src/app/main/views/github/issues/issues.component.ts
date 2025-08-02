@@ -71,6 +71,15 @@ export class IssuesComponent implements OnInit, OnDestroy {
     this.applications$ = this.applicationsService.applications$;
     this.loadingApplications$ = this.applicationsService.loading$;
     this.errorApplications$ = this.applicationsService.error$;
+    
+    // Subscribe to applications changes for automatic UI updates
+    this.applications$.pipe(takeUntil(this.destroy$)).subscribe(applications => {
+      console.log(`🔄 Aplicaciones actualizadas automáticamente: ${applications.length}`);
+      // Update local arrays for template compatibility
+      this.aplicaciones = applications;
+      this.lstAplicaciones = applications;
+      console.log('🎯 UI actualizada con aplicaciones:', applications.slice(0, 3).map(app => app.name));
+    });
   }
 
   ngOnInit(): void {
@@ -110,10 +119,11 @@ export class IssuesComponent implements OnInit, OnDestroy {
           if (innerMessage && Array.isArray(innerMessage)) {
             // Verificar si el primer elemento parece una aplicación o un issue
             const firstItem = innerMessage[0];
-            if (firstItem && this.isApplicationData(firstItem)) {
+            if (firstItem && this.applicationsService.isApplicationData(firstItem)) {
               console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.length);
-              console.log('🔄 Reemplazando datos mock con datos reales del WebSocket');
-              this.processAplicaciones(innerMessage);
+              console.log('🔄 Procesando aplicaciones con el servicio');
+              const processedApps = this.applicationsService.processApplications(innerMessage);
+              this.applicationsService.setApplications(processedApps);
             } else {
               console.log('🎯 Issues recibidas del servidor:', innerMessage.length);
               this.processGitHubIssues(innerMessage);
@@ -123,7 +133,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
             this.processGitHubIssues(innerMessage.issues);
           } else if (innerMessage && innerMessage.aplicaciones && Array.isArray(innerMessage.aplicaciones)) {
             console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.aplicaciones.length);
-            this.processAplicaciones(innerMessage.aplicaciones);
+            const processedApps = this.applicationsService.processApplications(innerMessage.aplicaciones);
+            this.applicationsService.setApplications(processedApps);
           } else {
             console.log('📄 Mensaje del servidor:', innerMessage);
           }
@@ -138,9 +149,10 @@ export class IssuesComponent implements OnInit, OnDestroy {
             if (Array.isArray(jsonMatch)) {
               // Detectar si son aplicaciones o issues también en el JSON extraído
               const firstItem = jsonMatch[0];
-              if (firstItem && this.isApplicationData(firstItem)) {
+              if (firstItem && this.applicationsService.isApplicationData(firstItem)) {
                 console.log('🏢 Aplicaciones extraídas del mensaje:', jsonMatch.length);
-                this.processAplicaciones(jsonMatch);
+                const processedApps = this.applicationsService.processApplications(jsonMatch);
+                this.applicationsService.setApplications(processedApps);
               } else {
                 console.log('🎯 Issues extraídas del mensaje:', jsonMatch.length);
                 this.processGitHubIssues(jsonMatch);
@@ -150,7 +162,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
               this.processGitHubIssues(jsonMatch.issues);
             } else if (jsonMatch.aplicaciones && Array.isArray(jsonMatch.aplicaciones)) {
               console.log('🏢 Aplicaciones extraídas del mensaje:', jsonMatch.aplicaciones.length);
-              this.processAplicaciones(jsonMatch.aplicaciones);
+              const processedApps = this.applicationsService.processApplications(jsonMatch.aplicaciones);
+              this.applicationsService.setApplications(processedApps);
             }
           } else {
             // Si no es JSON, tratarlo como texto plano para compatibilidad
@@ -185,12 +198,22 @@ export class IssuesComponent implements OnInit, OnDestroy {
    */
   seleccionarAplicacion(aplicacion: any): void {
     console.log('🎨 Aplicación seleccionada:', aplicacion.name);
+    console.log('🔍 DEBUG - Estado antes de selección:');
+    console.log('  - showIssuesTable:', this.showIssuesTable);
+    console.log('  - loadingIssues:', this.loadingIssues);
+    console.log('  - aplicacionSeleccionada:', this.aplicacionSeleccionada?.name || 'ninguna');
+    
     this.aplicacionSeleccionada = aplicacion;
     
     // Mostrar estado de carga
     this.loadingIssues = true;
     this.errorLoadingIssues = false;
     this.showIssuesTable = true; // Mostrar la tabla inmediatamente con loading
+    
+    console.log('🔍 DEBUG - Estado después de selección:');
+    console.log('  - showIssuesTable:', this.showIssuesTable);
+    console.log('  - loadingIssues:', this.loadingIssues);
+    console.log('  - aplicacionSeleccionada:', this.aplicacionSeleccionada?.name);
     
     // Limpiar issues anteriores usando el servicio
     this.githubIssuesService.clearIssues();
@@ -474,10 +497,19 @@ export class IssuesComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (applications: Application[]) => {
           console.log(`✅ Aplicaciones cargadas desde el servicio: ${applications.length}`);
+          console.log('📋 Primeras 3 aplicaciones:', applications.slice(0, 3).map(app => ({id: app.id, name: app.name})));
           
-          // Actualizar la lista local para compatibilidad con código existente
+          // Actualizar AMBAS listas para compatibilidad con el template
           this.aplicaciones = applications;
-          this.lstAplicaciones = applications;
+          this.lstAplicaciones = applications; // Esta es la que usa el template para las cards
+          
+          console.log('🎯 Cards de aplicaciones listas para mostrar:', this.lstAplicaciones.length);
+          
+          // Asegurar que NO se muestre la tabla de issues automáticamente
+          this.showIssuesTable = false;
+          this.aplicacionSeleccionada = null;
+          
+          console.log('🏠 Mostrando cards de aplicaciones - tabla oculta');
           
           // Finalizar estado de carga
           this.loadingAplicaciones = false;
@@ -557,74 +589,9 @@ export class IssuesComponent implements OnInit, OnDestroy {
     return isApplication;
   }
 
-  /**
-   * Process applications received from service
-   */
-  private processAplicaciones(rawAplicaciones: any[]): void {
-    console.log('🔄 Procesando aplicaciones recibidas:', rawAplicaciones);
-    
-    // Crear nombres más amigables para mostrar en las cards
-    const friendlyNames: { [key: string]: string } = {
-      'fideicomiso': 'Fideicomiso - Code Epic',
-      'gdoc': 'Gestión de Documentos', 
-      'nomina': 'Nómina Empresarial',
-      'sandra_cli': 'Sandra CLI',
-      'v2consola': 'V2 Consola',
-      'inventario': 'Sistema de Inventario',
-      'cmpdivisas': 'Componente Divisas',
-      'cmpfood': 'Componente Food',
-      'sandra-enterprise': 'Sandra Enterprise',
-      'wkfsolicitudes': 'Workflow Solicitudes',
-      'ipostel': 'Sistema Ipostel',
-      'app.te-escucha': 'App Te Escucha',
-      'inea.app.movil': 'INEA App Móvil'
-    };
-    
-    const processedAplicaciones = rawAplicaciones.map(app => ({
-      id: app.id,
-      name: friendlyNames[app.name] || app.name, // Usar nombre amigable si existe
-      repository: app.name, // usar name como repository
-      owner: app.full_name ? app.full_name.split('/')[0] : 'code-epic', // extraer owner de full_name
-      full_name: app.full_name
-    }));
-    
-    console.log('✅ Aplicaciones procesadas:', processedAplicaciones.length);
-    console.log('📋 Primeras 3 aplicaciones:', processedAplicaciones.slice(0, 3));
-    
-    // Actualizar AMBAS listas para asegurar compatibilidad con el template
-    this.aplicaciones = processedAplicaciones;
-    this.lstAplicaciones = processedAplicaciones; // Esta es la que usa el template para las cards
-    
-    console.log('🎯 Cards de aplicaciones listas para mostrar:', this.lstAplicaciones.length);
-    
-    // Asegurar que NO se muestre la tabla de issues automáticamente
-    this.showIssuesTable = false;
-    this.aplicacionSeleccionada = null;
-    
-    console.log('🏠 Mostrando cards de aplicaciones - tabla oculta');
-  }
 
-  /**
-   * Load mock applications data as fallback
-   */
-  private loadMockAplicaciones(): void {
-    console.log('📏 Cargando datos mock de aplicaciones como fallback');
-    
-    const mockData = [
-      { id: 1, name: 'Fideicomiso - Code Epic', repository: 'fideicomiso', owner: 'code-epic', full_name: 'code-epic/fideicomiso' },
-      { id: 2, name: 'Sistema de Inventario', repository: 'inventario', owner: 'code-epic', full_name: 'code-epic/inventario' },
-      { id: 3, name: 'Gestión de Documentos', repository: 'gdoc', owner: 'code-epic', full_name: 'code-epic/gdoc' },
-      { id: 4, name: 'Nómina Empresarial', repository: 'nomina', owner: 'code-epic', full_name: 'code-epic/nomina' },
-      { id: 5, name: 'Sandra CLI', repository: 'sandra_cli', owner: 'code-epic', full_name: 'code-epic/sandra_cli' },
-      { id: 6, name: 'V2 Consola', repository: 'v2consola', owner: 'code-epic', full_name: 'code-epic/v2consola' }
-    ];
-    
-    // Actualizar AMBAS listas como hace processAplicaciones
-    this.aplicaciones = mockData;
-    this.lstAplicaciones = mockData; // Esta es la que usa el template para las cards
-    
-    console.log('🏠 Cards mock cargadas, esperando datos reales del WebSocket...');
-  }
+
+
 
   /**
    * Map issue type from Spanish to English categories
