@@ -4,38 +4,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription } from 'rxjs';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { SessionService } from '@services/util/session.service';
-
-// Interface for GitHub Issues
-export interface Issue {
-  // Core fields
-  id: number;
-  number: number;
-  title: string;
-  description: string;
-  state: 'open' | 'closed';
-  
-  // Priority and type
-  priority: 'high' | 'medium' | 'low';
-  tipo: string;
-  
-  // Assignment
-  assignee: string | null;
-  assignee_avatar: string;
-  author: string;
-  
-  // Timestamps
-  created_at: string;
-  updated_at: string;
-  
-  // Metadata
-  labels: string[];
-  comments: number;
-  milestone: string | null;
-  
-  // Legacy fields for compatibility
-  body: string;
-  user: { login: string };
-}
+import { GitHubIssuesService } from '@services/github/github-issues.service';
+import { Issue } from '@services/github/interfaces/issue.interface';
 @Component({
   selector: 'app-issues',
   templateUrl: './issues.component.html',
@@ -70,7 +40,12 @@ export class IssuesComponent implements OnInit {
   loadingIssues = false;
   errorLoadingIssues = false;
 
-  constructor(private modalService: NgbModal, private apiService: ApiService, private sessionService: SessionService) {
+  constructor(
+    private modalService: NgbModal, 
+    private apiService: ApiService, 
+    private sessionService: SessionService,
+    private githubIssuesService: GitHubIssuesService
+  ) {
   }
 
   ngOnInit(): void {
@@ -391,29 +366,7 @@ export class IssuesComponent implements OnInit {
     return state === 'open' ? 'badge-light-success' : 'badge-light-secondary';
   }
 
-  /**
-   * Map priority from label or priority field
-   */
-  private mapPriorityFromLabel(labelOrPriority: string): string {
-    if (!labelOrPriority) return 'medium';
-    
-    const priority = labelOrPriority.toLowerCase();
-    
-    // Mapear desde etiquetas en español
-    if (priority.includes('alta') || priority.includes('high')) {
-      return 'high';
-    } else if (priority.includes('baja') || priority.includes('low')) {
-      return 'low';
-    } else if (priority.includes('media') || priority.includes('medium')) {
-      return 'medium';
-    }
-    
-    // Mapear desde valores directos
-    if (priority === 'high' || priority === 'alta') return 'high';
-    if (priority === 'low' || priority === 'baja') return 'low';
-    
-    return 'medium'; // Default
-  }
+
 
   /**
    * View issue details
@@ -846,79 +799,15 @@ export class IssuesComponent implements OnInit {
 
   /**
    * Process GitHub Issues received from WebSocket
+   * Now uses GitHubIssuesService for processing
    */
   private processGitHubIssues(rawIssues: any[]): void {
-    console.log('🔄 Procesando issues recibidas:', rawIssues);
+    console.log('🔄 Componente: Delegando procesamiento de issues al servicio');
     
-    const processedIssues: Issue[] = [];
+    // Usar el servicio para procesar las issues
+    const processedIssues = this.githubIssuesService.processIssues(rawIssues);
     
-    rawIssues.forEach((rawIssue, index) => {
-      try {
-        // ✨ NUEVA ESTRUCTURA: Usar directamente los campos del servicio enriquecido
-        const issue: any = {
-          // Campos principales
-          id: rawIssue.id || index + 1,
-          number: rawIssue.id || index + 1, // Usar id como number
-          title: rawIssue.title || 'Sin título',
-          description: rawIssue.description || '',
-          state: rawIssue.state || 'open',
-          
-          // Campos de prioridad y tipo
-          priority: this.mapPriorityFromLabel(rawIssue.labels?.[0] || rawIssue.priority || 'medium'),
-          tipo: rawIssue.tipo || 'Bug',
-          
-          // Campos de asignación
-          assignee: rawIssue.assignee || null,
-          assignee_avatar: rawIssue.assignee_avatar || '',
-          author: rawIssue.author || 'externosandra',
-          
-          // Fechas (usar las reales del servicio)
-          created_at: rawIssue.created_at || new Date().toISOString(),
-          updated_at: rawIssue.updated_at || new Date().toISOString(),
-          
-          // Metadatos
-          labels: rawIssue.labels || [],
-          comments: rawIssue.comments || 0,
-          milestone: rawIssue.milestone || null,
-          
-          // Campos legacy para compatibilidad
-          body: rawIssue.description || '',
-          user: {
-            login: rawIssue.author || 'externosandra'
-          }
-        };
-        
-        processedIssues.push(issue);
-        
-        // Mostrar cada issue en consola con formato legible
-        console.log(`📋 Issue #${issue.id}:`, {
-          título: issue.title,
-          estado: issue.state,
-          prioridad: issue.priority,
-          asignado: issue.assignee,
-          autor: issue.author,
-          tipo: issue.tipo,
-          comentarios: issue.comments
-        });
-        
-      } catch (error) {
-        console.error(`❌ Error procesando issue ${index}:`, error, rawIssue);
-      }
-    });
-    
-    // Mostrar resumen final
-    console.log(`✅ Total de issues procesadas: ${processedIssues.length}`);
-    console.log('📊 Resumen por estado:', {
-      abiertas: processedIssues.filter(i => i.state === 'open').length,
-      cerradas: processedIssues.filter(i => i.state === 'closed').length
-    });
-    console.log('📊 Resumen por prioridad:', {
-      alta: processedIssues.filter(i => i.priority === 'high').length,
-      media: processedIssues.filter(i => i.priority === 'medium').length,
-      baja: processedIssues.filter(i => i.priority === 'low').length
-    });
-    
-    // Actualizar los datos del componente con las issues reales
+    // Actualizar los datos del componente con las issues procesadas
     console.log('🔄 ANTES de actualizar issuesData. Length actual:', this.issuesData.length);
     this.issuesData = processedIssues;
     console.log('✅ DESPUÉS de actualizar issuesData. Nuevo length:', this.issuesData.length);
