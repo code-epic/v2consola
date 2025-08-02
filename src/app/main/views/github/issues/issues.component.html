@@ -454,183 +454,218 @@
   </div>
 </div>
 
-<!-- Issue Detail View -->
-<div class="card" *ngIf="showDetailView && selectedIssue">
-  <div class="card-header">
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="d-flex align-items-center">
-        <div class="avatar mr-2" 
-             [ngClass]="{
-               'bg-light-success': selectedIssue?.state === 'open',
-               'bg-light-secondary': selectedIssue?.state === 'closed'
-             }">
-          <div class="avatar-content">
-            <span [data-feather]="selectedIssue?.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="18"></span>
+<!-- Optimized Issue Detail View -->
+<div class="issue-detail-modern" *ngIf="showDetailView && selectedIssue">
+  
+  <!-- Compact Header -->
+  <div class="detail-header">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <button type="button" class="btn btn-outline-secondary btn-modern" (click)="cerrarDetalle()">
+          <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
+          Volver
+        </button>
+      </div>
+      <div class="col">
+        <div class="issue-title-section">
+          <div class="d-flex align-items-center mb-2">
+            <div class="issue-status-icon mr-3" 
+                 [ngClass]="{
+                   'status-open': selectedIssue?.state === 'open',
+                   'status-closed': selectedIssue?.state === 'closed'
+                 }">
+              <span [data-feather]="selectedIssue?.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="20"></span>
+            </div>
+            <div class="flex-grow-1">
+              <h3 class="issue-title mb-1">{{ selectedIssue?.title }}</h3>
+              <div class="issue-meta">
+                <span class="meta-item">
+                  <span [data-feather]="'hash'" [size]="14" class="mr-1"></span>
+                  {{ selectedIssue?.id }}
+                </span>
+                <span class="meta-divider">•</span>
+                <span class="meta-item">
+                  <span [data-feather]="'calendar'" [size]="14" class="mr-1"></span>
+                  {{ selectedIssue?.created_at | date:'dd/MM/yyyy' }}
+                </span>
+                <span class="meta-divider">•</span>
+                <span class="meta-item">
+                  <span [data-feather]="'user'" [size]="14" class="mr-1"></span>
+                  {{ selectedIssue?.author }}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-        <div>
-          <h4 class="mb-0">{{ selectedIssue?.title }}</h4>
-          <small class="text-muted">
-            #{{ selectedIssue?.id }} • {{ selectedIssue?.created_at | date:'dd/MM/yyyy' }} • por {{ selectedIssue?.author }}
-          </small>
-        </div>
       </div>
-      <div class="d-flex align-items-center">
-        <span class="badge mr-2" [ngClass]="getStateClass(selectedIssue?.state)">
-          {{ selectedIssue?.state === 'open' ? 'Abierto' : 'Cerrado' }}
-        </span>
-        <button type="button" class="btn btn-icon btn-outline-secondary" (click)="cerrarDetalle()">
-          <span [data-feather]="'x'" [size]="16"></span>
-        </button>
+      <div class="col-auto">
+        <div class="issue-badges">
+          <span class="badge badge-state" [ngClass]="getStateClass(selectedIssue?.state)">
+            {{ selectedIssue?.state === 'open' ? 'Abierto' : 'Cerrado' }}
+          </span>
+          <span class="badge badge-type" 
+                [ngClass]="{
+                  'badge-danger': selectedIssue?.tipo === 'Bug',
+                  'badge-success': selectedIssue?.tipo === 'Feature',
+                  'badge-warning': selectedIssue?.tipo === 'Enhancement',
+                  'badge-info': selectedIssue?.tipo === 'Documentation',
+                  'badge-primary': selectedIssue?.tipo === 'Security',
+                  'badge-secondary': selectedIssue?.tipo === 'Task' || selectedIssue?.tipo === 'Improvement'
+                }">
+            {{ selectedIssue?.tipo }}
+          </span>
+          <span class="badge badge-priority" [ngClass]="getPriorityClass(selectedIssue?.priority)">
+            {{ selectedIssue?.priority === 'high' ? 'Alta' : selectedIssue?.priority === 'medium' ? 'Media' : 'Baja' }}
+          </span>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="card-body">
-    <div class="row">
-      <!-- Main Content -->
-      <div class="col-md-8">
-        <!-- Description -->
-        <div class="mb-4">
-          <h6 class="mb-2">
-            <span [data-feather]="'file-text'" [size]="16" class="mr-25"></span>
-            Descripción
-          </h6>
-          <div class="p-3 bg-light rounded">
-            <p class="mb-0 text-justify">{{ selectedIssue?.description }}</p>
+  <!-- Integrated Content Layout -->
+  <div class="detail-content">
+    <div class="row g-3">
+      
+      <!-- Main Content Column -->
+      <div class="col-lg-8">
+        
+        <!-- Description Card -->
+        <div class="content-card description-card">
+          <div class="card-header-minimal">
+            <span [data-feather]="'file-text'" [size]="16" class="mr-2"></span>
+            <strong>Descripción</strong>
+          </div>
+          <div class="card-content">
+            <p class="description-text">{{ selectedIssue?.description }}</p>
           </div>
         </div>
 
-        <!-- Labels -->
-        <div class="mb-4" *ngIf="selectedIssue?.labels?.length > 0">
-          <h6 class="mb-2">
-            <span [data-feather]="'tag'" [size]="16" class="mr-25"></span>
-            Etiquetas
-          </h6>
-          <div class="d-flex flex-wrap">
-            <span *ngFor="let label of selectedIssue?.labels" 
-                  class="badge badge-light-secondary mr-50 mb-25">{{ label }}</span>
+        <!-- Labels Section -->
+        <div class="content-card labels-card" *ngIf="selectedIssue?.labels?.length > 0">
+          <div class="card-header-minimal">
+            <span [data-feather]="'tag'" [size]="16" class="mr-2"></span>
+            <strong>Etiquetas</strong>
           </div>
-        </div>
-
-        <!-- Activity Summary -->
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card border-left-primary">
-              <div class="card-body text-center">
-                <span [data-feather]="'message-circle'" [size]="24" class="text-primary mb-2"></span>
-                <h5 class="card-title mb-0">{{ selectedIssue?.comments }}</h5>
-                <small class="text-muted">Comentarios</small>
-              </div>
+          <div class="card-content">
+            <div class="labels-container">
+              <span *ngFor="let label of selectedIssue?.labels" 
+                    class="label-tag">{{ label }}</span>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="card border-left-info">
-              <div class="card-body text-center">
-                <span [data-feather]="'clock'" [size]="24" class="text-info mb-2"></span>
-                <h6 class="card-title mb-0">{{ selectedIssue?.updated_at | date:'dd/MM/yyyy' }}</h6>
-                <small class="text-muted">Última actualización</small>
+        </div>
+
+        <!-- Activity Stats -->
+        <div class="content-card stats-card">
+          <div class="card-header-minimal">
+            <span [data-feather]="'activity'" [size]="16" class="mr-2"></span>
+            <strong>Actividad</strong>
+          </div>
+          <div class="card-content">
+            <div class="row g-2">
+              <div class="col-6">
+                <div class="stat-item">
+                  <div class="stat-icon comments">
+                    <span [data-feather]="'message-circle'" [size]="20"></span>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-value">{{ selectedIssue?.comments }}</div>
+                    <div class="stat-label">Comentarios</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="stat-item">
+                  <div class="stat-icon updated">
+                    <span [data-feather]="'clock'" [size]="20"></span>
+                  </div>
+                  <div class="stat-info">
+                    <div class="stat-value">{{ selectedIssue?.updated_at | date:'dd/MM' }}</div>
+                    <div class="stat-label">Última actualización</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Sidebar -->
-      <div class="col-md-4">
-        <div class="card">
-          <div class="card-header">
-            <h6 class="card-title mb-0">
-              <span [data-feather]="'info'" [size]="16" class="mr-25"></span>
-              Detalles
-            </h6>
+      <!-- Compact Sidebar -->
+      <div class="col-lg-4">
+        
+        <!-- Details Card -->
+        <div class="content-card details-card">
+          <div class="card-header-minimal">
+            <span [data-feather]="'info'" [size]="16" class="mr-2"></span>
+            <strong>Detalles</strong>
           </div>
-          <div class="card-body">
+          <div class="card-content">
             
-            <!-- Type -->
-            <div class="mb-3">
-              <label class="form-label font-weight-bold small">Tipo</label>
-              <div>
-                <span class="badge" 
-                      [ngClass]="{
-                        'badge-light-danger': selectedIssue?.tipo === 'Bug',
-                        'badge-light-success': selectedIssue?.tipo === 'Feature',
-                        'badge-light-warning': selectedIssue?.tipo === 'Enhancement',
-                        'badge-light-info': selectedIssue?.tipo === 'Documentation',
-                        'badge-light-primary': selectedIssue?.tipo === 'Security',
-                        'badge-light-secondary': selectedIssue?.tipo === 'Task' || selectedIssue?.tipo === 'Improvement'
-                      }">
-                  {{ selectedIssue?.tipo }}
-                </span>
-              </div>
-            </div>
-
-            <!-- Priority -->
-            <div class="mb-3">
-              <label class="form-label font-weight-bold small">Prioridad</label>
-              <div>
-                <span class="badge" [ngClass]="getPriorityClass(selectedIssue?.priority)">
-                  {{ selectedIssue?.priority === 'high' ? 'Alta' : selectedIssue?.priority === 'medium' ? 'Media' : 'Baja' }}
-                </span>
-              </div>
-            </div>
-
             <!-- Assignee -->
-            <div class="mb-3">
-              <label class="form-label font-weight-bold small">Asignado a</label>
-              <div *ngIf="selectedIssue?.assignee; else noAssigneeDetail">
-                <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm mr-1 bg-light-primary">
-                    <div class="avatar-content">{{ selectedIssue?.assignee | initials }}</div>
-                  </div>
-                  <span class="font-weight-bold">{{ selectedIssue?.assignee }}</span>
+            <div class="detail-item">
+              <div class="detail-label">
+                <span [data-feather]="'user-check'" [size]="14" class="mr-2"></span>
+                Asignado
+              </div>
+              <div class="detail-value" *ngIf="selectedIssue?.assignee; else noAssigneeCompact">
+                <div class="assignee-info">
+                  <div class="assignee-avatar">{{ selectedIssue?.assignee | initials }}</div>
+                  <span class="assignee-name">{{ selectedIssue?.assignee }}</span>
                 </div>
               </div>
-              <ng-template #noAssigneeDetail>
-                <span class="text-muted">Sin asignar</span>
+              <ng-template #noAssigneeCompact>
+                <div class="detail-value text-muted">Sin asignar</div>
               </ng-template>
             </div>
 
             <!-- Milestone -->
-            <div class="mb-3" *ngIf="selectedIssue?.milestone">
-              <label class="form-label font-weight-bold small">Milestone</label>
-              <div class="d-flex align-items-center">
-                <span [data-feather]="'flag'" [size]="14" class="mr-25"></span>
-                <span class="font-weight-bold">{{ selectedIssue?.milestone }}</span>
+            <div class="detail-item" *ngIf="selectedIssue?.milestone">
+              <div class="detail-label">
+                <span [data-feather]="'flag'" [size]="14" class="mr-2"></span>
+                Milestone
               </div>
+              <div class="detail-value">{{ selectedIssue?.milestone }}</div>
             </div>
 
             <!-- Repository -->
-            <div class="mb-3">
-              <label class="form-label font-weight-bold small">Repositorio</label>
-              <div class="d-flex align-items-center">
-                <span [data-feather]="'git-branch'" [size]="14" class="mr-25"></span>
-                <small>{{ aplicacionSeleccionada?.owner }}/{{ aplicacionSeleccionada?.repository }}</small>
+            <div class="detail-item">
+              <div class="detail-label">
+                <span [data-feather]="'git-branch'" [size]="14" class="mr-2"></span>
+                Repositorio
               </div>
+              <div class="detail-value repo-link">
+                {{ aplicacionSeleccionada?.owner }}/{{ aplicacionSeleccionada?.repository }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions Card -->
+        <div class="content-card actions-card">
+          <div class="card-header-minimal">
+            <span [data-feather]="'settings'" [size]="16" class="mr-2"></span>
+            <strong>Acciones</strong>
+          </div>
+          <div class="card-content">
+            <div class="actions-grid">
+              <button type="button" 
+                      class="btn btn-primary btn-action" 
+                      (click)="editarIssue(selectedIssue)" 
+                      *ngIf="selectedIssue?.state === 'open'">
+                <span [data-feather]="'edit'" [size]="16" class="mb-1"></span>
+                <span class="btn-label">Editar</span>
+              </button>
+              <button type="button" 
+                      class="btn btn-outline-primary btn-action" 
+                      (click)="verEnGitHub(selectedIssue)">
+                <span [data-feather]="'external-link'" [size]="16" class="mb-1"></span>
+                <span class="btn-label">GitHub</span>
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
-  <div class="card-footer">
-    <div class="d-flex justify-content-between">
-      <button type="button" class="btn btn-outline-secondary" (click)="cerrarDetalle()">
-        <span [data-feather]="'arrow-left'" [size]="16" class="mr-25"></span>
-        Volver a la Lista
-      </button>
-      <div>
-        <button type="button" class="btn btn-primary mr-1" (click)="editarIssue(selectedIssue)" *ngIf="selectedIssue?.state === 'open'">
-          <span [data-feather]="'edit'" [size]="16" class="mr-25"></span>
-          Editar Issue
-        </button>
-        <button type="button" class="btn btn-outline-primary" (click)="verEnGitHub(selectedIssue)">
-          <span [data-feather]="'external-link'" [size]="16" class="mr-25"></span>
-          Ver en GitHub
-        </button>
-      </div>
-    </div>
-  </div>
+</div>
 
   
