@@ -312,7 +312,6 @@ export class IssuesComponent implements OnInit, OnDestroy {
     this.getListIssues();
   }
 
-
   /**
    * Filter issues by search - Enhanced UX with loading states
    */
@@ -335,6 +334,14 @@ export class IssuesComponent implements OnInit, OnDestroy {
     }, 300);
   }
 
+  /**
+   * Clear search input and reset filter
+   */
+  clearSearch(): void {
+    this.searchValue = '';
+    this.filterUpdate({ target: { value: '' } });
+    console.log('🧹 Búsqueda limpiada');
+  }
   /**
    * Clear selection
    */

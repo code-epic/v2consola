@@ -231,61 +231,89 @@
         <!-- Issues Table Panel -->
         <div *ngIf="showIssuesTable && !showDetailView">
           
-          <!-- Header with Back Button and Search -->
-          <div class="row">
-            <div class="col-md-6 col-12">
-              <div class="d-flex justify-content-between align-items-center m-1">
-                <button type="button" class="btn btn-outline-secondary btn-sm" (click)="limpiar()">
-                  <span [data-feather]="'arrow-left'" [size]="16" class="mr-25"></span>
+          <!-- Modern Application Header -->
+          <div class="app-header-modern mb-4">
+            <div class="row align-items-center">
+              <!-- Back Button -->
+              <div class="col-auto">
+                <button type="button" class="btn btn-outline-secondary btn-modern" (click)="limpiar()">
+                  <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
                   Volver
                 </button>
-                <div class="d-flex align-items-center ml-2">
-                  <label class="d-flex align-items-center">Mostrar
-                    <select class="form-control mx-25" [(ngModel)]="basicSelectedOption">
+              </div>
+              
+              <!-- App Info Section -->
+              <div class="col">
+                <div class="app-info-card">
+                  <div class="d-flex align-items-center">
+                    <div class="app-icon-header">
+                      <span [data-feather]="'git-branch'" [size]="24" class="text-primary"></span>
+                    </div>
+                    <div class="app-details-header">
+                      <h3 class="app-name-header mb-0">{{ aplicacionSeleccionada?.name || 'Cargando aplicación...' }}</h3>
+                      <div class="app-meta-header">
+                        <span class="owner-info">
+                          <span [data-feather]="'user'" [size]="14" class="mr-1"></span>
+                          {{ aplicacionSeleccionada?.owner || 'code-epic' }}
+                        </span>
+                        <span class="repo-divider">•</span>
+                        <span class="repo-info">
+                          <span [data-feather]="'folder'" [size]="14" class="mr-1"></span>
+                          {{ aplicacionSeleccionada?.repository || 'app.te-escucha' }}
+                        </span>
+                        <span class="issues-count-badge">
+                          <span [data-feather]="'list'" [size]="14" class="mr-1"></span>
+                          {{ (issues$ | async)?.length || 0 }} issues
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Search and Pagination Controls -->
+            <div class="row mt-3 align-items-center">
+              <!-- Search Input -->
+              <div class="col-md-8 col-lg-6">
+                <div class="search-container">
+                  <div class="position-relative">
+                    <input [(ngModel)]="searchValue"
+                           name="searchValue" 
+                           type="search" 
+                           class="form-control search-input"
+                           placeholder="Buscar issues por título, descripción o autor..."
+                           (keyup)="filterUpdate($event)" 
+                           (search)="filterUpdate($event)" />
+                    <div class="search-icon-container">
+                      <span [data-feather]="'search'" [size]="18" class="search-icon"></span>
+                    </div>
+                    <div class="search-clear" *ngIf="searchValue" (click)="clearSearch()">
+                      <span [data-feather]="'x'" [size]="16" class="clear-icon"></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Pagination Selector -->
+              <div class="col-md-4 col-lg-6 d-flex justify-content-end">
+                <div class="pagination-controls">
+                  <label class="pagination-label">
+                    <span class="label-text">Mostrar</span>
+                    <select class="form-control pagination-select" [(ngModel)]="basicSelectedOption">
                       <option value="10">10</option>
                       <option value="25">25</option>
                       <option value="50">50</option>
                       <option value="100">100</option>
                     </select>
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            <div class="col-md-6 col-lg-4 col-12 d-flex justify-content-start justify-content-md-end align-items-center offset-lg-2">
-              <div class="row pr-1 pb-1 pb-md-0 align-items-center w-100">
-                <div class="col-12">
-                  <label class="d-flex align-items-center mb-0 ml-1 ml-md-0">
-                    <input [(ngModel)]="searchValue"
-                           name="searchValue" 
-                           type="search" 
-                           class="form-control"
-                           placeholder="Buscar issues..."
-                           (keyup)="filterUpdate($event)" 
-                           (search)="filterUpdate($event)" />
+                    <span class="label-text">por página</span>
                   </label>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Application Info Header -->
-          <div class="row mb-2">
-            <div class="col-md-12">
-              <div class="card-header border-bottom">
-                <div class="d-flex align-items-center">
-                  <span [data-feather]="'git-branch'" [size]="20" class="mr-75"></span>
-                  <div>
-                    <h4 class="card-title mb-0">{{ aplicacionSeleccionada?.name || 'Cargando aplicación...' }}</h4>
-                    <small class="text-muted">{{ aplicacionSeleccionada?.owner || 'code-epic' }}/{{ aplicacionSeleccionada?.repository || 'fideicomiso' }}</small>
-                  </div>
-                  <div class="ml-auto">
-                    <span class="badge badge-light-info">{{ (issues$ | async)?.length || 0 }} issues</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+
 
           <!-- Loading State for Issues -->
           <div class="row" *ngIf="loadingIssues">
@@ -389,18 +417,7 @@
               </ng-template>
             </ngx-datatable-column>
 
-            <!-- Activity Summary Column -->
-            <ngx-datatable-column name="ACTIVIDAD" [width]="150">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="text-center">
-                  <div class="d-flex align-items-center justify-content-center mb-25">
-                    <span [data-feather]="'message-circle'" [size]="14" class="mr-25"></span>
-                    <span class="font-weight-bold">{{ row.comments }}</span>
-                  </div>
-                  <small class="text-muted">{{ row.updated_at | date:'dd/MM/yyyy' }}</small>
-                </div>
-              </ng-template>
-            </ngx-datatable-column>
+
 
             <!-- Actions Column -->
             <ngx-datatable-column name="ACCIÓN" [width]="80" [sortable]="false">
