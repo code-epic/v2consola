@@ -2,7 +2,8 @@ import { Component, OnInit, OnDestroy, TemplateRef, ViewChild, ChangeDetectionSt
 import { ColumnMode } from '@swimlane/ngx-datatable';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { takeUntil, filter } from 'rxjs/operators';
+import { Router, NavigationEnd } from '@angular/router';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { SessionService } from '@services/util/session.service';
 import { GitHubIssuesService } from '@services/github/github-issues.service';
@@ -36,15 +37,19 @@ export class IssuesComponent implements OnInit, OnDestroy {
   public showDetailView: boolean = false;
   private userId: string = '';
 
-  // Reactive observables from services (initialized in constructor)
+  // Reactive observables from services
   public issues$: Observable<Issue[]>;
-  public loadingIssues$: Observable<boolean>;
-  public errorIssues$: Observable<string | null>;
-  
   public applications$: Observable<Application[]>;
-  public loadingApplications$: Observable<boolean>;
-  public errorApplications$: Observable<string | null>;
+  public issuesLoading$: Observable<boolean>;
+  public applicationsLoading$: Observable<boolean>;
+  public issuesError$: Observable<string | null>;
+  public applicationsError$: Observable<string | null>;
   
+  // Navigation tracking
+  private isFirstLoad: boolean = true;
+  private currentRoute: string = '';
+  private navigationSubscription?: Subscription;
+
   // Error and connection state observables (initialized in constructor)
   public errors$: Observable<any>;
   public connectionState$: Observable<any>;
@@ -100,17 +105,17 @@ export class IssuesComponent implements OnInit, OnDestroy {
     private applicationsService: ApplicationsService,
     private errorHandler: ErrorHandlerService,
     private issueStatusService: IssueStatusService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {
     // Initialize reactive observables from services
     this.issues$ = this.githubIssuesService.issues$;
-    this.loadingIssues$ = this.githubIssuesService.loading$;
-    this.errorIssues$ = this.githubIssuesService.error$;
+    this.issuesLoading$ = this.githubIssuesService.loading$;
+    this.issuesError$ = this.githubIssuesService.error$;
     
-    // Initialize applications observables
     this.applications$ = this.applicationsService.applications$;
-    this.loadingApplications$ = this.applicationsService.loading$;
-    this.errorApplications$ = this.applicationsService.error$;
+    this.applicationsLoading$ = this.applicationsService.loading$;
+    this.applicationsError$ = this.applicationsService.error$;
     
     // Initialize ErrorHandlerService observables for professional error handling
     this.errors$ = this.errorHandler.errorState$;
@@ -130,23 +135,12 @@ export class IssuesComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userId = this.getUserId();
-    console.log("Iniciando componente Issues");
     
-    // Mostrar pantalla de carga bloqueante desde el inicio
-    this.showApplicationsLoading();
+    console.log('🚀 Iniciando componente Issues - SIEMPRE recargando aplicaciones');
+    console.log('📍 UserId:', this.userId);
     
-    // Connect to WebSocket with userId
-    this.sessionService.connect(this.userId);
-    
-    // Actualizar mensaje de carga
-    this.updateLoadingMessage('Estableciendo conexión...', 'Conectando con WebSocket');
-    
-    // Esperar 2 segundos para que se establezca la conexión WebSocket antes de cargar aplicaciones
-    setTimeout(() => {
-      this.updateLoadingMessage('Cargando aplicaciones...', 'Obteniendo lista de repositorios');
-      console.log('🔌 Conexión WebSocket establecida, cargando aplicaciones...');
-      this.getListAplicaciones();
-    }, 2000);
+    // SOLUCIÓN ROBUSTA: Siempre forzar la recarga de aplicaciones
+    this.forceApplicationsReload();
     
     // No cargar issues automáticamente - solo mostrar cards
     // Subscribe to WebSocket messages with professional error handling
@@ -452,6 +446,205 @@ export class IssuesComponent implements OnInit, OnDestroy {
       this.getListIssues();
     }
   }
+
+  /**
+   * Configura la detección de navegación para recargar aplicaciones cuando el usuario regrese
+   */
+  private setupNavigationDetection(): void {
+    // Suscribirse a eventos de navegación
+    this.navigationSubscription = this.router.events
+      .pipe(
+        filter(event => event instanceof NavigationEnd),
+        takeUntil(this.destroy$)
+      )
+      .subscribe((event: NavigationEnd) => {
+        console.log('🧪 Evento de navegación detectado:', event.url);
+        
+        // Si navegamos a la ruta de issues y no es la primera carga
+        if (event.url.includes('/github/issues') && !this.isFirstLoad) {
+          console.log('🔄 Usuario regresó al módulo de Issues - recargando aplicaciones');
+          
+          // Resetear estado y recargar aplicaciones
+          this.resetComponentStateCompletely();
+          this.initializeApplicationsLoad();
+        }
+        
+        this.currentRoute = event.url;
+      });
+  }
+
+  /**
+   * Inicializa la carga de aplicaciones con toda la lógica necesaria
+   */
+  private initializeApplicationsLoad(): void {
+    console.log('🚀 Inicializando carga de aplicaciones...');
+    
+    // Mostrar pantalla de carga bloqueante desde el inicio
+    this.showApplicationsLoading();
+    
+    // Connect to WebSocket with userId
+    this.sessionService.connect(this.userId);
+    
+    // Actualizar mensaje de carga
+    this.updateLoadingMessage('Estableciendo conexión...', 'Conectando con WebSocket');
+    
+    // Esperar 2 segundos para que se establezca la conexión WebSocket antes de cargar aplicaciones
+    setTimeout(() => {
+      this.updateLoadingMessage('Cargando aplicaciones...', 'Obteniendo lista de repositorios');
+      console.log('🔌 Conexión WebSocket establecida, cargando aplicaciones...');
+      this.getListAplicaciones();
+    }, 2000);
+  }
+
+  /**
+   * SOLUCIÓN ROBUSTA: Fuerza la recarga de aplicaciones SIEMPRE
+   * Este método se ejecuta en cada ngOnInit para asegurar que las aplicaciones se carguen
+   */
+  private forceApplicationsReload(): void {
+    console.log('🔥 FORZANDO recarga de aplicaciones - solución robusta');
+    
+    // 1. Limpiar todo el estado anterior
+    this.resetComponentStateCompletely();
+    
+    // 2. Mostrar pantalla de carga inmediatamente
+    this.showApplicationsLoading();
+    this.updateLoadingMessage('Recargando aplicaciones...', 'Obteniendo lista actualizada de repositorios');
+    
+    // 3. Conectar WebSocket
+    console.log('🔌 Conectando WebSocket...');
+    this.sessionService.connect(this.userId);
+    
+    // 4. Configurar listener de WebSocket
+    this.setupWebSocketMessages();
+    
+    // 5. Cargar aplicaciones después de un delay
+    setTimeout(() => {
+      console.log('📡 Solicitando aplicaciones al servidor...');
+      this.getListAplicaciones();
+    }, 2000);
+  }
+
+  /**
+   * Resetea COMPLETAMENTE el estado del componente
+   */
+  private resetComponentStateCompletely(): void {
+    console.log('🧹 Reseteando COMPLETAMENTE el estado del componente...');
+    
+    // Limpiar selección actual
+    this.aplicacionSeleccionada = null;
+    this.selectedIssue = null;
+    this.showDetailView = false;
+    this.showIssuesTable = false;
+    
+    // Limpiar servicios COMPLETAMENTE
+    this.applicationsService.clearApplications();
+    this.githubIssuesService.clearIssues();
+    
+    // Resetear TODOS los estados de carga
+    this.loadingIssues = false;
+    
+    // Limpiar suscripciones anteriores si existen
+    if (this.sessionMessagesSub) {
+      this.sessionMessagesSub.unsubscribe();
+      this.sessionMessagesSub = null;
+    }
+    
+    console.log('✨ Estado del componente COMPLETAMENTE reseteado');
+  }
+
+  /**
+   * Configura los listeners de WebSocket para recibir aplicaciones e issues
+   */
+  private setupWebSocketMessages(): void {
+    console.log('🔧 Configurando listeners de WebSocket...');
+    
+    // Subscribe to WebSocket messages with professional error handling
+    this.sessionMessagesSub = this.sessionService.messages$.subscribe({
+      next: (msg) => {
+        console.log("WebSocket message received:", msg);
+        // Update connection state to connected
+        this.errorHandler.updateConnectionState(true, false);
+        
+        let parsedMsg: any;
+        try {
+          parsedMsg = typeof msg === 'string' ? JSON.parse(msg) : msg;
+        } catch (e) {
+          console.error('WebSocket message is not valid JSON:', msg);
+          this.errorHandler.handleError(e, 'WebSocket - JSON Parsing');
+          return;
+        }
+
+        console.log('Parsed WebSocket message:', parsedMsg);
+        
+        if (parsedMsg && parsedMsg.message) {
+          // Parsear el mensaje interno que viene como string JSON
+          let innerMessage: any;
+          try {
+            innerMessage = typeof parsedMsg.message === 'string' ? JSON.parse(parsedMsg.message) : parsedMsg.message;
+            
+            // Detectar si son aplicaciones o issues
+            if (innerMessage && Array.isArray(innerMessage)) {
+              // Verificar si el primer elemento parece una aplicación o un issue
+              const firstItem = innerMessage[0];
+              if (firstItem && this.applicationsService.isApplicationData(firstItem)) {
+                console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.length);
+                console.log('🔄 Procesando aplicaciones con el servicio');
+                const processedApps = this.applicationsService.processApplications(innerMessage);
+                this.applicationsService.setApplications(processedApps);
+                
+                // OCULTAR la pantalla de carga - aplicaciones reales llegaron
+                console.log('✅ Aplicaciones reales recibidas por WebSocket - ocultando pantalla de carga');
+                this.hideApplicationsLoading();
+                this.setInitialLoadingComplete();
+              } else {
+                console.log('🎯 Issues recibidas del servidor:', innerMessage.length);
+                this.processGitHubIssues(innerMessage);
+              }
+            } else if (innerMessage && innerMessage.aplicaciones && Array.isArray(innerMessage.aplicaciones)) {
+              console.log('🏢 Aplicaciones recibidas por WebSocket:', innerMessage.aplicaciones.length);
+              const processedApps = this.applicationsService.processApplications(innerMessage.aplicaciones);
+              this.applicationsService.setApplications(processedApps);
+              
+              // OCULTAR la pantalla de carga - aplicaciones reales llegaron
+              console.log('✅ Aplicaciones reales recibidas por WebSocket - ocultando pantalla de carga');
+              this.hideApplicationsLoading();
+              this.setInitialLoadingComplete();
+            } else {
+              console.log('📄 Mensaje del servidor:', innerMessage);
+            }
+            
+          } catch (e) {
+            console.error('Inner message is not valid JSON:', parsedMsg.message);
+            
+            // Intentar extraer JSON de un mensaje mixto usando el servicio
+            const jsonMatch = this.githubIssuesService.parseWebSocketMessage(parsedMsg.message);
+            if (jsonMatch && Array.isArray(jsonMatch)) {
+              const firstItem = jsonMatch[0];
+              if (firstItem && this.applicationsService.isApplicationData(firstItem)) {
+                console.log('🏢 Aplicaciones extraídas del mensaje:', jsonMatch.length);
+                const processedApps = this.applicationsService.processApplications(jsonMatch);
+                this.applicationsService.setApplications(processedApps);
+                
+                // OCULTAR la pantalla de carga - aplicaciones reales llegaron
+                console.log('✅ Aplicaciones reales recibidas por WebSocket - ocultando pantalla de carga');
+                this.hideApplicationsLoading();
+                this.setInitialLoadingComplete();
+              } else {
+                console.log('🎯 Issues extraídas del mensaje:', jsonMatch.length);
+                this.processGitHubIssues(jsonMatch);
+              }
+            }
+          }
+        }
+      },
+      error: (error) => {
+        console.error('WebSocket error:', error);
+        this.errorHandler.updateConnectionState(false, true);
+        this.errorHandler.handleError(error, 'WebSocket - Connection');
+      }
+    });
+  }
+
   /**
    * Clear selection
    */
@@ -996,18 +1189,20 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * Component cleanup
    */
   ngOnDestroy(): void {
+    // Unsubscribe from all observables to prevent memory leaks
     this.destroy$.next();
     this.destroy$.complete();
     
-    // Clean up WebSocket subscriptions
+    // Clean up specific subscriptions
     if (this.sessionMessagesSub) {
       this.sessionMessagesSub.unsubscribe();
     }
-    if (this.sessionStatusSub) {
-      this.sessionStatusSub.unsubscribe();
+    
+    // Clean up navigation subscription
+    if (this.navigationSubscription) {
+      this.navigationSubscription.unsubscribe();
     }
     
-    console.log('🧹 IssuesComponent destroyed and subscriptions cleaned up');
+    console.log('🧹 Componente Issues destruido - suscripciones limpiadas');
   }
-
 }
