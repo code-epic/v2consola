@@ -445,6 +445,7 @@ export class FunctionsComponent implements OnInit {
   }
 
   ModalAdd(modal) {
+    this.LimpiarForm()
     this.modalService.open(modal, {
       centered: true,
       size: "xl",
@@ -472,6 +473,7 @@ export class FunctionsComponent implements OnInit {
 
   GuardarFuncion() {
     this.submitted = true
+    console.log(this.loginForm.get('categoria')?.value)
     if (this.loginForm.invalid) {
       return
     } else {
@@ -488,6 +490,12 @@ export class FunctionsComponent implements OnInit {
       this.rowData.push(this.ListaFunciones)
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
+          console.log(this.loginForm.get('categoria')?.value)
+
+          if (this.loginForm.get('categoria')?.value === 'PROGRAM') {
+            this.ejecutarCrontab()
+          } 
+          
           this.ListaFunciones = []
           this.CargarListaFunciones()
           this.modalService.dismissAll("Close")
@@ -586,6 +594,11 @@ export class FunctionsComponent implements OnInit {
       this.rowData.push(this.ListaFunciones);
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
+          console.log(this.loginForm.get('categoria')?.value)
+
+          if (this.loginForm.get('categoria')?.value === 'PROGRAM') {
+            this.ejecutarCrontab()
+          } 
           this.ListaFunciones = [];
           this.CargarListaFunciones();
           this.modalService.dismissAll("Close");
@@ -788,7 +801,19 @@ export class FunctionsComponent implements OnInit {
     );
   }
 
+  ejecutarCrontab(){
+    let fnx = JSON.stringify(this.loginForm.value)
 
+    this.apiService.ExecCrontab(fnx).subscribe(
+      (data) => {
+        console.log(data);
+       
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
 
 }

@@ -340,6 +340,18 @@ export class ApiService {
     return this.http.get<any>(url, this.httpOptions);
   }
 
+    //Ejecutar Api generales
+  ExecCrontab(fnx: any): Observable<any> {
+    var url = this.URL + "crontab";
+    return this.http.post<any>(url, fnx, this.httpOptions);
+  }
+
+  //  Consulta el PID de una funcion
+  ExecCrontabId(id: string): Observable<any> {
+    var url = this.URL + `crontab:${id}`;
+    return this.http.get<any>(url, this.httpOptions);
+  }
+
   // Consulta el Pid recursivamente
   ConsultarPidRecursivo(id: string, paquete: any) {
     this.ExecFnxId(id).subscribe(
