@@ -361,20 +361,14 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log(`🔄 Iniciando ${action} de issue #${issue.id}`);
 
     // Mostrar toast de progreso
-    this.errorHandler.showInfoToast(
-      `${action.charAt(0).toUpperCase() + action.slice(1)}ando issue`,
-      `Procesando cambio de estatus para issue #${issue.id}...`
-    );
+    // Info toast deshabilitado por solicitud del usuario
 
     this.issueStatusService.changeIssueStatus(issue.id, this.userId, open).subscribe({
       next: (response: IssueStatusChangeResponse) => {
         console.log('✅ Estatus cambiado exitosamente:', response);
         
         // Mostrar toast de éxito
-        this.errorHandler.showSuccessToast(
-          'Estatus actualizado',
-          `Issue #${issue.id} ${open ? 'reabierta' : 'cerrada'} exitosamente`
-        );
+        // Success toast deshabilitado por solicitud del usuario
 
         // Actualizar el issue en el servicio
         this.updateIssueInService(issue.id, open ? 'open' : 'closed');
@@ -800,9 +794,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     } else {
       console.log('✅ Applications loading completed');
       if (!error && this.aplicaciones.length > 0) {
-        this.showSuccessMessage = true;
-        this.successMessage = `${this.aplicaciones.length} aplicaciones cargadas exitosamente`;
-        this.hideSuccessMessage();
+        // Success banner deshabilitado por solicitud del usuario
       }
     }
     
@@ -936,12 +928,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
           console.log('✅ Issues cargadas desde el servicio:', issues.length);
           
           // Show success message for API fallback data
-          if (issues.length > 0) {
-            this.errorHandler.showInfoToast(
-              'Datos de respaldo cargados',
-              `${issues.length} issues cargadas desde cache. Esperando datos actualizados...`
-            );
-          }
+          // Info toast deshabilitado por solicitud del usuario
           
           // IMPORTANTE: NO ocultar la pantalla de carga aquí
           // porque estas pueden ser datos mock. La pantalla se ocultará
@@ -1001,12 +988,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
           console.log('📋 Primeras 3 aplicaciones:', applications.slice(0, 3).map(app => ({id: app.id, name: app.name})));
           
           // Show success message for API fallback data
-          if (applications.length > 0) {
-            this.errorHandler.showInfoToast(
-              'Aplicaciones de respaldo cargadas',
-              `${applications.length} aplicaciones cargadas desde cache. Esperando datos actualizados...`
-            );
-          }
+          // Info toast deshabilitado por solicitud del usuario
           
           // Actualizar lista para compatibilidad con el template
           this.aplicaciones = applications;
@@ -1140,23 +1122,15 @@ export class IssuesComponent implements OnInit, OnDestroy {
         console.log('✅ Estado de carga finalizado - issues cargadas');
         
         // Show professional success message
-        this.errorHandler.showSuccessToast(
-          'Issues cargadas exitosamente',
-          `${rawIssues.length} issues de ${this.aplicacionSeleccionada.name} cargadas desde el servidor`
-        );
+        // Success toast deshabilitado por solicitud del usuario
         
         // Legacy success message for template compatibility
-        this.showSuccessMessage = true;
-        this.successMessage = `${rawIssues.length} issues cargadas exitosamente`;
-        this.hideSuccessMessage();
+        // Success banner deshabilitado por solicitud del usuario
       } else {
         console.log('🏠 No hay aplicación seleccionada, manteniendo vista de cards');
         
         // Still show success for background processing
-        this.errorHandler.showInfoToast(
-          'Issues procesadas',
-          `${rawIssues.length} issues procesadas y almacenadas en cache`
-        );
+        // Info toast deshabilitado por solicitud del usuario
       }
     } catch (error) {
       console.error('❌ Error procesando issues:', error);
