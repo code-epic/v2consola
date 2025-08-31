@@ -60,6 +60,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
 
   // Local state for template compatibility (updated by observables)
   public aplicaciones: Application[] = [];
+  // Lista que se muestra (posiblemente filtrada por usuario)
+  public displayedAplicaciones: Application[] = [];
   public loadingIssues = false;
 
   // ========================================
@@ -93,9 +95,19 @@ export class IssuesComponent implements OnInit, OnDestroy {
   // Mensajes de carga personalizados
   public loadingMessage = 'Cargando aplicaciones...';
   public loadingSubMessage = 'Conectando con el servidor';
-  
+
   // Control de visibilidad de contenido
   public showMainContent = false;
+
+  // ========================================
+  // PRE-SELECCIÓN DE USUARIO PARA APPS/ISSUES
+  // ========================================
+  // Datos crudos desde SEC (_SYS_LstAplicaciones) para extraer usuarios y mapear repos
+  private secAplicaciones: any[] = [];
+  // Usuarios disponibles extraídos de SEC (únicos)
+  public usuariosDisponibles: { usua: string; pass: string }[] = [];
+  public selectedUsuario: string = '';
+  private selectedPass: string = '';
 
   constructor(
     private modalService: NgbModal, 
@@ -128,6 +140,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
       // Update local arrays for template compatibility
       this.aplicaciones = applications;
       console.log('🎯 UI actualizada con aplicaciones:', applications.slice(0, 3).map(app => app.name));
+      // Actualizar lista visible según filtro de usuario (si existe)
+      this.applyUserFilter();
       // Trigger change detection for OnPush
       this.cdr.markForCheck();
     });
@@ -138,9 +152,16 @@ export class IssuesComponent implements OnInit, OnDestroy {
     
     console.log('🚀 Iniciando componente Issues - SIEMPRE recargando aplicaciones');
     console.log('📍 UserId:', this.userId);
-    
-    // SOLUCIÓN ROBUSTA: Siempre forzar la recarga de aplicaciones
-    this.forceApplicationsReload();
+    // Paso 1: solo mostrar el selector de usuario (no cargar aplicaciones todavía)
+    this.showMainContent = true;
+    this.showApplicationsLoadingScreen = false;
+    // Por ahora usuarios "quemados" (hasta tener servicio SEC)
+    this.usuariosDisponibles = [
+      { usua: 'admin', pass: '' },
+      { usua: 'dev', pass: '' },
+      { usua: 'ops', pass: '' }
+    ];
+    this.selectedUsuario = '';
     
     // No cargar issues automáticamente - solo mostrar cards
     // Subscribe to WebSocket messages with professional error handling
@@ -868,6 +889,112 @@ export class IssuesComponent implements OnInit, OnDestroy {
     this.showApplicationsLoadingScreen = false;
     this.showMainContent = true;
     console.log('✅ Ocultando pantalla de carga - aplicaciones listas');
+    this.cdr.markForCheck();
+  }
+
+  // ========================================
+  // USUARIOS (SEC) Y FILTRO DE APLICACIONES
+  // ========================================
+  /**
+   * Cargar lista de aplicaciones desde SEC para extraer usuarios (usua/pass)
+   * y permitir filtrar aplicaciones por usuario.
+   */
+  private cargarUsuariosDesdeSEC(): void {
+    try {
+      const xAPI: IAPICore = {
+        id: '',
+        funcion: '_SYS_LstAplicaciones',
+        relacional: false,
+        concurrencia: false,
+        retorna: false,
+        migrar: false,
+        parametros: '',
+        modulo: '',
+        valores: null,
+        logs: false,
+        cache: 0,
+        estatus: false
+      };
+
+      this.apiService.Ejecutar(xAPI)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (data: any) => {
+            // Esperamos data.Cuerpo como en otros componentes
+            const cuerpo = Array.isArray(data?.Cuerpo) ? data.Cuerpo : [];
+            this.secAplicaciones = cuerpo;
+            // Extraer usuarios únicos con su pass
+            const mapUsers = new Map<string, string>();
+            for (const app of cuerpo) {
+              const u = app.usua || app.usuario || app.USER || app.user;
+              const p = app.pass || app.clave || app.PASS || app.token;
+              if (u && !mapUsers.has(u)) {
+                mapUsers.set(u, p || '');
+              }
+            }
+            this.usuariosDisponibles = Array.from(mapUsers.entries()).map(([usua, pass]) => ({ usua, pass }));
+            console.log('👥 Usuarios disponibles (SEC):', this.usuariosDisponibles.map(u => u.usua));
+            this.cdr.markForCheck();
+          },
+          error: (error: any) => {
+            console.error('❌ Error cargando usuarios desde SEC:', error);
+            // No bloquea el flujo principal; simplemente no habrá pre-filtro
+          }
+        });
+    } catch (err) {
+      console.error('❌ Excepción en cargarUsuariosDesdeSEC:', err);
+    }
+  }
+
+  /**
+   * Handler al cambiar el usuario en el selector
+   */
+  public onUsuarioChange(usua: string): void {
+    this.selectedUsuario = usua || '';
+    const found = this.usuariosDisponibles.find(u => u.usua === this.selectedUsuario);
+    this.selectedPass = found?.pass || '';
+    console.log('👤 Usuario seleccionado:', this.selectedUsuario);
+    
+    // Paso 2: al elegir cualquier usuario, ejecutar el flujo actual de carga de aplicaciones
+    if (this.selectedUsuario) {
+      // Mostrar pantalla de carga y disparar flujo robusto existente
+      this.forceApplicationsReload();
+    } else {
+      // Si limpia la selección, limpiar UI
+      this.displayedAplicaciones = [];
+      this.aplicacionSeleccionada = null;
+      this.showIssuesTable = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  /**
+   * Aplica el filtro de usuario sobre la lista de aplicaciones gestionada por ApplicationsService.
+   * Se mapea por nombre de repositorio (SEC.repositorio ~ Application.repository)
+   */
+  private applyUserFilter(): void {
+    if (!this.selectedUsuario) {
+      this.displayedAplicaciones = this.aplicaciones.slice();
+      return;
+    }
+
+    // Construir set de repos del usuario seleccionado según SEC
+    const reposUsuario = new Set<string>();
+    for (const app of this.secAplicaciones) {
+      const u = app.usua || app.usuario || app.USER || app.user;
+      if (u === this.selectedUsuario) {
+        const repo = (app.repositorio || app.repo || app.nombre || '').toString();
+        if (repo) reposUsuario.add(repo.toLowerCase());
+      }
+    }
+
+    // Filtrar aplicaciones cargadas
+    this.displayedAplicaciones = this.aplicaciones.filter(a => {
+      const repo = (a.repository || a.name || '').toString().toLowerCase();
+      return reposUsuario.size === 0 ? true : reposUsuario.has(repo);
+    });
+
+    console.log(`🎯 Aplicaciones filtradas para ${this.selectedUsuario}: ${this.displayedAplicaciones.length}`);
     this.cdr.markForCheck();
   }
 

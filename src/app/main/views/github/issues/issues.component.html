@@ -118,9 +118,23 @@
               </div>
             </div>
           </div>
+
+          <!-- User Pre-selection -->
+          <div class="row mb-2">
+            <div class="col-md-6">
+              <label class="form-label" for="usuarioSelect">Usuario</label>
+              <select id="usuarioSelect"
+                      class="form-control"
+                      [ngModel]="selectedUsuario"
+                      (ngModelChange)="onUsuarioChange($event)">
+                <option [ngValue]="''">Todos</option>
+                <option *ngFor="let u of usuariosDisponibles" [ngValue]="u.usua">{{ u.usua }}</option>
+              </select>
+            </div>
+          </div>
           
-          <!-- Loading State -->
-          <div class="row" *ngIf="applicationsLoading">
+          <!-- Loading State (solo tras seleccionar usuario) -->
+          <div class="row" *ngIf="selectedUsuario && applicationsLoading">
             <div class="col-12 text-center py-5">
               <div class="spinner-border text-primary" role="status">
                 <span class="sr-only">Cargando...</span>
@@ -129,8 +143,8 @@
             </div>
           </div>
 
-          <!-- Error State -->
-          <div class="row" *ngIf="applicationsError && !applicationsLoading">
+          <!-- Error State (solo tras seleccionar usuario) -->
+          <div class="row" *ngIf="selectedUsuario && applicationsError && !applicationsLoading">
             <div class="col-12 text-center py-5">
               <i data-feather="alert-circle" class="text-danger mb-3" style="width: 48px; height: 48px;"></i>
               <p class="text-danger">{{ applicationsError }}</p>
@@ -138,9 +152,9 @@
             </div>
           </div>
 
-          <!-- Applications Grid -->
-          <div class="row g-4" *ngIf="!applicationsLoading && !applicationsError">
-            <div class="col-md-6 col-lg-4" *ngFor="let app of aplicaciones; trackBy: trackByApplicationId">
+          <!-- Applications Grid (solo tras seleccionar usuario) -->
+          <div class="row g-4" *ngIf="selectedUsuario && !applicationsLoading && !applicationsError">
+            <div class="col-md-6 col-lg-4" *ngFor="let app of displayedAplicaciones; trackBy: trackByApplicationId">
               <div class="application-card h-100" 
                    [class.selected]="aplicacionSeleccionada?.id === app.id"
                    (click)="seleccionarAplicacion(app)"
