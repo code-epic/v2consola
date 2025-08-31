@@ -969,6 +969,23 @@ export class IssuesComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Volver a la selección de usuario. Limpia estado visual y muestra la intro.
+   */
+  public resetUserSelection(): void {
+    console.log('↩️ Volver a selección de usuario');
+    this.selectedUsuario = '';
+    this.selectedPass = '';
+    this.displayedAplicaciones = [];
+    this.aplicacionSeleccionada = null;
+    this.showIssuesTable = false;
+    this.applicationsError = null as any; // mantener tipados previos
+    this.loadingMessage = '';
+    this.loadingSubMessage = '';
+    this.showApplicationsLoadingScreen = false;
+    this.cdr.markForCheck();
+  }
+
+  /**
    * Aplica el filtro de usuario sobre la lista de aplicaciones gestionada por ApplicationsService.
    * Se mapea por nombre de repositorio (SEC.repositorio ~ Application.repository)
    */

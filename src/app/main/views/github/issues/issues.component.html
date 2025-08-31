@@ -131,6 +131,19 @@
           </div>
 
           <ng-container *ngIf="selectedUsuario">
+          <!-- Header con volver y usuario actual -->
+          <div class="user-apps-header mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+              <button type="button" class="btn btn-outline-secondary btn-modern" (click)="resetUserSelection()">
+                <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
+                Cambiar usuario
+              </button>
+              <div class="user-pill" aria-label="Usuario seleccionado">
+                <span [data-feather]="'user'" [size]="14" class="me-1"></span>
+                {{ selectedUsuario }}
+              </div>
+            </div>
+          </div>
           <!-- Error State (solo tras seleccionar usuario) -->
           <div class="row" *ngIf="selectedUsuario && applicationsError && !applicationsLoading">
             <div class="col-12 text-center py-5">
