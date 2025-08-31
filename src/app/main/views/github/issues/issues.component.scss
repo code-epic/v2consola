@@ -2,6 +2,80 @@
 // MODERN APPLICATION CARDS STYLING
 // ========================================
 
+// ========================================
+// INTRO HERO (pre-user selection)
+// ========================================
+
+.issues-intro {
+  min-height: 48vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+}
+
+.intro-card {
+  width: 100%;
+  max-width: 720px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.intro-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  margin: 0 auto 12px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7367f0 0%, #9c88ff 100%);
+  box-shadow: 0 6px 18px rgba(115, 103, 240, 0.35);
+}
+
+.intro-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #2c2c2c;
+  margin: 8px 0 6px 0;
+}
+
+.intro-subtitle {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 16px;
+}
+
+.intro-control {
+  text-align: left;
+  margin-top: 6px;
+}
+
+.intro-select {
+  border-radius: 12px !important;
+  border: 2px solid #e8e8e8 !important;
+  height: 44px;
+  transition: all 0.2s ease;
+  &:focus {
+    border-color: #7367f0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(115, 103, 240, 0.12) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .intro-card {
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+  .intro-title { font-size: 1.2rem; }
+  .intro-subtitle { font-size: 0.9rem; }
+}
+
 .application-card {
   position: relative;
   background: #ffffff;
