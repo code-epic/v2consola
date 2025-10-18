@@ -1,0 +1,1098 @@
+// ========================================
+// MODERN APPLICATION CARDS STYLING
+// ========================================
+
+// ========================================
+// INTRO HERO (pre-user selection)
+// ========================================
+
+.issues-intro {
+  min-height: 48vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+}
+
+.intro-card {
+  width: 100%;
+  max-width: 720px;
+  background: #ffffff;
+  border: 1px solid #e8e8e8;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.intro-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  margin: 0 auto 12px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: linear-gradient(135deg, #7367f0 0%, #9c88ff 100%);
+  box-shadow: 0 6px 18px rgba(115, 103, 240, 0.35);
+}
+
+.intro-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #2c2c2c;
+  margin: 8px 0 6px 0;
+}
+
+.intro-subtitle {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 16px;
+}
+
+.intro-control {
+  text-align: left;
+  margin-top: 6px;
+}
+
+.intro-select {
+  border-radius: 12px !important;
+  border: 2px solid #e8e8e8 !important;
+  height: 44px;
+  transition: all 0.2s ease;
+  &:focus {
+    border-color: #7367f0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(115, 103, 240, 0.12) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .intro-card {
+    padding: 20px 16px;
+    border-radius: 14px;
+  }
+  .intro-title { font-size: 1.2rem; }
+  .intro-subtitle { font-size: 0.9rem; }
+}
+
+// Header encima de las cards de aplicaciones
+.user-apps-header {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #7367f0 0%, #9c88ff 100%);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 10px rgba(115, 103, 240, 0.35);
+}
+
+.application-card {
+  position: relative;
+  background: #ffffff;
+  border: 2px solid #e8e8e8;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(0);
+  
+  // Hover Effects
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #7367f0;
+    
+    .hover-overlay {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .app-icon {
+      transform: scale(1.1);
+    }
+  }
+  
+  // Selected State
+  &.selected {
+    border-color: #7367f0;
+    box-shadow: 0 4px 20px rgba(115, 103, 240, 0.25);
+    
+    .card-header-gradient {
+      background: linear-gradient(135deg, #7367f0 0%, #9c88ff 100%);
+    }
+    
+    .app-icon {
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+  }
+  
+  // Focus State for Accessibility
+  &:focus {
+    outline: none;
+    
+    .focus-ring {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
+
+// Card Header with Gradient
+.card-header-gradient {
+  height: 80px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: background 0.3s ease;
+}
+
+// App Icon Container
+.app-icon-container {
+  position: relative;
+  z-index: 2;
+}
+
+.app-icon {
+  width: 56px;
+  height: 56px;
+  background: rgba(115, 103, 240, 0.1);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  .feather-icon {
+    width: 28px;
+    height: 28px;
+    color: #7367f0;
+    transition: color 0.3s ease;
+  }
+  
+  &.selected {
+    .feather-icon {
+      color: #ffffff;
+    }
+  }
+}
+
+// Modern Card Body
+.card-body-modern {
+  padding: 24px 20px;
+  text-align: center;
+}
+
+.app-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2c2c2c;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.app-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.owner-repo,
+.repo-name {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: #6c757d;
+  
+  i {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+  }
+}
+
+.owner-repo {
+  font-weight: 500;
+  color: #495057;
+}
+
+// App Stats
+.app-stats {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: #f8f9fa;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  color: #6c757d;
+  
+  .stat-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+// Selection Indicator
+.selection-indicator {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 3;
+  
+  &.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.selection-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #28a745;
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+  
+  .check-icon {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+// Hover Overlay
+.hover-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(115, 103, 240, 0.95), rgba(115, 103, 240, 0.8));
+  padding: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.hover-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  
+  .hover-icon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+// Focus Ring for Accessibility
+.focus-ring {
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 3px solid #7367f0;
+  border-radius: 20px;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.2s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+// Grid Improvements - More spacing between cards
+.row.g-4 {
+  --bs-gutter-x: 1.5rem;  // Horizontal spacing (sides)
+  --bs-gutter-y: 2.5rem;  // Vertical spacing (top/bottom) - Increased!
+}
+
+// Additional margin for better vertical separation
+.col-md-6.col-lg-4 {
+  margin-bottom: 1rem; // Extra bottom margin for each column
+}
+
+// Responsive Adjustments
+@media (max-width: 768px) {
+  .application-card {
+    border-radius: 12px;
+    
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+  
+  .card-header-gradient {
+    height: 60px;
+  }
+  
+  .app-icon {
+    width: 48px;
+    height: 48px;
+    
+    .feather-icon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
+  .card-body-modern {
+    padding: 20px 16px;
+  }
+  
+  .app-title {
+    font-size: 1.125rem;
+  }
+}
+
+// Animation for card entrance
+@keyframes cardSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.application-card {
+  animation: cardSlideIn 0.4s ease-out;
+  
+  // Stagger animation for multiple cards
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
+}
+
+// Dark mode support (if needed)
+@media (prefers-color-scheme: dark) {
+  .application-card {
+    background: #2c2c2c;
+    border-color: #404040;
+    
+    .app-title {
+      color: #ffffff;
+    }
+    
+    .owner-repo,
+    .repo-name {
+      color: #b0b0b0;
+    }
+    
+    .stat-item {
+      background: #404040;
+      color: #b0b0b0;
+    }
+  }
+}
+
+// ========================================
+// MODERN SEARCH INPUT STYLING
+// ========================================
+
+.search-container {
+  max-width: 400px;
+  
+  .position-relative {
+    position: relative;
+  }
+}
+
+.search-input {
+  padding-left: 45px !important;
+  padding-right: 45px !important;
+  border-radius: 25px !important;
+  border: 2px solid #e8e8e8 !important;
+  font-size: 0.9rem;
+  height: 42px;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  
+  &:focus {
+    border-color: #7367f0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(115, 103, 240, 0.15) !important;
+    background: #ffffff;
+  }
+  
+  &::placeholder {
+    color: #a8a8a8;
+    font-style: italic;
+  }
+}
+
+.search-icon-container {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.search-icon {
+  color: #7367f0;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+.search-input:focus + .search-icon-container .search-icon {
+  opacity: 1;
+}
+
+.search-clear {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  z-index: 2;
+  background: #f8f9fa;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: #e9ecef;
+    transform: translateY(-50%) scale(1.1);
+  }
+}
+
+.clear-icon {
+  color: #6c757d;
+  transition: color 0.3s ease;
+  
+  .search-clear:hover & {
+    color: #495057;
+  }
+}
+
+// Responsive search input
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 100%;
+  }
+  
+  .search-input {
+    font-size: 0.85rem;
+    height: 38px;
+    padding-left: 40px !important;
+    padding-right: 40px !important;
+    
+    &::placeholder {
+      font-size: 0.8rem;
+    }
+  }
+  
+  .search-icon-container {
+    left: 12px;
+  }
+  
+  .search-clear {
+    right: 12px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// ========================================
+// MODERN APPLICATION HEADER STYLING
+// ========================================
+
+.app-header-modern {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e8e8e8;
+  margin-bottom: 24px;
+}
+
+.btn-modern {
+  border-radius: 12px !important;
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.app-info-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+.app-icon-header {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #7367f0 0%, #9c88ff 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+  box-shadow: 0 4px 12px rgba(115, 103, 240, 0.3);
+  
+  .text-primary {
+    color: #ffffff !important;
+  }
+}
+
+.app-details-header {
+  flex: 1;
+}
+
+.app-name-header {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c2c2c;
+  margin-bottom: 8px;
+}
+
+.app-meta-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.owner-info,
+.repo-info {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.repo-divider {
+  color: #dee2e6;
+  font-weight: bold;
+}
+
+.issues-count-badge {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: #ffffff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+// ========================================
+// MODERN PAGINATION CONTROLS STYLING
+// ========================================
+
+.pagination-controls {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 8px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e8e8e8;
+}
+
+.pagination-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-weight: 500;
+  color: #495057;
+}
+
+.label-text {
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.pagination-select {
+  width: auto !important;
+  min-width: 70px;
+  border-radius: 8px !important;
+  border: 2px solid #e8e8e8 !important;
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 4px 8px !important;
+  height: auto !important;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    border-color: #7367f0 !important;
+    box-shadow: 0 0 0 0.15rem rgba(115, 103, 240, 0.15) !important;
+  }
+}
+
+// Responsive header adjustments
+@media (max-width: 768px) {
+  .app-header-modern {
+    padding: 16px;
+  }
+  
+  .app-info-card {
+    padding: 12px 16px;
+  }
+  
+  .app-icon-header {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+  }
+  
+  .app-name-header {
+    font-size: 1.25rem;
+  }
+  
+  .app-meta-header {
+    gap: 8px;
+  }
+  
+  .owner-info,
+  .repo-info {
+    font-size: 0.8rem;
+  }
+  
+  .issues-count-badge {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+  
+  .pagination-controls {
+    padding: 6px 12px;
+  }
+  
+  .label-text {
+    font-size: 0.8rem;
+  }
+  
+  .pagination-select {
+    font-size: 0.8rem;
+    min-width: 60px;
+  }
+}
+
+// ========================================
+// OPTIMIZED ISSUE DETAIL VIEW STYLING
+// ========================================
+
+.issue-detail-modern {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e8e8e8;
+  margin-bottom: 24px;
+}
+
+// Compact Header Section
+.detail-header {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+}
+
+.issue-title-section {
+  flex: 1;
+}
+
+.issue-status-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  &.status-open {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  }
+  
+  &.status-closed {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+  }
+}
+
+.issue-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c2c2c;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.issue-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.meta-divider {
+  color: #dee2e6;
+  font-weight: bold;
+  margin: 0 4px;
+}
+
+.issue-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  
+  .badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+  }
+  
+  .badge-state {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Content Layout
+.detail-content {
+  .row {
+    margin: 0;
+  }
+  
+  .col-lg-8,
+  .col-lg-4 {
+    padding: 0 8px;
+  }
+}
+
+// Content Cards
+.content-card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+  }
+}
+
+.card-header-minimal {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 600;
+}
+
+.card-content {
+  padding: 16px;
+}
+
+// Description Card
+.description-card {
+  .description-text {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #495057;
+    margin: 0;
+    text-align: justify;
+  }
+}
+
+// Labels Card
+.labels-card {
+  .labels-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .label-tag {
+    background: linear-gradient(135deg, #e9ecef 0%, #f8f9fa 100%);
+    color: #495057;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid #dee2e6;
+  }
+}
+
+// Stats Card
+.stats-card {
+  .stat-item {
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: #e9ecef;
+      transform: scale(1.02);
+    }
+  }
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    
+    &.comments {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: #ffffff;
+    }
+    
+    &.updated {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      color: #ffffff;
+    }
+  }
+  
+  .stat-info {
+    flex: 1;
+  }
+  
+  .stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    line-height: 1;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-top: 2px;
+  }
+}
+
+// Details Card
+.details-card {
+  .detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f8f9fa;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .detail-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+    min-width: 100px;
+  }
+  
+  .detail-value {
+    font-size: 0.9rem;
+    color: #495057;
+    font-weight: 600;
+    text-align: right;
+    
+    &.repo-link {
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 0.8rem;
+      background: #f8f9fa;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+  }
+  
+  .assignee-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .assignee-avatar {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #7367f0 0%, #9c88ff 100%);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  
+  .assignee-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+}
+
+// Actions Card
+.actions-card {
+  .actions-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  
+  .btn-action {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 8px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  .btn-label {
+    font-size: 0.8rem;
+    margin-top: 4px;
+  }
+}
+
+// Responsive adjustments for detail view
+@media (max-width: 992px) {
+  .issue-detail-modern {
+    padding: 16px;
+  }
+  
+  .detail-header {
+    padding: 12px 16px;
+  }
+  
+  .issue-title {
+    font-size: 1.25rem;
+  }
+  
+  .issue-status-icon {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .detail-content {
+    .col-lg-8,
+    .col-lg-4 {
+      padding: 0 4px;
+    }
+  }
+  
+  .content-card {
+    margin-bottom: 12px;
+  }
+  
+  .card-content {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .issue-badges {
+    margin-top: 12px;
+    justify-content: flex-start;
+  }
+  
+  .issue-meta {
+    font-size: 0.8rem;
+  }
+  
+  .actions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .detail-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    
+    .detail-value {
+      text-align: left;
+    }
+  }
+}

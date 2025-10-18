@@ -44,6 +44,7 @@ import { environment } from 'environments/environment';
 import { BlockUIModule } from 'ng-block-ui';
 import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
 import { SharedModule } from './main/license-bunker/shared.module';
+import { GithubModule } from './main/views/github/github.module';
 
 
 //  Recaptcha V2
@@ -113,7 +114,8 @@ const appRoutes: Routes = [
     TaskModule,
     InvestigationModule,
     NgSelectModule,
-    SharedModule
+    SharedModule,
+    GithubModule
   ],
   providers: [
     {
