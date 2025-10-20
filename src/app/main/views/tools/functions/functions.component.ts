@@ -381,7 +381,7 @@ export class FunctionsComponent implements OnInit {
 
   LimpiarForm() {
     this.loginForm = this._formBuilder.group({
-      id: ["", [Validators.required]],
+      id: [this.utilservice.GenerarUnicId().toUpperCase(), [Validators.required]],
       tipo: [undefined, [Validators.required]],
       nombre: ["", [Validators.required]],
       version: ["0.0.1", [Validators.required]],
@@ -475,6 +475,12 @@ export class FunctionsComponent implements OnInit {
     this.submitted = true
     console.log(this.loginForm.get('categoria')?.value)
     if (this.loginForm.invalid) {
+      this.utilservice.AlertMini(
+            "top-end",
+            "warning",
+            `Hay campos obligatorios pendientes`,
+            3000
+          )
       return
     } else {
       this.loginForm.value.version = this.existe
@@ -802,6 +808,7 @@ export class FunctionsComponent implements OnInit {
   }
 
   ejecutarCrontab(){
+    console.log('Ejecutando Crontab...')
     let fnx = JSON.stringify(this.loginForm.value)
 
     this.apiService.ExecCrontab(fnx).subscribe(

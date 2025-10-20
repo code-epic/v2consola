@@ -23,7 +23,7 @@
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label class="form-label" for="origen">Modulo</label>
+                            <label class="form-label" for="origen">Menu</label>
                             <ng-select [items]="dataModulo" [name]="xmodulo" [addTag]="true" [(ngModel)]="xmodulo"
                                 [ngModelOptions]="{standalone: true}" bindLabel="name" 
                                 (ngModelChange)="selectEventModulo($event)"
@@ -32,7 +32,7 @@
                         </div>
 
                         <div class="form-group col-md-6">
-                            <label class="form-label" for="origen">Menu</label>
+                            <label class="form-label" for="origen">Sub Menu</label>
                             <ng-select [items]="datamenu" [addTag]="true" [(ngModel)]="menu"
                                 [ngModelOptions]="{standalone: true}" (ngModelChange)="selectEventMenu($event)"
                                 (input)='onFocusedMenu($event)'

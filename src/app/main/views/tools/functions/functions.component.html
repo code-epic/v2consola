@@ -18,7 +18,7 @@
                 <button type="button" style="height: 38px; margin-top: -4px;" (click)="ModalAdd(ModalAddFunction)"
                   class="btn btn-icon btn-info" rippleEffect>
                   <span [data-feather]="'plus'"></span> Agregar</button>
-                  &nbsp;
+                &nbsp;
                 <button type="button" (click)="ModalExportarArchivo(ModalExportar)" class="btn btn-icon btn-primary"
                   style="height: 38px; margin-top: -4px;" rippleEffect>
                   <span [data-feather]="'database'"></span> Exportar</button>
@@ -54,9 +54,10 @@
         </div>
 
         <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-          [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
+          [columnMode]="ColumnMode.flex" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
           [limit]="basicSelectedOption">
-          <ngx-datatable-column name="DRIVER" [width]="150">
+
+          <ngx-datatable-column name="DRIVER" [flexGrow]="2">
             <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
               <div class="d-flex align-items-center">
                 <div *ngIf="row.length > 0; else customAvatar">
@@ -83,7 +84,7 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="Lenguaje" [width]="50">
+          <ngx-datatable-column name="LENGUAJE" [flexGrow]="1">
             <ng-template let-row="row" ngx-datatable-cell-template>
               <div>
                 <span class="font-weight-bold">
@@ -105,18 +106,17 @@
             </ng-template>
           </ngx-datatable-column>
 
-
-
-          <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [width]="500">
+          <ngx-datatable-column name="DESCRIPCIÓN" prop="descripcion" [flexGrow]="6" [cellClass]="'description-cell'">
             <ng-template let-descripcion="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">{{ descripcion.slice(0,100) }} ... </span>
+              <div class="d-flex align-items-center" style="flex: 1; min-width: 0;">
+                <span class="font-weight-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" [title]="descripcion | uppercase">
+                  {{ descripcion.slice(0, 70) + '...' | uppercase }}
+                </span>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-
-          <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
+          <ngx-datatable-column name="ACCIÓN" [flexGrow]="1" [sortable]="false">
             <ng-template ngx-datatable-cell-template let-row="row">
               <div ngbDropdown container="body">
                 <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>

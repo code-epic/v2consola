@@ -18,6 +18,7 @@ import { UtilService } from '@services/util/util.service'
 import {
   ColumnMode,
   DatatableComponent,
+  id,
   SelectionType,
 } from '@swimlane/ngx-datatable'
 import { environment } from 'environments/environment'
@@ -86,7 +87,7 @@ export class UserComponent implements OnInit {
     vigencia: 180,
     correo: '',
     observaciones: '',
-    duraciontexto: 1,
+    duraciontexto: 60,
     duraciontiempo: 5,
     oficina: '',
     regional: '',
@@ -200,6 +201,9 @@ export class UserComponent implements OnInit {
   public xregional: any = 'TODAS'
 
   public bEndPoint = false
+  public showClave = false;
+  public bChangePassword = false
+
 
   constructor(
     private apiService: ApiService,
@@ -329,13 +333,12 @@ export class UserComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES
+    this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.lstAplicacion = data.Cuerpo.map((e) => {
-          e.id = e.identificador + '|' + e.nombre
-          e.name = e.nombre + ' : ' + e.VERSION
+        this.lstAplicacion = data.map((e) => {
+          e.name = e.nombre
           return e
         })
       },
@@ -346,21 +349,13 @@ export class UserComponent implements OnInit {
   }
 
   selPerfil(e) {
-    // console.log(this.iUser)
     try {
-      let codPerfil = e.split('|')[0].toString()
-      //this.obtenerAplicacion(e)
-      // this.obetnerModulos(codPerfil, e)
-      this.xAPI.funcion = environment.functions.LISTAR_PERFIL_APP
+      let codPerfil = e
+      this.xAPI.funcion = environment.functions.OBTENER_PERFILES_POR_APLICACION
       this.xAPI.parametros = codPerfil
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          this.lstPerfil = data.Cuerpo.map((e) => {
-            e.id = `${e.id}|${e.perfil}|${e.llave}`
-            e.name = e.perfil
-            return e
-          })
-          // console.log(this.lstPerfil)
+          this.lstPerfil = data
         },
         (error) => {
           console.log(error)
@@ -454,12 +449,12 @@ export class UserComponent implements OnInit {
     this.usuario.correo = this.iUser.correo
     this.usuario.cargo = this.iUser.descripcion
     this.usuario.endpoint = this.iUser.endpoint
-    this.usuario.sucursal = this.xoficina.name!=undefined?this.xoficina.name: this.xoficina
-    this.usuario.direccion = this.xregional!=undefined?this.xregional.name: this.xregional
+    this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
+    this.usuario.direccion = this.xregional != undefined ? this.xregional.name : this.xregional
     // this.usuario.clave = await this.utilservice.generateSHA256Hash(
     //   this.iUser.clave
     // )
-    console.log('Entrando en clave',this.iUser.clave )
+    console.log('Entrando en clave', this.iUser.clave)
     if (this.iUser.clave != '') {
       await this.sha256.hash(this.iUser.clave).then(hash => {
         // console.log(this.usuario.clave, '::', this.iUser.clave, hash)
@@ -483,6 +478,70 @@ export class UserComponent implements OnInit {
     console.log(this.usuario)
   }
 
+
+  getAplication(id) {
+    return this.lstAplicacion.find((item) => item.id == id)
+
+  }
+
+  getProfile(nombre) {
+    return this.lstPerfil.find((item) => item.nombre == nombre)
+  }
+
+  async getUserApp(apps: any) {
+    let lstApp = []
+
+     let rol: SRol = {
+      descripcion: apps.idper.Rol.descripcion,
+      Menu: apps.idper.Rol.Menu,
+    }
+    
+
+    let xapps: SAplicacion = {
+      autor:  apps.idapp.autor,
+      id: 'ID-001',
+      nombre: apps.idapp.nombre,
+      version: apps.idapp.version,
+      url: apps.idapp.url,
+      comentario: 'Generado por sistema',
+      Rol: rol,
+    }
+    this.Aplicacion = xapps
+    lstApp.push(this.Aplicacion)
+    this.usuario.Perfil.descripcion = apps.perfil
+    this.usuario.Perfil.traza = apps.traza
+    this.usuario.cedula = this.iUser.cedula
+    this.usuario.login = this.iUser.login
+    this.usuario.nombre = this.iUser.nombre
+    this.usuario.correo = this.iUser.correo
+    this.usuario.cargo = this.iUser.descripcion
+    this.usuario.endpoint = this.iUser.endpoint
+    this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
+    this.usuario.direccion = this.xregional != undefined ? this.xregional.name : this.xregional
+
+
+    if (this.iUser.clave != '') {
+      await this.sha256.hash(this.iUser.clave).then(hash => {
+        this.usuario.clave = hash
+      })
+    }
+
+
+    let firma: Firmadigital = {
+      vigencia: this.iUser.vigencia,
+      duracion: this.iUser.duraciontiempo * this.iUser.duraciontexto,
+      direccionmac: '',
+      direccionip: '',
+      tiempo: new Date().toISOString(),
+      nivel: parseInt(apps.idtra),
+    }
+    this.usuario.firmadigital = firma
+    this.usuario.sistema = apps.idapp.id
+    this.usuario.Aplicacion = lstApp
+
+    console.log(this.usuario)
+  }
+
   async agregarAplicacion() {
     let app = {}
     if (
@@ -498,26 +557,21 @@ export class UserComponent implements OnInit {
       )
       return false
     }
-    this.lstAplicacion.forEach((e) => {
-      if (e.id == this.xaplicacion) {
-        app = {
-          id: e.id,
-          iduser: 0,
-          idapp: this.xaplicacion.split('|')[0],
-          aplicacion: this.xaplicacion.split('|')[1],
-          idper: this.xperfil.split('|')[0],
-          perfil: this.xperfil.split('|')[1],
-          idtra: this.xtraza.split('|')[0],
-          traza: this.xtraza.split('|')[1],
-          estatus: 1,
-          repositorio: e.repositorio,
-          version: e.VERSION,
-          creador: e.creador,
-          autor: e.name,
-          comentario: e.observacion,
-        }
-      }
-    })
+
+    //  console.log(this.getAplication(this.xaplicacion))
+    //  console.log(this.getProfile(this.xperfil))
+
+    app = {
+      idapp: this.getAplication(this.xaplicacion),
+      idper: this.getProfile(this.xperfil),
+      traza: this.xtraza.split('|')[1],
+      idtra: this.xtraza.split('|')[0],
+      nombre: this.getAplication(this.xaplicacion).nombre,
+      perfil: this.getProfile(this.xperfil).nombre,
+      estatus: 1,
+    }
+
+
 
     this.lstUsersApp.push(app)
     // console.log(this.lstUsersApp)
@@ -535,8 +589,26 @@ export class UserComponent implements OnInit {
 
   async agregarUsuario() {
 
+    if (this.property) {
+      const password = this.iUser.clave
+      const passwordRegex =
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+
+      if (!passwordRegex.test(password)) {
+        this.utilservice.AlertMini(
+          "top-end",
+          "error",
+          "La clave no cumple con los requisitos de complejidad. Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
+          8000
+        );
+        return;
+      }
+    }
+
+
+
     await this.lstUsersApp.forEach(async (e) => {
-      await this.obetnerModulos(e)
+      await this.getUserApp(e)
     })
 
     Swal.fire({
@@ -564,10 +636,8 @@ export class UserComponent implements OnInit {
       upsert: true,
     }
 
-    console.log(this.usuario)
     this.apiService.ExecColeccion(fnx).subscribe(
       (data) => {
-        console.log(data)
         this.lstPerfil = []
         this.xaplicacion = ''
         this.xperfil = ''
@@ -584,7 +654,7 @@ export class UserComponent implements OnInit {
     )
   }
 
-  finalizando(){
+  finalizando() {
     Swal.fire({
       title: 'Registrado',
       text: 'Tu usuario ha sido registrado codigo:',

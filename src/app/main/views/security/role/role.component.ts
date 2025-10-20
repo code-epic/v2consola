@@ -95,8 +95,17 @@ export class RoleComponent implements OnInit {
   active: any = 1
 
   public blApp: boolean = true
-  public bmenus : boolean = false
+  public bmenus: boolean = false
   public acciones: boolean = false
+
+  public consola = {
+    "app": "App.Consola",
+    "estatus": "1",
+    "idrol": "0",
+    "llave": "551582bbd1370fffe7c7198a854490e9.sse",
+    "observacion": "Sistema - Panel",
+    "rol": "Sistema"
+  }
 
 
   constructor(
@@ -204,19 +213,19 @@ export class RoleComponent implements OnInit {
 
 
   selectEventModulo(item) {
-    
+
     this.consultarMenu(this.xmodulo[0].split('|')[0])
-    
+
   }
 
 
   addMenuList() {
-   
+
     if (this.menu.length > 0) {
-      let idmodulo =  this.xmodulo[0].split('|')[0]
+      let idmodulo = this.xmodulo[0].split('|')[0]
       let descripcion_modulo = this.xmodulo[0].split('|')[1]
       this.menu.forEach(e => {
-        
+
         let i = 0
         let eliminar = 0
         let id = e.split('|')[0]
@@ -292,7 +301,14 @@ export class RoleComponent implements OnInit {
     this.lstRoles = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.lstRoles = data.Cuerpo
+        let lst = []
+        lst.push(this.consola)
+         data.Cuerpo.map(e => {
+          if (e.app != 'consola')
+            lst.push(e)
+        }); 
+
+        this.lstRoles = lst
       },
       (error) => {
         console.log(error)

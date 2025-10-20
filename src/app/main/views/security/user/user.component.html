@@ -39,7 +39,18 @@
 
             <div class="form-group col-md-3" *ngIf="property">
               <label class="form-label" for="Clave">Clave</label>
-              <input [(ngModel)]="iUser.clave"  type="password"  placeholder="Clave" class="form-control">
+              <!-- <input [(ngModel)]="iUser.clave"  type="password"  placeholder="Clave" class="form-control"> -->
+
+              <div class="input-group input-group-merge">
+                <input [type]="showClave ? 'text' : 'password'" [(ngModel)]="iUser.clave"
+                  [ngModelOptions]="{standalone: true}" class="form-control" />
+                <div class="input-group-append">
+                  <span class="input-group-text cursor-pointer" (click)="showClave = !showClave"><i class="feather"
+                      [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i></span>
+                </div>
+              </div>
+
+
             </div>
             <div class="form-group col-md-3" *ngIf="property">
               <label class="form-label" for="encriptamiento">Encriptamiento</label>
@@ -132,17 +143,17 @@
 
           
 
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-4">
               <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
               <ng-select [items]="lstAplicacion" [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
                 bindLabel="name" (ngModelChange)="selPerfil($event)" bindLabel="name" bindValue="id"
                 placeholder="Aplicación"></ng-select>
             </div>
 
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-3">
               <label class="form-label" for="descripcion">Seleccionar Perfil</label>
               <ng-select [items]="lstPerfil" [(ngModel)]="xperfil" [ngModelOptions]="{standalone: true}"
-                bindLabel="name"  bindLabel="name" bindValue="id"
+                bindLabel="nombre"  bindLabel="nombre" bindValue="nombre"
                 placeholder="Perfil"></ng-select>
             </div>
 
@@ -180,7 +191,7 @@
                 </thead>
                 <tbody>
                     <tr *ngFor="let e of dataUsers; let i = index">
-                        <td>{{e.aplicacion}}</td>
+                        <td>{{e.nombre}}</td>
                         <td>{{e.perfil}}</td>
                         <td>{{e.traza}}</td>
                         <td *ngIf="e.estatus==0">
@@ -218,25 +229,21 @@
           <br>
           <hr>
           <data class="row">
-            <div class="form-group col-md-8"></div>
-            <div class="form-group col-md-4">
-              <br><br>
-              
-
-              <div class="col-md-12" align="right">
-                <button type="button" [disabled]="dataUsers.length==0?'disabled':''" class="btn btn-success" (click)="agregarUsuario()">
-                  Registrar
+            <div class="form-group col-md-8" >
+                 <button type="button" *ngIf="bChangePassword" class="btn btn-warning" (click)="changePassword()">
+                  Cambiar Clave
                 </button>
-                &nbsp;
-                <!-- <button type="button" class="btn btn-warning" (click)="cancelar()">
-                  Cancelar
-                </button> -->
-              </div>
-
+            </div>
+            <div class="form-group col-md-4 text-right">
+              
+              <button type="button" [disabled]="dataUsers.length==0?'':''" class="btn btn-success" (click)="agregarUsuario()">
+                  Registrar Usuarios&nbsp;&nbsp;
+                </button>
             </div>
 
           </data>
 
+          
 
           <br>
 

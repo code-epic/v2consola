@@ -87,11 +87,13 @@
             width="40" /><span class="avatar-status-online"></span></span>
       </a>
       <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right">
-        <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'user'" [class]="'mr-50'"></span> Profile</a>
-        <a ngbDropdownItem [routerLink]="['/task/task-monitor']"><span [data-feather]="'monitor'"
-            [class]="'mr-50'"></span> Monitor</a>
+
+        <!-- <a ngbDropdownItem [routerLink]="['/task/task-monitor']"><span [data-feather]="'monitor'"
+            [class]="'mr-50'"></span> Monitor</a> -->
         <!-- <a angbDropdownItem [routerLink]="['/']"><span [data-feather]="'check-square'" [class]="'mr-50'"></span>Task</a> -->
         <!-- <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'message-square'" [class]="'mr-50'"></span> Chats</a>  -->
+        <a ngbDropdownItem (click)="ModalChangePassword(ChangePassword)"><span [data-feather]="'user'"
+            [class]="'mr-50'"></span> Cambiar Clave</a>
         <div class="dropdown-divider"></div>
         <a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Salir</a>
       </div>
@@ -101,3 +103,63 @@
 </div>
 
 <div *ngIf="blCargando" class="segundo-plano"></div>
+
+
+
+
+<ng-template #ChangePassword let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Credenciales: cambiar clave</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" tabindex="0" ngbAutofocus>
+    <form method="post" id="frmChange" name="frmChange">
+      <div class="form-group">
+        <label>Contraseña actual</label>
+        <div class="input-group input-group-merge">
+          <input [type]="showClave ? 'text' : 'password'" [(ngModel)]="Change.clave"
+            [ngModelOptions]="{standalone: true}" class="form-control" />
+          <div class="input-group-append">
+            <span class="input-group-text cursor-pointer" (click)="showClave = !showClave"><i class="feather"
+                [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Nueva contraseña</label>
+        <div class="input-group input-group-merge">
+          <input [type]="showNueva ? 'text' : 'password'" [(ngModel)]="Change.nueva"
+            [ngModelOptions]="{standalone: true}" class="form-control"
+            [class.is-invalid]="Change.nueva !== Change.repite && Change.repite.length > 0" />
+          <div class="input-group-append">
+            <span class="input-group-text cursor-pointer" (click)="showNueva = !showNueva"><i class="feather"
+                [ngClass]="showNueva ? 'icon-eye-off' : 'icon-eye'"></i></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Repetir contraseña</label>
+        <div class="input-group input-group-merge">
+          <input [type]="showRepite ? 'text' : 'password'" [(ngModel)]="Change.repite"
+            [ngModelOptions]="{standalone: true}" class="form-control"
+            [class.is-invalid]="Change.nueva !== Change.repite && Change.repite.length > 0" />
+          <div class="input-group-append">
+            <span class="input-group-text cursor-pointer" (click)="showRepite = !showRepite"><i class="feather"
+                [ngClass]="showRepite ? 'icon-eye-off' : 'icon-eye'"></i></span>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button style="height: 35px;text-align: left;" class="btn btn-success" tabindex="4" (click)="ChangesPassword()" rippleEffect >Cambiar
+      Clave</button>
+    <button style="height: 35px;" type="button" class="btn btn-danger  text-right" (click)="modal.close('Accept click')"
+      rippleEffect>Cerrar</button>
+  </div>
+
+</ng-template>

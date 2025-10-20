@@ -27,6 +27,17 @@ import Swal from "sweetalert2";
 import { environment } from "environments/environment";
 import { ApiService } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { UntypedFormBuilder } from "@angular/forms";
+import { Sha256Service } from "@services/util/sha256";
+
+
+interface Change {
+  usuario: string;
+  clave: string;
+  nueva: string;
+  repite: string;
+}
 
 @Component({
   selector: "app-navbar",
@@ -80,6 +91,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // Private
   private _unsubscribeAll: Subject<any>;
 
+  public showClave = false;
+  public showNueva = false;
+  public showRepite = false;
+
+
+  public Change: Change = {
+    usuario: "",
+    clave: "",
+    nueva: "",
+    repite: "",
+  }
+
+
   /**
    * Constructor
    *
@@ -101,7 +125,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     public _translateService: TranslateService,
     private loginService: LoginService,
     private apiService: ApiService,
-    private utilservice: UtilService
+    private utilservice: UtilService,
+    private modalService: NgbModal,
+    private _formBuilder: UntypedFormBuilder,
+    private sha256: Sha256Service
   ) {
     this.languageOptions = {
       en: {
@@ -355,4 +382,93 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  ModalChangePassword(modal) {
+    this.Change.usuario = this.usuario;
+    this.modalService.open(modal, {
+      centered: true,
+      size: "sm",
+      backdrop: false,
+      keyboard: false,
+      windowClass: 'fondo-modal'
+    });
+  }
+
+  async ChangesPassword() {
+    if (!this.Change.usuario) {
+      this.utilservice.AlertMini("top-end", "error", "No existe un usuario", 3000);
+      return;
+    }
+
+    if (this.Change.nueva !== this.Change.repite) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "error",
+        "La nueva contraseña y su repetición no coinciden.",
+        3000
+      );
+      return;
+    }
+
+    const password = this.Change.nueva;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+
+    if (!passwordRegex.test(password)) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "error",
+        "La clave no cumple con los requisitos de complejidad.",
+        5000
+      );
+      this.utilservice.AlertMini(
+        "top-end",
+        "info",
+        "Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
+        8000
+      );
+      return;
+    }
+
+
+    await this.sha256.hash(this.Change.clave).then(hash => {
+      this.Change.clave = hash
+    })
+
+    await this.sha256.hash(this.Change.nueva).then(hash => {
+      this.Change.nueva = hash
+    })
+
+
+    let xApi = {
+      funcion: "_SYS_UUserPanel",
+      parametros: `${this.Change.usuario},${this.Change.clave},${this.Change.nueva}`,
+    }
+
+    console.log(xApi)
+    this.apiService.Ejecutar(xApi).subscribe(
+      (data) => {
+        console.log(data)
+        this.clearModal();
+      },
+      (error) => {
+        console.log(error)
+        this.clearModal();
+      }
+    )
+
+
+  }
+
+  clearModal() {
+    this.Change = {
+      usuario: "",
+      clave: "",
+      nueva: "",
+      repite: "",
+    }
+    this.modalService.dismissAll();
+  }
+
+
 }

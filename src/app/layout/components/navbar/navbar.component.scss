@@ -1,6 +1,7 @@
 @import '@core/scss/base/bootstrap-extended/include'; // Bootstrap includes
 @import '@core/scss/base/components/include'; // Components includes
 
+
 // To open dd on right
 .dropdown-menu-right {
   right: 0 !important;
@@ -51,7 +52,7 @@ app-navbar-bookmark {
 
 .segundo-plano {
 position: fixed;
-z-index: -1;
+z-index: 1040; /* Debe ser menor que el z-index del backdrop del modal (1050) */
 bottom: 20px;
 right: 900px;
 top: 900px;

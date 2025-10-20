@@ -147,13 +147,33 @@ export class ApiListComponent implements OnInit {
 
 
    async CargarDrivers(){
+
+    let MGDBA = {
+        "_id": "60aab142a0f72cf87ed7a056",
+        "aplicacion": "consola",
+        "basedatos": "code_epic",
+        "descripcion": "Sandra Server Core 1.0.0",
+        "driver": "mongodb",
+        "estatus": true,
+        "host": "sandra.epic",
+        "id": "MGDBA",
+        "protocolo": null,
+        "puerto": "27017",
+        "url": "",
+        "usuario": ""
+    }
+
+    
+    
     this.xAPI.funcion = '_SYS_R_ListarDriver'
     this.xAPI.parametros = this.id
     this.drivers = []
    await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
-        // console.log(data)
-        this.drivers = await data
+        this.drivers = data
+        if(this.id == 'consola')
+          this.drivers.push(MGDBA)
+        
       },
       (error) => {
         console.log(error)

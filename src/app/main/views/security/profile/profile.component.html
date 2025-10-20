@@ -31,10 +31,10 @@
                                             </ng-template>
                                         </ngx-datatable-column>
 
-                                        <ngx-datatable-column name="PERFIL" prop="perfil" [width]="10">
-                                            <ng-template let-perfil="value" ngx-datatable-cell-template>
+                                        <ngx-datatable-column name="PERFIL" prop="nombre" [width]="10">
+                                            <ng-template let-nombre="value" ngx-datatable-cell-template>
                                                 <div>
-                                                    <span class="font-weight-bold">{{ perfil}} </span>
+                                                    <span class="font-weight-bold">{{ nombre }} </span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
@@ -145,68 +145,112 @@
                 
                 
                                 <div class="col-md-12">
-                                    <ngx-datatable [rows]="dataRolDetalles" [rowHeight]="58" class="bootstrap core-bootstrap"
-                                        [limit]="10" [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
-                                        [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption"
-                                        (select)="onSelect($event)">
-                
-                                        <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
-                                            [draggable]="false" [resizeable]="false">
-                                            <ng-template ngx-datatable-header-template let-value="value"
-                                                let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" [checked]="allRowsSelected"
-                                                        (change)="selectFn(!allRowsSelected)" id="headerChkbxRef" />
-                                                    <label class="custom-control-label" for="headerChkbxRef"></label>
+                                    
+                                    <ngx-datatable 
+                                    *ngIf="dataRolDetalles.length > 0"
+                                    [rows]="dataRolDetalles" 
+                                    [rowHeight]="58" 
+                                    class="bootstrap core-bootstrap"
+                                    [limit]="basicSelectedOption" [columnMode]="ColumnMode.force" 
+                                    [selectionType]="SelectionType.checkbox"
+                                    [headerHeight]="40" 
+                                    [footerHeight]="50" 
+                                    [scrollbarH]="true" 
+                                    (select)="onSelect($event)">
+
+                                    <ngx-datatable-row-detail [rowHeight]="'auto'" #rowDetail>
+                                        
+                                        <ng-template let-row="row" ngx-datatable-row-detail-template>
+                                            <div class="p-1 bg-light border-top">
+                                                <div *ngFor="let child of row.children; let i = index" class="d-flex align-items-center py-1" style="margin-left: 25px;">
+                                                    
+                                                    <div class="custom-control custom-checkbox mr-4" style="padding-left: 1.5rem;">
+                                                        <input type="checkbox" 
+                                                            class="custom-control-input" 
+                                                            [checked]="child.estatus === 1"
+                                                            (change)="onChildCheckboxChange(child, $event)" 
+                                                            id="childChkbxRef{{ row.menu + i }}" />
+                                                        <label class="custom-control-label" for="childChkbxRef{{ row.menu + i }}">
+                                                            <span class="ml-2 font-weight-normal">{{ child.accion }}</span>
+                                                        </label>
+                                                    </div>
                                                 </div>
-                                            </ng-template>
-                                            <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value"
-                                                let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" [checked]="isSelected"
-                                                        (change)="onCheckboxChangeFn($event)" id="rowChkbxRef{{ rowIndex }}" />
-                                                    <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
-                                                </div>
-                                            </ng-template>
-                                        </ngx-datatable-column>
-                
-                                        <ngx-datatable-column name="MODULO" [width]="200">
-                                            <ng-template let-modulo="value" let-name="value" ngx-datatable-cell-template>
-                                                <div>
-                                                    <span class="font-weight-bold">{{ modulo }} </span>
-                                                </div>
-                                            </ng-template>
-                
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="MENU" [width]="200">
-                                            <ng-template let-menu="value" let-name="value" ngx-datatable-cell-template>
-                                                <div>
-                                                    <span class="font-weight-bold">{{ menu }} </span>
-                                                </div>
-                                            </ng-template>
-                
-                                        </ngx-datatable-column>
-                                        <ngx-datatable-column name="ACCION" [width]="100">
-                                            <ng-template let-accion="value" let-name="value" ngx-datatable-cell-template>
-                                                <div>
-                                                    <span class="font-weight-bold">{{ accion }} </span>
-                                                </div>
-                                            </ng-template>
-                
-                                        </ngx-datatable-column>
-                
-                
-                                    </ngx-datatable>
-                
+                                            </div>
+                                        </ng-template>
+                                    </ngx-datatable-row-detail>
+
+                                    <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
+                                        [draggable]="false" [resizeable]="false">
+                                        
+                                        <ng-template ngx-datatable-header-template let-selectFn="selectFn">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" id="headerChkbxRef" 
+                                                    (change)="onMasterCheckboxChange($event)" />
+                                                <label class="custom-control-label" for="headerChkbxRef"></label>
+                                            </div>
+                                        </ng-template>
+
+                                        <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" 
+                                                    [checked]="row.estatus === 1"
+                                                    (change)="onParentCheckboxChange(row, $event)" 
+                                                    id="rowChkbxRef{{ rowIndex }}" />
+                                                <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
+                                            </div>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+
+                                    <ngx-datatable-column name="MÓDULO" [width]="250" prop="modulo">
+                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                            <div class="d-flex align-items-center">
+                                                
+                                                <button *ngIf="row.children && row.children.length > 0" 
+                                                    class="btn btn-sm btn-link p-0 mr-2" 
+                                                    title="Expandir/Contraer"
+                                                    (click)="table?.rowDetail.toggleExpandRow(row)">
+                                                    <span [data-feather]="row.isExpanded ? 'minus' : 'plus'"></span>
+                                                </button>
+                                                
+                                                <span class="font-weight-bold">{{ row.modulo }} </span>
+                                            </div>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+
+                                    <ngx-datatable-column name="MENÚ" [width]="200" prop="menu">
+                                        <ng-template let-menu="value" ngx-datatable-cell-template>
+                                            <span class="font-weight-bold">{{ menu }}</span>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+
+                                    <ngx-datatable-column name="ACCIÓN" [width]="100" prop="accion">
+                                        <ng-template let-accion="value" ngx-datatable-cell-template>
+                                            <div>
+                                                <span *ngIf="accion === '-'" class="font-weight-bold text-muted">Grupo</span>
+                                                <span *ngIf="accion !== '-'" class="font-weight-bold">{{ accion }}</span>
+                                            </div>
+                                        </ng-template>
+                                    </ngx-datatable-column>
+
+
+                                </ngx-datatable>
+
+
+
+
                                 </div>
                 
                 
                 
                                 <div class="col-md-12" align="right">
                                     <br>
-                                    <button type="button" class="btn btn-success" (click)="guardarPerfil()">
-                                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                                    
+                                    <button type="button" class="btn btn-success" (click)="guardarPerfiles()">
+                                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Guardar
                                     </button>
+                                    <!-- <button type="button" class="btn btn-success" (click)="guardarPerfil()">
+                                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                                    </button> -->
                                     &nbsp;&nbsp;
                                     <button type="button" class="btn btn-warning" (click)="Limpiar()">
                                         <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar

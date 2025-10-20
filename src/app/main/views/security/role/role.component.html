@@ -55,9 +55,9 @@
                                             </ng-template>
                                         </ngx-datatable-column>
 
-                                        <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
+                                        <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false" >
                                             <ng-template ngx-datatable-cell-template let-row="row">
-                                                <div ngbDropdown container="body">
+                                                <div *ngIf="row.app !== 'App.Consola'" ngbDropdown container="body">
                                                     <button ngbDropdownToggle type="button"
                                                         class="btn icon-btn btn-sm hide-arrow" rippleEffect>
                                                         <span [data-feather]="'settings'"

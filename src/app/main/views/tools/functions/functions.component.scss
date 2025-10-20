@@ -6,6 +6,11 @@
 @import '@core/scss/angular/libs/select.component.scss';
 
 
+::ng-deep .datatable-body-cell.description-cell .datatable-body-cell-label {
+  display: block;
+  width: 100%;
+}
+
 .code-container {
   overflow: auto;
   white-space: pre-wrap;

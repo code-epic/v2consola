@@ -253,10 +253,10 @@ export class LoginService {
     let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo
     this.xAPI.funcion = "_SYS_CUsuarioPerfil";
     this.xAPI.parametros = cadena
-    console.log(this.xAPI)
+    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data[0].Aplicacion[0])
+        // console.log(data[0].Aplicacion[0])
         sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu))
         let texto = Md5.hashStr(JSON.stringify(data[0].Aplicacion[0].Rol.Menu))
         sessionStorage.setItem("crypt", texto)

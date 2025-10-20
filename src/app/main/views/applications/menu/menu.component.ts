@@ -104,13 +104,13 @@ export class MenuComponent implements OnInit {
   public datamenu = []
 
   public lstEstatus = [
-    { id: "1", name: 'MENU' },
-    { id: '0', name: 'SUBMENU' }
+    { id: "1", name: 'TITULO' },
+    { id: '0', name: 'SUBTITULO' }
   ]
 
   public tipoMenu = [
-    { id: 1, name: 'MENU' },
-    { id: 0, name: 'SUBMENU' }
+    { id: 1, name: 'TITULO' },
+    { id: 0, name: 'SUBTITULO' }
   ]
 
   public metodos = [
