@@ -42,19 +42,21 @@ const routes = [
   {
     path: 'security/profile',
     component: ProfileComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'security/user',
     component: UserComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
+  },
+   {
+    path: 'security/user/:id',
+    component: UserComponent,
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'security/user-list',
     component: UserListComponent,
-    // canActivate: [AuthGuard,AuthGuardGuard],
     canActivate: [AuthGuardGuard],
   }
 ];

@@ -171,6 +171,8 @@ export class ProfileComponent implements OnInit {
   public dataJerarquica: PermisoPadre[] = [];
   public padresMap = new Map<string, PermisoPadre>();
 
+  public desactivo = ''
+
 
   constructor(
     private apiService: ApiService,
@@ -187,7 +189,7 @@ export class ProfileComponent implements OnInit {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },
@@ -196,12 +198,14 @@ export class ProfileComponent implements OnInit {
             isLink: false,
           },
           {
-            name: "Definir Rol",
+            name: "Definir Perfil",
             isLink: false,
           },
         ],
       },
     }
+    this.desactivo = ''
+
     this.CargarListaAplicaciones()
     this.listarPerfiles()
   }
@@ -212,7 +216,7 @@ export class ProfileComponent implements OnInit {
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstAplicaciones = data.map((e) => {
-          e.name = e.nombre 
+          e.name = e.nombre
           return e
         })
       },
@@ -245,6 +249,7 @@ export class ProfileComponent implements OnInit {
 
   selTab(e) {
     if (this.active == 2) {
+      this.desactivo = ''
       this.blApp = true
       this.dataRolDetalles = []
       this.dataPlana = []
@@ -255,8 +260,11 @@ export class ProfileComponent implements OnInit {
       // this.rol = undefined
       this.Perfil.descripcion = ''
       this.Perfil.nombre = ''
+      
+      
     } else {
       this.registrar = "Registrar nuevo perfil"
+      
     }
   }
 
@@ -276,7 +284,7 @@ export class ProfileComponent implements OnInit {
     this.Perfil.descripcion = ''
 
     this.aplicacion = this.obtenerAplicacion(event)
-  
+
 
     this.dataRol = []
     let rol = {
@@ -287,12 +295,14 @@ export class ProfileComponent implements OnInit {
       "observacion": this.aplicacion.comentario,
       "name": this.aplicacion.Rol.descripcion
     }
+    this.xrol = this.aplicacion.Rol.descripcion
+    this.xaplicacion = this.aplicacion.nombre
     this.dataRol.push(rol)
 
 
   }
 
-  selRolDetalle(event: any): void {
+  selRolDetalle(row: any = null): void {
     this.dataRolDetalles = []
     this.dataPlana = []
     this.dataJerarquica = []
@@ -333,7 +343,13 @@ export class ProfileComponent implements OnInit {
     this.dataPlana = lst
     this.convertirDataPlana()
     console.log(this.dataJerarquica)
-    this.dataRolDetalles = this.dataJerarquica
+    if (row != null) {
+      this.dataRolDetalles = this.updateMenuEstatusOnly(this.dataJerarquica, row.Rol.Menu)
+    } else {
+      this.dataRolDetalles = this.dataJerarquica
+
+    }
+    // this.dataRolDetalles = this.dataJerarquica
     this.cd.detectChanges();
     return
   }
@@ -612,44 +628,24 @@ export class ProfileComponent implements OnInit {
   }
 
   editarRol(row) {
-    this.xAPI.funcion = environment.functions.LISTAR_PERFIL_MENUS
-    this.xAPI.parametros = row.id
-    this.xAPI.valores = ''
-    this.dataRolDetalles = []
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        console.log(data)
-        let idAPP = ''
-        this.registrar = "Editar Perfil"
-        this.dataRolDetalles = data.Cuerpo.map((e) => {
-          this.Perfil.descripcion = e.observacion
-          this.Perfil.nombre = e.rol
-          this.xaplicacion = e.app
-          this.xrol = e.rol
-          idAPP = e.idapp
-          e.idmod = e.idmod
-          e.modulo = e.modulo
-          e.idmenu = e.idmenu
-          e.menu = e.menu
-          e.accid = e.accid
-          e.accion = e.accion
-          return e
-        })
-        this.lista = this.dataRolDetalles
-        this.blApp = false
-        this.Perfil.aplicacion = this.lstAplicaciones.find(
-          (item) => item.id == idAPP
-        ).name
-        this.active = 2
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
+    // console.log(row.Rol.Menu)
+    this.blApp = false
+    this.desactivo = 'disabled'
+    this.selRol(row.aplicacion)
+
+    this.Perfil.nombre = row.nombre
+    this.Perfil.descripcion = row.descripcion
+    this.Perfil.estatus = row.estatus
+    this.selRolDetalle(row)
+
+
+    this.active = 2
+
   }
 
 
   eliminarRol(row) {
+    console.log(row)
     Swal.fire({
       title: "Alerta",
       text: "¿Está seguro que desea eliminar perfil?",
@@ -744,7 +740,7 @@ export class ProfileComponent implements OnInit {
   }
 
   guardarPerfiles() {
-   
+
     if (
       this.Perfil.nombre == "" ||
       this.Perfil.aplicacion == undefined
@@ -759,7 +755,6 @@ export class ProfileComponent implements OnInit {
     }
 
     let mnu = this.aplicacion.Rol.Menu
-    // console.log(this.Perfil.nombre)
     this.perfilSave.nombre = this.Perfil.nombre
     this.perfilSave.descripcion = this.Perfil.descripcion
     this.perfilSave.estatus = this.Perfil.estatus
@@ -771,57 +766,121 @@ export class ProfileComponent implements OnInit {
     this.perfilSave.id = id
 
 
-    
-      const menuFinal = this.generarMenuSeleccionado(mnu);
 
-      console.log("Menú Final Seleccionado:", menuFinal);
-
-      this.perfilSave.Rol.descripcion = this.Perfil.descripcion
-      this.perfilSave.Rol.Menu = menuFinal
-
-      // console.log(this.perfilSave)
+    const menuFinal = this.generarMenuSeleccionado(mnu);
 
 
+    this.perfilSave.Rol.descripcion = this.Perfil.descripcion
+    this.perfilSave.Rol.Menu = menuFinal
 
-      var obj = {
-        coleccion: "sys-profile",
-        objeto: this.perfilSave,
-        donde: `{\"id\":\"${id}\"}`,
-        driver: "MGDBA",
-        upsert: true,
+    // console.log(this.perfilSave)
+
+
+
+    var obj = {
+      coleccion: "sys-profile",
+      objeto: this.perfilSave,
+      donde: JSON.stringify({ id: id }),
+      driver: "MGDBA",
+      upsert: true,
+    }
+
+    this.apiService.ExecColeccion(obj).subscribe(
+      (data) => {
+        this.utilservice.AlertMini(
+          "top-end",
+          "success",
+          `Tu perfil se ha registrado: ${data.UpsertedID}`,
+          3000
+        )
+        this.active = 1
+        this.dataRol = []
+        this.dataRolDetalles = []
+        this.dataPlana = []
+        this.dataJerarquica = []
+        this.xrol = ''
+        this.Perfil.nombre = ''
+        this.Perfil.descripcion = ''
+        this.listarPerfiles()
+      },
+      (error) => {
+        this.utilservice.AlertMini(
+          "top-end",
+          "error",
+          "Error al Guardadar los Datos",
+          3000
+        )
       }
-
-      this.apiService.ExecColeccion(obj).subscribe(
-        (data) => {
-          this.utilservice.AlertMini(
-            "top-end",
-            "success",
-            `Tu perfil se ha registrado: ${data.UpsertedID}`,
-            3000
-          )
-          this.active = 1
-          this.dataRol = []
-          this.dataRolDetalles = []
-          this.dataPlana = []
-          this.dataJerarquica = []
-          this.xrol = ''
-          this.Perfil.nombre = ''
-          this.Perfil.descripcion = ''
-          this.listarPerfiles()
-        },
-        (error) => {
-          this.utilservice.AlertMini(
-            "top-end",
-            "error",
-            "Error al Guardadar los Datos",
-            3000
-          )
-        }
-      )
+    )
 
 
   }
 
+
+
+
+  // -----------------------------------------------------------
+  // Función que actualiza el estatus (sin mutar el arreglo de origen)
+  // -----------------------------------------------------------
+
+  updateMenuEstatusOnly(
+    sourceArray: PermisoPadre[],
+    updateArray: MenuItem[]
+  ): PermisoPadre[] {
+    // 1. Crear un mapa para búsquedas rápidas de menús principales
+    const updateMap = new Map<string, MenuItem>();
+    updateArray.forEach(item => {
+      updateMap.set(item.nombre, item);
+    });
+
+    // 2. Usamos .map() para devolver un nuevo arreglo (inmutabilidad)
+    const updatedArray = sourceArray.map(menuItem => {
+      const updateData = updateMap.get(menuItem.menu);
+
+      if (updateData) {
+        // Coincidencia de Nivel Superior: 'menu' (origen) con 'nombre' (fuente)
+
+        // Creamos un nuevo objeto (newMenuItem) a partir del original, actualizando 'estatus'.
+        let newMenuItem: PermisoPadre = {
+          ...menuItem,
+          estatus: 1, // 🎯 ACT: estatus a 1
+          // Creamos una nueva copia de 'children' para el siguiente paso (profunda inmutabilidad)
+          children: menuItem.children.map(child => ({ ...child })),
+        };
+
+        // 3. Actualizar los Submenús (Children)
+        if (newMenuItem.children.length > 0 && updateData.SubMenu.length > 0) {
+          // Mapa rápido para los submenús de la data de actualización
+          const subUpdateMap = new Map<string, MenuItem["SubMenu"][0]>();
+          updateData.SubMenu.forEach(subItem => {
+            subUpdateMap.set(subItem.nombre, subItem);
+          });
+
+          // Recorremos los children y creamos un nuevo arreglo de children.
+          newMenuItem.children = newMenuItem.children.map(childItem => {
+            const subUpdateData = subUpdateMap.get(childItem.accion);
+
+            if (subUpdateData) {
+              // Coincidencia de Nivel Inferior: 'accion' (origen) con 'nombre' (fuente.SubMenu)
+              return {
+                ...childItem,
+                estatus: 1, // 🎯 ACT: estatus a 1 en el hijo
+              } as PermisoPadre;
+            }
+            return childItem;
+          });
+        }
+
+        return newMenuItem;
+      }
+
+      // Si no hay data de actualización, devolvemos el objeto original (o una copia si se requiere inmutabilidad profunda)
+      // Devolvemos el original ya que no hay cambios en sus propiedades.
+      return menuItem;
+    });
+
+    return updatedArray;
+  }
 
 
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, Inject } from "@angular/core";
 import {
   NgForm,
   UntypedFormBuilder,
@@ -13,14 +13,14 @@ import { CoreConfigService } from "@core/services/config.service";
 
 import { IToken, LoginService } from "@services/seguridad/login.service";
 
-import { Router } from "@angular/router";
-
 import { environment } from "environments/environment";
-import { ToastrService } from "ngx-toastr";
 import { UtilService } from "@services/util/util.service";
 
-import { ReCaptchaV3Service } from "ng-recaptcha";
+// import { ReCaptchaV3Service } from "ng-recaptcha";
 import { TaskService } from "@services/apicore/task.service";
+import { Router } from "@angular/router";
+
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: "app-auth-login-v1",
@@ -50,8 +50,12 @@ export class AuthLoginV1Component implements OnInit {
 
   public itk: IToken;
 
+  public bdv: boolean = true
+
+
   // Private
   private _unsubscribeAll: Subject<any>;
+  
 
   /**
    * Constructor
@@ -61,14 +65,18 @@ export class AuthLoginV1Component implements OnInit {
    */
   constructor(
     private taskService: TaskService,
-    private recaptchaV3Service: ReCaptchaV3Service,
+    // private recaptchaV3Service: ReCaptchaV3Service,
     private _coreConfigService: CoreConfigService,
     private _formBuilder: UntypedFormBuilder,
     private router: Router,
     private loginService: LoginService,
-    private toastrService: ToastrService,
-    private utilservice: UtilService
+    // private toastrService: ToastrService,
+    private utilservice: UtilService,
+    @Inject(DOCUMENT) private document: Document
   ) {
+
+    
+    this.bdv = true
     if (sessionStorage.getItem("token") != undefined) {
       this.router.navigate(["home"]);
     }
@@ -90,7 +98,31 @@ export class AuthLoginV1Component implements OnInit {
         enableLocalStorage: false,
       },
     };
+    this.evaluarCadenaYActualizarBDV( this.document.location.href )
+
+
   }
+
+
+ evaluarCadenaYActualizarBDV(cadena: string) {
+    const cadenaNormalizada = cadena.toLowerCase();
+
+    // Palabras clave a buscar
+    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4203'];
+
+    // Usamos el método some() para iterar sobre las palabrasProhibidas y verificar si
+    // alguna de ellas está incluida en la cadena normalizada.
+    const encontrada = palabrasProhibidas.some(palabra => 
+        cadenaNormalizada.includes(palabra)
+    );
+    if (encontrada) {
+        this.bdv = false;
+        // console.log(`Palabra clave encontrada. bdv establecido a: ${this.bdv}`);
+    } else {
+        this.bdv = true;
+        // console.log(`Ninguna palabra clave encontrada. bdv se mantiene en: ${this.bdv}`);
+    }
+}
 
   // convenience getter for easy access to form fields
   get f() {
@@ -132,8 +164,8 @@ export class AuthLoginV1Component implements OnInit {
       });
   }
 
-  getCurrentDate(): string {
-    return new Date().toLocaleDateString(); // or format as you prefer
+  getCurrentDate() {
+    return new Date(); // or format as you prefer
   }
 
   login() {
@@ -175,12 +207,30 @@ export class AuthLoginV1Component implements OnInit {
   }
 
 
-  // public send(form: NgForm): void {
-  //   if (form.invalid) {
-  //     for (const control of Object.keys(form.controls)) {
-  //       form.controls[control].markAsTouched();
-  //     }
-  //     return;
-  //   }
-  // }
+  loginOpt() {
+
+    this.loading = true;
+    this.loginService
+      .getLogin(this.usuario, this.clave)
+      .subscribe(
+        (itk) => {
+          this.loading = false;
+          this.isHidden = false;
+          this.loginService.Iniciar(itk.token)
+        },
+        (error) => {
+          this.loading = false;
+          this.isHidden = false;
+          this.utilservice.AlertMini(
+            "top-end",
+            "error",
+            "Error al acceder a los datos de conexion del Bus Empresarial",
+            3000
+          );
+        }
+      );
+
+  }
+
+ 
 }

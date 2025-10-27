@@ -75,7 +75,7 @@ export class UserComponent implements OnInit {
 
   public iUser: IUser = {
     cedula: '',
-    tipoacceso: 0,
+    tipoacceso: 3,
     respaldo: 0,
     endpoint: '',
     login: '',
@@ -94,7 +94,7 @@ export class UserComponent implements OnInit {
   }
 
   public tipoacceso = [
-    { id: 0, name: 'SELECCIONAR' },
+    // { id: 0, name: 'SELECCIONAR' },
     { id: 1, name: 'LOCAL' },
     { id: 3, name: 'DIRECTORIO ACTIVO' },
   ]
@@ -203,6 +203,8 @@ export class UserComponent implements OnInit {
   public bEndPoint = false
   public showClave = false;
   public bChangePassword = false
+  public blockEdit : string = 'false'
+
 
 
   constructor(
@@ -216,6 +218,15 @@ export class UserComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    let usuario = window.sessionStorage.getItem('validator')
+    if(usuario != undefined){
+      
+      this.iUser = JSON.parse(usuario)
+      console.log(this.iUser)
+      
+      this.blockEdit = 'disabled'
+    }
+
     this.contentHeader = {
       headerTitle: 'Aplicaciones',
       actionButton: true,
@@ -241,6 +252,7 @@ export class UserComponent implements OnInit {
     this.CargarListaAplicaciones()
     // this.CargarGrupo()
     this.iUser.encriptamiento = '1'
+    this.selTipoAcceso(3)
   }
 
   selDuracion(e) {
@@ -694,6 +706,12 @@ export class UserComponent implements OnInit {
     this.xoficina = ''
     this.xregional = ''
     this.dataUsers = []
+  }
+  
+
+  ngOnDestroy(): void {
+    window.sessionStorage.removeItem('validator')
+    
   }
 
 }

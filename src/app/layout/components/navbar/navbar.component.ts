@@ -103,6 +103,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     repite: "",
   }
 
+  public bDirectorioActivo: boolean = false;
+
 
   /**
    * Constructor
@@ -117,7 +119,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
     private msjService: WsocketsService,
     private taskService: TaskService,
-    private _router: Router,
     private _coreConfigService: CoreConfigService,
     private _coreMediaService: CoreMediaService,
     private _coreSidebarService: CoreSidebarService,
@@ -127,7 +128,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private utilservice: UtilService,
     private modalService: NgbModal,
-    private _formBuilder: UntypedFormBuilder,
     private sha256: Sha256Service
   ) {
     this.languageOptions = {
@@ -237,6 +237,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.token = jwt_decode(sessionStorage.getItem("token"));
     this.usuario = this.token.Usuario.usuario;
     this.tipo = this.token.Usuario.nombre;
+
+    this.bDirectorioActivo =
+      this.usuario.startsWith("NM") || this.usuario.startsWith("CT");
+
     // get the currentUser details from localStorage
 
     // Subscribe to the config changes

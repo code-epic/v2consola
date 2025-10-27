@@ -55,4 +55,10 @@ const routes: Routes = [
     CoreCommonModule,
   ]
 })
-export class AuthenticationModule {}
+export class AuthenticationModule {
+  constructor(){
+    
+    console.log('iniciando modulos de autenticacion')
+  }
+
+}

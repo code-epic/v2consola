@@ -18,13 +18,13 @@
                 (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id"
                 placeholder="Seleccione acceso"></ng-select>
             </div>
-            <div class="form-group col-md-2" *ngIf="ldap">
-              <label class="form-label" for="descripcion">Resaldo en cuenta</label>
+            <div class="form-group col-md-2" *ngIf="ldap" style="display: none;">
+              <label class="form-label" for="descripcion">Respaldo en cuenta</label>
               <ng-select [items]="respaldo" [(ngModel)]="iUser.respaldo" bindLabel="name" bindValue="id"
                 placeholder="Respaldo en cuenta"></ng-select>
             </div>
 
-            <div class="form-group col-md-4" *ngIf="ldap">
+            <div class="form-group col-md-6" *ngIf="ldap">
               <label class="form-label" for="descripcion">End Point</label>
               <input *ngIf="bEndPoint" [(ngModel)]="iUser.endpoint"  type="text" placeholder="End Point" class="form-control">
               <ng-select *ngIf="!bEndPoint"  [items]="lstEndPoint" [(ngModel)]="iUser.endpoint" [ngModelOptions]="{standalone: true}"
@@ -33,7 +33,7 @@
             </div>
 
             <div class="form-group col-md-3" *ngIf="property || ldap">
-              <label class="form-label" for="login">Login</label>
+              <label class="form-label" for="login">Login / Usuario</label>
               <input [(ngModel)]="iUser.login"  type="text"  placeholder="Login" class="form-control">
             </div>
 
@@ -107,19 +107,19 @@
           <!-- Primer -->
           <div class="row">
 
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-2" style="display: none;">
               <label class="form-label" for="tipoduracion">Duración de sesión</label>
               <ng-select [items]="duracion" [(ngModel)]="iUser.duraciontexto" (ngModelChange)="selDuracion($event)" bindLabel="name" bindValue="id"
                 placeholder="Tipo Duración"></ng-select>
             </div>
 
-            <div class="form-group col-md-2">
+            <div class="form-group col-md-2" style="display: none;">
               <label class="form-label" for="tiempoduracion">Tiempo sesión</label>
               <input type="number" [(ngModel)]="iUser.duraciontiempo" 
               [ngModelOptions]="{standalone: true}" placeholder="Tiempo" class="form-control">
             </div>
             
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-6">
               <label class="form-label" for="origen">Oficina / Departamento</label>
               <ng-select [items]="dataOficina" [addTag]="true" [(ngModel)]="xoficina"
                 [name]="xoficina"
@@ -130,7 +130,7 @@
                 placeholder="Oficina"></ng-select>
             </div>
 
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-6">
               <label class="form-label" for="origen">Regional / Sucursal</label>
               <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="xregional" 
                 [name]="xregional" [ngModelOptions]="{standalone: true}"
@@ -143,21 +143,22 @@
 
           
 
-            <div class="form-group col-md-4">
+            <div class="form-group col-md-5">
               <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
               <ng-select [items]="lstAplicacion" [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
                 bindLabel="name" (ngModelChange)="selPerfil($event)" bindLabel="name" bindValue="id"
+                disabled="{{blockEdit}}"
                 placeholder="Aplicación"></ng-select>
             </div>
 
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-5">
               <label class="form-label" for="descripcion">Seleccionar Perfil</label>
               <ng-select [items]="lstPerfil" [(ngModel)]="xperfil" [ngModelOptions]="{standalone: true}"
                 bindLabel="nombre"  bindLabel="nombre" bindValue="nombre"
                 placeholder="Perfil"></ng-select>
             </div>
 
-            <div class="form-group col-md-3">
+            <div class="form-group col-md-3" style="display: none;">
               <label class="form-label" for="descripcion">Nivel de traza</label>
               <ng-select [items]="traza" [(ngModel)]="xtraza"  [ngModelOptions]="{standalone: true}"
                bindLabel="name" bindValue="id"  placeholder="Nivel de traza"></ng-select>
@@ -184,7 +185,7 @@
                     <tr>
                         <th>APLICACION</th>
                         <th>PERFIL</th>
-                        <th>TRAZA</th>
+                        <th style="display: none;">TRAZA</th>
                         <th>ESTATUS</th>
                         <th>ACCION</th>
                     <tr>
@@ -193,7 +194,7 @@
                     <tr *ngFor="let e of dataUsers; let i = index">
                         <td>{{e.nombre}}</td>
                         <td>{{e.perfil}}</td>
-                        <td>{{e.traza}}</td>
+                        <td style="display: none;">{{e.traza}}</td>
                         <td *ngIf="e.estatus==0">
                           <div class="badge badge-danger" >Inactivo</div>
                         </td>

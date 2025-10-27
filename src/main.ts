@@ -38,5 +38,16 @@ if (environment.hmr) {
     console.log('Are you using the --hmr flag for ng serve?');
   }
 } else {
-  bootstrap().catch(err => console.log(err));
+  bootstrap().catch(err => {
+    // console.error('Error durante el arranque de la aplicación:', err);
+
+    // Si el error es por un token inválido (común en librerías JWT),
+    // limpiamos el almacenamiento para evitar que el error persista
+    // y recargamos la página para que el usuario pueda iniciar sesión de nuevo.
+    if (err.name === 'InvalidTokenError' || (err.message && err.message.includes('Invalid token'))) {
+      console.warn('Token inválido detectado. Limpiando almacenamiento y recargando...');
+      localStorage.clear();
+      window.location.reload();
+    }
+  });
 }

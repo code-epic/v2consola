@@ -1,4 +1,4 @@
-<div class="login__heading auth-wrapper auth-v1 px-2">
+<div class="login__heading auth-wrapper auth-v1 px-2" *ngIf="bdv">
   <div class="auth-inner py-2">
     <!-- Login v1 -->
     <div class="card mb-0">
@@ -102,5 +102,55 @@
 
     <app-asistente-virtual></app-asistente-virtual>
 
+  </div>
+</div>
+
+
+
+<!-- Page content -->
+<div class="page" *ngIf="!bdv">
+  <div class="border-0 contenedor">
+    <div class="left">
+      <div class="loginx">
+        <img src="assets/images/bdv/bdv.png" alt="LogoBDV" />
+      </div>
+      <div class="titulo">Sandra Server</div>
+    </div>
+    <div class="right">
+      <!-- <ngx-ui-loader [loaderId]="'loader-login'"></ngx-ui-loader> -->
+
+      
+      <form role="form" #form="ngForm" class="xform">
+        <h2 class="titulo" style="text-transform: uppercase; margin-bottom: 0;">Acceder</h2>
+
+          <input class="xinput" type="text" id="usuario" name="usuario" maxlength="12" placeholder="Usuario (*)" autocomplete="off" [(ngModel)]="usuario" [ngModelOptions]="{ standalone: true }"/>
+        
+          
+          <input class="xinput" type="password" name="clave" id="clave" placeholder="Contraseña (*)" [(ngModel)]="clave" [ngModelOptions]="{ standalone: true }" required />
+
+        <div class="row" style="margin-top: .5rem;" >
+          <button   type="submit" id="submit" class="xbutton primary" (click)="loginOpt()" style="margin-right: .5rem;height: 30px;font-size: 13px;">
+            Ingresar
+          </button>
+
+          
+        </div>
+        
+        <div class="separador"></div>
+  
+        <div>
+          <p  style="color: #494949; font-size: 12px; text-align: center;">Consola de Seguridad, Auditorias e Investigaciones</p>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <div class="row mt-5" style="width: 50%;">
+    <div class="col-6">
+    </div>
+  
+    <div class="col-6 text-right">
+    </div>
   </div>
 </div>

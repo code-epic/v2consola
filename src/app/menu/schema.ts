@@ -488,8 +488,6 @@ export const aplicacion = [
           "Privilegio": [],
           "SubMenu": []
         },
-
-
         {
           "url": "/aprobado",
           "js": "",
@@ -502,7 +500,6 @@ export const aplicacion = [
           "Privilegio": [],
           "SubMenu": []
         },
-
         {
           "url": "/conformacion",
           "js": "",
@@ -514,48 +511,6 @@ export const aplicacion = [
           "color": "",
           "Privilegio": [],
           "SubMenu": [
-            {
-              "url": "/cranalisis",
-              "js": "",
-              "descripcion": "Por Analizar",
-              "icono": "fa fa-plus-circle",
-              "nombre": "Registrados",
-              "accion": "CargarUrl('negocio', 'neregistrar')",
-              "clase": "f-left",
-              "color": "bg-c-green",
-              "Privilegios": [
-                {
-                  "metodo": "aceptar",
-                  "descripcion": "Registrados",
-                  "accion": "Registrados()",
-                  "directivas": ""
-                }
-              ]
-            },
-            {
-              "url": "/crdocumentar",
-              "js": "",
-              "descripcion": "Por Documentar",
-              "icono": "fa fa-plus-circle",
-              "nombre": "Documentar",
-              "accion": "CargarUrl('negocio', 'neregistrar')",
-              "clase": "f-left",
-              "color": "bg-c-green",
-              "Privilegios": [
-                {
-                  "metodo": "aprobador",
-                  "descripcion": "Enviar a Legal",
-                  "accion": "sendLayer()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "rechazar",
-                  "descripcion": "Enviar a Negocio",
-                  "accion": "sendBusines()",
-                  "directivas": ""
-                }
-              ]
-            }
           ]
         },
         {
@@ -568,9 +523,48 @@ export const aplicacion = [
           "clase": "text-pink",
           "color": "",
           "Privilegio": [],
-          "SubMenu": []
+          "SubMenu": [
+            {
+              "url": "/indicadores",
+              "js": "",
+              "descripcion": "Seguimiento",
+              "icono": "fa fa-plus-circle",
+              "nombre": "Seguimiento",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-c-green",
+              "Privilegios": [
+              
+              ]
+            },
+            {
+              "url": "/resumen",
+              "js": "",
+              "descripcion": "Expediente",
+              "icono": "fa fa-plus-circle",
+              "nombre": "Expediente",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-c-green",
+              "Privilegios": [
+              
+              ]
+            },
+            {
+              "url": "/control",
+              "js": "",
+              "descripcion": "Control / Gestion",
+              "icono": "fa fa-plus-circle",
+              "nombre": "Control / Gestion",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-c-green",
+              "Privilegios": [
+              
+              ]
+            }
+          ]
         },
-
         {
           "url": "/administracion",
           "js": "",
@@ -583,35 +577,11 @@ export const aplicacion = [
           "Privilegio": [],
           "SubMenu": [
             {
-              "url": "/neregistrar",
+              "url": "/documentos",
               "js": "",
-              "descripcion": "Registro",
-              "icono": "fa fa-plus-circle",
-              "nombre": "Registrados",
-              "accion": "CargarUrl('negocio', 'neregistrar')",
-              "clase": "f-left",
-              "color": "bg-c-green",
-              "Privilegios": [
-                {
-                  "metodo": "registrados",
-                  "descripcion": "Registrados",
-                  "accion": "Registrados()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "clasificacion",
-                  "descripcion": "Clasificacion",
-                  "accion": "Clasificacion()",
-                  "directivas": ""
-                }
-              ]
-            },
-            {
-              "url": "/neconsultar",
-              "js": "",
-              "descripcion": "Consultar",
+              "descripcion": "Documentos",
               "icono": "fa fa-inbox",
-              "nombre": "Consultar",
+              "nombre": "Documentos",
               "accion": "CargarUrl('negocio', 'neconsultar')",
               "clase": "f-left",
               "color": "bg-c-blue",
@@ -637,75 +607,42 @@ export const aplicacion = [
               ]
             },
             {
-              "url": "/exactualizar",
+              "url": "/productos",
               "js": "",
-              "descripcion": "Actualizar",
+              "descripcion": "Productos",
               "icono": "fa fa-share",
-              "nombre": "Actualizar",
+              "nombre": "Productos",
               "accion": "CargarUrl('expedientes', 'actualizar')",
               "clase": "f-left",
               "color": "bg-c-pink",
               "Privilegios": [
-                {
-                  "metodo": "registrados",
-                  "descripcion": "Registrados",
-                  "accion": "Registrados()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "clasificacion",
-                  "descripcion": "Clasificacion",
-                  "accion": "Clasificacion()",
-                  "directivas": ""
-                }
+                
               ]
             },
             {
-              "url": "/exprestamos",
+              "url": "/agencias",
               "js": "",
-              "descripcion": "Prestamos",
+              "descripcion": "Agencias / Regionales",
               "icono": "fa fa-envelope-open",
-              "nombre": "Prestamos",
+              "nombre": "Agencias / Regionales",
               "accion": "CargarUrl('expedientes', 'prestamos')",
               "clase": "f-left",
               "color": "bg-purple",
               "Privilegios": [
-                {
-                  "metodo": "alertas",
-                  "descripcion": "Alerta",
-                  "accion": "Alerta()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "pendientes",
-                  "descripcion": "Pendientes",
-                  "accion": "Pendientes()",
-                  "directivas": ""
-                }
+              
               ]
             },
             {
-              "url": "/exinactivar",
+              "url": "/configreportes",
               "js": "",
-              "descripcion": "Inactivar",
+              "descripcion": "Cuentas Contables / Productos",
               "icono": "fa fa-share",
-              "nombre": "Inactivar",
+              "nombre": "Cuentas Contables / Productos",
               "accion": "CargarUrl('expedientes', 'inactivar')",
               "clase": "f-left",
               "color": "bg-c-pink",
               "Privilegios": [
-                {
-                  "metodo": "registrados",
-                  "descripcion": "Registrados",
-                  "accion": "Registrados()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "clasificacion",
-                  "descripcion": "Clasificacion",
-                  "accion": "Clasificacion()",
-                  "directivas": ""
-                }
+              
               ]
             }
           ]

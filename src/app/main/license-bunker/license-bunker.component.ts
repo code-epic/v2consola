@@ -19,7 +19,7 @@ export class LicenseBunkerComponent implements OnInit {
 async checkLicense(): Promise<void> {
   try {
     // Add mode: 'no-cors' if you don't need to read the response
-    const response = await fetch('https://bunkertechsolutions.com', {
+    const response = await fetch('https://code-epic.com', {
       mode: 'no-cors' // This will let the request go through but you won't read response
     });
     // With no-cors, you can't read the response but the request will complete

@@ -77,6 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.Menu = undefined;
     // Get the application main menu
+    
     var token = sessionStorage.getItem('token');
     if (token === null) {
       this.menu = menu;

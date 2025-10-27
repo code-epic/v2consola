@@ -7,25 +7,32 @@
         <section class="invoice-list-wrapper">
             <div class="card">
 
-                <!-- Invoice List Header -->
-                        <div class="row">
-          <div class="col-md-6 col-12">
-            <div class="d-flex justify-content-between align-items-center m-1">
-              <div class="d-flex align-items-center">
-                <label class="d-flex align-items-center">Mostrar
-                  <select class="form-control mx-25" [(ngModel)]="basicSelectedOption">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </label>
-                <button type="button" (click)="ListadoUsers()" class="btn btn-icon btn-dark"
-                  style="height: 38px; margin-top: -4px;" rippleEffect>
-                  <span [data-feather]="'file'"></span> Generar PDF</button>
-              </div>
-            </div>
-          </div>
+                <div class="row">
+                    <div class="col-md-6 col-12">
+                        <div class="d-flex justify-content-between align-items-center m-1">
+                            <div class="d-flex align-items-center">
+                                <label class="d-flex align-items-center">Mostrar
+                                    <select class="form-control mx-25" [(ngModel)]="basicSelectedOption">
+                                        <option value="10">10</option>
+                                        <option value="25">25</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </label>
+                                <label class="d-flex align-items-center">Perfil
+                                    <select class="form-control mx-25" [(ngModel)]="selectedProfile" (ngModelChange)="filterUpdateProfile($event)">
+                                        <option value="">Todos</option>
+                                        <option *ngFor="let profile of lstPerfil" [value]="profile.nombre">
+                                            {{ profile.nombre }}
+                                        </option>
+                                    </select>
+                                </label>
+                                <button type="button" (click)="ListadoUsers()" class="btn btn-icon btn-dark"
+                                    style="height: 38px; margin-top: -4px;" rippleEffect>
+                                    <span [data-feather]="'file'"></span> Generar PDF</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="
                                     col-md-6 col-lg-4 col-12
                                     d-flex
@@ -48,7 +55,6 @@
                         </div>
                     </div>
                 </div>
-                <!--/ Invoice List Header -->
 
                 <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
                     [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
@@ -63,26 +69,36 @@
                                 </div>
                                 <ng-template #customAvatar>
                                     <div class="avatar mr-1 ml-0" [ngClass]="{
-                                    'bg-light-success': row.esta == '1',
-                                    'bg-light-danger': row.esta == '0'
+                                    'bg-light-success': row.estatus == '1',
+                                    'bg-light-danger': row.estatus == '0'
                                   }">
-                                        <div class="avatar-content">{{ row.nombre.toUpperCase() | initials }}</div>
+                                        <div class="avatar-content">{{ row.nombre | initials }}</div>
                                     </div>
                                 </ng-template>
                                 <div class="cell-line-height">
                                     <span class="font-weight-bold d-block text-nowrap font-medium-1">{{ row.nombre
                                         }}</span>
-                                    <span class="text-muted font-small-2"> {{ row.login }} | {{ row.cargo }}</span>
+                                    <span class="text-muted font-small-2"> V-{{ row.cedula }}</span>
                                 </div>
                             </div>
                         </ng-template>
                     </ngx-datatable-column>
 
+                    <ngx-datatable-column name="Perfil" [width]="150">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                            <div>
+                                <span class="font-weight-bold d-block text-nowrap font-medium-1"> {{ row.Perfil?.descripcion }} </span>
+                                <span class="text-muted font-small-2"> {{ row.login }} | {{ row.cargo }}</span>
+                            </div>
+                        </ng-template>
+                    </ngx-datatable-column>
 
                     <ngx-datatable-column name="Correo" [width]="150">
                         <ng-template let-row="row" ngx-datatable-cell-template>
                             <div>
-                                <span class="font-weight-bold"> {{ row.correo }} </span>
+                                <span class="font-weight-bold d-block text-nowrap font-medium-1"> {{ row.sistema }}
+                                </span>
+                                <span class="text-muted font-small-2"> {{ row.correo }}</span>
                             </div>
                         </ng-template>
                     </ngx-datatable-column>
@@ -92,7 +108,10 @@
                     <ngx-datatable-column name="Sistema" [width]="150">
                         <ng-template let-row="row" ngx-datatable-cell-template>
                             <div>
-                                <span class="font-weight-bold">{{ row.sistema }} </span>
+                                <span class="font-weight-bold d-block text-nowrap font-medium-1">{{ row.Perfil?.traza }}
+                                </span>
+                                <span class="text-muted font-small-2">{{ row.firmadigital?.tiempo | date: 'dd/MM/yyyy
+                                    HH:mm' }} </span>
                             </div>
                         </ng-template>
                     </ngx-datatable-column>
@@ -107,6 +126,8 @@
                                     <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                                 </button>
                                 <div ngbDropdownMenu>
+                                    <a (click)="EditarUser(row)" ngbDropdownItem><span [data-feather]="'edit'"
+                                            [size]="16" [class]="'mr-50'"></span>Editar</a>
                                     <a (click)="EliminarUser(row)" ngbDropdownItem><span [data-feather]="'trash'"
                                             [size]="16" [class]="'mr-50'"></span>Eliminar</a>
                                 </div>
@@ -115,7 +136,6 @@
                     </ngx-datatable-column>
 
                 </ngx-datatable>
-                <!--/ Invoice List Table -->
 
             </div>
         </section>

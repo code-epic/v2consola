@@ -4,6 +4,7 @@ import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMe
 import { IRol } from '@services/seguridad/rol.service';
 import { UtilService } from '@services/util/util.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { environment } from 'environments/environment';
 import JSONFormatter from 'json-formatter-js';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { windowWhen } from 'rxjs/operators';
@@ -164,7 +165,7 @@ export class RoleComponent implements OnInit {
   }
 
   selTab(e) {
-    console.log(e)
+    // console.log(e) 
     if (this.active == 2) {
       this.blApp = true
       this.rowData = []
@@ -295,17 +296,25 @@ export class RoleComponent implements OnInit {
   }
 
   listarRoles() {
-    this.xAPI.funcion = '_SYS_CRoles'
+    this.xAPI.funcion = environment.functions.CONSULTAR_SCHEMA_APP
     this.xAPI.parametros = ''
     this.xAPI.valores = ''
     this.lstRoles = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         let lst = []
-        lst.push(this.consola)
-         data.Cuerpo.map(e => {
-          if (e.app != 'consola')
-            lst.push(e)
+        // lst.push(this.consola)
+         data.map(e => {
+          let rol = {
+            ...e, 
+            'app' : e.id,
+            'rol': e.Rol.descripcion,
+            'observacion' : e.nombre ,
+            'estatus': 1
+          } 
+          
+          
+          lst.push(rol)
         }); 
 
         this.lstRoles = lst

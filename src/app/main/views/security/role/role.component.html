@@ -55,7 +55,7 @@
                                             </ng-template>
                                         </ngx-datatable-column>
 
-                                        <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false" >
+                                        <!-- <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false" style="display: none;">
                                             <ng-template ngx-datatable-cell-template let-row="row">
                                                 <div *ngIf="row.app !== 'App.Consola'" ngbDropdown container="body">
                                                     <button ngbDropdownToggle type="button"
@@ -73,7 +73,7 @@
                                                     </div>
                                                 </div>
                                             </ng-template>
-                                        </ngx-datatable-column>
+                                        </ngx-datatable-column> -->
 
                                     </ngx-datatable>
 
@@ -82,7 +82,7 @@
 
                             </ng-template>
                         </li>
-                        <li [ngbNavItem]="2">
+                        <li [ngbNavItem]="2" style="display: none;">
                             <a ngbNavLink><span [data-feather]="'git-merge'"></span>{{registrar}}</a>
                             <ng-template ngbNavContent>
 

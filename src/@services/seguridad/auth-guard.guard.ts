@@ -34,6 +34,7 @@ export class AuthGuardGuard implements CanActivate {
         if (state.url == '/home') return true
         menu.forEach(e => {
           e.SubMenu.forEach(xe => {
+            // console.log(state.url, xe.url)
             if (state.url.indexOf(xe.url) == 1) return valor = true
           });
         })

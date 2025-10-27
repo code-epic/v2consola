@@ -46,7 +46,7 @@
 
   <ul class="nav navbar-nav align-items-center ml-auto">
     <!-- ? Language selection | Uncomment if needed-->
-    <li ngbDropdown class="nav-item dropdown dropdown-language">
+    <!-- <li ngbDropdown class="nav-item dropdown dropdown-language">
       <a class="nav-link dropdown-toggle" id="dropdown-flag" ngbDropdownToggle>
         <i class="flag-icon flag-icon-{{ languageOptions[_translateService.currentLang].flag }}"></i><span
           class="selected-language">{{ languageOptions[_translateService.currentLang].title }}</span></a>
@@ -55,7 +55,7 @@
           <i class="flag-icon flag-icon-{{ languageOptions[lang].flag }}"></i> {{ languageOptions[lang].title }}
         </a>
       </div>
-    </li>
+    </li> -->
     <!--/ Language selection -->
 
 
@@ -92,9 +92,9 @@
             [class]="'mr-50'"></span> Monitor</a> -->
         <!-- <a angbDropdownItem [routerLink]="['/']"><span [data-feather]="'check-square'" [class]="'mr-50'"></span>Task</a> -->
         <!-- <a ngbDropdownItem [routerLink]="['/']"><span [data-feather]="'message-square'" [class]="'mr-50'"></span> Chats</a>  -->
-        <a ngbDropdownItem (click)="ModalChangePassword(ChangePassword)"><span [data-feather]="'user'"
+        <a *ngIf="!bDirectorioActivo" ngbDropdownItem (click)="ModalChangePassword(ChangePassword)"><span [data-feather]="'user'"
             [class]="'mr-50'"></span> Cambiar Clave</a>
-        <div class="dropdown-divider"></div>
+        <div *ngIf="!bDirectorioActivo" class="dropdown-divider"></div>
         <a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Salir</a>
       </div>
     </li>
