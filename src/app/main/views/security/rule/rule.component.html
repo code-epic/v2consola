@@ -1,0 +1,220 @@
+<div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
+    <div class="content-body">
+        <!-- content-header component -->
+        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+
+        <!-- Invoice List -->
+        <section class="invoice-list-wrapper">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Primer -->
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label class="form-label" for="app-select">Seleccionar Aplicación</label>
+                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacionSeleccionada"
+                                [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                                (change)="cargarConfiguracionApp($event)"
+                                placeholder="Seleccione una aplicación para configurar sus reglas">
+                            </ng-select>
+                        </div>
+
+                    </div>
+
+
+                    <!-- Contenedor de las tarjetas de configuración -->
+                    <div *ngIf="aplicacionSeleccionada && configuracion" class="mt-4" >
+                        
+                        <div class="row" style="margin-top: -40px;">
+                            <div class="col-md-12">
+                                <hr>
+                            </div>
+                            <!-- Card: Estatus y Sesión -->
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h4 class="card-title mb-0">Reglas Generales</h4>
+                                        <div class="custom-control custom-switch custom-control-lg">
+                                            <input type="checkbox" class="custom-control-input" id="appStatus"
+                                                [(ngModel)]="configuracion.estatus" [true-value]="1" [false-value]="0">
+                                            <label class="custom-control-label" for="appStatus"></label>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text text-muted">Activa o desactiva todas las reglas de seguridad
+                                            para esta aplicación.</p>
+                                        <hr>
+                                        <label class="font-weight-bold">Duración de Sesión de Usuario</label>
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="input-group input-group-lg">
+                                                    <input type="number" id="session-time"
+                                                        class="form-control form-control-lg" placeholder="Ej: 30"
+                                                        style="height: 38px;" [(ngModel)]="configuracion.sesion.tiempo">
+                                                    <div class="input-group-append">
+                                                        <ng-select class="custom-ng-select-units ng-select-lg"
+                                                            [items]="unidadesTiempo"
+                                                            [(ngModel)]="configuracion.sesion.unidad" bindLabel="name"
+                                                            bindValue="id" [clearable]="false">
+                                                            <ng-template ng-label-tmp let-item="item">
+                                                                <span [data-feather]="item.icon" [size]="18"
+                                                                    class="mr-1"></span>
+                                                                <span class="font-weight-bold">{{item.name}}</span>
+                                                            </ng-template>
+                                                            <ng-template ng-option-tmp let-item="item">
+                                                                <span [data-feather]="item.icon" [size]="20"
+                                                                    class="mr-1"></span> {{item.name}}
+                                                            </ng-template>
+                                                        </ng-select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mt-2">
+                                            <label class="font-weight-bold">Tipo de Encriptamiento</label>
+                                            <div class="input-group input-group-lg">
+                                                <!-- <div class="input-group-prepend">
+                                                    <span class="input-group-text"><span [data-feather]="'lock'"></span></span>
+                                                </div> -->
+                                                <ng-select class="ng-select-lg w-100"
+                                                    [items]="tiposEncriptamiento"
+                                                    bindLabel="name"
+                                                    bindValue="id"
+                                                    [(ngModel)]="configuracion.encriptamiento"
+                                                    [addTag]="true" [searchable]="false">
+                                                </ng-select>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row mt-2">
+                                            <div class="col-md-6 mb-1 mb-md-0">
+                                                <div class="d-flex align-items-center">
+                                                    <span [data-feather]="'calendar'" class="mr-2 text-primary"
+                                                        [size]="22"></span>
+                                                    <div>
+                                                        <small class="text-muted d-block">Creado</small>
+                                                        <span class="font-weight-bold">{{ configuracion.creado | date:
+                                                            'dd/MM/yyyy HH:mm:ss' }}</span>
+                                                        <div class="d-flex align-items-center mt-25">
+                                                            <span [data-feather]="'user'" class="mr-50"
+                                                                [size]="14"></span>
+                                                            <small class="font-weight-bold">{{
+                                                                configuracion.usuariocreado }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="d-flex align-items-center">
+                                                    <span [data-feather]="'check-circle'" class="mr-2 text-success"
+                                                        [size]="22"></span>
+                                                    <div>
+                                                        <small class="text-muted d-block">Actualizado</small>
+                                                        <span class="font-weight-bold">{{ configuracion.actualizado |
+                                                            date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+                                                        <div class="d-flex align-items-center mt-25">
+                                                            <span [data-feather]="'user'" class="mr-50"
+                                                                [size]="14"></span>
+                                                            <small class="font-weight-bold">{{
+                                                                configuracion.usuarioactualizado }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card: Endpoints -->
+                            <div class="col-lg-6 col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Endpoints de la Aplicación</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-group mb-2">
+                                            <label for="login-url">URL de Login</label>
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                                            [data-feather]="'log-in'"></span></span></div>
+                                                <input type="text" id="login-url" class="form-control"
+                                                    placeholder="https://api.dominio.com/v1/login"
+                                                    [(ngModel)]="configuracion.endpoints.login">
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-2">
+                                            <label for="offices-url">URL de Oficinas</label>
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                                            [data-feather]="'briefcase'"></span></span></div>
+                                                <input type="text" id="offices-url" class="form-control"
+                                                    placeholder="https://api.dominio.com/data/oficinas"
+                                                    [(ngModel)]="configuracion.endpoints.oficinas">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="states-url">URL de Estados</label>
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                                            [data-feather]="'map-pin'"></span></span></div>
+                                                <input type="text" id="states-url" class="form-control"
+                                                    placeholder="https://api.dominio.com/data/estados"
+                                                    [(ngModel)]="configuracion.endpoints.estados">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="ad-url">URL Directorio Activo</label>
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                                            [data-feather]="'users'"></span></span></div>
+                                                <input type="text" id="ad-url" class="form-control"
+                                                    placeholder="https://api.dominio.com/ad/users"
+                                                    [(ngModel)]="configuracion.endpoints.directorioActivo">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card: Nivel de Traza -->
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h4 class="card-title">Nivel de Traza</h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Define el nivel de detalle que se registrará en los logs
+                                            para las acciones de esta aplicación.</p>
+                                        <div class="btn-group btn-group-toggle d-flex" ngbRadioGroup name="traceLevel"
+                                            [(ngModel)]="configuracion.traza.nivel">
+                                            <label ngbButtonLabel class="btn-outline-secondary flex-fill"><input
+                                                    ngbButton type="radio" value="BAJA"><span [data-feather]="'shield'"
+                                                    class="mr-1"></span>Baja</label>
+                                            <label ngbButtonLabel class="btn-outline-warning flex-fill"><input ngbButton
+                                                    type="radio" value="MEDIA"><span [data-feather]="'activity'"
+                                                    class="mr-1"></span>Media</label>
+                                            <label ngbButtonLabel class="btn-outline-danger flex-fill"><input ngbButton
+                                                    type="radio" value="ALTA"><span [data-feather]="'alert-triangle'"
+                                                    class="mr-1"></span>Alta</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Botón de Guardar -->
+                        <div class="row">
+                            <div class="col-12 text-right">
+                                <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">
+                                    Guardar Configuración
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>

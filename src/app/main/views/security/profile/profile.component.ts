@@ -171,7 +171,7 @@ export class ProfileComponent implements OnInit {
   public dataJerarquica: PermisoPadre[] = [];
   public padresMap = new Map<string, PermisoPadre>();
 
-  public desactivo = ''
+  public desactivo = 'false'
 
 
   constructor(
@@ -204,7 +204,7 @@ export class ProfileComponent implements OnInit {
         ],
       },
     }
-    this.desactivo = ''
+    this.desactivo = 'false'
 
     this.CargarListaAplicaciones()
     this.listarPerfiles()
@@ -249,7 +249,6 @@ export class ProfileComponent implements OnInit {
 
   selTab(e) {
     if (this.active == 2) {
-      this.desactivo = ''
       this.blApp = true
       this.dataRolDetalles = []
       this.dataPlana = []
@@ -264,6 +263,7 @@ export class ProfileComponent implements OnInit {
       
     } else {
       this.registrar = "Registrar nuevo perfil"
+      this.desactivo = 'false'
       
     }
   }
@@ -332,7 +332,8 @@ export class ProfileComponent implements OnInit {
             "xmenu": "1",
             "xmodulo": "",
             "xrol": "1",
-            "estatus": 0
+            "estatus": 0,
+            "Privilegios": sub.Privilegio
           }
           lst.push(obj)
 

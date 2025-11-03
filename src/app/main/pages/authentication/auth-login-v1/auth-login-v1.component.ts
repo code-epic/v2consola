@@ -106,23 +106,16 @@ export class AuthLoginV1Component implements OnInit {
 
  evaluarCadenaYActualizarBDV(cadena: string) {
     const cadenaNormalizada = cadena.toLowerCase();
-
-    // Palabras clave a buscar
-    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4203'];
-
-    // Usamos el método some() para iterar sobre las palabrasProhibidas y verificar si
-    // alguna de ellas está incluida en la cadena normalizada.
+    const palabrasProhibidas = ['sicoex', 'banv', 'corp'];
     const encontrada = palabrasProhibidas.some(palabra => 
         cadenaNormalizada.includes(palabra)
     );
     if (encontrada) {
         this.bdv = false;
-        // console.log(`Palabra clave encontrada. bdv establecido a: ${this.bdv}`);
     } else {
         this.bdv = true;
-        // console.log(`Ninguna palabra clave encontrada. bdv se mantiene en: ${this.bdv}`);
     }
-}
+  }
 
   // convenience getter for easy access to form fields
   get f() {

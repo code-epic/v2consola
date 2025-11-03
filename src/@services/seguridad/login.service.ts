@@ -249,20 +249,36 @@ export class LoginService {
   //ObenterAplicacion 
   protected obenterAplicacion(itk: string) {
     
-    // console.log(this.Token.Usuario)
+    console.log(this.Token.Usuario)
     let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo
     this.xAPI.funcion = "_SYS_CUsuarioPerfil";
     this.xAPI.parametros = cadena
     // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // console.log(data[0].Aplicacion[0])
-        sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu))
-        let texto = Md5.hashStr(JSON.stringify(data[0].Aplicacion[0].Rol.Menu))
-        sessionStorage.setItem("crypt", texto)
-        this.router.navigate(["home"]).then(() => {
-          window.location.reload();
-        });
+        try {
+          // Verificamos que la data y las propiedades anidadas existan antes de usarlas
+          if (!data || data.length === 0 || !data[0].Aplicacion || data[0].Aplicacion.length === 0 || !data[0].Aplicacion[0].Rol) {
+            throw new Error("La respuesta del perfil de usuario no es válida o está vacía.");
+          }
+          
+          
+          sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
+          let texto = Md5.hashStr(JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
+          // console.log(data[0].Aplicacion[0].Rol);
+          sessionStorage.setItem("crypt", texto);
+          this.router.navigate(["home"]).then(() => {
+            window.location.reload();
+          });
+        } catch (e) {
+          console.error('Error al procesar el perfil del usuario:', e);
+          Swal.fire({
+            title: 'Error de Perfil',
+            text: 'No se pudo cargar la configuración de su perfil. Por favor, contacte al administrador.',
+            icon: 'error'
+          });
+        }
+
       },
       (error) => {
         console.error('Fallo conectando al perfil del usuario: ', error)

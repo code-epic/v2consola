@@ -58,7 +58,7 @@ const routes: Routes = [
 export class AuthenticationModule {
   constructor(){
     
-    console.log('iniciando modulos de autenticacion')
+    // console.log('iniciando modulos de autenticacion')
   }
 
 }

@@ -11,12 +11,12 @@
                 <div class="col-md-12 ">
                     <br>
                     <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
-                     class="nav-tabs justify-content-center">
-                        <li [ngbNavItem]="1" >
+                        class="nav-tabs justify-content-center">
+                        <li [ngbNavItem]="1">
                             <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Perfiles</a>
                             <ng-template ngbNavContent>
 
-                            
+
 
                                 <div class="col-md-12">
                                     <ngx-datatable [rows]="lstPerfil" [rowHeight]="58" class="bootstrap core-bootstrap"
@@ -65,12 +65,12 @@
                                                     </button>
                                                     <div ngbDropdownMenu>
                                                         <a (click)="editarRol(row)" ngbDropdownItem><span
-                                                            [data-feather]="'edit'" [size]="16"
-                                                            [class]="'mr-50'"></span> Editar</a>
+                                                                [data-feather]="'edit'" [size]="16"
+                                                                [class]="'mr-50'"></span> Editar</a>
 
                                                         <a (click)="eliminarRol(row)" ngbDropdownItem><span
-                                                            [data-feather]="'trash'" [size]="16"
-                                                            [class]="'mr-50'"></span> Eliminar</a>
+                                                                [data-feather]="'trash'" [size]="16"
+                                                                [class]="'mr-50'"></span> Eliminar</a>
                                                     </div>
                                                 </div>
                                             </ng-template>
@@ -91,21 +91,21 @@
 
                                     <!-- Primer -->
                                     <div class="row">
-                
-                
-                  
+
+
+
 
 
                                         <div class="form-group col-md-12" *ngIf="blApp">
                                             <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
                                             <ng-select [items]="lstAplicaciones" [(ngModel)]="Perfil.aplicacion"
                                                 [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                                (ngModelChange)="selRol($event)"  bindValue="id"
+                                                (ngModelChange)="selRol($event)" bindValue="id"
                                                 placeholder="Seleccione Aplicación"></ng-select>
                                         </div>
 
                                         <div class="form-group col-md-12" *ngIf="!blApp">
-                                            <label class="form-label" >Aplicacion</label>
+                                            <label class="form-label">Aplicacion</label>
                                             <input style="font-size:14px;" [(ngModel)]="xaplicacion"
                                                 [ngModelOptions]="{standalone: true}" type="text"
                                                 placeholder="Aplicacion" class="form-control" disabled="disabled">
@@ -113,25 +113,28 @@
 
 
                                         <div class="form-group col-md-5" *ngIf="!blApp">
-                                            <label class="form-label" >Rol</label>
+                                            <label class="form-label">Rol</label>
                                             <input style="font-size:14px;" [(ngModel)]="xrol"
-                                                [ngModelOptions]="{standalone: true}" type="text"
-                                                placeholder="Rol" class="form-control" disabled="disabled">
+                                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Rol"
+                                                class="form-control" disabled="disabled">
                                         </div>
-                
+
                                         <div class="form-group col-md-5" *ngIf="blApp">
                                             <label class="form-label" for="descripcion">Seleccionar Rol</label>
-                                            <ng-select [items]="dataRol" [(ngModel)]="rol" [ngModelOptions]="{standalone: true}"
-                                                 (ngModelChange)="selRolDetalle()" bindLabel="name" bindValue="id"
+                                            <ng-select [items]="dataRol" [(ngModel)]="rol"
+                                                [ngModelOptions]="{standalone: true}" (ngModelChange)="selRolDetalle()"
+                                                bindLabel="name" bindValue="id"
                                                 placeholder="Seleccione Rol"></ng-select>
                                         </div>
-                
+
                                         <div class="form-group col-md-3">
                                             <label class="form-label" for="descripcion">Nombre del Perfil</label>
-                                            <input style="font-size:14px;" [(ngModel)]="Perfil.nombre" [ngModelOptions]="{standalone: true}"
-                                                type="text" placeholder="Ingrese Nombre del Perfil" class="form-control" [disabled]="desactivo">
+                                            <input style="font-size:14px;" [(ngModel)]="Perfil.nombre"
+                                                [ngModelOptions]="{standalone: true}" type="text"
+                                                placeholder="Ingrese Nombre del Perfil" class="form-control"
+                                                [disabled]="desactivo">
                                         </div>
-                
+
                                         <div class="form-group col-md-4">
                                             <label class="form-label" for="origen">Descripcion del Perfil</label>
                                             <input style="font-size:14px;" [(ngModel)]="Perfil.descripcion"
@@ -140,111 +143,112 @@
                                         </div>
                                     </div>
                                     <br>
-                
-                                </div>
-                
-                
-                                <div class="col-md-12">
-                                    
-                                    <ngx-datatable 
-                                    *ngIf="dataRolDetalles.length > 0"
-                                    [rows]="dataRolDetalles" 
-                                    [rowHeight]="58" 
-                                    class="bootstrap core-bootstrap"
-                                    [limit]="basicSelectedOption" [columnMode]="ColumnMode.force" 
-                                    [selectionType]="SelectionType.checkbox"
-                                    [headerHeight]="40" 
-                                    [footerHeight]="50" 
-                                    [scrollbarH]="true" 
-                                    (select)="onSelect($event)">
 
-                                    <ngx-datatable-row-detail [rowHeight]="'auto'" #rowDetail>
-                                        
-                                        <ng-template let-row="row" ngx-datatable-row-detail-template>
-                                            <div class="p-1 bg-light border-top">
-                                                <div *ngFor="let child of row.children; let i = index" class="d-flex align-items-center py-1" style="margin-left: 25px;">
-                                                    
-                                                    <div class="custom-control custom-checkbox mr-4" style="padding-left: 1.5rem;">
-                                                        <input type="checkbox" 
-                                                            class="custom-control-input" 
-                                                            [checked]="child.estatus === 1"
-                                                            (change)="onChildCheckboxChange(child, $event)" 
-                                                            id="childChkbxRef{{ row.menu + i }}" />
-                                                        <label class="custom-control-label" for="childChkbxRef{{ row.menu + i }}">
-                                                            <span class="ml-2 font-weight-normal">{{ child.accion }}</span>
-                                                        </label>
+                                </div>
+
+
+                                <div class="col-md-12">
+
+                                    <ngx-datatable *ngIf="dataRolDetalles.length > 0" [rows]="dataRolDetalles"
+                                        [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="basicSelectedOption"
+                                        [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
+                                        [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
+                                        (select)="onSelect($event)">
+
+                                        <ngx-datatable-row-detail [rowHeight]="'auto'" #rowDetail>
+
+                                            <ng-template let-row="row" ngx-datatable-row-detail-template>
+                                                <div class="p-1 bg-light border-top">
+                                                    <div *ngFor="let child of row.children; let i = index"
+                                                        class="d-flex align-items-center py-1"
+                                                        style="margin-left: 25px;">
+
+                                                        <div class="custom-control custom-checkbox mr-4"
+                                                            style="padding-left: 1.5rem;">
+                                                            <input type="checkbox" class="custom-control-input"
+                                                                [checked]="child.estatus === 1"
+                                                                (change)="onChildCheckboxChange(child, $event)"
+                                                                id="childChkbxRef{{ row.menu + i }}" />
+                                                            <label class="custom-control-label"
+                                                                for="childChkbxRef{{ row.menu + i }}">
+                                                                <span class="ml-2 font-weight-normal">{{ child.accion
+                                                                    }}</span>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </ng-template>
-                                    </ngx-datatable-row-detail>
+                                            </ng-template>
+                                        </ngx-datatable-row-detail>
 
-                                    <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
-                                        [draggable]="false" [resizeable]="false">
-                                        
-                                        <ng-template ngx-datatable-header-template let-selectFn="selectFn">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" id="headerChkbxRef" 
-                                                    (change)="onMasterCheckboxChange($event)" />
-                                                <label class="custom-control-label" for="headerChkbxRef"></label>
-                                            </div>
-                                        </ng-template>
+                                        <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
+                                            [draggable]="false" [resizeable]="false">
 
-                                        <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
-                                            <div class="custom-control custom-checkbox">
-                                                <input type="checkbox" class="custom-control-input" 
-                                                    [checked]="row.estatus === 1"
-                                                    (change)="onParentCheckboxChange(row, $event)" 
-                                                    id="rowChkbxRef{{ rowIndex }}" />
-                                                <label class="custom-control-label" for="rowChkbxRef{{ rowIndex }}"></label>
-                                            </div>
-                                        </ng-template>
-                                    </ngx-datatable-column>
+                                            <ng-template ngx-datatable-header-template let-selectFn="selectFn">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                        id="headerChkbxRef" (change)="onMasterCheckboxChange($event)" />
+                                                    <label class="custom-control-label" for="headerChkbxRef"></label>
+                                                </div>
+                                            </ng-template>
 
-                                    <ngx-datatable-column name="MÓDULO" [width]="250" prop="modulo">
-                                        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                                            <div class="d-flex align-items-center">
-                                                
-                                                <button *ngIf="row.children && row.children.length > 0" 
-                                                    class="btn btn-sm btn-link p-0 mr-2" 
-                                                    title="Expandir/Contraer"
-                                                    (click)="table?.rowDetail.toggleExpandRow(row)">
-                                                    <span [data-feather]="row.isExpanded ? 'minus' : 'plus'"></span>
-                                                </button>
-                                                
-                                                <span class="font-weight-bold">{{ row.modulo }} </span>
-                                            </div>
-                                        </ng-template>
-                                    </ngx-datatable-column>
+                                            <ng-template ngx-datatable-cell-template let-row="row"
+                                                let-rowIndex="rowIndex">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                        [checked]="row.estatus === 1"
+                                                        (change)="onParentCheckboxChange(row, $event)"
+                                                        id="rowChkbxRef{{ rowIndex }}" />
+                                                    <label class="custom-control-label"
+                                                        for="rowChkbxRef{{ rowIndex }}"></label>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
 
-                                    <ngx-datatable-column name="MENÚ" [width]="200" prop="menu">
-                                        <ng-template let-menu="value" ngx-datatable-cell-template>
-                                            <span class="font-weight-bold">{{ menu }}</span>
-                                        </ng-template>
-                                    </ngx-datatable-column>
+                                        <ngx-datatable-column name="MÓDULO" [width]="250" prop="modulo">
+                                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                                                <div class="d-flex align-items-center">
 
-                                    <ngx-datatable-column name="ACCIÓN" [width]="100" prop="accion">
-                                        <ng-template let-accion="value" ngx-datatable-cell-template>
-                                            <div>
-                                                <span *ngIf="accion === '-'" class="font-weight-bold text-muted">Grupo</span>
-                                                <span *ngIf="accion !== '-'" class="font-weight-bold">{{ accion }}</span>
-                                            </div>
-                                        </ng-template>
-                                    </ngx-datatable-column>
+                                                    <button *ngIf="row.children && row.children.length > 0"
+                                                        class="btn btn-sm btn-link p-0 mr-2" title="Expandir/Contraer"
+                                                        (click)="table?.rowDetail.toggleExpandRow(row)">
+                                                        <span [data-feather]="row.isExpanded ? 'minus' : 'plus'"></span>
+                                                    </button>
+
+                                                    <span class="font-weight-bold">{{ row.modulo }} </span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="MENÚ" [width]="200" prop="menu">
+                                            <ng-template let-menu="value" ngx-datatable-cell-template>
+                                                <span class="font-weight-bold">{{ menu }}</span>
+                                            </ng-template>
+                                        </ngx-datatable-column>
+
+                                        <ngx-datatable-column name="ACCIÓN" [width]="100" prop="accion">
+                                            <ng-template let-accion="value" ngx-datatable-cell-template>
+                                                <div>
+                                                    <span *ngIf="accion === '-'"
+                                                        class="font-weight-bold text-muted">Grupo</span>
+                                                    <span *ngIf="accion !== '-'" class="font-weight-bold">{{ accion
+                                                        }}</span>
+                                                </div>
+                                            </ng-template>
+                                        </ngx-datatable-column>
 
 
-                                </ngx-datatable>
+                                    </ngx-datatable>
 
 
 
 
                                 </div>
-                
-                
-                
+
+
+
                                 <div class="col-md-12" align="right">
                                     <br>
-                                    
+
                                     <button type="button" class="btn btn-success" (click)="guardarPerfiles()">
                                         Guardar perfil
                                     </button>
@@ -268,7 +272,7 @@
 
 
 
-               
+
 
 
             </div>

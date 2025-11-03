@@ -5,3 +5,52 @@ input {
 button {
   height: 38px;
 }
+
+// 2. Estilo para el Botón de Expansión
+.btn-expansion {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; /* Asegura un buen área de clic */
+    height: 24px;
+    color: #007bff; /* Color azul para que resalte */
+}
+
+
+// 3. Indicador de Interacción al pasar el cursor sobre la fila
+:host ::ng-deep .datatable-body-row {
+    cursor: default; /* Por defecto, aunque ngx-datatable puede cambiarlo */
+    
+    // Si la fila no es solo informativa, sugiere que se puede hacer clic
+    // o que algo va a suceder.
+    &:hover {
+        cursor: pointer; /* Cambia el cursor para sugerir interactividad */
+    }
+}
+
+// 4. Estilo y Hover Específico para el Botón de Expansión
+.btn-expansion {
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    margin-right: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: #495057; /* Color estándar para texto */
+    transition: color 0.15s, background-color 0.15s;
+
+    &:hover {
+        color: #007bff; /* Resalta el ícono a azul al pasar el cursor */
+        background-color: #e9ecef; /* Sutil fondo gris alrededor del ícono */
+        border-radius: 3px;
+    }
+}

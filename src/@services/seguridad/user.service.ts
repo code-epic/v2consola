@@ -47,6 +47,10 @@ export interface SAplicacion {
   comentario: string;
   version: string;
   autor: string;
+  perfil: string;
+  traza: string;
+  estatus: number;
+  tiempo: string;
   Rol: SRol;
 }
 
@@ -67,6 +71,8 @@ export interface Firmadigital {
 export interface Usuario {
   cedula: string;
   nombre: string;
+  descripcion: string;
+  observaciones: string;
   login: string;
   correo: string;
   estatus: number;
@@ -83,12 +89,23 @@ export interface Usuario {
   firmadigital: Firmadigital;
 }
 
+interface AplicacionAgrupada {
+  id: string;
+  nombresAplicacion: string; // Títulos de la aplicación, por si son diferentes
+  rolesCombinados: string;   // Rol.descripcion concatenadas
+  menuUnificado: SMenu[];     // Menús fusionados sin duplicados
+  itemsOriginales: SAplicacion[]; // Referencia a los items originales (opcional)
+}
+
+
 @Injectable({ providedIn: 'root' })
 
 export class UserService implements Usuario {
 
   cedula = '';
   nombre = '';
+  descripcion= '';
+  observaciones = '';
   login = '';
   correo = '';
   clave = '';
@@ -111,9 +128,14 @@ export class UserService implements Usuario {
     nivel: 0
   };
 
+   // Propiedad de clase estándar para almacenar el resultado agrupado
+  public groupedApplications: AplicacionAgrupada[] = [];
+
   iniciarObjeto(): void {
     this.cedula = '';
     this.nombre = '';
+    this.descripcion = '';
+    this.observaciones = '';
     this.login = '';
     this.correo = '';
     this.clave = '';
@@ -185,4 +207,88 @@ export class UserService implements Usuario {
   toJSON(): Usuario {
     return { ...this };
   }
+
+
+
+  
+
+
+
+
+  /**
+   * Función que agrupa los elementos de Aplicacion por su 'id'
+   * y fusiona las propiedades 'Rol.descripcion' y 'Rol.Menu' utilizando
+   * un Map para una alta eficiencia O(N).
+   */
+  groupApplications(Usr: Usuario): void {
+    const groupedMap = new Map<string, AplicacionAgrupada>();
+
+    for (const item of Usr.Aplicacion) {
+      const appId = item.id;
+
+      if (groupedMap.has(appId)) {
+        // La aplicación ya existe en el mapa (FUSIONAR)
+        const existingGroup = groupedMap.get(appId)!;
+
+        // 1. Concatenar Rol.descripcion (evitando duplicados si el texto es idéntico)
+        const newDescription = item.Rol.descripcion;
+        // La validación simple de 'includes' evita añadir roles duplicados
+        if (!existingGroup.rolesCombinados.includes(newDescription)) {
+          existingGroup.rolesCombinados += ' | ' + newDescription;
+        }
+
+        // 2. Fusionar Rol.Menu sin duplicados (usando 'nombre' como clave única)
+        existingGroup.menuUnificado = this.mergeMenus(
+          existingGroup.menuUnificado,
+          item.Rol.Menu
+        );
+
+        // 3. Añadir el item original al array de referencia (opcional)
+        existingGroup.itemsOriginales.push(item);
+
+      } else {
+        // Es la primera vez que encontramos esta aplicación (INICIALIZAR)
+        groupedMap.set(appId, {
+          id: appId,
+          nombresAplicacion: item.nombre,
+          rolesCombinados: item.Rol.descripcion,
+          menuUnificado: [...item.Rol.Menu], // Copia superficial de los menús
+          itemsOriginales: [item],
+        });
+      }
+    }
+
+    // Asignar el resultado final a la propiedad de clase estándar (sin usar .set o Signals)
+    this.groupedApplications = Array.from(groupedMap.values());
+  }
+
+  /**
+   * Fusiona dos arrays de Menu, manteniendo solo las entradas únicas basadas en el 'nombre' del menú.
+   * Utiliza un Map para una búsqueda de duplicados rápida.
+   * @param existingMenus Menús ya existentes en el grupo.
+   * @param newMenus Nuevos menús a añadir.
+   * @returns Array de menús fusionados sin duplicados.
+   */
+  private mergeMenus(existingMenus: SMenu[], newMenus: SMenu[]): SMenu[] {
+    const menuMap = new Map<string, SMenu>();
+
+    // 1. Agregar menús existentes al mapa
+    existingMenus.forEach(menu => menuMap.set(menu.nombre, menu));
+
+    // 2. Agregar nuevos menús. Si el nombre ya existe, lo ignoramos para evitar duplicados.
+    for (const newMenu of newMenus) {
+      if (!menuMap.has(newMenu.nombre)) {
+        menuMap.set(newMenu.nombre, newMenu);
+      }
+    }
+
+    // Convertir el Map de nuevo a un Array para el resultado final
+    return Array.from(menuMap.values());
+  }
+
+
+
+
+
+
 }

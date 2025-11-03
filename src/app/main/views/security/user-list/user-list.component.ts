@@ -6,6 +6,8 @@ import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { PdfService } from '@services/pdf/pdf.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { environment } from 'environments/environment';
+import { env } from 'process';
 
 @Component({
   selector: 'app-user-list',
@@ -99,7 +101,7 @@ export class UserListComponent implements OnInit {
 
    ListarPerfiles() {
     // Asumo que tienes una función similar a la de profile.component.ts
-    this.xAPI.funcion = '_SYS_CListarPerfiles'; // O la función que corresponda
+    this.xAPI.funcion = environment.functions.LISTAR_PERFILES_APP // O la función que corresponda
     this.xAPI.parametros = '';
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -133,21 +135,21 @@ export class UserListComponent implements OnInit {
 
   // Modifica tu función de búsqueda para que considere el filtro de perfil
   filterUpdateProfile(event) {
-    const val = event.toLowerCase();
-    if (val == '') {
+    console.log(event)
+    const val = event;
+    if (val == ''  || val == null) {
       this.filterByProfile();
       return;
     }
     // Empieza con la data ya filtrada por perfil (o la completa si no hay filtro)
     let dataToFilter = this.tempData;
-    
     if (this.selectedProfile) {
         dataToFilter = this.tempData.filter(item => item.Perfil && item.Perfil.descripcion);
     }
 
     // Aplica el filtro de búsqueda de texto
     const temp = dataToFilter.filter(function (d) {
-      return d.nombre.toLowerCase().indexOf(val) !== -1 || !val;
+      return d.Perfil.descripcion.indexOf(val) !== -1 || !val;
     });
 
     // Actualiza la tabla
@@ -159,7 +161,7 @@ export class UserListComponent implements OnInit {
 
 
   async listarUsuarios() {
-    this.xAPI.funcion = "_SYS_LstUsuarios";
+    this.xAPI.funcion = environment.functions.LISTAR_USUARIOS
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -207,20 +209,19 @@ export class UserListComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        // this.ok(usuario);
+        this.ok(usuario);
       }
     })
   }
 
   ok(usuario) {
-    this.xAPI.funcion = "_SYS_DUsuario";
+    this.xAPI.funcion = environment.functions.ELIMINAR_USUARIO
     this.xAPI.parametros = `${usuario.cedula},${usuario.login}`
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.rowData = data;
-        this.tempData = this.rowData;
-        this.count = this.rowData.length
+       
         console.log(data)
+        this.listarUsuarios()
       },
       (error) => {
         console.log(error)

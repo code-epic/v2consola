@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap'
-import { ApiService, IAPICore } from '@services/apicore/api.service'
+import { ApiService, IAPICore, IConfiguracion } from '@services/apicore/api.service'
 
 import { IUser } from '@services/seguridad/rol.service'
 import {
@@ -57,6 +57,8 @@ export class UserComponent implements OnInit {
   public usuario: Usuario = {
     cedula: '',
     nombre: '',
+    descripcion: '',
+    observaciones: '',
     login: '',
     correo: '',
     clave: '',
@@ -166,6 +168,10 @@ export class UserComponent implements OnInit {
     comentario: '',
     version: '',
     autor: '',
+    perfil: '',
+    traza: '',
+    estatus: 0,
+    tiempo: '',
     Rol: {
       descripcion: '',
       Menu: [],
@@ -176,8 +182,8 @@ export class UserComponent implements OnInit {
   public activedirectory = false
   public property = false
   public tiempoduracion = '0'
-  public descripcion: ''
-  public lstAplicacion = []
+  public descripcion: string = ''
+  public lstAplicacion: SAplicacion[] = []
   public Privilegios: SPrivilegios = {
     metodo: '',
     descripcion: '',
@@ -203,8 +209,11 @@ export class UserComponent implements OnInit {
   public bEndPoint = false
   public showClave = false;
   public bChangePassword = false
-  public blockEdit : string = 'false'
+  public blockEdit: string = 'false'
+  public isBDV: boolean = false
 
+
+  public configuracion: IConfiguracion;
 
 
   constructor(
@@ -217,16 +226,9 @@ export class UserComponent implements OnInit {
     this.CargarListaEndPoint()
   }
 
-  ngOnInit(): void {
-    let usuario = window.sessionStorage.getItem('validator')
-    if(usuario != undefined){
-      
-      this.iUser = JSON.parse(usuario)
-      console.log(this.iUser)
-      
-      this.blockEdit = 'disabled'
-    }
-
+  async ngOnInit() {
+    this.isBDV = this.apiService.ConsultaSistemaBDV()
+    this.consultarRegionales()
     this.contentHeader = {
       headerTitle: 'Aplicaciones',
       actionButton: true,
@@ -249,10 +251,73 @@ export class UserComponent implements OnInit {
         ],
       },
     }
-    this.CargarListaAplicaciones()
-    // this.CargarGrupo()
-    this.iUser.encriptamiento = '1'
+
+    await this.CargarListaAplicaciones()
     this.selTipoAcceso(3)
+    this.iUser.encriptamiento = '1'
+
+
+
+    this.cargarConfiguracionApp()
+
+
+
+
+  }
+
+  cargarUsuario(usuario: Usuario): IUser {
+    // Mapeo de propiedades directas
+    this.iUser.cedula = usuario.cedula;
+    this.iUser.login = usuario.login;
+    this.iUser.nombre = usuario.nombre;
+    this.iUser.descripcion = usuario.descripcion;
+    this.descripcion = usuario.observaciones;
+    this.iUser.correo = usuario.correo;
+    this.iUser.estatus = usuario.estatus;
+    this.iUser.endpoint = usuario.endpoint;
+
+    // Mapeo de propiedades con nombres diferentes (basado en getUserApp)
+    this.iUser.descripcion = usuario.cargo;
+    this.iUser.oficina = usuario.sucursal;
+    this.iUser.regional = usuario.direccion;
+    this.xregional = usuario.direccion;
+    this.xoficina = usuario.sucursal;
+
+    // Mapeo de propiedades anidadas en 'firmadigital'
+    if (usuario.firmadigital) {
+      this.iUser.vigencia = usuario.firmadigital.vigencia;
+    }
+
+    // No se mapea la clave para evitar mostrar el hash. Se debe ingresar una nueva si se desea cambiar.
+    this.iUser.clave = '';
+    // this.dataUsers = usuario.Aplicacion;
+    this.tk_loadProfile(usuario)
+
+    return this.iUser
+  }
+
+  tk_loadProfile(usuario: Usuario) {
+
+    usuario.Aplicacion.forEach(usr => {
+      let xapp = this.getAplication(usr.id)
+      let xprof = this.getProfile(usr.perfil)
+      // console.log(usr)
+      let app = {
+        id: usr.id,
+        idapp: xapp,
+        idper: xprof,
+        traza: usr.traza,
+        nombre: usr.nombre,
+        perfil: usr.perfil,
+        estatus: usr.estatus,
+        tiempo: usr.tiempo,
+        url: xapp.url,
+      }
+
+      this.lstUsersApp.push(app)
+      this.dataUsers = this.lstUsersApp
+    });
+
   }
 
   selDuracion(e) {
@@ -284,24 +349,8 @@ export class UserComponent implements OnInit {
     }
   }
 
-  // async CargarGrupo() {
-  //   this.xAPI.funcion = '_SYS_CBitacoraGrupo'
-  //   this.xAPI.parametros = ''
-  //   await this.apiService.Ejecutar(this.xAPI).subscribe(
-  //     (data) => {
-  //       console.log(data)
-  //     },
-  //     (error) => {
-  //       console.log(error)
-  //     }
-  //   )
-  // }
 
   onFocusedRegional(item) {
-    // this.moduloid = '';
-    // this.modulo = '';
-    // this.IAddModulo.nomb = item.target.value
-    // this.IAddModulo.idapp = this.aplicacion
   }
 
 
@@ -353,6 +402,20 @@ export class UserComponent implements OnInit {
           e.name = e.nombre
           return e
         })
+        // console.log('Bajo control del enemigo',this.lstAplicacion)
+
+        let usuario = window.sessionStorage.getItem('validator')
+
+
+        if (usuario != undefined) {
+
+          this.usuario = JSON.parse(usuario)
+          // console.log(this.usuario)
+          this.xaplicacion = this.usuario.sistema
+          this.selPerfil(this.usuario.sistema)
+
+        }
+
       },
       (error) => {
         console.log(error)
@@ -361,6 +424,7 @@ export class UserComponent implements OnInit {
   }
 
   selPerfil(e) {
+
     try {
       let codPerfil = e
       this.xAPI.funcion = environment.functions.OBTENER_PERFILES_POR_APLICACION
@@ -368,6 +432,19 @@ export class UserComponent implements OnInit {
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
           this.lstPerfil = data
+
+          let usuario = window.sessionStorage.getItem('validator')
+          if (usuario != undefined) {
+
+            this.cargarUsuario(this.usuario)
+            if (this.usuario.endpoint == "") {
+              this.iUser.tipoacceso = 1
+              this.selTipoAcceso(1)
+            }
+
+            this.blockEdit = 'disabled'
+          }
+
         },
         (error) => {
           console.log(error)
@@ -376,118 +453,6 @@ export class UserComponent implements OnInit {
     } catch (error) {
       console.error('Errores varios: ', error)
     }
-  }
-
-  //OBTENER LA LISTA DE LOS MENU Y ACCIONES DESDE EL PERFIL
-  async obetnerModulos(apps) {
-    this.xAPI.funcion = environment.functions.LISTAR_MENU_APP
-    this.xAPI.parametros = `${apps.idapp},${apps.idper}`
-    this.xAPI.valores = ''
-    console.log(this.xAPI)
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        let lstMenu = []
-        console.log('menu: ', data)
-        data.Cuerpo.forEach((e) => {
-          if (e.menu_acciones != undefined) {
-            let menu = JSON.parse(e.menu_acciones)
-            if (menu.acciones != undefined) {
-              let lstPriv = []
-              menu.acciones.forEach((obj) => {
-                if (obj.accion != null) {
-                  let Privilegios = {
-                    accion: obj.accion,
-                    directivas: obj.directiva,
-                    funcion: obj.funcion,
-                    endpoint: obj.endpoint,
-                    clase: obj.clase,
-                    icono: obj.icono,
-                    color: obj.color,
-                    nombre: obj.nombre,
-                  }
-                  lstPriv.push(Privilegios)
-                }
-              })
-              let Menu = {
-                url: menu.url,
-                icono: menu.icono,
-                color: menu.color,
-                nombre: menu.nombre,
-                js: menu.js,
-                clase: menu.clase,
-                SubMenu: [],
-                Privilegios: lstPriv,
-              }
-              lstMenu.push(Menu)
-            }
-          }
-        })
-
-        this.obtenerAplicacion(apps, lstMenu)
-        console.log(lstMenu)
-        // return lstMenu
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
-  }
-
-  async obtenerAplicacion(apps, Menu: any) {
-    let lstApp = []
-
-    // let lstrol: any = []
-    let rol: SRol = {
-      descripcion: this.xperfil.split('|')[2],
-      Menu: Menu,
-    }
-    // lstrol.push(rol)
-    let xapps: SAplicacion = {
-      autor: apps.creador,
-      id: 'ID-001',
-      nombre: apps.nombre,
-      version: apps.version,
-      url: apps.repositorio,
-      comentario: 'Generado por sistema',
-      Rol: rol,
-    }
-    this.Aplicacion = xapps
-    lstApp.push(this.Aplicacion)
-    this.usuario.Perfil.descripcion = apps.perfil
-    this.usuario.Perfil.traza = apps.traza
-    this.usuario.cedula = this.iUser.cedula
-    this.usuario.login = this.iUser.login
-    this.usuario.nombre = this.iUser.nombre
-    this.usuario.correo = this.iUser.correo
-    this.usuario.cargo = this.iUser.descripcion
-    this.usuario.endpoint = this.iUser.endpoint
-    this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
-    this.usuario.direccion = this.xregional != undefined ? this.xregional.name : this.xregional
-    // this.usuario.clave = await this.utilservice.generateSHA256Hash(
-    //   this.iUser.clave
-    // )
-    console.log('Entrando en clave', this.iUser.clave)
-    if (this.iUser.clave != '') {
-      await this.sha256.hash(this.iUser.clave).then(hash => {
-        // console.log(this.usuario.clave, '::', this.iUser.clave, hash)
-        this.usuario.clave = hash
-      })
-    }
-
-    console.log(this.iUser, 'Imprimiendo Usuario')
-    let firma: Firmadigital = {
-      vigencia: this.iUser.vigencia,
-      duracion: this.iUser.duraciontiempo * this.iUser.duraciontexto,
-      direccionmac: '',
-      direccionip: '',
-      tiempo: new Date().toISOString(),
-      nivel: parseInt(apps.idtra),
-    }
-    this.usuario.firmadigital = firma
-    this.usuario.sistema = apps.aplicacion  //this.xaplicacion.split('|')[1].toString()
-    this.usuario.Aplicacion = lstApp
-
-    console.log(this.usuario)
   }
 
 
@@ -500,43 +465,64 @@ export class UserComponent implements OnInit {
     return this.lstPerfil.find((item) => item.nombre == nombre)
   }
 
-  async getUserApp(apps: any) {
-    let lstApp = []
+  async getUserApp() {
+    let apps: any = {}
+    let lstApp: SAplicacion[] = []
 
-     let rol: SRol = {
-      descripcion: apps.idper.Rol.descripcion,
-      Menu: apps.idper.Rol.Menu,
-    }
-    
+    await this.lstUsersApp.forEach(async (appx) => {
+      apps = appx;
+      let rol: SRol = {
+        descripcion: appx.idper.Rol.descripcion,
+        Menu: appx.idper.Rol.Menu,
+      }
 
-    let xapps: SAplicacion = {
-      autor:  apps.idapp.autor,
-      id: 'ID-001',
-      nombre: apps.idapp.nombre,
-      version: apps.idapp.version,
-      url: apps.idapp.url,
-      comentario: 'Generado por sistema',
-      Rol: rol,
-    }
-    this.Aplicacion = xapps
-    lstApp.push(this.Aplicacion)
+      let xapps: SAplicacion = {
+        autor: appx.idapp.autor,
+        id: appx.id,
+        nombre: appx.idapp.nombre,
+        version: appx.idapp.version,
+        url: appx.idapp.url,
+        perfil: appx.perfil,
+        traza: appx.traza,
+        estatus: appx.estatus,
+        comentario: 'Generado por sistema',
+        tiempo: appx.tiempo,
+        Rol: rol,
+      }
+      // this.Aplicacion = xapps
+      console.log(appx)
+      lstApp.push(xapps)
+
+    })
+
+
+
+
     this.usuario.Perfil.descripcion = apps.perfil
     this.usuario.Perfil.traza = apps.traza
     this.usuario.cedula = this.iUser.cedula
     this.usuario.login = this.iUser.login
     this.usuario.nombre = this.iUser.nombre
+    this.usuario.descripcion = this.iUser.descripcion
     this.usuario.correo = this.iUser.correo
     this.usuario.cargo = this.iUser.descripcion
+    this.usuario.observaciones = this.descripcion
     this.usuario.endpoint = this.iUser.endpoint
     this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
     this.usuario.direccion = this.xregional != undefined ? this.xregional.name : this.xregional
 
 
-    if (this.iUser.clave != '') {
-      await this.sha256.hash(this.iUser.clave).then(hash => {
-        this.usuario.clave = hash
-      })
+    let usuario = window.sessionStorage.getItem('validator')
+
+
+    if (usuario == undefined) {
+      if (this.iUser.clave != '') {
+        await this.sha256.hash(this.iUser.clave).then(hash => {
+          this.usuario.clave = hash
+        })
+      }
     }
+
 
 
     let firma: Firmadigital = {
@@ -551,7 +537,7 @@ export class UserComponent implements OnInit {
     this.usuario.sistema = apps.idapp.id
     this.usuario.Aplicacion = lstApp
 
-    console.log(this.usuario)
+    // console.log(this.usuario)
   }
 
   async agregarAplicacion() {
@@ -570,29 +556,90 @@ export class UserComponent implements OnInit {
       return false
     }
 
-    //  console.log(this.getAplication(this.xaplicacion))
-    //  console.log(this.getProfile(this.xperfil))
+    if (this.validarSiSeleccion()) {
+      this.utilservice.AlertMini(
+        'top-end',
+        'warning',
+        'La aplicación y el perfil seleccionados ya han sido asociados.',
+        3000
+      )
+      return false;
+    }
 
     app = {
+      id: this.getAplication(this.xaplicacion).id,
       idapp: this.getAplication(this.xaplicacion),
       idper: this.getProfile(this.xperfil),
       traza: this.xtraza.split('|')[1],
       idtra: this.xtraza.split('|')[0],
       nombre: this.getAplication(this.xaplicacion).nombre,
+      url: this.getAplication(this.xaplicacion).url,
+      tiempo: new Date().toISOString(),
       perfil: this.getProfile(this.xperfil).nombre,
       estatus: 1,
     }
 
 
-
+    // console.log(app)
     this.lstUsersApp.push(app)
-    // console.log(this.lstUsersApp)
 
     this.dataUsers = this.lstUsersApp
   }
 
+  /**
+   * Valida si la combinación de aplicación y perfil seleccionada ya existe en la lista.
+   * @returns {boolean} - Devuelve `true` si ya existe, de lo contrario `false`.
+   */
+  validarSiSeleccion(): boolean {
+    const aplicacionId = this.xaplicacion;
+    const perfilNombre = this.xperfil;
+
+    // Usamos el método `some` que es más eficiente, ya que se detiene en cuanto encuentra una coincidencia.
+    const existe = this.dataUsers.some(item =>
+      item.id === aplicacionId && item.perfil === perfilNombre
+    );
+
+    return existe;
+  }
+
+  /**
+   * Handles the status change of a user's application access.
+   * @param item The user application item that was changed.
+   * @param index The index of the item in the dataUsers array.
+   */
+  onStatusChange(item: any, index: number) {
+    const nuevoEstatus = item.estatus;
+    // console.log(`El estatus del elemento en el índice ${index} ha cambiado a: ${nuevoEstatus}`);
+    // console.log('Estatus actual en dataUsers:', this.dataUsers[index].estatus);
+    // console.log('Estatus actual en lstUsersApp:', this.lstUsersApp[index].estatus);
+    this.dataUsers[index].estatus = nuevoEstatus ? 1 : 0
+    this.dataUsers[index].tiempo = new Date().toISOString()
+
+    this.lstUsersApp[index].estatus = nuevoEstatus ? 1 : 0
+    this.lstUsersApp[index].tiempo = new Date().toISOString()
+
+  }
+
   quitarElemento(i) {
-    console.log(i)
+    if (i !== -1) {
+      Swal.fire({
+        title: 'Eliminar',
+        text: '¿Está seguro que desea eliminar perfil?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#C81D11',
+        confirmButtonText: 'Si, Aceptar',
+        cancelButtonText: 'Cancelar',
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          this.dataUsers.splice(i, 1);
+          this.lstUsersApp.splice(i, 1);
+        }
+
+      })
+    }
   }
 
   verPerfil() { }
@@ -601,27 +648,31 @@ export class UserComponent implements OnInit {
 
   async agregarUsuario() {
 
-    if (this.property) {
-      const password = this.iUser.clave
-      const passwordRegex =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+    let usuario = window.sessionStorage.getItem('validator')
 
-      if (!passwordRegex.test(password)) {
-        this.utilservice.AlertMini(
-          "top-end",
-          "error",
-          "La clave no cumple con los requisitos de complejidad. Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
-          8000
-        );
-        return;
+
+    if (usuario == undefined) {
+      if (this.property) {
+        const password = this.iUser.clave
+        const passwordRegex =
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+
+        if (!passwordRegex.test(password)) {
+          this.utilservice.AlertMini(
+            "top-end",
+            "error",
+            "La clave no cumple con los requisitos de complejidad. Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
+            8000
+          );
+          return;
+        }
       }
     }
 
 
 
-    await this.lstUsersApp.forEach(async (e) => {
-      await this.getUserApp(e)
-    })
+    await this.getUserApp()
+
 
     Swal.fire({
       title: 'Alerta',
@@ -640,6 +691,8 @@ export class UserComponent implements OnInit {
   }
 
   ok() {
+
+    console.log('usuario ', this.usuario)
     let fnx = {
       coleccion: 'usuario',
       objeto: this.usuario,
@@ -706,16 +759,128 @@ export class UserComponent implements OnInit {
     this.xoficina = ''
     this.xregional = ''
     this.dataUsers = []
+    window.sessionStorage.removeItem('validator')
   }
-  
+
+
+  cargarConfiguracionApp() {
+
+
+    this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
+    this.xAPI.parametros = environment.ID
+    this.xAPI.valores = {};
+
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data != null) {
+          if (data.length > 0) {
+            this.configuracion = data[0]
+          }
+        }
+      },
+      (error) => {
+        console.error('Error al cargar la configuración de la aplicación:', error);
+
+      }
+    );
+  }
+
+
+  SearchLoginLDAP() {
+    // console.log(this.configuracion, this.isBDV)
+    if (this.isBDV) {
+      console.log(this.configuracion.endpoints.directorioActivo)
+      let cod = {
+        'codUsuario': this.iUser.login
+      }
+
+      let data = {
+        'url': this.configuracion.endpoints.directorioActivo,
+        'data': JSON.stringify(cod),
+      }
+
+      // console.log(data)
+      this.apiService.SendRequestPostAnonimous(data).subscribe(
+        (data) => {
+          // console.log(data)
+          if (data.usuario != null) {
+            let usr = data.usuario
+
+            this.iUser.cedula = usr.cedula
+            // this.iUser.login = usr.login
+            this.iUser.nombre = usr.nombres + ' ' + usr.apellidos
+            this.iUser.descripcion = usr.descCargo
+            this.descripcion = usr.descUnidad
+            this.iUser.correo = usr.correo
+          } else {
+            this.utilservice.AlertMini(
+              'top-end',
+              'warning',
+              'Usuario no se encuentra registrado en el directorio activo',
+              3000
+            )
+          }
+        },
+        (error) => {
+          this.utilservice.AlertMini(
+            'top-end',
+            'warning',
+            error,
+            3000
+          )
+        }
+      )
+
+    }
+  }
+
+
+  consultarRegionales() {
+    this.dataRegional = []
+    if (this.isBDV) {
+      this.xAPI.funcion = environment.functions.CONSULTAR_REGIONALES; // Asumiendo que esta es tu función de backend
+      this.xAPI.parametros = ''
+      this.xAPI.valores = {};
+
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.dataRegional = data.Cuerpo
+        },
+        (error) => {
+          console.error('Error al cargar la configuración de la aplicación:', error);
+
+        }
+      );
+    }
+  }
+
+  consultarOficinas(e) {
+    this.dataOficina = []
+    if (this.isBDV) {
+      this.xAPI.funcion = environment.functions.CONSULTAR_OFICINAS; // Asumiendo que esta es tu función de backend
+      this.xAPI.parametros = this.utilservice.zfill(e.id, 2)
+      this.xAPI.valores = {};
+      console.log(this.xAPI)
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.dataOficina = data.Cuerpo
+        },
+        (error) => {
+          console.error('Error al cargar la configuración de la aplicación:', error);
+
+        }
+      );
+    }
+  }
+
+
 
   ngOnDestroy(): void {
     window.sessionStorage.removeItem('validator')
-    
+
   }
 
+
+
+
 }
-
-
-
-

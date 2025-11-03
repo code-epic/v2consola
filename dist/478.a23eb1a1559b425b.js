@@ -916,17 +916,14 @@ class AuthLoginV1Component {
   }
 
   evaluarCadenaYActualizarBDV(cadena) {
-    const cadenaNormalizada = cadena.toLowerCase(); // Palabras clave a buscar
-
-    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4203']; // Usamos el método some() para iterar sobre las palabrasProhibidas y verificar si
-    // alguna de ellas está incluida en la cadena normalizada.
-
+    const cadenaNormalizada = cadena.toLowerCase();
+    const palabrasProhibidas = ['sicoex', 'banv', 'corp'];
     const encontrada = palabrasProhibidas.some(palabra => cadenaNormalizada.includes(palabra));
 
     if (encontrada) {
-      this.bdv = false; // console.log(`Palabra clave encontrada. bdv establecido a: ${this.bdv}`);
+      this.bdv = false;
     } else {
-      this.bdv = true; // console.log(`Ninguna palabra clave encontrada. bdv se mantiene en: ${this.bdv}`);
+      this.bdv = true;
     }
   } // convenience getter for easy access to form fields
 
@@ -1742,8 +1739,7 @@ const routes = [{
   component: _auth_forgot_password_v1_auth_forgot_password_v1_component__WEBPACK_IMPORTED_MODULE_4__.AuthForgotPasswordV1Component
 }];
 class AuthenticationModule {
-  constructor() {
-    console.log('iniciando modulos de autenticacion');
+  constructor() {// console.log('iniciando modulos de autenticacion')
   }
 
   static ɵfac = function AuthenticationModule_Factory(t) {

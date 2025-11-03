@@ -3,7 +3,7 @@
 
 export const aplicacion = [
   {
-    "id": "ID-001",
+    "id": "App.Consola",
     "nombre": "Core Sandra Server",
     "url": "http://localhost/consola",
     "comentario": "Usuario Core",
@@ -255,6 +255,24 @@ export const aplicacion = [
           "Privilegio": [],
           "SubMenu": [
             {
+              "url": "security/rules",
+              "js": "",
+              "descripcion": "Reglas Generales",
+              "icono": "circle",
+              "nombre": "Reglas Generales",
+              "accion": "",
+              "clase": "item",
+              "color": "bg-c-green",
+              "Privilegios": [
+                {
+                  "metodo": "registrados",
+                  "descripcion": "Registrados",
+                  "accion": "Registrados()",
+                  "directivas": ""
+                }
+              ]
+            },
+            {
               "url": "security/role",
               "js": "",
               "descripcion": "Roles",
@@ -431,7 +449,7 @@ export const aplicacion = [
   },
 
   {
-    "id": "ID-001",
+    "id": "Sicoex",
     "nombre": "Gestion de Documentos",
     "url": "http://localhost/bdv",
     "comentario": "Sistema de Credito Carterizado",

@@ -7,6 +7,7 @@ import jwt_decode from "jwt-decode";
 import { Md5 } from 'ts-md5';
 import { UtilService } from '@services/util/util.service';
 import Swal from 'sweetalert2';
+import { environment } from 'environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class AuthGuardGuard implements CanActivate {
 
     const IDAPP = this.token.Usuario.Aplicacion[0].id
 
-    if (sessionStorage.getItem("token") !== undefined && IDAPP == 'ID-001') {
+    if (sessionStorage.getItem("token") !== undefined && IDAPP == environment.ID) {
       let menu = JSON.parse(sessionStorage.getItem('menu'))
       let texto = Md5.hashStr(sessionStorage.getItem('menu'))
       let validar = sessionStorage.getItem('crypt')

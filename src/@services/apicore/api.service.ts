@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import Swal, { SweetAlertIcon } from "sweetalert2";
@@ -7,6 +7,7 @@ import { environment } from "../../environments/environment";
 import { WsocketsService } from "@services/websockets/wsockets.service";
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "./task.service";
+import { DOCUMENT } from "@angular/common";
 
 export interface RestoreAPI {
   nombre: string;
@@ -133,7 +134,7 @@ export interface IAPI {
   bitacora: number;
   respaldo: number;
   puente?: string;
-  
+
 }
 
 export interface WkfEstatus {
@@ -259,6 +260,39 @@ export interface WTipoArchivo {
   archivo?: string; //CodeEncrypt
 }
 
+
+// Interfaces para tipar el objeto de configuración
+
+export interface ISesionConfig {
+  tiempo: number;
+  unidad: 'horas' | 'minutos' | 'segundos';
+}
+
+export interface IEndpointsConfig {
+  login: string;
+  oficinas: string;
+  estados: string;
+  directorioActivo: string;
+}
+
+export interface ITrazaConfig {
+  nivel: 'BAJA' | 'MEDIA' | 'ALTA';
+}
+
+export interface IConfiguracion {
+  id: string;
+  estatus: boolean;
+  sesion: ISesionConfig;
+  endpoints: IEndpointsConfig;
+  traza: ITrazaConfig;
+  creado: string;
+  actualizado: string;
+  usuariocreado: string;
+  usuarioactualizado: string;
+  encriptamiento: string;
+}
+
+
 @Injectable({
   providedIn: "root",
 })
@@ -288,8 +322,9 @@ export class ApiService {
     private utilService: UtilService,
     private router: Router,
     private http: HttpClient,
-    private ws: WsocketsService
-  ) {}
+    private ws: WsocketsService,
+    @Inject(DOCUMENT) private document: Document
+  ) { }
 
   //EnviarArchivos generales
   EnviarArchivos(frm: FormData): Observable<any> {
@@ -340,7 +375,7 @@ export class ApiService {
     return this.http.get<any>(url, this.httpOptions);
   }
 
-    //Ejecutar Api generales
+  //Ejecutar Api generales
   ExecCrontab(fnx: any): Observable<any> {
     var url = this.URL + "crontab";
     return this.http.post<any>(url, fnx, this.httpOptions);
@@ -560,4 +595,26 @@ export class ApiService {
 
     return respuesta;
   }
+
+
+
+  //ListarModulos
+  SendRequestPostAnonimous(data: any): Observable<any> {
+    var url = this.URL + "sendrequestpostanonimous";
+    return this.http.post<any>(url, data, this.httpOptions);
+  }
+
+
+  ConsultaSistemaBDV(): boolean {
+    let cadena = this.document.location.href
+    const cadenaNormalizada = cadena.toLowerCase();
+    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4203'];
+    return palabrasProhibidas.some(palabra =>
+      cadenaNormalizada.includes(palabra)
+    );
+    
+  }
+
+
+
 }

@@ -32,8 +32,14 @@ import { ProfileComponent } from './profile/profile.component';
 import { UserComponent } from './user/user.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { UserListComponent } from './user-list/user-list.component';
+import { RuleComponent } from './rule/rule.component';
 
 const routes = [
+   {
+    path: 'security/rules',
+    component: RuleComponent,
+    canActivate: [AuthGuardGuard],
+  },
   {
     path: 'security/role',
     component: RoleComponent,
@@ -67,7 +73,8 @@ const routes = [
     RoleComponent,
     ProfileComponent,
     UserComponent,
-    UserListComponent
+    UserListComponent,
+    RuleComponent
   ],
   imports: [
     RouterModule.forChild(routes),
