@@ -775,6 +775,7 @@ export class UserComponent implements OnInit {
         if (data != null) {
           if (data.length > 0) {
             this.configuracion = data[0]
+            this.iUser.endpoint = this.configuracion.endpoints.login
           }
         }
       },

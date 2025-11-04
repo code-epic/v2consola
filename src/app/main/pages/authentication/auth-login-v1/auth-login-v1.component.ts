@@ -21,6 +21,7 @@ import { TaskService } from "@services/apicore/task.service";
 import { Router } from "@angular/router";
 
 import { DOCUMENT } from '@angular/common';
+import { ApiService } from "@services/apicore/api.service";
 
 @Component({
   selector: "app-auth-login-v1",
@@ -72,6 +73,7 @@ export class AuthLoginV1Component implements OnInit {
     private loginService: LoginService,
     // private toastrService: ToastrService,
     private utilservice: UtilService,
+    private apiService: ApiService,
     @Inject(DOCUMENT) private document: Document
   ) {
 
@@ -98,24 +100,13 @@ export class AuthLoginV1Component implements OnInit {
         enableLocalStorage: false,
       },
     };
-    this.evaluarCadenaYActualizarBDV( this.document.location.href )
+    this.bdv = this.apiService.ConsultaSistemaBDV()
 
 
   }
 
 
- evaluarCadenaYActualizarBDV(cadena: string) {
-    const cadenaNormalizada = cadena.toLowerCase();
-    const palabrasProhibidas = ['sicoex', 'banv', 'corp'];
-    const encontrada = palabrasProhibidas.some(palabra => 
-        cadenaNormalizada.includes(palabra)
-    );
-    if (encontrada) {
-        this.bdv = false;
-    } else {
-        this.bdv = true;
-    }
-  }
+
 
   // convenience getter for easy access to form fields
   get f() {

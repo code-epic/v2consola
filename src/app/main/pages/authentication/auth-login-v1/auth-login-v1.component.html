@@ -1,4 +1,4 @@
-<div class="login__heading auth-wrapper auth-v1 px-2" *ngIf="bdv">
+<div class="login__heading auth-wrapper auth-v1 px-2" *ngIf="!bdv">
   <div class="auth-inner py-2">
     <!-- Login v1 -->
     <div class="card mb-0">
@@ -108,7 +108,7 @@
 
 
 <!-- Page content -->
-<div class="page" *ngIf="!bdv">
+<div class="page" *ngIf="bdv">
   <div class="border-0 contenedor">
     <div class="left">
       <div class="loginx">
@@ -121,7 +121,7 @@
 
       
       <form role="form" #form="ngForm" class="xform">
-        <h2 class="titulo" style="text-transform: uppercase; margin-bottom: 0;">Acceder</h2>
+        <h2 class="titulo" style="text-transform: uppercase; margin-bottom: 0;">Consola</h2>
 
           <input class="xinput" type="text" id="usuario" name="usuario" maxlength="12" placeholder="Usuario (*)" autocomplete="off" [(ngModel)]="usuario" [ngModelOptions]="{ standalone: true }"/>
         
@@ -139,7 +139,11 @@
         <div class="separador"></div>
   
         <div>
-          <p  style="color: #494949; font-size: 12px; text-align: center;">Consola de Seguridad, Auditorias e Investigaciones</p>
+          <p  style="color: #494949; font-size: 11px; text-align: center;">
+           {{version}}
+            <br>
+            Build: {{ fechaX  }}
+          </p>
         </div>
       </form>
 
