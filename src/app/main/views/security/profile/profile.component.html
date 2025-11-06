@@ -11,9 +11,9 @@
                 <div class="col-md-12 ">
                     <br>
                     <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
-                        class="nav-tabs justify-content-center">
+                        class="nav-pills justify-content-center">
                         <li [ngbNavItem]="1">
-                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Perfiles</a>
+                            <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'list'" class="mr-1"></span><span class="font-weight-bold">Listado de Perfiles</span></a>
                             <ng-template ngbNavContent>
 
 
@@ -24,9 +24,10 @@
                                         [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
 
                                         <ngx-datatable-column name="APLICACION / ROL" prop="aplicacion" [width]="10">
-                                            <ng-template let-aplicacion="value" ngx-datatable-cell-template>
-                                                <div>
-                                                    <span class="font-weight-bold">{{ aplicacion }} </span>
+                                            <ng-template let-row="row" ngx-datatable-cell-template>
+                                                <div class="d-flex align-items-center">
+                                                    <span [data-feather]="'box'" [size]="18" class="text-primary mr-1"></span>
+                                                    <span class="font-weight-bold">{{ row.aplicacion }}</span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
@@ -34,7 +35,8 @@
                                         <ngx-datatable-column name="PERFIL" prop="nombre" [width]="10">
                                             <ng-template let-nombre="value" ngx-datatable-cell-template>
                                                 <div>
-                                                    <span class="font-weight-bold">{{ nombre }} </span>
+                                                    <span [data-feather]="'user-check'" [size]="16" class="text-secondary mr-1"></span>
+                                                    <span class="font-weight-bold">{{ nombre }}</span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
@@ -42,7 +44,7 @@
                                         <ngx-datatable-column name="DESCRIPCION" prop="descripcion" [width]="20">
                                             <ng-template let-descripcion="value" ngx-datatable-cell-template>
                                                 <div>
-                                                    <span class="font-weight-bold">{{ descripcion }} </span>
+                                                    <span class="text-muted">{{ descripcion }}</span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
@@ -50,8 +52,8 @@
                                         <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
                                             <ng-template let-estatus="value" ngx-datatable-cell-template>
 
-                                                <div class="badge badge-danger" *ngIf="estatus==0">Inactivo</div>
-                                                <div class="badge badge-success" *ngIf="estatus==1">Activo</div>
+                                                <div class="badge badge-light-danger" *ngIf="estatus==0">Inactivo</div>
+                                                <div class="badge badge-light-success" *ngIf="estatus==1">Activo</div>
                                             </ng-template>
                                         </ngx-datatable-column>
 
@@ -84,62 +86,66 @@
                             </ng-template>
                         </li>
                         <li [ngbNavItem]="2">
-                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>{{registrar}}</a>
+                            <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'user-plus'" class="mr-1"></span><span class="font-weight-bold">{{registrar}}</span></a>
                             <ng-template ngbNavContent>
 
                                 <div class="col-md-12" style="margin-top: 25px;">
 
                                     <!-- Primer -->
                                     <div class="row">
-
-
-
-
-
-                                        <div class="form-group col-md-12" *ngIf="blApp">
-                                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                                        <div class="form-group col-md-6" *ngIf="blApp">
+                                            <label class="form-label" for="app-select">Seleccionar Aplicación</label>
                                             <ng-select [items]="lstAplicaciones" [(ngModel)]="Perfil.aplicacion"
                                                 [ngModelOptions]="{standalone: true}" bindLabel="name"
                                                 (ngModelChange)="selRol($event)" bindValue="id"
-                                                placeholder="Seleccione Aplicación"></ng-select>
+                                                placeholder="Seleccione una Aplicación"></ng-select>
                                         </div>
 
-                                        <div class="form-group col-md-12" *ngIf="!blApp">
+                                        <div class="form-group col-md-6" *ngIf="!blApp">
                                             <label class="form-label">Aplicacion</label>
-                                            <input style="font-size:14px;" [(ngModel)]="xaplicacion"
-                                                [ngModelOptions]="{standalone: true}" type="text"
-                                                placeholder="Aplicacion" class="form-control" disabled="disabled">
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span [data-feather]="'box'"></span></span></div>
+                                                <input [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}" type="text"
+                                                    placeholder="Aplicacion" class="form-control" disabled="disabled">
+                                            </div>
                                         </div>
 
-
-                                        <div class="form-group col-md-5" *ngIf="!blApp">
-                                            <label class="form-label">Rol</label>
-                                            <input style="font-size:14px;" [(ngModel)]="xrol"
-                                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Rol"
-                                                class="form-control" disabled="disabled">
-                                        </div>
-
-                                        <div class="form-group col-md-5" *ngIf="blApp">
-                                            <label class="form-label" for="descripcion">Seleccionar Rol</label>
+                                        <div class="form-group col-md-6" *ngIf="blApp">
+                                            <label class="form-label" for="rol-select">Seleccionar Rol</label>
                                             <ng-select [items]="dataRol" [(ngModel)]="rol"
                                                 [ngModelOptions]="{standalone: true}" (ngModelChange)="selRolDetalle()"
                                                 bindLabel="name" bindValue="id"
-                                                placeholder="Seleccione Rol"></ng-select>
+                                                placeholder="Seleccione un Rol"></ng-select>
                                         </div>
 
-                                        <div class="form-group col-md-3">
-                                            <label class="form-label" for="descripcion">Nombre del Perfil</label>
-                                            <input style="font-size:14px;" [(ngModel)]="Perfil.nombre"
-                                                [ngModelOptions]="{standalone: true}" type="text"
-                                                placeholder="Ingrese Nombre del Perfil" class="form-control"
-                                                [disabled]="desactivo">
+                                        <div class="form-group col-md-6" *ngIf="!blApp">
+                                            <label class="form-label">Rol</label>
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span [data-feather]="'shield'"></span></span></div>
+                                                <input [(ngModel)]="xrol" [ngModelOptions]="{standalone: true}" type="text" placeholder="Rol"
+                                                    class="form-control" disabled="disabled">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group col-md-6">
+                                            <label class="form-label" for="profile-name">Nombre del Perfil</label>
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span [data-feather]="'user-check'"></span></span></div>
+                                                <input [(ngModel)]="Perfil.nombre" [ngModelOptions]="{standalone: true}" type="text"
+                                                    id="profile-name" placeholder="Ej: Administrador de Ventas" class="form-control"
+                                                    [disabled]="desactivo">
+                                            </div>
                                         </div>
 
-                                        <div class="form-group col-md-4">
-                                            <label class="form-label" for="origen">Descripcion del Perfil</label>
-                                            <input style="font-size:14px;" [(ngModel)]="Perfil.descripcion"
-                                                [ngModelOptions]="{standalone: true}" type="text"
-                                                placeholder="Breve descripcion del Perfil" class="form-control">
+                                        <div class="form-group col-md-6">
+                                            <label class="form-label" for="profile-desc">Descripción del Perfil</label>
+                                            <div class="input-group input-group-merge">
+                                                <div class="input-group-prepend"><span class="input-group-text"><span [data-feather]="'file-text'"></span></span></div>
+                                                <input [(ngModel)]="Perfil.descripcion" [ngModelOptions]="{standalone: true}" type="text"
+                                                    id="profile-desc" placeholder="Una breve descripción de las responsabilidades del perfil" class="form-control">
+                                            </div>
                                         </div>
                                     </div>
                                     <br>
@@ -148,7 +154,7 @@
 
 
                                 <div class="col-md-12">
-
+                                    <h5 class="mb-3" *ngIf="dataRolDetalles.length > 0">Permisos del Perfil</h5>
                                     <ngx-datatable *ngIf="dataRolDetalles.length > 0" [rows]="dataRolDetalles"
                                         [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="basicSelectedOption"
                                         [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
@@ -158,22 +164,32 @@
                                         <ngx-datatable-row-detail [rowHeight]="'auto'" #rowDetail>
 
                                             <ng-template let-row="row" ngx-datatable-row-detail-template>
-                                                <div class="p-1 bg-light border-top">
-                                                    <div *ngFor="let child of row.children; let i = index"
-                                                        class="d-flex align-items-center py-1"
-                                                        style="margin-left: 25px;">
+                                                <div class="p-2 border-top" style="background-color: #f8f9fa;">
+                                                    <!-- Nivel 2: Sub-Menús -->
+                                                    <div *ngFor="let subMenu of row.children; let i = index" class="py-1" style="margin-left: 30px;">
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <!-- Botón para expandir Privilegios -->
+                                                            <button *ngIf="subMenu.children && subMenu.children.length > 0" class="btn btn-sm btn-link p-0 mr-2" (click)="subMenu.isExpanded = !subMenu.isExpanded">
+                                                                <!-- Solución definitiva: Usar [ngClass] para evitar la recreación del elemento y el conflicto con la directiva -->
+                                                                <span [ngClass]="{'icon-plus': !subMenu.isExpanded, 'icon-minus': subMenu.isExpanded}" [size]="16"></span>
+                                                            </button>
+                                                            <!-- Checkbox del Sub-Menú -->
+                                                            <div class="custom-control custom-checkbox" [style.margin-left]="(!subMenu.children || subMenu.children.length === 0) ? '24px' : '0'">
+                                                                <input type="checkbox" class="custom-control-input" [checked]="subMenu.estatus === 1" (change)="onSubMenuCheckboxChange(subMenu, $event)" id="subMenuChkbxRef{{ row.menu + i }}" />
+                                                                <label class="custom-control-label" for="subMenuChkbxRef{{ row.menu + i }}">
+                                                                    <span class="ml-2 font-weight-bolder" style="color: #5e5873;">{{ subMenu.accion }}</span>
+                                                                </label>
+                                                            </div>
+                                                        </div>
 
-                                                        <div class="custom-control custom-checkbox mr-4"
-                                                            style="padding-left: 1.5rem;">
-                                                            <input type="checkbox" class="custom-control-input"
-                                                                [checked]="child.estatus === 1"
-                                                                (change)="onChildCheckboxChange(child, $event)"
-                                                                id="childChkbxRef{{ row.menu + i }}" />
-                                                            <label class="custom-control-label"
-                                                                for="childChkbxRef{{ row.menu + i }}">
-                                                                <span class="ml-2 font-weight-normal">{{ child.accion
-                                                                    }}</span>
-                                                            </label>
+                                                        <!-- Nivel 3: Privilegios (si está expandido) -->
+                                                        <div class="privileges-container" [class.show]="subMenu.isExpanded">
+                                                            <div *ngFor="let privilegio of subMenu.children; let j = index" class="custom-control custom-checkbox mr-3 mb-1">
+                                                                <input type="checkbox" class="custom-control-input" [checked]="privilegio.estatus === 1" (change)="onPrivilegeCheckboxChange(privilegio, subMenu, $event)" id="privChkbxRef{{ row.menu + i + j }}" />
+                                                                <label class="custom-control-label" for="privChkbxRef{{ row.menu + i + j }}">
+                                                                    <span class="ml-2 font-weight-normal" style="color: #6e6b7b;">{{ privilegio.accion }}</span>
+                                                                </label>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -213,7 +229,7 @@
                                                         (click)="table?.rowDetail.toggleExpandRow(row)">
                                                         <span [data-feather]="row.isExpanded ? 'minus' : 'plus'"></span>
                                                     </button>
-
+                                                    <span [data-feather]="'grid'" [size]="18" class="text-primary mr-1"></span>
                                                     <span class="font-weight-bold">{{ row.modulo }} </span>
                                                 </div>
                                             </ng-template>
@@ -221,15 +237,14 @@
 
                                         <ngx-datatable-column name="MENÚ" [width]="200" prop="menu">
                                             <ng-template let-menu="value" ngx-datatable-cell-template>
-                                                <span class="font-weight-bold">{{ menu }}</span>
+                                                <span class="font-weight-normal">{{ menu }}</span>
                                             </ng-template>
                                         </ngx-datatable-column>
 
                                         <ngx-datatable-column name="ACCIÓN" [width]="100" prop="accion">
                                             <ng-template let-accion="value" ngx-datatable-cell-template>
                                                 <div>
-                                                    <span *ngIf="accion === '-'"
-                                                        class="font-weight-bold text-muted">Grupo</span>
+                                                    <span *ngIf="accion === '-'" class="badge badge-pill badge-light-secondary">Grupo de Permisos</span>
                                                     <span *ngIf="accion !== '-'" class="font-weight-bold">{{ accion
                                                         }}</span>
                                                 </div>
@@ -249,15 +264,12 @@
                                 <div class="col-md-12" align="right">
                                     <br>
 
-                                    <button type="button" class="btn btn-success" (click)="guardarPerfiles()">
-                                        Guardar perfil
-                                    </button>
-                                    <!-- <button type="button" class="btn btn-success" (click)="guardarPerfil()">
-                                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
-                                    </button> -->
-                                    &nbsp;&nbsp;
                                     <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                                        Limpiar formulario
+                                        <span [data-feather]="'trash-2'" class="mr-1"></span>Limpiar
+                                    </button>
+                                    &nbsp;&nbsp;
+                                    <button type="button" class="btn btn-primary" (click)="guardarPerfiles()">
+                                        <span [data-feather]="'save'" class="mr-1"></span>Guardar Perfil
                                     </button>
                                 </div>
                                 <br><br>

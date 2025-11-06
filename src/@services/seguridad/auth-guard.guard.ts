@@ -46,7 +46,11 @@ export class AuthGuardGuard implements CanActivate {
       }
 
     } else {
-      this.router.navigate(['/home']);
+      sessionStorage.clear();
+
+      this.router.navigate(["miscellaneous/error"]).then(() => {
+        window.location.reload();
+      })
       return false;
     }
 
@@ -74,4 +78,6 @@ export class AuthGuardGuard implements CanActivate {
       //
     })
   }
+
+
 }

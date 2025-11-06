@@ -1,9 +1,9 @@
 input {
-  font-size:14px;
+    font-size: 14px;
 }
 
 button {
-  height: 38px;
+    height: 38px;
 }
 
 // 2. Estilo para el Botón de Expansión
@@ -16,20 +16,24 @@ button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px; /* Asegura un buen área de clic */
+    width: 24px;
+    /* Asegura un buen área de clic */
     height: 24px;
-    color: #007bff; /* Color azul para que resalte */
+    color: #007bff;
+    /* Color azul para que resalte */
 }
 
 
 // 3. Indicador de Interacción al pasar el cursor sobre la fila
 :host ::ng-deep .datatable-body-row {
-    cursor: default; /* Por defecto, aunque ngx-datatable puede cambiarlo */
-    
+    cursor: default;
+    /* Por defecto, aunque ngx-datatable puede cambiarlo */
+
     // Si la fila no es solo informativa, sugiere que se puede hacer clic
     // o que algo va a suceder.
     &:hover {
-        cursor: pointer; /* Cambia el cursor para sugerir interactividad */
+        cursor: pointer;
+        /* Cambia el cursor para sugerir interactividad */
     }
 }
 
@@ -45,12 +49,96 @@ button {
     justify-content: center;
     width: 24px;
     height: 24px;
-    color: #495057; /* Color estándar para texto */
+    color: #495057;
+    /* Color estándar para texto */
     transition: color 0.15s, background-color 0.15s;
 
     &:hover {
-        color: #007bff; /* Resalta el ícono a azul al pasar el cursor */
-        background-color: #e9ecef; /* Sutil fondo gris alrededor del ícono */
+        color: #007bff;
+        /* Resalta el ícono a azul al pasar el cursor */
+        background-color: #e9ecef;
+        /* Sutil fondo gris alrededor del ícono */
         border-radius: 3px;
     }
+}
+
+
+
+/* Estilos para los íconos de expandir/contraer controlados por ngClass */
+.icon-plus::before {
+    content: '' !important;
+}
+
+/* Limpia contenido previo */
+.icon-minus::before {
+    content: '' !important;
+}
+
+.icon-plus {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
+}
+
+.icon-minus {
+    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
+}
+
+.sub-menu-item .custom-control-label {
+    display: flex;
+    align-items: center;
+}
+
+
+
+
+
+.datatable-body-row:hover {
+    background-color: rgba(115, 103, 240, 0.05) !important;
+    cursor: pointer;
+}
+
+/* Estilo unificado y moderno para todos los checkboxes */
+.custom-control-input:checked~.custom-control-label::before {
+    background-color: #7367f0 !important;
+    border-color: #7367f0 !important;
+}
+
+.custom-control-label::before {
+    border-radius: 0.25rem;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.sub-menu-item .custom-control-label {
+    display: flex;
+    align-items: center;
+}
+
+.privileges-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #fff;
+    border-radius: 0.428rem;
+    border: 1px solid #ebe9f1;
+    box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.04);
+    padding: 0;
+    margin-left: 48px;
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.privileges-container.show {
+    max-height: 500px;
+    padding: 1.8rem;
+    transition: max-height 0.4s ease-in;
+}
+
+.privilege-item {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 11px;
+    margin-left: 20px;
+    display: flex;
+    align-items: center;
+    padding: 0.25rem 0;
 }

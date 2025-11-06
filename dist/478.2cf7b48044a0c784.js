@@ -1772,29 +1772,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ 7625);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 8929);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 98723);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _core_services_config_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @core/services/config.service */ 52553);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 34793);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 36895);
+/* harmony import */ var _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/flex-layout/extended */ 24784);
 /* harmony import */ var _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @core/directives/core-ripple-effect/core-ripple-effect.directive */ 75287);
+ // Keep takeUntil
+
+ // Import timer
 
 
 
 
 
+
+
+const _c0 = function () {
+  return {
+    "background-color": "#f8f9fa"
+  };
+};
 
 class ErrorComponent {
   _coreConfigService;
-  coreConfig; // Private
+  _location;
+  coreConfig;
+  countdown = 10; // Initial countdown value
 
-  _unsubscribeAll;
+  _timerSubscription; // To hold the timer subscription
+  // Private
+
+  _unsubscribeAll; // Keep for general subscriptions
+
   /**
    * Constructor
    *
    * @param {CoreConfigService} _coreConfigService
+   * @param {Location} _location // Inject Location service
    */
 
-  constructor(_coreConfigService) {
+  constructor(_coreConfigService, _location) {
     this._coreConfigService = _coreConfigService;
+    this._location = _location;
     this._unsubscribeAll = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject(); // Configure the layout
 
     this._coreConfigService.config = {
@@ -1824,7 +1844,26 @@ class ErrorComponent {
     // Subscribe to config changes
     this._coreConfigService.config.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
+    }); // Start the countdown timer
+
+
+    this._timerSubscription = (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.timer)(0, 1000) // Emit value immediately, then every 1 second
+    .pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._unsubscribeAll)) // Ensure it unsubscribes when component is destroyed
+    .subscribe(() => {
+      if (this.countdown > 0) {
+        this.countdown--;
+      } else {
+        this.goBack(); // Redirect after countdown finishes
+      }
     });
+  }
+  /**
+   * Navigates back to the previous page.
+   */
+
+
+  goBack() {
+    this._location.back();
   }
   /**
    * On destroy
@@ -1832,60 +1871,69 @@ class ErrorComponent {
 
 
   ngOnDestroy() {
-    // Unsubscribe from all subscriptions
+    // Unsubscribe from all subscriptions (including the timer)
     this._unsubscribeAll.next();
 
-    this._unsubscribeAll.complete();
+    this._unsubscribeAll.complete(); // Explicitly unsubscribe from the timer if it's still active
+
+
+    if (this._timerSubscription) {
+      this._timerSubscription.unsubscribe();
+    }
   }
 
   static ɵfac = function ErrorComponent_Factory(t) {
-    return new (t || ErrorComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_0__.CoreConfigService));
+    return new (t || ErrorComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_0__.CoreConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdirectiveInject"](_angular_common__WEBPACK_IMPORTED_MODULE_6__.Location));
   };
-  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({
+  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineComponent"]({
     type: ErrorComponent,
     selectors: [["app-error"]],
-    decls: 20,
-    vars: 4,
-    consts: [[1, "misc-wrapper"], ["href", "javascript:void(0);", 1, "brand-logo"], ["alt", "brand-logo", "height", "28", 3, "src"], [1, "brand-text", "text-primary", "ml-1"], [1, "misc-inner", "d-lg-flex", "col-lg-12", "align-items-center", "p-5"], [1, "w-100", "text-center"], [1, "mb-1"], [1, "mb-2"], [1, "btn-whatsapp"], ["alt", "Error page", "width", "200px", 1, "img-fluid", "drop", 3, "src"], [1, "mb-1", "drop"], ["align", "center", "routerLink", "/", "rippleEffect", "", 1, "btn", "btn-danger", "mb-2", "btn-sm-block"]],
+    decls: 25,
+    vars: 3,
+    consts: [[1, "misc-wrapper", 3, "ngStyle"], [1, "background-shapes"], [1, "shape", "shape1"], [1, "shape", "shape2"], [1, "shape", "shape3"], [1, "misc-inner", "d-flex", "flex-column", "col-lg-12", "align-items-center", "justify-content-center", "p-4"], [1, "w-100", "text-center"], [1, "animated-lock-container", "mb-4"], ["xmlns", "http://www.w3.org/2000/svg", "viewBox", "0 0 100 125", 0, "xml", "space", "preserve", 1, "animated-lock", 2, "width", "150px", "height", "auto"], [1, "lock-body"], ["fill", "#7367F0", "d", "M82.1,48.4H78V35.3C78,20.8,65.2,8,50.7,8S23.4,20.8,23.4,35.3v13.1h-4.1c-3.3,0-6,2.7-6,6v34.5c0,3.3,2.7,6,6,6h62.8c3.3,0,6-2.7,6-6V54.4C88.1,51.1,85.4,48.4,82.1,48.4z M31.4,35.3c0-10.1,8.2-18.3,18.3-18.3s18.3,8.2,18.3,18.3v13.1H31.4V35.3z"], [1, "shackle"], ["fill", "#7367F0", "d", "M62.1,21.3c0-6.8-5.5-12.3-12.3-12.3S37.4,14.5,37.4,21.3v14h8V21.3c0-2.4,1.9-4.3,4.3-4.3s4.3,1.9,4.3,4.3v14h8V21.3z"], [1, "mb-2", "font-weight-bolder", 2, "color", "#5e5873"], [1, "mb-4", 2, "color", "#6e6b7b"], [1, "countdown-timer"], ["rippleEffect", "", 1, "btn", "btn-primary", "btn-lg", "mb-2", 3, "click"]],
     template: function ErrorComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 0)(1, "a", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "img", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "h2", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "div", 4)(6, "div", 5)(7, "h1", 6)(8, "strong");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "h2", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, "P\u00E1gina no encontrada \uD83D\uDD75\uD83C\uDFFB\u200D\u2640\uFE0F");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](12, "p", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](13, "Ups! \uD83D\uDE16 La URL solicitada no se encontr\u00F3 en este servidor.");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](14, "div", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](15, "img", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](16, "p", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](17, "br");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](18, "a", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](19, "Regresar al Inicio");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](2, "div", 2)(3, "div", 3)(4, "div", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](5, "div", 5)(6, "div", 6)(7, "div", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnamespaceSVG"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](8, "svg", 8)(9, "g", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](10, "path", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](11, "g", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](12, "path", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵnamespaceHTML"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](13, "h1", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](14, "Acceso Restringido");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](15, "p", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](16, " No tienes permiso para ver esta p\u00E1gina. ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelement"](17, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](18, " Ser\u00E1s redirigido autom\u00E1ticamente en ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](19, "span", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](21, " segundos. ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](22, "a", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵlistener"]("click", function ErrorComponent_Template_a_click_22_listener() {
+          return ctx.goBack();
+        });
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementStart"](23, "span");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtext"](24, "Regresar a la p\u00E1gina anterior");
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵelementEnd"]()()()()();
       }
 
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate"]("src", ctx.coreConfig.app.appLogoImage, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.coreConfig.app.appName);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.coreConfig.app.appTitle);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("src", ctx.coreConfig.layout.skin === "dark" ? "assets/images/logo/logo.png" : "assets/images/logo/logo.png", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵproperty"]("ngStyle", _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵpureFunction0"](2, _c0));
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵadvance"](20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵtextInterpolate"](ctx.countdown);
       }
     },
-    dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterLinkWithHref, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_1__.RippleEffectDirective],
-    styles: [".misc-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-basis: 100%;\n  min-height: 100vh;\n  width: 100%;\n  align-items: center;\n  justify-content: center;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n  position: relative;\n  max-width: 750px;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  position: absolute;\n  top: 2rem;\n  left: 2rem;\n  margin: 0;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%]   .brand-text[_ngcontent-%COMP%] {\n  font-weight: 600;\n}\n@media (max-height: 625px) {\n  .misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n    margin-top: 4rem;\n  }\n}\n.drop[_ngcontent-%COMP%] {\n  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));\n}\n.btn-whatsapp[_ngcontent-%COMP%] {\n  position: fixed;\n  z-index: -1;\n  bottom: 20px;\n  right: 740px;\n  top: 100px;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before, .btn-whatsapp[_ngcontent-%COMP%]:after {\n  content: \"\";\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  width: 180px;\n  height: 180px;\n  border-radius: 50%;\n  background-color: #eda409;\n  opacity: 0;\n  animation: onda 1s infinite;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before {\n  animation-delay: 0.2s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:after {\n  animation-delay: 0.5s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n}\n@keyframes onda {\n  0% {\n    transform: scale(1);\n  }\n  15% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n    transform: scale(2.5);\n  }\n}"]
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.NgStyle, _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_7__.DefaultStyleDirective, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_1__.RippleEffectDirective],
+    styles: [".misc-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-basis: 100%;\n  min-height: 100vh;\n  width: 100%;\n  align-items: center;\n  justify-content: center;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n  position: relative;\n  max-width: 750px;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  position: absolute;\n  top: 2rem;\n  left: 2rem;\n  margin: 0;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%]   .brand-text[_ngcontent-%COMP%] {\n  font-weight: 600;\n}\n@media (max-height: 625px) {\n  .misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n    margin-top: 4rem;\n  }\n}\n.drop[_ngcontent-%COMP%] {\n  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));\n}\n.btn-whatsapp[_ngcontent-%COMP%] {\n  position: fixed;\n  z-index: -1;\n  bottom: 20px;\n  right: 740px;\n  top: 100px;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before, .btn-whatsapp[_ngcontent-%COMP%]:after {\n  content: \"\";\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  width: 180px;\n  height: 180px;\n  border-radius: 50%;\n  background-color: #eda409;\n  opacity: 0;\n  animation: onda 1s infinite;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before {\n  animation-delay: 0.2s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:after {\n  animation-delay: 0.5s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n}\n@keyframes onda {\n  0% {\n    transform: scale(1);\n  }\n  15% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n    transform: scale(2.5);\n  }\n}", ".misc-wrapper[_ngcontent-%COMP%] {\n    position: relative;\n    overflow: hidden;\n  }\n  .background-shapes[_ngcontent-%COMP%] {\n    position: absolute;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    z-index: 0;\n  }\n  .shape[_ngcontent-%COMP%] {\n    position: absolute;\n    border-radius: 50%;\n    background: rgba(115, 103, 240, 0.08); \n    animation: float 20s infinite linear;\n  }\n  .shape1[_ngcontent-%COMP%] { width: 200px; height: 200px; top: 5%; left: 10%; animation-duration: 25s; }\n  .shape2[_ngcontent-%COMP%] { width: 120px; height: 120px; top: 65%; left: 80%; animation-duration: 18s; }\n  .shape3[_ngcontent-%COMP%] { width: 80px; height: 80px; top: 80%; left: 5%; animation-duration: 22s; }\n\n  @keyframes float {\n    0% { transform: translateY(0px) translateX(0px) rotate(0deg); }\n    50% { transform: translateY(-30px) translateX(20px) rotate(180deg); }\n    100% { transform: translateY(0px) translateX(0px) rotate(360deg); }\n  }\n\n  .misc-inner[_ngcontent-%COMP%] {\n    z-index: 1;\n    transform: translateY(-10%); \n  }\n\n  .animated-lock-container[_ngcontent-%COMP%] {\n    animation: float-lock 6s ease-in-out infinite;\n  }\n\n  .animated-lock[_ngcontent-%COMP%]   .shackle[_ngcontent-%COMP%] {\n    animation: lock-shake 2s ease-in-out infinite alternate;\n    transform-origin: 50% 50%;\n  }\n\n  @keyframes float-lock {\n    0%, 100% { transform: translateY(0); }\n    50% { transform: translateY(-15px); }\n  }\n\n  @keyframes lock-shake {\n    0%, 100% { transform: translateX(-2px) rotate(-3deg); }\n    50% { transform: translateX(2px) rotate(3deg); }\n  }\n\n  .countdown-timer[_ngcontent-%COMP%] {\n    font-weight: bold;\n    color: #7367F0; \n    font-size: 1.1em;\n  }"]
   });
 }
 

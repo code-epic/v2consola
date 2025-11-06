@@ -1,11 +1,19 @@
 <div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
     <div class="content-body">
+        <!-- Fondo Animado -->
+        <div class="background-shapes">
+            <div class="shape shape1"></div>
+            <div class="shape shape2"></div>
+            <div class="shape shape3"></div>
+        </div>
+
         <!-- content-header component -->
         <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
 
         <!-- Invoice List -->
-        <section class="invoice-list-wrapper">
+        <!-- La clase 'position-relative' es necesaria para que el fondo animado no se superponga -->
+        <section class="invoice-list-wrapper position-relative">
             <div class="card">
 
                 <div class="col-md-12 ">
@@ -13,7 +21,7 @@
                     <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
                         class="nav-tabs justify-content-center">
                         <li [ngbNavItem]="1">
-                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>Listado de Rol's</a>
+                            <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'list'" class="mr-1"></span><span class="font-weight-bold">Listado de Roles</span></a>
                             <ng-template ngbNavContent>
 
 
@@ -25,33 +33,35 @@
 
                                         <ngx-datatable-column name="APLICACION" prop="app" [width]="10">
                                             <ng-template let-app="value" ngx-datatable-cell-template>
-                                                <div>
+                                                <div class="d-flex align-items-center">
+                                                    <span [data-feather]="'box'" [size]="18" class="text-primary mr-1"></span>
                                                     <span class="font-weight-bold">{{ app }} </span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
 
                                         <ngx-datatable-column name="ROL" prop="rol" [width]="10">
-                                            <ng-template let-rol="value" ngx-datatable-cell-template>
-                                                <div>
+                                            <ng-template let-rol="value" let-row="row" ngx-datatable-cell-template>
+                                                <div class="d-flex align-items-center">
+                                                    <span [data-feather]="'shield'" [size]="16" class="text-info mr-1"></span>
                                                     <span class="font-weight-bold">{{ rol}} </span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
 
                                         <ngx-datatable-column name="DESCRIPCION" prop="observacion" [width]="20">
-                                            <ng-template let-observacion="value" ngx-datatable-cell-template>
-                                                <div>
-                                                    <span class="font-weight-bold">{{ observacion }} </span>
+                                            <ng-template let-observacion="value" let-row="row" ngx-datatable-cell-template>
+                                                <div class="d-flex align-items-center">
+                                                    <span [data-feather]="'file-text'" [size]="16" class="text-muted mr-1"></span>
+                                                    <span class="text-muted">{{ observacion }} </span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
 
                                         <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
                                             <ng-template let-estatus="value" ngx-datatable-cell-template>
-
-                                                <div class="badge badge-success" *ngIf="estatus==1">Activo</div>
-                                                <div class="badge badge-danger" *ngIf="estatusx==0">Inactivo</div>
+                                                <div class="badge badge-pill badge-light-success" *ngIf="estatus==1">Activo</div>
+                                                <div class="badge badge-pill badge-light-danger" *ngIf="estatus != 1">Inactivo</div>
                                             </ng-template>
                                         </ngx-datatable-column>
 
@@ -127,7 +137,6 @@
                                         <div class="form-group col-md-4">
                                             <label class="form-label" for="origen">Modulo</label>
                                             <select multiple class="form-control" style="height: 150px;"
-                                            
                                                 (dblclick)="selectEventModulo($event)" [(ngModel)]="xmodulo"
                                                 [ngModelOptions]="{standalone: true}">
                                                 <option *ngFor="let e of dataModulo" value="{{e.id + '|' + e.name}}">
@@ -138,9 +147,8 @@
                                         <div class="form-group col-md-4">
                                             <label class="form-label" for="origen">Menu</label>
                                             <select multiple class="form-control" style="height: 150px;"
-                                                (click)="this.bmenus = true"
-                                                (dblclick)="listarAcciones()" [(ngModel)]="menu"
-                                                [ngModelOptions]="{standalone: true}">
+                                                (click)="this.bmenus = true" (dblclick)="listarAcciones()"
+                                                [(ngModel)]="menu" [ngModelOptions]="{standalone: true}">
                                                 <option *ngFor="let e of datamenu" value="{{e.id + '|' + e.name}}">
                                                     {{e.name}}</option>
                                             </select>
@@ -159,13 +167,15 @@
 
                                         <div class="col-md-4"></div>
                                         <div class="form-group col-md-4" align="right">
-                                            <button type="button" class="btn btn-primary" [disabled]="!bmenus" (click)="addMenuList()">
-                                                <i class="fa fa-arrow-down"  aria-hidden="true"></i>&nbsp;Agregar Menu
+                                            <button type="button" class="btn btn-primary" [disabled]="!bmenus"
+                                                (click)="addMenuList()">
+                                                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar Menu
                                             </button>
                                         </div>
                                         <div class="col-md-4" align="right">
                                             <button type="button" [disabled]="!acciones" class="btn btn-primary">
-                                                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar Acciones
+                                                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar
+                                                Acciones
                                             </button>
                                         </div>
                                     </div>
@@ -217,3 +227,31 @@
 
     </div>
 </div>
+
+<!-- Estilos para la animación y el diseño -->
+<style>
+  .background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none; /* Asegura que no interfiera con los clics */
+  }
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(115, 103, 240, 0.05); /* Color principal del tema, muy suave */
+    animation: float 20s infinite linear;
+  }
+  .shape1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
+  .shape2 { width: 150px; height: 150px; top: 60%; left: 85%; animation-duration: 18s; }
+  .shape3 { width: 100px; height: 100px; top: 75%; left: 15%; animation-duration: 22s; }
+
+  @keyframes float {
+    0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+    50% { transform: translateY(-25px) translateX(15px) rotate(180deg); }
+    100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
+  }
+</style>

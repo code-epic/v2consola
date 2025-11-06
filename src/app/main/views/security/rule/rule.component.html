@@ -1,12 +1,20 @@
 <div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
     <div class="content-body">
+        <!-- Fondo Animado -->
+        <div class="background-shapes">
+            <div class="shape shape1"></div>
+            <div class="shape shape2"></div>
+            <div class="shape shape3"></div>
+        </div>
+
         <!-- content-header component -->
         <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
 
         <!-- Invoice List -->
-        <section class="invoice-list-wrapper">
-            <div class="card">
+        <!-- La clase 'position-relative' es necesaria para que el fondo animado no se superponga -->
+        <section class="invoice-list-wrapper position-relative">
+            <div class="card shadow-sm">
                 <div class="card-body">
                     <!-- Primer -->
                     <div class="row">
@@ -14,26 +22,54 @@
                             <label class="form-label" for="app-select">Seleccionar Aplicación</label>
                             <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacionSeleccionada"
                                 [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                                (change)="cargarConfiguracionApp($event)"
+                                (change)="cargarConfiguracionApp($event)" [clearable]="false"
                                 placeholder="Seleccione una aplicación para configurar sus reglas">
                             </ng-select>
                         </div>
-
                     </div>
 
+                    <!-- Placeholder de Bienvenida -->
+                    <div *ngIf="!aplicacionSeleccionada" class="text-center p-5 my-5">
+                        <!-- Animación de Candado de Seguridad Mejorada -->
+                        <div class="animated-lock-container mb-4">
+                            <svg style="width: 120px; height: auto;"
+                              class="animated-lock"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 100 125"
+                              xml:space="preserve"
+                            >
+                              <g class="lock-body">
+                                <path fill="#7367F0" d="M82.1,48.4H78V35.3C78,20.8,65.2,8,50.7,8S23.4,20.8,23.4,35.3v13.1h-4.1c-3.3,0-6,2.7-6,6v34.5c0,3.3,2.7,6,6,6h62.8c3.3,0,6-2.7,6-6V54.4C88.1,51.1,85.4,48.4,82.1,48.4z M31.4,35.3c0-10.1,8.2-18.3,18.3-18.3s18.3,8.2,18.3,18.3v13.1H31.4V35.3z"/>
+                                <!-- Keyhole -->
+                                <circle class="keyhole" fill="#FFFFFF" cx="50.5" cy="70" r="5"/>
+                                <path class="keyhole" fill="#FFFFFF" d="M50.5,75c-1.1,0-2,0.9-2,2v8c0,1.1,0.9,2,2,2s2-0.9,2-2v-8C52.5,75.9,51.6,75,50.5,75z"/>
+                              </g>
+                              <g class="shackle">
+                                <path fill="#7367F0" d="M62.1,21.3c0-6.8-5.5-12.3-12.3-12.3S37.4,14.5,37.4,21.3v14h8V21.3c0-2.4,1.9-4.3,4.3-4.3s4.3,1.9,4.3,4.3v14h8V21.3z"/>
+                              </g>
+                            </svg>
+                        </div>
+                        <h2 class="font-weight-bold text-primary mb-2">Centro de Reglas de Seguridad</h2>
+                        <p class="lead text-muted px-2" style="font-size: 1.1rem; letter-spacing: 0.2px; line-height: 1.6;">
+                            Selecciona una aplicación para definir sus políticas de sesión, encriptamiento y endpoints.
+                        </p>
+                    </div>
 
                     <!-- Contenedor de las tarjetas de configuración -->
-                    <div *ngIf="aplicacionSeleccionada && configuracion" class="mt-4" >
+                    <div *ngIf="aplicacionSeleccionada && configuracion" class="mt-4 animated-container" >
                         
                         <div class="row" style="margin-top: -40px;">
                             <div class="col-md-12">
                                 <hr>
                             </div>
                             <!-- Card: Estatus y Sesión -->
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card h-100 shadow-sm">
                                     <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h4 class="card-title mb-0">Reglas Generales</h4>
+                                        <h4 class="card-title mb-0 d-flex align-items-center">
+                                            <span [data-feather]="'sliders'" class="mr-1 text-primary"></span>
+                                            Reglas Generales
+                                        </h4>
                                         <div class="custom-control custom-switch custom-control-lg">
                                             <input type="checkbox" class="custom-control-input" id="appStatus"
                                                 [(ngModel)]="configuracion.estatus" [true-value]="1" [false-value]="0">
@@ -73,9 +109,6 @@
                                         <div class="form-group mt-2">
                                             <label class="font-weight-bold">Tipo de Encriptamiento</label>
                                             <div class="input-group input-group-lg">
-                                                <!-- <div class="input-group-prepend">
-                                                    <span class="input-group-text"><span [data-feather]="'lock'"></span></span>
-                                                </div> -->
                                                 <ng-select class="ng-select-lg w-100"
                                                     [items]="tiposEncriptamiento"
                                                     bindLabel="name"
@@ -127,10 +160,13 @@
                             </div>
 
                             <!-- Card: Endpoints -->
-                            <div class="col-lg-6 col-md-12">
-                                <div class="card">
+                            <div class="col-lg-6 col-md-12 mb-4">
+                                <div class="card h-100 shadow-sm">
                                     <div class="card-header">
-                                        <h4 class="card-title">Endpoints de la Aplicación</h4>
+                                        <h4 class="card-title d-flex align-items-center">
+                                            <span [data-feather]="'server'" class="mr-1 text-primary"></span>
+                                            Endpoints de la Aplicación
+                                        </h4>
                                     </div>
                                     <div class="card-body">
                                         <div class="form-group mb-2">
@@ -178,10 +214,13 @@
                             </div>
 
                             <!-- Card: Nivel de Traza -->
-                            <div class="col-12">
-                                <div class="card">
+                            <div class="col-12 mb-4">
+                                <div class="card shadow-sm">
                                     <div class="card-header">
-                                        <h4 class="card-title">Nivel de Traza</h4>
+                                        <h4 class="card-title d-flex align-items-center">
+                                            <span [data-feather]="'bar-chart-2'" class="mr-1 text-primary"></span>
+                                            Nivel de Traza
+                                        </h4>
                                     </div>
                                     <div class="card-body">
                                         <p class="card-text">Define el nivel de detalle que se registrará en los logs
@@ -206,8 +245,9 @@
                         <!-- Botón de Guardar -->
                         <div class="row">
                             <div class="col-12 text-right">
-                                <button type="button" class="btn btn-primary" (click)="guardarConfiguracion()">
-                                    Guardar Configuración
+                                <button type="button" class="btn btn-primary btn-lg pulse-button" (click)="guardarConfiguracion()">
+                                    <span [data-feather]="'save'" class="mr-1"></span>
+                                    Guardar Cambios
                                 </button>
                             </div>
                         </div>
@@ -218,3 +258,53 @@
 
     </div>
 </div>
+
+<!-- Estilos para la animación y el diseño -->
+<style>
+  .background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none; /* Asegura que no interfiera con los clics */
+  }
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(115, 103, 240, 0.05); /* Color principal del tema, muy suave */
+    animation: float 20s infinite linear;
+  }
+  .shape1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
+  .shape2 { width: 150px; height: 150px; top: 60%; left: 85%; animation-duration: 18s; }
+  .shape3 { width: 100px; height: 100px; top: 75%; left: 15%; animation-duration: 22s; }
+
+  @keyframes float {
+    0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+    50% { transform: translateY(-25px) translateX(15px) rotate(180deg); }
+    100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
+  }
+
+  .animated-illustration {
+    animation: float-illustration 6s ease-in-out infinite;
+  }
+  @keyframes float-illustration {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+
+  .animated-container {
+    animation: fadeInSlideUp 0.6s ease-out forwards;
+  }
+  @keyframes fadeInSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+</style>

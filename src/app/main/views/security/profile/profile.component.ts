@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core"
 import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap"
 import { ApiService, IAPICore } from "@services/apicore/api.service"
-import { IPerfil } from "@services/seguridad/rol.service"
+import { IPerfil, Privilegios } from "@services/seguridad/rol.service"
 import { UtilService } from "@services/util/util.service"
 import {
   ColumnMode,
@@ -28,25 +28,46 @@ interface MenuItem {
   clase: string;
   color: string;
   Privilegio: any[];
-  SubMenu: MenuItem[];
+  SubMenu: SubMenu[];
 }
 
 
-// 1. Interfaces para tipar tus datos
-interface PermisoAccion {
+// Interfaces para la estructura de permisos de 3 niveles
+
+// Nivel 3: Privilegio (la acción más específica)
+interface Privilegio {
   accion: string;
-  menu: string;
-  modulo: string;
-  rol: string;
-  xaccion: string | null;
-  xmenu: string; // Usaremos '1' para seleccionado, '0' para no seleccionado
-  xmodulo: string;
-  xrol: string;
+  descripcion: string;
+  metodo: string;
   estatus: number;
 }
 
-interface PermisoPadre extends PermisoAccion {
-  children?: PermisoAccion[]; // Array de sub-acciones
+// Nivel 2: SubMenu (agrupa privilegios)
+interface SubMenu {
+  url: string;
+  js: string;
+  icono: string;
+  descripcion: string;
+  nombre: string;
+  accion: string;
+  clase: string;
+  color: string;
+  estatus: number;
+  menu: string;
+  modulo: string
+
+  children?: Privilegio[]; // Hijos son los privilegios
+  isExpanded?: boolean;     // Para controlar la UI
+  Privilegios?: Privilegios[];    // Datos originales
+}
+
+// Nivel 1: PermisoPadre (la fila principal de la tabla, agrupa SubMenus)
+interface PermisoPadre {
+  accion: string;
+  menu: string;
+  modulo: string;
+  estatus: number;
+  children?: SubMenu[]; // Hijos son los SubMenus
   isExpanded?: boolean;      // Estado de la expansión de la fila
 }
 
@@ -118,7 +139,7 @@ export class ProfileComponent implements OnInit {
   public lstAplicaciones = []
   public lstRol = []
   public dataRolDetalles: PermisoPadre[] = [];
-  public dataRol = []
+  public dataRol: any[] = []
   public datamenu = []
   public rowData = []
   public temprowData = []
@@ -166,7 +187,7 @@ export class ProfileComponent implements OnInit {
   active: any = 1
 
   // Lógica de transformación
-  public dataPlana: PermisoAccion[] = [];
+  public dataPlana: any[] = [];
 
   public dataJerarquica: PermisoPadre[] = [];
   public padresMap = new Map<string, PermisoPadre>();
@@ -332,8 +353,8 @@ export class ProfileComponent implements OnInit {
             "xmenu": "1",
             "xmodulo": "",
             "xrol": "1",
-            "estatus": 0,
-            "Privilegios": sub.Privilegio
+            "estatus": 0, // Se inicia en 0, la lógica de update se encargará de marcarlo
+            "Privilegios": sub.Privilegios
           }
           lst.push(obj)
 
@@ -343,7 +364,7 @@ export class ProfileComponent implements OnInit {
 
     this.dataPlana = lst
     this.convertirDataPlana()
-    console.log(this.dataJerarquica)
+    // console.log(this.dataJerarquica)
     if (row != null) {
       this.dataRolDetalles = this.updateMenuEstatusOnly(this.dataJerarquica, row.Rol.Menu)
     } else {
@@ -356,21 +377,38 @@ export class ProfileComponent implements OnInit {
   }
 
   convertirDataPlana() {
+    const subMenuMap = new Map<string, SubMenu>();
+
     this.dataPlana.forEach(item => {
       const key = `${item.modulo}-${item.menu}`; // Usamos Modulo y Menu como clave del grupo
 
       if (item.accion === '-') {
         // Es un elemento padre (el grupo)
-        const padre: PermisoPadre = { ...item, children: [], isExpanded: false };
+        const padre: PermisoPadre = { ...item, children: [], isExpanded: false } as PermisoPadre;
         this.padresMap.set(key, padre);
         this.dataJerarquica.push(padre);
       } else {
-        // Es una acción (hijo)
+        // Es un SubMenú (hijo del padre)
         const padre = this.padresMap.get(key);
         if (padre) {
-          padre.children!.push(item);
+          const subMenu: SubMenu = {
+            ...item,
+            children: [],
+            isExpanded: false
+          };
+
+          // Procesar los Privilegios y asignarlos como hijos del SubMenu
+          if (item.Privilegios && item.Privilegios.length > 0) {
+            subMenu.children = item.Privilegios.map(priv => ({
+              accion: priv.descripcion,
+              descripcion: priv.descripcion,
+              metodo: priv.metodo,
+              estatus: 0 // Por defecto, los privilegios están deseleccionados
+            }));
+          }
+
+          padre.children!.push(subMenu);
         }
-        // Nota: Los elementos hijos que no tienen un padre '-' con la misma key se ignorarían o se tratarían como elementos de nivel superior si lo deseas.
       }
     });
   }
@@ -405,17 +443,22 @@ export class ProfileComponent implements OnInit {
   // En profile.component.ts, dentro de la clase ProfileComponent
 
   // Asegúrate de usar la interfaz PermisoPadre para tipar
-  onParentCheckboxChange(row: any, event: any): void {
+  onParentCheckboxChange(row: PermisoPadre, event: any): void {
     const isChecked = event.target.checked;
     const newStatus = isChecked ? 1 : 0;
 
-    // 1. Actualizar el estado del Padre
+    // 1. Actualizar el estado del Padre (Nivel 1 - Módulo)
     row.estatus = newStatus;
 
-    // 2. Actualizar el estado de todos los Hijos (cascada)
+    // 2. Actualizar en cascada el estado de todos los Hijos (Nivel 2 - SubMenús) y Nietos (Nivel 3 - Privilegios)
     if (row.children) {
       row.children.forEach(child => {
         child.estatus = newStatus;
+        if (child.children) {
+          child.children.forEach(privilegio => {
+            privilegio.estatus = newStatus;
+          });
+        }
       });
     }
 
@@ -424,25 +467,51 @@ export class ProfileComponent implements OnInit {
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
 
-  // También verifica si onChildCheckboxChange está presente, ya que la necesitarás:
-  onChildCheckboxChange(child: any, event: any): void {
+  /**
+   * Maneja el checkbox del SubMenú (Nivel 2).
+   * Actualiza sus Privilegios (Nivel 3) y recalcula el estado del Menú (Nivel 1).
+   */
+  onSubMenuCheckboxChange(subMenu: SubMenu, event: any): void {
     const isChecked = event.target.checked;
-    child.estatus = isChecked ? 1 : 0;
+    const newStatus = isChecked ? 1 : 0;
+    subMenu.estatus = newStatus;
 
-    // Lógica para buscar el padre y actualizar su estado (opcional, pero recomendado)
-    const key = `${child.modulo}-${child.menu}`;
-    const parent = this.padresMap.get(key);
-
-    if (parent) {
-      const allChildrenChecked = parent.children!.every(c => c.estatus === 1);
-      const newParentStatus = allChildrenChecked ? 1 : 0;
-
-      if (parent.estatus !== newParentStatus) {
-        parent.estatus = newParentStatus;
-      }
+    // 1. Aplicar el estado a todos los Privilegios (Nivel 3)
+    if (subMenu.children) {
+      subMenu.children.forEach(privilegio => {
+        privilegio.estatus = newStatus;
+      });
     }
 
+    // 2. Recalcular el estado del Menú principal (Nivel 1)
+    this.recalcularEstadoPadre(subMenu.menu);
+
+    // Forzar actualización de la tabla para ver los cambios
     this.dataRolDetalles = [...this.dataRolDetalles];
+  }
+
+  /**
+   * Maneja el checkbox del Privilegio (Nivel 3).
+   * Recalcula el estado del SubMenú (Nivel 2) y del Menú (Nivel 1).
+   */
+  onPrivilegeCheckboxChange(privilegio: Privilegio, subMenu: SubMenu, event: any): void {
+    // Simplemente actualiza el estado del privilegio clickeado.
+    privilegio.estatus = event.target.checked ? 1 : 0;
+
+    // Se elimina la lógica que propaga el cambio hacia los padres (SubMenu y Módulo).
+    this.dataRolDetalles = [...this.dataRolDetalles];
+  }
+
+  /**
+   * Función auxiliar para recalcular el estado del Menú (Nivel 1) basado en sus SubMenús (Nivel 2).
+   */
+  recalcularEstadoPadre(menuNombre: string): void {
+    const parent = this.padresMap.get(menuNombre);
+    if (parent) {
+      const todosSubMenusSeleccionados = parent.children!.every(subMenu => subMenu.estatus === 1);
+      // Si todos los hijos (SubMenús) están seleccionados, el Padre (Menú) se selecciona.
+      parent.estatus = todosSubMenusSeleccionados ? 1 : 0;
+    }
   }
 
   /**
@@ -450,17 +519,17 @@ export class ProfileComponent implements OnInit {
    * solo con los elementos hijos (acciones) seleccionados.
    * @returns {PermisoAccion[]} Una lista de objetos PermisoAccion con estatus=1
    */
-  listarPermisosSeleccionados(): PermisoAccion[] {
-    const seleccionados: PermisoAccion[] = [];
+  listarPermisosSeleccionados(): any[] {
+    const seleccionados: any[] = [];
 
-    this.dataRolDetalles.forEach(padre => {
+    this.dataRolDetalles.forEach((padre) => {
       let padreDebeSerIncluido = false;
-      const hijosSeleccionados: PermisoAccion[] = [];
+      const hijosSeleccionados: SubMenu[] = [];
 
       // 1. Caso: El Padre no tiene hijos (es una acción final)
       if (!padre.children || padre.children.length === 0) {
         if (padre.estatus === 1) {
-          seleccionados.push(padre);
+          seleccionados.push({ ...padre, children: [] }); // Incluir al padre sin hijos
         }
         return; // Pasar al siguiente padre
       }
@@ -468,7 +537,7 @@ export class ProfileComponent implements OnInit {
       // 2. Caso: El Padre tiene hijos
       padre.children.forEach(hijo => {
         if (hijo.estatus === 1) {
-          hijosSeleccionados.push(hijo);
+          hijosSeleccionados.push({ ...hijo }); // Incluir al hijo seleccionado
           padreDebeSerIncluido = true; // Si al menos un hijo está seleccionado, incluimos al padre
         }
       });
@@ -523,8 +592,8 @@ export class ProfileComponent implements OnInit {
 
       this.lista = this.dataRolDetalles.map((e) => {
         let estatus = this.SelectOn.find((el) => {
-          return el.xaccion == e.xaccion && el.xmenu == e.xmenu
-        })
+          return el.modulo == e.modulo && el.menu == e.menu;
+        });
         e.estatus = estatus != undefined ? 1 : 0
         return e
       })
@@ -629,7 +698,7 @@ export class ProfileComponent implements OnInit {
   }
 
   editarRol(row) {
-    // console.log(row.Rol.Menu)
+    console.log(row.Rol.Menu)
     this.blApp = false
     this.desactivo = 'disabled'
     this.selRol(row.aplicacion)
@@ -684,56 +753,59 @@ export class ProfileComponent implements OnInit {
   // (Asumiendo que PermisoPadre es el tipo de elemento en dataRolDetalles)
   generarMenuSeleccionado(menuCompleto: MenuItem[]): MenuItem[] {
     const menuSeleccionado: MenuItem[] = [];
+    const permisoMap = new Map<string, number>(); // Key: 'Modulo-Menu-Accion' o 'Modulo-Menu-Privilegio', Value: estatus
 
-    // Mapeamos dataRolDetalles para fácil acceso a los estados de permiso
-    const permisoMap = new Map<string, number>(); // Key: 'Modulo-Menu-Accion', Value: estatus
-
+    // 1. Mapear el estado de TODOS los checkboxes (Módulos, Sub-Menús y Privilegios)
     this.dataRolDetalles.forEach(padre => {
-      // 1. Guardar el estado del Padre (si 'accion' es '-')
-      if (padre.accion === '-') {
-        const keyPadre = `${padre.modulo}-${padre.menu}-`;
-        permisoMap.set(keyPadre, padre.estatus);
-      }
+      const keyPadre = `${padre.modulo}-${padre.menu}`;
+      permisoMap.set(keyPadre, padre.estatus);
 
-      // 2. Guardar el estado de los Hijos (acciones)
       if (padre.children) {
-        padre.children.forEach(hijo => {
-          const keyHijo = `${hijo.modulo}-${hijo.menu}-${hijo.accion}`;
-          permisoMap.set(keyHijo, hijo.estatus);
+        padre.children.forEach(subMenu => {
+          const keySubMenu = `${keyPadre}-${subMenu.accion}`;
+          permisoMap.set(keySubMenu, subMenu.estatus);
+
+          if (subMenu.children) {
+            subMenu.children.forEach(privilegio => {
+              // La clave para un privilegio es Modulo-Menu-SubMenu-Privilegio
+              const keyPrivilegio = `${keySubMenu}-${privilegio.accion}`;
+              permisoMap.set(keyPrivilegio, privilegio.estatus);
+            });
+          }
         });
       }
     });
 
-    // 3. Recorrer el Menú Completo (Plantilla) y Filtrar
+    // 2. Recorrer el Menú Completo (la plantilla original) y construir el resultado
     menuCompleto.forEach(padreMenu => {
+      const subMenuFinal: SubMenu[] = [];
+      let padreDebeSerIncluido = false;
 
-      // Obtener el estado del Padre en la lista de permisos
-      const keyPadre = `${padreMenu.descripcion}-${padreMenu.nombre}-`; // Usamos descripcion/nombre como Modulo/Menu
-      let padreEstaSeleccionado = permisoMap.get(keyPadre) === 1;
+      padreMenu.SubMenu.forEach(subMenuOriginal => {
+        const keySubMenu = `${padreMenu.descripcion}-${padreMenu.nombre}-${subMenuOriginal.nombre}`;
+        const subMenuEstaSeleccionado = permisoMap.get(keySubMenu) === 1;
 
-      // Preparar el nuevo SubMenu
-      const subMenuSeleccionado: MenuItem[] = [];
+        // Filtrar los privilegios de este submenú, incluyendo solo los seleccionados
+        const privilegiosSeleccionados = (subMenuOriginal.Privilegios || []).filter(priv => {
+          const keyPrivilegio = `${keySubMenu}-${priv.descripcion}`;
+          return permisoMap.get(keyPrivilegio) === 1;
+        });
 
-      // Recorrer los SubMenús (Hijos)
-      padreMenu.SubMenu.forEach(hijoMenu => {
-        const keyHijo = `${padreMenu.descripcion}-${padreMenu.nombre}-${hijoMenu.descripcion}`;
-
-        // Si el hijo está seleccionado (estatus = 1 en la tabla de permisos)
-        if (permisoMap.get(keyHijo) === 1) {
-          subMenuSeleccionado.push(hijoMenu);
-          padreEstaSeleccionado = true; // Asegurar que el padre se incluya si algún hijo se incluye
+        // Un submenú se incluye si está explícitamente marcado O si tiene al menos un privilegio seleccionado
+        if (subMenuEstaSeleccionado || privilegiosSeleccionados.length > 0) {
+          padreDebeSerIncluido = true;
+          // Clonamos el submenú y le asignamos solo los privilegios filtrados
+          const nuevoSubMenu = { ...subMenuOriginal, Privilegios: privilegiosSeleccionados };
+          subMenuFinal.push(nuevoSubMenu);
         }
       });
 
-      // 4. Construir el nuevo Objeto Padre
-      if (padreEstaSeleccionado || (padreMenu.SubMenu.length === 0 && permisoMap.get(keyPadre) === 1)) {
-        // Clona el objeto padre del menú completo
-        const nuevoPadre = { ...padreMenu };
-
-        // Asigna el submenú filtrado
-        nuevoPadre.SubMenu = subMenuSeleccionado;
-
-        menuSeleccionado.push(nuevoPadre);
+      // El menú padre se incluye si tiene al menos un submenú válido
+      if (padreDebeSerIncluido) {
+        menuSeleccionado.push({
+          ...padreMenu,
+          SubMenu: subMenuFinal
+        });
       }
     });
 
@@ -774,7 +846,7 @@ export class ProfileComponent implements OnInit {
     this.perfilSave.Rol.descripcion = this.Perfil.descripcion
     this.perfilSave.Rol.Menu = menuFinal
 
-    // console.log(this.perfilSave)
+    console.log(this.perfilSave)
 
 
 
@@ -861,14 +933,30 @@ export class ProfileComponent implements OnInit {
           newMenuItem.children = newMenuItem.children.map(childItem => {
             const subUpdateData = subUpdateMap.get(childItem.accion);
 
-            if (subUpdateData) {
-              // Coincidencia de Nivel Inferior: 'accion' (origen) con 'nombre' (fuente.SubMenu)
-              return {
-                ...childItem,
-                estatus: 1, // 🎯 ACT: estatus a 1 en el hijo
-              } as PermisoPadre;
+            if (!subUpdateData) {
+              return childItem; // No hay coincidencia en el submenú, devolver el original
             }
-            return childItem;
+
+            // Coincidencia de Nivel 2 (SubMenú) encontrada. Ahora actualizamos sus privilegios.
+            let newChildItem = { ...childItem, estatus: 1 };
+
+            // 4. Actualizar los Privilegios (Nivel 3)
+            if (newChildItem.children && newChildItem.children.length > 0 && subUpdateData.Privilegios && subUpdateData.Privilegios.length > 0) {
+              const privUpdateMap = new Map<string, any>();
+              subUpdateData.Privilegios.forEach(priv => {
+                privUpdateMap.set(priv.descripcion, priv);
+              });
+
+              newChildItem.children = newChildItem.children.map(privilegioItem => {
+                if (privUpdateMap.has(privilegioItem.accion)) {
+                  // Coincidencia de Nivel 3 (Privilegio) encontrada.
+                  return { ...privilegioItem, estatus: 1 }; // 🎯 ACT: estatus a 1 en el privilegio
+                }
+                return privilegioItem;
+              });
+            }
+
+            return newChildItem;
           });
         }
 
