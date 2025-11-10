@@ -236,7 +236,6 @@ export class ProfileComponent implements OnInit {
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
         this.lstAplicaciones = data.map((e) => {
           e.name = `${e.id}  (${e.nombre})`
           return e
@@ -754,9 +753,8 @@ export class ProfileComponent implements OnInit {
   // (Asumiendo que PermisoPadre es el tipo de elemento en dataRolDetalles)
   generarMenuSeleccionado(menuCompleto: MenuItem[]): MenuItem[] {
     const menuSeleccionado: MenuItem[] = [];
-    const permisoMap = new Map<string, number>(); // Key: 'Modulo-Menu-Accion' o 'Modulo-Menu-Privilegio', Value: estatus
+    const permisoMap = new Map<string, number>(); 
 
-    // 1. Mapear el estado de TODOS los checkboxes (Módulos, Sub-Menús y Privilegios)
     this.dataRolDetalles.forEach(padre => {
       const keyPadre = `${padre.modulo}-${padre.menu}`;
       permisoMap.set(keyPadre, padre.estatus);
@@ -768,7 +766,6 @@ export class ProfileComponent implements OnInit {
 
           if (subMenu.children) {
             subMenu.children.forEach(privilegio => {
-              // La clave para un privilegio es Modulo-Menu-SubMenu-Privilegio
               const keyPrivilegio = `${keySubMenu}-${privilegio.accion}`;
               permisoMap.set(keyPrivilegio, privilegio.estatus);
             });
@@ -779,30 +776,32 @@ export class ProfileComponent implements OnInit {
 
     // 2. Recorrer el Menú Completo (la plantilla original) y construir el resultado
     menuCompleto.forEach(padreMenu => {
+      // La clave para el menú padre (Nivel 1)
+      const keyPadre = `${padreMenu.descripcion}-${padreMenu.nombre}`;
+      const padreEstaSeleccionadoDirectamente = permisoMap.get(keyPadre) === 1;
+
       const subMenuFinal: SubMenu[] = [];
-      let padreDebeSerIncluido = false;
+      let algunHijoEstaSeleccionado = false;
 
       padreMenu.SubMenu.forEach(subMenuOriginal => {
         const keySubMenu = `${padreMenu.descripcion}-${padreMenu.nombre}-${subMenuOriginal.nombre}`;
         const subMenuEstaSeleccionado = permisoMap.get(keySubMenu) === 1;
 
-        // Filtrar los privilegios de este submenú, incluyendo solo los seleccionados
         const privilegiosSeleccionados = (subMenuOriginal.Privilegios || []).filter(priv => {
           const keyPrivilegio = `${keySubMenu}-${priv.descripcion}`;
           return permisoMap.get(keyPrivilegio) === 1;
         });
 
-        // Un submenú se incluye si está explícitamente marcado O si tiene al menos un privilegio seleccionado
+        // El submenú se incluye si está marcado directamente O si tiene al menos un privilegio marcado.
         if (subMenuEstaSeleccionado || privilegiosSeleccionados.length > 0) {
-          padreDebeSerIncluido = true;
-          // Clonamos el submenú y le asignamos solo los privilegios filtrados
+          algunHijoEstaSeleccionado = true;
           const nuevoSubMenu = { ...subMenuOriginal, Privilegios: privilegiosSeleccionados };
           subMenuFinal.push(nuevoSubMenu);
         }
       });
 
-      // El menú padre se incluye si tiene al menos un submenú válido
-      if (padreDebeSerIncluido) {
+      // El menú padre se incluye si está marcado directamente O si alguno de sus hijos fue incluido.
+      if (padreEstaSeleccionadoDirectamente || algunHijoEstaSeleccionado) {
         menuSeleccionado.push({
           ...padreMenu,
           SubMenu: subMenuFinal
@@ -812,6 +811,9 @@ export class ProfileComponent implements OnInit {
 
     return menuSeleccionado;
   }
+
+
+  
 
   guardarPerfiles() {
 
@@ -838,7 +840,6 @@ export class ProfileComponent implements OnInit {
 
     let id = Md5.hashAsciiStr(btoa(`${this.aplicacion.nombre}${this.aplicacion.version}${this.aplicacion.autor}${this.Perfil.nombre}`))
     this.perfilSave.id = id
-
 
 
     const menuFinal = this.generarMenuSeleccionado(mnu);

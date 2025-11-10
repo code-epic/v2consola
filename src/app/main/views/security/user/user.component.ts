@@ -454,10 +454,12 @@ export class UserComponent implements OnInit {
           if (data != undefined && data != null) {
             this.lstPerfil = data
           }
-          this.blockEdit = 'disabled'
-          this.blockEditApp = 'disabled'
+          
           let usuario = window.sessionStorage.getItem('validator')
           if (usuario != undefined) {
+            this.blockEdit = 'disabled'
+            this.blockEditApp = 'disabled'
+
             if (!this.bEliminarAllProfile) {
              
               this.cargarUsuario(this.usuario)
@@ -468,6 +470,7 @@ export class UserComponent implements OnInit {
             }else{
                this.blockEditApp = 'false'
             }
+
             
             
           }
@@ -516,7 +519,7 @@ export class UserComponent implements OnInit {
         Rol: rol,
       }
       // this.Aplicacion = xapps
-      console.log(appx)
+      // console.log(appx)
       lstApp.push(xapps)
 
     })
@@ -533,7 +536,7 @@ export class UserComponent implements OnInit {
     this.usuario.correo = this.iUser.correo
     this.usuario.cargo = this.iUser.descripcion
     this.usuario.observaciones = this.descripcion
-    this.usuario.endpoint = this.iUser.endpoint
+    this.usuario.endpoint = this.iUser.tipoacceso == 3 ? this.iUser.endpoint : ''
     this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
     this.usuario.direccion = this.xregional != undefined ? this.xregional.name : this.xregional
 

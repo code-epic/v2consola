@@ -33,7 +33,6 @@ export class AuthGuardGuard implements CanActivate {
       if (texto == validar) {
         let valor = false
         // Lista de URLs siempre permitidas
-        console.log(state.url)
         const whitelistedUrls = ['/home', '/options/upgrade'];
         if (whitelistedUrls.includes(state.url)) {
           return true;

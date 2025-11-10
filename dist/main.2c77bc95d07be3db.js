@@ -19003,7 +19003,6 @@ class AuthGuardGuard {
       if (texto == validar) {
         let valor = false; // Lista de URLs siempre permitidas
 
-        console.log(state.url);
         const whitelistedUrls = ['/home', '/options/upgrade'];
 
         if (whitelistedUrls.includes(state.url)) {
@@ -39703,7 +39702,6 @@ class ProfileComponent {
       _this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APLICACIONES;
       _this.xAPI.parametros = '';
       yield _this.apiService.Ejecutar(_this.xAPI).subscribe(data => {
-        console.log(data);
         _this.lstAplicaciones = data.map(e => {
           e.name = `${e.id}  (${e.nombre})`;
           return e;
@@ -40164,9 +40162,7 @@ class ProfileComponent {
 
   generarMenuSeleccionado(menuCompleto) {
     const menuSeleccionado = [];
-    const permisoMap = new Map(); // Key: 'Modulo-Menu-Accion' o 'Modulo-Menu-Privilegio', Value: estatus
-    // 1. Mapear el estado de TODOS los checkboxes (Módulos, Sub-Menús y Privilegios)
-
+    const permisoMap = new Map();
     this.dataRolDetalles.forEach(padre => {
       const keyPadre = `${padre.modulo}-${padre.menu}`;
       permisoMap.set(keyPadre, padre.estatus);
@@ -40178,7 +40174,6 @@ class ProfileComponent {
 
           if (subMenu.children) {
             subMenu.children.forEach(privilegio => {
-              // La clave para un privilegio es Modulo-Menu-SubMenu-Privilegio
               const keyPrivilegio = `${keySubMenu}-${privilegio.accion}`;
               permisoMap.set(keyPrivilegio, privilegio.estatus);
             });
@@ -40188,28 +40183,29 @@ class ProfileComponent {
     }); // 2. Recorrer el Menú Completo (la plantilla original) y construir el resultado
 
     menuCompleto.forEach(padreMenu => {
+      // La clave para el menú padre (Nivel 1)
+      const keyPadre = `${padreMenu.descripcion}-${padreMenu.nombre}`;
+      const padreEstaSeleccionadoDirectamente = permisoMap.get(keyPadre) === 1;
       const subMenuFinal = [];
-      let padreDebeSerIncluido = false;
+      let algunHijoEstaSeleccionado = false;
       padreMenu.SubMenu.forEach(subMenuOriginal => {
         const keySubMenu = `${padreMenu.descripcion}-${padreMenu.nombre}-${subMenuOriginal.nombre}`;
-        const subMenuEstaSeleccionado = permisoMap.get(keySubMenu) === 1; // Filtrar los privilegios de este submenú, incluyendo solo los seleccionados
-
+        const subMenuEstaSeleccionado = permisoMap.get(keySubMenu) === 1;
         const privilegiosSeleccionados = (subMenuOriginal.Privilegios || []).filter(priv => {
           const keyPrivilegio = `${keySubMenu}-${priv.descripcion}`;
           return permisoMap.get(keyPrivilegio) === 1;
-        }); // Un submenú se incluye si está explícitamente marcado O si tiene al menos un privilegio seleccionado
+        }); // El submenú se incluye si está marcado directamente O si tiene al menos un privilegio marcado.
 
         if (subMenuEstaSeleccionado || privilegiosSeleccionados.length > 0) {
-          padreDebeSerIncluido = true; // Clonamos el submenú y le asignamos solo los privilegios filtrados
-
+          algunHijoEstaSeleccionado = true;
           const nuevoSubMenu = { ...subMenuOriginal,
             Privilegios: privilegiosSeleccionados
           };
           subMenuFinal.push(nuevoSubMenu);
         }
-      }); // El menú padre se incluye si tiene al menos un submenú válido
+      }); // El menú padre se incluye si está marcado directamente O si alguno de sus hijos fue incluido.
 
-      if (padreDebeSerIncluido) {
+      if (padreEstaSeleccionadoDirectamente || algunHijoEstaSeleccionado) {
         menuSeleccionado.push({ ...padreMenu,
           SubMenu: subMenuFinal
         });
@@ -43927,11 +43923,12 @@ class UserComponent {
           this.lstPerfil = data;
         }
 
-        this.blockEdit = 'disabled';
-        this.blockEditApp = 'disabled';
         let usuario = window.sessionStorage.getItem('validator');
 
         if (usuario != undefined) {
+          this.blockEdit = 'disabled';
+          this.blockEditApp = 'disabled';
+
           if (!this.bEliminarAllProfile) {
             this.cargarUsuario(this.usuario);
 
@@ -43985,8 +43982,8 @@ class UserComponent {
             tiempo: appx.tiempo,
             Rol: rol
           }; // this.Aplicacion = xapps
+          // console.log(appx)
 
-          console.log(appx);
           lstApp.push(xapps);
         });
 
@@ -44003,7 +44000,7 @@ class UserComponent {
       _this4.usuario.correo = _this4.iUser.correo;
       _this4.usuario.cargo = _this4.iUser.descripcion;
       _this4.usuario.observaciones = _this4.descripcion;
-      _this4.usuario.endpoint = _this4.iUser.endpoint;
+      _this4.usuario.endpoint = _this4.iUser.tipoacceso == 3 ? _this4.iUser.endpoint : '';
       _this4.usuario.sucursal = _this4.xoficina.name != undefined ? _this4.xoficina.name : _this4.xoficina;
       _this4.usuario.direccion = _this4.xregional != undefined ? _this4.xregional.name : _this4.xregional;
       let usuario = window.sessionStorage.getItem('validator');
@@ -54152,7 +54149,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Mon Nov 10 2025 09:12:44 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Mon Nov 10 2025 11:03:34 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
