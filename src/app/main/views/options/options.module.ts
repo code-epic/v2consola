@@ -9,18 +9,24 @@ import { CoreCommonModule } from '@core/common.module';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
 
 import { UpdateComponent } from './update/update.component';
+import { UpgradeComponent } from './upgrade/upgrade.component';
 
 const routes = [
   {
     path: 'options/update',
     component: UpdateComponent,
     canActivate: [AuthGuardGuard],
-  }
+  },
+  {
+    path: 'options/upgrade',
+    component: UpgradeComponent
+  },
 ];
 
 @NgModule({
   declarations: [
-    UpdateComponent
+    UpdateComponent,
+    UpgradeComponent
   ],
   imports: [RouterModule.forChild(routes), CommonModule, ContentHeaderModule, TranslateModule, CoreCommonModule],
 })

@@ -8,105 +8,149 @@
     <section class="invoice-list-wrapper">
       <div class="card">
 
-        <div class="col-md-12" style="margin-top: 25px;">
-
-
+        <div class="card-body">
+          <h4 class="card-title">Información de Acceso</h4>
+          <hr>
           <div class="row">
             <div class="form-group col-md-3">
               <label class="form-label" for="descripcion">Tipo de acceso</label>
-              <ng-select [items]="tipoacceso" [(ngModel)]="iUser.tipoacceso" [ngModelOptions]="{standalone: true}"
-                (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id" disabled="{{blockEdit}}"
-                placeholder="Seleccione acceso"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'shield'"></span></span></div>
+                <ng-select [items]="tipoacceso" [(ngModel)]="iUser.tipoacceso" [ngModelOptions]="{standalone: true}"
+                  (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id" disabled="{{blockEdit}}"
+                  placeholder="Seleccione acceso" class="flex-grow-1"></ng-select>
+              </div>
             </div>
             <div class="form-group col-md-2" *ngIf="ldap" style="display: none;">
               <label class="form-label" for="descripcion">Respaldo en cuenta</label>
-              <ng-select [items]="respaldo" [(ngModel)]="iUser.respaldo" bindLabel="name" bindValue="id"
-                placeholder="Respaldo en cuenta"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'database'"></span></span></div>
+                <ng-select [items]="respaldo" [(ngModel)]="iUser.respaldo" bindLabel="name" bindValue="id"
+                  placeholder="Respaldo en cuenta" class="flex-grow-1"></ng-select>
+              </div>
             </div>
 
             <div class="form-group col-md-6" *ngIf="ldap">
               <label class="form-label" for="descripcion">End Point</label>
-              <!-- <input *ngIf="bEndPoint" -->
-              <input [(ngModel)]="iUser.endpoint" type="text" placeholder="End Point"  disabled="disabled"  class="form-control">
-              <!-- <ng-select *ngIf="!bEndPoint" [items]="lstEndPoint" [(ngModel)]="iUser.endpoint"
-                [ngModelOptions]="{standalone: true}" bindLabel="name" bindLabel="name" bindValue="id"
-                (ngModelChange)="selEndPoint($event)" placeholder="EndPoint"></ng-select> -->
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'server'"></span></span></div>
+                <input [(ngModel)]="iUser.endpoint" type="text" placeholder="End Point" disabled="disabled"
+                  class="form-control">
+              </div>
             </div>
 
             <div class="form-group col-md-3" *ngIf="property || ldap">
               <label class="form-label" for="login">Login / Usuario</label>
-              <input [(ngModel)]="iUser.login" type="text" placeholder="Login" class="form-control" (blur)="SearchLoginLDAP()" disabled="{{blockEdit}}">
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'user'"></span></span></div>
+                <input [(ngModel)]="iUser.login" type="text" placeholder="Login" class="form-control"
+                  (blur)="SearchLoginLDAP()" disabled="{{blockEdit}}">
+              </div>
             </div>
 
             <div class="form-group col-md-3" *ngIf="property">
               <label class="form-label" for="Clave">Clave</label>
-              <!-- <input [(ngModel)]="iUser.clave"  type="password"  placeholder="Clave" class="form-control"> -->
-
               <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'key'"></span></span></div>
                 <input [type]="showClave ? 'text' : 'password'" [(ngModel)]="iUser.clave"
-                  [ngModelOptions]="{standalone: true}" class="form-control" disabled="{{blockEdit}}" placeholder="Clave" />
+                  [ngModelOptions]="{standalone: true}" class="form-control" disabled="{{blockEdit}}"
+                  placeholder="Clave" />
                 <div class="input-group-append">
                   <span class="input-group-text cursor-pointer" (click)="showClave = !showClave"><i class="feather"
                       [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i></span>
                 </div>
               </div>
 
-
             </div>
             <div class="form-group col-md-3" *ngIf="property">
               <label class="form-label" for="encriptamiento">Encriptamiento</label>
-              <ng-select [items]="formato" [(ngModel)]="iUser.encriptamiento" bindLabel="name" bindValue="id"
-                placeholder="Encriptamiento"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'lock'"></span></span></div>
+                <ng-select [items]="formato" [(ngModel)]="iUser.encriptamiento" bindLabel="name" bindValue="id"
+                  placeholder="Encriptamiento" class="flex-grow-1"></ng-select>
+              </div>
             </div>
 
-
           </div>
+
 
           <div class="row">
             <div class="form-group col-md-2">
               <label class="form-label" for="descripcion">Cédula</label>
-              <input [(ngModel)]="iUser.cedula" [ngModelOptions]="{standalone: true}" type="text" placeholder="Cédula"
-                class="form-control">
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'credit-card'"></span></span></div>
+                <input [(ngModel)]="iUser.cedula" [ngModelOptions]="{standalone: true}" type="text" placeholder="Cédula"
+                  class="form-control">
+              </div>
             </div>
             <div class="form-group col-md-4">
               <label class="form-label" for="descripcion">Nombre de usuario</label>
-              <input [(ngModel)]="iUser.nombre" [ngModelOptions]="{standalone: true}" type="text"
-                placeholder="Nombre del usuario" class="form-control">
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'user'"></span></span></div>
+                <input [(ngModel)]="iUser.nombre" [ngModelOptions]="{standalone: true}" type="text"
+                  placeholder="Nombre del usuario" class="form-control">
+              </div>
             </div>
             <div class="form-group col-md-4">
               <label class="form-label" for="descripcion">Descripcion / Cargo</label>
-              <input [(ngModel)]="iUser.descripcion" [ngModelOptions]="{standalone: true}" type="text"
-                placeholder="Descripcion del usuario" class="form-control">
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'briefcase'"></span></span></div>
+                <input [(ngModel)]="iUser.descripcion" [ngModelOptions]="{standalone: true}" type="text"
+                  placeholder="Descripcion del usuario" class="form-control">
+              </div>
             </div>
-
             <div class="form-group col-md-2">
               <label class="form-label" for="estatus">Estatus</label>
-              <ng-select [items]="estatus" [(ngModel)]="iUser.estatus" bindLabel="name" bindValue="id"
-                placeholder="Estatus"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'activity'"></span></span></div>
+                <ng-select [items]="estatus" [(ngModel)]="iUser.estatus" bindLabel="name" bindValue="id"
+                  placeholder="Estatus" class="flex-grow-1"></ng-select>
+              </div>
             </div>
           </div>
 
           <div class="row">
             <div class="form-group col-md-2">
               <label class="form-label" for="tipoduracion">Vigencia de:</label>
-              <ng-select [items]="sesion" [(ngModel)]="iUser.vigencia" bindLabel="name" bindValue="id"
-                placeholder="Vigencia en"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'clock'"></span></span></div>
+                <ng-select [items]="sesion" [(ngModel)]="iUser.vigencia" bindLabel="name" bindValue="id"
+                  placeholder="Vigencia en" class="flex-grow-1"></ng-select>
+              </div>
             </div>
-
 
             <div class="form-group col-md-4">
               <label class="form-label">Correo del usuario</label>
-              <input [(ngModel)]="iUser.correo" [ngModelOptions]="{standalone: true}" type="text"
-                placeholder="Correo del usuario" class="form-control">
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'mail'"></span></span></div>
+                <input [(ngModel)]="iUser.correo" [ngModelOptions]="{standalone: true}" type="text"
+                  placeholder="Correo del usuario" class="form-control">
+              </div>
             </div>
             <div class="form-group col-md-6">
               <label class="form-label">Descripcion general</label>
-              <input [(ngModel)]="descripcion" [ngModelOptions]="{standalone: true}" type="text"
-                placeholder="Descripcion general" class="form-control">
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'file-text'"></span></span></div>
+                <input [(ngModel)]="descripcion" [ngModelOptions]="{standalone: true}" type="text"
+                  placeholder="Descripcion general" class="form-control">
+              </div>
             </div>
           </div>
 
-          <!-- Primer -->
+          <hr>
           <div class="row">
 
             <div class="form-group col-md-2" style="display: none;">
@@ -121,35 +165,50 @@
                 placeholder="Tiempo" class="form-control">
             </div>
 
-           
-
             <div class="form-group col-md-6">
               <label class="form-label" for="origen">Regional / Sucursal</label>
-              <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="xregional" [name]="xregional"
-                [ngModelOptions]="{standalone: true}" (ngModelChange)="consultarOficinas($event)"
-                (input)='onFocusedRegional($event)' bindId="id" bindLabel="name" placeholder="Regional"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'map-pin'"></span></span></div>
+                <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="xregional" [name]="xregional"
+                  [ngModelOptions]="{standalone: true}" (ngModelChange)="consultarOficinas($event)"
+                  (input)='onFocusedRegional($event)' bindId="id" bindLabel="name" placeholder="Regional"
+                  class="flex-grow-1"></ng-select>
+              </div>
             </div>
 
             <div class="form-group col-md-6">
               <label class="form-label" for="origen">Oficina / Departamento</label>
-              <ng-select [items]="dataOficina" [addTag]="true" [(ngModel)]="xoficina" [name]="xoficina"
-                [ngModelOptions]="{standalone: true}" bindId="id" bindLabel="name" 
-                placeholder="Oficina"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'map'"></span></span></div>
+                <ng-select [items]="dataOficina" [addTag]="true" [(ngModel)]="xoficina" [name]="xoficina"
+                  [ngModelOptions]="{standalone: true}" bindId="id" bindLabel="name" placeholder="Oficina"
+                  class="flex-grow-1"></ng-select>
+              </div>
             </div>
+          </div>
 
-
-
+          <div class="row mt-2">
             <div class="form-group col-md-5">
               <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-              <ng-select [items]="lstAplicacion" [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
-                bindLabel="name" (ngModelChange)="selPerfil($event)" bindLabel="name" bindValue="id"
-                disabled="{{blockEdit}}" placeholder="Aplicación"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'box'"></span></span></div>
+                <ng-select [items]="lstAplicacion" [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
+                  bindLabel="name" (ngModelChange)="selPerfil($event)" bindValue="id" disabled="{{blockEditApp}}"
+                  placeholder="Aplicación" class="flex-grow-1"></ng-select>
+              </div>
             </div>
 
             <div class="form-group col-md-5">
               <label class="form-label" for="descripcion">Seleccionar Perfil</label>
-              <ng-select [items]="lstPerfil" [(ngModel)]="xperfil" [ngModelOptions]="{standalone: true}"
-                bindLabel="nombre" bindLabel="nombre" bindValue="nombre" placeholder="Perfil"></ng-select>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'award'"></span></span></div>
+                <ng-select [items]="lstPerfil" [(ngModel)]="xperfil" [ngModelOptions]="{standalone: true}"
+                  bindLabel="nombre" bindValue="nombre" placeholder="Perfil" class="flex-grow-1"></ng-select>
+              </div>
             </div>
 
             <div class="form-group col-md-3" style="display: none;">
@@ -159,22 +218,14 @@
             </div>
 
             <div class="form-group col-md-2 d-flex align-items-end">
-
-              <label class="form-label"></label>
               <button type="button" class="btn btn-primary" (click)="agregarAplicacion()" style="width: 100%;">
-                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Asociar
+                <span [data-feather]="'arrow-down'" class="mr-1"></span>&nbsp;Asociar
               </button>
             </div>
-
-
-
-
-
           </div>
-          <data class="row">
-
+          <div class="row mt-3">
             <div class="col-md-12">
-              <table class="table bootstrap core-bootstrap">
+              <table class="table table-hover bootstrap core-bootstrap">
                 <thead>
                   <tr>
                     <th>APLICACION</th>
@@ -197,12 +248,14 @@
                     <td>
                       <div class="d-flex flex-column">
                         <div class="custom-control custom-switch custom-control-inline">
-                          <input type="checkbox" class="custom-control-input" id="customSwitch{{ i }}" [(ngModel)]="e.estatus" (ngModelChange)="onStatusChange(e, i)" [ngModelOptions]="{standalone: true}" [true-value]="1" [false-value]="0" />
+                          <input type="checkbox" class="custom-control-input" id="customSwitch{{ i }}"
+                            [(ngModel)]="e.estatus" (ngModelChange)="onStatusChange(e, i)"
+                            [ngModelOptions]="{standalone: true}" [true-value]="1" [false-value]="0" />
                           <label class="custom-control-label" for="customSwitch{{ i }}"></label>
                         </div>
                       </div>
                     </td>
-                    
+
                     <td *ngIf="e.id == null">
                       <button (click)="quitarElemento(i)" type="button" class="btn icon-btn btn-sm hide-arrow"
                         rippleEffect>
@@ -215,14 +268,14 @@
                           <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                         </button>
                         <div ngbDropdownMenu>
-                          <a (click)="verPerfil(e.idapp)" ngbDropdownItem><span [data-feather]="'edit'" 
-                              [class]="'mr-50'"></span> Listar </a>
-                          <a (click)="quitarElemento(i)" ngbDropdownItem><span [data-feather]="'shuffle'"
-                              [class]="'mr-50'"></span>Eliminar</a>
+                          <a (click)="verPerfil(e, ProfileDetail)" ngbDropdownItem><span [data-feather]="'eye'"
+                              [class]="'mr-50'"></span> Ver detalles </a>
+                          <a (click)="quitarElemento(i)" ngbDropdownItem><span [data-feather]="'trash'"
+                              [class]="'mr-50'"></span> Quitar</a>
                         </div>
                       </div>
                     </td>
-                    
+
                   </tr>
                 </tbody>
                 <tfoot>
@@ -230,46 +283,30 @@
               </table>
             </div>
 
-          </data>
-          <br>
-          <hr>
-          <data class="row">
+            <!-- </data> -->
+          </div>
+          <div class="row mt-3">
             <div class="form-group col-md-8">
-              <button type="button" *ngIf="bChangePassword" class="btn btn-warning" (click)="changePassword()">
-                Cambiar Clave
-              </button>
+
             </div>
             <div class="form-group col-md-4 text-right" *ngIf="blockEdit=='false'">
 
-              
+
               <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-success"
                 (click)="agregarUsuario()">
-                Registrar Usuario&nbsp;&nbsp;
+                <span [data-feather]="'save'"></span>&nbsp;&nbsp;Registrar Usuario
               </button>
 
             </div>
             <div class="form-group col-md-4 text-right" *ngIf="blockEdit!='false'">
 
-              
+
               <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-warning"
                 (click)="agregarUsuario()">
-                Modificar Usuario&nbsp;&nbsp;
+                <span [data-feather]="'edit'"></span>&nbsp;&nbsp;Modificar Usuario
               </button>
-
             </div>
-
-          </data>
-
-
-
-          <br>
-
-
-
-
-
-
-
+          </div>
         </div>
 
       </div>
@@ -277,3 +314,70 @@
 
   </div>
 </div>
+
+
+
+
+<ng-template #ProfileDetail  let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      <span [data-feather]="'award'" class="mr-1 text-primary"></span>
+      Detalles del Perfil: <span class="font-weight-bolder">{{ profileData.idper.nombre }}</span>
+    </h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="app-info mb-4">
+      <div class="info-item">
+        <span [data-feather]="'box'" class="icon"  [size]="32"></span>
+        <div>
+          <small>Aplicación</small>
+          <strong>{{ profileData.idapp.nombre }} ({{ profileData.idapp.id }})</strong>
+        </div>
+      </div>
+      <div class="info-item">
+        <span [data-feather]="'git-branch'" class="icon" [size]="32"></span>
+        <div>
+          <small>Versión</small>
+          <strong>{{ profileData.idapp.version }}</strong>
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div class="permissions-tree">
+      <div *ngFor="let menu of profileData.idper.Rol.Menu" class="menu-item">
+        <div class="item-header" (click)="toggleExpand(menu)">
+          <span [data-feather]="'grid'" class="item-icon"></span>
+          <span class="item-name">{{ menu.nombre }}</span>
+          
+        </div>
+        <div class="sub-items-container" [ngClass]="{ 'expanded': menu.isExpanded }">
+          <div *ngFor="let subMenu of menu.SubMenu" class="sub-menu-item">
+            <div class="item-header" (click)="toggleExpand(subMenu)">
+              <span [data-feather]="'check'" class="item-icon sub-icon"></span>
+              <span class="item-name">{{ subMenu.nombre }}</span>
+              <ng-container *ngIf="subMenu.Privilegios?.length > 0">
+                <!-- Reemplazo para evitar error de renderizado -->
+              </ng-container>
+            </div>
+            <div class="sub-items-container" [ngClass]="{ 'expanded': subMenu.isExpanded }">
+              <div *ngFor="let privilegio of subMenu.Privilegios" class="privilege-item">
+                <span [data-feather]="'shield'" class="item-icon privilege-icon"></span>
+                &nbsp;&nbsp;<span class="item-name">{{ privilegio.descripcion }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <!-- <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cross click')">Cerrar</button> -->
+  </div>
+
+</ng-template>

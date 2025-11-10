@@ -72,6 +72,7 @@ const routes = [
   declarations: [
     RoleComponent,
     ProfileComponent,
+   
     UserComponent,
     UserListComponent,
     RuleComponent

@@ -26,6 +26,9 @@ import { environment } from 'environments/environment'
 import { BlockUI, NgBlockUI } from 'ng-block-ui'
 import Swal from 'sweetalert2'
 
+
+
+
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
@@ -210,17 +213,25 @@ export class UserComponent implements OnInit {
   public showClave = false;
   public bChangePassword = false
   public blockEdit: string = 'false'
+  public blockEditApp: string = 'false'
+  public bEliminarAllProfile: boolean = false
+
+
   public isBDV: boolean = false
 
 
   public configuracion: IConfiguracion;
+  public profileData: any;
+
 
 
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
     private userService: UserService,
-    private sha256: Sha256Service
+    private sha256: Sha256Service,
+    private modalService: NgbModal,
+
   ) {
     this.userService.iniciarObjeto()
     this.CargarListaEndPoint()
@@ -299,9 +310,18 @@ export class UserComponent implements OnInit {
   tk_loadProfile(usuario: Usuario) {
 
     usuario.Aplicacion.forEach(usr => {
+      let url = ''
       let xapp = this.getAplication(usr.id)
       let xprof = this.getProfile(usr.perfil)
-      // console.log(usr)
+
+
+      if (xapp !== undefined) {
+        url = xapp.url
+      } else {
+        this.blockEditApp = 'false'
+      }
+
+
       let app = {
         id: usr.id,
         idapp: xapp,
@@ -311,7 +331,7 @@ export class UserComponent implements OnInit {
         perfil: usr.perfil,
         estatus: usr.estatus,
         tiempo: usr.tiempo,
-        url: xapp.url,
+        url: url,
       }
 
       this.lstUsersApp.push(app)
@@ -399,7 +419,7 @@ export class UserComponent implements OnInit {
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstAplicacion = data.map((e) => {
-          e.name = e.nombre
+          e.name = `${e.id}  (${e.nombre})`
           return e
         })
         // console.log('Bajo control del enemigo',this.lstAplicacion)
@@ -431,20 +451,26 @@ export class UserComponent implements OnInit {
       this.xAPI.parametros = codPerfil
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          this.lstPerfil = data
-
+          if (data != undefined && data != null) {
+            this.lstPerfil = data
+          }
+          this.blockEdit = 'disabled'
+          this.blockEditApp = 'disabled'
           let usuario = window.sessionStorage.getItem('validator')
           if (usuario != undefined) {
-
-            this.cargarUsuario(this.usuario)
-            if (this.usuario.endpoint == "") {
-              this.iUser.tipoacceso = 1
-              this.selTipoAcceso(1)
+            if (!this.bEliminarAllProfile) {
+             
+              this.cargarUsuario(this.usuario)
+              if (this.usuario.endpoint == undefined || this.usuario.endpoint == '') {
+                this.iUser.tipoacceso = 1
+                this.selTipoAcceso(1)
+              }
+            }else{
+               this.blockEditApp = 'false'
             }
-
-            this.blockEdit = 'disabled'
+            
+            
           }
-
         },
         (error) => {
           console.log(error)
@@ -636,13 +662,42 @@ export class UserComponent implements OnInit {
 
           this.dataUsers.splice(i, 1);
           this.lstUsersApp.splice(i, 1);
+
+          if (this.dataUsers.length == 0) {
+            this.blockEditApp = 'false'
+            this.bEliminarAllProfile = true
+          }
+
         }
 
       })
     }
   }
 
-  verPerfil() { }
+  verPerfil(profileData: any, modal: any) {
+    this.profileData = profileData;
+    // Aseguramos que las propiedades para expandir/contraer existan antes de abrir el modal.
+    if (this.profileData?.idper?.Rol?.Menu) {
+      this.profileData.idper.Rol.Menu.forEach(menu => {
+        menu.isExpanded = false;
+        menu.SubMenu?.forEach(subMenu => subMenu.isExpanded = false);
+      });
+    }
+    this.modalService.open(modal, {
+      centered: true,
+      size: "lg",
+      backdrop: false,
+      keyboard: false,
+      windowClass: "fondo-modal", scrollable: true
+    });
+  }
+
+
+
+
+  toggleExpand(item: any) {
+    item.isExpanded = !item.isExpanded;
+  }
 
   eliminarPerfil() { }
 

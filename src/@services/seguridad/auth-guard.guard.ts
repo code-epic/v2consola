@@ -32,10 +32,15 @@ export class AuthGuardGuard implements CanActivate {
       let validar = sessionStorage.getItem('crypt')
       if (texto == validar) {
         let valor = false
-        if (state.url == '/home') return true
+        // Lista de URLs siempre permitidas
+        console.log(state.url)
+        const whitelistedUrls = ['/home', '/options/upgrade'];
+        if (whitelistedUrls.includes(state.url)) {
+          return true;
+        }
+
         menu.forEach(e => {
           e.SubMenu.forEach(xe => {
-            // console.log(state.url, xe.url)
             if (state.url.indexOf(xe.url) == 1) return valor = true
           });
         })

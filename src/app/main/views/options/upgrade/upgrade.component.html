@@ -1,0 +1,58 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section class="changelog-wrapper position-relative">
+      <div class="card card-changelog shadow-lg">
+        <div class="card-body p-lg-5 p-4" [class.is-loading]="isLoading">
+          <div *ngIf="versions.length > 0; else noVersions" class="changelog-container">
+            <!-- Sidebar de la Línea de Tiempo -->
+            <div class="timeline-sidebar">
+              <h4 class="font-weight-bolder mb-4 animated-title-v2">
+                <span style="--i: 1;">H</span><span style="--i: 2;">i</span><span style="--i: 3;">s</span><span style="--i: 4;">t</span><span style="--i: 5;">o</span><span style="--i: 6;">r</span><span style="--i: 7;">i</span><span style="--i: 8;">a</span><span style="--i: 9;">l</span>
+                <span style="--i: 10;">&nbsp;</span>
+                <span style="--i: 11;">d</span><span style="--i: 12;">e</span>
+                <span style="--i: 13;">&nbsp;</span>
+                <span style="--i: 14;">V</span><span style="--i: 15;">e</span><span style="--i: 16;">r</span><span style="--i: 17;">s</span><span style="--i: 18;">i</span><span style="--i: 19;">o</span><span style="--i: 20;">n</span><span style="--i: 21;">e</span><span style="--i: 22;">s</span>
+              </h4>
+              <div *ngFor="let version of versions" 
+                   class="timeline-item" 
+                   [class.active]="selectedVersion?.path === version.path"
+                   (click)="loadVersion(version)">
+                <div class="d-flex align-items-center">
+                  <span class="mr-2" [data-feather]="'tag'"></span>
+                  <div>
+                    <div class="version-number">{{ version.version }}</div>
+                    <div class="version-date">{{ version.date }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel de Contenido -->
+            <div class="content-panel">
+              <div *ngIf="!isLoading" class="changelog-content" [innerHTML]="currentContent"></div>
+              <div *ngIf="isLoading" class="d-flex justify-content-center align-items-center h-100">
+                <div class="spinner-border text-primary" role="status">
+                  <span class="sr-only">Cargando...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Template para cuando no hay versiones -->
+          <ng-template #noVersions>
+            <div class="text-center p-5 my-4 empty-state">
+              <img src="assets/images/illustration/rocket.svg" height="200" alt="Sin Novedades" class="mb-4">
+              <h2 class="font-weight-bold text-primary">¡Siempre Mejorando!</h2>
+              <p class="lead text-muted" style="font-size: 1.1rem; letter-spacing: 0.5px;">
+                No hay nuevas versiones para mostrar en este momento.
+              </p>
+            </div>
+          </ng-template>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

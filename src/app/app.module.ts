@@ -46,12 +46,6 @@ import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.ser
 import { SharedModule } from './main/license-bunker/shared.module';
 import { GithubModule } from './main/views/github/github.module';
 
-
-//  Recaptcha V2
-// import { RECAPTCHA_SETTINGS, RecaptchaFormsModule, RecaptchaModule, RecaptchaSettings } from 'ng-recaptcha';
-// import { environment } from 'environments/environment';
-
-
 const appRoutes: Routes = [
   {
     path: '',
@@ -78,30 +72,14 @@ const appRoutes: Routes = [
     }),
     TranslateModule.forRoot(),
     CodemirrorModule,
-
-
-    //  Recaptcha V3
     RecaptchaV3Module,
-    //  Recaptcha V2
-    // RecaptchaFormsModule,
-    // RecaptchaModule,    
-
-    //NgBootstrap
     NgbModule,
     ToastrModule.forRoot(),
-
-    // Core modules
     CoreModule.forRoot(coreConfig),
     CoreCommonModule,
     CoreSidebarModule,
     CoreThemeCustomizerModule,
-
-
     BlockUIModule.forRoot(),
-
-    
-   
-    // App modules
     LayoutModule,
     HomeModule,
     NetworksModule,

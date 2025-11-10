@@ -236,8 +236,9 @@ export class ProfileComponent implements OnInit {
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        console.log(data)
         this.lstAplicaciones = data.map((e) => {
-          e.name = e.nombre
+          e.name = `${e.id}  (${e.nombre})`
           return e
         })
       },
