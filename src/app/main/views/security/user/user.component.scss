@@ -109,5 +109,74 @@ button {
       width: 16px;
       height: 16px;
     }
+}
+}
+
+/* Table Styles */
+.user-table {
+  thead {
+    th {
+      background-color: #f3f2f7;
+      border-top: none;
+      border-bottom: 1px solid #ebe9f1;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 1rem;
+      
+      span {
+        font-weight: 600;
+        color: #5e5873;
+      }
+    }
+  }
+
+  tbody {
+    td {
+      padding: 1rem;
+      vertical-align: middle;
+      color: #6e6b7b;
+      font-size: 0.9rem;
+      border-bottom: 1px solid #ebe9f1;
+    }
+
+    tr:hover {
+      background-color: #f8f8f8;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+      z-index: 1;
+      position: relative;
+    }
+  }
+}
+
+.badge {
+  padding: 0.5em 0.8em;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  
+  &.badge-light-warning {
+    background-color: rgba(255, 159, 67, 0.12);
+    color: #ff9f43;
+  }
+}
+
+.btn-flat-primary {
+  background-color: transparent;
+  color: #7367f0;
+  border: none;
+  &:hover {
+    background-color: rgba(115, 103, 240, 0.12);
+  }
+}
+
+.btn-flat-danger {
+  background-color: transparent;
+  color: #ea5455;
+  border: none;
+  &:hover {
+    background-color: rgba(234, 84, 85, 0.12);
   }
 }

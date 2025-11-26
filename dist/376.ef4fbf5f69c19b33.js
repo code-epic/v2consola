@@ -2693,7 +2693,7 @@ hljs.registerLanguage('avrasm', __webpack_require__(/*! ./languages/avrasm */ 19
 hljs.registerLanguage('awk', __webpack_require__(/*! ./languages/awk */ 90810));
 hljs.registerLanguage('axapta', __webpack_require__(/*! ./languages/axapta */ 69595));
 hljs.registerLanguage('bash', __webpack_require__(/*! ./languages/bash */ 71369));
-hljs.registerLanguage('basic', __webpack_require__(/*! ./languages/basic */ 11897));
+hljs.registerLanguage('basic', __webpack_require__(/*! ./languages/basic */ 68092));
 hljs.registerLanguage('bnf', __webpack_require__(/*! ./languages/bnf */ 14740));
 hljs.registerLanguage('brainfuck', __webpack_require__(/*! ./languages/brainfuck */ 23792));
 hljs.registerLanguage('c-like', __webpack_require__(/*! ./languages/c-like */ 31045));
@@ -5209,7 +5209,7 @@ module.exports = bash;
 
 /***/ }),
 
-/***/ 11897:
+/***/ 68092:
 /*!**********************************************************!*\
   !*** ./node_modules/highlight.js/lib/languages/basic.js ***!
   \**********************************************************/

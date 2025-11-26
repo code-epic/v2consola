@@ -454,25 +454,25 @@ export class UserComponent implements OnInit {
           if (data != undefined && data != null) {
             this.lstPerfil = data
           }
-          
+
           let usuario = window.sessionStorage.getItem('validator')
           if (usuario != undefined) {
             this.blockEdit = 'disabled'
             this.blockEditApp = 'disabled'
 
             if (!this.bEliminarAllProfile) {
-             
+
               this.cargarUsuario(this.usuario)
               if (this.usuario.endpoint == undefined || this.usuario.endpoint == '') {
                 this.iUser.tipoacceso = 1
                 this.selTipoAcceso(1)
               }
-            }else{
-               this.blockEditApp = 'false'
+            } else {
+              this.blockEditApp = 'false'
             }
 
-            
-            
+
+
           }
         },
         (error) => {
@@ -649,32 +649,29 @@ export class UserComponent implements OnInit {
 
   }
 
-  quitarElemento(i) {
-    if (i !== -1) {
-      Swal.fire({
-        title: 'Eliminar',
-        text: '¿Está seguro que desea eliminar perfil?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#C81D11',
-        confirmButtonText: 'Si, Aceptar',
-        cancelButtonText: 'Cancelar',
-      }).then((result) => {
-        if (result.isConfirmed) {
+  quitarElemento(i: number) {
+    Swal.fire({
+      title: 'Eliminar',
+      text: '¿Está seguro que desea eliminar perfil?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#C81D11',
+      confirmButtonText: 'Si, Aceptar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
 
-          this.dataUsers.splice(i, 1);
-          this.lstUsersApp.splice(i, 1);
-
-          if (this.dataUsers.length == 0) {
-            this.blockEditApp = 'false'
-            this.bEliminarAllProfile = true
-          }
-
+        this.dataUsers.splice(i, 1);
+        if (this.dataUsers.length == 0) {
+          this.blockEditApp = 'false'
+          this.bEliminarAllProfile = true
         }
 
-      })
-    }
+      }
+
+    })
+
   }
 
   verPerfil(profileData: any, modal: any) {

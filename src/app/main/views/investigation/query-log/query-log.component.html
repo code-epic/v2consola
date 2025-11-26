@@ -1,61 +1,170 @@
-<div class="log-container">
-  <div class="log-header">
-    <h2>Registros de consultas</h2>
-    
-    <div class="log-controls">
-      <button class="refresh-btn" (click)="verLogs()" [disabled]="isLoading">
-        <i class="refresh-icon" [class.spin]="isLoading"><i data-feather="refresh-ccw"></i></i>
-        {{isLoading ? 'Refrescando...' : 'Refrescar Registros'}}
-      </button>
-      
-      <div class="search-box">
-        <input type="text" 
-               [(ngModel)]="searchText" 
-               (ngModelChange)="onSearchChange($event)"
-               placeholder="Buscar Consultas..."
-               [disabled]="isLoading">
-        <i class="search-icon"><i data-feather="search"></i></i>
-      </div>
-      
-      <div class="type-filter">
-        <label>Filtrar:</label>
-        <select [(ngModel)]="selectedType" (change)="onTypeChange(selectedType)" [disabled]="isLoading">
-          <option *ngFor="let type of logTypes" [value]="type">{{type}}</option>
-        </select>
-      </div>
+<div class="log-viewer-container" *ngIf="sinRegistros">
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-message">
+        <div class="spinner"></div>
+        <p>Leyendo consultas del sistema, por favor espere...</p>
     </div>
-  </div>
 
-  <div *ngIf="isLoading" class="loading-message">
-    <div class="spinner"></div>
-    <p>Leyendo Consultas del Sistema, por favor espere...</p>
-  </div>
 
-  <div *ngIf="!isLoading" class="log-list">
-    <div *ngFor="let log of filteredLogs.slice().reverse()" class="log-entry" [class]="log.type.toLowerCase()">
-      <div class="log-header-line">
-        <span class="log-type">{{log.type}}</span>
-        <span class="log-date">{{log.date}}</span>
-        <span class="log-file">{{log.file}}:{{log.line}}</span>
-      </div>
-      
-      <div *ngIf="log.error" class="log-error">
-        <strong>Error:</strong> {{log.error}}
-      </div>
-      
-      <div class="sql-container">
-        <div class="sql-content" [class.expanded]="log.showFullQuery">
-          <pre>{{log.showFullQuery ? log.query : log.shortQuery}}</pre>
+    <!-- Header -->
+    <div class="log-header" *ngIf="!isLoading">
+        <div class="log-controls">
+            <div class="input-group">
+                <span class="input-group-icon"><i data-feather="search"></i></span>
+                <input type="text" [(ngModel)]="searchText" (ngModelChange)="onSearchChange($event)"
+                    placeholder="Buscar por consulta, archivo o error..." [disabled]="isLoading">
+            </div>
+            <div class="input-group">
+                <span class="input-group-icon"><i data-feather="filter"></i></span>
+                <select [(ngModel)]="selectedType" (change)="onTypeChange(selectedType)" [disabled]="isLoading">
+                    <option value="">Todos los Tipos</option>
+                    <option *ngFor="let type of logTypes" [value]="type">{{type}}</option>
+                </select>
+            </div>
+            <button class="btn-control btn-refresh" (click)="verLogs()" [disabled]="isLoading"
+                title="Refrescar Registros">
+                <i data-feather="refresh-cw" [class.spin]="isLoading"></i>
+                <span>Refrescar</span>
+            </button>
+            <button class="btn-control btn-download" (click)="descargarLogs()"
+                [disabled]="isLoading || filteredLogs.length === 0" title="Descargar Logs como TXT">
+                <i data-feather="download"></i>
+                <span>Descargar</span>
+            </button>
+            <button class="btn-control btn-download" (click)="verGraficos()"
+               *ngIf="isView" title="Ver Gráficos">
+                <i data-feather="pie-chart"></i>
+                <span>Gráficos</span>
+            </button>
+            <button class="btn-control btn-download" (click)="verGraficos()"
+               *ngIf="!isView" title="Ver Logs">
+                <i data-feather="code"></i>
+                <span>Logs</span>
+            </button>
         </div>
-        <button class="toggle-sql-btn" (click)="toggleQuery(log)">
-          {{log.showFullQuery ? 'Ocultar SQL' : 'Mostrar SQL completo'}}
-          <i class="icon" [class]="log.showFullQuery ? 'icon-chevron-up' : 'icon-chevron-down'"></i>
-        </button>
-      </div>
     </div>
-    
-    <div *ngIf="filteredLogs.length === 0 && !isLoading" class="no-logs">
-      No se encontraron registros de consultas que coincidan con sus criterios.
+
+
+
+
+    <div class="stats-dashboard" *ngIf="!isView && !isLoading">
+        
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="header-info" style="margin-left: 10px">
+                <h3>Resumen de Actividad</h3>
+                <p class="text-muted">
+                    <i data-feather="clock" class="mr-1"></i>
+                    {{ currentDate }}
+                </p>
+            </div>
+            <button class="btn-control btn-pdf" (click)="exportToPDF()" title="Exportar Reporte PDF">
+                <i data-feather="file-text"></i>
+                <span>Exportar PDF</span>
+            </button>
+        </div>
+
+        <div class="chart-container">
+            <div style="display: block;">
+                <canvas baseChart width="400" height="100" [datasets]="lineChartData" [labels]="lineChartLabels"
+                    [options]="lineChartOptions" [colors]="lineChartColors" [legend]="lineChartLegend"
+                    [chartType]="lineChartType">
+                </canvas>
+            </div>
+            <p *ngIf="lineChartData.length === 0" class="chart-placeholder-text">
+                No hay suficientes datos para generar la gráfica.
+            </p>
+        </div>
+
+        <div class="stats-column">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper"><i data-feather="activity"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ filteredLogs.length }}</span>
+                    <span class="stat-label">Consultas Totales</span>
+                    <small class="stat-desc">Total de registros procesados en el periodo actual.</small>
+                </div>
+            </div>
+            <div class="stat-card error">
+                <div class="stat-icon-wrapper"><i data-feather="alert-triangle"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value">{{ getErrorCount() }}</span>
+                    <span class="stat-label">Errores Detectados</span>
+                    <small class="stat-desc">Consultas que fallaron o generaron excepciones críticas.</small>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
+
+
+
+    <div class="log-list" *ngIf="isView && !isLoading">
+        <div *ngFor="let log of filteredLogs" class="log-entry" [ngClass]="getLogClass(log)">
+            <div class="log-header-line">
+                <span class="log-type" [class]="log.type.toLowerCase()">{{log.type}}</span>
+                <div class="log-meta">
+                    <span class="log-date"><i data-feather="calendar"></i>{{log.date}}</span>
+                    <span class="log-file"><i data-feather="file-text"></i>{{log.file}}:{{log.line}}</span>
+                </div>
+            </div>
+            <div class="sql-container">
+                <div class="sql-content">
+                    <pre *ngIf="!log.showFullQuery">{{ log.shortQuery }}</pre>
+                    <pre *ngIf="log.showFullQuery" class="full-query">{{ log.query }}</pre>
+                </div>
+                <div class="sql-footer">
+                    <div *ngIf="log.error" class="log-error">
+                        <i data-feather="alert-circle"></i>
+                        <strong>Error:</strong> {{log.error}}
+                    </div>
+
+                    <div class="action-buttons">
+                        <button *ngIf="!log.showFullQuery" class="toggle-sql-btn" (click)="toggleView(log)">
+                            <i data-feather="maximize-2"></i>
+                            <span>Ver Todo</span>
+                        </button>
+
+                        <ng-container *ngIf="log.showFullQuery">
+                            <button *ngIf="!log.isCopied" class="btn-inline-action btn-copy"
+                                (click)="copyToClipboard(log)" [class.btn-success]="log.isCopied">
+                                <i data-feather="copy"></i>
+                                <span>Copiar</span>
+                            </button>
+                            <button *ngIf="log.isCopied" class="btn-inline-action btn-copy"
+                                (click)="copyToClipboard(log)" [class.btn-success]="log.isCopied">
+                                <i data-feather="check"></i>
+                                <span>¡Copiado!</span>
+                            </button>
+                            <button class="btn-inline-action btn-hide" (click)="toggleView(log)">
+                                <i data-feather="minimize-2"></i> Ocultar
+                            </button>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div *ngIf="!isLoading && filteredLogs.length === 0" class="no-logs">
+            <i data-feather="info" class="no-logs-icon"></i>
+            <h4>No se encontraron registros</h4>
+            <p>No hay consultas que coincidan con los criterios de búsqueda o filtro actuales.</p>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</div>
+
+
+<div class="log-viewer-container" *ngIf="!sinRegistros">
+    <div class="no-logs">
+        <i data-feather="info" class="no-logs-icon"></i>
+        <h4>No se encontraron registros</h4>
+        <p>No hay consultas que coincidan con los criterios de búsqueda o filtro actuales.</p>
+    </div>
 </div>

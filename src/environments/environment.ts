@@ -9,7 +9,7 @@ export const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Mon Nov 10 2025 11:03:34 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Wed Nov 26 2025 13:20:05 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
@@ -57,7 +57,8 @@ export const environment = {
     RESTAURAR_FUNCIONES: 'Fnx_RestaurarFunciones',
     CONSULTAR_CONFIGURACION_APP: '_SYS_CReglasApp',
     CONSULTAR_REGIONALES: '_SYS_CRegionalesBDV',
-    CONSULTAR_OFICINAS: '_SYS_COficinasBDV'
+    CONSULTAR_OFICINAS: '_SYS_COficinasBDV',
+    RESPALDAR_LOGS: 'Fnx_BackupLogs'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',

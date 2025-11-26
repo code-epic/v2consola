@@ -225,47 +225,86 @@
           </div>
           <div class="row mt-3">
             <div class="col-md-12">
-              <table class="table table-hover bootstrap core-bootstrap">
+              <table class="table table-hover table-striped bootstrap core-bootstrap user-table">
                 <thead>
                   <tr>
-                    <th>APLICACION</th>
-                    <th>DESCRIPCION</th>
-                    <th>PERFIL</th>
+                    <th>
+                      <div class="d-flex align-items-center">
+                        <span [data-feather]="'box'" class="mr-1 text-primary"></span>
+                        <span>APLICACIÓN</span>
+                      </div>
+                    </th>
+                    <th>
+                      <div class="d-flex align-items-center">
+                        <span [data-feather]="'file-text'" class="mr-1 text-info"></span>
+                        <span>DESCRIPCIÓN</span>
+                      </div>
+                    </th>
+                    <th>
+                      <div class="d-flex align-items-center">
+                        <span [data-feather]="'award'" class="mr-1 text-warning"></span>
+                        <span>PERFIL</span>
+                      </div>
+                    </th>
                     <th style="display: none;">TRAZA</th>
-                    <th>CREADO</th>
-                    <th style="width: 40px;">ESTATUS</th>
-                    <th style="width: 40px;">ACCION</th>
-
+                    <th>
+                      <div class="d-flex align-items-center">
+                        <span [data-feather]="'calendar'" class="mr-1 text-success"></span>
+                        <span>CREADO</span>
+                      </div>
+                    </th>
+                    <th style="width: 100px;">
+                      <div class="d-flex align-items-center justify-content-center">
+                        <span [data-feather]="'activity'" class="mr-1 text-secondary"></span>
+                        <span>ESTATUS</span>
+                      </div>
+                    </th>
+                    <th style="width: 80px;">
+                      <div class="d-flex align-items-center justify-content-center">
+                        <span [data-feather]="'settings'" class="mr-1 text-secondary"></span>
+                        <span>ACCIÓN</span>
+                      </div>
+                    </th>
                   <tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let e of dataUsers; let i = index">
-                    <td>{{e.id}}</td>
-                    <td>{{e.nombre}}</td>
-                    <td>{{e.perfil}}</td>
+                    <td>
+                      <span class="font-weight-bold text-primary">{{e.nombre}}</span>
+                      <div class="small text-muted">ID: {{e.id}}</div>
+                    </td>
+                    <td>{{e.descripcion || 'Sin descripción'}}</td>
+                    <td>
+                      <div class="badge badge-light-warning">
+                        {{e.perfil}}
+                      </div>
+                    </td>
                     <td style="display: none;">{{e.traza}}</td>
-                    <td>{{e.tiempo | date: 'dd/MM/yyyy HH:mm:ss'}}</td>
                     <td>
                       <div class="d-flex flex-column">
-                        <div class="custom-control custom-switch custom-control-inline">
-                          <input type="checkbox" class="custom-control-input" id="customSwitch{{ i }}"
-                            [(ngModel)]="e.estatus" (ngModelChange)="onStatusChange(e, i)"
-                            [ngModelOptions]="{standalone: true}" [true-value]="1" [false-value]="0" />
-                          <label class="custom-control-label" for="customSwitch{{ i }}"></label>
-                        </div>
+                        <span>{{e.tiempo | date: 'dd/MM/yyyy'}}</span>
+                        <small class="text-muted">{{e.tiempo | date: 'HH:mm:ss'}}</small>
+                      </div>
+                    </td>
+                    <td class="text-center">
+                      <div class="custom-control custom-switch custom-control-inline">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch{{ i }}"
+                          [(ngModel)]="e.estatus" (ngModelChange)="onStatusChange(e, i)"
+                          [ngModelOptions]="{standalone: true}" [true-value]="1" [false-value]="0" />
+                        <label class="custom-control-label" for="customSwitch{{ i }}"></label>
                       </div>
                     </td>
 
-                    <td *ngIf="e.id == null">
-                      <button (click)="quitarElemento(i)" type="button" class="btn icon-btn btn-sm hide-arrow"
-                        rippleEffect>
-                        <span [data-feather]="'trash'" [class]="'cursor-pointer'" [size]="22"></span>
+                    <td *ngIf="e.id == null" class="text-center">
+                      <button (click)="quitarElemento(i)" type="button" class="btn icon-btn btn-sm btn-flat-danger"
+                        rippleEffect title="Eliminar">
+                        <span [data-feather]="'trash-2'" [class]="'cursor-pointer'"></span>
                       </button>
                     </td>
-                    <td *ngIf="e.id != null">
+                    <td *ngIf="e.id != null" class="text-center">
                       <div ngbDropdown container="body">
-                        <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                          <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                        <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm btn-flat-primary hide-arrow" rippleEffect>
+                          <span [data-feather]="'more-vertical'" [class]="'cursor-pointer'"></span>
                         </button>
                         <div ngbDropdownMenu>
                           <a (click)="verPerfil(e, ProfileDetail)" ngbDropdownItem><span [data-feather]="'eye'"

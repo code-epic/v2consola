@@ -3,47 +3,47 @@
     <!-- content-header component -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-    <!-- Invoice List -->
     <section class="invoice-list-wrapper">
       <div class="card">
-        <div class="col-md-12" style="margin-top: 25px;">
-          <div class="row justify-content-center"> <!-- Centramos la fila -->
+        <div class="row">
+          <div class="col-md-12 col-12">
 
-            <div class="col-md-12 col-12"> <!-- Select ocupa 6 columnas -->
-              <fieldset class="form-group mb-0">
-                <ng-select [items]="lstLogs" bindLabel="name" bindId="id" bindValue="name" (change)="onLogTypeChange($event)"  placeholder="Seleccione Log"></ng-select>
-              </fieldset>
-            </div>
-          </div>
-        </div>
-        <br>
 
-        <div class="card">
-          <div class="col-md-12" style="margin-top: 25px;">
-
-                  <div class="log-viewer-container">
-                    <!-- Log Sistema -->
-                    <app-query-log *ngIf="selectedLogType === 3" 
-                    [rawLogs]="queryLogs">
-                  </app-query-log>
-                  
-                  <!-- Log Query -->
-                  <app-system-log *ngIf="selectedLogType === 1" 
-                  [rawLogs]="systemLogs">
-                    </app-system-log>
-
-                    <!-- Log Cache -->
-                    <app-cache-log *ngIf="selectedLogType === 2" 
-                  [rawLogs]="systemLogs">
-                    </app-cache-log>
-                    
+               <!-- Log Selection Grid -->
+              <section class="log-selection-section">
+                <div class="log-selection-grid">
+                  <div *ngFor="let option of logOptions" 
+                      class="log-option-card" 
+                      [class.active]="selectedLogType === option.id"
+                      [class]="option.class"
+                      (click)="selectOption(option)">
+                    <div class="card-icon">
+                      <i [data-feather]="option.icon"></i>
+                    </div>
+                    <div class="card-content">
+                      <h3>{{ option.title }}</h3>
+                      <p>{{ option.description }}</p>
+                    </div>
+                    <div class="card-action-indicator">
+                      <i data-feather="arrow-right"></i>
+                    </div>
                   </div>
+                </div>
+
+                <!-- Log Viewer Container with Animation -->
+                <div class="log-viewer-wrapper" *ngIf="nameFnx!=''">
+                  <div class="log-viewer-container slide-up-fade">
+                    <app-query-log [rawLogs]="nameFnx"></app-query-log>
+                  </div>
+                </div>
+              </section>
 
 
           </div>
         </div>
-
       </div>
     </section>
+
+   
   </div>
 </div>

@@ -103,7 +103,7 @@
     "jwt-decode": "^3.1.2",
     "katex": "0.13.11",
     "lodash": "4.17.21",
-    "marked": "^17.0.0",
+    "marked": "^17.0.1",
     "moment": "^2.29.4",
     "ng-apexcharts": "^1.7.1",
     "ng-block-ui": "3.0.2",

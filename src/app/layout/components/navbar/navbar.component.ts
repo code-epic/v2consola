@@ -315,6 +315,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
         textoBoton = "Ok";
         bCancel = false;
         break;
+      case "BackupLogs":
+        contenido = `Proceso finalizado, los logs se han respaldado`;
+        textoBoton = "Ok";
+        bCancel = false;
+        break;
       default:
         contenido = `Su proyecto a sido clonado exitosamente!`;
         textoBoton = "Ir al proyecto!";
@@ -377,6 +382,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
               "Fusion exitosa",
               3000
             );
+            break;
+          case "BackupLogs":
+
             break;
           default:
             let dir = PID.contenido.split('|')
