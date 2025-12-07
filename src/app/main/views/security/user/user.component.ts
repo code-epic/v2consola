@@ -247,7 +247,7 @@ export class UserComponent implements OnInit {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/home',
           },
@@ -264,7 +264,8 @@ export class UserComponent implements OnInit {
     }
 
     await this.CargarListaAplicaciones()
-    this.selTipoAcceso(3)
+    let acceso = this.isBDV ? 3 : 1
+    this.selTipoAcceso(acceso)
     this.iUser.encriptamiento = '1'
 
 
@@ -841,6 +842,12 @@ export class UserComponent implements OnInit {
     );
   }
 
+
+  onLoginInput() {
+    if (this.isBDV && this.iUser.login) {
+      this.iUser.login = this.iUser.login.toUpperCase();
+    }
+  }
 
   SearchLoginLDAP() {
     // console.log(this.configuracion, this.isBDV)

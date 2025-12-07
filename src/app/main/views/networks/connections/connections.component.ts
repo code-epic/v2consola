@@ -99,6 +99,12 @@ export class ConnectionsComponent implements OnInit {
 
   public ListaAplicaciones
 
+  public passwordTextType: boolean = false;
+
+  togglePasswordTextType() {
+    this.passwordTextType = !this.passwordTextType;
+  }
+
 
   constructor(
     private comunicacionesService: ComunicationsService,

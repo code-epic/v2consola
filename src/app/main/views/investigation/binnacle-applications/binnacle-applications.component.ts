@@ -56,12 +56,18 @@ export class BinnacleApplicationsComponent implements OnInit {
   public tempDataRegistros = [];
   public rowDataRegistros = [];
 
+  // Pagination
+  public page = 1;
+  public pageSize = 7;
 
-  public urlID : MiObjeto = {}
+  public searchValue = '';
+  public searchRegistros = '';
+
+  public urlID: MiObjeto = {}
 
   // public
   public contentHeader: object;
-  public basicSelectedOption: number = 10;
+  public basicSelectedOption: number = 7;
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
@@ -76,42 +82,46 @@ export class BinnacleApplicationsComponent implements OnInit {
 
   async ngOnInit() {
     const datoBase64 = this.route.snapshot.paramMap.get('id');
+
     if (datoBase64) {
       const datoDecodificado = atob(datoBase64);
       const objetoRecibido: MiObjeto = JSON.parse(datoDecodificado);
       this.urlID = objetoRecibido;
-      console.log(objetoRecibido);
-      
+      // console.log(objetoRecibido);
+
       // Verificar si existe antes de acceder
       if (objetoRecibido.aplicacion) {
         console.log(objetoRecibido.aplicacion);
       } else {
-        this.utilService.AlertMini('top-end', 'error','La propiedad aplicacion no existe en el objeto recibido.',3000)
+        this.utilService.AlertMini('top-end', 'error', 'La propiedad aplicacion no existe en el objeto recibido.', 3000)
       }
     }
 
     this.urlID.funciones.forEach(e => {
       this.ListarBitacora.push(e);
     });
+
+    console.log(this.ListarBitacora);
     this.rowData = this.ListarBitacora;
     this.tempData = this.rowData;
 
 
     // content header
     this.contentHeader = {
-      headerTitle: "Investigación",
+      headerTitle: "Auditoría",
       actionButton: true,
       breadcrumb: {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },
           {
             name: "Bitacora",
-            isLink: false,
+            isLink: true,
+            link: "/investigation/binnacle",
           },
           {
             name: this.urlID.aplicacion,
@@ -159,8 +169,8 @@ export class BinnacleApplicationsComponent implements OnInit {
     });
     // update the rows
     this.rowData = temp;
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    // Reset to first page
+    this.page = 1;
   }
 
   filterUpdateRegister(event: any) {
@@ -171,13 +181,54 @@ export class BinnacleApplicationsComponent implements OnInit {
     });
     // update the rows
     this.rowDataRegistros = temps;
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    // Reset to first page
+    this.page = 1;
+  }
+
+  /**
+   * Formatea la duración en nanosegundos a una unidad legible
+   * @param nanoseconds Duración en nanosegundos
+   * @returns String formateado con la unidad apropiada
+   */
+  formatDuration(nanoseconds: number): string {
+    if (!nanoseconds || nanoseconds === 0) {
+      return '0 ns';
+    }
+
+    const seconds = nanoseconds / 1_000_000_000;
+    const milliseconds = nanoseconds / 1_000_000;
+    const microseconds = nanoseconds / 1_000;
+
+    // Si es mayor o igual a 1 segundo
+    if (seconds >= 1) {
+      return `${seconds.toFixed(2)} s`;
+    }
+    // Si es mayor o igual a 1 milisegundo
+    else if (milliseconds >= 1) {
+      return `${milliseconds.toFixed(2)} ms`;
+    }
+    // Si es mayor o igual a 1 microsegundo
+    else if (microseconds >= 1) {
+      return `${microseconds.toFixed(2)} μs`;
+    }
+    // Menor a 1 microsegundo, mostrar en nanosegundos
+    else {
+      return `${nanoseconds.toLocaleString('es-ES')} ns`;
+    }
+  }
+
+  /**
+   * Limpia el filtro de búsqueda de registros
+   */
+  clearSearch(): void {
+    this.searchRegistros = '';
+    this.rowDataRegistros = this.tempDataRegistros;
+    this.page = 1;
   }
 
 
   cerrarModal() {
-      this.modalService.dismissAll(); 
+    this.modalService.dismissAll();
   }
 
 

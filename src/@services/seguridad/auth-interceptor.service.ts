@@ -32,20 +32,26 @@ export class AuthInterceptorService implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
-        console.log(err.status)
-        switch(err.status){
+        // console.log(err.status)
+        switch (err.status) {
           case 401:
             sessionStorage.removeItem('token')
             this.cerrar(err.error.msj)
-          break;
+            break;
           case 403:
-            sessionStorage.removeItem('token')
-            this.cerrar(err.error.msj)
-          break;
+
+            if (err.error.msj) {
+              console.log(err.error.msj)
+            } else {
+              sessionStorage.removeItem('token')
+              this.cerrar('Acceso denegado')
+            }
+
+            break;
           case 504:
             sessionStorage.removeItem('token')
             this.cerrar(err.error)
-          break
+            break
         }
         return throwError(err);
       })

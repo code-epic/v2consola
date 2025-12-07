@@ -4,7 +4,7 @@
     <li class="nav-item">
       <a class="navbar-brand" [routerLink]="['/']">
         <span class="brand-logo">
-          <img src="assets/images/logo/logo.png" alt="brand-logo" width="36" />
+          <img src="{{ logo }}" alt="brand-logo" width="36" />
         </span>
         <h2 class="brand-text mb-0">{{ coreConfig.app.appName }}</h2>
       </a>
@@ -83,7 +83,7 @@
         <div class="user-nav d-sm-flex d-none">
           <span class="user-name font-weight-bolder">{{ usuario }}</span><span class="user-status">{{tipo}}</span>
         </div>
-        <span class="avatar"><img class="round" src="assets/images/logo/logo.png" alt="avatar" height="40"
+        <span class="avatar"><img class="round" src="{{icono}}" alt="avatar" height="40"
             width="40" /><span class="avatar-status-online"></span></span>
       </a>
       <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right animated-dropdown">

@@ -1,0 +1,513 @@
+/* ========================================
+   PASTEL THEME STYLES FOR API DETAILS
+   ======================================== */
+
+/* Pastel Color Palette - Ultra Soft */
+$pastel-purple: #e8e0ff;
+$pastel-blue: #e0f2ff;
+$pastel-green: #e0f8f0;
+$pastel-orange: #fff0e0;
+$pastel-red: #ffe8e8;
+$pastel-yellow: #fffae0;
+$pastel-pink: #ffe8f5;
+
+/* Pastel API Header */
+.api-header-pastel {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #fafbff 0%, #ffffff 100%);
+  border: 1px solid #f0f0f5;
+  border-radius: 10px;
+  padding: 14px 18px;
+  box-shadow: 0 1px 4px rgba(115, 103, 240, 0.04);
+}
+
+.api-icon-container-pastel {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  background: linear-gradient(135deg, $pastel-purple 0%, #f0ebff 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 14px;
+  
+  .api-icon {
+    color: #9f7aea;
+  }
+}
+
+.api-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.api-subtitle {
+  font-size: 0.85rem;
+  color: #718096;
+  margin: 0;
+}
+
+.api-meta {
+  font-size: 0.75rem;
+  color: #a0aec0;
+  
+  small {
+    color: #a0aec0;
+  }
+}
+
+/* Pastel Badges */
+.badge-pastel-primary {
+  background-color: $pastel-purple;
+  color: #805ad5;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+.badge-pastel-info {
+  background-color: $pastel-blue;
+  color: #4299e1;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+/* Pastel Cards */
+.card-pastel {
+  background: #ffffff;
+  border: 1px solid #f5f5fa;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+}
+
+.card-header-pastel {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, #fafbff 0%, #f8f9ff 100%);
+  border-bottom: 1px solid #f0f0f5;
+  
+  .header-icon {
+    color: #9f7aea;
+    margin-right: 0.6rem;
+  }
+  
+  h5 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin: 0;
+  }
+}
+
+.card-header-pastel-primary {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, #f0ebff 0%, #f8f5ff 100%);
+  border-bottom: none;
+  border: 1px solid #e8e0ff;
+  
+  .header-icon-white {
+    color: #9f7aea;
+    margin-right: 0.6rem;
+  }
+  
+  h5 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+    color: #7c3aed;
+  }
+}
+
+.card-body-pastel {
+  padding: 1rem;
+}
+
+/* Pastel Stat Cards */
+.stat-card-pastel {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid #f0f0f5;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  height: 100%;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .stat-icon-pastel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+  }
+  
+  .stat-info {
+    flex-grow: 1;
+    
+    small {
+      display: block;
+      color: #9a9aaf;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    
+    strong {
+      display: block;
+      font-size: 1rem;
+      color: #5e5873;
+      font-weight: 600;
+    }
+  }
+  
+  &.stat-card-status-pastel {
+    &.active {
+      border-left: 3px solid #7bc67e;
+      background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
+      
+      .stat-icon-pastel {
+        background-color: $pastel-green;
+        color: #48bb78;
+      }
+    }
+    
+    &.inactive {
+      border-left: 3px solid #f687b3;
+      background: linear-gradient(135deg, #fff5f7 0%, #ffffff 100%);
+      
+      .stat-icon-pastel {
+        background-color: $pastel-red;
+        color: #f56565;
+      }
+    }
+  }
+  
+  &.stat-card-version-pastel {
+    border-left: 3px solid #63b3ed;
+    background: linear-gradient(135deg, #f0f9ff 0%, #ffffff 100%);
+    
+    .stat-icon-pastel {
+      background-color: $pastel-blue;
+      color: #4299e1;
+    }
+  }
+  
+  &.stat-card-env-pastel {
+    border-left: 3px solid #9f7aea;
+    background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+    
+    .stat-icon-pastel {
+      background-color: $pastel-purple;
+      color: #805ad5;
+    }
+  }
+}
+
+/* Pastel Config List */
+.config-list-pastel {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  
+  .config-item-pastel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid #f5f5fa;
+    transition: all 0.2s ease;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+    
+    &:hover {
+      background: linear-gradient(135deg, #fafbff 0%, #f8f9ff 100%);
+    }
+    
+    .item-label-pastel {
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      color: #5e5873;
+      font-size: 0.875rem;
+      
+      svg {
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+      }
+    }
+    
+    .item-value {
+      font-weight: 600;
+      color: #6e6b7b;
+      font-size: 0.875rem;
+    }
+    
+    .item-status-pastel {
+      display: flex;
+      align-items: center;
+      
+      &.active {
+        color: #48bb78;
+      }
+      
+      &.inactive {
+        color: #cbd5e0;
+      }
+    }
+  }
+}
+
+/* Pastel Icon Colors */
+.icon-pastel-purple {
+  color: #9f7aea !important;
+}
+
+.icon-pastel-blue {
+  color: #4299e1 !important;
+}
+
+.icon-pastel-green {
+  color: #48bb78 !important;
+}
+
+.icon-pastel-orange {
+  color: #ed8936 !important;
+}
+
+.icon-pastel-red {
+  color: #f56565 !important;
+}
+
+.icon-pastel-yellow {
+  color: #ecc94b !important;
+}
+
+.icon-pastel-pink {
+  color: #ed64a6 !important;
+}
+
+/* Pastel Control Panel */
+.control-panel-pastel-sticky {
+  position: sticky;
+  top: 20px;
+  z-index: 10;
+}
+
+.action-section-pastel {
+  .section-label-pastel {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9a9aaf;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f0f0f5;
+    
+    svg {
+      color: #9f7aea;
+      flex-shrink: 0;
+    }
+  }
+  
+  .action-buttons-pastel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Pastel Buttons */
+.btn-pastel {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-weight: 500;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  border: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  .btn-icon-pastel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.4);
+    margin-right: 0.65rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    
+    .btn-icon-pastel {
+      background: rgba(255, 255, 255, 0.6);
+      transform: scale(1.03);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-pastel-primary {
+  background: linear-gradient(135deg, #f0ebff 0%, #f8f5ff 100%);
+  color: #7c3aed;
+  border: 1px solid #e8e0ff;
+  
+  &:hover {
+    background: linear-gradient(135deg, #e8e0ff 0%, #f0ebff 100%);
+    color: #6d28d9;
+  }
+}
+
+.btn-pastel-success {
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf7 100%);
+  color: #059669;
+  border: 1px solid #d1fae5;
+  
+  &:hover {
+    background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+    color: #047857;
+  }
+}
+
+.btn-pastel-warning {
+  background: linear-gradient(135deg, #fffbeb 0%, #fffcf0 100%);
+  color: #d97706;
+  border: 1px solid #fef3c7;
+  
+  &:hover {
+    background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+    color: #b45309;
+  }
+}
+
+.btn-pastel-info {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f5fbff 100%);
+  color: #0284c7;
+  border: 1px solid #e0f2fe;
+  
+  &:hover {
+    background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+    color: #0369a1;
+  }
+}
+
+.btn-pastel-danger {
+  background: linear-gradient(135deg, #fef2f2 0%, #fef5f5 100%);
+  color: #dc2626;
+  border: 1px solid #fee2e2;
+  
+  &:hover {
+    background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+    color: #b91c1c;
+  }
+}
+
+.btn-pastel-secondary {
+  background: linear-gradient(135deg, #f9fafb 0%, #fcfcfd 100%);
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+  
+  .btn-icon-pastel {
+    background: rgba(107, 114, 128, 0.08);
+    color: #6b7280;
+  }
+  
+  &:hover {
+    background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);
+    color: #4b5563;
+    
+    .btn-icon-pastel {
+      background: rgba(107, 114, 128, 0.12);
+    }
+  }
+}
+
+/* Description Panel Pastel */
+.description-panel-pastel {
+  .markdown-container {
+    line-height: 1.7;
+    color: #5e5873;
+    font-size: 0.9rem;
+  }
+}
+
+/* Input Map Panel Pastel */
+.input-map-panel-pastel {
+  .json-viewer-container {
+    background-color: #1e1e2e;
+    border: 1px solid #2d2d3d;
+    border-radius: 8px;
+    padding: 1.25rem;
+    max-height: 450px;
+    overflow: auto;
+    font-family: 'Fira Code', 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) {
+  .api-header-pastel {
+    flex-direction: column;
+    text-align: center;
+    
+    .api-icon-container-pastel {
+      margin-right: 0;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  .control-panel-pastel-sticky {
+    position: relative;
+    top: 0;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .stat-card-pastel {
+    margin-bottom: 0.5rem;
+  }
+}

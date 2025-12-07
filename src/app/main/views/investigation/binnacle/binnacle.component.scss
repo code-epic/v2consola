@@ -1,122 +1,486 @@
 @import '@core/scss/base/pages/app-ecommerce.scss';
 
+// ========================================
+// Binnacle Component Styles (Soft Minimalist Pastel)
+// ========================================
 
+// Typography
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+// Colors - Soft Palette
+$soft-bg: #f8f9fa;
+$card-bg: #ffffff;
+$text-primary: #5e5873;
+$text-secondary: #b9b9c3;
+$border-color: #ebe9f1;
 
-/* Asegurar que el grid-view sea responsivo */
+$primary-soft: #e3f2fd; // Light Blue
+$primary-text: #2196f3;
+
+$success-soft: #e8f5e9; // Light Green
+$success-text: #4caf50;
+
+$warning-soft: #fff3e0; // Light Orange
+$warning-text: #ff9800;
+
+$danger-soft: #ffebee; // Light Red
+$danger-text: #f44336;
+
+$purple-soft: #f3e5f5; // Light Purple
+$purple-text: #9c27b0;
+
+$info-soft: #e1f5fe; // Light Cyan
+$info-text: #00bcd4;
+
+// ========================================
+// Search Bar Section
+// ========================================
+.ecommerce-searchbar {
+  padding: 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  margin-bottom: 24px;
+  
+  .input-group-merge {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    
+    &:focus-within {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+    
+    .form-control {
+      border: 1px solid $border-color;
+      border-right: none;
+      padding: 0.75rem 1rem;
+      color: $text-primary;
+      font-weight: 500;
+      height: 44px;
+      
+      &::placeholder {
+        color: lighten($text-secondary, 10%);
+        font-weight: 400;
+      }
+      
+      &:focus {
+        box-shadow: none;
+        border-color: $border-color;
+      }
+    }
+    
+    .input-group-append {
+      .input-group-text {
+        background: $soft-bg;
+        border: 1px solid $border-color;
+        border-left: none;
+        height: 44px;
+        padding: 0.75rem 1rem;
+        
+        i {
+          color: $text-secondary;
+        }
+      }
+    }
+  }
+}
+
+// ng-select styling for search
+::ng-deep {
+  .ecommerce-searchbar {
+    ng-select {
+      .ng-select-container {
+        background: white;
+        border: 1px solid $border-color;
+        min-height: 44px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        transition: all 0.3s ease;
+        
+        &:hover {
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+      }
+      
+      &.ng-select-opened .ng-select-container {
+        border-color: $primary-text;
+      }
+    }
+  }
+  
+  .ng-dropdown-panel {
+    background-color: white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(34, 41, 47, 0.15);
+    margin-top: 4px;
+    z-index: 1050 !important;
+    
+    .ng-dropdown-panel-items {
+      .ng-option {
+        padding: 0;
+        
+        &:hover {
+          background-color: $primary-soft;
+        }
+        
+        .card {
+          margin: 8px;
+          border-radius: 8px;
+          border: 1px solid $border-color;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+          }
+          
+          .card-body {
+            padding: 1rem;
+          }
+          
+          .card-title {
+            font-weight: 600;
+            color: $text-primary;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+          }
+          
+          .card-subtitle {
+            color: $text-secondary;
+            font-size: 0.85rem;
+          }
+          
+          .card-text {
+            color: $text-secondary;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ========================================
+// Grid View - Card Layout
+// ========================================
 .grid-view.wishlist-items {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Ajusta el ancho mínimo de las tarjetas */
-  gap: 15px; /* Espacio entre tarjetas */
-  padding: 0 15px; /* Padding lateral para evitar que toquen los bordes */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  padding: 0;
   width: 100%;
   margin: 0 auto;
 }
 
-.efecto-img img {
-  max-width: 120px; /* Tamaño máximo deseado */
-  max-height: 120px; /* Altura máxima deseada */
-  width: auto;
-  height: auto;
-  object-fit: contain; /* Mantiene la proporción de la imagen */
+// ========================================
+// Application Cards
+// ========================================
+.ecommerce-card.tarjeta {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid $border-color;
+  box-shadow: 0 4px 24px rgba(34, 41, 47, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  background: white;
+  position: relative;
+  
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 32px rgba(34, 41, 47, 0.15);
+    border-color: $primary-text;
+    
+    .badge {
+      transform: scale(1.05);
+    }
+  }
+  
+  a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  // Minimalist Icon Header
+  .item-icon-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 5%) 100%);
+    min-height: 200px;
+    position: relative;
+    transition: all 0.3s ease;
+    
+    .icon-container {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+      
+      .app-icon {
+        width: 40px;
+        height: 40px;
+        color: $primary-text;
+      }
+    }
+    
+    .app-initial {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      box-shadow: 0 4px 16px rgba($primary-text, 0.3);
+      transition: all 0.3s ease;
+    }
+  }
+  
+  &:hover {
+    .item-icon-header {
+      .icon-container {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+      }
+      
+      .app-initial {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba($primary-text, 0.4);
+      }
+    }
+  }
+  
+  .card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    
+    .item-wrapper {
+      margin-bottom: 1rem;
+      
+      .item-description {
+        .item-price {
+          font-family: 'Inter', sans-serif;
+          font-weight: 700;
+          font-size: 1.1rem;
+          color: $text-primary;
+          margin: 0;
+          letter-spacing: -0.3px;
+          line-height: 1.4;
+        }
+      }
+    }
+    
+    .item-rating {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      
+      .badge {
+        padding: 0.5rem 1rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        letter-spacing: 0.3px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, $success-soft 0%, lighten($success-soft, 3%) 100%);
+        color: $success-text;
+        border: none;
+        transition: all 0.2s ease;
+      }
+      
+      span[data-feather] {
+        color: $danger-text;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: $danger-soft;
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
 }
 
-/* Tarjeta responsiva */
-.tarjeta {
-  width: 100%; /* Ocupa todo el ancho del grid cell */
-  height: auto; /* Altura automática para que se ajuste al contenido */
-  min-height: 300px; /* Altura mínima */
-  margin: 0; /* Elimina el margen ya que usamos gap en el grid */
-  transition: transform 0.3s ease; /* Efecto hover opcional */
+// ========================================
+// Pagination Styling
+// ========================================
+#ecommerce-pagination {
+  margin-top: 3rem;
+  margin-bottom: 2rem;
+  
+  ::ng-deep {
+    .pagination {
+      .page-item {
+        margin: 0 4px;
+        
+        .page-link {
+          border-radius: 8px;
+          border: 1px solid $border-color;
+          color: $text-primary;
+          padding: 0.5rem 0.75rem;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background: $primary-soft;
+            border-color: $primary-text;
+            color: $primary-text;
+            transform: translateY(-2px);
+          }
+          
+          &:focus {
+            box-shadow: 0 0 0 0.2rem rgba($primary-text, 0.25);
+          }
+        }
+        
+        &.active .page-link {
+          background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+          border-color: $primary-text;
+          color: white;
+          box-shadow: 0 4px 12px rgba($primary-text, 0.3);
+        }
+        
+        &.disabled .page-link {
+          background: $soft-bg;
+          border-color: $border-color;
+          color: $text-secondary;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
 }
 
-.tarjeta:hover {
-  transform: translateY(-5px); /* Efecto hover opcional */
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* Efecto hover opcional */
+// ========================================
+// Responsive Adjustments
+// ========================================
+@media (max-width: 992px) {
+  .grid-view.wishlist-items {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
 }
 
-/* Ajustes para pantallas más pequeñas */
 @media (max-width: 768px) {
   .grid-view.wishlist-items {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Tarjetas más estrechas en móviles */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  
+  .ecommerce-card.tarjeta {
+    min-height: 280px;
+    
+    .item-icon-header {
+      min-height: 160px;
+      padding: 2rem 1.5rem;
+      
+      .icon-container {
+        width: 64px;
+        height: 64px;
+        
+        .app-icon {
+          width: 32px;
+          height: 32px;
+        }
+      }
+      
+      .app-initial {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+      }
+    }
+    
+    .card-body {
+      padding: 1rem;
+    }
+  }
+  
+  .ecommerce-searchbar {
+    padding: 16px;
   }
 }
 
 @media (max-width: 576px) {
   .grid-view.wishlist-items {
-    grid-template-columns: 1fr; /* Una columna en pantallas muy pequeñas */
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .ecommerce-card.tarjeta {
+    min-height: 260px;
   }
 }
 
+// ========================================
+// Content Body
+// ========================================
 .content-body {
-  overflow-x: hidden; /* Previene desbordamiento horizontal */
+  overflow-x: hidden;
   width: 100%;
+  padding: 0 1rem;
 }
 
-
-.efecto-img {
-    justify-content: center;
+// ========================================
+// Empty State (Optional)
+// ========================================
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  
+  .empty-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 5%) 100%);
+    display: flex;
     align-items: center;
-    max-width: 100%;
-    /* Adjust based on your design */
-    text-align: center;
-    margin: 0 auto;
-    /* Center the container horizontally */
-}
-
-.efecto-img img {
-    max-width: 100%;
-    /* Image will not exceed container width */
-    height: auto;
-    /* Maintains aspect ratio */
-}
-
-
-/* search-bar.component.css */
-.ecommerce-searchbar {
-  padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-}
-
-/* Asegurar que el select, input y ng-select tengan el mismo estilo */
-select.form-control,
-input.form-control,
-ng-select.form-control {
-  height: 40px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-  font-size: 14px; /* Asegurar que el texto tenga el mismo tamaño */
-}
-
-/* Ajustar el ícono de búsqueda */
-.input-group-text {
-  height: 40px;
-  background-color: #fff;
-  border-left: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Estilos específicos para ng-select */
-ng-select.form-control .ng-select-container {
-  height: 40px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 8px;
-}
-
-/* Asegurar que no haya superposición */
-.col-sm-4, .col-sm-8 {
-  padding-right: 5px;
-  padding-left: 5px;
-}
-
-.trash-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 1;
+    justify-content: center;
+    
+    span {
+      color: $text-secondary;
+      opacity: 0.6;
+    }
+  }
+  
+  h4 {
+    color: $text-primary;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  p {
+    color: $text-secondary;
+    font-size: 0.95rem;
+  }
 }

@@ -42,7 +42,10 @@ export class ApiDetailsComponent implements OnInit {
     tipo: '',
     prioridad: '',
     entorno: '',
-    logs: false
+    logs: false,
+    traza: false,
+    columnas: '',
+    prefijo: '',
   };
 
   public apiPromover: IAPICore = {
@@ -88,19 +91,19 @@ export class ApiDetailsComponent implements OnInit {
 
   ) { }
 
- 
+
   async ngOnInit() {
 
     this.rutaURL = this.rutaActiva.snapshot.params.id
     this.urlControl = this.rutaActiva.snapshot.params.ruta
     let url = ''
 
-    if (this.urlControl != undefined){
+    if (this.urlControl != undefined) {
       let valor = atob(this.urlControl).split('|')
       this.driversAPP = valor[0]
       this.url = valor[1]
-      url = '/'  + this.url
-      console.log(valor)
+      url = '/' + this.url
+      // console.log(valor)
     }
 
 
@@ -140,8 +143,8 @@ export class ApiDetailsComponent implements OnInit {
       }
     };
 
-    
-    
+
+
   }
 
   async ConsultarAPI(api: string) {
@@ -153,8 +156,25 @@ export class ApiDetailsComponent implements OnInit {
         data.map(e => {
           this.xAPI = e
         });
-        const formatter = new JSONFormatter(this.xAPI.entradas);
-        document.getElementById("xrsx").appendChild(formatter.render());
+
+        // Parse JSON string if needed
+        let entradasData: any = this.xAPI.entradas;
+        if (typeof entradasData === 'string') {
+          try {
+            entradasData = JSON.parse(entradasData);
+          } catch (e) {
+            // console.error('Error parsing entradas JSON:', e);
+            entradasData = { error: 'Invalid JSON format' };
+          }
+        }
+
+        // Clear previous content
+        const container = document.getElementById("xrsx");
+        if (container) {
+          container.innerHTML = '';
+          const formatter = new JSONFormatter(entradasData, 2, { theme: 'dark' });
+          container.appendChild(formatter.render());
+        }
       },
       (error) => {
         console.log(error)
@@ -187,7 +207,7 @@ export class ApiDetailsComponent implements OnInit {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.PromoverAPI(funcion,entorno)
+        this.PromoverAPI(funcion, entorno)
       }
     })
   }
@@ -226,7 +246,7 @@ export class ApiDetailsComponent implements OnInit {
     };
     let sApi = 'crud';
     this.xAPI = {}
-   await  this.apiService.Guardar(jsonG, sApi).subscribe(
+    await this.apiService.Guardar(jsonG, sApi).subscribe(
       (data) => {
         this.ConsultarAPI(this.rutaURL)
         let id = data.UpsertedID != null ? "registrada codigo: " + data.UpsertedID : "actualizada "
@@ -238,7 +258,7 @@ export class ApiDetailsComponent implements OnInit {
     )
   }
 
-  getContent(){
+  getContent() {
 
     // const formatter = new JSONFormatter(this.xAPI.entradas);
     // document.getElementById("xrsx").appendChild(formatter.render());

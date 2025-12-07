@@ -3,125 +3,226 @@
         <!-- content-header component -->
         <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-
         <!-- Invoice List -->
         <section class="invoice-list-wrapper">
             <div class="card">
 
+                <!-- Menu List Header -->
+                <!-- Table Header & Controls -->
+                <div class="card-header-custom">
+                  
+                  <!-- Top Section: Title & Filters -->
+                  <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                    <div class="header-title-group">
+                      <h4 class="content-header-title mb-0">Gestión de Menús</h4>
+                      <small class="text-muted">Administración y configuración de menús de aplicación</small>
+                    </div>
+                  </div>
+
+                  <!-- Bottom Section: Filters & Actions -->
+                  <div class="d-flex justify-content-between align-items-center flex-wrap actions-bar">
+                    
+                    <!-- Left: Application Filters -->
+                    <div class="d-flex align-items-center flex-wrap actions-left">
+                      <div class="filter-group mr-2 mb-1 mb-md-0" style="min-width: 300px;">
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'package'" [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
+                            [ngModelOptions]="{standalone: true}" bindLabel="name"
+                            (ngModelChange)="selModulo($event)" bindValue="id"
+                            placeholder="Seleccionar Aplicación" class="custom-select-soft">
+                          </ng-select>
+                        </div>
+                      </div>
+                      
+                      <div class="filter-group mr-2 mb-1 mb-md-0" style="min-width: 200px;">
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'menu'" [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="dataModulo" [name]="xmodulo" [addTag]="true" [(ngModel)]="xmodulo"
+                            [ngModelOptions]="{standalone: true}" bindLabel="name" 
+                            (ngModelChange)="selectEventModulo($event)"
+                            (input)="onFocusedModulo($event)"
+                            placeholder="Menu" class="custom-select-soft">
+                          </ng-select>
+                        </div>
+                      </div>
+
+                      <div class="filter-group mb-1 mb-md-0" style="min-width: 200px;">
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="datamenu" [addTag]="true" [(ngModel)]="menu"
+                            [ngModelOptions]="{standalone: true}" (ngModelChange)="selectEventMenu($event)"
+                            (input)='onFocusedMenu($event)'
+                            bindLabel="name" placeholder="Sub Menu" class="custom-select-soft">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right: Action Buttons -->
+                    <div class="actions-right mb-1 mb-md-0">
+                      <button type="button" *ngIf="!showDiv" class="btn btn-primary mr-1" (click)="procesar()" rippleEffect>
+                        <span [data-feather]="'search'" [size]="16" class="mr-50"></span>
+                        <span class="align-middle">Consultar</span>
+                      </button>
+                      
+                      <button type="button" class="btn btn-outline-secondary" (click)="Limpiar()" rippleEffect title="Limpiar">
+                        <span [data-feather]="'refresh-cw'" [size]="16"></span>
+                      </button>
+                    </div>
+
+                  </div>
+                </div>
+                <!--/ Menu List Header -->
+
                 <div class="col-md-12" style="margin-top: 25px;">
 
-                    <!-- Primer -->
-                    <div class="row">
-
-
-                        <div class="form-group col-md-12">
-                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
-                                placeholder="Seleccione Aplicación"></ng-select>
+                    <!-- Menu Definition Panel -->
+                    <div class="menu-definition-panel" *ngIf="showDiv">
+                        
+                        <!-- Section Header -->
+                        <div class="section-header-pastel mb-3">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div class="d-flex align-items-center">
+                                    <div class="header-icon-wrapper">
+                                        <span [data-feather]="'edit-3'" [size]="20"></span>
+                                    </div>
+                                    <div>
+                                        <h5 class="section-title mb-0">Definición de Menú</h5>
+                                        <small class="section-subtitle">Configure los detalles del menú seleccionado</small>
+                                    </div>
+                                </div>
+                                <div class="action-buttons">
+                                    <button type="button" *ngIf="!btnMenu" class="btn btn-success" (click)="GuardarMenu()" rippleEffect>
+                                        <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
+                                        <span class="align-middle">Agregar</span>
+                                    </button>
+                                    <button type="button" *ngIf="btnMenu" class="btn btn-warning" (click)="UpdateMenu(IDefinirMenu.id)" rippleEffect>
+                                        <span [data-feather]="'save'" [size]="16" class="mr-50"></span>
+                                        <span class="align-middle">Actualizar</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group col-md-6">
-                            <label class="form-label" for="origen">Menu</label>
-                            <ng-select [items]="dataModulo" [name]="xmodulo" [addTag]="true" [(ngModel)]="xmodulo"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name" 
-                                (ngModelChange)="selectEventModulo($event)"
-                                (input)="onFocusedModulo($event)"
-                                placeholder="Seleccione Modulo"></ng-select>
+                        <!-- Form Fields -->
+                        <div class="row">
+                            <!-- Row 1: Nombre y URL -->
+                            <div class="form-group col-md-4">
+                                <label class="form-label" for="descripcion">
+                                    <span [data-feather]="'type'" [size]="14" class="mr-1"></span>
+                                    Nombre
+                                </label>
+                                <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                                    </div>
+                                    <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.nombre"
+                                        [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-8">
+                                <label class="form-label" for="origen">
+                                    <span [data-feather]="'link'" [size]="14" class="mr-1"></span>
+                                    Dirección URL
+                                </label>
+                                <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
+                                    </div>
+                                    <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.url"
+                                        [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Dirección URL"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <!-- Row 2: Icono, Color, Clase CSS -->
+                            <div class="form-group col-md-3">
+                                <label class="form-label" for="descripcion">
+                                    <span [data-feather]="'feather'" [size]="14" class="mr-1"></span>
+                                    Icono
+                                </label>
+                                <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'feather'" [size]="16"></span></span>
+                                    </div>
+                                    <input style="font-size:14px;" type="text" [(ngModel)]="IDefinirMenu.icon"
+                                        [ngModelOptions]="{standalone: true}" placeholder="ej: home" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label class="form-label" for="descripcion">
+                                    <span [data-feather]="'droplet'" [size]="14" class="mr-1"></span>
+                                    Color
+                                </label>
+                                <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'droplet'" [size]="16"></span></span>
+                                    </div>
+                                    <input style="font-size:14px;" type="text" [(ngModel)]="IDefinirMenu.color"
+                                        [ngModelOptions]="{standalone: true}" placeholder="ej: #7c3aed" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label class="form-label" for="descripcion">
+                                    <span [data-feather]="'code'" [size]="14" class="mr-1"></span>
+                                    Clase CSS
+                                </label>
+                                <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
+                                    </div>
+                                    <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.clase"
+                                        [ngModelOptions]="{standalone: true}" type="text" placeholder="ej: btn-primary"
+                                        class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3">
+                                <label class="form-label" for="descripcion">
+                                    <span [data-feather]="'tag'" [size]="14" class="mr-1"></span>
+                                    Tipo
+                                </label>
+                                <div class="ng-select-group-pastel">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'tag'" [size]="16"></span></span>
+                                    </div>
+                                    <ng-select [items]="lstEstatus" [(ngModel)]="IDefinirMenu.tipo"
+                                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                                        placeholder="Seleccione Tipo"></ng-select>
+                                </div>
+                            </div>
+
+                            <!-- Row 3: JavaScript Code (Full Width) -->
+                            <div class="form-group col-md-12">
+                                <label class="form-label" for="descripcion">
+                                    <span [data-feather]="'terminal'" [size]="14" class="mr-1"></span>
+                                    Código JavaScript
+                                </label>
+                                <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'terminal'" [size]="16"></span></span>
+                                    </div>
+                                    <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.js"
+                                        [ngModelOptions]="{standalone: true}" type="text"
+                                        placeholder="Ingrese Código JavaScript (opcional)" class="form-control">
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="form-group col-md-6">
-                            <label class="form-label" for="origen">Sub Menu</label>
-                            <ng-select [items]="datamenu" [addTag]="true" [(ngModel)]="menu"
-                                [ngModelOptions]="{standalone: true}" (ngModelChange)="selectEventMenu($event)"
-                                (input)='onFocusedMenu($event)'
-                                bindLabel="name" placeholder="Seleccione Menu"></ng-select>
-                        </div>
-
-                        <div class="col-md-12" align="right">
-                            <button type="button" *ngIf="!showDiv" class="btn btn-success" (click)="procesar()">
-                                <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Consultar
-                            </button>
-                            &nbsp;
-                            <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                                <i class="fa fa-trash" aria-hidden="true"></i> &nbsp; Limpiar
-                            </button>
-                        </div>
-
-
-                        <div *ngIf="!showDiv">
-                            <br><br><br>
-                        </div>
-
 
                     </div>
-                    <!-- Primer -->
+                    <!-- Menu Definition Panel -->
 
-                    <!-- Segundo Panel -->
-                    <div class="row" *ngIf="showDiv">
-                        <hr>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="descripcion">Nombre</label>
-                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.nombre"
-                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Nombre"
-                                class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-8">
-                            <label class="form-label" for="origen">Dirección URL</label>
-                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.url"
-                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Dirección"
-                                class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="descripcion">Icono</label>
-                            <input style="font-size:14px;" type="text" [(ngModel)]="IDefinirMenu.icon"
-                                [ngModelOptions]="{standalone: true}" placeholder="Ingrese Icono" class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="descripcion">Color</label>
-                            <input style="font-size:14px;" type="text" [(ngModel)]="IDefinirMenu.color"
-                                [ngModelOptions]="{standalone: true}" placeholder="Ingrese Color" class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="descripcion">Clase Css</label>
-                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.clase"
-                                [ngModelOptions]="{standalone: true}" type="text" placeholder="Ingrese Clase Css"
-                                class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-6">
-                            <label class="form-label" for="descripcion">Codigo JavaScript</label>
-                            <input style="font-size:14px;" [(ngModel)]="IDefinirMenu.js"
-                                [ngModelOptions]="{standalone: true}" type="text"
-                                placeholder="Ingrese Codigo JavaScript" class="form-control">
-                        </div>
-
-                        <div class="form-group col-md-4">
-                            <label class="form-label" for="descripcion">Seleccionar Tipo</label>
-                            <ng-select [items]="lstEstatus" [(ngModel)]="IDefinirMenu.tipo"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                                placeholder="Seleccione Tipo"></ng-select>
-                        </div>
-
-                        <br>
-                        <div class="form-group col-md-2" style="margin-top: 25px;">
-                            <label class="form-label"></label>
-                            <button type="button" *ngIf="!btnMenu" class="btn btn-success" (click)="GuardarMenu()">
-                                <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Agregar
-                            </button>
-                            <button type="button" *ngIf="btnMenu" class="btn btn-warning" (click)="UpdateMenu(IDefinirMenu.id)">
-                                <i class="fa fa-arrow-down" aria-hidden="true"></i> &nbsp; Actualizar
-                            </button>
-                        </div>
-                        <hr>
-                    </div>
-                    <!-- Segundo Panel -->
                     <!-- TABLA -->
                     <div class="container" *ngIf="showDiv">
                         <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-left">
@@ -322,49 +423,84 @@
 
                     <div class="col-md-4 col-12 mb-1">
                         <label for="login-tipo" class="form-label">Seleccione Metodo</label>
-                        <ng-select [items]="metodos" bindLabel="descripcion" placeholder="Seleccione Metodo"
-                            [(ngModel)]="IAccion.nombre" [ngModelOptions]="{standalone: true}" bindValue="id"
-                            bindLabel="name">
-                        </ng-select>
+                        <div class="ng-select-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'settings'" [size]="16"></span></span>
+                            </div>
+                            <ng-select [items]="metodos" bindLabel="descripcion" placeholder="Seleccione Metodo"
+                                [(ngModel)]="IAccion.nombre" [ngModelOptions]="{standalone: true}" bindValue="id"
+                                bindLabel="name">
+                            </ng-select>
+                        </div>
                     </div>
 
                     <div class="col-md-4 col-12 mb-1">
                         <label for="login-host" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" [(ngModel)]="IAccion.nomb"
-                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" 
-                            tabindex="1" autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="IAccion.nomb"
+                                [ngModelOptions]="{standalone: true}" placeholder="Nombre" 
+                                tabindex="1" autofocus />
+                        </div>
                     </div>
 
                     <div class="col-md-4 col-4 mb-1">
                         <label for="login-host" class="form-label">Función</label>
-                        <input type="text" class="form-control" [(ngModel)]="IAccion.func"
-                            [ngModelOptions]="{standalone: true}" placeholder="Función" 
-                            tabindex="1" autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'zap'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="IAccion.func"
+                                [ngModelOptions]="{standalone: true}" placeholder="Función" 
+                                tabindex="1" autofocus />
+                        </div>
                     </div>
 
                     <div class="col-md-2 col-2 mb-1">
                         <label class="form-label">Clase</label>
-                        <input type="text" class="form-control" [(ngModel)]="IAccion.clase"
-                            [ngModelOptions]="{standalone: true}" placeholder="Clase" 
-                            tabindex="1" autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="IAccion.clase"
+                                [ngModelOptions]="{standalone: true}" placeholder="Clase" 
+                                tabindex="1" autofocus />
+                        </div>
                     </div>
                     <div class="col-md-2 col-2 mb-1">
                         <label class="form-label">Icono</label>
-                        <input type="text" class="form-control" [(ngModel)]="IAccion.icono"
-                            [ngModelOptions]="{standalone: true}" placeholder="Clase" 
-                            tabindex="1" autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'feather'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="IAccion.icono"
+                                [ngModelOptions]="{standalone: true}" placeholder="Icono" 
+                                tabindex="1" autofocus />
+                        </div>
                     </div>
                     <div class="col-md-2 col-2 mb-1">
                         <label class="form-label">Color</label>
-                        <input type="text" class="form-control" [(ngModel)]="IAccion.color"
-                            [ngModelOptions]="{standalone: true}" placeholder="Clase" 
-                            tabindex="1" autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'droplet'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="IAccion.color"
+                                [ngModelOptions]="{standalone: true}" placeholder="Color" 
+                                tabindex="1" autofocus />
+                        </div>
                     </div>
                     <div class="col-md-6 col-6 mb-1">
                         <label class="form-label">EndPoint</label>
-                        <input type="text" [(ngModel)]="IAccion.endpoint" [ngModelOptions]="{standalone: true}"
-                            class="form-control" placeholder="EndPoint"  tabindex="1"
-                            autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" [(ngModel)]="IAccion.endpoint" [ngModelOptions]="{standalone: true}"
+                                class="form-control" placeholder="EndPoint"  tabindex="1"
+                                autofocus />
+                        </div>
                     </div>
 
                     <div class="col-md-12 col-12 mb-1">
@@ -408,38 +544,63 @@
 
                     <div class="col-md-6 col-12 mb-1">
                         <label for="login-host" class="form-label">Nombre</label>
-                        <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.nomb"
-                            [ngModelOptions]="{standalone: true}" placeholder="Nombre" 
-                            tabindex="1" autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.nomb"
+                                [ngModelOptions]="{standalone: true}" placeholder="Nombre" 
+                                tabindex="1" autofocus />
+                        </div>
                     </div>
 
                     <div class="col-md-6 col-12 mb-1">
                         <label for="login-host" class="form-label">Dirección URL</label>
-                        <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.url"
-                            [ngModelOptions]="{standalone: true}" placeholder="Dirección URL" 
-                            tabindex="1" autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" class="form-control" [(ngModel)]="IAddSubMenu.url"
+                                [ngModelOptions]="{standalone: true}" placeholder="Dirección URL" 
+                                tabindex="1" autofocus />
+                        </div>
                     </div>
 
                     <div class="col-md-5 col-12 mb-1">
                         <label for="login-host" class="form-label">Codigo JavaScript</label>
-                        <input type="text" [(ngModel)]="IAddSubMenu.js" [ngModelOptions]="{standalone: true}"
-                            class="form-control" placeholder="Codigo JavaScript"  tabindex="1"
-                            autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'terminal'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" [(ngModel)]="IAddSubMenu.js" [ngModelOptions]="{standalone: true}"
+                                class="form-control" placeholder="Codigo JavaScript"  tabindex="1"
+                                autofocus />
+                        </div>
                     </div>
 
                     <div class="col-md-4 col-12 mb-1">
                         <label for="login-host" class="form-label">Clase Css</label>
-                        <input type="text" [(ngModel)]="IAddSubMenu.clase" [ngModelOptions]="{standalone: true}"
-                            class="form-control" placeholder="Clase Css"  tabindex="1"
-                            autofocus />
+                        <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
+                            </div>
+                            <input type="text" [(ngModel)]="IAddSubMenu.clase" [ngModelOptions]="{standalone: true}"
+                                class="form-control" placeholder="Clase Css"  tabindex="1"
+                                autofocus />
+                        </div>
                     </div>
 
                     <div class="col-md-3 col-12 mb-1">
                         <label for="login-tipo" class="form-label">Estatus</label>
-                        <ng-select [items]="tipoMenu" bindLabel="descripcion" placeholder="Seleccione"
-                            [(ngModel)]="IAddSubMenu.tipo" [ngModelOptions]="{standalone: true}" bindValue="id"
-                            bindLabel="name">
-                        </ng-select>
+                        <div class="ng-select-group-pastel">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'activity'" [size]="16"></span></span>
+                            </div>
+                            <ng-select [items]="tipoMenu" bindLabel="descripcion" placeholder="Seleccione"
+                                [(ngModel)]="IAddSubMenu.tipo" [ngModelOptions]="{standalone: true}" bindValue="id"
+                                bindLabel="name">
+                            </ng-select>
+                        </div>
                     </div>
 
 

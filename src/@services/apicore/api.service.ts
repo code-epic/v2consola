@@ -52,6 +52,7 @@ export interface IAPICore {
   consumidores?: number;
   cache?: number;
   logs?: boolean;
+  traza?: boolean;
   concurrencia?: boolean;
   retorna?: boolean;
   // tiempo de duracion
@@ -66,7 +67,7 @@ export interface IAPICore {
   tiempoduracion?: string;
   tipoduracion?: number;
   protocolo?: string;
-  migrar?: false;
+  migrar?: boolean;
   modulo?: string;
   puertohttp?: number;
   puertohttps?: number;
@@ -608,11 +609,11 @@ export class ApiService {
   ConsultaSistemaBDV(): boolean {
     let cadena = this.document.location.href
     const cadenaNormalizada = cadena.toLowerCase();
-    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4203'];
+    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4201'];
     return palabrasProhibidas.some(palabra =>
       cadenaNormalizada.includes(palabra)
     );
-    
+
   }
 
 

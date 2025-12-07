@@ -2,29 +2,48 @@
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
 
+    <!-- Enhanced Search Bar -->
     <section id="ecommerce-searchbar" class="ecommerce-searchbar">
-      <div class="row mt-1">
-        <div class="col-sm-12">
+      <div class="row">
+        <div class="col-12">
           <div class="input-group input-group-merge">
-            <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
-              [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" style="height: 40px;" />
+            <input 
+              type="text" 
+              class="form-control search-product" 
+              id="shop-search" 
+              placeholder="Buscar aplicaciones por nombre..." 
+              [(ngModel)]="searchText" 
+              aria-label="Search..." 
+              aria-describedby="shop-search" 
+            />
             <div class="input-group-append">
-              <span class="input-group-text" style="height: 40px;"><i data-feather="search"
-                  class="text-muted"></i></span>
+              <span class="input-group-text">
+                <i data-feather="search" class="text-muted"></i>
+              </span>
             </div>
           </div>
         </div>
-        <div class="col-sm-9" *ngIf="searchType === 'api'">
-          <ng-select [items]="rowData" [(ngModel)]="selectCustomSelected" bindLabel="funcion" bindValue="id"
-            [searchable]="true" placeholder="Seleccione API" [hideSelected]="false" (change)="LinkRuta($event)"
-            style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
+        
+        <!-- API Search Dropdown (if needed) -->
+        <div class="col-12 mt-3" *ngIf="searchType === 'api'">
+          <ng-select 
+            [items]="rowData" 
+            [(ngModel)]="selectCustomSelected" 
+            bindLabel="funcion" 
+            bindValue="id"
+            [searchable]="true" 
+            placeholder="Seleccione API específica" 
+            [hideSelected]="false" 
+            (change)="LinkRuta($event)"
+            appendTo="body"
+          >
             <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-              <div style="margin: 10px 0" class="card">
+              <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">{{ item.funcion }}</h5>
                   <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6>
                   <p class="card-text">
-                    {{ item.tipo }} --- {{ item.aplicacion }}
+                    {{ item.tipo }} • {{ item.aplicacion }}
                   </p>
                 </div>
               </div>
@@ -34,72 +53,101 @@
       </div>
     </section>
 
-    <br>
-
+    <!-- Application Cards Grid -->
     <section id="wishlist" class="grid-view wishlist-items">
       <div
-        *ngFor="let product of ListarBitacora | filter: searchText:'aplicacion' | slice: (page - 1) * pageSize : page * pageSize"
-        class="card ecommerce-card tarjeta">
-        <a (click)="irA('/investigation/binnacle/',product)">
-          <div class="item-img text-center efecto-img">
-            <img class="img-fluid" src="assets/images/logo/logo.png" alt="img-placeholder" />
+        *ngFor="let product of ListarBitacora | filter: searchText:'aplicacion' | slice: (page - 1) * pageSize : page * pageSize; let i = index"
+        class="card ecommerce-card tarjeta"
+      >
+        <a (click)="irA('/investigation/binnacle/', product)">
+          <!-- Minimalist Icon Header -->
+          <div class="item-icon-header">
+            <div class="icon-container">
+              <span data-feather="database" class="app-icon"></span>
+            </div>
+            <div class="app-initial">
+              {{ product.aplicacion.charAt(0).toUpperCase() }}
+            </div>
           </div>
+          
+          <!-- Card Content -->
           <div class="card-body">
             <div class="item-wrapper">
               <div class="card-text item-description">
                 <h6 class="item-price">{{ product.aplicacion | uppercase }}</h6>
               </div>
             </div>
+            
+            <!-- Card Footer with Badge and Actions -->
             <div class="item-rating d-flex justify-content-between align-items-center">
               <div class="badge badge-success">
-                Total Funciones: {{ product.totalFunciones }}
+                <span data-feather="layers" style="width: 14px; height: 14px; margin-right: 4px;"></span>
+                {{ product.totalFunciones }}
               </div>
               <span 
-              data-feather="trash-2" 
-              class="font-weight-bolder text-danger" 
-              style="width: 18px; height: 18px; cursor: pointer;"
-              (click)="$event.stopPropagation(); deleteItem($event, product)">
-            </span>
+                data-feather="trash-2" 
+                class="font-weight-bolder text-danger" 
+                style="width: 18px; height: 18px; cursor: pointer;"
+                (click)="$event.stopPropagation(); deleteItem($event, product)"
+                title="Eliminar"
+              >
+              </span>
             </div>
           </div>
         </a>
       </div>
     </section>
 
-    <br><br>
+    <!-- Empty State (when no results) -->
+    <section 
+      *ngIf="(ListarBitacora | filter: searchText:'aplicacion').length === 0" 
+      class="empty-state"
+    >
+      <div class="empty-icon">
+        <span data-feather="inbox" style="width: 64px; height: 64px;"></span>
+      </div>
+      <h4>No se encontraron aplicaciones</h4>
+      <p>Intenta ajustar tu búsqueda o filtros</p>
+    </section>
 
-    <section id="ecommerce-pagination">
+    <!-- Pagination -->
+    <section id="ecommerce-pagination" *ngIf="(ListarBitacora | filter: searchText:'aplicacion').length > 0">
       <div class="row">
         <div class="col-sm-12">
           <div class="d-flex justify-content-center">
-            <ngb-pagination [collectionSize]="(ListarBitacora | filter: searchText:'nombre').length" [(page)]="page"
-              [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
-              aria-label="Pagination">
-
-              <!-- Primer página -->
+            <ngb-pagination 
+              [collectionSize]="(ListarBitacora | filter: searchText:'aplicacion').length" 
+              [(page)]="page"
+              [pageSize]="pageSize" 
+              [maxSize]="5" 
+              [rotate]="true" 
+              [ellipses]="false" 
+              [boundaryLinks]="true"
+              aria-label="Pagination"
+            >
+              <!-- First Page -->
               <ng-template ngbPaginationFirst>
                 <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
               </ng-template>
 
-              <!-- Página anterior -->
+              <!-- Previous Page -->
               <ng-template ngbPaginationPrevious>
                 <span data-feather="chevron-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
               </ng-template>
 
-              <!-- Números de página (personalizado para quitar "current") -->
+              <!-- Page Numbers -->
               <ng-template ngbPaginationNumber let-page>
                 {{ page }}
               </ng-template>
 
-              <!-- Página siguiente -->
+              <!-- Next Page -->
               <ng-template ngbPaginationNext>
                 <span data-feather="chevron-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
               </ng-template>
 
-              <!-- Última página -->
+              <!-- Last Page -->
               <ng-template ngbPaginationLast>
-                <span data-feather="chevrons-right" class="font-weight-bolder"
-                  style="width: 18px; height: 18px;"></span>
+                <span data-feather="chevrons-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
               </ng-template>
             </ngb-pagination>
           </div>

@@ -1,0 +1,782 @@
+@import '@core/scss/base/pages/app-ecommerce.scss';
+
+// ========================================
+// Binnacle Applications Styles (Soft Minimalist Pastel)
+// ========================================
+
+// Typography
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+// Colors - Soft Palette
+$soft-bg: #f8f9fa;
+$card-bg: #ffffff;
+$text-primary: #5e5873;
+$text-secondary: #b9b9c3;
+$border-color: #ebe9f1;
+
+$primary-soft: #e3f2fd; // Light Blue
+$primary-text: #2196f3;
+
+$success-soft: #e8f5e9; // Light Green
+$success-text: #4caf50;
+
+$warning-soft: #fff3e0; // Light Orange
+$warning-text: #ff9800;
+
+$danger-soft: #ffebee; // Light Red
+$danger-text: #f44336;
+
+$purple-soft: #f3e5f5; // Light Purple
+$purple-text: #9c27b0;
+
+$info-soft: #e1f5fe; // Light Cyan
+$info-text: #00bcd4;
+
+// ========================================
+// Card Header Custom
+// ========================================
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(34, 41, 47, 0.05);
+  border: 1px solid $border-color;
+  
+  .row {
+    padding: 1rem 1.5rem;
+    
+    .form-control {
+      border-radius: 6px;
+      border: 1px solid $border-color;
+      padding: 0.6rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: $primary-text;
+        box-shadow: 0 0 0 0.2rem rgba($primary-text, 0.15);
+      }
+    }
+    
+    select.form-control {
+      cursor: pointer;
+      
+      &:hover {
+        border-color: darken($border-color, 10%);
+      }
+    }
+    
+    input[type="search"] {
+      background: white;
+      
+      &::placeholder {
+        color: lighten($text-secondary, 10%);
+      }
+    }
+    
+    label {
+      font-weight: 600;
+      color: $text-primary;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+}
+
+// ========================================
+// Enhanced Datatable Styling
+// ========================================
+.user-table {
+  width: 100%;
+  margin-bottom: 0;
+  
+  thead {
+    background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 5%) 100%);
+    border-bottom: 2px solid $border-color;
+    
+    th {
+      padding: 1rem;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      color: $text-primary;
+      border: none;
+      vertical-align: middle;
+      
+      .d-flex {
+        font-family: 'Inter', sans-serif;
+      }
+      
+      span[data-feather] {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+  
+  tbody {
+    tr {
+      border-bottom: 1px solid lighten($border-color, 3%);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: lighten($primary-soft, 5%);
+        transform: scale(1.002);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+      
+      td {
+        padding: 1rem;
+        vertical-align: middle;
+        border: none;
+        
+        .font-weight-bold {
+          font-weight: 600;
+          color: $text-primary;
+        }
+        
+        .text-muted {
+          color: $text-secondary;
+          font-size: 0.85rem;
+        }
+        
+        small {
+          font-size: 0.8rem;
+        }
+      }
+    }
+  }
+}
+
+::ng-deep {
+  .ngx-datatable.bootstrap {
+    box-shadow: none;
+    
+    // Header Styling
+    .datatable-header {
+      background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 5%) 100%);
+      border-bottom: 2px solid $border-color;
+      
+      .datatable-header-cell {
+        padding: 1rem;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: $text-primary;
+        text-transform: uppercase;
+        
+        .datatable-header-cell-label {
+          font-family: 'Inter', sans-serif;
+        }
+      }
+    }
+    
+    // Body Styling
+    .datatable-body {
+      .datatable-body-row {
+        border-bottom: 1px solid lighten($border-color, 3%);
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: lighten($primary-soft, 5%);
+          transform: scale(1.005);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .datatable-body-cell {
+          padding: 1rem;
+          vertical-align: middle;
+          
+          .font-weight-bold {
+            font-weight: 600;
+            color: $text-primary;
+          }
+          
+          .text-nowrap {
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+    
+    // Footer Styling
+    .datatable-footer {
+      background: white;
+      border-top: 1px solid $border-color;
+      padding: 1rem;
+      
+      .datatable-pager {
+        .pager {
+          li {
+            margin: 0 4px;
+            
+            a {
+              border-radius: 6px;
+              border: 1px solid $border-color;
+              color: $text-primary;
+              padding: 0.5rem 0.75rem;
+              font-weight: 500;
+              transition: all 0.2s ease;
+              
+              &:hover {
+                background: $primary-soft;
+                border-color: $primary-text;
+                color: $primary-text;
+              }
+            }
+            
+            &.active a {
+              background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+              border-color: $primary-text;
+              color: white;
+              box-shadow: 0 4px 12px rgba($primary-text, 0.3);
+            }
+            
+            &.disabled a {
+              background: $soft-bg;
+              border-color: $border-color;
+              color: $text-secondary;
+              cursor: not-allowed;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// ========================================
+// Avatar & Initials
+// ========================================
+.avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  
+  &.bg-light-success {
+    background: linear-gradient(135deg, $success-soft 0%, lighten($success-soft, 3%) 100%);
+    color: $success-text;
+  }
+  
+  &.bg-light-primary {
+    background: linear-gradient(135deg, $primary-soft 0%, lighten($primary-soft, 3%) 100%);
+    color: $primary-text;
+  }
+  
+  &.bg-light-warning {
+    background: linear-gradient(135deg, $warning-soft 0%, lighten($warning-soft, 3%) 100%);
+    color: $warning-text;
+  }
+  
+  .avatar-content {
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+// ========================================
+// Badge Styling
+// ========================================
+.badge {
+  padding: 0.5rem 0.85rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.3px;
+  border-radius: 6px;
+  
+  &.badge-success {
+    background: linear-gradient(135deg, $success-soft 0%, lighten($success-soft, 2%) 100%);
+    color: $success-text;
+    border: 1px solid lighten($success-text, 40%);
+  }
+  
+  &.badge-warning {
+    background: linear-gradient(135deg, $warning-soft 0%, lighten($warning-soft, 2%) 100%);
+    color: $warning-text;
+    border: 1px solid lighten($warning-text, 40%);
+  }
+  
+  &.badge-info {
+    background: linear-gradient(135deg, $info-soft 0%, lighten($info-soft, 2%) 100%);
+    color: $info-text;
+    border: 1px solid lighten($info-text, 40%);
+  }
+  
+  &.badge-glow {
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+}
+
+// ========================================
+// Dropdown Menu Styling
+// ========================================
+::ng-deep {
+  .dropdown-menu {
+    border-radius: 8px;
+    border: 1px solid $border-color;
+    box-shadow: 0 8px 24px rgba(34, 41, 47, 0.15);
+    padding: 0.5rem 0;
+    
+    .dropdown-item {
+      padding: 0.75rem 1.25rem;
+      color: $text-primary;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      
+      span[data-feather] {
+        color: $text-secondary;
+        transition: color 0.2s ease;
+      }
+      
+      &:hover {
+        background: $primary-soft;
+        color: $primary-text;
+        
+        span[data-feather] {
+          color: $primary-text;
+        }
+      }
+      
+      &:active {
+        background: darken($primary-soft, 5%);
+      }
+    }
+  }
+}
+
+// ========================================
+// Button Styling
+// ========================================
+.btn {
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  
+  &.icon-btn {
+    padding: 0.5rem;
+    
+    &:hover {
+      background: $primary-soft;
+      
+      span[data-feather] {
+        color: $primary-text;
+      }
+    }
+  }
+  
+  &.btn-danger {
+    background: linear-gradient(135deg, $danger-text 0%, darken($danger-text, 10%) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba($danger-text, 0.3);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($danger-text, 0.4);
+    }
+  }
+  
+  &.btn-success {
+    background: linear-gradient(135deg, $success-text 0%, darken($success-text, 10%) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba($success-text, 0.3);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($success-text, 0.4);
+    }
+  }
+}
+
+// ========================================
+// Modal Records Header Styling
+// ========================================
+.modal-records-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 7%) 100%);
+  border-radius: 8px;
+  margin: 1rem;
+  
+  // Header Icon Wrapper
+  .header-icon-wrapper {
+    .icon-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      
+      &.bg-gradient-info {
+        background: linear-gradient(135deg, $info-text 0%, darken($info-text, 10%) 100%);
+        color: white;
+      }
+      
+      &:hover {
+        transform: scale(1.05) rotate(5deg);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+      }
+    }
+  }
+  
+  h4 {
+    font-size: 1.3rem;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.3px;
+  }
+  
+  p.small {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+}
+
+// ========================================
+// Statistics Card Styling
+// ========================================
+.stats-card {
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-left: 3px solid $success-text;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, $success-soft 0%, lighten($success-soft, 3%) 100%);
+    
+    span {
+      color: $success-text;
+    }
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $text-primary;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .stat-label {
+    font-size: 0.75rem;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0.25rem;
+  }
+}
+
+// ========================================
+// Enhanced Search Box Styling
+// ========================================
+.search-box-enhanced {
+  .input-group {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    
+    &:focus-within {
+      box-shadow: 0 4px 12px rgba($primary-text, 0.2);
+      transform: translateY(-1px);
+    }
+    
+    .input-group-text {
+      padding: 0.75rem 1rem;
+      border: 1px solid $border-color;
+      
+      &.bg-transparent {
+        background: transparent;
+      }
+      
+      &.border-right-0 {
+        border-right: none;
+      }
+      
+      &.border-left-0 {
+        border-left: none;
+      }
+      
+      &.cursor-pointer {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: $danger-soft;
+        }
+      }
+    }
+    
+    .form-control {
+      border: 1px solid $border-color;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      
+      &.border-left-0 {
+        border-left: none;
+      }
+      
+      &.border-right-0 {
+        border-right: none;
+      }
+      
+      &:focus {
+        border-color: $primary-text;
+        box-shadow: none;
+        background: lighten($primary-soft, 7%);
+      }
+      
+      &::placeholder {
+        color: lighten($text-secondary, 10%);
+        font-style: italic;
+      }
+    }
+    
+    // Icon Styling
+    .search-icon {
+      width: 18px;
+      height: 18px;
+      color: $primary-text;
+    }
+    
+    .filter-icon {
+      width: 18px;
+      height: 18px;
+      color: $text-secondary;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        color: $primary-text;
+      }
+    }
+    
+    .clear-icon {
+      width: 18px;
+      height: 18px;
+      color: $danger-text;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}
+
+// ========================================
+// Old Search Box (deprecated - keeping for compatibility)
+// ========================================
+.search-box {
+  .input-group-merge {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    
+    &:focus-within {
+      box-shadow: 0 4px 12px rgba($primary-text, 0.15);
+      transform: translateY(-1px);
+    }
+    
+    .input-group-text {
+      background: white;
+      border: 1px solid $border-color;
+      border-right: none;
+      
+      &:first-child {
+        border-radius: 8px 0 0 8px;
+      }
+      
+      &:last-child {
+        border-left: none;
+        border-radius: 0 8px 8px 0;
+      }
+      
+      &.cursor-pointer {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background: $danger-soft;
+        }
+      }
+    }
+    
+    .form-control {
+      border: 1px solid $border-color;
+      border-left: none;
+      border-right: none;
+      
+      &:focus {
+        border-color: $primary-text;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+// ========================================
+// Avatar Info Styling
+// ========================================
+.avatar.bg-light-info {
+  background: linear-gradient(135deg, $info-soft 0%, lighten($info-soft, 3%) 100%);
+  
+  .avatar-content {
+    color: $info-text;
+  }
+}
+
+.stat-icon.bg-light-success {
+  background: linear-gradient(135deg, $success-soft 0%, lighten($success-soft, 3%) 100%);
+}
+
+// ========================================
+// Pagination Styling (ngb-pagination)
+// ========================================
+::ng-deep {
+  ngb-pagination {
+    .pagination {
+      margin: 0;
+      
+      .page-item {
+        margin: 0 4px;
+        
+        .page-link {
+          border-radius: 8px;
+          border: 1px solid $border-color;
+          color: $text-primary;
+          padding: 0.5rem 0.75rem;
+          font-weight: 500;
+          transition: all 0.2s ease;
+          min-width: 40px;
+          text-align: center;
+          
+          &:hover {
+            background: $primary-soft;
+            border-color: $primary-text;
+            color: $primary-text;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba($primary-text, 0.2);
+          }
+          
+          &:focus {
+            box-shadow: 0 0 0 0.2rem rgba($primary-text, 0.15);
+          }
+        }
+        
+        &.active .page-link {
+          background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+          border-color: $primary-text;
+          color: white;
+          box-shadow: 0 4px 12px rgba($primary-text, 0.3);
+          
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba($primary-text, 0.4);
+          }
+        }
+        
+        &.disabled .page-link {
+          background: $soft-bg;
+          border-color: $border-color;
+          color: $text-secondary;
+          cursor: not-allowed;
+          
+          &:hover {
+            transform: none;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+// ========================================
+// Modal Styling
+// ========================================
+
+.modal-body {
+  padding: 2rem;
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+    
+    label {
+      font-weight: 600;
+      color: $text-primary;
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+    
+    textarea {
+      border-radius: 8px;
+      border: 1px solid $border-color;
+      padding: 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.85rem;
+      color: $text-primary;
+      background: $soft-bg;
+      transition: all 0.3s ease;
+      
+      &:focus {
+        border-color: $primary-text;
+        box-shadow: 0 0 0 0.2rem rgba($primary-text, 0.15);
+        background: white;
+      }
+    }
+  }
+}
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid $border-color;
+  
+  .btn {
+    min-width: 120px;
+  }
+}
+
+// ========================================
+// Responsive Adjustments
+// ========================================
+@media (max-width: 768px) {
+  .card .row {
+    padding: 0.75rem 1rem;
+  }
+  
+  ::ng-deep {
+    .ngx-datatable.bootstrap {
+      .datatable-header .datatable-header-cell,
+      .datatable-body .datatable-body-cell {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+      }
+    }
+  }
+  
+  .modal-body {
+    padding: 1.5rem;
+  }
+}

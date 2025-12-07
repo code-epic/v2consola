@@ -1,0 +1,213 @@
+@import '@core/scss/base/pages/app-ecommerce.scss';
+
+// ========================================
+// Connections Component Styles (Soft Minimalist)
+// ========================================
+
+// Typography
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+// Colors - Soft Palette
+$soft-bg: #f8f9fa;
+$card-bg: #ffffff;
+$text-primary: #5e5873;
+$text-secondary: #b9b9c3;
+$border-color: #ebe9f1;
+
+$primary-soft: #e3f2fd; // Light Blue
+$primary-text: #2196f3;
+
+$success-soft: #e8f5e9; // Light Green
+$success-text: #4caf50;
+
+$warning-soft: #fff3e0; // Light Orange
+$warning-text: #ff9800;
+
+$danger-soft: #ffebee; // Light Red
+$danger-text: #f44336;
+
+// ========================================
+// Header & Controls Styles
+// ========================================
+
+.card-header-custom {
+  padding: 24px 24px 16px 24px;
+  background: white;
+  border-bottom: 1px solid $border-color;
+  border-radius: 8px 8px 0 0;
+}
+
+.header-title-group {
+  .content-header-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: $text-primary;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+  }
+  
+  small {
+    font-size: 0.9rem;
+    color: $text-secondary;
+  }
+}
+
+.header-search {
+  min-width: 300px;
+  
+  .input-group {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    
+    &:focus-within {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transform: translateY(-1px);
+    }
+  }
+  
+  .input-group-text {
+    background: white;
+    border-color: $border-color;
+    border-right: none;
+    color: $text-secondary;
+  }
+  
+  .form-control {
+    border-color: $border-color;
+    border-left: none;
+    padding-left: 0;
+    color: $text-primary;
+    
+    &::placeholder {
+      color: lighten($text-secondary, 10%);
+    }
+    
+    &:focus {
+      box-shadow: none;
+      border-color: $border-color;
+    }
+  }
+}
+
+.actions-bar {
+  margin-top: 16px;
+}
+
+.actions-left {
+  gap: 12px;
+}
+
+.pagination-select-wrapper {
+  select {
+    min-width: 70px;
+    border-radius: 6px;
+    border-color: $border-color;
+    font-size: 0.9rem;
+    padding: 4px 8px;
+    transition: all 0.2s ease;
+    
+    &:focus {
+      border-color: $primary-text;
+      box-shadow: 0 0 0 2px rgba($primary-text, 0.1);
+    }
+  }
+}
+
+.status-filter {
+  min-width: 200px;
+}
+
+.custom-select-soft {
+  ::ng-deep {
+    .ng-select-container {
+      border-radius: 6px;
+      border-color: $border-color;
+      min-height: 36px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+      transition: all 0.2s ease;
+      
+      &:hover {
+        border-color: darken($border-color, 5%);
+      }
+    }
+    
+    .ng-value-container {
+      padding-left: 8px;
+    }
+    
+    &.ng-select-focused {
+      .ng-select-container {
+        border-color: $primary-text;
+        box-shadow: 0 0 0 2px rgba($primary-text, 0.1);
+      }
+    }
+  }
+}
+
+.actions-right {
+  display: flex;
+  gap: 8px;
+  
+  .btn {
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    
+    &.btn-primary {
+      background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+      border: none;
+      box-shadow: 0 2px 8px rgba($primary-text, 0.2);
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($primary-text, 0.3);
+      }
+    }
+    
+    &.btn-warning {
+      background: linear-gradient(135deg, $warning-text 0%, darken($warning-text, 10%) 100%);
+      border: none;
+      box-shadow: 0 2px 8px rgba($warning-text, 0.2);
+      color: white;
+      
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($warning-text, 0.3);
+      }
+    }
+    
+    &.btn-outline-secondary {
+      border-color: $border-color;
+      color: $text-primary;
+      background: white;
+      
+      &:hover {
+        background: $soft-bg;
+        border-color: darken($border-color, 5%);
+        transform: translateY(-1px);
+      }
+    }
+  }
+  
+  .btn-group {
+    .btn {
+      &:first-child {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      
+      &:last-child {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+      
+      &:not(:first-child):not(:last-child) {
+        border-radius: 0;
+      }
+    }
+  }
+}
+
+// Import pastel input styles
+@import '../../tools/api/register-api/register-api-pastel.scss';

@@ -3,283 +3,339 @@
     <!-- content-header component -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-
-    <!-- Invoice List -->
+    <!-- Application List -->
     <section class="invoice-list-wrapper">
-      <div class="card">
 
-        <!-- Invoice List Header -->
-        <div class="row">
-          <div class="col-md-6 col-12">
-            <div class="d-flex justify-content-between align-items-center m-1">
-              <div class="d-flex align-items-center">
-                <label class="d-flex align-items-center">Mostrar
-                  <select class="form-control mx-25" [(ngModel)]="basicSelectedOption">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </label>
+
+      <div class="card">
+        <div class="card-header border-bottom">
+          <h4 class="card-title">Búsqueda de Aplicaciones</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <!-- Filtro por Perfil -->
+            <div class="col-md-4">
+              <label for="profile-filter">Filtrar por Perfil</label>
+              <ng-select [items]="lenguaje" 
+                bindLabel="name" 
+                bindId="id" 
+                bindValue="name" 
+                [clearable]="false"
+                placeholder="Seleccionar Lenguaje" 
+                (change)="filterLenguaje($event)" 
+                class="custom-select-enhanced">
+                <ng-template ng-option-tmp let-item="item">
+                  <span [data-feather]="'user-check'" [size]="16" class="mr-1"></span> {{ item.name }}
+                </ng-template>
+              </ng-select>
+            </div>
+            <!-- Búsqueda -->
+            <div class="col-md-4">
+              <label for="search-input">Buscar Aplicación</label>
+              <div class="input-group input-group-merge">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><span [data-feather]="'search'"></span></span>
+                </div>
+                <input [(ngModel)]="searchValue" 
+                name="searchValue" 
+                type="search" 
+                class="form-control"
+                placeholder="Buscar aplicaciones..." 
+                (keyup)="filterUpdate($event)" 
+                (search)="filterUpdate($event)" 
+                ngbTooltip="Buscar por nombre, rama o proyecto" 
+                placement="top" />
               </div>
             </div>
-          </div>
-          <div class="
-                        col-md-6 col-lg-4 col-12
-                        d-flex
-                        justify-content-start justify-content-md-end
-                        align-items-center
-                        offset-lg-2
-                      ">
-            <div class="row pr-1 pb-1 pb-md-0 align-items-center w-100">
-              <div class="col-10 col-md-6 pr-0">
-                <label class="d-flex align-items-center mb-0 ml-1 ml-md-0"><input [(ngModel)]="searchValue"
-                    name="searchValue" type="search" class="form-control" placeholder="Buscar..."
-                    (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" /></label>
-              </div>
-              <div class="col-10 col-md-6 mt-2 ml-1 ml-md-0 mt-md-0">
-                <fieldset class="form-group mb-0">
-                  <ng-select [items]="lenguaje" bindLabel="name" bindId="id" bindValue="name"
-                    placeholder="Seleccione Status" (change)="filterLenguaje($event)"></ng-select>
-                </fieldset>
-              </div>
+            <!-- Botón de Exportar -->
+            <div class="col-md-4 d-flex align-items-end">
+              <!-- <button type="button" (click)="ListadoUsers()" class="btn btn-primary w-100" rippleEffect
+                style="height: 38px;">
+                <span [data-feather]="'download'" class="mr-1"></span>Exportar a PDF
+              </button> -->
             </div>
           </div>
         </div>
-        <!--/ Invoice List Header -->
 
-        <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-          [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
-          [limit]="basicSelectedOption">
+        <ngx-datatable [rows]="rowData" [rowHeight]="60" class="bootstrap core-bootstrap minimalist-table"
+          [limit]="basicSelectedOption" [columnMode]="ColumnMode.force" [headerHeight]="45" [footerHeight]="45"
+          [scrollbarH]="true">
 
-
-          <ngx-datatable-column name="APLICACION" [width]="100">
-            <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+          <!-- Application Name & Avatar -->
+          <ngx-datatable-column name="APLICACION" [width]="280">
+            <ng-template let-column="column" ngx-datatable-header-template>
               <div class="d-flex align-items-center">
-                <div *ngIf="row.length > 0; else customAvatar">
-                  <img class="rounded-circle mr-1" src="{{ row.avatar }}" height="32" width="32"
-                    alt="datatable-avatar" />
+                <span [data-feather]="'box'" class="mr-1 text-primary" [size]="14"></span>
+                <span class="font-weight-bolder text-uppercase">Aplicación</span>
+              </div>
+            </ng-template>
+            <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+              <div class="d-flex align-items-center py-1">
+                <div *ngIf="row.length > 0; else customAvatar" class="avatar-wrapper mr-3">
+                  <img class="rounded-circle shadow-sm" src="{{ row.avatar }}" height="38" width="38" alt="avatar"
+                    ngbTooltip="Avatar del proyecto" />
                 </div>
                 <ng-template #customAvatar>
-                  <div class="avatar mr-1 ml-0" [ngClass]="{
+                  <div class="avatar avatar-md mr-3 ml-0 shadow-sm" [ngClass]="{
                         'bg-light-success': row.esta == '1',
                         'bg-light-danger': row.esta == '0'
-                      }">
-                    <div class="avatar-content">{{ row.nombre.toUpperCase() | initials }}</div>
+                      }" [ngbTooltip]="row.esta == '1' ? 'Activo' : 'Inactivo'">
+                    <div class="avatar-content font-weight-bolder">{{ row.nombre.toUpperCase() | initials }}</div>
                   </div>
                 </ng-template>
-                <div class="cell-line-height">
-                  <span class="font-weight-bold d-block text-nowrap font-medium-1">{{ row.nombre }}</span>
-                  <span class="text-muted font-small-2"> {{ row.fecha | date:"dd-MM-yyyy" }}</span>
+                <div class="d-flex flex-column">
+                  <span class="font-weight-bolder text-dark font-medium-2 text-truncate" [ngbTooltip]="row.nombre">{{
+                    row.nombre }}</span>
+                  <span class="text-muted font-small-1 d-flex align-items-center">
+                    <span [data-feather]="'calendar'" [size]="10" class="mr-1"></span>
+                    {{ row.fecha | date:"dd MMM yyyy" }}
+                  </span>
                 </div>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="RAMA" [width]="50">
+          <!-- Branch -->
+          <ngx-datatable-column name="RAMA" [width]="120" [cellClass]="'d-flex justify-content-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="w-100 text-center d-flex align-items-center justify-content-center">
+                <span [data-feather]="'git-branch'" class="mr-1 text-info" [size]="14"></span>
+                <span class="font-weight-bolder text-uppercase">Rama</span>
+              </div>
+            </ng-template>
             <ng-template let-row="row" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> {{ row.rama }} </span>
+              <div class="d-flex align-items-center justify-content-center w-100">
+                <div class="badge badge-light-info rounded-pill px-3 py-1 d-flex align-items-center shadow-sm"
+                  [ngbTooltip]="'Rama actual: ' + row.rama">
+                  <span class="font-weight-bold">{{ row.rama }}</span>
+                </div>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="PROYECTO" [width]="150">
+          <!-- Project -->
+          <ngx-datatable-column name="PROYECTO" [width]="160" [cellClass]="'d-flex justify-content-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="w-100 text-center d-flex align-items-center justify-content-center">
+                <span [data-feather]="'folder'" class="mr-1 text-warning" [size]="14"></span>
+                <span class="font-weight-bolder text-uppercase">Proyecto</span>
+              </div>
+            </ng-template>
             <ng-template let-row="row" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> {{ row.proyecto }} </span>
+              <div class="w-100 text-center">
+                <span class="badge badge-light-secondary rounded-pill px-3 py-1 shadow-sm"
+                  [ngbTooltip]="'Proyecto: ' + row.proyecto">{{ row.proyecto }}</span>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column name="URL" [width]="150">
+          <!-- URL -->
+          <ngx-datatable-column name="URL" [width]="220" [cellClass]="'d-flex justify-content-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="w-100 text-center d-flex align-items-center justify-content-center">
+                <span [data-feather]="'link'" class="mr-1 text-primary" [size]="14"></span>
+                <span class="font-weight-bolder text-uppercase">URL</span>
+              </div>
+            </ng-template>
             <ng-template let-row="row" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold"> https://{{ row.origen }}/{{ row.proyecto }} </span>
+              <div class="w-100 text-center">
+                <a [href]="'https://' + row.origen + '/' + row.proyecto" target="_blank"
+                  class="text-primary d-inline-flex align-items-center text-truncate hover-underline"
+                  [ngbTooltip]="'Ir a ' + row.origen + '/' + row.proyecto">
+                  <span class="text-truncate font-small-3" style="max-width: 180px;">{{ row.origen }}/{{ row.proyecto
+                    }}</span>
+                  <span [data-feather]="'external-link'" [size]="12" class="ml-1"></span>
+                </a>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-
-
-
-
-
-          <ngx-datatable-column name="Lenguaje" prop="lenguaje" [width]="150">
+          <!-- Language -->
+          <ngx-datatable-column name="LENGUAJE" prop="lenguaje" [width]="130"
+            [cellClass]="'d-flex justify-content-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="w-100 text-center d-flex align-items-center justify-content-center">
+                <span [data-feather]="'code'" class="mr-1 text-danger" [size]="14"></span>
+                <span class="font-weight-bolder text-uppercase">Lenguaje</span>
+              </div>
+            </ng-template>
             <ng-template let-lenguaje="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">{{ lenguaje }} </span>
+              <div class="w-100 text-center">
+                <span class="font-weight-bold text-dark" [ngbTooltip]="'Lenguaje: ' + lenguaje">{{ lenguaje }}</span>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-
-
-          <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
+          <!-- Actions -->
+          <ngx-datatable-column name="ACCIONES" [width]="100" [sortable]="false" [canAutoResize]="false"
+            [cellClass]="'d-flex justify-content-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="w-100 text-center d-flex align-items-center justify-content-center">
+                <span [data-feather]="'settings'" class="mr-1 text-secondary" [size]="14"></span>
+                <span class="font-weight-bolder text-uppercase">Acción</span>
+              </div>
+            </ng-template>
             <ng-template ngx-datatable-cell-template let-row="row">
-              <div ngbDropdown container="body">
-                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
-                </button>
-                <div ngbDropdownMenu>
-                  <a [href]="'https://' + row.origen+'/'+row.proyecto" target="_blank" *ngIf="row.status == '1'"
-                    ngbDropdownItem><span [data-feather]="'aperture'" [size]="16" [class]="'mr-50'"></span> Proyecto</a>
-                  <a *ngIf="row.rama.split(',').length>1&&row.status != '0'" (click)="Modal(ModalMerge, row)" ngbDropdownItem><span [data-feather]="'git-merge'" [size]="16"
-                      [class]="'mr-50'"></span> Fusionar</a>
-                  <a (click)="Clonar(row)" *ngIf="row.status == '0'" ngbDropdownItem><span
-                      [data-feather]="'download-cloud'" [size]="16" [class]="'mr-50'"></span> Clonar</a>
-                  <a (click)="Pull(row)" *ngIf="row.status == '1'" ngbDropdownItem> <span
-                      [data-feather]="'git-pull-request'" [size]="16" [class]="'mr-50'"></span> Actualizar</a>
-                  <a (click)="ModalExePlay(ModalPlay,row)" *ngIf="row.status != '0'" ngbDropdownItem><span [data-feather]="'git-commit'"
-                      [size]="16" [class]="'mr-50'"></span> Ver Log</a>
-                  <a (click)="ModalExeStatus(ModalStatus,row)" *ngIf="row.status != '0'" ngbDropdownItem><span [data-feather]="'info'"
-                    [size]="16" [class]="'mr-50'"></span> Ver Estatus</a>
+              <div class="w-100 text-center">
+                <div ngbDropdown container="body" class="d-inline-block">
+                  <button ngbDropdownToggle type="button"
+                    class="btn btn-icon btn-flat-primary btn-sm rounded-circle hide-arrow" rippleEffect
+                    ngbTooltip="Opciones">
+                    <span [data-feather]="'more-vertical'"></span>
+                  </button>
+                  <div ngbDropdownMenu class="dropdown-menu-right border-0 shadow-lg">
+                    <a [href]="'https://' + row.origen+'/'+row.proyecto" target="_blank" *ngIf="row.status == '1'"
+                      ngbDropdownItem class="dropdown-item py-2"><span [data-feather]="'aperture'" [size]="16"
+                        class="mr-2 text-primary"></span> Ver Proyecto</a>
 
-                      
+                    <div class="dropdown-divider"></div>
 
-                  <!-- <button (click)="ModalExePlay(ModalPlay,row)" type="button" class="btn icon-btn btn-sm hide-arrow"
-                    rippleEffect>
-                    <span [data-feather]="'play'" [class]="'cursor-pointer'"></span>
-                    Ver Logs
-                  </button> -->
+                    <a *ngIf="row.rama.split(',').length>1&&row.status != '0'" (click)="Modal(ModalMerge, row)"
+                      ngbDropdownItem class="dropdown-item py-2">
+                      <span [data-feather]="'git-merge'" [size]="16" class="mr-2 text-warning"></span> Fusionar
+                    </a>
+                    <a (click)="Clonar(row)" *ngIf="row.status == '0'" ngbDropdownItem class="dropdown-item py-2">
+                      <span [data-feather]="'download-cloud'" [size]="16" class="mr-2 text-info"></span> Clonar
+                    </a>
+                    <a (click)="Pull(row)" *ngIf="row.status == '1'" ngbDropdownItem class="dropdown-item py-2">
+                      <span [data-feather]="'git-pull-request'" [size]="16" class="mr-2 text-success"></span> Actualizar
+                    </a>
+
+                    <div class="dropdown-divider"></div>
+
+                    <a (click)="ModalExePlay(ModalPlay,row)" *ngIf="row.status != '0'" ngbDropdownItem
+                      class="dropdown-item py-2">
+                      <span [data-feather]="'terminal'" [size]="16" class="mr-2 text-secondary"></span> Ver Logs
+                    </a>
+                    <a (click)="ModalExeStatus(ModalStatus,row)" *ngIf="row.status != '0'" ngbDropdownItem
+                      class="dropdown-item py-2">
+                      <span [data-feather]="'activity'" [size]="16" class="mr-2 text-secondary"></span> Ver Estatus
+                    </a>
+                  </div>
                 </div>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
         </ngx-datatable>
-        <!--/ Invoice List Table -->
-
       </div>
-    </section>
-    <!--/ Invoice List -->
 
+
+
+
+
+
+
+
+
+
+
+    </section>
   </div>
 </div>
 
 
 
 
-
+<!-- Modal: Logs (Terminal Style) -->
 <ng-template #ModalPlay let-modal>
   <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Visualizar Logs</h5>
+    <h5 class="modal-title" id="myModalLabel160">
+      <span [data-feather]="'terminal'" class="mr-2"></span>Visualizar Logs</h5>
     <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <div class="row">
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <div style="width:100%; height:400px; overflow: scroll;" [innerHTML]="xrs">
-              <!-- <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
-                [ngModelOptions]="{standalone: true}" [(ngModel)]="xrs" value="{{xrs}}"></textarea> -->
-            </div>
-          </div>
-        </div>
-
-      </div>
-
+    <div style="height:400px; overflow: scroll;" [innerHTML]="xrs">
     </div>
-
   </div>
+
   <div class="modal-footer">
-    <!-- <button class="btn btn-success" tabindex="4" (click)="ScanRed()" rippleEffect>Escanear</button> -->
     <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
   </div>
 
 </ng-template>
 
-
+<!-- Modal: Status (Terminal Style) -->
 <ng-template #ModalStatus let-modal>
+
+
+
   <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Visualizar Estatus del proyecto: {{ proyecto }}</h5>
+    <h5 class="modal-title" id="myModalLabel160">
+      <span [data-feather]="'activity'" class="mr-2"></span> Estatus: {{ proyecto }}
+    </h5>
     <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
+
+
+
+
+  
   <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <div class="row">
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <div style="width:100%; height:400px; overflow: scroll;" [innerHTML]="xstatus">
-              <!-- <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
-                [ngModelOptions]="{standalone: true}" [(ngModel)]="xrs" value="{{xrs}}"></textarea> -->
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
+       <div style="height:400px; overflow: scroll;" [innerHTML]="xstatus"></div>
   </div>
+
   <div class="modal-footer">
-    <!-- <button class="btn btn-success" tabindex="4" (click)="ScanRed()" rippleEffect>Escanear</button> -->
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
+      rippleEffect>Cerrar</button>
   </div>
-
 </ng-template>
 
-
-
-
+<!-- Modal: Merge -->
 <ng-template #ModalMerge let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Fusionar ramas ¡Mantengamos el código limpio y seguro!</h5>
+  <div class="modal-header border-bottom-0 pb-0">
+    <h5 class="modal-title font-weight-bolder">Fusionar Ramas</h5>
     <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-
-    <div class="col-xl-12 col-md-12 col-12">
-      <div class="form-row">
-        Importante: Revisar cambios antes de fusionar ramas  <br><br>
-
-        Antes de fusionar cualquier rama, es fundamental visualizar y validar los cambios para garantizar la estabilidad del código. Recuerda: <br> 
-        
-        - Rama destino: Es la rama donde se encuentra actualmente el código (ej: develop).  <br>
-        - Rama a fusionar (origen): Contiene los cambios que se integrarán (ej: feature/nueva-funcionalidad).  <br>
-        - Rama main: Solo debe recibir código ya probado, ya que es la rama que se publica en producción.  <br><br>
-        
-        Pasos recomendados:  <br>
-        1. Usa git diff origen, destino o herramientas gráficas (GitHub/GitLab) para revisar diferencias. <br> 
-        2. Resuelve conflictos *antes* de fusionar.  <br>
-        3. Asegúrate de que la rama main siempre refleje una versión estable.  <br><br>
-        
+  <div class="modal-body pt-2" tabindex="0" ngbAutofocus>
+    <div class="alert alert-primary p-2 mb-3" role="alert">
+      <div class="d-flex align-items-center">
+        <span [data-feather]="'info'" class="mr-2"></span>
+        <small>Revisa los cambios antes de fusionar para mantener la estabilidad.</small>
       </div>
-
-      <div class="form-row">
-        <div class="form-group col-md-12">
-          <input type="text" [(ngModel)]="mensaje" placeholder="Comentario de la fusion"
-          [ngModelOptions]="{standalone: true}" class="form-control" />
-        </div>
-        <div class="form-group col-md-6">
-          <input type="text" [(ngModel)]="origen" placeholder="Nombre de la rama origen (develop)"
-          [ngModelOptions]="{standalone: true}" class="form-control" />
-        </div>
-        <div class="form-group col-md-6">
-          <input type="text" [(ngModel)]="destino" placeholder="Rama de destino (main)" 
-          [ngModelOptions]="{standalone: true}" class="form-control" />
-        </div>
-      </div>
-
     </div>
 
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="Merge()" rippleEffect>Fusionar</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-  </div>
+    <form>
+      <div class="form-group">
+        <label class="form-label font-weight-bold">Rama Origen (Feature)</label>
+        <div class="input-group input-group-merge">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><span [data-feather]="'git-branch'"></span></span>
+          </div>
+          <input type="text" [(ngModel)]="origen" [ngModelOptions]="{standalone: true}" class="form-control"
+            placeholder="Ej: feature/nueva-funcionalidad" />
+        </div>
+      </div>
 
+      <div class="form-group">
+        <label class="form-label font-weight-bold">Rama Destino (Main/Develop)</label>
+        <div class="input-group input-group-merge">
+          <div class="input-group-prepend">
+            <span class="input-group-text"><span [data-feather]="'arrow-right-circle'"></span></span>
+          </div>
+          <input type="text" [(ngModel)]="destino" [ngModelOptions]="{standalone: true}" class="form-control"
+            placeholder="Ej: main" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label font-weight-bold">Comentario</label>
+        <textarea [(ngModel)]="mensaje" [ngModelOptions]="{standalone: true}" class="form-control" rows="3"
+          placeholder="Describe los cambios de esta fusión..."></textarea>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer border-top-0">
+    <button type="button" class="btn btn-flat-secondary" (click)="modal.close('Accept click')"
+      rippleEffect>Cancelar</button>
+    <button class="btn btn-primary" (click)="Merge()" rippleEffect>
+      <span [data-feather]="'git-merge'" class="mr-1"></span> Fusionar
+    </button>
+  </div>
 </ng-template>

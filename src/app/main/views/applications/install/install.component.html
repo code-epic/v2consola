@@ -42,13 +42,18 @@
 
                                             <div class="form-group col-md-6" *ngIf="showAppA">
                                                 <label class="form-label" for="apli">Aplicacion</label>
-                                                <ng-select [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp"
-                                                    [ngModelOptions]="{standalone: true}"
-                                                    (ngModelChange)='selectEventModuloo($event)'
-                                                    [class.error]="accountDetailsForm.submitted" bindLabel="name"
-                                                    name="aplicacion" id="aplicacion" required placeholder="Seleccione"
-                                                    bindValue="identificador">
-                                                </ng-select>
+                                                <div class="ng-select-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'grid'" [size]="16"></span></span>
+                                                    </div>
+                                                    <ng-select [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        (ngModelChange)='selectEventModuloo($event)'
+                                                        [class.error]="accountDetailsForm.submitted" bindLabel="name"
+                                                        name="aplicacion" id="aplicacion" required placeholder="Seleccione"
+                                                        bindValue="identificador">
+                                                    </ng-select>
+                                                </div>
                                                 <span *ngIf="accountDetailsForm.submitted && aplicacion.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
@@ -58,11 +63,16 @@
                                             </div>
                                             <div class="form-group col-md-6" *ngIf="showAppB">
                                                 <label class="form-label" for="aplicacion">Aplicacion</label>
-                                                <input [(ngModel)]="iApp.nombre" #Apliref="ngModel"
-                                                    [ngModelOptions]="{standalone: true}" required type="text"
-                                                    name="aplicacion" id="aplicacion" class="form-control"
-                                                    (blur)='selectEventModulo($event)'
-                                                    [class.error]="!Apliref.valid && accountDetailsForm.submitted" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'grid'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.nombre" #Apliref="ngModel"
+                                                        [ngModelOptions]="{standalone: true}" required type="text"
+                                                        name="aplicacion" id="aplicacion" class="form-control"
+                                                        (blur)='selectEventModulo($event)'
+                                                        [class.error]="!Apliref.valid && accountDetailsForm.submitted" />
+                                                </div>
 
                                                 <span *ngIf="accountDetailsForm.submitted && Apliref.invalid"
                                                     class="invalid-form">
@@ -74,9 +84,14 @@
 
                                             <div class="form-group col-md-3">
                                                 <label class="form-label" for="proyecto">Nombre Proyecto</label>
-                                                <input [(ngModel)]="iApp.proyecto" #Proyecto="ngModel" required
-                                                    type="text" name="proyecto" id="proyecto" class="form-control"
-                                                    [class.error]="!Proyecto.valid && accountDetailsForm.submitted" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'folder'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.proyecto" #Proyecto="ngModel" required
+                                                        type="text" name="proyecto" id="proyecto" class="form-control"
+                                                        [class.error]="!Proyecto.valid && accountDetailsForm.submitted" />
+                                                </div>
 
                                                 <span *ngIf="accountDetailsForm.submitted && Proyecto.invalid"
                                                     class="invalid-form">
@@ -87,9 +102,14 @@
 
                                             <div class="form-group col-md-3">
                                                 <label class="form-label" for="rama">Nombre de la Rama</label>
-                                                <input [(ngModel)]="iApp.rama" #Ramas="ngModel" required
-                                                    type="text" name="rama" id="rama" class="form-control"
-                                                    [class.error]="!Ramas.valid && accountDetailsForm.submitted" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.rama" #Ramas="ngModel" required
+                                                        type="text" name="rama" id="rama" class="form-control"
+                                                        [class.error]="!Ramas.valid && accountDetailsForm.submitted" />
+                                                </div>
 
                                                 <span *ngIf="accountDetailsForm.submitted && Ramas.invalid"
                                                     class="invalid-form">
@@ -104,13 +124,18 @@
                                         <div class="row">
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="tipo">Tipo de instalación</label>
-                                                <ng-select [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo"
-                                                    [class.error]="accountDetailsForm.submitted"
-                                                    (ngModelChange)="CapturarSeleccion($event)" bindLabel="descripcion"
-                                                    name="tipo" id="tipo" required placeholder="Seleccione"
-                                                    bindValue="id">
-                                                    <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
-                                                </ng-select>
+                                                <div class="ng-select-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'settings'" [size]="16"></span></span>
+                                                    </div>
+                                                    <ng-select [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo"
+                                                        [class.error]="accountDetailsForm.submitted"
+                                                        (ngModelChange)="CapturarSeleccion($event)" bindLabel="descripcion"
+                                                        name="tipo" id="tipo" required placeholder="Seleccione"
+                                                        bindValue="id">
+                                                        <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
+                                                    </ng-select>
+                                                </div>
                                                 <span *ngIf="accountDetailsForm.submitted && Tipo.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
@@ -119,13 +144,18 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="servidor">Servidor</label>
-                                                <ng-select #Server="ngModel" [(ngModel)]="iApp.origen"
-                                                    [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                    name="servidor" id="servidor" required
-                                                    placeholder="Seleccione Servidor" bindValue="id">
-                                                    <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}">{{ mdl.id
-                                                        }} | {{ mdl.descripcion }}</ng-option>
-                                                </ng-select>
+                                                <div class="ng-select-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'server'" [size]="16"></span></span>
+                                                    </div>
+                                                    <ng-select #Server="ngModel" [(ngModel)]="iApp.origen"
+                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
+                                                        name="servidor" id="servidor" required
+                                                        placeholder="Seleccione Servidor" bindValue="id">
+                                                        <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}">{{ mdl.id
+                                                            }} | {{ mdl.descripcion }}</ng-option>
+                                                    </ng-select>
+                                                </div>
                                                 <span *ngIf="accountDetailsForm.submitted && Server.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
@@ -134,12 +164,17 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="sistemas">Sistema Operativo</label>
-                                                <ng-select [items]="sistemasOperativos" #System="ngModel"
-                                                    [(ngModel)]="iApp.sistema"
-                                                    [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                    name="sistemas" id="sistemas" required
-                                                    placeholder="Seleccione Servidor" bindValue="id">
-                                                </ng-select>
+                                                <div class="ng-select-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'monitor'" [size]="16"></span></span>
+                                                    </div>
+                                                    <ng-select [items]="sistemasOperativos" #System="ngModel"
+                                                        [(ngModel)]="iApp.sistema"
+                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
+                                                        name="sistemas" id="sistemas" required
+                                                        placeholder="Seleccione Servidor" bindValue="id">
+                                                    </ng-select>
+                                                </div>
                                                 <span *ngIf="accountDetailsForm.submitted && System.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
@@ -150,9 +185,14 @@
                                         <div class="row">
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="repositorio">Repositorio Url</label>
-                                                <input [(ngModel)]="iApp.repositorio" #Reporef="ngModel" required
-                                                    type="text" name="repositorio" id="repositorio" class="form-control"
-                                                    [class.error]="!Reporef.valid && accountDetailsForm.submitted" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'github'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.repositorio" #Reporef="ngModel" required
+                                                        type="text" name="repositorio" id="repositorio" class="form-control"
+                                                        [class.error]="!Reporef.valid && accountDetailsForm.submitted" />
+                                                </div>
 
                                                 <span *ngIf="accountDetailsForm.submitted && Reporef.invalid"
                                                     class="invalid-form">
@@ -162,9 +202,14 @@
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="usuario">Usuario</label>
-                                                <input [(ngModel)]="iApp.usuario" #Usuref="ngModel" required type="text"
-                                                    name="usuario" id="usuario" class="form-control"
-                                                    [class.error]="!Usuref.valid && accountDetailsForm.submitted" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.usuario" #Usuref="ngModel" required type="text"
+                                                        name="usuario" id="usuario" class="form-control"
+                                                        [class.error]="!Usuref.valid && accountDetailsForm.submitted" />
+                                                </div>
 
                                                 <span *ngIf="accountDetailsForm.submitted && Usuref.invalid"
                                                     class="invalid-form">
@@ -174,25 +219,40 @@
                                             </div>
                                             <div class="form-group col-md-4">
                                                 <label class="form-label" for="password">Password / Token</label>
-                                                <input [(ngModel)]="iApp.clave" type="text"
-                                                    [ngModelOptions]="{standalone: true}" class="form-control" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'key'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.clave" type="text"
+                                                        [ngModelOptions]="{standalone: true}" class="form-control" />
+                                                </div>
                                             </div>
                                             <div class="form-group col-md-2">
                                                 <label class="form-label" for="montaje">Punto Montaje</label>
-                                                <input [(ngModel)]="iApp.puntoMontaje"
-                                                    [ngModelOptions]="{standalone: true}" type="text"
-                                                    class="form-control" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'hard-drive'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.puntoMontaje"
+                                                        [ngModelOptions]="{standalone: true}" type="text"
+                                                        class="form-control" />
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-5">
                                                 <label class="form-label" for="bdatos">Base de Datos</label>
-                                                <ng-select [items]="basesDatos" #Bdatos="ngModel"
-                                                    [(ngModel)]="iApp.basedatos"
-                                                    [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                    name="bdatos" id="bdatos" required placeholder="Seleccione"
-                                                    bindValue="id">
-                                                </ng-select>
+                                                <div class="ng-select-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
+                                                    </div>
+                                                    <ng-select [items]="basesDatos" #Bdatos="ngModel"
+                                                        [(ngModel)]="iApp.basedatos"
+                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
+                                                        name="bdatos" id="bdatos" required placeholder="Seleccione"
+                                                        bindValue="id">
+                                                    </ng-select>
+                                                </div>
                                                 <span *ngIf="accountDetailsForm.submitted && Bdatos.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
@@ -201,10 +261,15 @@
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label class="form-label" for="version">Versión</label>
-                                                <input [(ngModel)]="iApp.version" [readOnly]="true" #Verref="ngModel"
-                                                    required type="text" name="version" id="version"
-                                                    class="form-control"
-                                                    [class.error]="!Verref.valid && accountDetailsForm.submitted" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'tag'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input [(ngModel)]="iApp.version" [readOnly]="true" #Verref="ngModel"
+                                                        required type="text" name="version" id="version"
+                                                        class="form-control"
+                                                        [class.error]="!Verref.valid && accountDetailsForm.submitted" />
+                                                </div>
 
                                                 <span *ngIf="accountDetailsForm.submitted && Verref.invalid"
                                                     class="invalid-form">
@@ -214,12 +279,17 @@
                                             </div>
                                             <div class="form-group col-md-3">
                                                 <label class="form-label" for="lenguaje">Lenguaje</label>
-                                                <ng-select [items]="lenguaje" #Lenref="ngModel"
-                                                    [(ngModel)]="iApp.lenguaje"
-                                                    [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                    name="lenguaje" id="lenguaje" required placeholder="Seleccione"
-                                                    bindValue="id">
-                                                </ng-select>
+                                                <div class="ng-select-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
+                                                    </div>
+                                                    <ng-select [items]="lenguaje" #Lenref="ngModel"
+                                                        [(ngModel)]="iApp.lenguaje"
+                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
+                                                        name="lenguaje" id="lenguaje" required placeholder="Seleccione"
+                                                        bindValue="id">
+                                                    </ng-select>
+                                                </div>
                                                 <span *ngIf="accountDetailsForm.submitted && Lenref.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
@@ -236,12 +306,15 @@
                                         <div class="row">
                                             <div class="form-group col-md-12">
                                                 <label for="descripcion">Descripción</label>
-                                                <fieldset class="form-group">
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                                                    </div>
                                                     <textarea [(ngModel)]="iApp.observacion" #Desref="ngModel" required
                                                         type="text" name="descripcion" id="descripcion"
                                                         class="form-control"
                                                         [class.error]="!Desref.valid && accountDetailsForm.submitted"></textarea>
-                                                </fieldset>
+                                                </div>
                                                 <span *ngIf="accountDetailsForm.submitted && Desref.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
@@ -276,24 +349,39 @@
 
                                             <div class="form-group col-md-12">
                                                 <label class="form-label" for="language">Driver</label>
-                                                <ng-select [items]="ListaConexiones" [(ngModel)]="iApp.sistema"
-                                                    bindLabel="name" name="driver" id="driver" required
-                                                    placeholder="Seleccione Driver" bindValue="id">
-                                                </ng-select>
+                                                <div class="ng-select-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'hard-drive'" [size]="16"></span></span>
+                                                    </div>
+                                                    <ng-select [items]="ListaConexiones" [(ngModel)]="iApp.sistema"
+                                                        bindLabel="name" name="driver" id="driver" required
+                                                        placeholder="Seleccione Driver" bindValue="id">
+                                                    </ng-select>
+                                                </div>
                                             </div>
 
                                             <div class="form-group col-md-12">
                                                 <label class="form-label" for="first-name">Archivo</label>
-                                                <input type="file" [(ngModel)]="TDFirstNameVar" required
-                                                    name="first-name" id="first-name" class="form-control"
-                                                    placeholder="John" />
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'file'" [size]="16"></span></span>
+                                                    </div>
+                                                    <input type="file" [(ngModel)]="TDFirstNameVar" required
+                                                        name="first-name" id="first-name" class="form-control"
+                                                        placeholder="John" />
+                                                </div>
                                             </div>
 
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-12">
                                                 <label class="form-label" for="country">SQL</label>
-                                                <textarea rows="7" class="form-control"></textarea>
+                                                <div class="input-group-pastel">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
+                                                    </div>
+                                                    <textarea rows="7" class="form-control"></textarea>
+                                                </div>
                                             </div>
 
                                         </div>

@@ -1,0 +1,136 @@
+/* ========================================
+   API LIST SEARCH PASTEL STYLES
+   ======================================== */
+
+/* Search Result Card Pastel */
+.search-result-card-pastel {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #f0f0f5;
+  transition: all 0.2s ease;
+  margin: 4px 0;
+  
+  &:hover {
+    background: #fafbff;
+    border-color: #e8e0ff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transform: translateY(-1px);
+    
+    .search-result-header .search-result-title {
+      color: #7c3aed;
+    }
+    
+    .pastel-icon {
+      color: #8b5cf6;
+      background-color: #f3f0ff;
+    }
+  }
+}
+
+/* Header Section */
+.search-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  
+  .search-result-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin: 0;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    
+    svg {
+      margin-right: 8px;
+    }
+  }
+  
+  .pastel-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background-color: #f0ebff;
+    color: #7c3aed;
+    display: flex;
+    align-items: center;
+    
+    svg {
+      margin-right: 4px;
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
+/* Body Section */
+.search-result-body {
+  margin-bottom: 10px;
+  
+  .search-result-description {
+    font-size: 0.85rem;
+    color: #718096;
+    margin: 0;
+    line-height: 1.4;
+    display: flex;
+    align-items: flex-start;
+    
+    svg {
+      margin-right: 8px;
+      margin-top: 3px;
+      flex-shrink: 0;
+      color: #cbd5e0;
+    }
+  }
+}
+
+/* Footer Section */
+.search-result-footer {
+  display: flex;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px dashed #f0f0f5;
+  
+  .footer-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #a0aec0;
+    margin-right: 16px;
+    
+    &:last-child {
+      margin-right: 0;
+    }
+    
+    svg {
+      margin-right: 6px;
+      color: #cbd5e0;
+    }
+    
+    strong {
+      color: #718096;
+      font-weight: 500;
+      margin-left: 4px;
+    }
+  }
+}
+
+/* Icon Styling */
+.pastel-icon {
+  color: #c4b5fd;
+  transition: all 0.2s ease;
+  
+  &.icon-lg {
+    width: 18px;
+    height: 18px;
+  }
+  
+  &.icon-sm {
+    width: 14px;
+    height: 14px;
+  }
+}

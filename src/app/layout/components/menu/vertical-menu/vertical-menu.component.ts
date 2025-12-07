@@ -8,6 +8,7 @@ import { PerfectScrollbarDirective } from 'ngx-perfect-scrollbar';
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
+import { ApiService } from '@services/apicore/api.service';
 
 @Component({
   selector: 'vertical-menu',
@@ -23,6 +24,9 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
 
   // Private
   private _unsubscribeAll: Subject<any>;
+  public logo: string = '';
+  public logoWidth: string = '36';
+  public isBDV: boolean = false;
 
   /**
    * Constructor
@@ -36,7 +40,8 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     private _coreConfigService: CoreConfigService,
     private _coreMenuService: CoreMenuService,
     private _coreSidebarService: CoreSidebarService,
-    private _router: Router
+    private _router: Router,
+    private apiService: ApiService,
   ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -91,6 +96,15 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
       .subscribe(() => {
         this.menu = this._coreMenuService.getCurrentMenu();
       });
+
+    this.isBDV = this.apiService.ConsultaSistemaBDV()
+    if (this.isBDV) {
+      this.coreConfig.app.appName = ''
+      this.logo = 'assets/images/bdv/bdv.png'
+      this.logoWidth = '70'
+    } else {
+      this.logo = 'assets/images/logo/logo.png'
+    }
   }
 
   /**

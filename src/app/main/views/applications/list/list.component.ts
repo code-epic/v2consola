@@ -67,14 +67,14 @@ export class ListComponent implements OnInit {
     contenido: "",
   };
 
-  public msj:string = "Cargardo!!! por favor espere..."
+  public msj: string = "Cargardo!!! por favor espere..."
 
   // Private
 
-  public xrs:string = ''
-  public xstatus:string = ''
+  public xrs: string = ''
+  public xstatus: string = ''
 
-  
+
 
   public urlEnvironment = environment;
 
@@ -96,9 +96,9 @@ export class ListComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
-  public origen : string = ''
-  public destino : string = ''
-  public mensaje : string = ''
+  public origen: string = ''
+  public destino: string = ''
+  public mensaje: string = ''
   public proyecto: string = ''
 
   constructor(
@@ -169,7 +169,7 @@ export class ListComponent implements OnInit {
     let nameFnx = "Fnx_GitCloneAll";
     let ramas = ''
     app.rama.split(',').forEach(e => {
-      ramas+= `"${e}" `
+      ramas += `"${e}" `
     });
     this.fnx = {
       funcion: nameFnx,
@@ -267,7 +267,7 @@ export class ListComponent implements OnInit {
   async Pull(app: any) {
     let ramas = ''
     app.rama.split(',').forEach(e => {
-      ramas+= `"${e}" `
+      ramas += `"${e}" `
     });
     let nameFnx = "Fnx_Actualizar";
     this.fnx = {
@@ -312,9 +312,9 @@ export class ListComponent implements OnInit {
   }
 
 
-  async Merge(){
+  async Merge() {
 
-    if(this.mensaje == '' || this.destino == ''  || this.origen == '' ){
+    if (this.mensaje == '' || this.destino == '' || this.origen == '') {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar todos los campos', 3000)
       return false;
     }
@@ -441,13 +441,20 @@ export class ListComponent implements OnInit {
   }
 
 
+
   Modal(modal, app: any) {
     this.modalService.open(modal, {
       centered: true,
-      size: "lg",
+      size: "xl",
       backdrop: false,
       keyboard: false,
       windowClass: "fondo-modal",
     })
+  }
+
+  exportToPdf() {
+    // TODO: Implement PDF export functionality
+    this.utilservice.AlertMini('top-end', 'info', 'Exportando a PDF...', 2000);
+    console.log('Exporting to PDF:', this.rowData);
   }
 }

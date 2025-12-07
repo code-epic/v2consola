@@ -1,102 +1,589 @@
-.titulo {
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 10px;
-}
-.sandraccs table {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 10px;
-    color: #333;
-    font-size: 10px;
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-.sandraccs th {
-    font-size: 10px;
-    background-color: #3498db;
-    color: white;
-    padding: 12px;
-    text-align: left;
-}
-.sandraccs td {
-    font-size: 10px;
-    padding: 5px;
-    border-bottom: 1px solid #ddd;
-}
-.sandraccs tr:nth-child(even) {
-    background-color: #f8f9fa;
-}
-.sandraccs tr:hover {
-    background-color: #e9f7fe;
-}
-.branch-info {
-    background-color: #e8f4fc;
-    padding: 5px;
-    border-radius: 5px;
-    margin-bottom: 20px;
-    font-weight: bold;
-}
-.commit-hash {
-    font-family: monospace;
-    font-size: 10px;
-    color: #2980b9;
-}
-.commit-date {
-    width: 100px;
-    font-size: 10px;
-    color: #7f8c8d;
+@import '~@core/scss/base/bootstrap-extended/include';
+@import '~@core/scss/base/components/include';
+
+// Variables for Premium Look
+$primary-gradient: linear-gradient(118deg, #7367f0, rgba(115, 103, 240, 0.7));
+$card-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.1);
+$hover-shadow: 0 8px 25px -8px rgba(34, 41, 47, 0.15);
+$border-radius-lg: 0.75rem;
+
+// Keyframe Animations
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+// Input with Icon Inside - New Unified Style
+.input-with-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+
+  .icon-inside {
+    position: absolute;
+    left: 15px;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+    transition: color 0.3s ease;
+    pointer-events: none;
+
+    ::ng-deep svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  // Search Input Wrapper
+  &.search-input-wrapper {
+    width: 380px; // Ampliado
+
+    input {
+      width: 100%;
+      padding-left: 3rem;
+      height: 45px; // Más grande
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+
+      &:focus {
+        border-color: $primary;
+        box-shadow: 0 4px 12px rgba(115, 103, 240, 0.15);
+
+        ~.icon-inside {
+          color: $primary;
+        }
+      }
+
+      &::placeholder {
+        color: #b9b9c3;
+      }
+    }
+  }
+
+  // Filter Select Wrapper
+  &.filter-select-wrapper {
+    min-width: 200px; // Ampliado
+
+    .custom-select-with-icon {
+      ::ng-deep .ng-select-container {
+        border: 1px solid #e8e8e8;
+        border-radius: 0.5rem;
+        min-height: 45px; // Más grande
+        padding-left: 2.8rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          border-color: #d4d4d4;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .ng-value-container {
+          padding-left: 0;
+
+          .ng-placeholder {
+            color: #b9b9c3;
+          }
+        }
+      }
+
+      ::ng-deep .ng-select-focused .ng-select-container {
+        border-color: $primary;
+        box-shadow: 0 4px 12px rgba(115, 103, 240, 0.15);
+      }
+    }
+
+    &:focus-within .icon-inside {
+      color: $primary;
+    }
+  }
+
+  // Enhanced Filter Select Wrapper (New Style)
+  &.filter-select-wrapper-enhanced {
+    min-width: 240px; // Más amplio
+
+    .custom-select-enhanced {
+      ::ng-deep .ng-select-container {
+        border: 2px solid #e3f2fd;
+        border-radius: 0.75rem;
+        min-height: 50px; // Más alto
+        padding-left: 3rem;
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+        &:hover {
+          border-color: #90caf9;
+          background: #ffffff;
+          box-shadow: 0 4px 12px rgba(33, 150, 243, 0.1);
+          transform: translateY(-1px);
+        }
+
+        .ng-value-container {
+          padding-left: 0;
+
+          .ng-placeholder {
+            color: #2196f3;
+            font-weight: 500;
+            font-size: 0.95rem;
+          }
+
+          .ng-value {
+            color: #1976d2;
+            font-weight: 600;
+            font-size: 1rem;
+          }
+        }
+
+        .ng-arrow-wrapper {
+          padding-right: 1rem;
+
+          .ng-arrow {
+            border-color: #2196f3 transparent transparent;
+            border-width: 6px 6px 2.5px;
+          }
+        }
+      }
+
+      ::ng-deep .ng-select-focused .ng-select-container {
+        border-color: #2196f3;
+        background: #ffffff;
+        box-shadow: 0 6px 20px rgba(33, 150, 243, 0.2);
+        transform: translateY(-2px);
+      }
+
+      ::ng-deep .ng-dropdown-panel {
+        border: 2px solid #2196f3;
+        border-radius: 0.75rem;
+        box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15);
+        margin-top: 8px;
+
+        .ng-dropdown-panel-items {
+          .ng-option {
+            padding: 12px 20px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background-color: #e3f2fd;
+              color: #1976d2;
+            }
+
+            &.ng-option-selected {
+              background-color: #2196f3;
+              color: #ffffff;
+              font-weight: 600;
+            }
+          }
+        }
+      }
+    }
+
+    .icon-inside {
+      color: #2196f3;
+
+      ::ng-deep svg {
+        width: 20px;
+        height: 20px;
+      }
+    }
+
+    &:focus-within .icon-inside {
+      color: #1565c0;
+    }
+  }
+}
+
+// Card & Layout
+.card {
+  border: none;
+  box-shadow: $card-shadow;
+  border-radius: $border-radius-lg;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: $hover-shadow;
+  }
+}
+
+// Gradient Background for Header
+.bg-gradient-light {
+  background: linear-gradient(135deg, #fafbfc 0%, #f4f5f7 100%);
+}
+
+// Solid Color Backgrounds
+.bg-info-light {
+  background-color: rgba(0, 207, 232, 0.12) !important;
+}
+
+.bg-primary-light {
+  background-color: rgba(115, 103, 240, 0.12) !important;
+}
+
+// Input Icon Wrapper - Unified Container
+.input-icon-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 2rem;
+  padding: 0.4rem 1rem;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background-color: #fff;
+  border: 1px solid #e8e8e8;
+
+  .input-icon-left {
+    position: absolute;
+    left: 12px;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+    z-index: 2;
+
+    ::ng-deep svg {
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  // Hover state
+  &:hover {
+    border-color: #d4d4d4;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+  }
+
+  // Focus state
+  &:focus-within {
+    border-color: $primary;
+    box-shadow: 0 4px 12px rgba(115, 103, 240, 0.2);
+    transform: translateY(-1px);
+
+    .input-icon-left {
+      color: $primary;
+    }
+  }
+
+  // Search Box Specific
+  &.search-box {
+    width: 280px;
+
+    input {
+      width: 100%;
+      padding: 0.4rem 0.5rem 0.4rem 2.2rem;
+      height: auto;
+      font-size: 0.9rem;
+
+      &::placeholder {
+        color: #b9b9c3;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  // Filter Box Specific
+  &.filter-box {
+    min-width: 150px;
+    border-color: rgba(0, 207, 232, 0.3);
+
+    &:hover {
+      border-color: rgba(0, 207, 232, 0.5);
+      background-color: rgba(0, 207, 232, 0.15);
+    }
+
+    &:focus-within {
+      border-color: $info;
+      background-color: rgba(0, 207, 232, 0.18);
+
+      .input-icon-left {
+        color: $info;
+      }
+    }
+
+    .custom-select-icon {
+      flex-grow: 1;
+
+      ::ng-deep .ng-select-container {
+        background: transparent !important;
+        border: none !important;
+        min-height: auto !important;
+        height: 100%;
+        padding: 0 0 0 1.8rem;
+
+        .ng-value-container {
+          padding: 0;
+
+          .ng-placeholder {
+            color: #00cfe8;
+            font-weight: 500;
+          }
+
+          .ng-value {
+            color: #00cfe8;
+            font-weight: 600;
+          }
+        }
+
+        .ng-arrow-wrapper {
+          .ng-arrow {
+            border-color: #00cfe8 transparent transparent;
+          }
+        }
+      }
+    }
+  }
+
+  // Pagination Box Specific
+  &.pagination-box {
+    min-width: 100px;
+    border-color: rgba(115, 103, 240, 0.3);
+    cursor: pointer;
+
+    &:hover {
+      border-color: rgba(115, 103, 240, 0.5);
+      background-color: rgba(115, 103, 240, 0.15);
+    }
+
+    select {
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding-left: 2rem;
+
+      &:focus {
+        box-shadow: none;
+        outline: none;
+      }
+
+      option {
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// PDF Export Button
+.btn-danger {
+  background: linear-gradient(135deg, #ea5455 0%, #ff6b6b 100%) !important;
+  border: none !important;
+  font-size: 0.85rem;
+  height: 38px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(234, 84, 85, 0.4) !important;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  span {
+    font-size: 0.85rem;
+  }
+}
+
+// Data Table Overrides
+.ngx-datatable.minimalist-table {
+  box-shadow: none;
+
+  .datatable-header {
+    background-color: #fff;
+    border-bottom: 2px solid #f0f0f0;
+
+    .datatable-header-cell {
+      padding: 0.8rem 1rem;
+      color: $text-muted;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+
+      .datatable-header-cell-template-wrap {
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+    }
+  }
+
+  .datatable-body {
+    .datatable-row-wrapper {
+      border-bottom: 1px solid #f8f8f8;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #fafafa;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        z-index: 10;
+        position: relative;
+      }
+    }
+
+    .datatable-body-cell {
+      padding: 0.5rem 1rem;
+      vertical-align: middle;
+      display: flex;
+      align-items: center;
+      font-size: 0.95rem;
+      color: $body-color;
+    }
+  }
+}
+
+// Links
+.hover-underline {
+  position: relative;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Avatar Styling
+.avatar-wrapper {
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.15);
+    z-index: 5;
+  }
+}
+
+
+// Modal Tweaks
+.modal-header {
+  border-top-left-radius: $border-radius-lg;
+  border-top-right-radius: $border-radius-lg;
+  padding: 1.5rem;
+
+  .modal-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+// Tooltip customization
+::ng-deep .tooltip-inner {
+  background-color: #343a40;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.4rem;
+}
+
+::ng-deep .tooltip-arrow::before {
+  border-top-color: #343a40;
+}
+
+
+
+
 .container {
-    max-width: 1000px;
-    margin: 0 auto;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    overflow: hidden;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  overflow: hidden;
 }
+
 .header {
-    background: #2c3e50;
-    color: white;
-    padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2px;
+  text-align: center;
 }
-.section {
-    padding: 15px 20px;
-    border-bottom: 1px solid #eee;
+
+.header h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
+
+.branch-info {
+  background: #f8f9fa;
+  padding: 8px 10px;
+  border-left: 5px solid #667eea;
+}
+
+.branch-info h2 {
+  color: #667eea;
+  font-size: 1.3rem;
+  margin-bottom: 3px;
+  margin-left: 10px;
+}
+
+.branch-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #3a536b;
+  margin-left: 10px;
+}
+
+.xcontent {
+  padding: 2px;
+  margin-top: 15px;
+}
+
 .section-title {
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #2c3e50;
-    display: flex;
-    align-items: center;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #c6cad9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.file-list {
-    margin-left: 20px;
+
+.commit-list {
+  margin-left: -40px;
+  list-style: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.file-item {
-    display: flex;
-    align-items: center;
-    padding: 5px 0;
+
+.commit-item {
+  background: #f8f9fa;
+  border-left: 4px solid #667eea;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-.file-icon {
-    margin-right: 8px;
-    font-size: 1.1em;
+
+.commit-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
 }
-.modified { color: #e67e22; }
-.new { color: #2ecc71; }
-.deleted { color: #e74c3c; }
-.untracked { color: #3498db; }
-.file-date {
-    margin-left: auto;
-    color: #7f8c8d;
-    font-size: 0.9em;
+
+.commit-author {
+  font-weight: 500;
+  color: #667eea;
+  font-size: 1.2rem;
 }
-.timestamp {
-    text-align: right;
-    padding: 10px;
-    color: #7f8c8d;
-    font-size: 0.9em;
+
+.commit-date {
+  color: #6c757d;
+  font-size: 0.75rem;
+  margin-top: 5px;
+}
+
+.commit-message {
+  color: #2c3e50;
+  font-weight: normal;
+  margin-top: 10px;
+  line-height: 1.6;
+  font-size: 0.9rem;
 }

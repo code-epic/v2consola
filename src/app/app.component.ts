@@ -16,15 +16,16 @@ import { CoreTranslationService } from '@core/services/translation.service';
 import { menu } from 'app/menu/menu';
 import { locale as menuEnglish } from 'app/menu/i18n/en';
 import { locale as menuEspanish } from 'app/menu/i18n/es';
-import {Md5} from 'ts-md5';
+import { Md5 } from 'ts-md5';
 
 import { environment } from '../environments/environment';
+import { ApiService } from '@services/apicore/api.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  encapsulation: ViewEncapsulation.None 
+  encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit, OnDestroy {
   devToolsOpened = false;
@@ -32,7 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
   showContent = true;
   private disableRightClick = false; // Variable para controlar el bloqueo del clic derecho
 
-  token: string|undefined;
+  token: string | undefined;
   coreConfig: any;
   menu: any;
   defaultLanguage: 'es'; // This language will be used as a fallback when a translation isn't found in the current language
@@ -55,7 +56,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private _coreTranslationService: CoreTranslationService,
     private _translateService: TranslateService,
     private appRef: ApplicationRef,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private apiService: ApiService,
   ) {
     // Crear el overlay de protección
     this.overlayElement = this.renderer.createElement('div');
@@ -67,7 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (environment.production) {
       // this.disableRightClick = true; // Activar bloqueo de clic derecho
       // this.setupProtection();
-    
+
       // Detectar cuando las herramientas ya estaban abiertas al cargar la página
       // if (window.outerWidth - window.innerWidth > 160 || 
       //   window.outerHeight - window.innerHeight > 160) {
@@ -77,7 +79,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.Menu = undefined;
     // Get the application main menu
-    
+
     var token = sessionStorage.getItem('token');
     if (token === null) {
       this.menu = menu;
@@ -89,7 +91,7 @@ export class AppComponent implements OnInit, OnDestroy {
         e.icon = e.icono
         e.translate = ''
         e.title = e.nombre
-        if(e.SubMenu != undefined ) {
+        if (e.SubMenu != undefined) {
           e.children = e.SubMenu.map(el => {
             el.id = el.nombre.toLowerCase()
             el.title = el.descripcion
@@ -262,8 +264,11 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     });
 
+    let isBDV = this.apiService.ConsultaSistemaBDV()
+    let titulo = isBDV ? 'BDV' : this.coreConfig.app.appTitle
+
     // Set the application page title
-    this._title.setTitle(this.coreConfig.app.appTitle);
+    this._title.setTitle(titulo);
   }
 
   private setupProtection(): void {
@@ -275,9 +280,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
     // Detectar atajos de teclado
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'F12' || e.keyCode === 123 || 
-          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || 
-          (e.ctrlKey && e.key === 'U')) {
+      if (e.key === 'F12' || e.keyCode === 123 ||
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) ||
+        (e.ctrlKey && e.key === 'U')) {
         e.preventDefault();
         this.handleDevToolsOpened();
       }
@@ -287,7 +292,7 @@ export class AppComponent implements OnInit, OnDestroy {
   private checkDevTools(): void {
     const widthThreshold = window.outerWidth - window.innerWidth > 160;
     const heightThreshold = window.outerHeight - window.innerHeight > 160;
-    
+
     if (widthThreshold || heightThreshold) {
       this.handleDevToolsOpened();
     } else {

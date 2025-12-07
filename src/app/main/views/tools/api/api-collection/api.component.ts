@@ -113,6 +113,12 @@ export class ApiComponent implements OnInit {
     clave: ''
   }
 
+  public passwordTextType: boolean = false;
+
+  togglePasswordTextType() {
+    this.passwordTextType = !this.passwordTextType;
+  }
+
   public archivos = []
 
   public rutaURL
@@ -250,7 +256,7 @@ export class ApiComponent implements OnInit {
   }
 
   async ExportApi() {
- 
+
     let nameFnx = environment.functions.EXPORTAR_API
     this.fnx = {
       'funcion': nameFnx,
@@ -258,7 +264,7 @@ export class ApiComponent implements OnInit {
       'user': this.IExportAPI.usuario,
       'pass': this.IExportAPI.clave,
       'driver': this.driversAPP,
-      'file_name' : environment.colecciones.API_CORE_NAME
+      'file_name': environment.colecciones.API_CORE_NAME
     };
     await Swal.fire({
       title: `Va a descargar la coleccion de API `,
@@ -287,9 +293,9 @@ export class ApiComponent implements OnInit {
               })
               .catch((e) => console.log(e));
 
-             
-              
-           
+
+
+
           },
           (error) => {
             console.log(error);
@@ -331,7 +337,7 @@ export class ApiComponent implements OnInit {
 
 
 
-  
+
 
   rowDetailsToggleExpand(row) {
     this.tableRowDetails.rowDetail.toggleExpandRow(row);
@@ -420,13 +426,13 @@ export class ApiComponent implements OnInit {
   }
 
   async SubirArchivo(e) {
-    console.log(document.getElementById('identificador') )
+    console.log(document.getElementById('identificador'))
     var frm = new FormData(document.forms.namedItem("forma"))
     try {
       await this.apiService.EnviarArchivos(frm).subscribe(
         (data) => {
-         this.ValoresMasivos()
-         
+          this.ValoresMasivos()
+
         }
       )
     } catch (error) {
@@ -459,7 +465,7 @@ export class ApiComponent implements OnInit {
     this.xAPI.funcion = environment.functions.INSERT_FILE_PATH;
     this.xAPI.parametros = "";
     this.xAPI.valores = JSON.stringify(cargaMasiva);
-    
+
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
@@ -521,7 +527,7 @@ export class ApiComponent implements OnInit {
             );
           })
           .catch((e) => console.log(e));
-       
+
       },
       (error) => {
         console.log(error);
@@ -529,7 +535,7 @@ export class ApiComponent implements OnInit {
     );
     // this.apiService.ExecFnx(this.xRestore).subscribe(
     //   data => {
-        
+
     //     this.ListarApis(this.driversAPP)
     //     this.utilservice.AlertMini('top-end', 'success', 'Se han importado las APIS de la Base de datos XXXXX y la Coleccion XXXX', 3000)
     //   },

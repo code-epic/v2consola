@@ -5,7 +5,7 @@
     <section id="ecommerce-searchbar" class="ecommerce-searchbar">
       <div class="row mt-1">
         <!-- Search Bar -->
-        <div class="col-md-6 col-sm-12 mb-3">
+        <div class="col-md-4 col-sm-6 mb-12">
           <div class="input-group">
             <input type="text" 
                    class="form-control search-product w-100" 
@@ -19,7 +19,7 @@
         </div>
     
         <!-- Select Dropdown -->
-        <div class="col-md-6 col-sm-12 mb-3">
+        <div class="col-md-8 col-sm-6 mb-12">
           <div class="input-group">
             <ng-select class="w-100" 
                        [items]="rowData" 
@@ -32,13 +32,33 @@
                        (change)="onSelectChange($event)"
                        style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
               <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                <div style="margin: 10px 0" class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ item.funcion }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6>
-                    <p class="card-text">
-                      {{ item.tipo }} --- {{ item.aplicacion }}
+                <div class="search-result-card-pastel">
+                  <!-- Header: Function Name and Type Badge -->
+                  <div class="search-result-header">
+                    <h5 class="search-result-title">
+                      <span [data-feather]="'code'" [size]="16" class="pastel-icon icon-lg"></span>
+                      {{ item.funcion }}
+                    </h5>
+                    <span class="pastel-badge">
+                      <span [data-feather]="'grid'" [size]="12"></span>
+                      {{ item.tipo }}
+                    </span>
+                  </div>
+
+                  <!-- Body: Description -->
+                  <div class="search-result-body">
+                    <p class="search-result-description">
+                      <span [data-feather]="'file-text'" [size]="14" class="pastel-icon icon-sm"></span>
+                      {{ item.descripcion }}
                     </p>
+                  </div>
+
+                  <!-- Footer: Application and other details -->
+                  <div class="search-result-footer">
+                    <div class="footer-item">
+                      <span [data-feather]="'box'" [size]="14" class="pastel-icon icon-sm"></span>
+                      App: <strong>{{ item.aplicacion }}</strong>
+                    </div>
                   </div>
                 </div>
               </ng-template>
@@ -54,44 +74,59 @@
       <ng-container
         *ngFor="let product of drivers  | filter: searchText:'descripcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
 
-
-        <!-- Ecommerce Item -->
-
-        <div class="card tarjeta ecommerce-card col-sm-12">
-
-          <div class="item-img text-center efecto-img">
-            <a [routerLink]="'/tools/applications/api-list/'+getUrl(product.id)">
-              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mongodb.png"
-                *ngIf="product.driver == 'mongodb'" alt="img-placeholder" />
-              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mysql.png"
-                *ngIf="product.driver == 'mysql8'" alt="img-placeholder" />
-              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/mariadb.png"
-                *ngIf="product.driver == 'mariadb'" alt="img-placeholder" />
-              <img class="img-fluid" width="150px" height="150px" src="assets/integraciones/postgres.png"
-                *ngIf="product.driver == 'postgres13' || product.driver == 'postgres96'" alt="img-placeholder" />
-            </a>
-          </div>
-          <div class="card-body">
-            <div class="item-wrapper">
-              <div class="item-rating">
-                <div class="rating rating-sm">
-                  <div class="badge badge-success" *ngIf="product.estatus === true">Activo</div>
-                  <div class="badge badge-danger" *ngIf="product.estatus === false">Inactivo</div>
-                </div>
-              </div>
-              <div class="item-cost">
-                <h6 class="item-price">
-                  {{ product.driver | uppercase }}
-                </h6>
+        <!-- Vivid API Card -->
+        <div class="card ecommerce-card app-card-minimal">
+          <a [routerLink]="'/tools/applications/api-list/'+getUrl(product.id)" class="card-link-minimal">
+            
+            <!-- Minimal Header with Database Icon -->
+            <div class="minimal-header" [ngClass]="{'header-active': product.estatus === true, 'header-inactive': product.estatus === false}">
+              <div class="icon-container-minimal">
+                <span [data-feather]="'database'" [size]="32" class="app-icon-minimal"></span>
               </div>
             </div>
-            <p class="card-text item-description">
-              <strong>{{ product.descripcion }}</strong>
-            </p>
-          </div>
 
+            <!-- Card Content -->
+            <div class="card-body-minimal">
+              
+              <!-- Status Badge Minimal -->
+              <div class="status-row">
+                <span class="status-dot" [ngClass]="{'dot-active': product.estatus === true, 'dot-inactive': product.estatus === false}"></span>
+                <span class="status-text">{{ product.estatus === true ? 'Active' : 'Inactive' }}</span>
+              </div>
+
+              <!-- Driver Name -->
+              <h3 class="app-title-minimal">{{ product.descripcion }}</h3>
+              
+              <!-- Details List -->
+              <div class="details-list">
+                <div class="detail-item">
+                  <span [data-feather]="'file-text'" [size]="14" class="detail-icon"></span>
+                  <span class="detail-label">Descripción:</span>
+                  <span class="detail-value">{{ product.basedatos }}</span>
+                </div>
+                
+                <div class="detail-item">
+                  <span [data-feather]="'server'" [size]="14" class="detail-icon"></span>
+                  <span class="detail-label">Tipo:</span>
+                  <span class="detail-value">{{ product.driver }}</span>
+                </div>
+                
+                <div class="detail-item">
+                  <span [data-feather]="'activity'" [size]="14" class="detail-icon"></span>
+                  <span class="detail-label">Estatus:</span>
+                  <span class="detail-value">{{ product.estatus ? 'Running' : 'Stopped' }}</span>
+                </div>
+              </div>
+
+              <!-- Action Footer -->
+              <div class="card-footer-minimal">
+                <span class="view-link">Ver Detalles</span>
+                <span [data-feather]="'arrow-right'" [size]="16" class="arrow-icon"></span>
+              </div>
+            </div>
+          </a>
         </div>
-        <!--/ Ecommerce Item -->
+        <!--/ Vivid API Card -->
       </ng-container>
     </section>
 

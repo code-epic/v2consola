@@ -104,7 +104,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   public bDirectorioActivo: boolean = false;
-
+  public logo: string = ''
+  public isBDV: boolean = false
+  public icono: string = ''
 
   /**
    * Constructor
@@ -140,6 +142,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         flag: "es",
       },
     };
+
 
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -280,6 +283,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.selectedLanguage = _.find(this.languageOptions, {
       id: this._translateService.currentLang,
     });
+
+
+    let isBDV = this.apiService.ConsultaSistemaBDV()
+    if (isBDV) {
+      this.coreConfig.app.appName = ''
+      this.logo = 'assets/images/bdv/logobdv.png'
+      this.icono = 'assets/images/bdv/icon.png'
+    } else {
+      this.logo = 'assets/images/logo/logo.png'
+      this.icono = 'assets/images/logo/logo.png'
+    }
+
+
+
   }
 
   /**

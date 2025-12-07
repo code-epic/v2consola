@@ -1,0 +1,214 @@
+@import '@core/scss/base/pages/app-ecommerce.scss';
+
+// ========================================
+// Menu Component Styles (Soft Minimalist)
+// ========================================
+
+// Typography
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+// Colors - Soft Palette
+$soft-bg: #f8f9fa;
+$card-bg: #ffffff;
+$text-primary: #5e5873;
+$text-secondary: #b9b9c3;
+$border-color: #ebe9f1;
+
+$primary-soft: #e3f2fd; // Light Blue
+$primary-text: #2196f3;
+
+$success-soft: #e8f5e9; // Light Green
+$success-text: #4caf50;
+
+$warning-soft: #fff3e0; // Light Orange
+$warning-text: #ff9800;
+
+$danger-soft: #ffebee; // Light Red
+$danger-text: #f44336;
+
+// ========================================
+// Header & Controls Styles
+// ========================================
+
+.card-header-custom {
+  padding: 24px 24px 16px 24px;
+  background: white;
+  border-bottom: 1px solid $border-color;
+  border-radius: 8px 8px 0 0;
+}
+
+.header-title-group {
+  .content-header-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: $text-primary;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+  }
+  
+  small {
+    font-size: 0.9rem;
+    color: $text-secondary;
+  }
+}
+
+.actions-bar {
+  margin-top: 16px;
+}
+
+.filter-group {
+  .ng-select.custom-select-soft {
+    .ng-select-container {
+      background: $soft-bg;
+      border: 1px solid transparent;
+      min-height: 38px;
+      border-radius: 6px;
+    }
+    
+    &.ng-select-opened .ng-select-container {
+      background: white;
+      border-color: $border-color;
+    }
+  }
+}
+
+.actions-right {
+  .btn {
+    padding: 0.6rem 1.2rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    
+    &.btn-primary {
+      background: $primary-text;
+      border-color: $primary-text;
+      box-shadow: 0 4px 12px rgba($primary-text, 0.2);
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba($primary-text, 0.3);
+      }
+    }
+    
+    &.btn-outline-secondary {
+      border-color: $border-color;
+      color: $text-primary;
+      
+      &:hover {
+        background: $soft-bg;
+        border-color: darken($border-color, 10%);
+        color: $text-primary;
+      }
+    }
+  }
+}
+
+// ========================================
+// Menu Definition Panel Styles
+// ========================================
+
+.menu-definition-panel {
+  background: $card-bg;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid $border-color;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section-header-pastel {
+  padding-bottom: 16px;
+  border-bottom: 2px solid $border-color;
+  
+  .header-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #e8e0ff 0%, #f0ebff 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    color: #8b5cf6;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: linear-gradient(135deg, #d4c5ff 0%, #e8e0ff 100%);
+      transform: scale(1.05);
+    }
+  }
+  
+  .section-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: $text-primary;
+    font-size: 1.1rem;
+    letter-spacing: -0.3px;
+  }
+  
+  .section-subtitle {
+    font-size: 0.85rem;
+    color: $text-secondary;
+  }
+  
+  .action-buttons {
+    .btn {
+      padding: 0.65rem 1.5rem;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      
+      &.btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border: none;
+        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+        }
+      }
+      
+      &.btn-warning {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        border: none;
+        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+        
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
+        }
+      }
+    }
+  }
+}
+
+// Form Labels with Icons
+.form-label {
+  display: flex;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 0.5rem;
+  
+  svg {
+    color: #a78bfa;
+    flex-shrink: 0;
+  }
+}
+
+// Import pastel input styles
+@import './menu-pastel.scss';

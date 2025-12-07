@@ -25,6 +25,7 @@ interface QueryLog {
   isCopied?: boolean;
 }
 
+
 @Component({
   selector: 'app-query-log',
   templateUrl: './query-log.component.html',
@@ -47,9 +48,10 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   sinRegistros: boolean = false;
   activeId = 1;
 
-  // Chart Properties
   public lineChartData: ChartDataSets[] = [];
+
   public lineChartLabels: Label[] = [];
+
   public lineChartOptions: (ChartOptions & { annotation: any }) = {
     responsive: true,
     maintainAspectRatio: false,
@@ -152,6 +154,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       annotations: [],
     },
   };
+
   public lineChartColors: Color[] = [
     { // red (Error)
       backgroundColor: 'rgba(234, 84, 85, 0.1)', // Fondo muy sutil
@@ -178,13 +181,15 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       pointHoverBorderColor: '#fff'
     }
   ];
+
   public lineChartLegend = true;
+
   public lineChartType = 'line';
 
   public isView: boolean = true;
 
-
   private searchSubject = new Subject<string>();
+
   private searchSubscription: Subscription;
 
   constructor(
@@ -422,7 +427,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
 
   }
 
-
   downloadLogs() {
     let content = `Reporte de Consultas SQL - ${new Date().toLocaleString()}\n\n`;
     content += `Filtros aplicados: Tipo=${this.selectedType || 'Todos'}, Búsqueda='${this.searchText}'\n`;
@@ -447,8 +451,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
     window.URL.revokeObjectURL(url);
   }
 
-
-
   filterLogs() {
     this.filteredLogs = this.parsedLogs.filter(log => {
       const matchesType = this.selectedType === '' || log.type === this.selectedType;
@@ -461,7 +463,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       return matchesType && matchesSearch;
     });
   }
-
 
   onTypeChange(type: string) {
     this.selectedType = type;
@@ -512,7 +513,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       this.searchSubscription.unsubscribe();
     }
   }
-
 
   selTab(event: any) {
     console.log(this.activeId);

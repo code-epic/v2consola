@@ -1,13 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { ComunicationsService } from '@services/networks/comunications.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WsocketsService } from '@services/websockets/wsockets.service';
-
-import { AES } from 'crypto-js';
-const clave = '5412892DF0D2919B04ADD29EDEFABA30E30F6D7F5A62A9B84AD46BDE23B25491';
-import { enc } from 'crypto-js';
 
 @Component({
   selector: 'app-api-list',
@@ -24,12 +18,12 @@ export class ApiListComponent implements OnInit {
 
   codeTypeJs = ''
 
-  
+
   xAPI: IAPICore = {
     funcion: '',
     parametros: ''
   };
-  
+
   public searchText: string = '';
   public page = 1;
   public pageSize = 8;
@@ -39,10 +33,10 @@ export class ApiListComponent implements OnInit {
 
 
   public selectCustomSelected = [];
-  
 
 
-  public id : string = ''
+
+  public id: string = ''
 
 
   public rowData = []
@@ -68,22 +62,22 @@ export class ApiListComponent implements OnInit {
 
 
 
-  async  ngOnInit() {
-    
+  async ngOnInit() {
+
     this.id = this.rutaActiva.snapshot.params.id
     this.urlControl = this.rutaActiva.snapshot.params.ruta
-    
+
     let url = ''
 
-    if (this.urlControl != undefined){
+    if (this.urlControl != undefined) {
       let valor = atob(this.urlControl).split('|')
       this.driversAPP = valor[0]
       this.url = valor[1]
       url = '/' + this.id + '/' + this.url
     }
 
-    
-    
+
+
     await this.ListarApis()
     await this.CargarDrivers()
     this.contentHeader = {
@@ -100,7 +94,7 @@ export class ApiListComponent implements OnInit {
           {
             name: 'Aplicaciones',
             isLink: true,
-            link: '/tools/applications'+url
+            link: '/tools/applications' + url
           },
           {
             name: 'Api',
@@ -116,10 +110,11 @@ export class ApiListComponent implements OnInit {
 
     this.developer = []
     this.xAPI.funcion = '_SYS_R_ListarApisAPP'
-    this.xAPI.parametros =  this.id
+    this.xAPI.parametros = this.id
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
+
         if (data.msj != undefined) return
         await data.map(e => {
           e.descripcion = e.descripcion == undefined ? '' : e.descripcion
@@ -146,42 +141,42 @@ export class ApiListComponent implements OnInit {
   }
 
 
-   async CargarDrivers(){
+  async CargarDrivers() {
 
     let MGDBA = {
-        "_id": "60aab142a0f72cf87ed7a056",
-        "aplicacion": "consola",
-        "basedatos": "code_epic",
-        "descripcion": "Sandra Server Core 1.0.0",
-        "driver": "mongodb",
-        "estatus": true,
-        "host": "sandra.epic",
-        "id": "MGDBA",
-        "protocolo": null,
-        "puerto": "27017",
-        "url": "",
-        "usuario": ""
+      "_id": "60aab142a0f72cf87ed7a056",
+      "aplicacion": "consola",
+      "basedatos": "code_epic",
+      "descripcion": "Sandra Server Core 1.0.0",
+      "driver": "mongodb",
+      "estatus": true,
+      "host": "sandra.epic",
+      "id": "MGDBA",
+      "protocolo": null,
+      "puerto": "27017",
+      "url": "",
+      "usuario": ""
     }
 
-    
-    
+
+
     this.xAPI.funcion = '_SYS_R_ListarDriver'
     this.xAPI.parametros = this.id
     this.drivers = []
-   await this.apiService.Ejecutar(this.xAPI).subscribe(
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
         this.drivers = data
-        if(this.id == 'consola')
+        if (this.id == 'consola')
           this.drivers.push(MGDBA)
-        
+
       },
       (error) => {
         console.log(error)
       }
-    ) 
+    )
   }
 
-  getUrl(id: string): string{
+  getUrl(id: string): string {
     // console.log(id, this.id)
     let url = id + '|' + this.id
     return btoa(url)

@@ -6,8 +6,8 @@ import { Router } from "@angular/router";
   selector: 'app-binnacle',
   templateUrl: './binnacle.component.html',
   styleUrls: ['./binnacle.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    host: { class: "ecommerce-application" },
+  encapsulation: ViewEncapsulation.None,
+  host: { class: "ecommerce-application" },
 })
 export class BinnacleComponent implements OnInit {
 
@@ -36,7 +36,7 @@ export class BinnacleComponent implements OnInit {
   constructor(
     private ruta: Router,
     private apiService: ApiService
-  ) {}
+  ) { }
 
 
   async ngOnInit() {
@@ -50,7 +50,7 @@ export class BinnacleComponent implements OnInit {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/home',
           },

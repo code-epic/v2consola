@@ -15,47 +15,71 @@
               <form class="normal-form">
                 <div class="row">
                   <div class="form-group col-md-4">
-
                     <label class="form-label" for="aplicacion">Aplicación</label>
-                    <ng-select #Aplication="ngModel" [disabled]="isDisabledInput" [(ngModel)]="aplicacion"
-                      bindLabel="descripcion" name="aplicacion" id="aplicacion" required placeholder="Seleccione"
-                      bindValue="id" (change)="selModulo()">
-                      <ng-option *ngFor="let xapp of lstApps"
-                        value="{{ xapp.identificador + '|' + xapp.llave}}">{{xapp.nombre}} :
-                        {{xapp.version}}</ng-option>
-                    </ng-select>
+                    <div class="ng-select-group-pastel">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><span [data-feather]="'package'" [size]="16"></span></span>
+                      </div>
+                      <ng-select #Aplication="ngModel" [disabled]="isDisabledInput" [(ngModel)]="aplicacion"
+                        bindLabel="descripcion" name="aplicacion" id="aplicacion" required placeholder="Seleccione"
+                        bindValue="id" (change)="selModulo()">
+                        <ng-option *ngFor="let xapp of lstApps"
+                          value="{{ xapp.identificador + '|' + xapp.llave}}">{{xapp.nombre}} :
+                          {{xapp.version}}</ng-option>
+                      </ng-select>
+                    </div>
                   </div>
 
                   <div class="form-group col-md-4">
                     <label class="form-label" for="arquitectura">Arquitectura</label>
-                    <ng-select [items]="tipos" [(ngModel)]="xmodulo" (change)="consultarRed()" bindLabel="descripcion"
-                      name="arquitectura" id="arquitectura" required placeholder="Seleccione" bindValue="id">
-                    </ng-select>
+                    <div class="ng-select-group-pastel">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
+                      </div>
+                      <ng-select [items]="tipos" [(ngModel)]="xmodulo" (change)="consultarRed()" bindLabel="descripcion"
+                        name="arquitectura" id="arquitectura" required placeholder="Seleccione" bindValue="id">
+                      </ng-select>
+                    </div>
                   </div>
                   <div class="form-group col-md-4">
                     <label class="form-label" for="driver">Driver</label>
-                    <ng-select #Module="ngModel" [disabled]="isDisabledInput" [(ngModel)]="xdrivers"
-                      bindLabel="descripcion" name="driver" id="driver" required placeholder="Seleccione"
-                      bindValue="id">
-                      <ng-option *ngFor="let item of drivers" value="{{item.id}}">{{ item.descripcion }} (
-                        {{item.basedatos}} ) </ng-option>
-                    </ng-select>
+                    <div class="ng-select-group-pastel">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
+                      </div>
+                      <ng-select #Module="ngModel" [disabled]="isDisabledInput" [(ngModel)]="xdrivers"
+                        bindLabel="descripcion" name="driver" id="driver" required placeholder="Seleccione"
+                        bindValue="id">
+                        <ng-option *ngFor="let item of drivers" value="{{item.id}}">{{ item.descripcion }} (
+                          {{item.basedatos}} ) </ng-option>
+                      </ng-select>
+                    </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label class="form-label" for="nombre">Nombre</label>
-                    <input [(ngModel)]="nombre" [disabled]="isDisabledInput" value="{{nombre}}" #NombreRef="ngModel"
-                      required type="text" name="nombre" id="nombre" class="form-control" />
-
+                    <div class="input-group-pastel">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                      </div>
+                      <input [(ngModel)]="nombre" [disabled]="isDisabledInput" value="{{nombre}}" #NombreRef="ngModel"
+                        required type="text" name="nombre" id="nombre" class="form-control"
+                        placeholder="Nombre del workflow" />
+                    </div>
                   </div>
 
                   <div class="form-group col-md-8">
                     <label class="form-label" for="descripcion">Descripción</label>
                     <div class="input-group mb-3">
-                      <input [(ngModel)]="descripcion" [disabled]="isDisabledInput" value="{{descripcion}}"
-                        #DescripcionRef="ngModel" required type="text" name="descripcion" id="`descripcion"
-                        class="form-control" />
+                      <div class="input-group-pastel" style="flex: 1;">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                        </div>
+                        <input [(ngModel)]="descripcion" [disabled]="isDisabledInput" value="{{descripcion}}"
+                          #DescripcionRef="ngModel" required type="text" name="descripcion" id="`descripcion"
+                          class="form-control" placeholder="Descripción del workflow" />
+                      </div>
 
                       <div class="input-group-prepend">
                         <div class="form-group col-md-1" *ngIf="!isButtonVisibleSalvar">
@@ -97,27 +121,40 @@
                     <div class="row">
                       <div class="form-group col-md-4">
                         <label class="form-label" for="nombre">Nombre del campo</label>
-                        <input [(ngModel)]="wkfForm.nombre" value="{{wkfForm.nombre}}"
-                          [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
-                          id="nombre" placeholder="Nombre del campo ..." class="form-control" />
-
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                          </div>
+                          <input [(ngModel)]="wkfForm.nombre" value="{{wkfForm.nombre}}"
+                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
+                            id="nombre" placeholder="Nombre del campo ..." class="form-control" />
+                        </div>
                       </div>
                       <div class="form-group col-md-4">
                         <label class="form-label" for="nombre">Descripción del campo</label>
-                        <input [(ngModel)]="wkfForm.descripcion" value="{{wkfForm.descripcion}}"
-                          [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text"
-                          name="descripcion" id="descripcion" placeholder="Descripción del campo ..."
-                          class="form-control" />
-
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                          </div>
+                          <input [(ngModel)]="wkfForm.descripcion" value="{{wkfForm.descripcion}}"
+                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text"
+                            name="descripcion" id="descripcion" placeholder="Descripción del campo ..."
+                            class="form-control" />
+                        </div>
                       </div>
 
                       <div class="form-group col-md-4">
                         <label class="form-label" for="tipo">Tipo de campo</label>
-                        <ng-select #Module="ngModel" [(ngModel)]="xtipo" bindLabel="descripcion" name="descripcion"
-                          id="id" required placeholder="Seleccione" bindValue="id" (change)="selTipo()">
-                          <ng-option *ngFor="let item of lstTipo" value="{{item.id}}">{{ item.descripcion }}
-                          </ng-option>
-                        </ng-select>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
+                          </div>
+                          <ng-select #Module="ngModel" [(ngModel)]="xtipo" bindLabel="descripcion" name="descripcion"
+                            id="id" required placeholder="Seleccione" bindValue="id" (change)="selTipo()">
+                            <ng-option *ngFor="let item of lstTipo" value="{{item.id}}">{{ item.descripcion }}
+                            </ng-option>
+                          </ng-select>
+                        </div>
                       </div>
 
                     </div>
@@ -125,21 +162,26 @@
                     <div class="row">
 
                       <div class="form-group col-md-4">
-                        <!-- <div *ngIf="xdatos_val"> -->
-
                         <label class="form-label" for="datos">Origen de datos</label>
-                        <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion" name="descripcion"
-                          id="id" required placeholder="Origen de datos" bindValue="id" (change)="selOrigen()"
-                          [disabled]="!xdatos_val">
-                          <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{ item.descripcion }}
-                          </ng-option>
-                        </ng-select>
-                        <!-- </div> -->
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'folder'" [size]="16"></span></span>
+                          </div>
+                          <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion" name="descripcion"
+                            id="id" required placeholder="Origen de datos" bindValue="id" (change)="selOrigen()"
+                            [disabled]="!xdatos_val">
+                            <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{ item.descripcion }}
+                            </ng-option>
+                          </ng-select>
+                        </div>
                       </div>
 
                       <div class="form-group col-md-6">
-                        <div>
-                          <label class="form-label" for="api">Origen de API</label>
+                        <label class="form-label" for="api">Origen de API</label>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'cloud'" [size]="16"></span></span>
+                          </div>
                           <ng-select #Module="ngModel" [(ngModel)]="xorigen" bindLabel="descripcion" name="descripcion"
                             id="id" required placeholder="Origen de API" bindValue="id" [disabled]="!xdatos_api">
                             <ng-option *ngFor="let item of lstAPI" value="{{item.id}}">{{ item.descripcion }}
@@ -201,26 +243,38 @@
                     <div class="row">
                       <div class="form-group col-md-3">
                         <label class="form-label" for="nombre">Nombre</label>
-                        <input [(ngModel)]="wkfEstado.nombre" autocomplete="off" value="{{wkfEstado.nombre}}"
-                          [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
-                          id="nombre" placeholder="Enter ..." class="form-control" />
-
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                          </div>
+                          <input [(ngModel)]="wkfEstado.nombre" autocomplete="off" value="{{wkfEstado.nombre}}"
+                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
+                            id="nombre" placeholder="Enter ..." class="form-control" />
+                        </div>
                       </div>
                       <div class="form-group col-md-4">
                         <label class="form-label" for="descripcion">Descripcion</label>
-                        <!-- <div class="input-group mb-3"> -->
-                        <input [ngModelOptions]="{standalone: true}" autocomplete="off"
-                          [(ngModel)]="wkfEstado.descripcion" value="{{wkfEstado.descripcion}}" #NombreRef="ngModel"
-                          required type="text" name="descripcion" id="descripcion" placeholder="Enter ..."
-                          class="form-control" />
-                        <!--   </div> -->
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                          </div>
+                          <input [ngModelOptions]="{standalone: true}" autocomplete="off"
+                            [(ngModel)]="wkfEstado.descripcion" value="{{wkfEstado.descripcion}}" #NombreRef="ngModel"
+                            required type="text" name="descripcion" id="descripcion" placeholder="Enter ..."
+                            class="form-control" />
+                        </div>
                       </div>
 
                       <div class="form-group col-md-3">
                         <label class="form-label" for="nivel">Nivel</label>
-                        <ng-select [items]="niveles" [(ngModel)]="estatus" bindLabel="descripcion" name="nivel"
-                          id="nivel" required placeholder="Seleccione" bindValue="id">
-                        </ng-select>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="niveles" [(ngModel)]="estatus" bindLabel="descripcion" name="nivel"
+                            id="nivel" required placeholder="Seleccione" bindValue="id">
+                          </ng-select>
+                        </div>
                       </div>
                       <div class="form-group col-md-2" style="margin-top: 22px;">
                         <button type="button" class="btn btn-primary" (click)="Guardar()" style="width: 100%;"><i class="fa fa-arrow-down"
@@ -293,35 +347,51 @@
                     <div class="row">
                       <div class="form-group col-md-3">
                         <label class="form-label" for="origen">Estado Origen</label>
-                        <ng-select #Module="ngModel" [(ngModel)]="estado" bindLabel="descripcion" name="origen"
-                          id="origen" required placeholder="Seleccione" bindValue="id" (change)="lstEstatus()">
-                          <ng-option *ngFor="let e of rowEstado; let i = index" value="{{ e.id }}">{{e.nomb |
-                            uppercase}}</ng-option>
-                        </ng-select>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'cast'" [size]="16"></span></span>
+                          </div>
+                          <ng-select #Module="ngModel" [(ngModel)]="estado" bindLabel="descripcion" name="origen"
+                            id="origen" required placeholder="Seleccione" bindValue="id" (change)="lstEstatus()">
+                            <ng-option *ngFor="let e of rowEstado; let i = index" value="{{ e.id }}">{{e.nomb |
+                              uppercase}}</ng-option>
+                          </ng-select>
+                        </div>
                       </div>
 
                       <div class="form-group col-md-2">
                         <label class="form-label" for="nombre">Nombre</label>
-                        <input [(ngModel)]="wkfEstatus.nombre" autocomplete="off" value="{{wkfEstatus.nombre}}"
-                          [ngModelOptions]="{standalone: true}" required type="text" name="nombre" id="nombre"
-                          placeholder="Enter ..." class="form-control" />
-
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                          </div>
+                          <input [(ngModel)]="wkfEstatus.nombre" autocomplete="off" value="{{wkfEstatus.nombre}}"
+                            [ngModelOptions]="{standalone: true}" required type="text" name="nombre" id="nombre"
+                            placeholder="Enter ..." class="form-control" />
+                        </div>
                       </div>
                       <div class="form-group col-md-3">
                         <label class="form-label" for="descripcion">Descripción</label>
-                        <input [(ngModel)]="wkfEstatus.descripcion" autocomplete="off"
-                          value="{{wkfEstatus.descripcion}}" [ngModelOptions]="{standalone: true}" required type="text"
-                          name="descripcion" id="descripcion" placeholder="Enter ..." class="form-control" />
-
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                          </div>
+                          <input [(ngModel)]="wkfEstatus.descripcion" autocomplete="off"
+                            value="{{wkfEstatus.descripcion}}" [ngModelOptions]="{standalone: true}" required type="text"
+                            name="descripcion" id="descripcion" placeholder="Enter ..." class="form-control" />
+                        </div>
                       </div>
                       <div class="col-md-2">
                         <label class="form-label" for="orden">Orden</label>
-                        <ng-select [(ngModel)]="orden" bindLabel="descripcion" name="orden" id="orden" required
-                          placeholder="Seleccione" bindValue="id">
-                          <ng-option *ngFor="let e of lstOrden" value="{{ e }}">{{e}}</ng-option>
-                        </ng-select>
-
-
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
+                          </div>
+                          <ng-select [(ngModel)]="orden" bindLabel="descripcion" name="orden" id="orden" required
+                            placeholder="Seleccione" bindValue="id">
+                            <ng-option *ngFor="let e of lstOrden" value="{{ e }}">{{e}}</ng-option>
+                          </ng-select>
+                        </div>
                       </div>
                       <div class="col-md-2 mb-md-0 mb-1" style="margin-top: 23px;">
                         <button type="button" class="btn btn-primary" (click)="GuardarEstatus()" style="width: 100%;"><i

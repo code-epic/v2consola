@@ -1,182 +1,562 @@
-button {
-    height: 38px;
-}
+// ========================================
+// User Management Styles (Soft Minimalist Pastel)
+// ========================================
 
+// Typography
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+// Colors - Soft Palette
+$soft-bg: #f8f9fa;
+$card-bg: #ffffff;
+$text-primary: #5e5873;
+$text-secondary: #b9b9c3;
+$border-color: #ebe9f1;
 
-.modal-header {
-  border-bottom: 1px solid #ebe9f1;
-  .modal-title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+$primary-soft: #e3f2fd; // Light Blue
+$primary-text: #2196f3;
+
+$success-soft: #e8f5e9; // Light Green
+$success-text: #4caf50;
+
+$warning-soft: #fff3e0; // Light Orange
+$warning-text: #ff9800;
+
+$danger-soft: #ffebee; // Light Red
+$danger-text: #f44336;
+
+$purple-soft: #f3e5f5; // Light Purple
+$purple-text: #9c27b0;
+
+$info-soft: #e1f5fe; // Light Cyan
+$info-text: #00bcd4;
+
+// ========================================
+// Card Header Custom
+// ========================================
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.05);
+  border: 1px solid $border-color;
+  
+  .card-body {
+    padding: 24px;
+  }
+  
+  .card-title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: $text-primary;
+    font-size: 1.3rem;
+    letter-spacing: -0.3px;
+    margin-bottom: 1rem;
+  }
+  
+  hr {
+    border-color: $border-color;
+    margin: 1.5rem 0;
   }
 }
 
-.app-info {
-  display: flex;
-  gap: 1.5rem;
-  background-color: #f8f9fa;
-  padding: 1rem;
+// ========================================
+// Pastel Input Groups
+// ========================================
+.input-group-pastel {
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
   border-radius: 8px;
-  border: 1px solid #ebe9f1;
-
-  .info-item {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-
-    .icon {
-      color: #7367f0;
+  transition: all 0.3s ease;
+  // Remove overflow: hidden to allow ng-select dropdowns to display
+  
+  &:focus-within {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  
+  .input-group-prepend {
+    .input-group-text {
+      background: $soft-bg;
+      border-color: $border-color;
+      border-right: none;
+      color: $text-secondary;
+      transition: all 0.3s ease;
+      padding: 0.75rem 1rem;
+      border-radius: 8px 0 0 8px;
     }
+  }
+  
+  .form-control {
+    border-color: $border-color;
+    border-left: none;
+    padding: 0.75rem 1rem;
+    color: $text-primary;
+    font-weight: 500;
+    border-radius: 0 8px 8px 0;
+    
+    &::placeholder {
+      color: lighten($text-secondary, 10%);
+      font-weight: 400;
+    }
+    
+    &:focus {
+      box-shadow: none;
+      border-color: $border-color;
+    }
+    
+    &:disabled {
+      background-color: #fafbfc;
+      cursor: not-allowed;
+    }
+  }
+  
+  .input-group-append {
+    .input-group-text {
+      background: white;
+      border-color: $border-color;
+      border-left: none;
+      color: $text-secondary;
+      transition: all 0.3s ease;
+      padding: 0.75rem 1rem;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      
+      &:hover {
+        background: $soft-bg;
+      }
+    }
+  }
+  
+  &:focus-within .input-group-prepend .input-group-text {
+    background: white;
+    color: $primary-text;
+  }
+}
 
-    div {
-      display: flex;
-      flex-direction: column;
-      line-height: 1.2;
+// ========================================
+// Form Labels
+// ========================================
+.form-label {
+  font-weight: 600;
+  color: $text-primary;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.2px;
+}
 
-      small {
-        font-size: 0.85rem;
-        color: #b8c2cc;
+// ========================================
+// ng-select Pastel Styling
+// ========================================
+::ng-deep {
+  .ng-select {
+    &.flex-grow-1 {
+      flex: 1;
+      
+      .ng-select-container {
+        background: white;
+        border: 1px solid $border-color;
+        border-left: none;
+        min-height: 44px;
+        border-radius: 0 8px 8px 0;
+        transition: all 0.3s ease;
+        
+        .ng-value-container {
+          padding-left: 0.75rem;
+          
+          .ng-placeholder {
+            color: lighten($text-secondary, 10%);
+          }
+          
+          .ng-value {
+            color: $text-primary;
+            font-weight: 500;
+          }
+        }
+        
+        .ng-arrow-wrapper {
+          padding-right: 0.75rem;
+          
+          .ng-arrow {
+            border-color: $text-secondary transparent transparent;
+          }
+        }
+      }
+      
+      &.ng-select-opened {
+        .ng-select-container {
+          border-color: $border-color;
+          box-shadow: none;
+          
+          .ng-arrow {
+            border-color: transparent transparent $text-secondary;
+          }
+        }
+      }
+      
+      &.ng-select-focused {
+        .ng-select-container {
+          border-color: $border-color;
+          box-shadow: none;
+        }
+      }
+      
+      &.ng-select-disabled {
+        .ng-select-container {
+          background-color: #fafbfc;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+  
+  // Dropdown panel styling
+  .ng-dropdown-panel {
+    background-color: white;
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(34, 41, 47, 0.1);
+    margin-top: 4px;
+    z-index: 1050 !important; // Ensure dropdown appears above other elements
+    
+    .ng-dropdown-panel-items {
+      .ng-option {
+        padding: 0.75rem 1rem;
+        color: $text-primary;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: $primary-soft;
+          color: $primary-text;
+        }
+        
+        &.ng-option-selected {
+          background-color: lighten($primary-soft, 3%);
+          color: $primary-text;
+          font-weight: 600;
+        }
+        
+        &.ng-option-marked {
+          background-color: $soft-bg;
+        }
       }
     }
   }
 }
 
-.permissions-tree {
-  .menu-item, .sub-menu-item {
-    border-left: 2px solid #e9ecef;
-    margin-left: 5px;
-    padding-left: 15px;
-    margin-bottom: 5px;
-  }
-
-  .item-header {
-    display: flex;
-    align-items: center;
-    padding: 0.6rem 0.5rem;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: background-color 0.2s ease;
-
-    &:hover {
-      background-color: #f8f9fa;
-    }
-
-    .item-icon {
-      margin-right: 0.75rem;
-      color: #7367f0;
-      width: 18px;
-      height: 18px;
-    }
-
-    .item-name {
-      font-weight: 500;
-      flex-grow: 1;
-    }
-
-    .expand-icon {
-      color: #b8c2cc;
-      transition: transform 0.25s ease-in-out;
-    }
-  }
-
-  .sub-items-container {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-
-    &.expanded {
-      max-height: 1000px; // Un valor grande para permitir la expansión
-    }
-  }
-
-  .sub-menu-item {
-    margin-top: 5px;
-    .item-icon.sub-icon {
-      color: #28c76f; // Verde para submenús
-    }
-  }
-
-  .privilege-item {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 0.5rem 0.5rem 2.5rem; // Mayor indentación
-    font-size: 0.9rem;
-
-    .item-icon.privilege-icon {
-      color: #ff9f43; // Naranja para privilegios
-      width: 16px;
-      height: 16px;
-    }
-}
-}
-
-/* Table Styles */
+// ========================================
+// Enhanced Table Styling
+// ========================================
 .user-table {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  
   thead {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    
     th {
-      background-color: #f3f2f7;
-      border-top: none;
-      border-bottom: 1px solid #ebe9f1;
+      border-bottom: 2px solid $border-color;
+      padding: 1rem;
+      font-weight: 600;
       font-size: 0.85rem;
       letter-spacing: 0.5px;
-      text-transform: uppercase;
-      padding: 1rem;
+      color: $text-primary;
       
-      span {
-        font-weight: 600;
-        color: #5e5873;
+      .d-flex {
+        span[data-feather] {
+          opacity: 0.7;
+        }
       }
     }
   }
-
+  
   tbody {
-    td {
-      padding: 1rem;
-      vertical-align: middle;
-      color: #6e6b7b;
-      font-size: 0.9rem;
-      border-bottom: 1px solid #ebe9f1;
-    }
-
-    tr:hover {
-      background-color: #f8f8f8;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    tr {
       transition: all 0.2s ease;
-      z-index: 1;
-      position: relative;
+      border-bottom: 1px solid lighten($border-color, 3%);
+      
+      &:hover {
+        background-color: lighten($primary-soft, 5%);
+        transform: scale(1.01);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      }
+      
+      td {
+        padding: 1rem;
+        vertical-align: middle;
+        color: $text-primary;
+        
+        .font-weight-bold {
+          font-weight: 600;
+        }
+        
+        .text-muted {
+          color: $text-secondary !important;
+          font-size: 0.85rem;
+        }
+      }
     }
   }
 }
 
+// Badge Styling
 .badge {
-  padding: 0.5em 0.8em;
-  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
   font-weight: 600;
   font-size: 0.8rem;
+  letter-spacing: 0.3px;
+  border-radius: 6px;
   
   &.badge-light-warning {
-    background-color: rgba(255, 159, 67, 0.12);
-    color: #ff9f43;
+    background-color: $warning-soft;
+    color: $warning-text;
+  }
+  
+  &.badge-light-success {
+    background-color: $success-soft;
+    color: $success-text;
+  }
+  
+  &.badge-light-danger {
+    background-color: $danger-soft;
+    color: $danger-text;
+  }
+  
+  &.badge-light-info {
+    background-color: $info-soft;
+    color: $info-text;
   }
 }
 
-.btn-flat-primary {
-  background-color: transparent;
-  color: #7367f0;
-  border: none;
-  &:hover {
-    background-color: rgba(115, 103, 240, 0.12);
+// ========================================
+// Custom Switch Styling
+// ========================================
+.custom-switch {
+  .custom-control-input:checked ~ .custom-control-label::before {
+    background-color: $success-text;
+    border-color: $success-text;
+  }
+  
+  .custom-control-label::before {
+    background-color: #e0e0e0;
+    border-color: #e0e0e0;
   }
 }
 
-.btn-flat-danger {
-  background-color: transparent;
-  color: #ea5455;
-  border: none;
-  &:hover {
-    background-color: rgba(234, 84, 85, 0.12);
+// ========================================
+// Button Styling
+// ========================================
+.btn {
+  padding: 0.7rem 1.5rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  
+  &.btn-primary {
+    background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba($primary-text, 0.3);
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($primary-text, 0.4);
+    }
+    
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+  
+  &.btn-success {
+    background: linear-gradient(135deg, $success-text 0%, darken($success-text, 10%) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba($success-text, 0.3);
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($success-text, 0.4);
+    }
+  }
+  
+  &.btn-warning {
+    background: linear-gradient(135deg, $warning-text 0%, darken($warning-text, 10%) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba($warning-text, 0.3);
+    color: white;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($warning-text, 0.4);
+    }
+  }
+  
+  &.btn-flat-danger {
+    background-color: transparent;
+    color: $danger-text;
+    border: 1px solid transparent;
+    
+    &:hover {
+      background-color: $danger-soft;
+      border-color: $danger-text;
+    }
+  }
+  
+  &.btn-flat-primary {
+    background-color: transparent;
+    color: $primary-text;
+    border: 1px solid transparent;
+    
+    &:hover {
+      background-color: $primary-soft;
+      border-color: $primary-text;
+    }
+  }
+}
+
+// ========================================
+// Modal Styling
+// ========================================
+
+.modal-body {
+  padding: 2rem;
+  
+  .app-info {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: $soft-bg;
+      border-radius: 8px;
+      flex: 1;
+      min-width: 200px;
+      
+      span[data-feather] {
+        color: $primary-text;
+      }
+      
+      div {
+        display: flex;
+        flex-direction: column;
+        
+        small {
+          color: $text-secondary;
+          font-size: 0.8rem;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        
+        strong {
+          color: $text-primary;
+          font-weight: 600;
+          margin-top: 0.25rem;
+        }
+      }
+    }
+  }
+}
+
+// Permissions Tree
+.permissions-tree {
+  .menu-item {
+    margin-bottom: 1rem;
+    
+    .item-header {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      background: $soft-bg;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background: darken($soft-bg, 3%);
+      }
+      
+      .item-icon {
+        color: $primary-text;
+        margin-right: 0.75rem;
+      }
+      
+      .item-name {
+        font-weight: 600;
+        color: $text-primary;
+      }
+    }
+    
+    .sub-items-container {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      
+      &.expanded {
+        max-height: 1000px;
+      }
+    }
+    
+    .sub-menu-item {
+      margin-left: 2rem;
+      margin-top: 0.5rem;
+      
+      .item-header {
+        background: white;
+        border: 1px solid $border-color;
+        
+        .sub-icon {
+          color: $success-text;
+        }
+      }
+    }
+    
+    .privilege-item {
+      margin-left: 4rem;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      color: $text-secondary;
+      font-size: 0.9rem;
+      
+      .privilege-icon {
+        color: $purple-text;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.modal-footer {
+  padding: 1.5rem 2rem;
+  border-top: 1px solid $border-color;
+  
+  .btn {
+    min-width: 120px;
+  }
+}
+
+// ========================================
+// Responsive Adjustments
+// ========================================
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1rem;
+  }
+  
+  .user-table {
+    font-size: 0.85rem;
+    
+    thead th,
+    tbody td {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+  
+  .btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
   }
 }

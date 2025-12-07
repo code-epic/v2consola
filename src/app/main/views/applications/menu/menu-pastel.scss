@@ -1,0 +1,506 @@
+/* ========================================
+   REGISTER API PASTEL STYLES
+   ======================================== */
+
+/* Stepper Pastel */
+.bs-stepper.horizontal-wizard-example {
+  background: linear-gradient(135deg, #fafbff 0%, #ffffff 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  
+  .bs-stepper-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #f0f0f5;
+    background: linear-gradient(135deg, #fafbff 0%, #f8f9ff 100%);
+    border-radius: 12px 12px 0 0;
+    
+    .step {
+      .step-trigger {
+        padding: 0.75rem 1.25rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background: linear-gradient(135deg, #f0ebff 0%, #f8f5ff 100%);
+        }
+        
+        .bs-stepper-box {
+          width: 38px;
+          height: 38px;
+          background: linear-gradient(135deg, #e8e0ff 0%, #f0ebff 100%);
+          color: #a78bfa;
+          border-radius: 10px;
+          font-weight: 600;
+          font-size: 0.95rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .bs-stepper-label {
+          .bs-stepper-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a5568;
+          }
+          
+          .bs-stepper-subtitle {
+            font-size: 0.75rem;
+            color: #9ca3af;
+          }
+        }
+      }
+      
+      &.active {
+        .step-trigger {
+          .bs-stepper-box {
+            background: linear-gradient(135deg, #b8a8ff 0%, #d4c5ff 100%);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(184, 168, 255, 0.3);
+          }
+          
+          .bs-stepper-label {
+            .bs-stepper-title {
+              color: #8b5cf6;
+            }
+          }
+        }
+      }
+    }
+    
+    .line {
+      i {
+        color: #cbd5e0;
+      }
+    }
+  }
+  
+  .bs-stepper-content {
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Form Groups Pastel */
+.form-group {
+  margin-bottom: 1.25rem;
+  
+  .form-label {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.5rem;
+    
+    svg {
+      margin-right: 0.5rem;
+      color: #a78bfa;
+      flex-shrink: 0;
+    }
+  }
+}
+
+/* Form Controls Pastel */
+.form-control {
+  padding: 0.65rem 0.85rem;
+  font-size: 0.875rem;
+  color: #4a5568;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #b8a8ff;
+    box-shadow: 0 0 0 3px rgba(184, 168, 255, 0.1);
+    background-color: #fafbff;
+  }
+  
+  &:disabled {
+    background-color: #f9fafb;
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  &::placeholder {
+    color: #cbd5e0;
+  }
+  
+  &.error {
+    border-color: #fca5a5;
+    
+    &:focus {
+      border-color: #f87171;
+      box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+    }
+  }
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ng-select Pastel Styling */
+::ng-deep {
+  .ng-select {
+    .ng-select-container {
+      min-height: 38px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background-color: #ffffff;
+      transition: all 0.3s ease;
+      
+      &:hover {
+        border-color: #d1d5db;
+      }
+      
+      .ng-value-container {
+        padding: 0.4rem 0.85rem;
+        
+        .ng-placeholder {
+          color: #cbd5e0;
+          font-size: 0.875rem;
+        }
+        
+        .ng-value {
+          font-size: 0.875rem;
+          color: #4a5568;
+        }
+      }
+      
+      .ng-arrow-wrapper {
+        padding-right: 0.75rem;
+        
+        .ng-arrow {
+          border-color: #9ca3af transparent transparent;
+        }
+      }
+    }
+    
+    &.ng-select-focused {
+      .ng-select-container {
+        border-color: #b8a8ff;
+        box-shadow: 0 0 0 3px rgba(184, 168, 255, 0.1);
+        background-color: #fafbff;
+      }
+    }
+    
+    &.error {
+      .ng-select-container {
+        border-color: #fca5a5;
+        
+        &:focus {
+          border-color: #f87171;
+          box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.1);
+        }
+      }
+    }
+  }
+  
+  .ng-dropdown-panel {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-top: 4px;
+    z-index: 1050;
+    
+    .ng-dropdown-panel-items {
+      .ng-option {
+        padding: 0.65rem 0.85rem;
+        font-size: 0.875rem;
+        color: #4a5568;
+        transition: all 0.2s ease;
+        
+        &:hover {
+          background-color: #f9fafb;
+        }
+        
+        &.ng-option-selected {
+          background-color: #f0ebff;
+          color: #7c3aed;
+        }
+        
+        &.ng-option-marked {
+          background-color: #fafbff;
+        }
+      }
+    }
+  }
+}
+
+/* Code Editor Wrapper Pastel */
+.code-editor-wrapper-pastel,
+.form-group .text-justify {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #1e1e2e;
+  
+  .CodeMirror {
+    font-family: 'Fira Code', 'Monaco', 'Menlo', 'Consolas', monospace;
+    font-size: 0.85rem;
+  }
+}
+
+/* Input Groups Pastel */
+.input-group-pastel {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  border-radius: 8px;
+  /* overflow: hidden; Removed to allow ng-select dropdowns to show */
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  
+  &:focus-within {
+    border-color: #b8a8ff;
+    box-shadow: 0 0 0 3px rgba(184, 168, 255, 0.1);
+    background-color: #fafbff;
+    
+    .input-group-text {
+      background-color: #f3f0ff;
+      color: #8b5cf6;
+    }
+  }
+  
+  &.disabled {
+    background-color: #f9fafb;
+    cursor: not-allowed;
+    
+    .input-group-text {
+      background-color: #f3f4f6;
+      color: #9ca3af;
+    }
+  }
+  
+  .input-group-prepend {
+    display: flex;
+  }
+  
+  .input-group-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.65rem 0.85rem;
+    background-color: #fbfaff;
+    border: none;
+    border-right: 1px solid #f0f0f5;
+    color: #c4b5fd;
+    transition: all 0.3s ease;
+    min-width: 42px;
+    
+    svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    /* Ensure rounded corners since overflow is visible */
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+  
+  .form-control {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    padding-left: 0.75rem;
+    
+    /* Ensure rounded corners since overflow is visible */
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    
+    &:focus {
+      box-shadow: none;
+      background-color: transparent;
+    }
+  }
+}
+
+/* Wrapper for ng-select to look like input group */
+.ng-select-group-pastel {
+  @extend .input-group-pastel;
+  
+  .ng-select {
+    flex-grow: 1;
+    
+    .ng-select-container {
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      min-height: 36px;
+      
+      /* Ensure rounded corners since overflow is visible */
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    
+    &.ng-select-focused {
+      .ng-select-container {
+        box-shadow: none !important;
+      }
+    }
+  }
+}
+
+/* Buttons Pastel Refined */
+.btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.3px;
+  
+  i, svg {
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    
+    i, svg {
+      transform: scale(1.1);
+    }
+  }
+  
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  &.btn-primary {
+    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);
+    
+    &:hover {
+      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+      box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3);
+    }
+    
+    &.btn-prev {
+      background: #ffffff;
+      color: #7c3aed;
+      border: 1px solid #e8e0ff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      
+      &:hover {
+        background: #fcfaff;
+        border-color: #d4c5ff;
+      }
+    }
+  }
+  
+  &.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+    
+    &:hover {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+    }
+  }
+  
+  &.btn-outline-secondary {
+    background: #ffffff;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+    
+    &:hover {
+      background: #f9fafb;
+      color: #374151;
+      border-color: #d1d5db;
+    }
+  }
+}
+
+/* Stepper Refinements */
+.bs-stepper.horizontal-wizard-example {
+  .bs-stepper-header {
+    .step {
+      .step-trigger {
+        .bs-stepper-box {
+          width: 42px;
+          height: 42px;
+          font-size: 1rem;
+        }
+      }
+      
+      &.active {
+        .step-trigger {
+          .bs-stepper-box {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+          }
+        }
+      }
+    }
+  }
+}
+
+/* Validation Messages */
+.invalid-form {
+  display: block;
+  margin-top: 0.35rem;
+  
+  .form-text.text-danger {
+    font-size: 0.75rem;
+    color: #f87171;
+    display: flex;
+    align-items: center;
+    
+    &::before {
+      content: '⚠';
+      margin-right: 0.35rem;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+/* Section Labels with Icons */
+.section-label-with-icon {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4a5568;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #f0f0f5;
+  
+  svg {
+    margin-right: 0.75rem;
+    color: #9f7aea;
+    flex-shrink: 0;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+  .bs-stepper.horizontal-wizard-example {
+    .bs-stepper-header {
+      flex-direction: column;
+      
+      .line {
+        transform: rotate(90deg);
+        margin: 0.5rem 0;
+      }
+    }
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+}
