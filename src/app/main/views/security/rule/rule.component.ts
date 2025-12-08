@@ -39,13 +39,13 @@ export class RuleComponent implements OnInit {
     { id: 'segundos', name: 'Segundos', icon: 'watch' }
   ];
 
-   public tiposEncriptamiento = [
+  public tiposEncriptamiento = [
     { id: 'MD5', name: 'MD5' },
     { id: 'SHA256', name: 'SHA256' },
     { id: 'SHA512', name: 'SHA512' }
   ];
 
-  public token : any 
+  public token: any
 
   constructor(
     private apiService: ApiService,
@@ -53,7 +53,7 @@ export class RuleComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.token  = jwt_decode(sessionStorage.getItem("token"));
+    this.token = jwt_decode(sessionStorage.getItem("token"));
 
     this.contentHeader = {
       headerTitle: 'Reglas de Seguridad',
@@ -61,7 +61,7 @@ export class RuleComponent implements OnInit {
       breadcrumb: {
         type: '',
         links: [
-          { name: 'Home', isLink: true, link: '/home' },
+          { name: 'Principal', isLink: true, link: '/home' },
           { name: 'Seguridad', isLink: false },
           { name: 'Reglas', isLink: false },
         ],
@@ -75,7 +75,10 @@ export class RuleComponent implements OnInit {
     this.xAPI.parametros = '';
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.lstAplicaciones = data.map(e => ({ id: e.id, name: e.nombre }));
+        this.lstAplicaciones = data.map((e) => {
+          e.name = `${e.id}  (${e.nombre})`
+          return e
+        })
       },
       (error) => {
         console.error('Error cargando las aplicaciones:', error);
@@ -102,10 +105,10 @@ export class RuleComponent implements OnInit {
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        if(data != null) {
+        if (data != null) {
           if (data.length > 0) {
             this.configuracion = data[0]
-          } 
+          }
         } else {
           this.configuracion = this.crearConfiguracionDefecto(appId)
         }

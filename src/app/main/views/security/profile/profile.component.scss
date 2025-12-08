@@ -1,144 +1,354 @@
+// ========================================
+// Pastel Theme Variables
+// ========================================
+$primary-soft: #e8f0fe;
+$primary-text: #5b8fc9;
+$success-soft: #e6f4ea;
+$success-text: #6ba88e;
+$warning-soft: #fef7e0;
+$warning-text: #d4a574;
+$danger-soft: #fce8e6;
+$danger-text: #d18a9a;
+$info-soft: #e1f5fe;
+$info-text: #4fc3f7;
+$secondary-soft: #f5f5f5;
+$secondary-text: #9e9e9e;
+
+$soft-bg: #f8f9fa;
+$border-color: #e0e0e0;
+$text-primary: #2c3e50;
+$text-secondary: #7f8c8d;
+
+// ========================================
+// General Styling
+// ========================================
 input {
-    font-size: 14px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
 }
 
 button {
-    height: 38px;
+  height: 38px;
+  font-family: 'Inter', sans-serif;
 }
 
-// 2. Estilo para el Botón de Expansión
-.btn-expansion {
-    border: none;
-    background: none;
-    cursor: pointer;
-    padding: 0;
-    margin-right: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    /* Asegura un buen área de clic */
-    height: 24px;
-    color: #007bff;
-    /* Color azul para que resalte */
-}
-
-
-// 3. Indicador de Interacción al pasar el cursor sobre la fila
-:host ::ng-deep .datatable-body-row {
-    cursor: default;
-    /* Por defecto, aunque ngx-datatable puede cambiarlo */
-
-    // Si la fila no es solo informativa, sugiere que se puede hacer clic
-    // o que algo va a suceder.
-    &:hover {
+// ========================================
+// Datatable Enhanced Styling
+// ========================================
+::ng-deep {
+  .ngx-datatable.bootstrap {
+    box-shadow: none;
+    
+    // Header Styling
+    .datatable-header {
+      background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 5%) 100%);
+      border-bottom: 2px solid $border-color;
+      
+      .datatable-header-cell {
+        padding: 1rem;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        color: $text-primary;
+        text-transform: uppercase;
+        font-family: 'Inter', sans-serif;
+      }
+    }
+    
+    // Body Styling
+    .datatable-body {
+      .datatable-body-row {
+        border-bottom: 1px solid lighten($border-color, 3%);
+        transition: all 0.2s ease;
         cursor: pointer;
-        /* Cambia el cursor para sugerir interactividad */
+        
+        &:hover {
+          background-color: lighten($primary-soft, 5%) !important;
+          transform: scale(1.002);
+          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .datatable-body-cell {
+          padding: 1rem;
+          vertical-align: middle;
+          
+          .font-weight-bold {
+            font-weight: 600;
+            color: $text-primary;
+          }
+        }
+      }
+      
+      // Row Detail (Expanded Content)
+      .datatable-row-detail {
+        background: linear-gradient(135deg, $soft-bg 0%, lighten($secondary-soft, 2%) 100%);
+        border-top: 1px solid $border-color;
+        border-bottom: 1px solid $border-color;
+        padding: 1.5rem;
+      }
     }
+  }
 }
 
-// 4. Estilo y Hover Específico para el Botón de Expansión
-.btn-expansion {
-    border: none;
-    background: none;
-    cursor: pointer;
-    padding: 0;
-    margin-right: 0.5rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    color: #495057;
-    /* Color estándar para texto */
-    transition: color 0.15s, background-color 0.15s;
+// ========================================
+// Expansion Button Styling
+// ========================================
+.btn-expansion,
+.btn-sm.btn-link {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: $text-secondary;
+  transition: all 0.2s ease;
+  border-radius: 6px;
 
-    &:hover {
-        color: #007bff;
-        /* Resalta el ícono a azul al pasar el cursor */
-        background-color: #e9ecef;
-        /* Sutil fondo gris alrededor del ícono */
-        border-radius: 3px;
-    }
+  &:hover {
+    color: $primary-text;
+    background-color: $primary-soft;
+    transform: scale(1.1);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
-
-
-/* Estilos para los íconos de expandir/contraer controlados por ngClass */
-.icon-plus::before {
-    content: '' !important;
-}
-
-/* Limpia contenido previo */
+// ========================================
+// Icon Styling (Plus/Minus)
+// ========================================
+.icon-plus::before,
 .icon-minus::before {
-    content: '' !important;
+  content: '' !important;
 }
 
 .icon-plus {
-    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
 }
 
 .icon-minus {
-    content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
+  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
 }
 
-.sub-menu-item .custom-control-label {
+// ========================================
+// Enhanced Checkbox Styling
+// ========================================
+.custom-control-input {
+  &:checked ~ .custom-control-label::before {
+    background-color: $success-text !important;
+    border-color: $success-text !important;
+    box-shadow: 0 2px 4px rgba($success-text, 0.3);
+  }
+}
+
+.custom-control-label {
+  &::before {
+    border-radius: 0.35rem;
+    border: 2px solid $border-color;
+    transition: all 0.2s ease;
+  }
+  
+  &:hover::before {
+    border-color: $primary-text;
+    box-shadow: 0 0 0 0.2rem rgba($primary-text, 0.1);
+  }
+}
+
+// ========================================
+// Sub-Menu and Privileges Container
+// ========================================
+.sub-menu-item {
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  background: white;
+  border-radius: 8px;
+  border-left: 3px solid $info-text;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: lighten($info-soft, 3%);
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .custom-control-label {
     display: flex;
     align-items: center;
-}
-
-
-
-
-
-.datatable-body-row:hover {
-    background-color: rgba(115, 103, 240, 0.05) !important;
-    cursor: pointer;
-}
-
-/* Estilo unificado y moderno para todos los checkboxes */
-.custom-control-input:checked~.custom-control-label::before {
-    background-color: #7367f0 !important;
-    border-color: #7367f0 !important;
-}
-
-.custom-control-label::before {
-    border-radius: 0.25rem;
-    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.sub-menu-item .custom-control-label {
-    display: flex;
-    align-items: center;
+    font-weight: 600;
+    color: $text-primary;
+  }
 }
 
 .privileges-container {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
-    background-color: #fff;
-    border-radius: 0.428rem;
-    border: 1px solid #ebe9f1;
-    box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.04);
-    padding: 0;
-    margin-left: 48px;
-    margin-top: 8px;
-    display: flex;
-    flex-direction: column;
-}
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+  background: linear-gradient(135deg, white 0%, lighten($success-soft, 5%) 100%);
+  border-radius: 8px;
+  border: 1px solid lighten($border-color, 2%);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  padding: 0;
+  margin-left: 48px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
 
-.privileges-container.show {
+  &.show {
     max-height: 500px;
-    padding: 1.8rem;
-    transition: max-height 0.4s ease-in;
+    padding: 1.5rem;
+    transition: max-height 0.4s ease-in, padding 0.3s ease-in;
+  }
 }
 
 .privilege-item {
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    font-size: 11px;
-    margin-left: 20px;
-    display: flex;
-    align-items: center;
-    padding: 0.25rem 0;
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: lighten($success-soft, 2%);
+    transform: translateX(2px);
+  }
+  
+  .custom-control-label {
+    color: $text-secondary;
+    font-weight: 400;
+  }
+}
+
+// ========================================
+// Badge Styling
+// ========================================
+.badge {
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  
+  &.badge-pill {
+    border-radius: 50rem;
+  }
+  
+  &.badge-light-secondary {
+    background: linear-gradient(135deg, $secondary-soft 0%, lighten($secondary-soft, 2%) 100%);
+    color: $text-secondary;
+    border: 1px solid lighten($border-color, 2%);
+  }
+  
+  &.badge-light-success {
+    background: linear-gradient(135deg, $success-soft 0%, lighten($success-soft, 2%) 100%);
+    color: $success-text;
+    border: 1px solid lighten($success-text, 30%);
+  }
+  
+  &.badge-light-danger {
+    background: linear-gradient(135deg, $danger-soft 0%, lighten($danger-soft, 2%) 100%);
+    color: $danger-text;
+    border: 1px solid lighten($danger-text, 30%);
+  }
+  
+  &.badge-light-warning {
+    background: linear-gradient(135deg, $warning-soft 0%, lighten($warning-soft, 2%) 100%);
+    color: $warning-text;
+    border: 1px solid lighten($warning-text, 30%);
+  }
+}
+
+// ========================================
+// Tab Navigation Styling
+// ========================================
+::ng-deep {
+  .nav-pills {
+    .nav-link {
+      border-radius: 8px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      color: $text-secondary;
+      
+      &:hover {
+        background: $primary-soft;
+        color: $primary-text;
+        transform: translateY(-2px);
+      }
+      
+      &.active {
+        background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba($primary-text, 0.3);
+      }
+    }
+  }
+}
+
+// ========================================
+// Button Styling
+// ========================================
+.btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  
+  &.btn-primary {
+    background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba($primary-text, 0.3);
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($primary-text, 0.4);
+    }
+  }
+  
+  &.btn-warning {
+    background: linear-gradient(135deg, $warning-text 0%, darken($warning-text, 10%) 100%);
+    border: none;
+    box-shadow: 0 4px 12px rgba($warning-text, 0.3);
+    color: white;
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba($warning-text, 0.4);
+    }
+  }
+}
+
+// ========================================
+// Dropdown Menu Styling
+// ========================================
+::ng-deep {
+  .dropdown-menu {
+    border-radius: 8px;
+    border: 1px solid $border-color;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    padding: 0.5rem 0;
+    
+    .dropdown-item {
+      padding: 0.75rem 1.5rem;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      
+      &:hover {
+        background: $primary-soft;
+        color: $primary-text;
+        transform: translateX(4px);
+        
+        span[data-feather] {
+          color: $primary-text;
+        }
+      }
+    }
+  }
 }

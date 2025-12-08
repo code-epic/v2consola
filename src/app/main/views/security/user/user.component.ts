@@ -277,6 +277,31 @@ export class UserComponent implements OnInit {
 
   }
 
+
+  cargarConfiguracionApp() {
+
+
+    this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
+    this.xAPI.parametros = environment.ID
+    this.xAPI.valores = {};
+
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data != null) {
+          if (data.length > 0) {
+            this.configuracion = data[0]
+            this.iUser.endpoint = this.configuracion.endpoints.login
+          }
+        }
+      },
+      (error) => {
+        console.error('Error al cargar la configuración de la aplicación:', error);
+
+      }
+    );
+  }
+
+
   cargarUsuario(usuario: Usuario): IUser {
     // Mapeo de propiedades directas
     this.iUser.cedula = usuario.cedula;
@@ -337,6 +362,7 @@ export class UserComponent implements OnInit {
 
       this.lstUsersApp.push(app)
       this.dataUsers = this.lstUsersApp
+      // console.log(this.dataUsers)
     });
 
   }
@@ -702,7 +728,7 @@ export class UserComponent implements OnInit {
 
   eliminarPerfil() { }
 
-  async agregarUsuario() {
+  async agregarUsuario(tipo: number) {
 
     let usuario = window.sessionStorage.getItem('validator')
 
@@ -729,10 +755,11 @@ export class UserComponent implements OnInit {
 
     await this.getUserApp()
 
+    let texto = tipo == 1 ? 'guardar' : 'modificar'
 
     Swal.fire({
       title: 'Alerta',
-      text: '¿Está seguro que desea guardar usuario?',
+      text: '¿Está seguro que desea ' + texto + ' el usuario?',
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -741,18 +768,18 @@ export class UserComponent implements OnInit {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.ok()
+        this.ok(tipo)
       }
     })
   }
 
-  ok() {
+  ok(tipo: number) {
 
-    console.log('usuario ', this.usuario)
+    // console.log('usuario ', this.usuario)
     let fnx = {
       coleccion: 'usuario',
       objeto: this.usuario,
-      donde: `{"cedula":"${this.usuario.cedula}"}`,
+      donde: JSON.stringify({ cedula: this.usuario.cedula }),
       driver: 'MGDBA',
       upsert: true,
     }
@@ -762,7 +789,7 @@ export class UserComponent implements OnInit {
         this.lstPerfil = []
         this.xaplicacion = ''
         this.xperfil = ''
-        this.finalizando()
+        this.finalizando(tipo)
       },
       (error) => {
         this.utilservice.AlertMini(
@@ -775,14 +802,14 @@ export class UserComponent implements OnInit {
     )
   }
 
-  finalizando() {
+  finalizando(tipo: number) {
+    let texto = tipo == 1 ? 'registrado' : 'modificado'
     Swal.fire({
-      title: 'Registrado',
-      text: 'Tu usuario ha sido registrado codigo:',
-      icon: 'info',
+      title: 'Aviso',
+      text: 'Tu usuario ha sido ' + texto,
+      icon: 'success',
       showCancelButton: false,
       confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#C81D11',
       confirmButtonText: 'Aceptar',
     }).then((result) => {
       if (result.isConfirmed) {
@@ -819,28 +846,6 @@ export class UserComponent implements OnInit {
   }
 
 
-  cargarConfiguracionApp() {
-
-
-    this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
-    this.xAPI.parametros = environment.ID
-    this.xAPI.valores = {};
-
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        if (data != null) {
-          if (data.length > 0) {
-            this.configuracion = data[0]
-            this.iUser.endpoint = this.configuracion.endpoints.login
-          }
-        }
-      },
-      (error) => {
-        console.error('Error al cargar la configuración de la aplicación:', error);
-
-      }
-    );
-  }
 
 
   onLoginInput() {

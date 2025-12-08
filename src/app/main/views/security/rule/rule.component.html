@@ -21,7 +21,7 @@
                         <div class="form-group col-md-12">
                             <label class="form-label" for="app-select">Seleccionar Aplicación</label>
                             <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacionSeleccionada"
-                                [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                                [ngModelOptions]="{standalone: true}" bindLabel="nombre" bindValue="id"
                                 (change)="cargarConfiguracionApp($event)" [clearable]="false"
                                 placeholder="Seleccione una aplicación para configurar sus reglas">
                             </ng-select>

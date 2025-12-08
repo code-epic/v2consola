@@ -14,6 +14,8 @@ import Swal from "sweetalert2"
 import { aplicacion } from "app/menu/schema"
 import { Menu } from "@services/seguridad/login.service"
 import { Md5 } from "ts-md5"
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 
 
@@ -280,12 +282,12 @@ export class ProfileComponent implements OnInit {
       // this.rol = undefined
       this.Perfil.descripcion = ''
       this.Perfil.nombre = ''
-      
-      
+
+
     } else {
       this.registrar = "Registrar nuevo perfil"
       this.desactivo = 'false'
-      
+
     }
   }
 
@@ -372,8 +374,64 @@ export class ProfileComponent implements OnInit {
 
     }
     // this.dataRolDetalles = this.dataJerarquica
+
+    // Recalcular el estado de todos los padres después de cargar los datos
+    this.recalcularTodosLosPadres();
+
+    // SNAPSHOT INICIAL
+    // Guardamos el estado inicial para comparar después
+    this.initialPerfilSnapshot = {
+      nombre: this.Perfil.nombre,
+      descripcion: this.Perfil.descripcion
+    };
+    this.initialPermissionsHash = this.getPermissionsHash();
+
     this.cd.detectChanges();
-    return
+    return;
+  }
+
+  // Variables para control de cambios
+  public initialPerfilSnapshot: any = {};
+  public initialPermissionsHash: string = '';
+
+  /**
+   * Genera un string único basado en los estatus de todos los permisos.
+   * Se usa para detectar si hubo cambios en la selección.
+   */
+  getPermissionsHash(): string {
+    let hash = '';
+    if (this.dataRolDetalles) {
+      this.dataRolDetalles.forEach(mod => {
+        hash += `${mod.modulo}:${mod.estatus}|`;
+        if (mod.children) {
+          mod.children.forEach(menu => {
+            hash += `${menu.accion}:${menu.estatus}|`;
+            if (menu.children) {
+              menu.children.forEach(priv => {
+                hash += `${priv.accion}:${priv.estatus}|`;
+              });
+            }
+          });
+        }
+      });
+    }
+    return hash;
+  }
+
+  /**
+   * Verifica si el perfil ha sufrido cambios con respecto a su carga inicial.
+   * Compara nombre, descripción y el hash de permisos.
+   */
+  hasProfileChanged(): boolean {
+    // 1. Verificar Nombre y Descripción
+    if (this.Perfil.nombre !== this.initialPerfilSnapshot.nombre) return true;
+    if (this.Perfil.descripcion !== this.initialPerfilSnapshot.descripcion) return true;
+
+    // 2. Verificar Hash de Permisos
+    const currentHash = this.getPermissionsHash();
+    if (currentHash !== this.initialPermissionsHash) return true;
+
+    return false;
   }
 
   convertirDataPlana() {
@@ -462,7 +520,10 @@ export class ProfileComponent implements OnInit {
       });
     }
 
-    // Opcional: Forzar la actualización de la tabla para que se refresque visualmente
+    // 3. Recalcular todos los padres para asegurar consistencia
+    this.recalcularTodosLosPadres();
+
+    // 4. Forzar la actualización de la tabla para que se refresque visualmente
     // Esto es crucial para que ngx-datatable reconozca el cambio de estado
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
@@ -486,7 +547,10 @@ export class ProfileComponent implements OnInit {
     // 2. Recalcular el estado del Menú principal (Nivel 1)
     this.recalcularEstadoPadre(subMenu.menu);
 
-    // Forzar actualización de la tabla para ver los cambios
+    // 3. Recalcular todos los padres para asegurar consistencia
+    this.recalcularTodosLosPadres();
+
+    // 4. Forzar actualización de la tabla para ver los cambios
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
 
@@ -495,23 +559,192 @@ export class ProfileComponent implements OnInit {
    * Recalcula el estado del SubMenú (Nivel 2) y del Menú (Nivel 1).
    */
   onPrivilegeCheckboxChange(privilegio: Privilegio, subMenu: SubMenu, event: any): void {
-    // Simplemente actualiza el estado del privilegio clickeado.
+    // 1. Actualiza el estado del privilegio clickeado
     privilegio.estatus = event.target.checked ? 1 : 0;
 
-    // Se elimina la lógica que propaga el cambio hacia los padres (SubMenu y Módulo).
+    // 2. Recalcular el estado del SubMenu basado en sus privilegios
+    if (subMenu.children && subMenu.children.length > 0) {
+      const todosPrivilegiosSeleccionados = subMenu.children.every(priv => priv.estatus === 1);
+      const algunPrivilegioSeleccionado = subMenu.children.some(priv => priv.estatus === 1);
+
+      // Si todos los privilegios están seleccionados, seleccionar el SubMenu
+      if (todosPrivilegiosSeleccionados) {
+        subMenu.estatus = 1;
+      }
+      // Si ninguno está seleccionado, deseleccionar el SubMenu
+      else if (!algunPrivilegioSeleccionado) {
+        subMenu.estatus = 0;
+      }
+      // Si algunos están seleccionados (parcial), deseleccionar el SubMenu
+      // El indicador visual (badge "-") mostrará que hay selección parcial
+      else {
+        subMenu.estatus = 0;
+      }
+    }
+
+    // 3. Recalcular el estado del Módulo padre
+    this.recalcularEstadoPadre(subMenu.menu);
+
+    // 4. Recalcular todos los padres para asegurar consistencia
+    this.recalcularTodosLosPadres();
+
+    // 5. Forzar actualización de la tabla
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
 
   /**
-   * Función auxiliar para recalcular el estado del Menú (Nivel 1) basado en sus SubMenús (Nivel 2).
+   * Función auxiliar para recalcular el estado del Menú (Nivel 1) basado en sus SubMenús (Nivel 2) y Privilegios (Nivel 3).
+   * El padre solo se selecciona si TODOS los SubMenus Y TODOS los Privilegios están seleccionados.
    */
   recalcularEstadoPadre(menuNombre: string): void {
-    const parent = this.padresMap.get(menuNombre);
-    if (parent) {
-      const todosSubMenusSeleccionados = parent.children!.every(subMenu => subMenu.estatus === 1);
-      // Si todos los hijos (SubMenús) están seleccionados, el Padre (Menú) se selecciona.
-      parent.estatus = todosSubMenusSeleccionados ? 1 : 0;
+    // Buscar el padre en el mapa usando todas las posibles claves
+    // La clave del mapa es "${modulo}-${menu}"
+    let parent: PermisoPadre | undefined;
+
+    // Buscar en el mapa por todas las claves que contengan el menuNombre
+    for (const [key, value] of this.padresMap.entries()) {
+      if (key.endsWith(`-${menuNombre}`)) {
+        parent = value;
+        break;
+      }
     }
+
+    if (parent && parent.children) {
+      // Verificar si TODOS los SubMenus están seleccionados
+      const todosSubMenusSeleccionados = parent.children.every(subMenu => subMenu.estatus === 1);
+
+      // Verificar si TODOS los Privilegios de TODOS los SubMenus están seleccionados
+      const todosPrivilegiosSeleccionados = parent.children.every(subMenu => {
+        if (subMenu.children && subMenu.children.length > 0) {
+          return subMenu.children.every(priv => priv.estatus === 1);
+        }
+        return true; // Si no tiene privilegios, se considera como "todos seleccionados"
+      });
+
+      // Verificar si hay al menos un SubMenu o Privilegio seleccionado
+      const algunElementoSeleccionado = parent.children.some(subMenu => {
+        // Si el SubMenu está seleccionado
+        if (subMenu.estatus === 1) return true;
+        // O si tiene al menos un privilegio seleccionado
+        if (subMenu.children && subMenu.children.length > 0) {
+          return subMenu.children.some(priv => priv.estatus === 1);
+        }
+        return false;
+      });
+
+      // El padre se selecciona SOLO si TODOS los SubMenus Y TODOS los Privilegios están seleccionados
+      if (todosSubMenusSeleccionados && todosPrivilegiosSeleccionados) {
+        parent.estatus = 1;
+      }
+      // Si no hay ningún elemento seleccionado, deseleccionar el padre
+      else if (!algunElementoSeleccionado) {
+        parent.estatus = 0;
+      }
+      // Si hay selección parcial (algunos pero no todos), deseleccionar el padre
+      // El badge "Parcial" mostrará que hay selección parcial
+      else {
+        parent.estatus = 0;
+      }
+    }
+  }
+
+  /**
+   * Recalcula el estado de TODOS los padres en dataRolDetalles.
+   * Se llama después de cargar datos (por ejemplo, en editarRol).
+   */
+  recalcularTodosLosPadres(): void {
+    if (!this.dataRolDetalles || this.dataRolDetalles.length === 0) {
+      return;
+    }
+
+    this.dataRolDetalles.forEach(parent => {
+      if (parent.children && parent.children.length > 0) {
+        // Verificar si TODOS los SubMenus están seleccionados
+        const todosSubMenusSeleccionados = parent.children.every(subMenu => subMenu.estatus === 1);
+
+        // Verificar si TODOS los Privilegios de TODOS los SubMenus están seleccionados
+        const todosPrivilegiosSeleccionados = parent.children.every(subMenu => {
+          if (subMenu.children && subMenu.children.length > 0) {
+            return subMenu.children.every(priv => priv.estatus === 1);
+          }
+          return true;
+        });
+
+        // Verificar si hay al menos un SubMenu o Privilegio seleccionado
+        const algunElementoSeleccionado = parent.children.some(subMenu => {
+          if (subMenu.estatus === 1) return true;
+          if (subMenu.children && subMenu.children.length > 0) {
+            return subMenu.children.some(priv => priv.estatus === 1);
+          }
+          return false;
+        });
+
+        // Actualizar el estado del padre
+        if (todosSubMenusSeleccionados && todosPrivilegiosSeleccionados) {
+          parent.estatus = 1;
+        } else if (!algunElementoSeleccionado) {
+          parent.estatus = 0;
+        } else {
+          parent.estatus = 0; // Parcial
+        }
+
+        // También recalcular el estado de cada SubMenu basado en sus privilegios
+        parent.children.forEach(subMenu => {
+          if (subMenu.children && subMenu.children.length > 0) {
+            const todosPrivilegios = subMenu.children.every(priv => priv.estatus === 1);
+            const algunPrivilegio = subMenu.children.some(priv => priv.estatus === 1);
+
+            if (todosPrivilegios) {
+              subMenu.estatus = 1;
+            } else if (!algunPrivilegio) {
+              subMenu.estatus = 0;
+            } else {
+              subMenu.estatus = 0; // Parcial
+            }
+          }
+        });
+      }
+    });
+  }
+
+  /**
+   * Verifica si un elemento padre tiene al menos un hijo seleccionado
+   * pero no todos. Útil para mostrar un indicador visual (guion o badge).
+   * @param row El elemento padre a verificar
+   * @returns true si tiene algunos hijos seleccionados pero no todos
+   */
+  hasSelectedChildren(row: PermisoPadre | SubMenu): boolean {
+    if (!row.children || row.children.length === 0) {
+      return false;
+    }
+
+    // 1. Verificar si hay algún hijo directo seleccionado
+    const someChildrenSelected = row.children.some(child => child.estatus === 1);
+
+    // 2. Verificar si hay algún nieto (privilegio) seleccionado
+    const someGrandchildrenSelected = row.children.some(child => {
+      if ('children' in child && child.children && child.children.length > 0) {
+        return (child as SubMenu).children.some(p => p.estatus === 1);
+      }
+      return false;
+    });
+
+    // Retorna true si hay CUALQUIER selección (hijos o nietos)
+    // El *ngIf en el HTML se encargará de ocultar esto si el padre está totalmente seleccionado (estatus === 1)
+    return someChildrenSelected || someGrandchildrenSelected;
+  }
+
+  /**
+   * Verifica si un SubMenu tiene al menos un privilegio seleccionado
+   * @param subMenu El submenu a verificar
+   * @returns true si tiene al menos un privilegio seleccionado
+   */
+  hasSelectedPrivileges(subMenu: SubMenu): boolean {
+    if (!subMenu.children || subMenu.children.length === 0) {
+      return false;
+    }
+
+    return subMenu.children.some(privilegio => privilegio.estatus === 1);
   }
 
   /**
@@ -693,8 +926,9 @@ export class ProfileComponent implements OnInit {
     )
   }
 
-  LimpiarMenu() {
-    this.estatus = undefined
+  Cancelar() {
+    this.active = 1
+    this.selTab(1)
   }
 
   editarRol(row) {
@@ -727,13 +961,44 @@ export class ProfileComponent implements OnInit {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.ok(row.id);
+        this.ok(row.id, row.nombre);
       }
     });
   }
 
 
-  ok(id: string) {
+  ok(id: string, idperfil: string) {
+
+    this.xAPI.funcion = environment.functions.CONSULTAR_PERFILES_ACTIVOS
+    this.xAPI.parametros = `${idperfil},${environment.ID}`
+    this.xAPI.valores = ''
+    console.log(this.xAPI.parametros)
+    this.dataRolDetalles = []
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      data => {
+        console.log(data)
+        if (data.length == 0) {
+          this.deleteAll(id)
+        } else {
+          Swal.fire({
+            title: "Advertencia",
+            text: `No se puede eliminar el perfil, existen (${data.length}) usuarios creados con este perfil.`,
+            icon: "info",
+            showCancelButton: false,
+            confirmButtonColor: "#567b9eff",
+            confirmButtonText: "Ok",
+          })
+        }
+      },
+      err => {
+
+      }
+    )
+
+
+  }
+
+  deleteAll(id: string) {
     this.xAPI.funcion = environment.functions.ELIMINAR_PERFIL
     this.xAPI.parametros = id
     this.xAPI.valores = ''
@@ -753,7 +1018,7 @@ export class ProfileComponent implements OnInit {
   // (Asumiendo que PermisoPadre es el tipo de elemento en dataRolDetalles)
   generarMenuSeleccionado(menuCompleto: MenuItem[]): MenuItem[] {
     const menuSeleccionado: MenuItem[] = [];
-    const permisoMap = new Map<string, number>(); 
+    const permisoMap = new Map<string, number>();
 
     this.dataRolDetalles.forEach(padre => {
       const keyPadre = `${padre.modulo}-${padre.menu}`;
@@ -813,7 +1078,7 @@ export class ProfileComponent implements OnInit {
   }
 
 
-  
+
 
   guardarPerfiles() {
 
@@ -862,12 +1127,8 @@ export class ProfileComponent implements OnInit {
 
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
-        this.utilservice.AlertMini(
-          "top-end",
-          "success",
-          `Tu perfil se ha registrado: ${data.UpsertedID}`,
-          3000
-        )
+        console.log(data)
+
         this.active = 1
         this.dataRol = []
         this.dataRolDetalles = []
@@ -877,6 +1138,21 @@ export class ProfileComponent implements OnInit {
         this.Perfil.nombre = ''
         this.Perfil.descripcion = ''
         this.listarPerfiles()
+        if (data.UpsertedID != null) {
+          this.utilservice.AlertMini(
+            "top-end",
+            "success",
+            `Tu perfil se ha registrado: ${data.UpsertedID}`,
+            3000
+          )
+        } else {
+          this.utilservice.AlertMini(
+            "top-end",
+            "success",
+            "Perfil actualizado correctamente",
+            3000
+          )
+        }
       },
       (error) => {
         this.utilservice.AlertMini(
@@ -973,5 +1249,271 @@ export class ProfileComponent implements OnInit {
     return updatedArray;
   }
 
+  /**
+   * Exportar Perfil A PDF
+   */
+  /**
+   * Exportar Perfil A PDF (Versión Premium)
+   */
+  /**
+   * Exportar Perfil A PDF (Versión Premium Creativa)
+   */
+  /**
+   * Exportar Perfil A PDF (Versión Premium Final)
+   */
+  exportarPDF(): void {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+
+    // ==========================================
+    // PAGINA 1: PORTADA (Suave / Minimalista)
+    // ==========================================
+
+    // Titulo Principal - Azul Suave
+    doc.setFontSize(26);
+    doc.setTextColor(100, 181, 246); // Blue 300 (Pastel)
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPORTE DE PERFIL', pageWidth / 2, 80, { align: 'center' });
+
+    // Línea Decorativa Sutil
+    doc.setDrawColor(224, 224, 224); // Grey 300
+    doc.setLineWidth(0.5);
+    doc.line(60, 85, pageWidth - 60, 85);
+
+    // Subtítulo (Nombre del Perfil)
+    doc.setFontSize(18);
+    doc.setTextColor(97, 97, 97); // Grey 700
+    doc.text((this.Perfil.nombre || 'Perfil Sin Nombre').toUpperCase(), pageWidth / 2, 100, { align: 'center' });
+
+    // Detalles Centrados
+    doc.setFontSize(12);
+    doc.setTextColor(117, 117, 117); // Grey 600
+    doc.text(`Aplicación: ${this.xaplicacion || 'N/A'}`, pageWidth / 2, 115, { align: 'center' });
+    doc.text(`Rol Asignado: ${this.xrol || 'N/A'}`, pageWidth / 2, 122, { align: 'center' });
+
+    // Descripción en itálica suave
+    if (this.Perfil.descripcion) {
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'italic');
+      doc.setTextColor(158, 158, 158); // Grey 500
+      const splitDesc = doc.splitTextToSize(`"${this.Perfil.descripcion}"`, pageWidth - 100);
+      doc.text(splitDesc, pageWidth / 2, 140, { align: 'center' });
+    }
+
+    doc.setFontSize(9);
+    doc.setTextColor(189, 189, 189); // Grey 400
+    doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
+
+
+    // ==========================================
+    // PAGINA 2+: TABLA
+    // ==========================================
+    doc.addPage();
+
+    // Encabezado P2
+    doc.setFontSize(14);
+    doc.setTextColor(100, 181, 246);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Mapa de Permisos', 14, 20);
+
+    const tableData: any[][] = [];
+    let lastModule = '';
+    let lastMenu = '';
+
+    const rowConfig: any[] = [];
+
+    this.dataRolDetalles.forEach(modulo => {
+      const isNewModule = modulo.modulo !== lastModule;
+      if (isNewModule) {
+        lastModule = modulo.modulo;
+        lastMenu = '';
+        // Módulo Header con ESTATUS
+        tableData.push([
+          modulo.modulo.toUpperCase(),
+          '',
+          '',
+          modulo.estatus // Pasar estatus del módulo
+        ]);
+        rowConfig.push({ type: 'module' });
+      }
+
+      if (modulo.children && modulo.children.length > 0) {
+        modulo.children.forEach(menu => {
+          const isNewMenu = menu.accion !== lastMenu;
+          if (isNewMenu) {
+            lastMenu = menu.accion;
+          }
+
+          if (menu.children && menu.children.length > 0) {
+            menu.children.forEach((privilegio, index) => {
+              // Para la primera fila del menú, podríamos querer mostrar el status del menú padre si se desea
+              // Pero aquí listamos privilegios.
+              // El usuario pidió "en los menu padre tambien podemos poner el check".
+              // Esto implica que la fila "Menu" (que agrupamos) debería tener su propio status?
+              // Actualmente NO tenemos una fila dedicada solo al menú si tiene hijos, los hijos "ocupan" las filas.
+              // Para cumplir el deseo, mostraré el menú con su check en la primera fila del grupo.
+
+              // Hack: Usaremos la primera fila del privilegio para "representar" al menú también visualmente?
+              // O mejor: Insertamos una fila explicita para el Menú si es nuevo.
+
+              // Si es un MENÚ NUEVO, agregamos una fila de "Cabecera de Menú" que tenga el check del menú
+              if (isNewMenu && index === 0) {
+                // Fila de MENÚ PADRE (Solo si se quiere explicito)
+                // El usuario dijo "en los menu padre tb".
+                // Vamos a agregar una fila para el Menú si tiene hijos, antes de los hijos.
+                tableData.push([
+                  '',
+                  menu.accion.toUpperCase(),
+                  '(Grupo de Permisos)',
+                  menu.estatus // Check del Menú Padre
+                ]);
+                rowConfig.push({ type: 'menu_header' });
+              }
+
+              tableData.push([
+                '',
+                '', // Menu vacío (ya lo mostramos en header o agrupado)
+                privilegio.accion,
+                privilegio.estatus
+              ]);
+              rowConfig.push({ type: 'privilege' });
+            });
+          } else {
+            // Menu sin hijos (es un privilegio directo en sí mismo)
+            tableData.push([
+              '',
+              menu.accion,
+              '(Acceso General)',
+              menu.estatus
+            ]);
+            // Tratamos como menu header o priv? Privilegio directo.
+            rowConfig.push({ type: 'privilege', isDirectMenu: true });
+          }
+        });
+      }
+    });
+
+    autoTable(doc, {
+      startY: 25,
+      head: [['MÓDULO', 'MENÚ', 'PRIVILEGIO', 'ESTATUS']],
+      body: tableData,
+      theme: 'grid',
+
+      styles: {
+        font: 'helvetica',
+        fontSize: 9,
+        cellPadding: 3,
+        valign: 'middle',
+        lineColor: [238, 238, 238],
+        lineWidth: 0.1,
+        textColor: [97, 97, 97]
+      },
+
+      headStyles: {
+        fillColor: [255, 255, 255], // White Header
+        textColor: [100, 181, 246], // Blue Text
+        fontStyle: 'bold',
+        halign: 'left',
+        lineWidth: 0, // No borders on header
+        lineColor: [255, 255, 255]
+      },
+
+      columnStyles: {
+        0: { cellWidth: 0 },
+        3: { cellWidth: 20, halign: 'center' }
+      },
+
+      didParseCell: (data) => {
+        const rowIndex = data.row.index;
+        const config = rowConfig[rowIndex];
+
+        if (data.section === 'body') {
+          // Estilo MÓDULO (Header Azul Muy Suave)
+          if (config && config.type === 'module') {
+            data.cell.styles.fillColor = [227, 242, 253]; // Light Blue 50
+            data.cell.styles.fontStyle = 'bold';
+            data.cell.styles.textColor = [33, 150, 243];
+            if (data.column.index === 0) data.cell.colSpan = 3; // Span solo primeras 3 columnas para dejar la 4ta (Estatus) libre para el check
+          }
+
+          // Estilo MENÚ PADRE (Header)
+          if (config && config.type === 'menu_header') {
+            data.cell.styles.fillColor = [255, 248, 225]; // Amber 50 (Pastel Yellow/Orange)
+            data.cell.styles.fontStyle = 'bold';
+            data.cell.styles.textColor = [97, 97, 97];
+            // Indentar visualmente el texto del menu
+            if (data.column.index === 1) data.cell.styles.fontStyle = 'bold';
+          }
+
+          // Estilo PRIVILEGIO (Hijo)
+          if (config && config.type === 'privilege') {
+            // Fondo blanco puro
+            data.cell.styles.fillColor = [255, 255, 255];
+            if (data.column.index === 2) {
+              // Indentacion visual en texto? No, ya esta en col 3
+            }
+          }
+
+          // VACIIAR TEXTO ESTATUS (Para todos, incluidos módulos)
+          if (data.column.index === 3) {
+            data.cell.text = [];
+          }
+        }
+        // Header Clean Line
+        if (data.section === 'head') {
+          // Border bottom blue
+          // data.cell.styles.lineWidth = {bottom: 0.5};
+          // data.cell.styles.lineColor = [100, 181, 246];
+        }
+      },
+
+      didDrawCell: (data) => {
+        // CHECKBOX PASTELES
+        if (data.section === 'body' && data.column.index === 3) {
+          const rowIndex = data.row.index;
+          const config = rowConfig[rowIndex];
+
+          // Ahora PERMITIMOS dibujar en modulos tambien
+          // if (config && config.type === 'module') return false;
+
+          const estatus = data.cell.raw as number;
+          const dim = 4; // tamaño caja más pequeño y fino
+          const cx = data.cell.x + (data.cell.width / 2) - (dim / 2);
+          const cy = data.cell.y + (data.cell.height / 2) - (dim / 2);
+
+          if (estatus === 1) {
+            // Caja Verde Pastel Suave
+            doc.setFillColor(165, 214, 167); // Green 200
+            doc.setDrawColor(165, 214, 167);
+            doc.roundedRect(cx, cy, dim, dim, 1, 1, 'FD');
+
+            // Check Blanco Fino
+            doc.setDrawColor(255, 255, 255);
+            doc.setLineWidth(0.6);
+            doc.line(cx + 1, cy + 2, cx + 1.8, cy + 3);
+            doc.line(cx + 1.8, cy + 3, cx + 3.2, cy + 1.2);
+          } else {
+            // Caja Gris Muy Suave
+            doc.setDrawColor(224, 224, 224); // Grey 300
+            doc.setFillColor(250, 250, 250); // Almost white
+            doc.roundedRect(cx, cy, dim, dim, 1, 1, 'FD');
+          }
+        }
+      }
+    }); // End autoTable
+
+    // Paginación Minimalist
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 2; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(200);
+      doc.text(`${i} / ${pageCount}`, pageWidth - 14, pageHeight - 10, { align: 'right' });
+    }
+
+    const fileName = `Reporte_${this.Perfil.nombre || 'Perfil'}.pdf`.replace(/ /g, '_');
+    doc.save(fileName);
+  }
 
 }

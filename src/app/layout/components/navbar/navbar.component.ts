@@ -108,6 +108,41 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public isBDV: boolean = false
   public icono: string = ''
 
+  // Password Strength properties
+  public passwordStrength: number = 0;
+  public passwordStrengthLabel: string = 'Sin seguridad';
+  public passwordStrengthColor: string = '';
+  public passwordStrengthWidth: number = 0;
+
+  /**
+   * Check Password Strength
+   * @param password 
+   */
+  checkPasswordStrength(password: string): void {
+    let result = 0;
+    if (password.length >= 8) result += 20;
+    if (password.match(/[A-Z]/)) result += 20;
+    if (password.match(/[a-z]/)) result += 20;
+    if (password.match(/[0-9]/)) result += 20;
+    if (password.match(/[@$!%*?&]/)) result += 20;
+
+    this.passwordStrengthWidth = result;
+
+    if (result < 40) {
+      this.passwordStrengthLabel = 'Débil';
+      this.passwordStrengthColor = 'bg-danger';
+    } else if (result < 80) {
+      this.passwordStrengthLabel = 'Media';
+      this.passwordStrengthColor = 'bg-warning';
+    } else if (result === 100) {
+      this.passwordStrengthLabel = 'Fuerte';
+      this.passwordStrengthColor = 'bg-success';
+    } else {
+      this.passwordStrengthLabel = 'Buena';
+      this.passwordStrengthColor = 'bg-info';
+    }
+  }
+
   /**
    * Constructor
    *
@@ -130,7 +165,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private utilservice: UtilService,
     private modalService: NgbModal,
-    private sha256: Sha256Service
+    private sha256: Sha256Service,
+    private router: Router
   ) {
     this.languageOptions = {
       en: {
@@ -416,7 +452,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.Change.usuario = this.usuario;
     this.modalService.open(modal, {
       centered: true,
-      size: "sm",
+      size: "md",
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal'
@@ -470,14 +506,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
 
     let xApi = {
-      funcion: "_SYS_UUserPanel",
+      funcion: environment.functions.ACTUALIZAR_CLAVE_USUARIO,
       parametros: `${this.Change.usuario},${this.Change.clave},${this.Change.nueva}`,
     }
 
-    console.log(xApi)
     this.apiService.Ejecutar(xApi).subscribe(
       (data) => {
-        console.log(data)
+        console.log(data.ModifiedCount)
+        if (data.ModifiedCount > 0) {
+          this.utilservice.AlertMini("top-end", "success", "Contraseña actualizada exitosamente", 3000);
+          window.sessionStorage.clear();
+          this.router.navigate(['/login']);
+        }
         this.clearModal();
       },
       (error) => {

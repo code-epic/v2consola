@@ -196,7 +196,7 @@
                 <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'box'"></span></span></div>
                 <ng-select [items]="lstAplicacion" [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
-                  bindLabel="name" (ngModelChange)="selPerfil($event)" bindValue="id" disabled="{{blockEditApp}}"
+                  bindLabel="nombre" (ngModelChange)="selPerfil($event)" bindValue="id" disabled="{{blockEditApp}}"
                   placeholder="Aplicación" appendTo="body" class="flex-grow-1"></ng-select>
               </div>
             </div>
@@ -273,7 +273,7 @@
                       <span class="font-weight-bold text-primary">{{e.nombre}}</span>
                       <div class="small text-muted">ID: {{e.id}}</div>
                     </td>
-                    <td>{{e.descripcion || 'Sin descripción'}}</td>
+                    <td>{{e.idper.descripcion || 'Sin descripción'}}</td>
                     <td>
                       <div class="badge badge-light-warning">
                         {{e.perfil}}
@@ -332,7 +332,7 @@
 
 
               <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-success"
-                (click)="agregarUsuario()">
+                (click)="agregarUsuario(1)">
                 <span [data-feather]="'save'"></span>&nbsp;&nbsp;Registrar Usuario
               </button>
 
@@ -341,7 +341,7 @@
 
 
               <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-warning"
-                (click)="agregarUsuario()">
+                (click)="agregarUsuario(2)">
                 <span [data-feather]="'edit'"></span>&nbsp;&nbsp;Modificar Usuario
               </button>
             </div>

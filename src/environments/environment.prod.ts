@@ -23,7 +23,13 @@ export const environment = {
     WUSUARIO: 'wusuario',
     USER_TASK: 'user-task',
     API_CORE_NAME: "apicore",
-    SYS_FNX_NAME: "sys-function"
+    SYS_FNX_NAME: "sys-function",
+    SYS_CONFIG: "sys-config",
+    SYS_SCHEMA: "sys-schema",
+    SYS_PROFILE: "sys-profile",
+    SYS_CACHE: "sys-cache",
+    SYS_TASK: "sys-task",
+    SYS_LOG: "sys-log",
   },
   functions: {
     ACTUALIAZAR_MENU: "_SYS_ActualizarMenu",
@@ -58,7 +64,9 @@ export const environment = {
     CONSULTAR_CONFIGURACION_APP: '_SYS_CReglasApp',
     CONSULTAR_REGIONALES: '_SYS_CRegionalesBDV',
     CONSULTAR_OFICINAS: '_SYS_COficinasBDV',
-    RESPALDAR_LOGS: 'Fnx_BackupLogs'
+    RESPALDAR_LOGS: 'Fnx_BackupLogs',
+    CONSULTAR_PERFILES_ACTIVOS: '_SYS_CUsuariosAppPerfil',
+    ACTUALIZAR_CLAVE_USUARIO: '_SYS_UUserPanel'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',
