@@ -225,7 +225,7 @@ export class RegisterApiComponent implements OnInit {
     { id: true, name: "SI" },
     { id: false, name: "NO" },
   ];
-  
+
   public inclusionjwt = [
     { id: true, name: "SI" },
     { id: false, name: "NO" },
@@ -332,7 +332,7 @@ export class RegisterApiComponent implements OnInit {
     private apiService: ApiService,
     private utilservice: UtilService,
     private router: Router
-  ) {}
+  ) { }
 
   private horizontalWizardStepper: Stepper;
 
@@ -449,7 +449,7 @@ export class RegisterApiComponent implements OnInit {
       upsert: true,
     };
 
-    
+
 
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
@@ -572,7 +572,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   onTipo(e) {
-    console.log(e);
+    // console.log(e);
     // this._divInit()
     switch (this.xAPIDB.tipo) {
       case "CODIGO":

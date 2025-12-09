@@ -28,8 +28,8 @@ import { environment } from "environments/environment";
 import { ApiService } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { UntypedFormBuilder } from "@angular/forms";
 import { Sha256Service } from "@services/util/sha256";
+import { IdleService } from '@services/seguridad/idle.service';
 
 
 interface Change {
@@ -68,7 +68,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   @HostBinding("class.navbar-static-style-on-scroll")
   public windowScrolled = false;
 
-  // Add .navbar-static-style-on-scroll on scroll using HostListener & HostBinding
+
   @HostListener("window:scroll", [])
   onWindowScroll() {
     if (
@@ -114,34 +114,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public passwordStrengthColor: string = '';
   public passwordStrengthWidth: number = 0;
 
-  /**
-   * Check Password Strength
-   * @param password 
-   */
-  checkPasswordStrength(password: string): void {
-    let result = 0;
-    if (password.length >= 8) result += 20;
-    if (password.match(/[A-Z]/)) result += 20;
-    if (password.match(/[a-z]/)) result += 20;
-    if (password.match(/[0-9]/)) result += 20;
-    if (password.match(/[@$!%*?&]/)) result += 20;
-
-    this.passwordStrengthWidth = result;
-
-    if (result < 40) {
-      this.passwordStrengthLabel = 'Débil';
-      this.passwordStrengthColor = 'bg-danger';
-    } else if (result < 80) {
-      this.passwordStrengthLabel = 'Media';
-      this.passwordStrengthColor = 'bg-warning';
-    } else if (result === 100) {
-      this.passwordStrengthLabel = 'Fuerte';
-      this.passwordStrengthColor = 'bg-success';
-    } else {
-      this.passwordStrengthLabel = 'Buena';
-      this.passwordStrengthColor = 'bg-info';
-    }
-  }
 
   /**
    * Constructor
@@ -166,7 +138,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private utilservice: UtilService,
     private modalService: NgbModal,
     private sha256: Sha256Service,
-    private router: Router
+    private router: Router,
+    private idleService: IdleService,
   ) {
     this.languageOptions = {
       en: {
@@ -244,6 +217,36 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   /**
+ * Check Password Strength
+ * @param password 
+ */
+  checkPasswordStrength(password: string): void {
+    let result = 0;
+    if (password.length >= 8) result += 20;
+    if (password.match(/[A-Z]/)) result += 20;
+    if (password.match(/[a-z]/)) result += 20;
+    if (password.match(/[0-9]/)) result += 20;
+    if (password.match(/[@$!%*?&]/)) result += 20;
+
+    this.passwordStrengthWidth = result;
+
+    if (result < 40) {
+      this.passwordStrengthLabel = 'Débil';
+      this.passwordStrengthColor = 'bg-danger';
+    } else if (result < 80) {
+      this.passwordStrengthLabel = 'Media';
+      this.passwordStrengthColor = 'bg-warning';
+    } else if (result === 100) {
+      this.passwordStrengthLabel = 'Fuerte';
+      this.passwordStrengthColor = 'bg-success';
+    } else {
+      this.passwordStrengthLabel = 'Buena';
+      this.passwordStrengthColor = 'bg-info';
+    }
+  }
+
+
+  /**
    * Logout method
    */
   logout() {
@@ -276,6 +279,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.token = jwt_decode(sessionStorage.getItem("token"));
     this.usuario = this.token.Usuario.usuario;
     this.tipo = this.token.Usuario.nombre;
+
+
+    // Initialize Idle Service
+    this.idleService.init();
 
     this.bDirectorioActivo =
       this.usuario.startsWith("NM") || this.usuario.startsWith("CT");
@@ -512,7 +519,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     this.apiService.Ejecutar(xApi).subscribe(
       (data) => {
-        console.log(data.ModifiedCount)
+        // console.log(data.ModifiedCount)
         if (data.ModifiedCount > 0) {
           this.utilservice.AlertMini("top-end", "success", "Contraseña actualizada exitosamente", 3000);
           window.sessionStorage.clear();
@@ -521,7 +528,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.clearModal();
       },
       (error) => {
-        console.log(error)
+        // console.log(error)
         this.clearModal();
       }
     )

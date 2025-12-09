@@ -9,7 +9,7 @@ import jwt_decode from "jwt-decode";
 import { TaskService } from '@services/apicore/task.service';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 
-import {Md5} from 'ts-md5';
+import { Md5 } from 'ts-md5';
 
 export interface IUsuario {
   nombre: string,
@@ -122,7 +122,7 @@ export class LoginService {
 
   public Aplicacion: any
 
-  public xAPI : IAPICore = {
+  public xAPI: IAPICore = {
     funcion: '',
     parametros: ''
   }
@@ -139,8 +139,8 @@ export class LoginService {
 
   }
 
-  async Iniciar(itk : string) {
-    this.Token = await  this.getUserDecrypt(itk)
+  async Iniciar(itk: string) {
+    this.Token = await this.getUserDecrypt(itk)
     sessionStorage.setItem("token", itk);
     this.obenterAplicacion(itk)
   }
@@ -183,9 +183,9 @@ export class LoginService {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.router.navigate(["login"])
+        this.router.navigate(["/"])
         this.clearSession()
-       
+
 
       }
     })
@@ -248,7 +248,7 @@ export class LoginService {
 
   //ObenterAplicacion 
   protected obenterAplicacion(itk: string) {
-    
+
     console.log(this.Token.Usuario)
     let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo
     this.xAPI.funcion = "_SYS_CUsuarioPerfil";
@@ -261,8 +261,8 @@ export class LoginService {
           if (!data || data.length === 0 || !data[0].Aplicacion || data[0].Aplicacion.length === 0 || !data[0].Aplicacion[0].Rol) {
             throw new Error("La respuesta del perfil de usuario no es válida o está vacía.");
           }
-          
-          
+
+
           sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
           let texto = Md5.hashStr(JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
           // console.log(data[0].Aplicacion[0].Rol);

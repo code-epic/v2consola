@@ -48,7 +48,7 @@
                 <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'user'"></span></span></div>
                 <input [(ngModel)]="iUser.login" type="text" placeholder="Login" class="form-control"
-                  (input)="onLoginInput()" (blur)="SearchLoginLDAP()" disabled="{{blockEdit}}">
+                  (input)="onLoginInput()" (blur)="SearchLoginLDAP();consultarLogin()" disabled="{{blockEdit}}">
               </div>
             </div>
 
@@ -100,7 +100,7 @@
                 <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'credit-card'"></span></span></div>
                 <input [(ngModel)]="iUser.cedula" [ngModelOptions]="{standalone: true}" type="text" placeholder="Cédula"
-                  class="form-control">
+                  (blur)="consultarCedula()" class="form-control">
               </div>
             </div>
             <div class="form-group col-md-4">
@@ -361,7 +361,7 @@
             <div class="form-group col-md-8">
 
             </div>
-            <div class="form-group col-md-4 text-right" *ngIf="blockEdit=='false'">
+            <div class="form-group col-md-4 text-right">
               <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-warning"
                 (click)="agregarUsuario(2)">
                 <span [data-feather]="'edit'"></span>&nbsp;&nbsp;Modificar Usuario

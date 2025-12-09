@@ -86,18 +86,18 @@ export class LogsComponent implements OnInit {
 
   async ngOnInit() {
     this.contentHeader = {
-      headerTitle: "Investigación",
+      headerTitle: "Auditoria",
       actionButton: true,
       breadcrumb: {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },
           {
-            name: "Investigación",
+            name: "Auditoria",
             isLink: false,
           },
           {

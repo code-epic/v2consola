@@ -1,0 +1,5 @@
+- [v1.0.4](v1.0.4-04DIC2025.md) - Avance en Seguridad y Perfil
+- [v1.0.3](v1.0.3-26NOV2025.md) - Cambios en la Arquitectura
+- [v1.0.2](v1.0.2-09NOV2025.md) - Optimizacion de la UI/UX
+- [v1.0.1](v1.0.1-23JUL2025.md) - Mejoras claves en Seguridad
+- [v1.0.0](v1.0.0-15JUN2025.md) - Avances Interfaz de usuario

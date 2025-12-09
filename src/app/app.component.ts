@@ -57,7 +57,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private _translateService: TranslateService,
     private appRef: ApplicationRef,
     private renderer: Renderer2,
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {
     // Crear el overlay de protección
     this.overlayElement = this.renderer.createElement('div');

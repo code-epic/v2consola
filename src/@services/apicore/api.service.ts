@@ -291,6 +291,9 @@ export interface IConfiguracion {
   usuariocreado: string;
   usuarioactualizado: string;
   encriptamiento: string;
+  duracion?: number;
+  vigencia?: number;
+  nivel?: number;
 }
 
 

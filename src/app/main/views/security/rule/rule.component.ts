@@ -149,7 +149,7 @@ export class RuleComponent implements OnInit {
     this.configuracion.usuarioactualizado = this.token.Usuario.nombre;
 
     const fnx = {
-      coleccion: 'sys-config',
+      coleccion: environment.colecciones.SYS_CONFIG,
       objeto: this.configuracion,
       donde: JSON.stringify({ id: this.configuracion.id }),
       driver: 'MGDBA',
@@ -158,7 +158,8 @@ export class RuleComponent implements OnInit {
 
     this.apiService.ExecColeccion(fnx).subscribe(
       () => {
-        this.utilService.AlertMini('top-end', 'success', '¡Configuración guardada exitosamente!', 3000);
+
+        this.ActualizarTokens();
       },
       (error) => {
         console.error('Error al guardar la configuración:', error);
@@ -166,4 +167,57 @@ export class RuleComponent implements OnInit {
       }
     );
   }
+
+  ActualizarTokens() {
+    // console.log('ActualizarTokens', this.configuracion)
+    this.xAPI.funcion = environment.functions.ACTUALIZAR_TOKENS
+    let app = this.configuracion
+    this.xAPI.parametros = `${app.id},${this.convertirASegundos()},${this.convertirTraza(app.traza.nivel)},${app.traza.nivel}`
+    this.xAPI.valores = {}
+
+    // console.log('ActualizarTokens', this.xAPI)
+
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      () => {
+        this.utilService.AlertMini('top-end', 'success', '¡Configuración guardada exitosamente!', 3000);
+      },
+      (error) => {
+        console.error('Error al guardar la configuración:', error)
+        this.utilService.AlertMini('top-end', 'error', 'Ocurrió un error al guardar.', 3000)
+      }
+    )
+  }
+
+
+  convertirASegundos(): number {
+    let tiempo = this.configuracion.sesion.tiempo
+    let unidad = this.configuracion.sesion.unidad
+
+    switch (unidad) {
+      case 'horas':
+        return tiempo * 60 * 60;
+      case 'minutos':
+        return tiempo * 60;
+      case 'segundos':
+        return tiempo;
+      default:
+        return tiempo;
+    }
+
+  }
+
+  convertirTraza(tipo: string): number {
+
+    switch (tipo) {
+      case 'BAJA':
+        return 1;
+      case 'MEDIA':
+        return 2;
+      case 'ALTA':
+        return 3;
+    }
+
+  }
+
+
 }

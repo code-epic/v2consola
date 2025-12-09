@@ -277,7 +277,7 @@ export class UserComponent implements OnInit {
 
 
 
-    this.cargarConfiguracionApp()
+    await this.cargarConfiguracionApp()
 
 
 
@@ -297,7 +297,9 @@ export class UserComponent implements OnInit {
         if (data != null) {
           if (data.length > 0) {
             this.configuracion = data[0]
+            console.log(this.configuracion)
             this.iUser.endpoint = this.configuracion.endpoints.login
+            this.iUser.duraciontiempo = this.configuracion.sesion.tiempo * this.exportTime(this.configuracion.sesion.unidad)
           }
         }
       },
@@ -306,6 +308,22 @@ export class UserComponent implements OnInit {
 
       }
     );
+  }
+
+  exportTime(tiemp: string): number {
+    let xtime = 0
+    switch (tiemp) {
+      case 'segundos':
+        xtime = 1
+        break;
+      case 'minutos':
+        xtime = 60
+        break;
+      case 'horas':
+        xtime = 3600
+        break;
+    }
+    return xtime
   }
 
 
@@ -465,6 +483,7 @@ export class UserComponent implements OnInit {
           this.selPerfil(this.usuario.sistema)
           this.blockEditApp = 'false'
           this.usuarioSave = true
+          console.log(this.usuario)
         }
 
       },
@@ -587,7 +606,7 @@ export class UserComponent implements OnInit {
 
     let firma: Firmadigital = {
       vigencia: this.iUser.vigencia,
-      duracion: this.iUser.duraciontiempo * this.iUser.duraciontexto,
+      duracion: this.iUser.duraciontiempo,
       direccionmac: '',
       direccionip: '',
       tiempo: new Date().toISOString(),
@@ -821,8 +840,11 @@ export class UserComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         if (tipo == 2) {
-          this.limpiar()
+
+
           this.usuarioSave = false
+          this.limpiar()
+
         } else {
           this.usuarioSave = true
         }
@@ -830,10 +852,11 @@ export class UserComponent implements OnInit {
     })
   }
 
-  limpiar() {
+  async limpiar() {
+    window.sessionStorage.removeItem('validator')
     this.iUser = {
       cedula: '',
-      tipoacceso: 0,
+      tipoacceso: 3,
       respaldo: 0,
       endpoint: '',
       login: '',
@@ -850,11 +873,19 @@ export class UserComponent implements OnInit {
       oficina: 'TODAS',
       regional: 'TODAS',
     }
-    // this.xoficina = ''
-    // this.xregional = ''
+    this.xoficina = 'TODAS'
+    this.xregional = 'TODAS'
+    this.descripcion = ''
     this.dataUsers = []
     this.lstUsersApp = []
-    window.sessionStorage.removeItem('validator')
+
+
+    this.blockEdit = 'false'
+    this.userService.iniciarObjeto()
+    await this.CargarListaEndPoint()
+
+
+    this.ngOnInit()
   }
 
   onLoginInput() {
@@ -1032,6 +1063,50 @@ export class UserComponent implements OnInit {
     } else {
       this.isPasswordInvalid = false;
     }
+  }
+
+
+  consultarCedula() {
+    this.xAPI.funcion = environment.functions.CONSULTAR_CEDULA
+    this.xAPI.parametros = this.iUser.cedula
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data.length > 0) {
+          this.utilservice.AlertMini(
+            'top-end',
+            'warning',
+            'Cédula ya se encuentra registrado',
+            3000
+          )
+          this.iUser.cedula = ''
+        }
+
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+
+  consultarLogin() {
+    this.xAPI.funcion = environment.functions.CONSULTAR_LOGIN
+    this.xAPI.parametros = this.iUser.login
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data.length > 0) {
+          this.utilservice.AlertMini(
+            'top-end',
+            'warning',
+            'Login ya se encuentra registrado',
+            3000
+          )
+          this.iUser.login = ''
+        }
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
   }
 
   ngOnDestroy(): void {

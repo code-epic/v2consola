@@ -55,6 +55,10 @@ export class BinnacleComponent implements OnInit {
             link: '/home',
           },
           {
+            name: "Auditoria",
+            isLink: false,
+          },
+          {
             name: 'Bitacora',
             isLink: false,
           },
