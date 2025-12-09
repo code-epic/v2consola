@@ -7,6 +7,8 @@ interface VersionIndex {
   version: string;
   date: string;
   path: string;
+  icon: string;
+  color: string;
 }
 
 @Component({
@@ -71,10 +73,37 @@ export class UpgradeComponent implements OnInit {
       const pathMatch = line.match(/\((.*?)\)/);
       const dateMatch = line.match(/\]\((.*?)\)\s-\s(.*?)$/);
 
+      const ver = versionMatch ? versionMatch[1] : 'v0.0.0';
+
+      // Lógica de Iconos y Colores más variada para evitar repetición visual
+      let icon = 'tag';
+      let color = 'secondary';
+      const lastDigit = parseInt(ver.slice(-1)) || 0;
+
+      if (ver.endsWith('.0.0')) {
+        icon = 'award'; // Major Release
+        color = 'success';
+      } else if (ver.endsWith('.0')) {
+        icon = 'gift'; // Minor Release
+        color = 'primary';
+      } else {
+        // Variación para parches basada en el último dígito
+        switch (lastDigit % 6) {
+          case 1: icon = 'zap'; color = 'warning'; break;     // Performance
+          case 2: icon = 'shield'; color = 'danger'; break;   // Security
+          case 3: icon = 'layout'; color = 'info'; break;     // UI/UX
+          case 4: icon = 'star'; color = 'warning'; break;    // Features
+          case 5: icon = 'box'; color = 'primary'; break;     // Components
+          default: icon = 'tool'; color = 'secondary'; break; // Fixes
+        }
+      }
+
       return {
-        version: versionMatch ? versionMatch[1] : 'N/A',
+        version: ver,
         path: pathMatch ? pathMatch[1] : '',
-        date: dateMatch ? dateMatch[1] : 'N/A'
+        date: dateMatch ? dateMatch[1] : 'N/A',
+        icon: icon,
+        color: color
       };
     });
   }
@@ -84,7 +113,7 @@ export class UpgradeComponent implements OnInit {
 
     this.isLoading = true;
     this.selectedVersion = version;
-    
+
     this.http.get(`assets/changes/${version.path}`, { responseType: 'text' })
       .subscribe({
         next: async (markdownContent) => { // Hacemos el callback asíncrono

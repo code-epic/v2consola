@@ -33,6 +33,7 @@ export interface IRol {
 
 
 export interface IPerfil {
+  id?: string,
   nombre: string,
   descripcion: string,
   estatus: number,

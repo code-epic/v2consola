@@ -126,7 +126,7 @@ export class RoleComponent implements OnInit {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },
@@ -304,18 +304,18 @@ export class RoleComponent implements OnInit {
       (data) => {
         let lst = []
         // lst.push(this.consola)
-         data.map(e => {
+        data.map(e => {
           let rol = {
-            ...e, 
-            'app' : e.id,
+            ...e,
+            'app': e.id,
             'rol': e.Rol.descripcion,
-            'observacion' : e.nombre ,
+            'observacion': e.nombre,
             'estatus': 1
-          } 
-          
-          
+          }
+
+
           lst.push(rol)
-        }); 
+        });
 
         this.lstRoles = lst
       },

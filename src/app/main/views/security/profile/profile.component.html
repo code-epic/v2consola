@@ -146,7 +146,7 @@
                                             <label class="form-label">Aplicacion</label>
                                             <div class="input-group input-group-merge">
                                                 <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'box'"></span></span></div>
+                                                            [data-feather]="'box'" style="color: #64B5F6;"></span></span></div>
                                                 <input [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
                                                     type="text" placeholder="Aplicacion" class="form-control"
                                                     disabled="disabled">
@@ -165,7 +165,7 @@
                                             <label class="form-label">Rol</label>
                                             <div class="input-group input-group-merge">
                                                 <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'shield'"></span></span></div>
+                                                            [data-feather]="'shield'" style="color: #BA68C8;"></span></span></div>
                                                 <input [(ngModel)]="xrol" [ngModelOptions]="{standalone: true}"
                                                     type="text" placeholder="Rol" class="form-control"
                                                     disabled="disabled">
@@ -178,7 +178,7 @@
                                             <label class="form-label" for="profile-name">Nombre del Perfil</label>
                                             <div class="input-group input-group-merge">
                                                 <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'user-check'"></span></span></div>
+                                                            [data-feather]="'user-check'" style="color: #81C784;"></span></span></div>
                                                 <input [(ngModel)]="Perfil.nombre" [ngModelOptions]="{standalone: true}"
                                                     type="text" id="profile-name"
                                                     placeholder="Ej: Administrador de Ventas" class="form-control">
@@ -189,7 +189,7 @@
                                             <label class="form-label" for="profile-desc">Descripción del Perfil</label>
                                             <div class="input-group input-group-merge">
                                                 <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'file-text'"></span></span></div>
+                                                            [data-feather]="'file-text'" style="color: #90A4AE;"></span></span></div>
                                                 <input [(ngModel)]="Perfil.descripcion"
                                                     [ngModelOptions]="{standalone: true}" type="text" id="profile-desc"
                                                     placeholder="Una breve descripción de las responsabilidades del perfil"
@@ -392,7 +392,7 @@
                                         <button type="button" class="btn mr-1 shadow-none" *ngIf="!blApp"
                                             (click)="exportarPDF()"
                                             style="background-color: #6f42c1; color: #ffffff; border: none; font-weight: 400; min-width: 150px; border-radius: 6px;">
-                                            <span [data-feather]="'file-text'" class="mr-1"></span>Generar PDF
+                                            <span [data-feather]="'download'" class="mr-1"></span>Generar PDF
                                         </button>
                                         <button type="button" class="btn mr-1 shadow-none" (click)="Cancelar()" 
                                             style="background-color: #b06d4e; color: #ffffff; border: none; font-weight: 400; min-width: 150px; border-radius: 6px;">

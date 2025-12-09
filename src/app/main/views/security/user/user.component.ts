@@ -222,7 +222,14 @@ export class UserComponent implements OnInit {
 
   public configuracion: IConfiguracion;
   public profileData: any;
-
+  public usuarioSave: boolean = false;
+  public isEmailInvalid: boolean = false;
+  // Password Strength properties
+  public passwordStrength: number = 0;
+  public passwordStrengthLabel: string = 'Sin seguridad';
+  public passwordStrengthColor: string = '';
+  public passwordStrengthWidth: number = 0;
+  public isPasswordInvalid: boolean = false;
 
 
   constructor(
@@ -256,7 +263,7 @@ export class UserComponent implements OnInit {
             isLink: false,
           },
           {
-            name: 'Definir Usuario',
+            name: 'Crear Usuarios',
             isLink: false,
           },
         ],
@@ -368,7 +375,6 @@ export class UserComponent implements OnInit {
   }
 
   selDuracion(e) {
-    console.log(e)
     if (e == 3) {
       this.tiempoduracion = '0'
     }
@@ -449,18 +455,16 @@ export class UserComponent implements OnInit {
           e.name = `${e.id}  (${e.nombre})`
           return e
         })
-        // console.log('Bajo control del enemigo',this.lstAplicacion)
+
 
         let usuario = window.sessionStorage.getItem('validator')
 
-
         if (usuario != undefined) {
-
           this.usuario = JSON.parse(usuario)
-          // console.log(this.usuario)
           this.xaplicacion = this.usuario.sistema
           this.selPerfil(this.usuario.sistema)
-
+          this.blockEditApp = 'false'
+          this.usuarioSave = true
         }
 
       },
@@ -552,7 +556,7 @@ export class UserComponent implements OnInit {
     })
 
 
-
+    // console.log(this.xregional)
 
     this.usuario.Perfil.descripcion = apps.perfil
     this.usuario.Perfil.traza = apps.traza
@@ -565,7 +569,7 @@ export class UserComponent implements OnInit {
     this.usuario.observaciones = this.descripcion
     this.usuario.endpoint = this.iUser.tipoacceso == 3 ? this.iUser.endpoint : ''
     this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
-    this.usuario.direccion = this.xregional != undefined ? this.xregional.name : this.xregional
+    this.usuario.direccion = this.xregional.name != undefined ? this.xregional.name : this.xregional
 
 
     let usuario = window.sessionStorage.getItem('validator')
@@ -589,9 +593,17 @@ export class UserComponent implements OnInit {
       tiempo: new Date().toISOString(),
       nivel: parseInt(apps.idtra),
     }
+
+
     this.usuario.firmadigital = firma
-    this.usuario.sistema = apps.idapp.id
-    this.usuario.Aplicacion = lstApp
+    if (apps.idapp == undefined) {
+      this.usuario.sistema = 'App.Consola'
+      this.usuario.Aplicacion = []
+    } else {
+      this.usuario.sistema = apps.idapp.id
+      this.usuario.Aplicacion = lstApp
+    }
+
 
     // console.log(this.usuario)
   }
@@ -649,8 +661,6 @@ export class UserComponent implements OnInit {
   validarSiSeleccion(): boolean {
     const aplicacionId = this.xaplicacion;
     const perfilNombre = this.xperfil;
-
-    // Usamos el método `some` que es más eficiente, ya que se detiene en cuanto encuentra una coincidencia.
     const existe = this.dataUsers.some(item =>
       item.id === aplicacionId && item.perfil === perfilNombre
     );
@@ -665,9 +675,6 @@ export class UserComponent implements OnInit {
    */
   onStatusChange(item: any, index: number) {
     const nuevoEstatus = item.estatus;
-    // console.log(`El estatus del elemento en el índice ${index} ha cambiado a: ${nuevoEstatus}`);
-    // console.log('Estatus actual en dataUsers:', this.dataUsers[index].estatus);
-    // console.log('Estatus actual en lstUsersApp:', this.lstUsersApp[index].estatus);
     this.dataUsers[index].estatus = nuevoEstatus ? 1 : 0
     this.dataUsers[index].tiempo = new Date().toISOString()
 
@@ -703,7 +710,6 @@ export class UserComponent implements OnInit {
 
   verPerfil(profileData: any, modal: any) {
     this.profileData = profileData;
-    // Aseguramos que las propiedades para expandir/contraer existan antes de abrir el modal.
     if (this.profileData?.idper?.Rol?.Menu) {
       this.profileData.idper.Rol.Menu.forEach(menu => {
         menu.isExpanded = false;
@@ -726,7 +732,7 @@ export class UserComponent implements OnInit {
     item.isExpanded = !item.isExpanded;
   }
 
-  eliminarPerfil() { }
+
 
   async agregarUsuario(tipo: number) {
 
@@ -774,8 +780,6 @@ export class UserComponent implements OnInit {
   }
 
   ok(tipo: number) {
-
-    // console.log('usuario ', this.usuario)
     let fnx = {
       coleccion: 'usuario',
       objeto: this.usuario,
@@ -786,9 +790,12 @@ export class UserComponent implements OnInit {
 
     this.apiService.ExecColeccion(fnx).subscribe(
       (data) => {
-        this.lstPerfil = []
-        this.xaplicacion = ''
-        this.xperfil = ''
+        if (tipo == 2) {
+          this.lstPerfil = []
+          this.xaplicacion = ''
+          this.xperfil = ''
+        }
+
         this.finalizando(tipo)
       },
       (error) => {
@@ -813,11 +820,15 @@ export class UserComponent implements OnInit {
       confirmButtonText: 'Aceptar',
     }).then((result) => {
       if (result.isConfirmed) {
-        this.limpiar()
+        if (tipo == 2) {
+          this.limpiar()
+          this.usuarioSave = false
+        } else {
+          this.usuarioSave = true
+        }
       }
     })
   }
-  cancelar() { }
 
   limpiar() {
     this.iUser = {
@@ -827,7 +838,7 @@ export class UserComponent implements OnInit {
       endpoint: '',
       login: '',
       clave: '',
-      encriptamiento: '',
+      encriptamiento: '1',
       nombre: '',
       descripcion: '',
       estatus: 1,
@@ -836,27 +847,25 @@ export class UserComponent implements OnInit {
       observaciones: '',
       duraciontexto: 1,
       duraciontiempo: 5,
-      oficina: '',
-      regional: '',
+      oficina: 'TODAS',
+      regional: 'TODAS',
     }
-    this.xoficina = ''
-    this.xregional = ''
+    // this.xoficina = ''
+    // this.xregional = ''
     this.dataUsers = []
+    this.lstUsersApp = []
     window.sessionStorage.removeItem('validator')
   }
 
-
-
-
   onLoginInput() {
-    if (this.isBDV && this.iUser.login) {
+    if (this.isBDV && this.iUser.login && this.iUser.tipoacceso == 3) {
       this.iUser.login = this.iUser.login.toUpperCase();
     }
   }
 
   SearchLoginLDAP() {
     // console.log(this.configuracion, this.isBDV)
-    if (this.isBDV) {
+    if (this.isBDV && this.iUser.tipoacceso == 3) {
       console.log(this.configuracion.endpoints.directorioActivo)
       let cod = {
         'codUsuario': this.iUser.login
@@ -867,15 +876,11 @@ export class UserComponent implements OnInit {
         'data': JSON.stringify(cod),
       }
 
-      // console.log(data)
       this.apiService.SendRequestPostAnonimous(data).subscribe(
         (data) => {
-          // console.log(data)
           if (data.usuario != null) {
             let usr = data.usuario
-
             this.iUser.cedula = usr.cedula
-            // this.iUser.login = usr.login
             this.iUser.nombre = usr.nombres + ' ' + usr.apellidos
             this.iUser.descripcion = usr.descCargo
             this.descripcion = usr.descUnidad
@@ -941,14 +946,97 @@ export class UserComponent implements OnInit {
     }
   }
 
-
-
-  ngOnDestroy(): void {
-    window.sessionStorage.removeItem('validator')
+  async registrarUsuario() {
+    await this.getUserApp()
+    let texto = 'registrar'
+    Swal.fire({
+      title: 'Alerta',
+      text: '¿Está seguro que desea ' + texto + ' un usuario?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#C81D11',
+      confirmButtonText: 'Si, Aceptar',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.ok(1)
+      }
+    })
 
   }
 
+  validateUserForm(): boolean {
+    if (this.iUser.login == '' || this.iUser.login == undefined) return false;
+    if (this.iUser.cedula == '' || this.iUser.cedula == undefined) return false;
+    if (this.iUser.nombre == '' || this.iUser.nombre == undefined) return false;
+    if (this.iUser.descripcion == '' || this.iUser.descripcion == undefined) return false; // Cargo
+    if (this.iUser.correo == '' || this.iUser.correo == undefined) return false;
+    if (this.descripcion == '' || this.descripcion == undefined) return false; // Descripcion General
+    return true;
+  }
 
+
+
+  validateEmail() {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (this.iUser.correo && this.iUser.correo.trim() !== '') {
+      this.isEmailInvalid = !emailRegex.test(this.iUser.correo);
+    } else {
+      this.isEmailInvalid = false;
+    }
+  }
+
+  /**
+   * Check Password Strength
+   * @param password 
+   */
+  checkPasswordStrength(password: string): void {
+    let result = 0;
+    if (password) {
+      if (password.length >= 8) result += 20;
+      if (password.match(/[A-Z]/)) result += 20;
+      if (password.match(/[a-z]/)) result += 20;
+      if (password.match(/[0-9]/)) result += 20;
+      if (password.match(/[@$!%*?&]/)) result += 20;
+    }
+
+    this.passwordStrengthWidth = result;
+
+    if (result < 40) {
+      this.passwordStrengthLabel = 'Débil';
+      this.passwordStrengthColor = 'bg-danger';
+    } else if (result < 80) {
+      this.passwordStrengthLabel = 'Media';
+      this.passwordStrengthColor = 'bg-warning';
+    } else if (result === 100) {
+      this.passwordStrengthLabel = 'Fuerte';
+      this.passwordStrengthColor = 'bg-success';
+    } else {
+      this.passwordStrengthLabel = 'Buena';
+      this.passwordStrengthColor = 'bg-info';
+    }
+  }
+
+  validatePassword() {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+
+    if (this.iUser.clave && !passwordRegex.test(this.iUser.clave)) {
+      this.isPasswordInvalid = true;
+      this.utilservice.AlertMini(
+        "top-end",
+        "error",
+        "La clave no cumple con los requisitos. Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
+        5000
+      );
+    } else {
+      this.isPasswordInvalid = false;
+    }
+  }
+
+  ngOnDestroy(): void {
+    window.sessionStorage.removeItem('validator')
+  }
 
 
 }

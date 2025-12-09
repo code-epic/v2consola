@@ -11,8 +11,6 @@ import {
 import { environment } from "environments/environment"
 import { BlockUI, NgBlockUI } from "ng-block-ui"
 import Swal from "sweetalert2"
-import { aplicacion } from "app/menu/schema"
-import { Menu } from "@services/seguridad/login.service"
 import { Md5 } from "ts-md5"
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -131,6 +129,7 @@ export class ProfileComponent implements OnInit {
   public basicSelectedOption: number = 100
 
   public Perfil: IPerfil = {
+    id: "",
     nombre: "",
     descripcion: "",
     estatus: 1,
@@ -261,7 +260,12 @@ export class ProfileComponent implements OnInit {
     this.lstPerfil = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // console.log(data)
+        data.sort((a, b) => {
+          if ((a.aplicacion || '').localeCompare(b.aplicacion || '') === 0) {
+            return (a.nombre || '').localeCompare(b.nombre || '');
+          }
+          return (a.aplicacion || '').localeCompare(b.aplicacion || '');
+        });
         this.lstPerfil = data
       },
       (error) => {
@@ -932,7 +936,7 @@ export class ProfileComponent implements OnInit {
   }
 
   editarRol(row) {
-    console.log(row.Rol.Menu)
+    // console.log(row.Rol.Menu)
     this.blApp = false
     this.desactivo = 'disabled'
     this.selRol(row.aplicacion)
@@ -940,8 +944,8 @@ export class ProfileComponent implements OnInit {
     this.Perfil.nombre = row.nombre
     this.Perfil.descripcion = row.descripcion
     this.Perfil.estatus = row.estatus
+    this.Perfil.id = row.id
     this.selRolDetalle(row)
-
 
     this.active = 2
 
@@ -961,24 +965,24 @@ export class ProfileComponent implements OnInit {
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.ok(row.id, row.nombre);
+        this.ok(row);
       }
     });
   }
 
 
-  ok(id: string, idperfil: string) {
+  ok(row) {
 
     this.xAPI.funcion = environment.functions.CONSULTAR_PERFILES_ACTIVOS
-    this.xAPI.parametros = `${idperfil},${environment.ID}`
+    this.xAPI.parametros = `${row.nombre},${row.aplicacion}`
     this.xAPI.valores = ''
     console.log(this.xAPI.parametros)
     this.dataRolDetalles = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       data => {
         console.log(data)
-        if (data.length == 0) {
-          this.deleteAll(id)
+        if (data == null) {
+          this.deleteAll(row.id)
         } else {
           Swal.fire({
             title: "Advertencia",
@@ -1095,6 +1099,7 @@ export class ProfileComponent implements OnInit {
       return false
     }
 
+    let id = ""
     let mnu = this.aplicacion.Rol.Menu
     this.perfilSave.nombre = this.Perfil.nombre
     this.perfilSave.descripcion = this.Perfil.descripcion
@@ -1103,8 +1108,14 @@ export class ProfileComponent implements OnInit {
     this.perfilSave.version = this.aplicacion.version
     this.perfilSave.llave = this.aplicacion.autor
 
-    let id = Md5.hashAsciiStr(btoa(`${this.aplicacion.nombre}${this.aplicacion.version}${this.aplicacion.autor}${this.Perfil.nombre}`))
-    this.perfilSave.id = id
+
+    if (this.Perfil.id === "") {
+      id = Md5.hashAsciiStr(btoa(`${this.aplicacion.nombre}${this.aplicacion.version}${this.aplicacion.autor}${this.Perfil.nombre}`))
+      this.perfilSave.id = id
+    } else {
+      id = this.Perfil.id
+      this.perfilSave.id = this.Perfil.id
+    }
 
 
     const menuFinal = this.generarMenuSeleccionado(mnu);
@@ -1127,7 +1138,6 @@ export class ProfileComponent implements OnInit {
 
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
-        console.log(data)
 
         this.active = 1
         this.dataRol = []

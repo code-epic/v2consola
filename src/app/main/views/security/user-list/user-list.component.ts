@@ -59,7 +59,7 @@ export class UserListComponent implements OnInit {
   public tempData = []
   public rowData = []
 
-   
+
   public lstPerfil = []; // Asegúrate de cargar esta lista, por ejemplo en ngOnInit
   public selectedProfile: string = ''; // Propiedad para el ngModel del nuevo select
 
@@ -72,7 +72,7 @@ export class UserListComponent implements OnInit {
 
   async ngOnInit() {
 
-    this.ListarPerfiles(); 
+    this.ListarPerfiles();
     await this.listarUsuarios();
 
     this.contentHeader = {
@@ -82,7 +82,7 @@ export class UserListComponent implements OnInit {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },
@@ -99,13 +99,13 @@ export class UserListComponent implements OnInit {
     };
   }
 
-   ListarPerfiles() {
+  ListarPerfiles() {
     // Asumo que tienes una función similar a la de profile.component.ts
     this.xAPI.funcion = environment.functions.LISTAR_PERFILES_APP // O la función que corresponda
     this.xAPI.parametros = '';
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // console.log(data)
+        console.log(data)
         this.lstPerfil = data;
       },
       (error) => {
@@ -117,7 +117,7 @@ export class UserListComponent implements OnInit {
   // Nueva función para filtrar por el perfil seleccionado
   filterByProfile() {
     const profileId = this.selectedProfile;
-    
+
     // Primero, asegúrate de que la búsqueda por texto esté vacía para no mezclar filtros inicialmente
     // this.searchValue = ''; 
 
@@ -137,14 +137,14 @@ export class UserListComponent implements OnInit {
   filterUpdateProfile(event) {
     console.log(event)
     const val = event;
-    if (val == ''  || val == null) {
+    if (val == '' || val == null) {
       this.filterByProfile();
       return;
     }
     // Empieza con la data ya filtrada por perfil (o la completa si no hay filtro)
     let dataToFilter = this.tempData;
     if (this.selectedProfile) {
-        dataToFilter = this.tempData.filter(item => item.Perfil && item.Perfil.descripcion);
+      dataToFilter = this.tempData.filter(item => item.Perfil && item.Perfil.descripcion);
     }
 
     // Aplica el filtro de búsqueda de texto
@@ -165,6 +165,7 @@ export class UserListComponent implements OnInit {
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        data.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
         this.rowData = data;
         this.tempData = this.rowData;
         this.count = this.rowData.length
@@ -219,7 +220,7 @@ export class UserListComponent implements OnInit {
     this.xAPI.parametros = `${usuario.cedula},${usuario.login}`
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-       
+
         console.log(data)
         this.listarUsuarios()
       },
