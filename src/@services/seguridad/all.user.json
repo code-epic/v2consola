@@ -476,148 +476,6 @@
                   "directivas": ""
                 },
                 {
-                  "metodo": "DatosGarantia",
-                  "descripcion": "Datos de la Garantia (Lectura)",
-                  "accion": "DTGarantia()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "DatosInterviniente",
-                  "descripcion": "Datos del Interviniente (Lectura)",
-                  "accion": "DTInterviniente()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "Bitacora",
-                  "descripcion": "Bitacora",
-                  "accion": "Bitacora()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "Traza",
-                  "descripcion": "Traza",
-                  "accion": "Traza()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "Descargar",
-                  "descripcion": "Descargar",
-                  "accion": "Descargar()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "VisualizarVencidos",
-                  "descripcion": "Visualizar Vencidos",
-                  "accion": "VisualizarRepetidos()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "VisualizarRepetidos",
-                  "descripcion": "Visualizar Repetidos",
-                  "accion": "VisualizarRepetidos()",
-                  "directivas": ""
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "url": "/recibidos",
-          "js": "",
-          "icono": "icon-bdv-mail-l",
-          "descripcion": "Recibidos",
-          "nombre": "Recibidos",
-          "accion": "",
-          "clase": "text-primary",
-          "color": "",
-          "Privilegio": [],
-          "SubMenu": [
-            {
-              "url": "",
-              "js": "AsignarUsuario()",
-              "descripcion": "Asignar Usuario",
-              "icono": "fa fa-inbox",
-              "nombre": "Asignar Usuario",
-              "accion": "",
-              "clase": "f-left",
-              "color": "bg-c-blue",
-              "Privilegios": []
-            },
-            {
-              "url": "",
-              "js": "Notificaciones()",
-              "descripcion": "Notificaciones",
-              "icono": "fa fa-inbox",
-              "nombre": "Notificaciones",
-              "accion": "",
-              "clase": "f-left",
-              "color": "bg-c-blue",
-              "Privilegios": []
-            },
-            {
-              "url": "",
-              "js": "Eliminar()",
-              "descripcion": "Eliminar",
-              "icono": "fa fa-inbox",
-              "nombre": "Eliminar",
-              "accion": "",
-              "clase": "f-left",
-              "color": "bg-c-blue",
-              "Privilegios": []
-            },
-            {
-              "url": "",
-              "js": "ImportarExpediente()",
-              "descripcion": "Importar Expediente",
-              "icono": "fa fa-inbox",
-              "nombre": "Importar Expediente",
-              "accion": "",
-              "clase": "f-left",
-              "color": "bg-c-blue",
-              "Privilegios": []
-            }
-          ]
-        },
-        {
-          "url": "/conformacionusuario",
-          "js": "",
-          "icono": "icon-bdv-location-l",
-          "descripcion": "Conformacion Usuario",
-          "nombre": "Conformacion Usuario",
-          "accion": "",
-          "clase": "text-orange",
-          "color": "",
-          "Privilegios": [],
-          "SubMenu": [
-            {
-              "url": "/expedientes",
-              "js": "",
-              "descripcion": "Expedientes",
-              "icono": "fa fa-inbox",
-              "nombre": "Expedientes",
-              "accion": "",
-              "clase": "f-left",
-              "color": "bg-c-blue",
-              "Privilegios": [
-                {
-                  "metodo": "DatosExpediente",
-                  "descripcion": "Datos de Expediente",
-                  "accion": "DTExpediente()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "DatosCredito",
-                  "descripcion": "Datos del Credito",
-                  "accion": "DTCreditos()",
-                  "directivas": ""
-                },
-                {
-                  "metodo": "CDatosLinea",
-                  "descripcion": "Datos de la Linea (Lectura)",
-                  "accion": "DTLinea()",
-                  "directivas": ""
-                },
-                {
                   "metodo": "XDatosLinea",
                   "descripcion": "Datos de la Linea (Modificar / Eliminar)",
                   "accion": "XDTLinea()",
@@ -706,6 +564,75 @@
           ]
         },
         {
+          "url": "/recibidos",
+          "js": "",
+          "icono": "icon-bdv-mail-l",
+          "descripcion": "Recibidos",
+          "nombre": "Recibidos",
+          "accion": "",
+          "clase": "text-primary",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "",
+              "js": "AsignarUsuario()",
+              "descripcion": "Asignar Usuario",
+              "icono": "fa fa-inbox",
+              "nombre": "Asignar Usuario",
+              "accion": "asignar",
+              "clase": "f-left",
+              "color": "bg-c-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "",
+              "js": "Notificaciones()",
+              "descripcion": "Notificaciones",
+              "icono": "fa fa-inbox",
+              "nombre": "Notificaciones",
+              "accion": "notificar",
+              "clase": "f-left",
+              "color": "bg-c-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "",
+              "js": "Eliminar()",
+              "descripcion": "Eliminar",
+              "icono": "fa fa-inbox",
+              "nombre": "Eliminar",
+              "accion": "eliminar",
+              "clase": "f-left",
+              "color": "bg-c-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "",
+              "js": "ImportarExpediente()",
+              "descripcion": "Importar Expediente",
+              "icono": "fa fa-inbox",
+              "nombre": "Importar Expediente",
+              "accion": "importar",
+              "clase": "f-left",
+              "color": "bg-c-blue",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/conformacionusuario",
+          "js": "",
+          "icono": "icon-bdv-location-l",
+          "descripcion": "Conformacion Usuario",
+          "nombre": "Conformacion Usuario",
+          "accion": "",
+          "clase": "text-orange",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": []
+        },
+        {
           "url": "/tareaspendientes",
           "js": "",
           "icono": "icon-bdv-location-l",
@@ -758,7 +685,7 @@
               "descripcion": "Seguimiento",
               "icono": "fa fa-plus-circle",
               "nombre": "Seguimiento",
-              "accion": "",
+              "accion": "indicadores",
               "clase": "f-left",
               "color": "bg-c-green",
               "Privilegios": []
@@ -769,7 +696,7 @@
               "descripcion": "Reporte de Expedientes",
               "icono": "fa fa-plus-circle",
               "nombre": "Reporte de Expedientes",
-              "accion": "",
+              "accion": "resumen",
               "clase": "f-left",
               "color": "bg-c-green",
               "Privilegios": []
@@ -780,7 +707,7 @@
               "descripcion": "Control y Gestion de Expedientes",
               "icono": "fa fa-plus-circle",
               "nombre": "Control y Gestion de Expedientes",
-              "accion": "",
+              "accion": "control",
               "clase": "f-left",
               "color": "bg-c-green",
               "Privilegios": []
@@ -793,7 +720,7 @@
           "icono": "icon-bdv-config-l",
           "descripcion": "Configurar",
           "nombre": "Configurar",
-          "accion": "",
+          "accion": "administracion",
           "clase": "text-blue",
           "color": "",
           "Privilegio": [],
@@ -804,7 +731,7 @@
               "descripcion": "Documentos",
               "icono": "fa fa-inbox",
               "nombre": "Documentos",
-              "accion": "CargarUrl('negocio', 'neconsultar')",
+              "accion": "documentos",
               "clase": "f-left",
               "color": "bg-c-blue",
               "Privilegios": []
@@ -815,7 +742,7 @@
               "descripcion": "Productos",
               "icono": "fa fa-share",
               "nombre": "Productos",
-              "accion": "CargarUrl('expedientes', 'actualizar')",
+              "accion": "productos",
               "clase": "f-left",
               "color": "bg-c-pink",
               "Privilegios": []
@@ -826,7 +753,7 @@
               "descripcion": "Agencias / Regionales",
               "icono": "fa fa-envelope-open",
               "nombre": "Agencias / Regionales",
-              "accion": "CargarUrl('expedientes', 'prestamos')",
+              "accion": "agencias",
               "clase": "f-left",
               "color": "bg-purple",
               "Privilegios": []
@@ -837,7 +764,7 @@
               "descripcion": "Cuentas Contables / Productos",
               "icono": "fa fa-share",
               "nombre": "Cuentas Contables / Productos",
-              "accion": "CargarUrl('expedientes', 'inactivar')",
+              "accion": "configreportes",
               "clase": "f-left",
               "color": "bg-c-pink",
               "Privilegios": []

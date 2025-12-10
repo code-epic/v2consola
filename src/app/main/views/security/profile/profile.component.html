@@ -24,7 +24,7 @@
                                         [limit]="10" [columnMode]="ColumnMode.force" [headerHeight]="40"
                                         [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
 
-                                        <ngx-datatable-column name="APLICACION / ROL" prop="aplicacion" [width]="10">
+                                        <ngx-datatable-column name="APLICACION / ROL" prop="llave" [width]="10">
                                             <ng-template ngx-datatable-header-template>
                                                 <div class="d-flex align-items-center">
                                                     <span [data-feather]="'box'" [size]="16"
@@ -37,7 +37,7 @@
                                                 <div class="d-flex align-items-center">
                                                     <span [data-feather]="'box'" [size]="18"
                                                         class="text-primary mr-1"></span>
-                                                    <span class="font-weight-bold">{{ row.aplicacion }}</span>
+                                                    <span class="font-weight-bold">{{ row.llave }}</span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
@@ -238,8 +238,9 @@
                                                                 <label class="custom-control-label"
                                                                     for="subMenuChkbxRef{{ row.menu + i }}">
                                                                     <span class="ml-2 font-weight-bolder"
-                                                                        style="color: #5e5873;">{{ subMenu.accion
-                                                                        }}</span>
+                                                                        style="color: #5e5873;">{{ subMenu.accion }}
+                                                                        <span class="text-muted font-small-3" *ngIf="subMenu.children?.length">({{ subMenu.children.length }})</span>
+                                                                    </span>
                                                                     <!-- Indicador visual de selección parcial -->
                                                                     <span
                                                                         *ngIf="hasSelectedPrivileges(subMenu) && subMenu.estatus !== 1"

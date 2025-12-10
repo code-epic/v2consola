@@ -216,9 +216,13 @@ export class InstallComponent implements OnInit {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/'
+          },
+          {
+            name: "Aplicaciones",
+            isLink: false,
           },
           {
             name: 'Registrar',

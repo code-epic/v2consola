@@ -24,6 +24,12 @@ const routes = [
     component: HomeComponent,
     // canActivate: [AuthGuardGuard],
     canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'Principal',
+    component: HomeComponent,
+    // canActivate: [AuthGuardGuard],
+    canActivate: [AuthGuardGuard],
   }
 ];
 

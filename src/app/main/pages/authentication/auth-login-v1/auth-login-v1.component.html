@@ -123,13 +123,18 @@
       <form role="form" #form="ngForm" class="xform">
         <h2 class="titulo" style="text-transform: uppercase; margin-bottom: 0;">Consola</h2>
 
-          <input class="xinput" type="text" id="usuario" name="usuario" maxlength="12" placeholder="Usuario (*)" autocomplete="off" [(ngModel)]="usuario" [ngModelOptions]="{ standalone: true }"/>
+          <input class="xinput" type="text" id="usuario" name="usuario" maxlength="12" placeholder="Usuario (*)" 
+          (blur)="onLoginBlur($event)"
+          autocomplete="off" [(ngModel)]="usuario" [ngModelOptions]="{ standalone: true }"/>
         
           
-          <input class="xinput" type="password" name="clave" id="clave" placeholder="Contraseña (*)" [(ngModel)]="clave" [ngModelOptions]="{ standalone: true }" required />
+          <input class="xinput" type="password" name="clave" id="clave" placeholder="Contraseña (*)" 
+          [(ngModel)]="clave" [ngModelOptions]="{ standalone: true }" required />
 
         <div class="row" style="margin-top: .5rem;" >
-          <button   type="submit" id="submit" class="xbutton primary" (click)="loginOpt()" style="margin-right: .5rem;height: 30px;font-size: 13px;">
+          <button   type="submit" id="submit" class="xbutton primary" (click)="loginOpt()" 
+            
+            style="margin-right: .5rem;height: 30px;font-size: 13px;">
             Ingresar
           </button>
 

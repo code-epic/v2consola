@@ -31,14 +31,16 @@
                                         [limit]="10" [columnMode]="ColumnMode.force" [headerHeight]="40"
                                         [footerHeight]="50" [scrollbarH]="true" [limit]="basicSelectedOption">
 
-                                        <ngx-datatable-column name="APLICACION" prop="app" [width]="10">
-                                            <ng-template let-app="value" ngx-datatable-cell-template>
+                                         <ngx-datatable-column name="DESCRIPCION" prop="observacion" [width]="20">
+                                            <ng-template let-observacion="value" let-row="row" ngx-datatable-cell-template>
                                                 <div class="d-flex align-items-center">
                                                     <span [data-feather]="'box'" [size]="18" class="text-primary mr-1"></span>
-                                                    <span class="font-weight-bold">{{ app }} </span>
+                                                    <span class="font-weight-bold">{{ observacion }} </span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
+
+                                        
 
                                         <ngx-datatable-column name="ROL" prop="rol" [width]="10">
                                             <ng-template let-rol="value" let-row="row" ngx-datatable-cell-template>
@@ -49,14 +51,16 @@
                                             </ng-template>
                                         </ngx-datatable-column>
 
-                                        <ngx-datatable-column name="DESCRIPCION" prop="observacion" [width]="20">
-                                            <ng-template let-observacion="value" let-row="row" ngx-datatable-cell-template>
+                                        <ngx-datatable-column name="APLICACION" prop="app" [width]="10">
+                                            <ng-template let-app="value" ngx-datatable-cell-template>
                                                 <div class="d-flex align-items-center">
-                                                    <span [data-feather]="'file-text'" [size]="16" class="text-muted mr-1"></span>
-                                                    <span class="text-muted">{{ observacion }} </span>
+                                                    <span [data-feather]="'file-text'" [size]="18" class="text-primary mr-1"></span>
+                                                    
+                                                    <span class="font-weight-bold">{{ app }} </span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>
+                                       
 
                                         <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
                                             <ng-template let-estatus="value" ngx-datatable-cell-template>

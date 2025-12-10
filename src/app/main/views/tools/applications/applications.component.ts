@@ -57,7 +57,7 @@ export class ApplicationsComponent implements OnInit {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/home',
           },

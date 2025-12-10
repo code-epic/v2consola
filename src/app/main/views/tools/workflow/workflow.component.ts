@@ -121,10 +121,10 @@ export class WorkflowComponent implements OnInit {
     { id: "6", descripcion: 'FECHA' },
   ]
 
-  public xdatos_val : boolean = false
-  public xdatos_api : boolean = false
-  public xdatos_archivo : boolean = false
-  public xdatos_defecto : boolean = false
+  public xdatos_val: boolean = false
+  public xdatos_api: boolean = false
+  public xdatos_archivo: boolean = false
+  public xdatos_defecto: boolean = false
 
   public xdatos = ''
   public xorigen = ''
@@ -217,7 +217,7 @@ export class WorkflowComponent implements OnInit {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/home'
           },
@@ -291,12 +291,12 @@ export class WorkflowComponent implements OnInit {
 
   selTipo(): void {
     this.visibleFalse()
-    if(this.xtipo == "1") {
+    if (this.xtipo == "1") {
       this.xdatos_val = true
     }
   }
 
-  visibleFalse(){
+  visibleFalse() {
     this.xdatos_val = false
     this.xdatos_api = false
     this.xdatos_archivo = false
@@ -311,7 +311,7 @@ export class WorkflowComponent implements OnInit {
       case "1":
         this.xdatos_api = true
         break;
-    
+
       default:
         break;
     }
@@ -583,12 +583,12 @@ export class WorkflowComponent implements OnInit {
     // this.lstEstados(this.xidW.toString())
   }
 
-  abrirModal(modalPrimary){
+  abrirModal(modalPrimary) {
     this.modalService.open(modalPrimary, {
       centered: true,
       windowClass: 'modal modal-primary',
       size: 'lg',
-      backdrop: false 
+      backdrop: false
     });
   }
 
@@ -697,7 +697,7 @@ export class WorkflowComponent implements OnInit {
     console.log(this.DescripcionRed)
   }
 
-  addItemForm(){
+  addItemForm() {
     this.rowForm.push(this.wkfForm)
   }
 

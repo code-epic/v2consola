@@ -136,7 +136,7 @@ export class MenuComponent implements OnInit {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },

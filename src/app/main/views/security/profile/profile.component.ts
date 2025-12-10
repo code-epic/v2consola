@@ -241,6 +241,7 @@ export class ProfileComponent implements OnInit {
           e.name = `${e.id}  (${e.nombre})`
           return e
         })
+
       },
       (error) => {
         console.log(error)
@@ -260,13 +261,19 @@ export class ProfileComponent implements OnInit {
     this.lstPerfil = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.sort((a, b) => {
-          if ((a.aplicacion || '').localeCompare(b.aplicacion || '') === 0) {
-            return (a.nombre || '').localeCompare(b.nombre || '');
-          }
-          return (a.aplicacion || '').localeCompare(b.aplicacion || '');
-        });
-        this.lstPerfil = data
+
+
+        if (data != null) {
+          data.sort((a, b) => {
+            if ((a.aplicacion || '').localeCompare(b.aplicacion || '') === 0) {
+              return (a.nombre || '').localeCompare(b.nombre || '');
+            }
+            return (a.aplicacion || '').localeCompare(b.aplicacion || '');
+          });
+          this.lstPerfil = data
+        }
+
+
       },
       (error) => {
         console.log(error)
@@ -1100,13 +1107,15 @@ export class ProfileComponent implements OnInit {
     }
 
     let id = ""
+    // console.log(this.Perfil)
+    // console.log(this.aplicacion)
     let mnu = this.aplicacion.Rol.Menu
     this.perfilSave.nombre = this.Perfil.nombre
     this.perfilSave.descripcion = this.Perfil.descripcion
     this.perfilSave.estatus = this.Perfil.estatus
     this.perfilSave.aplicacion = this.aplicacion.id
     this.perfilSave.version = this.aplicacion.version
-    this.perfilSave.llave = this.aplicacion.autor
+    this.perfilSave.llave = this.aplicacion.nombre
 
 
     if (this.Perfil.id === "") {
@@ -1124,30 +1133,17 @@ export class ProfileComponent implements OnInit {
     this.perfilSave.Rol.descripcion = this.Perfil.descripcion
     this.perfilSave.Rol.Menu = menuFinal
 
-    console.log(this.perfilSave)
-
-
-
     var obj = {
-      coleccion: "sys-profile",
+      coleccion: environment.colecciones.SYS_PROFILE,
       objeto: this.perfilSave,
       donde: JSON.stringify({ id: id }),
-      driver: "MGDBA",
+      driver: environment.driver.PRINCIPAL,
       upsert: true,
     }
 
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
 
-        this.active = 1
-        this.dataRol = []
-        this.dataRolDetalles = []
-        this.dataPlana = []
-        this.dataJerarquica = []
-        this.xrol = ''
-        this.Perfil.nombre = ''
-        this.Perfil.descripcion = ''
-        this.listarPerfiles()
         if (data.UpsertedID != null) {
           this.utilservice.AlertMini(
             "top-end",
@@ -1155,13 +1151,11 @@ export class ProfileComponent implements OnInit {
             `Tu perfil se ha registrado: ${data.UpsertedID}`,
             3000
           )
+
+
         } else {
-          this.utilservice.AlertMini(
-            "top-end",
-            "success",
-            "Perfil actualizado correctamente",
-            3000
-          )
+
+          this.updateAllUserProfile()
         }
       },
       (error) => {
@@ -1178,7 +1172,40 @@ export class ProfileComponent implements OnInit {
   }
 
 
+  updateAllUserProfile() {
 
+    this.xAPI.funcion = environment.functions.UPDATE_ALL_USER_PROFILE
+    this.xAPI.parametros = `${this.perfilSave.id}array##${JSON.stringify(this.perfilSave.Rol.Menu)}`
+    this.xAPI.valores = ``
+
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        this.active = 1
+        this.dataRol = []
+        this.dataRolDetalles = []
+        this.dataPlana = []
+        this.dataJerarquica = []
+        this.xrol = ''
+        this.Perfil.id = ''
+        this.Perfil.nombre = ''
+        this.Perfil.descripcion = ''
+        this.selRol(this.aplicacion.id)
+
+        this.listarPerfiles()
+        this.utilservice.AlertMini(
+          "top-end",
+          "success",
+          "Perfil actualizado correctamente",
+          3000
+        )
+
+
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
 
   // -----------------------------------------------------------
   // Función que actualiza el estatus (sin mutar el arreglo de origen)
@@ -1259,15 +1286,7 @@ export class ProfileComponent implements OnInit {
     return updatedArray;
   }
 
-  /**
-   * Exportar Perfil A PDF
-   */
-  /**
-   * Exportar Perfil A PDF (Versión Premium)
-   */
-  /**
-   * Exportar Perfil A PDF (Versión Premium Creativa)
-   */
+
   /**
    * Exportar Perfil A PDF (Versión Premium Final)
    */
@@ -1275,10 +1294,6 @@ export class ProfileComponent implements OnInit {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
-
-    // ==========================================
-    // PAGINA 1: PORTADA (Suave / Minimalista)
-    // ==========================================
 
     // Titulo Principal - Azul Suave
     doc.setFontSize(26);

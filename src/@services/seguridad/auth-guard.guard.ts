@@ -18,22 +18,45 @@ export class AuthGuardGuard implements CanActivate {
 
   constructor(private router: Router, private util: UtilService, private loginService: LoginService) { }
 
+  sessionError() {
+    sessionStorage.clear();
+    this.router.navigate(["/login"]).then(() => {
+      window.location.reload();
+    })
+  }
+
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
 
-    this.token = jwt_decode(sessionStorage.getItem('token'));
+    const token = sessionStorage.getItem('token');
+
+    if (!token) {
+      this.sessionError();
+      return false;
+    }
+
+    try {
+      this.token = jwt_decode(token);
+    } catch (error) {
+      console.error('AuthGuard: Invalid token', error);
+      this.sessionError();
+      return false;
+    }
 
     const IDAPP = this.token.Usuario.Aplicacion[0].id
+    // console.log(this.token)
+    // console.log(IDAPP)
+    // console.log(environment.ID)
 
-    if (sessionStorage.getItem("token") !== undefined && IDAPP == environment.ID) {
+    if (this.token !== undefined && IDAPP == environment.ID) {
       let menu = JSON.parse(sessionStorage.getItem('menu'))
       let texto = Md5.hashStr(sessionStorage.getItem('menu'))
       let validar = sessionStorage.getItem('crypt')
       if (texto == validar) {
         let valor = false
         // Lista de URLs siempre permitidas
-        const whitelistedUrls = ['/home', '/options/upgrade'];
+        const whitelistedUrls = ['/home', '/Principal', '/options/upgrade'];
         if (whitelistedUrls.includes(state.url)) {
           return true;
         }

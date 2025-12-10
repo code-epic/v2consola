@@ -25,36 +25,36 @@ import JSONFormatter from 'json-formatter-js';
 })
 
 export class CommunicationsComponent implements OnInit {
-  
+
   @ViewChild(DatatableComponent) table: DatatableComponent;
-    @BlockUI() blockUI: NgBlockUI;
-    @BlockUI('section-block') sectionBlockUI: NgBlockUI;
+  @BlockUI() blockUI: NgBlockUI;
+  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
-  public xAPI : IAPICore = {
+  public xAPI: IAPICore = {
     funcion: '',
     parametros: '',
     relacional: false,
-    concurrencia : false,
+    concurrencia: false,
     protocolo: '',
-    ruta : '',
-    retorna : false,
-    migrar : false,
-    modulo : '',
-    valores : {},
-    coleccion : '',
-    http : 0,
-    https : 0,
-    consumidores : 0,
-    puertohttp : 0,
-    puertohttps : 0,
-    driver : '',
-    query : '',
-    metodo : '',
-    tipo : '',
-    prioridad : '',
+    ruta: '',
+    retorna: false,
+    migrar: false,
+    modulo: '',
+    valores: {},
+    coleccion: '',
+    http: 0,
+    https: 0,
+    consumidores: 0,
+    puertohttp: 0,
+    puertohttps: 0,
+    driver: '',
+    query: '',
+    metodo: '',
+    tipo: '',
+    prioridad: '',
     entorno: '',
-    logs : false
+    logs: false
   };
 
   public searchValue = ''
@@ -64,7 +64,7 @@ export class CommunicationsComponent implements OnInit {
   public titleModal
 
   public fnx
- 
+
   public ListaComunicaciones = []
   public tempData = [];
   public rowData = [];
@@ -73,18 +73,18 @@ export class CommunicationsComponent implements OnInit {
   public hostIP
 
   public dispositivos = [
-    {id:'SRV', descripcion: 'SERVIDORES'},
-    {id:'ROU', descripcion: 'ROUTERS'},
-    {id:'SWI', descripcion: 'SWITCHES'},
-    {id:'IMP', descripcion: 'IMPRESORAS'},
-    {id:'LHU', descripcion: 'LECTOR BIOMETRICO'},
-    {id:'DVR', descripcion: 'DVR - CAMARAS'},
-    {id:'CIP', descripcion: 'CAMARAS IP'},
+    { id: 'SRV', descripcion: 'SERVIDORES' },
+    { id: 'ROU', descripcion: 'ROUTERS' },
+    { id: 'SWI', descripcion: 'SWITCHES' },
+    { id: 'IMP', descripcion: 'IMPRESORAS' },
+    { id: 'LHU', descripcion: 'LECTOR BIOMETRICO' },
+    { id: 'DVR', descripcion: 'DVR - CAMARAS' },
+    { id: 'CIP', descripcion: 'CAMARAS IP' },
   ]
 
   public status = [
-    {id:true, name: 'ACTIVO'},
-    {id:false, name: 'INACTIVO'},
+    { id: true, name: 'ACTIVO' },
+    { id: false, name: 'INACTIVO' },
   ]
 
   public btnShow = false
@@ -93,7 +93,7 @@ export class CommunicationsComponent implements OnInit {
 
   // public
   public mac
-  public data : any
+  public data: any
   public xrs = ''
   public host = ''
   public submitted = false;
@@ -108,8 +108,8 @@ export class CommunicationsComponent implements OnInit {
 
   constructor(
     private msjService: WsocketsService,
-    private comunicacionesService : ComunicationsService,
-    private apiService : ApiService,
+    private comunicacionesService: ComunicationsService,
+    private apiService: ApiService,
     private modalService: NgbModal,
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
@@ -117,10 +117,10 @@ export class CommunicationsComponent implements OnInit {
   ) {
   }
 
-    // convenience getter for easy access to form fields
-    get f() {
-      return this.loginForm.controls;
-    }
+  // convenience getter for easy access to form fields
+  get f() {
+    return this.loginForm.controls;
+  }
 
 
   async ngOnInit() {
@@ -142,21 +142,21 @@ export class CommunicationsComponent implements OnInit {
     });
 
     this.msjService.lstpid$.subscribe(
-      (e)=> {
+      (e) => {
         this.xrs = e.rs
         this.btnShow = true
       }
     )
-    
-     // content header
-     this.contentHeader = {
+
+    // content header
+    this.contentHeader = {
       headerTitle: 'Comunicaciones',
       actionButton: true,
       breadcrumb: {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/home'
           },
@@ -201,7 +201,7 @@ export class CommunicationsComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  LimpiarForm(){
+  LimpiarForm() {
     this.loginForm = this._formBuilder.group({
       host: ['', [Validators.required]],
       mac: ['', [Validators.required]],
@@ -212,25 +212,25 @@ export class CommunicationsComponent implements OnInit {
     });
   }
 
-  async CargarLista(){
+  async CargarLista() {
     this.xAPI.funcion = "_SYS_LstComunicaciones";
     this.xAPI.parametros = ''
     this.ListaComunicaciones = []
     this.count = 0
-     await this.apiService.Ejecutar(this.xAPI).subscribe(
+    await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-          this.ListaComunicaciones.push(data);
-              this.rowData = data;
-              this.count = this.rowData.length
-              this.tempData = this.rowData;
+        this.ListaComunicaciones.push(data);
+        this.rowData = data;
+        this.count = this.rowData.length
+        this.tempData = this.rowData;
       },
       (error) => {
         console.log(error)
       }
-    ) 
+    )
   }
 
-  ModalEdit(modal, data){
+  ModalEdit(modal, data) {
     this.loginForm = this._formBuilder.group({
       host: [data.host, [Validators.required]],
       mac: [data.mac, [Validators.required]],
@@ -239,7 +239,7 @@ export class CommunicationsComponent implements OnInit {
       tipo: [data.tipo],
       estatus: [data.estatus],
     });
-    this.modalService.open(modal,{
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -248,12 +248,12 @@ export class CommunicationsComponent implements OnInit {
     });
   }
 
-  ModalEscaneo(modal, data){
+  ModalEscaneo(modal, data) {
     this.hostIP = data.host
-    this.titleModal = `IP: ${data.host} - ${data.descripcion}` 
+    this.titleModal = `IP: ${data.host} - ${data.descripcion}`
     this.btnShow = true
     this.data = data
-    this.modalService.open(modal,{
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -269,21 +269,21 @@ export class CommunicationsComponent implements OnInit {
       'funcion': 'Fnx_NMap',
       'ip': this.hostIP
     };
-  
+
     try {
       // Esperamos a que se complete la ejecución
       const data = await this.apiService.ExecFnx(this.fnx).toPromise();
-      
+
       this.utilservice.AlertMini('top-end', 'success', 'Realizando Escaneo Nmap', 3000);
-      
+
       // Esperamos a que se complete la consulta del PID
       const resultadoScan = await this.apiService.ConsultarPidScan(data.contenido.id, this.fnx);
-      
+
       // Aquí puedes procesar el resultado del scan
       // console.log('Resultado del escaneo:', resultadoScan);
-      this.xrs =  resultadoScan.rs || 'No se encontraron resultados';
+      this.xrs = resultadoScan.rs || 'No se encontraron resultados';
       this.btnShow = true; // Restablecer el botón cuando termine (éxito o error)
-      
+
     } catch (error) {
       this.xrs = 'Error al escanear la red';
       this.btnShow = true; // Restablecer el botón en caso de error
@@ -300,20 +300,20 @@ export class CommunicationsComponent implements OnInit {
     this.fnx = {
       'funcion': 'Fnx_ScanRed',
     };
-  
+
     try {
       // Convertimos el Observable a Promesa usando firstValueFrom (RxJS 7+)
       const data = await this.apiService.ExecFnx(this.fnx).toPromise();
-      
+
       this.utilservice.AlertMini('top-end', 'success', 'Realizando Escaneo de Red', 3000);
-      
+
       // Esperamos el resultado del escaneo
       const scanResult = await this.apiService.ConsultarPidScan(data.contenido.id, this.fnx);
-      
+
       // Actualizamos la UI con el resultado
       this.xrs = scanResult.rs || 'Escaneo completado';
       // console.log(scanResult);
-      
+
     } catch (error) {
       console.error('Error en ScanRed:', error);
       this.utilservice.AlertMini('top-end', 'error', 'Error al generar Escaneo de Red', 3000);
@@ -328,19 +328,19 @@ export class CommunicationsComponent implements OnInit {
       'funcion': 'Fnx_NMapAuto',
       'ip': this.loginForm.value.host
     };
-  
+
     try {
       const data = await this.apiService.ExecFnx(this.fnx).toPromise();
       this.utilservice.AlertMini('top-end', 'success', 'Realizando Escaneo Nmap', 3000);
-      
+
       const resultadoScan = await this.apiService.ConsultarPidScan(data.contenido.id, this.fnx);
       // console.log('Resultado completo:', resultadoScan); // Para depuración
-      
+
       // Verifica si resultadoScan.rs existe y es un string
       if (resultadoScan?.rs) {
         const parsedData = JSON.parse(resultadoScan.rs);
         // console.log('Datos parseados:', parsedData); // Para depuración
-        
+
         if (parsedData.active_connection) {
           this.loginForm.patchValue({
             host: parsedData.active_connection.ip,
@@ -355,12 +355,12 @@ export class CommunicationsComponent implements OnInit {
       }
 
       this.btnShowScan = true;
-      
+
     } catch (error) {
       this.btnShowScan = false;
       this.utilservice.AlertMini('top-end', 'error', 'Error al generar Nmap', 3000);
       console.error('Error completo:', error);
-      
+
       if (error instanceof Error) {
         console.error('Mensaje de error:', error.message);
         console.error('Stack trace:', error.stack);
@@ -368,8 +368,8 @@ export class CommunicationsComponent implements OnInit {
     }
   }
 
-  ModalAdd(modal){
-    this.modalService.open(modal,{
+  ModalAdd(modal) {
+    this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
@@ -378,7 +378,7 @@ export class CommunicationsComponent implements OnInit {
     });
   }
 
-  GuardarDispositivo(){
+  GuardarDispositivo() {
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -396,10 +396,10 @@ export class CommunicationsComponent implements OnInit {
           this.ListaComunicaciones = []
           this.CargarLista()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`,3000)
+          this.utilservice.AlertMini('top-end', 'success', `Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
           // console.log(error)
         }
       )
@@ -407,7 +407,7 @@ export class CommunicationsComponent implements OnInit {
     }
   }
 
-  EditarDispositivo(){
+  EditarDispositivo() {
     this.submitted = true;
     if (this.loginForm.invalid) {
       return;
@@ -425,10 +425,10 @@ export class CommunicationsComponent implements OnInit {
           this.ListaComunicaciones = []
           this.CargarLista()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end','success',`Tu (Comunicacion) ha sido actualizada`,3000)
+          this.utilservice.AlertMini('top-end', 'success', `Tu (Comunicacion) ha sido actualizada`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end','error','Error al Guardadar los Datos',3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
           // console.log(error)
         }
       )

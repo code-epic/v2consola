@@ -56,7 +56,7 @@ export class AuthLoginV1Component implements OnInit {
 
   // Private
   private _unsubscribeAll: Subject<any>;
-  
+
 
   /**
    * Constructor
@@ -77,7 +77,7 @@ export class AuthLoginV1Component implements OnInit {
     @Inject(DOCUMENT) private document: Document
   ) {
 
-    
+
     this.bdv = true
     if (sessionStorage.getItem("token") != undefined) {
       this.router.navigate(["home"]);
@@ -216,5 +216,14 @@ export class AuthLoginV1Component implements OnInit {
 
   }
 
- 
+
+  onLoginBlur() {
+    if (this.bdv && this.usuario) {
+      const prefix = this.usuario.substring(0, 2).toUpperCase();
+      if (prefix === 'NM' || prefix === 'CT') {
+        this.usuario = this.usuario.toUpperCase();
+      }
+    }
+  }
+
 }

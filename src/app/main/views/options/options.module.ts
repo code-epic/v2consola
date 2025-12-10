@@ -19,7 +19,8 @@ const routes = [
   },
   {
     path: 'options/upgrade',
-    component: UpgradeComponent
+    component: UpgradeComponent,
+    canActivate: [AuthGuardGuard],
   },
 ];
 

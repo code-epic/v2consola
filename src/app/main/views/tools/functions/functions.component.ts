@@ -230,8 +230,8 @@ export class FunctionsComponent implements OnInit {
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
     private msjService: WsocketsService,
-     private taskService: TaskService,
-  ) {}
+    private taskService: TaskService,
+  ) { }
 
   // convenience getter for easy access to form fields
   get f() {
@@ -241,7 +241,7 @@ export class FunctionsComponent implements OnInit {
   async ngOnInit() {
     this.llave = this.utilservice.GenerarUnicId()
     this.hashcontrol = btoa("XING" + this.llave)
-    
+
     await this.CargarListaFunciones()
     this.CargarListaAplicaciones()
 
@@ -267,7 +267,7 @@ export class FunctionsComponent implements OnInit {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },
@@ -476,11 +476,11 @@ export class FunctionsComponent implements OnInit {
     console.log(this.loginForm.get('categoria')?.value)
     if (this.loginForm.invalid) {
       this.utilservice.AlertMini(
-            "top-end",
-            "warning",
-            `Hay campos obligatorios pendientes`,
-            3000
-          )
+        "top-end",
+        "warning",
+        `Hay campos obligatorios pendientes`,
+        3000
+      )
       return
     } else {
       this.loginForm.value.version = this.existe
@@ -500,8 +500,8 @@ export class FunctionsComponent implements OnInit {
 
           if (this.loginForm.get('categoria')?.value === 'PROGRAM') {
             this.ejecutarCrontab()
-          } 
-          
+          }
+
           this.ListaFunciones = []
           this.CargarListaFunciones()
           this.modalService.dismissAll("Close")
@@ -604,7 +604,7 @@ export class FunctionsComponent implements OnInit {
 
           if (this.loginForm.get('categoria')?.value === 'PROGRAM') {
             this.ejecutarCrontab()
-          } 
+          }
           this.ListaFunciones = [];
           this.CargarListaFunciones();
           this.modalService.dismissAll("Close");
@@ -701,13 +701,13 @@ export class FunctionsComponent implements OnInit {
   }
 
   async SubirArchivo(e) {
-    console.log(document.getElementById('identificador') )
+    console.log(document.getElementById('identificador'))
     var frm = new FormData(document.forms.namedItem("forma"))
     try {
       await this.apiService.EnviarArchivos(frm).subscribe(
         (data) => {
-         this.ValoresMasivos()
-         
+          this.ValoresMasivos()
+
         }
       )
     } catch (error) {
@@ -737,7 +737,7 @@ export class FunctionsComponent implements OnInit {
     this.xAPI.funcion = environment.functions.INSERT_FILE_PATH;
     this.xAPI.parametros = "";
     this.xAPI.valores = JSON.stringify(cargaMasiva);
-    
+
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
@@ -799,7 +799,7 @@ export class FunctionsComponent implements OnInit {
             );
           })
           .catch((e) => console.log(e));
-       
+
       },
       (error) => {
         console.log(error);
@@ -807,14 +807,14 @@ export class FunctionsComponent implements OnInit {
     );
   }
 
-  ejecutarCrontab(){
+  ejecutarCrontab() {
     console.log('Ejecutando Crontab...')
     let fnx = JSON.stringify(this.loginForm.value)
 
     this.apiService.ExecCrontab(fnx).subscribe(
       (data) => {
         console.log(data);
-       
+
       },
       (error) => {
         console.log(error);

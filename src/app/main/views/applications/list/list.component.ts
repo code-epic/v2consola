@@ -123,7 +123,7 @@ export class ListComponent implements OnInit {
         type: "",
         links: [
           {
-            name: "Home",
+            name: "Principal",
             isLink: true,
             link: "/home",
           },
@@ -132,7 +132,7 @@ export class ListComponent implements OnInit {
             isLink: false,
           },
           {
-            name: "Versiones",
+            name: "Listar Versiones",
             isLink: false,
           },
         ],

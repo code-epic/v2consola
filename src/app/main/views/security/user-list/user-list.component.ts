@@ -105,7 +105,7 @@ export class UserListComponent implements OnInit {
     this.xAPI.parametros = '';
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        // console.log(data)
         this.lstPerfil = data;
       },
       (error) => {

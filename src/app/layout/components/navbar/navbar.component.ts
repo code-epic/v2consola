@@ -276,9 +276,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.token = jwt_decode(sessionStorage.getItem("token"));
-    this.usuario = this.token.Usuario.usuario;
-    this.tipo = this.token.Usuario.nombre;
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      try {
+        this.token = jwt_decode(token);
+        this.usuario = this.token.Usuario.usuario;
+        this.tipo = this.token.Usuario.nombre;
+      } catch (error) {
+        console.error("Error decoding token in Navbar:", error);
+        // Optional: Redirect to login or handle invalid session
+      }
+    } else {
+      // Handle case where there is no token (e.g. redirect to login)
+      // For now, ensure variables used later are safe
+      this.usuario = '';
+    }
 
 
     // Initialize Idle Service

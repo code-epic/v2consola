@@ -157,7 +157,7 @@ export class ConnectionsComponent implements OnInit {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/home'
           },
@@ -399,7 +399,7 @@ export class ConnectionsComponent implements OnInit {
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        console.log(data)
+        // console.log(data)
         this.ListaAplicaciones = data.Cuerpo.map(e => {
           e.name = e.nombre + ' : ' + e.VERSION
           return e

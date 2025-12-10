@@ -36,6 +36,7 @@ export interface SMenu {
 }
 
 export interface SRol {
+  id: string;
   descripcion: string;
   Menu: SMenu[];
 }
@@ -55,6 +56,7 @@ export interface SAplicacion {
 }
 
 export interface Perfil {
+  id: string;
   descripcion: string;
   traza: string;
 }
@@ -104,7 +106,7 @@ export class UserService implements Usuario {
 
   cedula = '';
   nombre = '';
-  descripcion= '';
+  descripcion = '';
   observaciones = '';
   login = '';
   correo = '';
@@ -117,7 +119,7 @@ export class UserService implements Usuario {
   token = '';
   endpoint = '';
   estatus = 1;
-  Perfil: Perfil = { descripcion: '', traza : '' };
+  Perfil: Perfil = { id: '', descripcion: '', traza: '' };
   Aplicacion: SAplicacion[] = [];
   firmadigital: Firmadigital = {
     duracion: 0,
@@ -128,7 +130,7 @@ export class UserService implements Usuario {
     nivel: 0
   };
 
-   // Propiedad de clase estándar para almacenar el resultado agrupado
+  // Propiedad de clase estándar para almacenar el resultado agrupado
   public groupedApplications: AplicacionAgrupada[] = [];
 
   iniciarObjeto(): void {
@@ -147,7 +149,7 @@ export class UserService implements Usuario {
     this.sistema = '';
     this.token = '';
     this.estatus = 1;
-    this.Perfil = { descripcion: '', traza : '' };
+    this.Perfil = { id: '', descripcion: '', traza: '' };
     this.Aplicacion = [];
     this.firmadigital = {
       duracion: 0,
@@ -210,7 +212,7 @@ export class UserService implements Usuario {
 
 
 
-  
+
 
 
 

@@ -202,6 +202,7 @@ button {
   &.show {
     max-height: 500px;
     padding: 1.5rem;
+    overflow-y: auto; // Habilitar scroll para listas largas
     transition: max-height 0.4s ease-in, padding 0.3s ease-in;
   }
 }

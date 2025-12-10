@@ -54,6 +54,7 @@ export class UserComponent implements OnInit {
   }
 
   public Perfil: Perfil = {
+    id: '',
     descripcion: '',
     traza: '',
   }
@@ -147,6 +148,7 @@ export class UserComponent implements OnInit {
   ]
 
   public Rol: SRol = {
+    id: '',
     descripcion: '',
     Menu: [],
   }
@@ -176,6 +178,7 @@ export class UserComponent implements OnInit {
     estatus: 0,
     tiempo: '',
     Rol: {
+      id: '',
       descripcion: '',
       Menu: [],
     },
@@ -297,7 +300,6 @@ export class UserComponent implements OnInit {
         if (data != null) {
           if (data.length > 0) {
             this.configuracion = data[0]
-            console.log(this.configuracion)
             this.iUser.endpoint = this.configuracion.endpoints.login
             this.iUser.duraciontiempo = this.configuracion.sesion.tiempo * this.exportTime(this.configuracion.sesion.unidad)
           }
@@ -483,7 +485,7 @@ export class UserComponent implements OnInit {
           this.selPerfil(this.usuario.sistema)
           this.blockEditApp = 'false'
           this.usuarioSave = true
-          console.log(this.usuario)
+          // console.log(this.usuario)
         }
 
       },
@@ -551,6 +553,7 @@ export class UserComponent implements OnInit {
     await this.lstUsersApp.forEach(async (appx) => {
       apps = appx;
       let rol: SRol = {
+        id: appx.idper.id,
         descripcion: appx.idper.Rol.descripcion,
         Menu: appx.idper.Rol.Menu,
       }
@@ -568,15 +571,12 @@ export class UserComponent implements OnInit {
         tiempo: appx.tiempo,
         Rol: rol,
       }
-      // this.Aplicacion = xapps
-      // console.log(appx)
       lstApp.push(xapps)
 
     })
 
 
-    // console.log(this.xregional)
-
+    this.usuario.Perfil.id = apps.idper == undefined ? '' : apps.idper.id
     this.usuario.Perfil.descripcion = apps.perfil
     this.usuario.Perfil.traza = apps.traza
     this.usuario.cedula = this.iUser.cedula
@@ -623,8 +623,6 @@ export class UserComponent implements OnInit {
       this.usuario.Aplicacion = lstApp
     }
 
-
-    // console.log(this.usuario)
   }
 
   async agregarAplicacion() {
@@ -1071,14 +1069,16 @@ export class UserComponent implements OnInit {
     this.xAPI.parametros = this.iUser.cedula
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        if (data.length > 0) {
-          this.utilservice.AlertMini(
-            'top-end',
-            'warning',
-            'Cédula ya se encuentra registrado',
-            3000
-          )
-          this.iUser.cedula = ''
+        if (data != null) {
+          if (data.length > 0) {
+            this.utilservice.AlertMini(
+              'top-end',
+              'warning',
+              'Cédula ya se encuentra registrado',
+              3000
+            )
+            this.iUser.cedula = ''
+          }
         }
 
       },
@@ -1093,14 +1093,16 @@ export class UserComponent implements OnInit {
     this.xAPI.parametros = this.iUser.login
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        if (data.length > 0) {
-          this.utilservice.AlertMini(
-            'top-end',
-            'warning',
-            'Login ya se encuentra registrado',
-            3000
-          )
-          this.iUser.login = ''
+        if (data != null) {
+          if (data.length > 0) {
+            this.utilservice.AlertMini(
+              'top-end',
+              'warning',
+              'Login ya se encuentra registrado',
+              3000
+            )
+            this.iUser.login = ''
+          }
         }
       },
       (error) => {

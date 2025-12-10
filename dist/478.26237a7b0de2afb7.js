@@ -807,24 +807,28 @@ function AuthLoginV1Component_div_1_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](11, "Consola");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](12, "input", 58);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("ngModelChange", function AuthLoginV1Component_div_1_Template_input_ngModelChange_12_listener($event) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("blur", function AuthLoginV1Component_div_1_Template_input_blur_12_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r11);
       const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r10.usuario = $event);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r10.onLoginBlur($event));
+    })("ngModelChange", function AuthLoginV1Component_div_1_Template_input_ngModelChange_12_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r11);
+      const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r12.usuario = $event);
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](13, "input", 59);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("ngModelChange", function AuthLoginV1Component_div_1_Template_input_ngModelChange_13_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r11);
-      const ctx_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r12.clave = $event);
+      const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r13.clave = $event);
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](14, "div", 60)(15, "button", 61);
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function AuthLoginV1Component_div_1_Template_button_click_15_listener() {
       _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r11);
-      const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r13.loginOpt());
+      const ctx_r14 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r14.loginOpt());
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](16, " Ingresar ");
     _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
@@ -1007,6 +1011,16 @@ class AuthLoginV1Component {
     });
   }
 
+  onLoginBlur() {
+    if (this.bdv && this.usuario) {
+      const prefix = this.usuario.substring(0, 2).toUpperCase();
+
+      if (prefix === 'NM' || prefix === 'CT') {
+        this.usuario = this.usuario.toUpperCase();
+      }
+    }
+  }
+
   static ɵfac = function AuthLoginV1Component_Factory(t) {
     return new (t || AuthLoginV1Component)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_services_apicore_task_service__WEBPACK_IMPORTED_MODULE_1__.TaskService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_2__.CoreConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_forms__WEBPACK_IMPORTED_MODULE_11__.UntypedFormBuilder), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_13__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_3__.LoginService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_services_util_util_service__WEBPACK_IMPORTED_MODULE_4__.UtilService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_5__.ApiService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_common__WEBPACK_IMPORTED_MODULE_14__.DOCUMENT));
   };
@@ -1015,7 +1029,7 @@ class AuthLoginV1Component {
     selectors: [["app-auth-login-v1"]],
     decls: 2,
     vars: 2,
-    consts: [["class", "login__heading auth-wrapper auth-v1 px-2", 4, "ngIf"], ["class", "page", 4, "ngIf"], [1, "login__heading", "auth-wrapper", "auth-v1", "px-2"], [1, "auth-inner", "py-2"], [1, "card", "mb-0"], [1, "card-body"], ["href", "javascript:void(0);", 1, "brand-logo"], ["alt", "brand-logo", "height", "30", 3, "src"], [1, "brand-text", "text-primary", "ml-1"], [1, "card", "mb-1", "text-center"], [1, "auth-login-form", "mt-2", 3, "formGroup", "ngSubmit"], [1, "form-group"], ["for", "login-email", 1, "form-label"], ["type", "text", "formControlName", "email", "placeholder", "Usuario", "aria-describedby", "login-email", "tabindex", "1", "autofocus", "", 1, "form-control", 3, "ngClass"], ["class", "invalid-feedback", 4, "ngIf"], [1, "d-flex", "justify-content-between"], ["for", "login-password"], ["routerLink", "/authentication/forgot-password-v1"], [1, "input-group", "input-group-merge", "form-password-toggle"], ["formControlName", "password", "tabindex", "2", "placeholder", "\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7", "aria-describedby", "login-password", 1, "form-control", "form-control-merge", 3, "type", "ngClass"], [1, "input-group-append"], [1, "input-group-text", "cursor-pointer"], [1, "feather", "font-small-4", 3, "ngClass", "click"], ["class", "invalid-feedback", 3, "ngClass", 4, "ngIf"], [1, "custom-control", "custom-checkbox"], ["type", "checkbox", "id", "remember-me", "tabindex", "3", 1, "custom-control-input"], ["for", "remember-me", 1, "custom-control-label"], ["tabindex", "4", "rippleEffect", "", 1, "btn", "btn-primary", "btn-block"], [1, "login"], [1, "login__heading"], [1, "login__circuit-mask"], [1, "text-center", "mt-2"], ["routerLink", "/authentication/register-v1"], [1, "divider", "my-2"], [1, "divider-text"], [1, "auth-footer-btn", "d-flex", "justify-content-center"], ["href", "javascript:void(0)", 1, "btn", "btn-facebook"], ["data-feather", "facebook"], ["href", "javascript:void(0)", 1, "btn", "btn-twitter", "white"], ["data-feather", "twitter"], ["href", "javascript:void(0)", 1, "btn", "btn-google"], ["data-feather", "mail"], ["href", "javascript:void(0)", 1, "btn", "btn-github"], ["data-feather", "github"], [1, "card-text", "text-center"], [1, "invalid-feedback"], [4, "ngIf"], [1, "invalid-feedback", 3, "ngClass"], [1, "page"], [1, "border-0", "contenedor"], [1, "left"], [1, "loginx"], ["src", "assets/images/bdv/bdv.png", "alt", "LogoBDV"], [1, "titulo"], [1, "right"], ["role", "form", 1, "xform"], ["form", "ngForm"], [1, "titulo", 2, "text-transform", "uppercase", "margin-bottom", "0"], ["type", "text", "id", "usuario", "name", "usuario", "maxlength", "12", "placeholder", "Usuario (*)", "autocomplete", "off", 1, "xinput", 3, "ngModel", "ngModelOptions", "ngModelChange"], ["type", "password", "name", "clave", "id", "clave", "placeholder", "Contrase\u00F1a (*)", "required", "", 1, "xinput", 3, "ngModel", "ngModelOptions", "ngModelChange"], [1, "row", 2, "margin-top", ".5rem"], ["type", "submit", "id", "submit", 1, "xbutton", "primary", 2, "margin-right", ".5rem", "height", "30px", "font-size", "13px", 3, "click"], [1, "separador"], [2, "color", "#494949", "font-size", "11px", "text-align", "center"], [1, "row", "mt-5", 2, "width", "50%"], [1, "col-6"], [1, "col-6", "text-right"]],
+    consts: [["class", "login__heading auth-wrapper auth-v1 px-2", 4, "ngIf"], ["class", "page", 4, "ngIf"], [1, "login__heading", "auth-wrapper", "auth-v1", "px-2"], [1, "auth-inner", "py-2"], [1, "card", "mb-0"], [1, "card-body"], ["href", "javascript:void(0);", 1, "brand-logo"], ["alt", "brand-logo", "height", "30", 3, "src"], [1, "brand-text", "text-primary", "ml-1"], [1, "card", "mb-1", "text-center"], [1, "auth-login-form", "mt-2", 3, "formGroup", "ngSubmit"], [1, "form-group"], ["for", "login-email", 1, "form-label"], ["type", "text", "formControlName", "email", "placeholder", "Usuario", "aria-describedby", "login-email", "tabindex", "1", "autofocus", "", 1, "form-control", 3, "ngClass"], ["class", "invalid-feedback", 4, "ngIf"], [1, "d-flex", "justify-content-between"], ["for", "login-password"], ["routerLink", "/authentication/forgot-password-v1"], [1, "input-group", "input-group-merge", "form-password-toggle"], ["formControlName", "password", "tabindex", "2", "placeholder", "\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7\u00B7", "aria-describedby", "login-password", 1, "form-control", "form-control-merge", 3, "type", "ngClass"], [1, "input-group-append"], [1, "input-group-text", "cursor-pointer"], [1, "feather", "font-small-4", 3, "ngClass", "click"], ["class", "invalid-feedback", 3, "ngClass", 4, "ngIf"], [1, "custom-control", "custom-checkbox"], ["type", "checkbox", "id", "remember-me", "tabindex", "3", 1, "custom-control-input"], ["for", "remember-me", 1, "custom-control-label"], ["tabindex", "4", "rippleEffect", "", 1, "btn", "btn-primary", "btn-block"], [1, "login"], [1, "login__heading"], [1, "login__circuit-mask"], [1, "text-center", "mt-2"], ["routerLink", "/authentication/register-v1"], [1, "divider", "my-2"], [1, "divider-text"], [1, "auth-footer-btn", "d-flex", "justify-content-center"], ["href", "javascript:void(0)", 1, "btn", "btn-facebook"], ["data-feather", "facebook"], ["href", "javascript:void(0)", 1, "btn", "btn-twitter", "white"], ["data-feather", "twitter"], ["href", "javascript:void(0)", 1, "btn", "btn-google"], ["data-feather", "mail"], ["href", "javascript:void(0)", 1, "btn", "btn-github"], ["data-feather", "github"], [1, "card-text", "text-center"], [1, "invalid-feedback"], [4, "ngIf"], [1, "invalid-feedback", 3, "ngClass"], [1, "page"], [1, "border-0", "contenedor"], [1, "left"], [1, "loginx"], ["src", "assets/images/bdv/bdv.png", "alt", "LogoBDV"], [1, "titulo"], [1, "right"], ["role", "form", 1, "xform"], ["form", "ngForm"], [1, "titulo", 2, "text-transform", "uppercase", "margin-bottom", "0"], ["type", "text", "id", "usuario", "name", "usuario", "maxlength", "12", "placeholder", "Usuario (*)", "autocomplete", "off", 1, "xinput", 3, "ngModel", "ngModelOptions", "blur", "ngModelChange"], ["type", "password", "name", "clave", "id", "clave", "placeholder", "Contrase\u00F1a (*)", "required", "", 1, "xinput", 3, "ngModel", "ngModelOptions", "ngModelChange"], [1, "row", 2, "margin-top", ".5rem"], ["type", "submit", "id", "submit", 1, "xbutton", "primary", 2, "margin-right", ".5rem", "height", "30px", "font-size", "13px", 3, "click"], [1, "separador"], [2, "color", "#494949", "font-size", "11px", "text-align", "center"], [1, "row", "mt-5", 2, "width", "50%"], [1, "col-6"], [1, "col-6", "text-right"]],
     template: function AuthLoginV1Component_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](0, AuthLoginV1Component_div_0_Template, 68, 24, "div", 0);
