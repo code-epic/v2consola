@@ -1148,10 +1148,11 @@ export class ProfileComponent implements OnInit {
           this.utilservice.AlertMini(
             "top-end",
             "success",
-            `Tu perfil se ha registrado: ${data.UpsertedID}`,
+            `Tu perfil se ha registrado correctamente`,
             3000
           )
 
+          this.limpiarPerfil()
 
         } else {
 
@@ -1180,18 +1181,7 @@ export class ProfileComponent implements OnInit {
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.active = 1
-        this.dataRol = []
-        this.dataRolDetalles = []
-        this.dataPlana = []
-        this.dataJerarquica = []
-        this.xrol = ''
-        this.Perfil.id = ''
-        this.Perfil.nombre = ''
-        this.Perfil.descripcion = ''
-        this.selRol(this.aplicacion.id)
 
-        this.listarPerfiles()
         this.utilservice.AlertMini(
           "top-end",
           "success",
@@ -1199,12 +1189,29 @@ export class ProfileComponent implements OnInit {
           3000
         )
 
+        this.limpiarPerfil()
 
       },
       (error) => {
         console.log(error)
       }
     )
+  }
+
+  limpiarPerfil() {
+    this.active = 1
+    this.dataRol = []
+    this.dataRolDetalles = []
+    this.dataPlana = []
+    this.dataJerarquica = []
+    this.xrol = ''
+    this.Perfil.id = ''
+    this.Perfil.nombre = ''
+    this.Perfil.descripcion = ''
+    this.rol = ''
+    this.selRol(this.aplicacion.id)
+
+    this.listarPerfiles()
   }
 
   // -----------------------------------------------------------

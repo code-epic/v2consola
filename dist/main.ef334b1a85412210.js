@@ -42871,7 +42871,8 @@ class ProfileComponent {
     };
     this.apiService.ExecColeccion(obj).subscribe(data => {
       if (data.UpsertedID != null) {
-        this.utilservice.AlertMini("top-end", "success", `Tu perfil se ha registrado: ${data.UpsertedID}`, 3000);
+        this.utilservice.AlertMini("top-end", "success", `Tu perfil se ha registrado correctamente`, 3000);
+        this.limpiarPerfil();
       } else {
         this.updateAllUserProfile();
       }
@@ -42885,21 +42886,26 @@ class ProfileComponent {
     this.xAPI.parametros = `${this.perfilSave.id}array##${JSON.stringify(this.perfilSave.Rol.Menu)}`;
     this.xAPI.valores = ``;
     this.apiService.Ejecutar(this.xAPI).subscribe(data => {
-      this.active = 1;
-      this.dataRol = [];
-      this.dataRolDetalles = [];
-      this.dataPlana = [];
-      this.dataJerarquica = [];
-      this.xrol = '';
-      this.Perfil.id = '';
-      this.Perfil.nombre = '';
-      this.Perfil.descripcion = '';
-      this.selRol(this.aplicacion.id);
-      this.listarPerfiles();
       this.utilservice.AlertMini("top-end", "success", "Perfil actualizado correctamente", 3000);
+      this.limpiarPerfil();
     }, error => {
       console.log(error);
     });
+  }
+
+  limpiarPerfil() {
+    this.active = 1;
+    this.dataRol = [];
+    this.dataRolDetalles = [];
+    this.dataPlana = [];
+    this.dataJerarquica = [];
+    this.xrol = '';
+    this.Perfil.id = '';
+    this.Perfil.nombre = '';
+    this.Perfil.descripcion = '';
+    this.rol = '';
+    this.selRol(this.aplicacion.id);
+    this.listarPerfiles();
   } // -----------------------------------------------------------
   // Función que actualiza el estatus (sin mutar el arreglo de origen)
   // -----------------------------------------------------------
@@ -58509,7 +58515,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Wed Dec 10 2025 14:17:19 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Wed Dec 10 2025 17:02:05 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
