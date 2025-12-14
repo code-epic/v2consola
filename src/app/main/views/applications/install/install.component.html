@@ -223,8 +223,13 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><span [data-feather]="'key'" [size]="16"></span></span>
                                                     </div>
-                                                    <input [(ngModel)]="iApp.clave" type="text"
+                                                    <input [(ngModel)]="iApp.clave" [type]="passwordTextType ? 'text' : 'password'"
                                                         [ngModelOptions]="{standalone: true}" class="form-control" />
+                                                    <div class="input-group-append">
+                                                      <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()">
+                                                        <span [data-feather]="'eye-off'" [size]="16"></span>
+                                                      </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="form-group col-md-2">

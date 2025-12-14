@@ -179,8 +179,11 @@ export class ListComponent implements OnInit {
       paquete: app.nombre,
       punto_montaje: app.puntoMontaje,
       proyecto: app.proyecto,
-      rama: ramas
+      rama: ramas,
+      servidor: app.origen
     };
+
+    // console.log(app)
 
     // console.log(this.fnx)
     await Swal.fire({

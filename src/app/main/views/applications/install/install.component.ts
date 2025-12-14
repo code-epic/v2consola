@@ -160,6 +160,9 @@ export class InstallComponent implements OnInit {
 
   public showInput: boolean = false
 
+  public passwordTextType: boolean = false;
+
+
 
   onSubmit() {
     alert('Submitted!!');
@@ -172,23 +175,7 @@ export class InstallComponent implements OnInit {
   private modernVerticalWizardStepper: Stepper;
   private bsStepper;
 
-  /**
-   * Horizontal Wizard Stepper Next
-   *
-   * @param data
-   */
-  horizontalWizardStepperNext(data) {
-    if (data.form.valid === true) {
-      this.guardarAplicacion();
-      this.horizontalWizardStepper.next();
-    }
-  }
-  /**
-   * Horizontal Wizard Stepper Previous
-   */
-  horizontalWizardStepperPrevious() {
-    this.horizontalWizardStepper.previous();
-  }
+
 
   public ListaConexiones = []
 
@@ -234,13 +221,37 @@ export class InstallComponent implements OnInit {
 
   }
 
+
+  togglePasswordTextType() {
+    this.passwordTextType = !this.passwordTextType;
+  }
+
+  /**
+   * Horizontal Wizard Stepper Next
+   *
+   * @param data
+   */
+  horizontalWizardStepperNext(data) {
+    if (data.form.valid === true) {
+      this.guardarAplicacion();
+      this.horizontalWizardStepper.next();
+    }
+  }
+  /**
+   * Horizontal Wizard Stepper Previous
+   */
+  horizontalWizardStepperPrevious() {
+    this.horizontalWizardStepper.previous();
+  }
+
+
   async ListarIP() {
     await this.comunicacionesServices.Listar().subscribe(
       async (data) => {
         await data.map(e => {
           this.hosts.push(e)
         });
-        this.hosts.push({ id: 'SERVIDOR', host: 'github', descripcion: '@GITHUB' }, { id: 'SERVIDOR', host: 'gitlab', descripcion: '@GITLAB' })
+        this.hosts.push({ id: 'REPOSITORIO', host: 'github.com', descripcion: '@GITHUB' }, { id: 'REPOSITORIO', host: 'gitlab.com', descripcion: '@GITLAB' })
       },
       (error) => {
         console.log(error)
