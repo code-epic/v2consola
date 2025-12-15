@@ -35827,6 +35827,22 @@ pre {
 .fondo-modal {
   background-color: rgba(0, 0, 0, 0.1921568627);
 }
+/* /src/styles.scss */
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: #e3e7ea !important;
+  opacity: 1;
+}
+.ng-select.ng-select-disabled > .ng-select-container {
+  background-color: #e3e7ea !important;
+  color: #676772;
+}
+.ng-select.ng-select-disabled > .ng-select-container .ng-value-container .ng-value {
+  color: #6e6b7b;
+}
+.ng-select.ng-select-disabled > .ng-select-container .ng-arrow-wrapper .ng-arrow {
+  border-color: #b9b9c3 transparent transparent;
+}
 /*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[5].rules[0].oneOf[0].use[2]!./node_modules/resolve-url-loader/index.js??ruleSet[1].rules[5].rules[1].use[0]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[5].rules[1].use[1]!./node_modules/highlight.js/scss/atom-one-dark.scss ***!
   \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
