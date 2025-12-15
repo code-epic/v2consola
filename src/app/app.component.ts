@@ -265,7 +265,7 @@ export class AppComponent implements OnInit, OnDestroy {
     });
 
     let isBDV = this.apiService.ConsultaSistemaBDV()
-    let titulo = isBDV ? 'BDV' : this.coreConfig.app.appTitle
+    let titulo = isBDV ? 'BDV Server' : this.coreConfig.app.appTitle
 
     // Set the application page title
     this._title.setTitle(titulo);

@@ -228,6 +228,7 @@ export class UserComponent implements OnInit {
   public usuarioSave: boolean = false;
   public isEmailInvalid: boolean = false;
   // Password Strength properties
+  public loginPrefixError: string | null = null;
   public passwordStrength: number = 0;
   public passwordStrengthLabel: string = 'Sin seguridad';
   public passwordStrengthColor: string = '';
@@ -887,9 +888,51 @@ export class UserComponent implements OnInit {
   }
 
   onLoginInput() {
-    if (this.isBDV && this.iUser.login && this.iUser.tipoacceso == 3) {
-      this.iUser.login = this.iUser.login.toUpperCase();
+    if (!this.isBDV || this.iUser.tipoacceso !== 3) {
+      this.loginPrefixError = null;
+      return;
     }
+
+    let login = this.iUser.login || '';
+    login = login.toUpperCase();
+
+    let validatedLogin = '';
+    this.loginPrefixError = null; // Reset error
+
+    for (let i = 0; i < login.length && i < 7; i++) {
+      const char = login[i];
+
+      if (i === 0) { // Primer carácter
+        if (char === 'N' || char === 'C') {
+          validatedLogin += char;
+        } else {
+          this.loginPrefixError = 'Debe iniciar con NM o CT.';
+        }
+      } else if (i === 1) { // Segundo carácter
+        const firstChar = validatedLogin[0];
+        if ((firstChar === 'N' && char === 'M') || (firstChar === 'C' && char === 'T')) {
+          validatedLogin += char;
+          this.loginPrefixError = null; // Prefijo correcto, limpiar error
+        } else if (firstChar === 'N' && char !== 'M') {
+          this.loginPrefixError = 'El prefijo debe ser NM.';
+        } else if (firstChar === 'C' && char !== 'T') {
+          this.loginPrefixError = 'El prefijo debe ser CT.';
+        } else {
+          // Si el primer caracter fue inválido, no se añade el segundo
+        }
+      } else { // Caracteres del 2 al 6 (índices)
+        if (/[0-9]/.test(char)) {
+          validatedLogin += char;
+        }
+        // Si no es un número, simplemente se ignora.
+      }
+    }
+
+    // Asignar el valor validado de vuelta al modelo
+    // Usar setTimeout para evitar problemas con la actualización del ngModel
+    setTimeout(() => {
+      this.iUser.login = validatedLogin;
+    }, 0);
   }
 
   SearchLoginLDAP() {

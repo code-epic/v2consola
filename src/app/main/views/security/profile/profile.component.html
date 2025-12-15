@@ -231,8 +231,9 @@
                                                             <!-- Checkbox del Sub-Menú -->
                                                             <div class="custom-control custom-checkbox"
                                                                 [style.margin-left]="(!subMenu.children || subMenu.children.length === 0) ? '24px' : '0'">
-                                                                <input type="checkbox" class="custom-control-input"
+                                                                <input type="checkbox" class="custom-control-input"                                                                    
                                                                     [checked]="subMenu.estatus === 1"
+                                                                    [indeterminate]="hasSelectedPrivileges(subMenu) && subMenu.estatus !== 1"
                                                                     (change)="onSubMenuCheckboxChange(subMenu, $event)"
                                                                     id="subMenuChkbxRef{{ row.menu + i }}" />
                                                                 <label class="custom-control-label"
@@ -240,14 +241,6 @@
                                                                     <span class="ml-2 font-weight-bolder"
                                                                         style="color: #5e5873;">{{ subMenu.accion }}
                                                                         <span class="text-muted font-small-3" *ngIf="subMenu.children?.length">({{ subMenu.children.length }})</span>
-                                                                    </span>
-                                                                    <!-- Indicador visual de selección parcial -->
-                                                                    <span
-                                                                        *ngIf="hasSelectedPrivileges(subMenu) && subMenu.estatus !== 1"
-                                                                        class="badge badge-pill badge-light-warning ml-2"
-                                                                        style="font-size: 0.65rem; padding: 0.2rem 0.5rem;">
-                                                                        <span [data-feather]="'minus'"
-                                                                            style="width: 10px; height: 10px;"></span>
                                                                     </span>
                                                                 </label>
                                                             </div>
@@ -289,9 +282,9 @@
                                             <ng-template ngx-datatable-cell-template let-row="row"
                                                 let-rowIndex="rowIndex">
                                                 <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input"
+                                                    <input type="checkbox" class="custom-control-input"                                                        
                                                         [checked]="row.estatus === 1"
-                                                        (change)="onParentCheckboxChange(row, $event)"
+                                                        [indeterminate]="hasSelectedChildren(row) && row.estatus !== 1" (change)="onParentCheckboxChange(row, $event)"
                                                         id="rowChkbxRef{{ rowIndex }}" />
                                                     <label class="custom-control-label"
                                                         for="rowChkbxRef{{ rowIndex }}"></label>
@@ -320,12 +313,6 @@
                                                         (click)="table?.rowDetail.toggleExpandRow(row)">
                                                         <span [data-feather]="row.isExpanded ? 'minus' : 'plus'"></span>
                                                     </button>
-                                                    <!-- Indicador visual de selección parcial -->
-                                                    <span *ngIf="hasSelectedChildren(row) && row.estatus !== 1"
-                                                        class="badge badge-pill badge-light-warning ml-2"
-                                                        style="font-size: 0.7rem;">
-                                                        Parcial
-                                                    </span>
                                                 </div>
                                             </ng-template>
                                         </ngx-datatable-column>

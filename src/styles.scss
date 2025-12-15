@@ -38,3 +38,32 @@
     background-color: #00000031;
 }
 
+
+/* /src/styles.scss */
+
+// ... (contenido existente del archivo) ...
+
+// =========================================================================================
+// Estilos personalizados para campos deshabilitados
+// =========================================================================================
+
+// Aumenta el color de fondo para inputs y textareas deshabilitados
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: #e3e7ea !important; // Gris estándar de Bootstrap para 'disabled'
+  opacity: 1; // Asegura que el fondo sea opaco (valor máximo es 1)
+}
+
+// Estilos para el componente ng-select cuando está deshabilitado
+.ng-select.ng-select-disabled > .ng-select-container {
+  background-color: #e3e7ea !important; // Mismo gris para consistencia
+  color: #676772;
+
+  .ng-value-container .ng-value {
+    color: #6e6b7b; // Color del texto del valor seleccionado
+  }
+
+  .ng-arrow-wrapper .ng-arrow {
+    border-color: #b9b9c3 transparent transparent; // Color de la flecha
+  }
+}

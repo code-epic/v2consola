@@ -45,6 +45,7 @@ import { BlockUIModule } from 'ng-block-ui';
 import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
 import { SharedModule } from './main/license-bunker/shared.module';
 import { GithubModule } from './main/views/github/github.module';
+import { PushService } from '@services/seguridad/push.service';
 
 const appRoutes: Routes = [
   {
@@ -105,6 +106,7 @@ const appRoutes: Routes = [
       useClass: AuthInterceptorService,
       multi: true
     },
+    PushService,
   ],
   bootstrap: [AppComponent]
 })

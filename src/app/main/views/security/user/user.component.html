@@ -43,7 +43,12 @@
             </div>
 
             <div class="form-group col-md-3" *ngIf="property || ldap">
-              <label class="form-label" for="login">Login / Usuario</label>
+              <div class="d-flex justify-content-between align-items-center">
+                <label class="form-label" for="login">Login / Usuario</label>
+                <small *ngIf="loginPrefixError" class="text-danger font-small-2" style="margin-top: -5px;">
+                  {{ loginPrefixError }}
+                </small>
+              </div>
               <div class="input-group input-group-pastel">
                 <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'user'"></span></span></div>
@@ -55,7 +60,7 @@
             <div class="form-group col-md-3" *ngIf="property">
               <div class="d-flex justify-content-between align-items-center">
                   <label class="form-label" for="Clave">Clave</label>
-                  <small *ngIf="iUser.clave && iUser.clave.length > 0" class="font-weight-bold" 
+                  <small *ngIf="iUser.clave && iUser.clave.length > 0" class="font-weight-bold"  style="margin-top: -5px;"
                       [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
                       {{ passwordStrengthLabel }} <span class="text-muted font-small-1">({{ passwordStrengthWidth }}%)</span>
                   </small>
