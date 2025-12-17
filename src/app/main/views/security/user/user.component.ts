@@ -471,22 +471,27 @@ export class UserComponent implements OnInit {
     this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
+      async data => {
         this.lstAplicacion = data.map((e) => {
           e.name = `${e.id}  (${e.nombre})`
           return e
         })
 
 
-        let usuario = window.sessionStorage.getItem('validator')
+        let usuario: any = window.sessionStorage.getItem('validator')
 
         if (usuario != undefined) {
           this.usuario = JSON.parse(usuario)
           this.xaplicacion = this.usuario.sistema
-          this.selPerfil(this.usuario.sistema)
-          this.blockEditApp = 'false'
+
+
+          // if (this.usuario.Aplicacion.length > 0) {
+          await this.selPerfil(this.usuario.sistema)
+          // console.log(this.usuario.Aplicacion.length, this.usuario.Aplicacion)
+          // this.blockEditApp = 'false'
           this.usuarioSave = true
-          // console.log(this.usuario)
+          // }
+
         }
 
       },
@@ -511,7 +516,7 @@ export class UserComponent implements OnInit {
           let usuario = window.sessionStorage.getItem('validator')
           if (usuario != undefined) {
             this.blockEdit = 'disabled'
-            this.blockEditApp = 'disabled'
+            this.blockEditApp = this.usuario.Aplicacion.length > 0 ? 'disabled' : 'false'
 
             if (!this.bEliminarAllProfile) {
 
@@ -810,7 +815,7 @@ export class UserComponent implements OnInit {
       (data) => {
         if (tipo == 2) {
           this.lstPerfil = []
-          this.xaplicacion = ''
+          
           this.xperfil = ''
         }
 

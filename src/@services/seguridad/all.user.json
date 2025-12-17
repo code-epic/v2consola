@@ -425,7 +425,6 @@
       ]
     }
   },
-
   {
     "id": "Sicoex",
     "nombre": "Sicoex (Gestion De Documentos)",
@@ -767,6 +766,1102 @@
               "accion": "configreportes",
               "clase": "f-left",
               "color": "bg-c-pink",
+              "Privilegios": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "mppd.gdoc",
+    "nombre": "GDoc (Gestion De Documentos)",
+    "url": "https://localhost/app/gdoc/index.html?tk=$0",
+    "comentario": "Administrador GDoc",
+    "version": "V1.0.0.0",
+    "autor": "Sandra Server",
+    "Rol": {
+      "descripcion": "Administrador GDoc",
+      "Menu": [
+        {
+          "url": "/principal",
+          "js": "",
+          "icono": "ni-tv-2",
+          "descripcion": "Principal",
+          "nombre": "Principal",
+          "accion": "",
+          "clase": "text-primary",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": []
+        },
+        {
+          "url": "/control",
+          "js": "",
+          "icono": "ni-planet",
+          "descripcion": "Control y Gestion",
+          "nombre": "Control y Gestion",
+          "accion": "",
+          "clase": "text-blue",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "/registrar",
+              "js": "",
+              "descripcion": "Entradas General",
+              "icono": "fa fa-plus-circle",
+              "nombre": "Entradas General",
+              "accion": "CargarUrl('control', 'registrar')",
+              "clase": "f-left",
+              "color": "bg-c-green",
+              "Privilegios": [
+                {
+                  "metodo": "registrados",
+                  "descripcion": "Registrados",
+                  "accion": "registrados()",
+                  "directivas": "",
+                  "icon": "",
+                  "color": ""
+                },
+                {
+                  "metodo": "clasificacion",
+                  "descripcion": "Clasificacion",
+                  "accion": "Clasificacion()",
+                  "directivas": "",
+                  "icon": "",
+                  "color": ""
+                },
+                {
+                  "metodo": "alertas",
+                  "descripcion": "Alertas",
+                  "accion": "Alertas()",
+                  "directivas": "",
+                  "icon": "",
+                  "color": ""
+                },
+                {
+                  "metodo": "nuevo",
+                  "descripcion": "Nuevo Documento",
+                  "accion": "NDocumento()",
+                  "directivas": "",
+                  "icon": "",
+                  "color": ""
+                },
+                {
+                  "metodo": "notas",
+                  "descripcion": "Notas de Entrega",
+                  "accion": "NEntregas()",
+                  "directivas": "",
+                  "icon": "",
+                  "color": ""
+                }
+              ]
+            },
+            {
+              "url": "/buzon",
+              "js": "",
+              "descripcion": "Control de Gestion",
+              "icono": "fa fa-inbox",
+              "nombre": "Control de Gestion",
+              "accion": "CargarUrl('control', 'buzon')",
+              "clase": "f-left",
+              "color": "bg-c-blue",
+              "Privilegios": [
+                {
+                  "metodo": "recibidos",
+                  "descripcion": "Recibidos",
+                  "accion": "Recibidos()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "procesados",
+                  "descripcion": "Procesados",
+                  "accion": "Procesados()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "pendientes",
+                  "descripcion": "Pendientes",
+                  "accion": "Pedientes()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "alertas",
+                  "descripcion": "Alertas",
+                  "accion": "Alertas()",
+                  "directivas": ""
+                }
+              ]
+            },
+            {
+              "url": "/salidas",
+              "js": "",
+              "descripcion": "Salidas General",
+              "icono": "fa fa-share",
+              "nombre": "Salidas General",
+              "accion": "CargarUrl('control', 'salidas')",
+              "clase": "f-left",
+              "color": "bg-c-pink",
+              "Privilegios": [
+                {
+                  "metodo": "recibidos",
+                  "descripcion": "Recibidos",
+                  "accion": "Recibidos()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "procesados",
+                  "descripcion": "Procesados",
+                  "accion": "Procesados()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "pendientes",
+                  "descripcion": "Pendientes",
+                  "accion": "Pedientes()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "alertas",
+                  "descripcion": "Alertas",
+                  "accion": "Alertas()",
+                  "directivas": ""
+                }
+              ]
+            },
+            {
+              "url": "/pendientes",
+              "js": "",
+              "descripcion": "Buscador",
+              "icono": "fa fa-search",
+              "nombre": "Buscador",
+              "accion": "CargarUrl('control', 'pendientes')",
+              "clase": "f-left",
+              "color": "bg-purple",
+              "Privilegios": []
+            },
+            {
+              "url": "/consulta-general",
+              "js": "",
+              "descripcion": "Consulta individual",
+              "icono": "fa fa-list",
+              "nombre": "Consulta individual",
+              "accion": "CargarUrl('control', 'pendientes')",
+              "clase": "f-left",
+              "color": "bg-red",
+              "Privilegios": []
+            },
+            {
+              "url": "/ctrlestadisticas",
+              "js": "",
+              "descripcion": "Estadistica General",
+              "icono": "fa fa-table",
+              "nombre": "Estadistica General",
+              "accion": "CargarUrl('control', 'pendientes')",
+              "clase": "f-left",
+              "color": "bg-teal",
+              "Privilegios": []
+            },
+            {
+              "url": "/ctrlreporte",
+              "js": "",
+              "descripcion": "Reportes General",
+              "icono": "fa fa-print",
+              "nombre": "Reportes General",
+              "accion": "CargarUrl('control', 'pendientes')",
+              "clase": "f-left",
+              "color": "bg-gray",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/secretaria",
+          "js": "",
+          "icono": "ni-pin-3",
+          "descripcion": "Secretaria",
+          "nombre": "Secretaria",
+          "accion": "",
+          "clase": "text-orange",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "/sbuzon",
+              "js": "",
+              "descripcion": "Documentos en Buzon",
+              "icono": "fa fa-envelope",
+              "nombre": "Buzon",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/spresidencial",
+              "js": "",
+              "descripcion": "Presidencial",
+              "icono": "fa fa-landmark",
+              "nombre": "Presidenciales",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-red",
+              "Privilegios": []
+            },
+            {
+              "url": "/sministerial/ministeriales",
+              "js": "",
+              "descripcion": "Ministerial",
+              "icono": "fa fa-building",
+              "nombre": "Ministeriales",
+              "accion": "CargarUrl('control', 'salidas')",
+              "clase": "f-left",
+              "color": "bg-green",
+              "Privilegios": []
+            },
+            {
+              "url": "/sbuscador",
+              "js": "",
+              "descripcion": "Buscador de Documentos",
+              "icono": "fa fa-compass",
+              "nombre": "Buscador",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-purple",
+              "Privilegios": []
+            },
+            {
+              "url": "/consulta-general",
+              "js": "",
+              "descripcion": "Consulta General",
+              "icono": "fa fa-search",
+              "nombre": "Consulta",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-orange",
+              "Privilegios": []
+            },
+            {
+              "url": "/sministerial/tramitaciones-por-organo-regular",
+              "js": "",
+              "descripcion": "Tramitaciones por organo regular",
+              "icono": "fa fa-book",
+              "nombre": "TOR",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-info",
+              "Privilegios": []
+            },
+            {
+              "url": "/sministerial/otros-documentos",
+              "js": "",
+              "descripcion": "Otros Documentos",
+              "icono": "fa fa-file",
+              "nombre": "Otros",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-gray",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/generales",
+          "js": "",
+          "icono": "ni-pin-3",
+          "descripcion": "Generales",
+          "nombre": "Generales",
+          "accion": "",
+          "clase": "text-green",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "/gralibro",
+              "js": "",
+              "descripcion": "Libro",
+              "icono": "fa fa-book",
+              "nombre": "Libro",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-red",
+              "Privilegios": []
+            },
+            {
+              "url": "/gralconsultas",
+              "js": "",
+              "descripcion": "Nomina",
+              "icono": "fa fa-search",
+              "nombre": "Nomina",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/gralestadistica",
+              "js": "",
+              "descripcion": "Estadistica",
+              "icono": "fa fa-cube",
+              "nombre": "Estadistica",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-brown",
+              "Privilegios": []
+            },
+            {
+              "url": "/graedicion",
+              "js": "",
+              "descripcion": "Edicion",
+              "icono": "fa fa-edit",
+              "nombre": "Edicion",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-orange",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/resoluciones",
+          "js": "",
+          "icono": "ni-single-02 ",
+          "descripcion": "Resoluciones",
+          "nombre": "Resoluciones",
+          "accion": "",
+          "clase": "text-yellow",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "/rsprocesos/rsconsulta",
+              "js": "",
+              "descripcion": "Consultar",
+              "icono": "fa fa-search",
+              "nombre": "Consultar",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-red",
+              "Privilegios": [
+                {
+                  "metodo": "especifica",
+                  "descripcion": "Especifica",
+                  "accion": "Especifica()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "filtrada",
+                  "descripcion": "Filtrada",
+                  "accion": "DTCreditos()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "expandida",
+                  "descripcion": "Expandida",
+                  "accion": "Expandida()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "buscararchivo",
+                  "descripcion": "Buscar Por Archivo",
+                  "accion": "BArchivo()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "configuraciones",
+                  "descripcion": "Configuraciones",
+                  "accion": "Configuraciones()",
+                  "directivas": ""
+                }
+              ]
+            },
+            {
+              "url": "/rsbuzon",
+              "js": "",
+              "descripcion": "Buzon",
+              "icono": "fa fa-inbox",
+              "nombre": "Buzon",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-green",
+              "Privilegios": [
+                {
+                  "metodo": "recibidos",
+                  "descripcion": "Recibidos",
+                  "accion": "Recibidos()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "clasificar",
+                  "descripcion": "Clasificar",
+                  "accion": "Clasificar()",
+                  "directivas": ""
+                },
+                {
+                  "metodo": "enproceso",
+                  "descripcion": "En Proceso",
+                  "accion": "EnProceso()",
+                  "directivas": ""
+                }
+              ]
+            },
+            {
+              "url": "/rstranscripcion",
+              "js": "",
+              "descripcion": "Doc. Proceso",
+              "icono": "fa fa-keyboard",
+              "nombre": "Doc. Proceso",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/rsprocesos/rsconsulta",
+              "js": "",
+              "descripcion": "Revision Documentos",
+              "icono": "fa fa-eye",
+              "nombre": "Revision",
+              "accion": "CargarUrl('resolucion', 'revision')",
+              "clase": "f-left",
+              "color": "text-yellow",
+              "Privilegios": []
+            },
+            {
+              "url": "/rsprocesos",
+              "js": "",
+              "descripcion": "Procesos",
+              "icono": "fa fa-folder-open",
+              "nombre": "Procesos",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-purple",
+              "Privilegios": [
+                {
+                  "metodo": "agregarEntrada",
+                  "descripcion": "Agregar Entrada",
+                  "accion": "AEntrada()",
+                  "directivas": "",
+                  "icono": "fa-file",
+                  "color": "text-green"
+                },
+                {
+                  "metodo": "agregarResolucion",
+                  "descripcion": "Agregar Resolucion",
+                  "accion": "AResolucion()",
+                  "directivas": "",
+                  "icono": "fa-book",
+                  "color": "text-blue"
+                },
+                {
+                  "metodo": "lotes",
+                  "descripcion": "Lotes",
+                  "accion": "Lotes()",
+                  "directivas": "",
+                  "icono": "fa-task",
+                  "color": "text-orange"
+                },
+                {
+                  "metodo": "publicaciones",
+                  "descripcion": "Publicaciones",
+                  "accion": "Publicaciones()",
+                  "directivas": "",
+                  "icono": "fa-upload",
+                  "color": "text-teal"
+                },
+                {
+                  "metodo": "eliminaciones",
+                  "descripcion": "Eliminaciones",
+                  "accion": "Eliminaciones()",
+                  "directivas": "",
+                  "icono": "fa-tash",
+                  "color": "text-purple"
+                }
+              ]
+            },
+            {
+              "url": "/rsconfiguracion",
+              "js": "",
+              "descripcion": "Configuraciones",
+              "icono": "fa fa-cogs",
+              "nombre": "Configuracion",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-pink",
+              "Privilegios": [
+                {
+                  "metodo": "datosBasicos",
+                  "descripcion": "Datos Basicos",
+                  "accion": "desactivar('Datos Basicos');dbasico=true",
+                  "directivas": "",
+                  "icono": "fa-user-circle",
+                  "color": "text-pink"
+                },
+                {
+                  "metodo": "reportes",
+                  "descripcion": "Reportes",
+                  "accion": "desactivar('Reportes');dpublicaciones=true",
+                  "directivas": "",
+                  "icono": "fa-print",
+                  "color": "text-green"
+                }
+              ]
+            },
+            {
+              "url": "/pendientes",
+              "js": "",
+              "descripcion": "Seguimiento",
+              "icono": "fa fa-exclamation",
+              "nombre": "Seguimiento",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/rsreportes",
+              "js": "",
+              "descripcion": "Reportes",
+              "icono": "fa fa-print",
+              "nombre": "Reportes",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-brown",
+              "Privilegios": []
+            },
+            {
+              "url": "/rsalertas",
+              "js": "",
+              "descripcion": "Alertas",
+              "icono": "fa fa-bell",
+              "nombre": "Alertas",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-orange",
+              "Privilegios": []
+            },
+            {
+              "url": "/rsestadisticas",
+              "js": "",
+              "descripcion": "Estadistica",
+              "icono": "fa fa-chart-line",
+              "nombre": "Estadistica",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-green",
+              "Privilegios": []
+            },
+            {
+              "url": "/codigosrojo",
+              "js": "",
+              "descripcion": "Codigos Rojo",
+              "icono": "fa fa-code",
+              "nombre": "Codigos Rojo",
+              "accion": "",
+              "clase": "f-left",
+              "color": "text-orange",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/ayudantia",
+          "js": "",
+          "icono": "ni-bullet-list-67",
+          "descripcion": "Ayudantia",
+          "nombre": "Ayudantia",
+          "accion": "",
+          "clase": "text-red",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "/aybuzon",
+              "js": "",
+              "descripcion": "Buzón",
+              "icono": "fa fa-inbox",
+              "nombre": "Buzon",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-c-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/procesos",
+              "js": "",
+              "descripcion": "Procesos",
+              "icono": "fa fa-share",
+              "nombre": "Procesos",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-c-pink",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/acami",
+          "js": "",
+          "icono": "ni-circle-08 ",
+          "descripcion": "Acami",
+          "nombre": "Acami",
+          "accion": "",
+          "clase": "text-pink",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "",
+              "js": "",
+              "icono": "fas fa-shipping-fast",
+              "nombre": "Buzon",
+              "accion": "",
+              "clase": "opt",
+              "color": "bg-success",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/timonel",
+          "js": "",
+          "icono": "ni-key-25",
+          "descripcion": "Timonel",
+          "nombre": "Timonel",
+          "accion": "",
+          "clase": "text-info",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "",
+              "js": "",
+              "icono": "fas fa-shipping-fast",
+              "nombre": "Buzon",
+              "accion": "",
+              "clase": "opt",
+              "color": "bg-success",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/personal",
+          "js": "",
+          "icono": "ni-bullet-list-67",
+          "descripcion": "Personal",
+          "nombre": "Personal",
+          "accion": "",
+          "clase": "text-red",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "",
+              "js": "",
+              "icono": "fas fa-shipping-fast",
+              "nombre": "Buzon",
+              "accion": "",
+              "clase": "opt",
+              "color": "bg-success",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/archivo",
+          "js": "",
+          "icono": "ni-archive-2",
+          "descripcion": "Archivo",
+          "nombre": "Archivo",
+          "accion": "",
+          "clase": "text-red",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "",
+              "js": "",
+              "icono": "fas fa-shipping-fast",
+              "nombre": "Buzon",
+              "accion": "",
+              "clase": "opt",
+              "color": "bg-success",
+              "Privilegios": []
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "fideicomiso",
+    "nombre": "Sistema de Fideicomiso",
+    "url": "https://localhost/fideicomiso/index.html?tk=$0",
+    "comentario": "Administrador Fideicomiso",
+    "version": "V 2.0.0.rc1",
+    "autor": "Sandra Server",
+    "Rol": {
+      "descripcion": "Administrador Fideicomiso",
+      "Menu": [
+        {
+          "url": "/principal",
+          "js": "",
+          "icono": "ni-tv-2",
+          "descripcion": "Principal",
+          "nombre": "Principal",
+          "accion": "",
+          "clase": "text-primary",
+          "color": "",
+          "Privilegios": [],
+          "SubMenu": []
+        },
+        {
+          "url": "/administracion",
+          "js": "",
+          "icono": "ni-archive-2",
+          "descripcion": "Administracion",
+          "nombre": "Administracion",
+          "accion": "",
+          "clase": "text-blue",
+          "color": "",
+          "Privilegios": [],
+          "SubMenu": [
+            {
+              "url": "/configuraciones",
+              "js": "",
+              "descripcion": "Configuraciones",
+              "icono": "fas fa-cog",
+              "nombre": "Configuraciones",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-purple",
+              "Privilegios": [
+                {
+                  "metodo": "portafolio",
+                  "descripcion": "Portafolio",
+                  "accion": "",
+                  "directivas": "",
+                  "icono": "",
+                  "color": ""
+                },
+                {
+                  "metodo": "empresa",
+                  "descripcion": "Empresa",
+                  "accion": "",
+                  "directivas": "",
+                  "icono": "",
+                  "color": ""
+                },
+                {
+                  "metodo": "ejecutivos",
+                  "descripcion": "Ejecutivos",
+                  "accion": "",
+                  "directivas": "",
+                  "icono": "",
+                  "color": ""
+                }
+              ]
+            },
+            {
+              "url": "/contratos",
+              "js": "",
+              "descripcion": "Contratos",
+              "icono": "fas fa-file",
+              "nombre": "Contratos",
+              "accion": "",
+              "clase": "f-left",
+              "color": "bg-blue",
+              "Privilegios": [
+                {
+                  "metodo": "registrar",
+                  "descripcion": "Registrar",
+                  "accion": "",
+                  "directivas": "",
+                  "icono": "",
+                  "color": ""
+                },
+                {
+                  "metodo": "modificar",
+                  "descripcion": "Modificar",
+                  "accion": "",
+                  "directivas": "",
+                  "icono": "",
+                  "color": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "url": "/npanel",
+          "js": "",
+          "icono": "ni-badge",
+          "descripcion": "Pagos",
+          "nombre": "Pagos",
+          "accion": "",
+          "clase": "text-blue",
+          "color": "",
+          "Privilegios": [],
+          "SubMenu": [
+            {
+              "url": "/incrementos",
+              "js": "",
+              "descripcion": "Incrementos",
+              "icono": "fas fa-warehouse",
+              "nombre": "Incrementos",
+              "accion": "",
+              "clase": "",
+              "color": "bg-green",
+              "Privilegios": []
+            },
+            {
+              "url": "/retiros",
+              "js": "",
+              "descripcion": "Retiros",
+              "icono": "fas fa-truck",
+              "nombre": "Retiros",
+              "accion": "",
+              "clase": "",
+              "color": "bg-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/finiquitos",
+              "js": "",
+              "descripcion": "Finiquitos",
+              "icono": "fas fa-wrench",
+              "nombre": "Finiquitos",
+              "accion": "",
+              "clase": "",
+              "color": "bg-orange",
+              "Privilegios": []
+            },
+            {
+              "url": "/pagointereses",
+              "js": "",
+              "descripcion": "Pago de Intereses",
+              "icono": "fas fa-exchange-alt",
+              "nombre": "Pago de Intereses",
+              "accion": "",
+              "clase": "",
+              "color": "bg-danger",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/operaciones",
+          "js": "",
+          "icono": "ni-planet",
+          "descripcion": "Operaciones",
+          "nombre": "Operaciones",
+          "accion": "",
+          "clase": "text-blue",
+          "color": "",
+          "Privilegios": [],
+          "SubMenu": [
+            {
+              "url": "/valorinicial",
+              "js": "",
+              "descripcion": "Valores Iniciales",
+              "icono": "fas fa-file",
+              "nombre": "Valores Iniciales",
+              "accion": "",
+              "clase": "",
+              "color": "bg-purple",
+              "Privilegios": []
+            },
+            {
+              "url": "/aporteinicial",
+              "js": "",
+              "descripcion": "Aporte Inicial",
+              "icono": "fas fa-warehouse",
+              "nombre": "Aporte Inicial",
+              "accion": "",
+              "clase": "",
+              "color": "bg-orange",
+              "Privilegios": []
+            },
+            {
+              "url": "/listados",
+              "js": "",
+              "descripcion": "Listados",
+              "icono": "fas fa-print",
+              "nombre": "Listados",
+              "accion": "",
+              "clase": "",
+              "color": "bg-purple",
+              "Privilegios": []
+            },
+            {
+              "url": "/procesooperaciones",
+              "js": "",
+              "descripcion": "Proceso",
+              "icono": "fas fa-lock",
+              "nombre": "Cierre",
+              "accion": "",
+              "clase": "",
+              "color": "bg-blue",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/contabilidad",
+          "js": "",
+          "icono": "ni-pin-3",
+          "descripcion": "Contabilidad",
+          "nombre": "Contabilidad",
+          "accion": "",
+          "clase": "text-pink",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "/cuenta",
+              "js": "",
+              "descripcion": "Cuenta Contable",
+              "icono": "fas fa-window-restore",
+              "nombre": "Cuenta Contable",
+              "accion": "",
+              "clase": "",
+              "color": "bg-purple",
+              "Privilegios": []
+            },
+            {
+              "url": "/tabla",
+              "js": "",
+              "descripcion": "Dinamica Contable",
+              "icono": "fas fa-wrench",
+              "nombre": "Dinamica Contable",
+              "accion": "",
+              "clase": "",
+              "color": "bg-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/comprobante",
+              "js": "",
+              "descripcion": "Comprobante Contable",
+              "icono": "fas fa-taks",
+              "nombre": "Comprobante Contable",
+              "accion": "",
+              "clase": "",
+              "color": "bg-red",
+              "Privilegios": []
+            },
+            {
+              "url": "/generalyresultado",
+              "js": "",
+              "descripcion": "Balance ",
+              "icono": "fas fa-chart-bar",
+              "nombre": "General y Resultado",
+              "accion": "",
+              "clase": "",
+              "color": "bg-orange",
+              "Privilegios": []
+            },
+            {
+              "url": "/comprobacion",
+              "js": "",
+              "descripcion": "Balance",
+              "icono": "fas fa-chart-line",
+              "nombre": "Comprobacion",
+              "accion": "",
+              "clase": "",
+              "color": "bg-green",
+              "Privilegios": []
+            },
+            {
+              "url": "/mayoranalitico",
+              "js": "",
+              "descripcion": "Mayor",
+              "icono": "fas fa-chart-area",
+              "nombre": "Analitico",
+              "accion": "",
+              "clase": "",
+              "color": "bg-pink",
+              "Privilegios": []
+            },
+            {
+              "url": "/auxiliarcontable",
+              "js": "",
+              "descripcion": "Auxiliar",
+              "icono": "fas fa-chart-area",
+              "nombre": "Auxliar Contable",
+              "accion": "",
+              "clase": "",
+              "color": "bg-yellow",
+              "Privilegios": []
+            },
+            {
+              "url": "/procesocontable",
+              "js": "",
+              "descripcion": "Pre Cierre",
+              "icono": "fas fa-print",
+              "nombre": "Pre Cierre",
+              "accion": "",
+              "clase": "",
+              "color": "bg-teal",
+              "Privilegios": []
+            },
+            {
+              "url": "/cierre",
+              "js": "",
+              "descripcion": "Cierre",
+              "icono": "fas fa-lock",
+              "nombre": "Cierre Contable",
+              "accion": "",
+              "clase": "",
+              "color": "bg-gray",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
+          "url": "/inversion",
+          "js": "",
+          "icono": "ni-single-02",
+          "descripcion": "Inversiones",
+          "nombre": "Inversiones",
+          "accion": "",
+          "clase": "text-yellow",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "/consultas",
+              "js": "",
+              "descripcion": "Inversiones",
+              "icono": "fas fa-print",
+              "nombre": "Inversiones",
+              "accion": "",
+              "clase": "",
+              "color": "bg-purple",
+              "Privilegios": []
+            },
+            {
+              "url": "/cartera",
+              "js": "",
+              "descripcion": "Cartera",
+              "icono": "fas fa-wrench",
+              "nombre": "Cartera",
+              "accion": "",
+              "clase": "",
+              "color": "bg-blue",
+              "Privilegios": []
+            },
+            {
+              "url": "/procesos",
+              "js": "",
+              "descripcion": "Inversiones",
+              "icono": "fas fa-lock",
+              "nombre": "Cierre",
+              "accion": "",
+              "clase": "",
+              "color": "bg-red",
               "Privilegios": []
             }
           ]

@@ -45087,25 +45087,28 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "UserListComponent": () => (/* binding */ UserListComponent)
 /* harmony export */ });
 /* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! tslib */ 97582);
-/* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
-/* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ng-block-ui */ 23684);
-/* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! tslib */ 97582);
+/* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
+/* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ng-block-ui */ 23684);
+/* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ 35226);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! environments/environment */ 92340);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/core */ 94650);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/router */ 34793);
-/* harmony import */ var _services_apicore_api_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @services/apicore/api.service */ 89780);
-/* harmony import */ var _services_pdf_pdf_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @services/pdf/pdf.service */ 2416);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @angular/common */ 36895);
-/* harmony import */ var app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! app/layout/components/content-header/content-header.component */ 4810);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/forms */ 24006);
-/* harmony import */ var _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ng-select/ng-select */ 88796);
-/* harmony import */ var _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @core/directives/core-ripple-effect/core-ripple-effect.directive */ 75287);
-/* harmony import */ var _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @core/directives/core-feather-icons/core-feather-icons */ 66279);
-/* harmony import */ var _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/flex-layout/extended */ 24784);
-/* harmony import */ var _core_pipes_initials_pipe__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @core/pipes/initials.pipe */ 16516);
+/* harmony import */ var jspdf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! jspdf */ 20114);
+/* harmony import */ var jspdf_autotable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! jspdf-autotable */ 12983);
+/* harmony import */ var jspdf_autotable__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(jspdf_autotable__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @angular/router */ 34793);
+/* harmony import */ var _services_apicore_api_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @services/apicore/api.service */ 89780);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/common */ 36895);
+/* harmony import */ var app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! app/layout/components/content-header/content-header.component */ 4810);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/forms */ 24006);
+/* harmony import */ var _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @ng-select/ng-select */ 88796);
+/* harmony import */ var _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @core/directives/core-ripple-effect/core-ripple-effect.directive */ 75287);
+/* harmony import */ var _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @core/directives/core-feather-icons/core-feather-icons */ 66279);
+/* harmony import */ var _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! @angular/flex-layout/extended */ 24784);
+/* harmony import */ var _core_pipes_initials_pipe__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @core/pipes/initials.pipe */ 16516);
+
 
 
 
@@ -45131,44 +45134,44 @@ __webpack_require__.r(__webpack_exports__);
 
 function UserListComponent_div_0_ng_template_14_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](0, "span", 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](0, "span", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](1);
   }
 
   if (rf & 2) {
     const item_r11 = ctx.item;
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "user-check")("size", 16);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"](" ", item_r11.nombre, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "user-check")("size", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"](" ", item_r11.nombre, " ");
   }
 }
 
 function UserListComponent_div_0_ng_template_29_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "span", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](3, "Usuario");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](1, "span", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](2, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3, "Usuario");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "user");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "user");
   }
 }
 
 function UserListComponent_div_0_ng_template_30_div_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "img", 37);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](1, "img", 37);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
   }
 
   if (rf & 2) {
-    const row_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]().row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpropertyInterpolate"]("src", row_r12.avatar, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵsanitizeUrl"]);
+    const row_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpropertyInterpolate"]("src", row_r12.avatar, _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵsanitizeUrl"]);
   }
 }
 
@@ -45181,298 +45184,297 @@ const _c0 = function (a0, a1) {
 
 function UserListComponent_div_0_ng_template_30_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 38)(1, "div", 39);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipe"](3, "initials");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 38)(1, "div", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpipe"](3, "initials");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
-    const row_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]().row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpureFunction2"](4, _c0, row_r12.estatus == "1", row_r12.estatus == "0"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipeBind1"](3, 2, row_r12.nombre));
+    const row_r12 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]().row;
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpureFunction2"](4, _c0, row_r12.estatus == "1", row_r12.estatus == "0"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpipeBind1"](3, 2, row_r12.nombre));
   }
 }
 
 function UserListComponent_div_0_ng_template_30_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](1, UserListComponent_div_0_ng_template_30_div_1_Template, 2, 1, "div", 33);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](2, UserListComponent_div_0_ng_template_30_ng_template_2_Template, 4, 7, "ng-template", null, 34, _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplateRefExtractor"]);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](4, "div")(5, "div", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](7, "div", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](1, UserListComponent_div_0_ng_template_30_div_1_Template, 2, 1, "div", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](2, UserListComponent_div_0_ng_template_30_ng_template_2_Template, 4, 7, "ng-template", null, 34, _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplateRefExtractor"]);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](4, "div")(5, "div", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](7, "div", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
   }
 
   if (rf & 2) {
     const row_r12 = ctx.row;
 
-    const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵreference"](3);
+    const _r15 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵreference"](3);
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngIf", row_r12.length > 0)("ngIfElse", _r15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](row_r12.nombre);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"]("CI: ", row_r12.cedula, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngIf", row_r12.length > 0)("ngIfElse", _r15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](row_r12.nombre);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"]("CI: ", row_r12.cedula, "");
   }
 }
 
 function UserListComponent_div_0_ng_template_32_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "span", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](3, "Perfil");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](1, "span", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](2, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3, "Perfil");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "shield");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "shield");
   }
 }
 
 function UserListComponent_div_0_ng_template_33_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div")(1, "div", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "div", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div")(1, "div", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](3, "div", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
     const row_r19 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](row_r19.Perfil == null ? null : row_r19.Perfil.descripcion);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](row_r19.cargo);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](row_r19.Perfil == null ? null : row_r19.Perfil.descripcion);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](row_r19.cargo);
   }
 }
 
 function UserListComponent_div_0_ng_template_35_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "span", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](3, "Contacto");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](1, "span", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](2, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3, "Contacto");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "mail");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "mail");
   }
 }
 
 function UserListComponent_div_0_ng_template_36_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div")(1, "div", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "div", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div")(1, "div", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](3, "div", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](4);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
     const row_r20 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](row_r20.correo);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"]("Login: ", row_r20.login, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](row_r20.correo);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"]("Login: ", row_r20.login, "");
   }
 }
 
 function UserListComponent_div_0_ng_template_38_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](1, "span", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](2, "span");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](3, "\u00DAltima Actividad");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](1, "span", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](2, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](3, "\u00DAltima Actividad");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "clock");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "clock");
   }
 }
 
 function UserListComponent_div_0_ng_template_39_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div")(1, "div", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipe"](3, "date");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](4, "div", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div")(1, "div", 35);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpipe"](3, "date");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](4, "div", 36);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
     const row_r21 = ctx.row;
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵpipeBind2"](3, 2, row_r21.firmadigital == null ? null : row_r21.firmadigital.tiempo, "dd/MM/yyyy HH:mm:ss"));
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtextInterpolate1"]("Traza: ", row_r21.Perfil == null ? null : row_r21.Perfil.traza, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵpipeBind2"](3, 2, row_r21.firmadigital == null ? null : row_r21.firmadigital.tiempo, "dd/MM/yyyy HH:mm:ss"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"]("Traza: ", row_r21.Perfil == null ? null : row_r21.Perfil.traza, "");
   }
 }
 
 function UserListComponent_div_0_ng_template_41_Template(rf, ctx) {
   if (rf & 1) {
-    const _r24 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+    const _r24 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 40)(1, "button", 41);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](2, "span", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "div", 42)(4, "a", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function UserListComponent_div_0_ng_template_41_Template_a_click_4_listener() {
-      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 40)(1, "button", 41);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](2, "span", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](3, "div", 42)(4, "a", 43);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function UserListComponent_div_0_ng_template_41_Template_a_click_4_listener() {
+      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r24);
       const row_r22 = restoredCtx.row;
-      const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r23.EditarUser(row_r22));
+      const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r23.EditarUser(row_r22));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](5, "span", 44);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](6, "Editar");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](7, "a", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function UserListComponent_div_0_ng_template_41_Template_a_click_7_listener() {
-      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](5, "span", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](6, "Editar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](7, "a", 43);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function UserListComponent_div_0_ng_template_41_Template_a_click_7_listener() {
+      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r24);
       const row_r22 = restoredCtx.row;
-      const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r25.EliminarUser(row_r22));
+      const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r25.EliminarUser(row_r22));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](8, "span", 44);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](9, "Eliminar");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](8, "span", 44);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](9, "Eliminar");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
   }
 
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵclassMap"]("cursor-pointer");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "settings");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵclassMap"]("mr-50");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "edit")("size", 16);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵclassMap"]("mr-50");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "trash")("size", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵclassMap"]("cursor-pointer");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "settings");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵclassMap"]("mr-50");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "edit")("size", 16);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵclassMap"]("mr-50");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "trash")("size", 16);
   }
 }
 
 function UserListComponent_div_0_Template(rf, ctx) {
   if (rf & 1) {
-    const _r27 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵgetCurrentView"]();
+    const _r27 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](0, "div", 1)(1, "div", 2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](2, "app-content-header", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](3, "section", 4)(4, "div", 5)(5, "div", 6)(6, "h4", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](7, "B\u00FAsqueda y Filtro de Usuarios");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](8, "div", 8)(9, "div", 9)(10, "div", 10)(11, "label", 11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](12, "Filtrar por Perfil");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](13, "ng-select", 12);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("ngModelChange", function UserListComponent_div_0_Template_ng_select_ngModelChange_13_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r27);
-      const ctx_r26 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r26.selectedProfile = $event);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](0, "div", 1)(1, "div", 2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](2, "app-content-header", 3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](3, "section", 4)(4, "div", 5)(5, "div", 6)(6, "h4", 7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](7, "B\u00FAsqueda y Filtro de Usuarios");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](8, "div", 8)(9, "div", 9)(10, "div", 10)(11, "label", 11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](12, "Filtrar por Perfil");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](13, "ng-select", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("ngModelChange", function UserListComponent_div_0_Template_ng_select_ngModelChange_13_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r27);
+      const ctx_r26 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r26.selectedProfile = $event);
     })("ngModelChange", function UserListComponent_div_0_Template_ng_select_ngModelChange_13_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r27);
-      const ctx_r28 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r28.filterUpdateProfile($event));
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r27);
+      const ctx_r28 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r28.filterUpdateProfile($event));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](14, UserListComponent_div_0_ng_template_14_Template, 2, 3, "ng-template", 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](15, "div", 10)(16, "label", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](17, "Buscar Usuario");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](18, "div", 15)(19, "div", 16)(20, "span", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](21, "span", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](22, "input", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("ngModelChange", function UserListComponent_div_0_Template_input_ngModelChange_22_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r27);
-      const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r29.searchValue = $event);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](14, UserListComponent_div_0_ng_template_14_Template, 2, 3, "ng-template", 13);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](15, "div", 10)(16, "label", 14);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](17, "Buscar Usuario");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](18, "div", 15)(19, "div", 16)(20, "span", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](21, "span", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](22, "input", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("ngModelChange", function UserListComponent_div_0_Template_input_ngModelChange_22_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r27);
+      const ctx_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r29.searchValue = $event);
     })("keyup", function UserListComponent_div_0_Template_input_keyup_22_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r27);
-      const ctx_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r30.filterUpdate($event));
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r27);
+      const ctx_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r30.filterUpdate($event));
     })("search", function UserListComponent_div_0_Template_input_search_22_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r27);
-      const ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r31.filterUpdate($event));
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r27);
+      const ctx_r31 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r31.filterUpdate($event));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](23, "div", 20)(24, "button", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵlistener"]("click", function UserListComponent_div_0_Template_button_click_24_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵrestoreView"](_r27);
-      const ctx_r32 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵresetView"](ctx_r32.ListadoUsers());
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](23, "div", 20)(24, "button", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵlistener"]("click", function UserListComponent_div_0_Template_button_click_24_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵrestoreView"](_r27);
+      const ctx_r32 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵresetView"](ctx_r32.exportarUsuariosPDF());
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelement"](25, "span", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtext"](26, "Exportar a PDF ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](27, "ngx-datatable", 23)(28, "ngx-datatable-column", 24);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](29, UserListComponent_div_0_ng_template_29_Template, 4, 1, "ng-template", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](30, UserListComponent_div_0_ng_template_30_Template, 9, 4, "ng-template", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](31, "ngx-datatable-column", 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](32, UserListComponent_div_0_ng_template_32_Template, 4, 1, "ng-template", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](33, UserListComponent_div_0_ng_template_33_Template, 5, 2, "ng-template", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](34, "ngx-datatable-column", 28);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](35, UserListComponent_div_0_ng_template_35_Template, 4, 1, "ng-template", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](36, UserListComponent_div_0_ng_template_36_Template, 5, 2, "ng-template", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](37, "ngx-datatable-column", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](38, UserListComponent_div_0_ng_template_38_Template, 4, 1, "ng-template", 25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](39, UserListComponent_div_0_ng_template_39_Template, 6, 5, "ng-template", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementStart"](40, "ngx-datatable-column", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](41, UserListComponent_div_0_ng_template_41_Template, 10, 11, "ng-template", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵelementEnd"]()()()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelement"](25, "span", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtext"](26, "Exportar a PDF ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](27, "ngx-datatable", 23)(28, "ngx-datatable-column", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](29, UserListComponent_div_0_ng_template_29_Template, 4, 1, "ng-template", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](30, UserListComponent_div_0_ng_template_30_Template, 9, 4, "ng-template", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](31, "ngx-datatable-column", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](32, UserListComponent_div_0_ng_template_32_Template, 4, 1, "ng-template", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](33, UserListComponent_div_0_ng_template_33_Template, 5, 2, "ng-template", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](34, "ngx-datatable-column", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](35, UserListComponent_div_0_ng_template_35_Template, 4, 1, "ng-template", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](36, UserListComponent_div_0_ng_template_36_Template, 5, 2, "ng-template", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](37, "ngx-datatable-column", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](38, UserListComponent_div_0_ng_template_38_Template, 4, 1, "ng-template", 25);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](39, UserListComponent_div_0_ng_template_39_Template, 6, 5, "ng-template", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementStart"](40, "ngx-datatable-column", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](41, UserListComponent_div_0_ng_template_41_Template, 10, 11, "ng-template", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵelementEnd"]()()()()()();
   }
 
   if (rf & 2) {
-    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("contentHeader", ctx_r0.contentHeader);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("items", ctx_r0.lstPerfil)("ngModel", ctx_r0.selectedProfile);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "search");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("ngModel", ctx_r0.searchValue);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("data-feather", "download");
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("rows", ctx_r0.rowData)("rowHeight", 62)("columnMode", ctx_r0.ColumnMode.force)("headerHeight", 50)("footerHeight", 50)("scrollbarH", true)("limit", ctx_r0.basicSelectedOption);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("width", 250);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("width", 200);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("width", 250);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("width", 180);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("width", 80)("sortable", false)("cellClass", "text-center");
+    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("contentHeader", ctx_r0.contentHeader);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](11);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("items", ctx_r0.lstPerfil)("ngModel", ctx_r0.selectedProfile);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "search");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("ngModel", ctx_r0.searchValue);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("data-feather", "download");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("rows", ctx_r0.rowData)("rowHeight", 62)("columnMode", ctx_r0.ColumnMode.force)("headerHeight", 50)("footerHeight", 50)("scrollbarH", true)("limit", ctx_r0.basicSelectedOption);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("width", 250);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("width", 200);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("width", 250);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("width", 180);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("width", 80)("sortable", false)("cellClass", "text-center");
   }
 }
 
 class UserListComponent {
   router;
   apiService;
-  pdf;
   table;
   blockUI;
   sectionBlockUI;
@@ -45502,8 +45504,8 @@ class UserListComponent {
     logs: false
   };
   basicSelectedOption = 10;
-  ColumnMode = _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__.ColumnMode;
-  SelectionType = _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__.SelectionType;
+  ColumnMode = _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__.ColumnMode;
+  SelectionType = _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__.SelectionType;
   contentHeader;
   count = 0;
   tempData = [];
@@ -45512,10 +45514,9 @@ class UserListComponent {
 
   selectedProfile = ''; // Propiedad para el ngModel del nuevo select
 
-  constructor(router, apiService, pdf) {
+  constructor(router, apiService) {
     this.router = router;
     this.apiService = apiService;
-    this.pdf = pdf;
   }
 
   ngOnInit() {
@@ -45643,8 +45644,8 @@ class UserListComponent {
 
   EliminarUser(usuario) {
     sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-      title: 'Eliminar Usuario',
-      text: "¿Está seguro que desea borrar el historico de acceso y la información de sesión?",
+      title: `Eliminar Usuario`,
+      text: `¿Está seguro que desea eliminar al usuario ${usuario.nombre}?`,
       icon: 'question',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -45669,48 +45670,271 @@ class UserListComponent {
     });
   }
 
-  ListadoUsers() {
-    this.pdf.ListadoDeUsers(this.rowData);
+  exportarUsuariosPDF() {
+    const doc = new jspdf__WEBPACK_IMPORTED_MODULE_3__["default"]();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height; // ==========================================
+    // PAGINA 1: PORTADA (Estilo Premium)
+    // ==========================================
+
+    doc.setFontSize(26);
+    doc.setTextColor(100, 181, 246); // Blue 300 (Pastel)
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPORTE DE USUARIOS', pageWidth / 2, 80, {
+      align: 'center'
+    }); // Línea Decorativa Sutil
+
+    doc.setDrawColor(224, 224, 224); // Grey 300
+
+    doc.setLineWidth(0.5);
+    doc.line(60, 85, pageWidth - 60, 85); // Subtítulo
+
+    doc.setFontSize(18);
+    doc.setTextColor(97, 97, 97); // Grey 700
+
+    doc.text('LISTADO GENERAL DE USUARIOS', pageWidth / 2, 100, {
+      align: 'center'
+    }); // Detalles
+
+    doc.setFontSize(12);
+    doc.setTextColor(117, 117, 117); // Grey 600
+
+    doc.text(`Total de Usuarios: ${this.rowData.length}`, pageWidth / 2, 115, {
+      align: 'center'
+    }); // Pie de página de la portada
+
+    doc.setFontSize(9);
+    doc.setTextColor(189, 189, 189); // Grey 400
+
+    doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth / 2, pageHeight - 20, {
+      align: 'center'
+    }); // ==========================================
+    // PAGINA 2: TABLA RESUMEN (Estilo Premium)
+    // ==========================================
+
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.setTextColor(100, 181, 246);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Listado Resumido de Usuarios', 14, 20);
+    const tableData = this.rowData.map((user, i) => {
+      const primerPerfil = user.Aplicacion?.length > 0 ? user.Aplicacion[0] : {
+        perfil: 'N/A',
+        nombre: 'N/A',
+        traza: '0'
+      };
+      const estatusTexto = user.estatus === 1 ? 'Activo' : 'Inactivo';
+      return [i + 1, user.nombre || 'N/A', user.cedula || 'N/A', user.correo || 'N/A', primerPerfil.perfil || 'Sin Perfil', user.estatus // Pasamos el valor numérico para el dibujado personalizado
+      ];
+    });
+    jspdf_autotable__WEBPACK_IMPORTED_MODULE_4___default()(doc, {
+      startY: 25,
+      head: [['#', 'Nombre Completo', 'Cédula', 'Correo', 'Perfil Principal', 'Estatus']],
+      body: tableData,
+      theme: 'grid',
+      styles: {
+        font: 'helvetica',
+        fontSize: 8,
+        cellPadding: 3,
+        valign: 'middle',
+        lineColor: [238, 238, 238],
+        lineWidth: 0.1,
+        textColor: [97, 97, 97]
+      },
+      headStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [100, 181, 246],
+        fontStyle: 'bold',
+        halign: 'left',
+        lineWidth: 0,
+        lineColor: [255, 255, 255]
+      },
+      columnStyles: {
+        0: {
+          cellWidth: 10,
+          halign: 'center'
+        },
+        5: {
+          cellWidth: 20,
+          halign: 'center'
+        }
+      },
+      didParseCell: data => {
+        // Limpiar el texto de la celda de estatus para dibujar el checkbox
+        if (data.section === 'body' && data.column.index === 5) {
+          data.cell.text = [];
+        }
+      },
+      didDrawCell: data => {
+        // Dibujar Checkbox personalizado para el estatus
+        if (data.section === 'body' && data.column.index === 5) {
+          const estatus = data.cell.raw;
+          const dim = 4;
+          const cx = data.cell.x + data.cell.width / 2 - dim / 2;
+          const cy = data.cell.y + data.cell.height / 2 - dim / 2;
+
+          if (estatus === 1) {
+            doc.setFillColor(165, 214, 167); // Green 200
+
+            doc.setDrawColor(165, 214, 167);
+            doc.roundedRect(cx, cy, dim, dim, 1, 1, 'FD');
+            doc.setDrawColor(255, 255, 255);
+            doc.setLineWidth(0.6);
+            doc.line(cx + 1, cy + 2, cx + 1.8, cy + 3);
+            doc.line(cx + 1.8, cy + 3, cx + 3.2, cy + 1.2);
+          } else {
+            doc.setDrawColor(224, 224, 224); // Grey 300
+
+            doc.setFillColor(250, 250, 250); // Almost white
+
+            doc.roundedRect(cx, cy, dim, dim, 1, 1, 'FD');
+          }
+        }
+      }
+    }); // ==========================================
+    // PAGINAS DE DETALLE DE USUARIO (Estilo Premium)
+    // ==========================================
+
+    this.rowData.forEach(user => {
+      doc.addPage(); // Encabezado de la página de detalle
+
+      doc.setFontSize(16);
+      doc.setTextColor(100, 181, 246);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Detalle Individual del Usuario', pageWidth / 2, 20, {
+        align: 'center'
+      }); // Login del usuario como cabecera principal
+
+      doc.setFontSize(20);
+      doc.setTextColor(97, 97, 97);
+      doc.text((user.login || 'Sin Login').toUpperCase(), pageWidth / 2, 35, {
+        align: 'center'
+      });
+      doc.setDrawColor(224, 224, 224);
+      doc.setLineWidth(0.3);
+      doc.line(20, 40, pageWidth - 20, 40);
+      let y = 50; // Posición Y inicial
+      // --- Función auxiliar para dibujar campo-valor ---
+
+      const drawField = (label, value, yPos, isBold = false) => {
+        doc.setFontSize(10);
+        doc.setTextColor(117, 117, 117);
+        doc.setFont('helvetica', 'bold');
+        doc.text(label, 20, yPos);
+        doc.setFontSize(10);
+        doc.setTextColor(97, 97, 97);
+        doc.setFont('helvetica', isBold ? 'bold' : 'normal');
+        doc.text(value || 'N/A', 60, yPos);
+      }; // --- Detalles del Usuario ---
+
+
+      drawField('Nombre Completo:', user.nombre, y, true);
+      y += 8;
+      drawField('Cédula:', user.cedula, y);
+      y += 8;
+      drawField('Correo:', user.correo, y);
+      y += 8;
+      drawField('Cargo:', user.cargo, y);
+      y += 8;
+      drawField('Sucursal:', user.sucursal, y);
+      y += 8;
+      drawField('Dirección (Regional):', user.direccion, y);
+      y += 8;
+      drawField('Estatus:', user.estatus === 1 ? 'Activo' : 'Inactivo', y);
+      y += 15; // --- Aplicaciones y Perfiles ---
+
+      doc.setFontSize(12);
+      doc.setTextColor(100, 181, 246);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Aplicaciones y Perfiles Asignados', 20, y);
+      y += 5;
+
+      if (user.Aplicacion && user.Aplicacion.length > 0) {
+        const appTableData = user.Aplicacion.map(app => [app.nombre || 'N/A', app.perfil || 'N/A', app.traza || 'N/A']);
+        jspdf_autotable__WEBPACK_IMPORTED_MODULE_4___default()(doc, {
+          startY: y,
+          head: [['Aplicación', 'Perfil Asignado', 'Nivel de Traza']],
+          body: appTableData,
+          theme: 'striped',
+          headStyles: {
+            fillColor: [100, 181, 246],
+            textColor: 255,
+            fontStyle: 'bold'
+          },
+          styles: {
+            fontSize: 9,
+            cellPadding: 2.5
+          },
+          margin: {
+            left: 20,
+            right: 20
+          }
+        });
+      } else {
+        doc.setFontSize(10);
+        doc.setTextColor(158, 158, 158);
+        doc.setFont('helvetica', 'italic');
+        doc.text('Este usuario no tiene aplicaciones o perfiles asignados.', 20, y);
+      }
+    }); // ==========================================
+    // PAGINACIÓN FINAL
+    // ==========================================
+
+    const pageCount = doc.internal.getNumberOfPages();
+
+    for (let i = 1; i <= pageCount; i++) {
+      // Corregido: totalPages -> pageCount
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(200);
+      doc.text(`${i} / ${pageCount}`, pageWidth - 14, pageHeight - 10, {
+        align: 'right'
+      });
+    }
+
+    const fileName = `Reporte_Usuarios_${new Date().toISOString().slice(0, 10)}.pdf`;
+    doc.save(fileName);
   }
 
   static ɵfac = function UserListComponent_Factory(t) {
-    return new (t || UserListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_11__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_3__.ApiService), _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdirectiveInject"](_services_pdf_pdf_service__WEBPACK_IMPORTED_MODULE_4__.PdfService));
+    return new (t || UserListComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_12__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_5__.ApiService));
   };
-  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵdefineComponent"]({
+  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵdefineComponent"]({
     type: UserListComponent,
     selectors: [["app-user-list"]],
     viewQuery: function UserListComponent_Query(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵviewQuery"](_swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__.DatatableComponent, 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵviewQuery"](_swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__.DatatableComponent, 5);
       }
 
       if (rf & 2) {
         let _t;
 
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵloadQuery"]()) && (ctx.table = _t.first);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵloadQuery"]()) && (ctx.table = _t.first);
       }
     },
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵProvidersFeature"]([_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbModalConfig, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbModal])],
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵProvidersFeature"]([_ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__.NgbModalConfig, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__.NgbModal])],
     decls: 1,
     vars: 1,
     consts: [["class", "content-wrapper container-xxl p-0", 4, "blockUI"], [1, "content-wrapper", "container-xxl", "p-0"], [1, "content-body"], [3, "contentHeader"], [1, "invoice-list-wrapper"], [1, "card"], [1, "card-header", "border-bottom"], [1, "card-title"], [1, "card-body"], [1, "row"], [1, "col-md-4"], ["for", "profile-filter"], ["bindLabel", "nombre", "bindValue", "nombre", "placeholder", "Seleccionar un perfil", 3, "items", "ngModel", "ngModelChange"], ["ng-option-tmp", ""], ["for", "search-input"], [1, "input-group", "input-group-merge"], [1, "input-group-prepend"], [1, "input-group-text"], [3, "data-feather"], ["id", "search-input", "type", "search", "placeholder", "Buscar por nombre, c\u00E9dula o correo...", 1, "form-control", 3, "ngModel", "ngModelChange", "keyup", "search"], [1, "col-md-4", "d-flex", "align-items-end"], ["type", "button", "rippleEffect", "", 1, "btn", "btn-primary", "w-100", 2, "height", "38px", 3, "click"], [1, "mr-1", 3, "data-feather"], [1, "bootstrap", "core-bootstrap", "striped", 3, "rows", "rowHeight", "columnMode", "headerHeight", "footerHeight", "scrollbarH", "limit"], ["prop", "nombre", 3, "width"], ["ngx-datatable-header-template", ""], ["ngx-datatable-cell-template", ""], ["prop", "Perfil.descripcion", 3, "width"], ["prop", "correo", 3, "width"], ["prop", "firmadigital.tiempo", 3, "width"], ["name", "Acci\u00F3n", 3, "width", "sortable", "cellClass"], [1, "mr-1", 3, "data-feather", "size"], [1, "d-flex", "align-items-center"], [4, "ngIf", "ngIfElse"], ["customAvatar", ""], [1, "font-weight-bold"], [1, "font-small-2", "text-muted"], ["height", "32", "width", "32", "alt", "datatable-avatar", 1, "rounded-circle", "mr-1", 3, "src"], [1, "avatar", "mr-1", "ml-0", 3, "ngClass"], [1, "avatar-content"], ["ngbDropdown", "", "container", "body"], ["ngbDropdownToggle", "", "type", "button", "rippleEffect", "", 1, "btn", "icon-btn", "btn-sm", "hide-arrow"], ["ngbDropdownMenu", ""], ["ngbDropdownItem", "", 3, "click"], [3, "data-feather", "size"]],
     template: function UserListComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵtemplate"](0, UserListComponent_div_0_Template, 42, 20, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtemplate"](0, UserListComponent_div_0_Template, 42, 20, "div", 0);
       }
 
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_9__["ɵɵproperty"]("blockUI", "section-block");
+        _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵproperty"]("blockUI", "section-block");
       }
     },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_13__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_13__.NgIf, app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_5__.ContentHeaderComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_14__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_14__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_14__.NgModel, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__.DatatableComponent, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__.DataTableColumnDirective, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__.DataTableColumnHeaderDirective, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__.DataTableColumnCellDirective, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdown, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdownToggle, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdownMenu, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__.NgbDropdownItem, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_15__.NgSelectComponent, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_15__.NgOptionTemplateDirective, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_6__.RippleEffectDirective, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_7__.FeatherIconDirective, ng_block_ui__WEBPACK_IMPORTED_MODULE_16__["ɵf"], _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_17__.DefaultClassDirective, _angular_common__WEBPACK_IMPORTED_MODULE_13__.DatePipe, _core_pipes_initials_pipe__WEBPACK_IMPORTED_MODULE_8__.InitialsPipe],
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_14__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_14__.NgIf, app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_6__.ContentHeaderComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_15__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_15__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_15__.NgModel, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__.DatatableComponent, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__.DataTableColumnDirective, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__.DataTableColumnHeaderDirective, _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__.DataTableColumnCellDirective, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__.NgbDropdown, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__.NgbDropdownToggle, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__.NgbDropdownMenu, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__.NgbDropdownItem, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_16__.NgSelectComponent, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_16__.NgOptionTemplateDirective, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_7__.RippleEffectDirective, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_8__.FeatherIconDirective, ng_block_ui__WEBPACK_IMPORTED_MODULE_17__["ɵf"], _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_18__.DefaultClassDirective, _angular_common__WEBPACK_IMPORTED_MODULE_14__.DatePipe, _core_pipes_initials_pipe__WEBPACK_IMPORTED_MODULE_9__.InitialsPipe],
     encapsulation: 2
   });
 }
 
-(0,tslib__WEBPACK_IMPORTED_MODULE_18__.__decorate)([(0,ng_block_ui__WEBPACK_IMPORTED_MODULE_16__.BlockUI)()], UserListComponent.prototype, "blockUI", void 0);
+(0,tslib__WEBPACK_IMPORTED_MODULE_19__.__decorate)([(0,ng_block_ui__WEBPACK_IMPORTED_MODULE_17__.BlockUI)()], UserListComponent.prototype, "blockUI", void 0);
 
-(0,tslib__WEBPACK_IMPORTED_MODULE_18__.__decorate)([(0,ng_block_ui__WEBPACK_IMPORTED_MODULE_16__.BlockUI)('section-block')], UserListComponent.prototype, "sectionBlockUI", void 0);
+(0,tslib__WEBPACK_IMPORTED_MODULE_19__.__decorate)([(0,ng_block_ui__WEBPACK_IMPORTED_MODULE_17__.BlockUI)('section-block')], UserListComponent.prototype, "sectionBlockUI", void 0);
 
 /***/ }),
 
@@ -46323,7 +46547,7 @@ function UserComponent_div_0_div_86_tr_39_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"]("ID: ", e_r49.id, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"](e_r49.idper.descripcion || "Sin descripci\u00F3n");
+    _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate"]((e_r49.idper == null ? null : e_r49.idper.descripcion) || "Sin descripci\u00F3n");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵtextInterpolate1"](" ", e_r49.perfil, " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_10__["ɵɵadvance"](2);
@@ -47236,23 +47460,29 @@ class UserComponent {
     return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APLICACIONES;
       _this3.xAPI.parametros = '';
-      yield _this3.apiService.Ejecutar(_this3.xAPI).subscribe(data => {
-        _this3.lstAplicacion = data.map(e => {
-          e.name = `${e.id}  (${e.nombre})`;
-          return e;
+      yield _this3.apiService.Ejecutar(_this3.xAPI).subscribe( /*#__PURE__*/function () {
+        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+          _this3.lstAplicacion = data.map(e => {
+            e.name = `${e.id}  (${e.nombre})`;
+            return e;
+          });
+          let usuario = window.sessionStorage.getItem('validator');
+
+          if (usuario != undefined) {
+            _this3.usuario = JSON.parse(usuario);
+            _this3.xaplicacion = _this3.usuario.sistema; // if (this.usuario.Aplicacion.length > 0) {
+
+            yield _this3.selPerfil(_this3.usuario.sistema); // console.log(this.usuario.Aplicacion.length, this.usuario.Aplicacion)
+            // this.blockEditApp = 'false'
+
+            _this3.usuarioSave = true; // }
+          }
         });
-        let usuario = window.sessionStorage.getItem('validator');
 
-        if (usuario != undefined) {
-          _this3.usuario = JSON.parse(usuario);
-          _this3.xaplicacion = _this3.usuario.sistema;
-
-          _this3.selPerfil(_this3.usuario.sistema);
-
-          _this3.blockEditApp = 'false';
-          _this3.usuarioSave = true; // console.log(this.usuario)
-        }
-      }, error => {
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }(), error => {
         console.log(error);
       });
     })();
@@ -47272,7 +47502,7 @@ class UserComponent {
 
         if (usuario != undefined) {
           this.blockEdit = 'disabled';
-          this.blockEditApp = 'disabled';
+          this.blockEditApp = this.usuario.Aplicacion.length > 0 ? 'disabled' : 'false';
 
           if (!this.bEliminarAllProfile) {
             this.cargarUsuario(this.usuario);
@@ -47308,7 +47538,7 @@ class UserComponent {
       let apps = {};
       let lstApp = [];
       yield _this4.lstUsersApp.forEach( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (appx) {
+        var _ref2 = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (appx) {
           apps = appx;
           let rol = {
             id: appx.idper.id,
@@ -47331,8 +47561,8 @@ class UserComponent {
           lstApp.push(xapps);
         });
 
-        return function (_x) {
-          return _ref.apply(this, arguments);
+        return function (_x2) {
+          return _ref2.apply(this, arguments);
         };
       }());
       _this4.usuario.Perfil.id = apps.idper == undefined ? '' : apps.idper.id;
@@ -47538,7 +47768,6 @@ class UserComponent {
     this.apiService.ExecColeccion(fnx).subscribe(data => {
       if (tipo == 2) {
         this.lstPerfil = [];
-        this.xaplicacion = '';
         this.xperfil = '';
       }
 
@@ -58735,7 +58964,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Sun Dec 14 2025 20:43:14 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Tue Dec 16 2025 22:05:57 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

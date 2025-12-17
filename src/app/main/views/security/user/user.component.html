@@ -309,7 +309,7 @@
                       <span class="font-weight-bold text-primary">{{e.nombre}}</span>
                       <div class="small text-muted">ID: {{e.id}}</div>
                     </td>
-                    <td>{{e.idper.descripcion || 'Sin descripción'}}</td>
+                    <td>{{e.idper?.descripcion || 'Sin descripción'}}</td>
                     <td>
                       <div class="badge badge-light-warning">
                         {{e.perfil}}
