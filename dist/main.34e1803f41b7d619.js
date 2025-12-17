@@ -47641,7 +47641,9 @@ class UserComponent {
 
       _this5.lstUsersApp.push(app);
 
-      _this5.dataUsers = _this5.lstUsersApp;
+      _this5.dataUsers = _this5.lstUsersApp; // Limpiar la selección del combo de perfil
+
+      _this5.xperfil = null;
     })();
   }
   /**
@@ -47767,8 +47769,8 @@ class UserComponent {
     };
     this.apiService.ExecColeccion(fnx).subscribe(data => {
       if (tipo == 2) {
-        this.lstPerfil = [];
-        this.xperfil = '';
+        this.xaplicacion = null;
+        this.xperfil = null;
       }
 
       this.finalizando(tipo);
@@ -58964,7 +58966,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: ':c521f27fb1b3311d686d511b668e5bd4',
-  buildDateTime: 'Tue Dec 16 2025 22:05:57 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Wed Dec 17 2025 15:44:10 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

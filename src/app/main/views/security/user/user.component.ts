@@ -675,6 +675,9 @@ export class UserComponent implements OnInit {
     this.lstUsersApp.push(app)
 
     this.dataUsers = this.lstUsersApp
+
+    // Limpiar la selección del combo de perfil
+    this.xperfil = null;
   }
 
   /**
@@ -814,9 +817,8 @@ export class UserComponent implements OnInit {
     this.apiService.ExecColeccion(fnx).subscribe(
       (data) => {
         if (tipo == 2) {
-          this.lstPerfil = []
-          
-          this.xperfil = ''
+          this.xaplicacion = null
+          this.xperfil = null
         }
 
         this.finalizando(tipo)
