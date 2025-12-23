@@ -70,7 +70,8 @@ export const environment = {
     CONSULTAR_CEDULA: '_SYS_CUserPanelCedula',
     CONSULTAR_LOGIN: '_SYS_CUserPanelLogin',
     ACTUALIZAR_TOKENS: '_SYS_UUsuarioDuracion',
-    UPDATE_ALL_USER_PROFILE: '_SYS_UPerfilesTodos'
+    UPDATE_ALL_USER_PROFILE: '_SYS_UPerfilesTodos',
+    CONSULTAR_GUPO_BITACORA: '_SYS_CBitacoraGrupo'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',

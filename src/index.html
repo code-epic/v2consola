@@ -116,15 +116,23 @@
         const bdvKeywords = ['sicoex', 'banv', 'corp', '4201']; // Palabras clave
         let logoSrc = 'assets/images/logo/logo.png'; // Logo por defecto
         let pageTitle = 'Sandra Server'; // Título por defecto
+        let faviconSrc = 'favicon.ico'; // Favicon por defecto
 
         // Comprueba si la URL contiene alguna de las palabras clave
         if (bdvKeywords.some(keyword => url.includes(keyword))) {
           logoSrc = 'assets/images/logo/logo-bdv.png'; // Cambia al logo de BDV
           pageTitle = 'BDV Server'; // Cambia el título
+          faviconSrc = 'assets/images/bdv/favicon.ico'; // Cambia el favicon
         }
 
         // Actualiza el título de la página
         window.document.title = pageTitle;
+
+        // Actualiza el favicon
+        const link = document.querySelector("link[rel~='icon']");
+        if (link) {
+          link.href = faviconSrc;
+        }
 
         // Crea y configura la etiqueta <img> dinámicamente
         const imgElement = document.createElement('img');

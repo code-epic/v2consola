@@ -62,9 +62,7 @@
         <a (click)="irA('/investigation/binnacle/', product)">
           <!-- Minimalist Icon Header -->
           <div class="item-icon-header">
-            <div class="icon-container">
-              <span data-feather="database" class="app-icon"></span>
-            </div>
+            
             <div class="app-initial">
               {{ product.aplicacion.charAt(0).toUpperCase() }}
             </div>
@@ -84,14 +82,7 @@
                 <span data-feather="layers" style="width: 14px; height: 14px; margin-right: 4px;"></span>
                 {{ product.totalFunciones }}
               </div>
-              <span 
-                data-feather="trash-2" 
-                class="font-weight-bolder text-danger" 
-                style="width: 18px; height: 18px; cursor: pointer;"
-                (click)="$event.stopPropagation(); deleteItem($event, product)"
-                title="Eliminar"
-              >
-              </span>
+            
             </div>
           </div>
         </a>

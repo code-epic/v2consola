@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from "@angular/core";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { Router } from "@angular/router";
+import { environment } from "environments/environment";
 
 @Component({
   selector: 'app-binnacle',
@@ -72,15 +73,14 @@ export class BinnacleComponent implements OnInit {
     this.ruta.navigate([base + '/' + datoCodificado]);
   }
 
-  deleteItem(event: any, data: any) {
-    console.log(data);
-  }
+
 
   async CargarBitacora() {
-    this.xAPI.funcion = "_SYS_CBitacoraGrupo";
+    this.xAPI.funcion = environment.functions.CONSULTAR_GUPO_BITACORA;
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async (data) => {
+        console.log(data)
         if (data == null) return;
         await data.map((e) => {
           this.ListarBitacora.push(e);
