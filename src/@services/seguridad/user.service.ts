@@ -68,6 +68,7 @@ export interface Firmadigital {
   direccionip: string;
   tiempo: string;
   nivel: number; //entero 0 BAJA, 1 MEDIA, 2 ALTA
+  sesion: string;
 }
 
 export interface Usuario {
@@ -127,7 +128,8 @@ export class UserService implements Usuario {
     direccionip: '*',
     tiempo: new Date().toISOString(),
     vigencia: 0,
-    nivel: 0
+    nivel: 0,
+    sesion: ''
   };
 
   // Propiedad de clase estándar para almacenar el resultado agrupado
@@ -157,7 +159,8 @@ export class UserService implements Usuario {
       direccionip: '*',
       tiempo: new Date().toISOString(),
       vigencia: 0,
-      nivel: 0
+      nivel: 0,
+      sesion: ''
     };
   }
 

@@ -42,16 +42,11 @@
             <tr>
               <th>
                 <div class="d-flex align-items-center">
-                  <span [data-feather]="'code'" class="mr-1 text-primary"></span>
-                  <span class="font-weight-bolder text-uppercase">FUNCIÓN</span>
+                  <span [data-feather]="'user'" class="mr-1 text-primary"></span>
+                  <span class="font-weight-bolder text-uppercase">USUARIO</span>
                 </div>
               </th>
-              <th style="width: 120px;">
-                <div class="d-flex align-items-center">
-                  <span [data-feather]="'tag'" class="mr-1 text-info"></span>
-                  <span class="font-weight-bolder text-uppercase">VERSIÓN</span>
-                </div>
-              </th>
+            
               <th style="width: 150px;">
                 <div class="d-flex align-items-center">
                   <span [data-feather]="'database'" class="mr-1 text-warning"></span>
@@ -71,23 +66,18 @@
               <td>
                 <div class="d-flex align-items-center">
                   <div class="avatar mr-1 ml-0 bg-light-success">
-                    <div class="avatar-content">{{ row.funcion | initials }}</div>
+                    <div class="avatar-content">{{ row.id_usuario | initials }}</div>
                   </div>
                   <div>
-                    <span class="font-weight-bold text-primary d-block">{{ row.funcion }}</span>
-                    <small class="text-muted">Función del sistema</small>
+                    <span class="font-weight-bold text-primary d-block">{{ row.id_usuario }}</span>
+                    <small class="text-muted">Usuario del sistema</small>
                   </div>
                 </div>
               </td>
               <td>
-                <div class="badge badge-success">V{{ row.version }}</div>
+                <div class="badge badge-success">{{ row.actividad.length }}</div>
               </td>
-              <td>
-                <div class="badge badge-warning">
-                  <span [data-feather]="'layers'" style="width: 14px; height: 14px; margin-right: 4px;"></span>
-                  {{ row.totalRegistros }}
-                </div>
-              </td>
+            
               <td class="text-center">
                 <div ngbDropdown container="body">
                   <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm btn-flat-primary hide-arrow"
@@ -203,7 +193,7 @@
                     name="searchRegistros" 
                     type="search" 
                     class="form-control border-left-0 border-right-0" 
-                    placeholder="Filtrar por usuario..."
+                    placeholder="Filtrar por Acciones..."
                     (keyup)="filterUpdateRegister($event)"
                     (search)="filterUpdateRegister($event)"
                   />
@@ -229,14 +219,14 @@
               <tr>
                 <th>
                   <div class="d-flex align-items-center">
-                    <span [data-feather]="'user'" class="mr-1 text-primary"></span>
-                    <span class="font-weight-bolder text-uppercase">USUARIO</span>
+                    <span [data-feather]="'list'" class="mr-1 text-primary"></span>
+                    <span class="font-weight-bolder text-uppercase">ACCIONES</span>
                   </div>
                 </th>
                 <th style="width: 150px;">
                   <div class="d-flex align-items-center">
-                    <span [data-feather]="'clock'" class="mr-1 text-info"></span>
-                    <span class="font-weight-bolder text-uppercase">DURACIÓN</span>
+                    <span [data-feather]="'zap'" class="mr-1 text-info"></span>
+                    <span class="font-weight-bolder text-uppercase">TOTAL</span>
                   </div>
                 </th>
                 <th style="width: 200px;">
@@ -257,22 +247,19 @@
               <tr *ngFor="let row of rowDataRegistros | slice: (page - 1) * pageSize : page * pageSize; let i = index">
                 <td>
                   <div class="d-flex align-items-center">
-                    <div class="avatar mr-1 ml-0 bg-light-primary">
-                      <div class="avatar-content">{{ row.usuario | initials }}</div>
-                    </div>
-                    <span class="font-weight-bold text-primary">{{ row.usuario }}</span>
+                    <span [data-feather]="'list'" class="mr-1 text-secondary"></span>
+                    <span class="font-weight-bold text-primary">{{ row.nombre }}</span>
                   </div>
                 </td>
-                <td>
+                <td style="align-items: center;">
                   <div class="d-flex align-items-center">
-                    <span [data-feather]="'zap'" class="mr-1" style="width: 14px; height: 14px; color: #6ba88e;"></span>
-                    <span class="font-weight-bold">{{ formatDuration(row.duracion) }}</span>
+                    <div class="badge badge-success">{{ row.total }}</div>
                   </div>
                 </td>
                 <td>
                   <div class="badge badge-warning">
                     <span [data-feather]="'calendar'" style="width: 14px; height: 14px; margin-right: 4px;"></span>
-                    {{ row.fecha | date: 'dd/MM/yyyy HH:mm' }}
+                    {{ row.ultimaVez | date: 'dd/MM/yyyy HH:mm' }}
                   </div>
                 </td>
                 <td class="text-center">
@@ -282,9 +269,7 @@
                       <span [data-feather]="'more-vertical'" [class]="'cursor-pointer'"></span>
                     </button>
                     <div ngbDropdownMenu>
-                      <a (click)="ModalVerConsulta(ModalConsulta,row)" ngbDropdownItem>
-                        <span [data-feather]="'file-text'" [class]="'mr-50'"></span> Ver Consulta
-                      </a>
+                    
                       <a (click)="ModalVerConsulta(ModalConsulta,row)" ngbDropdownItem>
                         <span [data-feather]="'package'" [class]="'mr-50'"></span> Ver Contenido
                       </a>

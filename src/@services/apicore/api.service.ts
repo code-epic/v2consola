@@ -304,7 +304,7 @@ export class ApiService {
   //Dirección Get para servicios en la página WEB
   URL = environment.API;
 
-  hash = ":c521f27fb1b3311d686d511b668e5bd4";
+  hash: string = environment.Hash;
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -341,7 +341,7 @@ export class ApiService {
   }
 
   Guardar(xAPI: IAPICore, sApi: string): Observable<any> {
-    var url = this.URL + sApi + this.hash;
+    var url = this.URL + sApi + ":" + this.hash;
     return this.http.post<any>(url, xAPI, this.httpOptions);
   }
 
@@ -363,7 +363,7 @@ export class ApiService {
         Authorization: "Bearer " + sessionStorage.getItem("token"),
       }),
     };
-    var url = this.URL + "crud" + this.hash;
+    var url = this.URL + "crud:" + this.hash;
     return this.http.post<any>(url, xAPI, hOpt);
   }
 

@@ -233,6 +233,7 @@ export class ProfileComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -255,6 +256,7 @@ export class ProfileComponent implements OnInit {
   }
 
   listarPerfiles() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_LISTA_PERFILES
     this.xAPI.parametros = ''
     this.xAPI.valores = ''

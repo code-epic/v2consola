@@ -8,7 +8,7 @@ export const environment = {
   Url: 'https://localhost',
   API: '/v1/api/',
   ID: 'App.Consola',
-  Hash: ':c521f27fb1b3311d686d511b668e5bd4',
+  Hash: '551582bbd1370fffe7c7198a854490e9.sse',
   buildDateTime: 'Wed Dec 17 2025 15:44:10 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
@@ -20,6 +20,7 @@ export const environment = {
     SYS_FUNCION_ZIP: "sys-function.zip"
   },
   colecciones: {
+    USUARIO: 'usuario', 
     WUSUARIO: 'wusuario',
     USER_TASK: 'user-task',
     API_CORE_NAME: "apicore",
@@ -30,9 +31,19 @@ export const environment = {
     SYS_CACHE: "sys-cache",
     SYS_TASK: "sys-task",
     SYS_LOG: "sys-log",
+    SYS_CONNECTIONS: "sys-conections",
+    SYS_DRIVERS: "sys-drivers",
   },
   functions: {
+     LISTAR_DRIVERS: 'LESBDrivers',
+    LISTAR_APIS_ID: '_SYS_R_ListarApisID',
+    INSERTAR_APLICACION: 'SSB_IAplicacion',
+    CONSULTAR_APLICACION: 'SEC_CAplicacion',
+    LISTAR_MODULOS: 'LstModulos',
     ACTUALIAZAR_MENU: "_SYS_ActualizarMenu",
+    INSERTAR_ROL_DEFINICION: "_SYS_IRolDefinicion",
+    INSERTAR_ROL_DETALLES: "_SYS_IRolDetalles",
+    EDITAR_ROL: "_SYS_CRolEditar",
     OBTENER_NOMBRE_ARCHIVO: "_SYS_getFileName",
     INSERT_FILE_PATH: "_SYS_ISetPath",
     LISTAR_COMUNICACIONES: '_SYS_LstComunicaciones',
@@ -43,10 +54,10 @@ export const environment = {
     LISTAR_PERFILES_APP: '_SYS_CListarPerfiles',
     CONSULTAR_APLICACIONES: '_SYS_CAplicaciones',
     CONSULTAR_SCHEMA_APP: '_SYS_CSchemaApp',
-    CONSULTAR_LISTA_PERFILES: '_SYS_CListarPerfiles',
     OBTENER_PERFILES_POR_APLICACION: '_SYS_CObtenerPerfiles',
     LISTAR_ENDPOINT: '_SYS_CEndPointUsers',
     LISTAR_PERFILES: '_SYS_CPerfiles',
+    CONSULTAR_LISTA_PERFILES: '_SYS_CListarPerfiles',
     LISTAR_PERFIL_MENUS: '_SYS_CPerfil',
     LISTAR_PERFIL_APP: '_SYS_CPerfilesAPP',
     LISTAR_MENU_APP: '_SYS_CModulosAPP',
@@ -70,7 +81,8 @@ export const environment = {
     CONSULTAR_CEDULA: '_SYS_CUserPanelCedula',
     CONSULTAR_LOGIN: '_SYS_CUserPanelLogin',
     ACTUALIZAR_TOKENS: '_SYS_UUsuarioDuracion',
-    UPDATE_ALL_USER_PROFILE: '_SYS_UPerfilesTodos'
+    UPDATE_ALL_USER_PROFILE: '_SYS_UPerfilesTodos',
+    CONSULTAR_GUPO_BITACORA: '_SYS_CBitacoraGrupo'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',

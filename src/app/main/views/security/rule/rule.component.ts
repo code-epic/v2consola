@@ -71,6 +71,7 @@ export class RuleComponent implements OnInit {
   }
 
   async cargarAplicaciones() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES;
     this.xAPI.parametros = '';
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -98,7 +99,7 @@ export class RuleComponent implements OnInit {
     }
 
     const appId = event.id;
-
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
     this.xAPI.parametros = appId;
     this.xAPI.valores = {};
@@ -152,7 +153,7 @@ export class RuleComponent implements OnInit {
       coleccion: environment.colecciones.SYS_CONFIG,
       objeto: this.configuracion,
       donde: JSON.stringify({ id: this.configuracion.id }),
-      driver: 'MGDBA',
+      driver: environment.driver.PRINCIPAL,
       upsert: true,
     };
 
@@ -169,13 +170,11 @@ export class RuleComponent implements OnInit {
   }
 
   ActualizarTokens() {
-    // console.log('ActualizarTokens', this.configuracion)
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.ACTUALIZAR_TOKENS
     let app = this.configuracion
     this.xAPI.parametros = `${app.id},${this.convertirASegundos()},${this.convertirTraza(app.traza.nivel)},${app.traza.nivel}`
     this.xAPI.valores = {}
-
-    // console.log('ActualizarTokens', this.xAPI)
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       () => {

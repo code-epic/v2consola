@@ -109,6 +109,7 @@ export class ApiListComponent implements OnInit {
   async ListarApis() {
 
     this.developer = []
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = '_SYS_R_ListarApisAPP'
     this.xAPI.parametros = this.id
     this.xAPI.valores = ''
@@ -159,7 +160,7 @@ export class ApiListComponent implements OnInit {
     }
 
 
-
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = '_SYS_R_ListarDriver'
     this.xAPI.parametros = this.id
     this.drivers = []

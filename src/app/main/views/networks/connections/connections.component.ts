@@ -13,6 +13,8 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
 import { ConexionesService } from '@services/networks/connections.service';
+import { environment } from 'environments/environment';
+import { env } from 'process';
 
 
 @Component({
@@ -229,15 +231,13 @@ export class ConnectionsComponent implements OnInit {
   }
 
   async CargarListaConexiones() {
-    this.xAPI.funcion = "LESBDrivers";
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.LISTAR_DRIVERS;
     this.xAPI.parametros = ''
     this.ListaConexiones = []
     this.count = 0
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // data.map(e => {
-        //   this.ListaConexiones.push(e);
-        // });
         this.rowData = data;
         this.tempData = this.rowData;
         this.count = this.rowData.length
@@ -343,10 +343,10 @@ export class ConnectionsComponent implements OnInit {
       return;
     } else {
       var obj = {
-        "coleccion": "sys-drivers",
+        "coleccion": environment.colecciones.SYS_DRIVERS,
         "objeto": this.loginForm.value,
-        "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
-        "driver": "MGDBA",
+        "donde": JSON.stringify({ id: this.loginForm.value.id }),
+        "driver": environment.driver.PRINCIPAL,
         "upsert": true
       }
       this.rowData.push(this.ListaConexiones)
@@ -370,10 +370,10 @@ export class ConnectionsComponent implements OnInit {
       return;
     } else {
       var obj = {
-        "coleccion": "sys-drivers",
+        "coleccion": environment.colecciones.SYS_DRIVERS,
         "objeto": this.loginForm.value,
-        "donde": `{\"id\":\"${this.loginForm.value.id}\"}`,
-        "driver": "MGDBA",
+        "donde": JSON.stringify({ id: this.loginForm.value.id }),
+        "driver": environment.driver.PRINCIPAL,
         "upsert": true
       }
       this.rowData.push(this.ListaConexiones)
@@ -386,7 +386,6 @@ export class ConnectionsComponent implements OnInit {
           this.LimpiarForm()
         }, (error) => {
           this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
-          // console.log(error)
         }
       )
 
@@ -394,12 +393,12 @@ export class ConnectionsComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.parametros = ''
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // console.log(data)
         this.ListaAplicaciones = data.Cuerpo.map(e => {
           e.name = e.nombre + ' : ' + e.VERSION
           return e

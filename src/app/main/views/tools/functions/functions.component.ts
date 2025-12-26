@@ -456,6 +456,7 @@ export class FunctionsComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
+     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES
     this.xAPI.parametros = ""
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -733,7 +734,7 @@ export class FunctionsComponent implements OnInit {
       usuario: environment.Hash,
     };
 
-
+    this.xAPI = {} as IAPICore;  
     this.xAPI.funcion = environment.functions.INSERT_FILE_PATH;
     this.xAPI.parametros = "";
     this.xAPI.valores = JSON.stringify(cargaMasiva);
@@ -757,6 +758,7 @@ export class FunctionsComponent implements OnInit {
   }
 
   ObtenerNombreArchivo() {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = environment.functions.OBTENER_NOMBRE_ARCHIVO;
     this.xAPI.parametros = this.llave;
     this.xAPI.valores = "";

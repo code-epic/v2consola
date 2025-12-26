@@ -1,62 +1,4 @@
 import { Injectable } from '@angular/core';
-
-// @Injectable({
-//   providedIn: 'root'
-// })
-
-
-// export class Sha256Service {
-
-//     constructor() { }
-
-
-//     private readonly K = [
-//       0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
-//       0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
-//       // ... (resto de las constantes K)
-//     ];
-  
-//     public async hash(message: string): Promise<string> {
-//       // Preprocesamiento del mensaje
-//       const msgBuffer = new TextEncoder().encode(message);
-//       const msgBits = Array.from(msgBuffer)
-//         .map(b => b.toString(2).padStart(8, '0'))
-//         .join('');
-  
-//       const len = msgBits.length;
-//       const totalLen = len + 1 + 64 - ((len + 1) % 64);
-  
-//       // Añadir padding
-//       const paddedMsg = msgBits + '1' + '0'.repeat(totalLen - len - 1) 
-//         + len.toString(2).padStart(64, '0');
-  
-//       // Procesar en bloques de 512 bits
-//       const blocks = [];
-//       for (let i = 0; i < paddedMsg.length; i += 512) {
-//         blocks.push(paddedMsg.substr(i, 512));
-//       }
-  
-//       // Inicializar variables de hash
-//       let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a;
-//       let h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
-  
-//       // Procesar cada bloque
-//       for (const block of blocks) {
-//         // ... (implementación completa del algoritmo)
-//       }
-  
-//       // Combinar los hashes
-//       const hashArray = [h0, h1, h2, h3, h4, h5, h6, h7];
-//       const hashHex = hashArray.map(h => h.toString(16).padStart(8, '0')).join('');
-  
-//       return hashHex;
-//     }
-//   }
-  
-  // Uso:
-//   SHA256.hash('texto').then(hash => console.log(hash));
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -86,7 +28,7 @@ export class Sha256Service {
     const padded = new Uint8Array(totalLen / 8);
     padded.set(msgBuffer);
     padded[msgBuffer.length] = 0x80; // Bit '1' del padding
-    
+
     // Escribir longitud en bits al final (big-endian)
     const lenView = new DataView(padded.buffer);
     lenView.setUint32(padded.length - 4, len);
@@ -99,7 +41,7 @@ export class Sha256Service {
     for (let i = 0; i < padded.length; i += 64) {
       const block = padded.slice(i, i + 64);
       const words = new Array(64);
-      
+
       // Dividir bloque en 16 palabras de 32 bits (big-endian)
       const view = new DataView(block.buffer);
       for (let j = 0; j < 16; j++) {
@@ -108,9 +50,9 @@ export class Sha256Service {
 
       // Extender a 64 palabras
       for (let j = 16; j < 64; j++) {
-        const s0 = this.rightRotate(words[j-15], 7) ^ this.rightRotate(words[j-15], 18) ^ (words[j-15] >>> 3);
-        const s1 = this.rightRotate(words[j-2], 17) ^ this.rightRotate(words[j-2], 19) ^ (words[j-2] >>> 10);
-        words[j] = (words[j-16] + s0 + words[j-7] + s1) >>> 0;
+        const s0 = this.rightRotate(words[j - 15], 7) ^ this.rightRotate(words[j - 15], 18) ^ (words[j - 15] >>> 3);
+        const s1 = this.rightRotate(words[j - 2], 17) ^ this.rightRotate(words[j - 2], 19) ^ (words[j - 2] >>> 10);
+        words[j] = (words[j - 16] + s0 + words[j - 7] + s1) >>> 0;
       }
 
       // Inicializar variables de trabajo
@@ -149,5 +91,64 @@ export class Sha256Service {
     // Combinar los hashes
     const hashArray = [h0, h1, h2, h3, h4, h5, h6, h7];
     return hashArray.map(h => h.toString(16).padStart(8, '0')).join('');
+  }
+
+  // Dentro de Sha256Service
+  // public async hmac(message: string, key: string): Promise<string> {
+  //   const blockSize = 64; // Tamaño de bloque para SHA-256
+  //   let keyBuffer = new TextEncoder().encode(key);
+
+  //   if (keyBuffer.length > blockSize) {
+  //     const keyHash = await this.hash(key);
+  //     keyBuffer = new Uint8Array(keyHash.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+  //   }
+
+  //   const ipad = new Uint8Array(blockSize).fill(0x36);
+  //   const opad = new Uint8Array(blockSize).fill(0x5c);
+
+  //   const paddedKey = new Uint8Array(blockSize);
+  //   paddedKey.set(keyBuffer);
+
+  //   const innerMsg = new Uint8Array(blockSize + new TextEncoder().encode(message).length);
+  //   for (let i = 0; i < blockSize; i++) ipad[i] ^= paddedKey[i];
+  //   innerMsg.set(ipad);
+  //   innerMsg.set(new TextEncoder().encode(message), blockSize);
+
+  //   const innerHash = await this.hash(Array.from(innerMsg).map(b => String.fromCharCode(b)).join(''));
+  //   const innerHashBuffer = new Uint8Array(innerHash.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+
+  //   const outerMsg = new Uint8Array(blockSize + innerHashBuffer.length);
+  //   for (let i = 0; i < blockSize; i++) opad[i] ^= paddedKey[i];
+  //   outerMsg.set(opad);
+  //   outerMsg.set(innerHashBuffer, blockSize);
+
+  //   return await this.hash(Array.from(outerMsg).map(b => String.fromCharCode(b)).join(''));
+  // }
+
+  public async hmac(message: string, key: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(key);
+    const messageData = encoder.encode(message);
+
+    // Importar la llave para HMAC
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    // Firmar el mensaje
+    const signature = await crypto.subtle.sign(
+      'HMAC',
+      cryptoKey,
+      messageData
+    );
+
+    // Convertir el buffer resultante a Hexadecimal
+    return Array.from(new Uint8Array(signature))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
   }
 }

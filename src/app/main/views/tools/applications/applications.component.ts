@@ -77,6 +77,7 @@ export class ApplicationsComponent implements OnInit {
 
   async ListarApis() {
     this.developer = [];
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "_SYS_R_ListarTodasApis";
     this.xAPI.parametros = '';
     this.xAPI.valores = '';
@@ -105,6 +106,7 @@ export class ApplicationsComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.parametros = '';
     this.ListaAplicaciones = [];

@@ -235,6 +235,8 @@ export class UserComponent implements OnInit {
   public passwordStrengthWidth: number = 0;
   public isPasswordInvalid: boolean = false;
 
+  public xsesion: string = ''
+
 
   constructor(
     private apiService: ApiService,
@@ -291,7 +293,7 @@ export class UserComponent implements OnInit {
 
   cargarConfiguracionApp() {
 
-
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
     this.xAPI.parametros = environment.ID
     this.xAPI.valores = {};
@@ -351,6 +353,7 @@ export class UserComponent implements OnInit {
     // Mapeo de propiedades anidadas en 'firmadigital'
     if (usuario.firmadigital) {
       this.iUser.vigencia = usuario.firmadigital.vigencia;
+      this.xsesion = usuario.firmadigital.sesion;
     }
 
     // No se mapea la clave para evitar mostrar el hash. Se debe ingresar una nueva si se desea cambiar.
@@ -358,6 +361,7 @@ export class UserComponent implements OnInit {
     // this.dataUsers = usuario.Aplicacion;
     this.tk_loadProfile(usuario)
 
+    console.log(this.iUser)
     return this.iUser
   }
 
@@ -431,6 +435,7 @@ export class UserComponent implements OnInit {
 
   async CargarListaEndPoint() {
     this.lstEndPoint = []
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_ENDPOINT
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -468,6 +473,7 @@ export class UserComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -505,6 +511,7 @@ export class UserComponent implements OnInit {
 
     try {
       let codPerfil = e
+      this.xAPI = {} as IAPICore
       this.xAPI.funcion = environment.functions.OBTENER_PERFILES_POR_APLICACION
       this.xAPI.parametros = codPerfil
       this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -605,9 +612,15 @@ export class UserComponent implements OnInit {
         await this.sha256.hash(this.iUser.clave).then(hash => {
           this.usuario.clave = hash
         })
+
+
       }
     }
 
+
+    await this.sha256.hash(this.iUser.cedula + this.iUser.login).then(xhash => {
+      this.xsesion = xhash
+    })
 
 
     let firma: Firmadigital = {
@@ -617,6 +630,7 @@ export class UserComponent implements OnInit {
       direccionip: '',
       tiempo: new Date().toISOString(),
       nivel: parseInt(apps.idtra),
+      sesion: this.xsesion
     }
 
 
@@ -807,10 +821,10 @@ export class UserComponent implements OnInit {
 
   ok(tipo: number) {
     let fnx = {
-      coleccion: 'usuario',
+      coleccion: environment.colecciones.USUARIO,
       objeto: this.usuario,
       donde: JSON.stringify({ cedula: this.usuario.cedula }),
-      driver: 'MGDBA',
+      driver: environment.driver.PRINCIPAL,
       upsert: true,
     }
 
@@ -990,6 +1004,7 @@ export class UserComponent implements OnInit {
   consultarRegionales() {
     this.dataRegional = []
     if (this.isBDV) {
+      this.xAPI = {} as IAPICore
       this.xAPI.funcion = environment.functions.CONSULTAR_REGIONALES; // Asumiendo que esta es tu función de backend
       this.xAPI.parametros = ''
       this.xAPI.valores = {};
@@ -1009,6 +1024,7 @@ export class UserComponent implements OnInit {
   consultarOficinas(e) {
     this.dataOficina = []
     if (this.isBDV) {
+      this.xAPI = {} as IAPICore
       this.xAPI.funcion = environment.functions.CONSULTAR_OFICINAS; // Asumiendo que esta es tu función de backend
       this.xAPI.parametros = this.utilservice.zfill(e.id, 2)
       this.xAPI.valores = {};
@@ -1115,6 +1131,7 @@ export class UserComponent implements OnInit {
 
 
   consultarCedula() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_CEDULA
     this.xAPI.parametros = this.iUser.cedula
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -1139,6 +1156,7 @@ export class UserComponent implements OnInit {
   }
 
   consultarLogin() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_LOGIN
     this.xAPI.parametros = this.iUser.login
     this.apiService.Ejecutar(this.xAPI).subscribe(

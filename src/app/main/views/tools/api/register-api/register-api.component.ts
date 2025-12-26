@@ -416,7 +416,8 @@ export class RegisterApiComponent implements OnInit {
   }
 
   CargarDrivers() {
-    this.xAPI.funcion = "LESBDrivers";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_DRIVERS;
     this.drivers = [];
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (datax) => {
@@ -476,7 +477,8 @@ export class RegisterApiComponent implements OnInit {
 
   LeerAPI(funcion: string) {
     this.existe = true;
-    this.xAPI.funcion = "_SYS_R_ListarApisID";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_APIS_ID;
     this.xAPI.parametros = funcion;
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -746,7 +748,8 @@ export class RegisterApiComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.parametros = "";
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {

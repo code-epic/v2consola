@@ -237,6 +237,7 @@ export class WorkflowComponent implements OnInit {
 
   //  Carga la Lista de las Funciones
   async CargarListaFunciones() {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "SSB_LFunciones"
     this.xAPI.parametros = ''
     this.ListaFunciones = []
@@ -272,6 +273,7 @@ export class WorkflowComponent implements OnInit {
   // Lista los Modulos 
   selModulo(): void {
     let app = this.aplicacion.split('|')
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "LstModulos"
     this.xAPI.parametros = app[0]
     this.dataModulo = []
@@ -318,10 +320,12 @@ export class WorkflowComponent implements OnInit {
   }
   //  Consula la Red y la Carga
   consultarRed() {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = 'WKF_CDefinicion'
     let app = this.aplicacion.split('|')
     this.xAPI.parametros = app[0]
-    this.apiService.hash = ':' + app[1]
+    this.apiService.hash =  app[1]
+    console.log(this.apiService.hash)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.isBtnSalvar = false
@@ -347,6 +351,7 @@ export class WorkflowComponent implements OnInit {
 
   // Carga la lista de los Drivers
   async CargarDrivers() {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "LESBDrivers"
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -382,6 +387,7 @@ export class WorkflowComponent implements OnInit {
       'driver': this.xdrivers
     }
     this.Definicion.push(ObjSalvar)
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = 'WKF_IDefinicion'
     this.xAPI.valores = JSON.stringify(ObjSalvar)
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -406,6 +412,7 @@ export class WorkflowComponent implements OnInit {
 
 
   Guardar(): any {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = 'WKF_IEstados'
     this.wkfEstado.wkf = this.xidW
     this.wkfEstado.estatus = parseInt(this.estatus)
@@ -425,6 +432,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   GuardarEstatus(): any {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_IEstatus"
     this.wkfEstatus.estado = parseInt(this.estado)
     this.wkfEstatus.estatus = this.estatus
@@ -458,6 +466,7 @@ export class WorkflowComponent implements OnInit {
   }
 
   lstEstados(idw: string): any {
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = 'WKF_CEstados'
     this.xAPI.parametros = idw
     this.xAPI.valores = {}
@@ -488,6 +497,7 @@ export class WorkflowComponent implements OnInit {
 
   lstEstatus(): any {
     this.rowEstatus = []
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_CEstatus"
     this.xAPI.parametros = this.estado
     this.xAPI.valores = {}
@@ -503,6 +513,7 @@ export class WorkflowComponent implements OnInit {
 
   lstEstatusRedV(event): any {
     this.rowEstatusRedV = []
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_CEstatus"
     this.xAPI.parametros = event
     this.xAPI.valores = {}
@@ -519,6 +530,7 @@ export class WorkflowComponent implements OnInit {
   }
   lstEstatusRedF(event): any {
     this.rowEstatusRedF = []
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_CEstatus"
     this.xAPI.parametros = event
     this.xAPI.valores = {}
@@ -535,6 +547,7 @@ export class WorkflowComponent implements OnInit {
   }
   lstEstatusRedDF(event): any {
     this.rowEstatusDF = []
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_CEstatus"
     this.xAPI.parametros = event
     this.xAPI.valores = {}
@@ -552,6 +565,7 @@ export class WorkflowComponent implements OnInit {
 
   lstTranscion(e: any): any {
     this.ListaTransiciones = []
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_RTransicion"
     this.xAPI.parametros = e
     this.xAPI.valores = {}
@@ -638,6 +652,7 @@ export class WorkflowComponent implements OnInit {
 
   lstRed(e: any): any {
     this.ListaRed = []
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_CMapaRed"
     this.xAPI.parametros = e
     this.xAPI.valores = {}
@@ -658,6 +673,7 @@ export class WorkflowComponent implements OnInit {
 
   GuardarRed() {
     this.wkfRed.idred = this.xidW
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_IRed"
     this.xAPI.valores = JSON.stringify(this.wkfRed)
     this.rowDataRed = []

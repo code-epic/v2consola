@@ -3,7 +3,6 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Subject, Observable, timer, BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-// Tipos de mensaje
 interface InitialClientMessage {
   ID: string;
   Message: string;
@@ -17,6 +16,7 @@ export enum ConnectionStatus {
   RECONNECTING = 3,
   ERROR = 4 // Para errores irrecuperables después de los reintentos
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -83,14 +83,14 @@ export class SessionService implements OnDestroy {
 
     // Tu URL WebSocket, ahora con el userId en la query
     //const serverUrl = `wss://code-epic.com:8443/sandra_ws?userId=${this.userId}`;
-    const serverUrl = `wss://localhost:3000/sandra_ws?userId=${this.userId}`;
+    const serverUrl = `wss://localhost:8443/sandra_ws?userId=${this.userId}`;
 
     // console.log(`WebSocketService: Intentando conectar a ${serverUrl} (Intento ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
 
     this.ws = new WebSocket(serverUrl);
 
     this.ws.onopen = (event) => {
-       console.log('WebSocketService: Conexión establecida.', event);
+      //  console.log('WebSocketService: Conexión establecida.', event);
       this.connectionStatusSubject.next(ConnectionStatus.CONNECTED);
       this.reconnectAttempts = 0;
 

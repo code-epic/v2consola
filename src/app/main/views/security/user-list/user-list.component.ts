@@ -100,6 +100,7 @@ export class UserListComponent implements OnInit {
 
   ListarPerfiles() {
     // Asumo que tienes una función similar a la de profile.component.ts
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_PERFILES_APP // O la función que corresponda
     this.xAPI.parametros = '';
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -160,6 +161,7 @@ export class UserListComponent implements OnInit {
 
 
   async listarUsuarios() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_USUARIOS
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -215,6 +217,7 @@ export class UserListComponent implements OnInit {
   }
 
   ok(usuario) {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.ELIMINAR_USUARIO
     this.xAPI.parametros = `${usuario.cedula},${usuario.login}`
     this.apiService.Ejecutar(this.xAPI).subscribe(

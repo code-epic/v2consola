@@ -10,6 +10,7 @@ import { TaskService } from '@services/apicore/task.service';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 
 import { Md5 } from 'ts-md5';
+import { UtilService } from '@services/util/util.service';
 
 export interface IUsuario {
   nombre: string,
@@ -131,7 +132,11 @@ export class LoginService {
 
   //public Epic: CodeEpic = new CodeEpic
 
-  constructor(private router: Router, private http: HttpClient, private taskService: TaskService, private apiService: ApiService) {
+  constructor(private router: Router, 
+    private utils: UtilService,
+    private http: HttpClient, 
+    private taskService: TaskService, 
+    private apiService: ApiService) {
     //environment.Url +
     this.urlGet = environment.API
     this.Id = environment.ID
@@ -249,7 +254,7 @@ export class LoginService {
   //ObenterAplicacion 
   protected obenterAplicacion(itk: string) {
 
-    console.log(this.Token.Usuario)
+
     let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo
     this.xAPI.funcion = "_SYS_CUsuarioPerfil";
     this.xAPI.parametros = cadena
@@ -265,22 +270,35 @@ export class LoginService {
 
           sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
           let texto = Md5.hashStr(JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
-          // console.log(data[0].Aplicacion[0].Rol);
+          
+          this.utils.uuidv4();
+
           sessionStorage.setItem("crypt", texto);
           this.router.navigate(["home"]).then(() => {
             window.location.reload();
           });
         } catch (e) {
+
           console.error('Error al procesar el perfil del usuario:', e);
           Swal.fire({
             title: 'Error de Perfil',
             text: 'No se pudo cargar la configuración de su perfil. Por favor, contacte al administrador.',
             icon: 'error'
           });
+          sessionStorage.clear();
+          localStorage.clear();
+          // this.router.navigate(["/login"]).then(() => {
+          //   window.location.reload();
+          // });
         }
 
       },
       (error) => {
+        sessionStorage.clear();
+        localStorage.clear();
+        // this.router.navigate(["/login"]).then(() => {
+        //   window.location.reload();
+        // });
         console.error('Fallo conectando al perfil del usuario: ', error)
       }
     )

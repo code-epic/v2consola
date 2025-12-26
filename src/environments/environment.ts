@@ -8,7 +8,7 @@ export const environment = {
   Url: 'https://localhost', // requerido para la Fnx_Eliminar proyectos 
   API: '/v1/api/',
   ID: 'App.Consola',
-  Hash: ':c521f27fb1b3311d686d511b668e5bd4',
+  Hash: '551582bbd1370fffe7c7198a854490e9.sse',
   buildDateTime: 'Wed Dec 17 2025 15:44:10 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
@@ -20,6 +20,7 @@ export const environment = {
     SYS_FUNCION_ZIP: "sys-function.zip"
   },
   colecciones: {
+    USUARIO: 'usuario', 
     WUSUARIO: 'wusuario',
     USER_TASK: 'user-task',
     API_CORE_NAME: "apicore",
@@ -30,9 +31,19 @@ export const environment = {
     SYS_CACHE: "sys-cache",
     SYS_TASK: "sys-task",
     SYS_LOG: "sys-log",
+    SYS_CONNECTIONS: "sys-conections",
+    SYS_DRIVERS: "sys-drivers",
   },
   functions: {
+    LISTAR_DRIVERS: 'LESBDrivers',
+    LISTAR_APIS_ID: '_SYS_R_ListarApisID',
+    INSERTAR_APLICACION: 'SSB_IAplicacion',
+    CONSULTAR_APLICACION: 'SEC_CAplicacion',
+    LISTAR_MODULOS: 'LstModulos',
     ACTUALIAZAR_MENU: "_SYS_ActualizarMenu",
+    INSERTAR_ROL_DEFINICION: "_SYS_IRolDefinicion",
+    INSERTAR_ROL_DETALLES: "_SYS_IRolDetalles",
+    EDITAR_ROL: "_SYS_CRolEditar",
     OBTENER_NOMBRE_ARCHIVO: "_SYS_getFileName",
     INSERT_FILE_PATH: "_SYS_ISetPath",
     LISTAR_COMUNICACIONES: '_SYS_LstComunicaciones',

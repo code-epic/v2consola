@@ -20,8 +20,8 @@ import { ActivatedRoute } from "@angular/router";
 
 interface MiObjeto {
   aplicacion?: string
-  funciones?: []
-  totalFunciones?: string
+  usuarios?: []
+  totalUsuarios?: string
 }
 
 @Component({
@@ -52,7 +52,7 @@ export class BinnacleApplicationsComponent implements OnInit {
   public tempData = [];
   public rowData = [];
 
-  public ListarBitacoraRegistros = [];
+  public ListarBitacoraRegistros : any;
   public tempDataRegistros = [];
   public rowDataRegistros = [];
 
@@ -87,7 +87,7 @@ export class BinnacleApplicationsComponent implements OnInit {
       const datoDecodificado = atob(datoBase64);
       const objetoRecibido: MiObjeto = JSON.parse(datoDecodificado);
       this.urlID = objetoRecibido;
-      // console.log(objetoRecibido);
+      console.log(objetoRecibido);
 
       // Verificar si existe antes de acceder
       if (objetoRecibido.aplicacion) {
@@ -97,7 +97,7 @@ export class BinnacleApplicationsComponent implements OnInit {
       }
     }
 
-    this.urlID.funciones.forEach(e => {
+    this.urlID.usuarios.forEach(e => {
       this.ListarBitacora.push(e);
     });
 
@@ -133,11 +133,14 @@ export class BinnacleApplicationsComponent implements OnInit {
   }
 
   async ModalExePlay(modal: any, data: any) {
-    data.registros.forEach(e => {
-      this.ListarBitacoraRegistros.push(e)
-    });
+    
+   
+    this.ListarBitacoraRegistros = data.actividad
+
+
+    console.log(this.ListarBitacoraRegistros);
     this.rowDataRegistros = this.ListarBitacoraRegistros
-    this.tempDataRegistros = this.tempDataRegistros
+    this.tempDataRegistros = this.ListarBitacoraRegistros.length
     this.modalService.open(modal, {
       centered: true,
       size: 'xl',
@@ -229,6 +232,14 @@ export class BinnacleApplicationsComponent implements OnInit {
 
   cerrarModal() {
     this.modalService.dismissAll();
+  }
+
+  decodificar(cadena: string): string {
+    try {
+      return atob(cadena);
+    } catch (e) {
+      return 'Error al decodificar la cadena';
+    }
   }
 
 

@@ -155,7 +155,8 @@ export class MenuComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -172,7 +173,8 @@ export class MenuComponent implements OnInit {
   }
 
   selModulo(event: any): void {
-    this.xAPI.funcion = "LstModulos";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_MODULOS;
     this.xAPI.parametros = event;
     this.xAPI.valores = ''
     this.dataModulo = [];
@@ -191,7 +193,8 @@ export class MenuComponent implements OnInit {
   }
 
   consultarMenu(acc: string) {
-    this.xAPI.funcion = "LstMenus"
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_MENUS
     this.xAPI.parametros = acc
     this.datamenu = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -235,6 +238,7 @@ export class MenuComponent implements OnInit {
 
   guardarModulo() {
     if (this.menu != '') {
+      this.xAPI = {} as IAPICore
       this.xAPI.funcion = "AgregarModulo"
       this.xAPI.parametros = ''
       this.xAPI.valores = JSON.stringify(this.IAddModulo)
@@ -276,6 +280,7 @@ export class MenuComponent implements OnInit {
   async listarAcciones(item: any) {
     if (item > 0) {
       this.rowDataAcc = []
+      this.xAPI = {} as IAPICore
       this.xAPI.funcion = "OMenuAccion"
       this.xAPI.parametros = item
       this.xAPI.valores = ''
@@ -323,6 +328,7 @@ export class MenuComponent implements OnInit {
 
   async listarSubmenu(item: string) {
     this.ListarowSubMenu = []
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = "OSubMenuAccion"
     this.xAPI.parametros = ''
     this.xAPI.valores = ''
@@ -343,6 +349,7 @@ export class MenuComponent implements OnInit {
 
   GuardarMenu() {
     this.IDefinirMenu.idmod = this.xmodulo.id
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = "AgregarMenu";
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.IDefinirMenu)
@@ -366,6 +373,7 @@ export class MenuComponent implements OnInit {
   UpdateMenu(item: any) {
     this.IDefinirMenu.id = item
     this.IDefinirMenu.idmod = this.xmodulo.id
+    this.xAPI = {} as IAPICore
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.IDefinirMenu)
     this.xAPI.funcion = environment.functions.ACTUALIAZAR_MENU;
@@ -466,6 +474,7 @@ export class MenuComponent implements OnInit {
   }
 
   GuardarAccion() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = "AgregarAccion";
     this.xAPI.valores = JSON.stringify(this.IAccion)
     this.xAPI.parametros = ''
@@ -490,6 +499,7 @@ export class MenuComponent implements OnInit {
   MenuAccionGuardar() {
     this.IAccionMenu.accionid = parseInt(this.accionid)
     this.IAccionMenu.menuid = parseInt(this.menuid)
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = "AgregarAccionMenu";
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.IAccionMenu)
@@ -509,6 +519,7 @@ export class MenuComponent implements OnInit {
   }
 
   GuardarSubMenu() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = "AgregarSubMenu";
     this.xAPI.valores = JSON.stringify(this.IAddSubMenu)
     this.xAPI.parametros = ''

@@ -30,6 +30,7 @@ import { UtilService } from "@services/util/util.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Sha256Service } from "@services/util/sha256";
 import { IdleService } from '@services/seguridad/idle.service';
+import { WsSandraService } from "@services/seguridad/ws-sandra.service";
 
 
 interface Change {
@@ -140,6 +141,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private sha256: Sha256Service,
     private router: Router,
     private idleService: IdleService,
+    private ws: WsSandraService
   ) {
     this.languageOptions = {
       en: {
@@ -350,6 +352,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.icono = 'assets/images/logo/logo.png'
     }
 
+    this.ws.Run();
 
 
   }

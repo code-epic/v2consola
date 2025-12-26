@@ -148,7 +148,8 @@ export class RoleComponent implements OnInit {
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -178,7 +179,8 @@ export class RoleComponent implements OnInit {
 
   selModulo(event: any): void {
     // console.log(event)
-    this.xAPI.funcion = "LstModulos";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_MODULOS;
     this.xAPI.parametros = event;
     this.xAPI.valores = ''
     this.dataModulo = [];
@@ -196,7 +198,8 @@ export class RoleComponent implements OnInit {
   }
 
   consultarMenu(acc: string) {
-    this.xAPI.funcion = "LstMenus"
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_MENUS
     this.xAPI.parametros = acc
     this.datamenu = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -263,6 +266,7 @@ export class RoleComponent implements OnInit {
 
   async listarAcciones() {
     this.rowDataAcc = []
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = "OMenuAccion"
     this.xAPI.parametros = this.menu[0].split('|')[0]
     this.xAPI.valores = ''
@@ -296,6 +300,7 @@ export class RoleComponent implements OnInit {
   }
 
   listarRoles() {
+    this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_SCHEMA_APP
     this.xAPI.parametros = ''
     this.xAPI.valores = ''
@@ -358,12 +363,10 @@ export class RoleComponent implements OnInit {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
       return false
     }
-    // console.log(this.lista)
-    this.xAPI.funcion = '_SYS_IRolDefinicion'
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.INSERTAR_ROL_DEFINICION
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(this.Rol)
-
-    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       data => {
         this.insertBach(data.msj, 0)
@@ -386,8 +389,8 @@ export class RoleComponent implements OnInit {
       "accion": parseInt(this.lista[posicion].accid),
       "estatus": 1
     }
-
-    this.xAPI.funcion = '_SYS_IRolDetalles'
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.INSERTAR_ROL_DETALLES
     this.xAPI.parametros = ''
     this.xAPI.valores = JSON.stringify(data)
 
@@ -424,10 +427,8 @@ export class RoleComponent implements OnInit {
 
 
   editarRol(row) {
-
-    // console.log(row)
-
-    this.xAPI.funcion = '_SYS_CRolEditar'
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.EDITAR_ROL
     this.xAPI.parametros = row.idrol
     this.xAPI.valores = ''
     this.rowData = []

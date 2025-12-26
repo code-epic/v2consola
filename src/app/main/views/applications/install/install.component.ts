@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { InstallService, SSB_IAplicacion } from '@services/applications/install.service';
-import JSONFormatter from 'json-formatter-js';
+import { SSB_IAplicacion } from '@services/applications/install.service';
 import Stepper from 'bs-stepper';
 import { NgSelectConfig } from '@ng-select/ng-select';
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
 import { UtilService } from '@services/util/util.service';
+import { environment } from 'environments/environment';
 
 
 @Component({
@@ -251,7 +251,9 @@ export class InstallComponent implements OnInit {
         await data.map(e => {
           this.hosts.push(e)
         });
-        this.hosts.push({ id: 'REPOSITORIO', host: 'github.com', descripcion: '@GITHUB' }, { id: 'REPOSITORIO', host: 'gitlab.com', descripcion: '@GITLAB' })
+        this.hosts.push({ id: 'REPOSITORIO', host: 'github.com', descripcion: '@GITHUB' }, 
+          { id: 'REPOSITORIO', host: 'gitlab.com', descripcion: '@GITLAB' },
+          { id: 'REPOSITORIO', host: 'code-epic.io', descripcion: '@GITEA' })
       },
       (error) => {
         console.log(error)
@@ -260,8 +262,8 @@ export class InstallComponent implements OnInit {
   }
 
   async guardarAplicacion() {
-
-    this.xAPI.funcion = "SSB_IAplicacion"
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.INSERTAR_APLICACION;
     this.iApp.llave = this.iApp.nombre + '.sse'
     this.xAPI.valores = JSON.stringify(this.iApp)
     if (this.iApp.identificador != null) this.xAPI.funcion = "SSB_UAplicacion"
@@ -270,7 +272,7 @@ export class InstallComponent implements OnInit {
       (data) => {
         if (data.tipo == 1) {
           var msj = "Actualizado"
-          if (this.xAPI.funcion == "SSB_IAplicacion") {
+          if (this.xAPI.funcion == environment.functions.INSERTAR_APLICACION) {
             this.iApp.identificador = data.msj;
             var msj = "Agregado"
           }
@@ -306,7 +308,8 @@ export class InstallComponent implements OnInit {
 
 
   async CargarListaConexiones() {
-    this.xAPI.funcion = "LESBDrivers";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_DRIVERS;
     this.xAPI.parametros = ''
     this.ListaConexiones = []
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -338,7 +341,8 @@ export class InstallComponent implements OnInit {
 
     if (this.iApp.identificador == null) return false
 
-    this.xAPI.funcion = "SEC_CAplicacion" //Consultar Aplicacion del sistema 
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.CONSULTAR_APLICACION //Consultar Aplicacion del sistema 
     this.xAPI.parametros = this.iApp.identificador.toString()
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -362,7 +366,8 @@ export class InstallComponent implements OnInit {
   }
 
   async lstAplicaciones() {
-    this.xAPI.funcion = "_SYS_LstAplicaciones";
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.valores = null;
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
