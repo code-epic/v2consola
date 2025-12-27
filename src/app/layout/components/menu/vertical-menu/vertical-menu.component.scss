@@ -1,3 +1,99 @@
+
+// Importa las variables de tu tema si aún no lo has hecho
+@import '@core/scss/base/bootstrap-extended/include';
+@import '@core/scss/base/components/include';
+
+
 .brand-logo {
  
+}
+
+// Animación para la aparición del indicador
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menu-footer-progress-wrapper {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  right: 1rem;
+  z-index: 100;
+  animation: fadeInUp 0.4s ease-out;
+
+  .card-progress {
+    background-color: $white;
+    border-radius: $card-border-radius;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 4px 24px 0 rgba($black, 0.08);
+    border: 1px solid $border-color;
+    transition: all 0.3s ease;
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+
+      .progress-label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: $body-color;
+      }
+      .progress-percentage,
+      .progress-speed {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $primary;
+      }
+    }
+
+    .progress.progress-xs {
+      height: 5px;
+      .progress-bar {
+        background-color: $primary;
+        transition: width 0.4s ease;
+      }
+    }
+
+    .progress-details {
+      margin-top: 0.4rem;
+      font-size: 0.7rem;
+      color: $text-muted;
+      text-align: right;
+    }
+  }
+}
+
+// Oculta el indicador cuando el menú está colapsado para mantener un diseño limpio
+.menu-collapsed {
+  .menu-footer-progress-wrapper {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// Soporte para el tema oscuro
+.dark-layout {
+  .menu-footer-progress-wrapper {
+    .card-progress {
+      background-color: $theme-dark-card-bg;
+      border-color: $theme-dark-border-color;
+      box-shadow: 0 4px 24px 0 rgba($black, 0.24);
+
+      .progress-info .progress-label {
+        color: $theme-dark-body-color;
+      }
+      .progress-details {
+        color: $theme-dark-text-muted-color;
+      }
+    }
+  }
 }

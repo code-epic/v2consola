@@ -11,6 +11,9 @@ export class MensajeService {
   contenido : []
   estatusText$ = new EventEmitter<string>();
   estatusText: string = ''
+
+  progreso$ = new EventEmitter<any>();
+  progreso: any = ''
   
   constructor() { }
 }

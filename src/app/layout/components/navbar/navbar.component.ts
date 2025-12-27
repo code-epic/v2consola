@@ -63,6 +63,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public navigation: any;
   public selectedLanguage: any;
 
+  public progressPercentage: number = 0;
+  public circumference: number = 2 * Math.PI * 16; // 2 * π * r (nuevo radio = 16)
+  public strokeOffset: number = this.circumference;
+
   @HostBinding("class.fixed-top")
   public isFixed = false;
 
@@ -264,10 +268,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.msjService.lstpid$.subscribe((pid) => {
       this.blCargando = pid.estatus;
+      this.updateProgress(pid.progress || 0);
 
       if (!pid.estatus) {
         this.taskService.update(pid.id);
         this.ok("Sandra Server", pid);
+        // Opcional: Ocultar y resetear después de un tiempo
+        setTimeout(() => { this.blCargando = false; this.updateProgress(0); }, 2000);
       }
     });
 
@@ -364,6 +371,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // Unsubscribe from all subscriptions
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
+  }
+
+  /**
+   * Actualiza el valor del anillo de progreso
+   * @param percentage El nuevo porcentaje (0-100)
+   */
+  private updateProgress(percentage: number): void {
+    this.progressPercentage = Math.round(percentage);
+    const offset = this.circumference - (this.progressPercentage / 100) * this.circumference;
+    this.strokeOffset = offset;
   }
 
   ok(titulo: string, PID: any) {

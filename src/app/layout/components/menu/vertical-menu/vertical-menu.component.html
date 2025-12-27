@@ -40,3 +40,49 @@
   <ul class="navigation navigation-main" layout="vertical" core-menu></ul>
 </div>
 <!--/ Main menu -->
+
+<!-- Menu Footer Progress -->
+<div class="menu-footer-progress-wrapper" *ngIf="blCargando">
+  <div class="card-progress">
+    <!-- Modo Determinado (con porcentaje) -->
+    <ng-container *ngIf="progressMode === 'determinate'">
+      <div class="progress-info">
+        <span class="progress-label">{{ progressLabel }}</span>
+        <span class="progress-percentage">{{ progressPercentage }}%</span>
+      </div>
+      <div class="progress progress-xs">
+        <div
+          class="progress-bar"
+          role="progressbar"
+          [style.width.%]="progressPercentage"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      <div class="progress-details">
+        <span>{{ progressText }}</span>
+      </div>
+    </ng-container>
+
+    <!-- Modo Indeterminado (con velocidad) -->
+    <ng-container *ngIf="progressMode === 'indeterminate'">
+      <div class="progress-info">
+        <span class="progress-label">{{ progressLabel }}</span>
+        <span class="progress-speed">{{ speed }}</span>
+      </div>
+      <div class="progress progress-xs">
+        <div
+          class="progress-bar progress-bar-striped progress-bar-animated"
+          role="progressbar"
+          style="width: 100%"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      <div class="progress-details">
+        <span>{{ progressText }}</span>
+      </div>
+    </ng-container>
+  </div>
+</div>
+<!--/ Main menu -->

@@ -1,5 +1,4 @@
 <div *ngIf="horizontalMenu" class="navbar-header d-xl-block d-none">
-  <!-- Navbar brand -->
   <ul class="nav navbar-nav flex-row">
     <li class="nav-item">
       <a class="navbar-brand" [routerLink]="['/']">
@@ -10,12 +9,10 @@
       </a>
     </li>
   </ul>
-  <!--/ Navbar brand -->
 </div>
 
 <div class="navbar-container d-flex content">
   <div class="bookmark-wrapper d-flex align-items-center">
-    <!-- Menu Toggler | Menu icon will be hidden in case of layout without menu -->
     <ul class="nav navbar-nav d-xl-none" *ngIf="!coreConfig.layout.menu.hidden">
       <li class="nav-item">
         <a class="nav-link menu-toggle" (click)="toggleSidebar('menu')">
@@ -23,75 +20,26 @@
         </a>
       </li>
     </ul>
-    <!--/ Menu Toggler -->
-
   </div>
-  <!-- Bookmark -->
-  <!-- <div class="spinner-grow warning text-warning" *ngIf="spiner"> -->
-  <!-- <span class="sr-only">Loading...</span> -->
-  <!-- <label>{{peso}}</label> -->
-  <!-- </div> -->
-  <!-- <app-navbar-bookmark></app-navbar-bookmark> -->
-  <!--/ Bookmark -->
-  <div class="spinner-grow warning text-warning" style="margin-top: 5px;" *ngIf="blCargando"></div>
-  <ul class="nav navbar-nav align-items-center">
-    <li class="nav-item dropdown dropdown-language">
-
-      <span class="selected-language" *ngIf="blCargando">&nbsp;&nbsp;&nbsp;Procesando tareas en segundo plano...</span>
-    </li>
-  </ul>
-
-
-
-
   <ul class="nav navbar-nav align-items-center ml-auto">
-    <!-- ? Language selection | Uncomment if needed-->
-    <!-- <li ngbDropdown class="nav-item dropdown dropdown-language">
-      <a class="nav-link dropdown-toggle" id="dropdown-flag" ngbDropdownToggle>
-        <i class="flag-icon flag-icon-{{ languageOptions[_translateService.currentLang].flag }}"></i><span
-          class="selected-language">{{ languageOptions[_translateService.currentLang].title }}</span></a>
-      <div ngbDropdownMenu aria-labelledby="dropdown-flag">
-        <a *ngFor="let lang of _translateService.getLangs()" ngbDropdownItem (click)="setLanguage(lang)">
-          <i class="flag-icon flag-icon-{{ languageOptions[lang].flag }}"></i> {{ languageOptions[lang].title }}
-        </a>
-      </div>
-    </li> -->
-    <!--/ Language selection -->
-
-
-    <!-- Toggle skin -->
-    <li class="nav-item d-none d-lg-block">
-      <a class="nav-link nav-link-style btn" (click)="toggleDarkSkin()">
-        <span [ngClass]="currentSkin === 'dark' ? 'icon-sun' : 'icon-moon'" class="ficon font-medium-5 feather"></span>
-      </a>
-    </li>
-    <!--/ Toggle skin -->
-
-    <!-- Search -->
-    <!-- <app-navbar-search></app-navbar-search> -->
-    <!--/ Search -->
-
-
-    <!-- Notification -->
-    <!-- <app-navbar-notification></app-navbar-notification> -->
-    <!--/ Notification -->
-
-    <!-- User Dropdown -->
+    
     <li ngbDropdown class="nav-item dropdown-user">
       <a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" ngbDropdownToggle
         id="navbarUserDropdown" aria-haspopup="true" aria-expanded="false">
         <div class="user-nav d-sm-flex d-none">
           <span class="user-name font-weight-bolder">{{ usuario }}</span><span class="user-status">{{tipo}}</span>
         </div>
-        <span class="avatar"><img class="round" src="{{icono}}" alt="avatar" height="40"
-            width="40" /><span class="avatar-status-online"></span></span>
+        <span class="avatar"><img class="round" src="{{icono}}" alt="avatar" height="40" width="40" /><span
+            class="avatar-status-online"></span></span>
       </a>
-      <div ngbDropdownMenu aria-labelledby="navbarUserDropdown" class="dropdown-menu dropdown-menu-right animated-dropdown">
-        
-        <a *ngIf="!bDirectorioActivo" ngbDropdownItem (click)="ModalChangePassword(ChangePassword)"><span [data-feather]="'key'"
-            [class]="'mr-50'"></span> Cambiar Clave</a>
+      <div ngbDropdownMenu aria-labelledby="navbarUserDropdown"
+        class="dropdown-menu dropdown-menu-right animated-dropdown">
+
+        <a *ngIf="!bDirectorioActivo" ngbDropdownItem (click)="ModalChangePassword(ChangePassword)"><span
+            [data-feather]="'key'" [class]="'mr-50'"></span> Cambiar Clave</a>
         <div *ngIf="!bDirectorioActivo" class="dropdown-divider"></div>
-        <a ngbDropdownItem [routerLink]="['/options/upgrade']"><span [data-feather]="'gift'" [class]="'mr-50'"></span> Novedades</a>
+        <a ngbDropdownItem [routerLink]="['/options/upgrade']"><span [data-feather]="'gift'" [class]="'mr-50'"></span>
+          Novedades</a>
         <a ngbDropdownItem (click)="logout()"><span [data-feather]="'power'" [class]="'mr-50'"></span> Salir</a>
       </div>
     </li>
@@ -117,13 +65,15 @@
     <div class="alert alert-primary p-1 mb-2" role="alert">
       <div class="d-flex align-items-center">
         <i [data-feather]="'info'" class="mr-1"></i>
-        <small>La contraseña debe tener entre 8-16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).</small>
+        <small>La contraseña debe tener entre 8-16 caracteres, incluir mayúsculas, minúsculas, números y caracteres
+          especiales (@$!%*?&).</small>
       </div>
     </div>
 
     <form method="post" id="frmChange" name="frmChange">
       <div class="form-group">
-        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'unlock'" class="mr-50" [size]="14"></i>Contraseña Actual</label>
+        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'unlock'" class="mr-50"
+            [size]="14"></i>Contraseña Actual</label>
         <div class="input-group input-group-merge">
           <input [type]="showClave ? 'text' : 'password'" [(ngModel)]="Change.clave"
             [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Ingrese su clave actual" />
@@ -136,11 +86,11 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'key'" class="mr-50" [size]="14"></i>Nueva Contraseña</label>
+        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'key'" class="mr-50"
+            [size]="14"></i>Nueva Contraseña</label>
         <div class="input-group input-group-merge">
           <input [type]="showNueva ? 'text' : 'password'" [(ngModel)]="Change.nueva"
-            (ngModelChange)="checkPasswordStrength($event)"
-            [ngModelOptions]="{standalone: true}" class="form-control" 
+            (ngModelChange)="checkPasswordStrength($event)" [ngModelOptions]="{standalone: true}" class="form-control"
             placeholder="Ingrese su nueva clave"
             [class.is-invalid]="Change.nueva !== Change.repite && Change.repite.length > 0" />
           <div class="input-group-append">
@@ -149,31 +99,30 @@
             </span>
           </div>
         </div>
-        
+
         <!-- Password Strength Indicator -->
         <div class="mt-1" *ngIf="Change.nueva.length > 0">
           <div class="d-flex justify-content-between align-items-center mb-50">
-            <small class="font-weight-bold" [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
+            <small class="font-weight-bold"
+              [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
               Nivel de seguridad: {{ passwordStrengthLabel }}
             </small>
             <small class="text-muted">{{ passwordStrengthWidth }}%</small>
           </div>
           <div class="progress progress-bar-primary" style="height: 6px;">
-            <div class="progress-bar" role="progressbar" 
-              [ngClass]="passwordStrengthColor" 
-              [style.width.%]="passwordStrengthWidth" 
-              aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar" role="progressbar" [ngClass]="passwordStrengthColor"
+              [style.width.%]="passwordStrengthWidth" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
 
       </div>
 
       <div class="form-group">
-        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'shield'" class="mr-50" [size]="14"></i>Repetir Contraseña</label>
+        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'shield'" class="mr-50"
+            [size]="14"></i>Repetir Contraseña</label>
         <div class="input-group input-group-merge">
           <input [type]="showRepite ? 'text' : 'password'" [(ngModel)]="Change.repite"
-            [ngModelOptions]="{standalone: true}" class="form-control" 
-            placeholder="Confirme su nueva clave"
+            [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Confirme su nueva clave"
             [class.is-invalid]="Change.nueva !== Change.repite && Change.repite.length > 0" />
           <div class="input-group-append">
             <span class="input-group-text cursor-pointer" (click)="showRepite = !showRepite">
@@ -187,30 +136,14 @@
       </div>
     </form>
   </div>
-  <div class="modal-footer bg-light-secondary navbar-shadow"> 
-    <button type="button" class="btn btn-primary btn-icon-text" (click)="ChangesPassword()" rippleEffect 
+  <div class="modal-footer bg-light-secondary navbar-shadow">
+    <button type="button" class="btn btn-primary btn-icon-text" (click)="ChangesPassword()" rippleEffect
       [disabled]="passwordStrengthWidth < 80 || Change.nueva !== Change.repite">
       <span [data-feather]="'save'" class="mr-50"></span> Cambiar Clave
     </button>
-    <button type="button" class="btn btn-outline-danger btn-icon-text" (click)="modal.close('Accept click')" rippleEffect>
+    <button type="button" class="btn btn-outline-danger btn-icon-text" (click)="modal.close('Accept click')"
+      rippleEffect>
       <span [data-feather]="'x'" class="mr-50"></span> Cancelar
     </button>
   </div>
 </ng-template>
-
-<style>
-  .animated-dropdown {
-    animation: fadeInDown 0.3s ease-out;
-  }
-
-  @keyframes fadeInDown {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-</style>

@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ApiService } from "@services/apicore/api.service";
 import { SessionService, ConnectionStatus } from "@services/util/session.service";
+import { MensajeService } from '@services/util/mensaje.service';
 
 interface IncomingMessage { // Para otros tipos de mensaje que no sean Ollama chunks
     message: string;
@@ -34,8 +35,11 @@ export class WsSandraService {
     msjx: string = '';
     idx: string = '';
 
-    constructor(private sessionService: SessionService,
-        private apiService: ApiService) { }
+    constructor(
+        private sessionService: SessionService,
+        private apiService: ApiService,
+        private mensajeService: MensajeService
+    ) { }
 
 
     Run(){
@@ -54,8 +58,9 @@ export class WsSandraService {
                 // Intenta parsear el JSON de los chunks de Ollama
                 try {
                     const data = JSON.parse(dataAsString);
+                    // console.log('ChatComponent: Mensaje WebSocket recibido y parseado:', data);
+
                     if (data && typeof data.content === 'string' && typeof data.done === 'boolean') {
-                        // Es un chunk de Ollama
                         const lastMessage = this.messages[this.messages.length - 1];
                         if (lastMessage && lastMessage.from === 'bot' && this.loading) {
                             lastMessage.message += data.content;
@@ -69,12 +74,14 @@ export class WsSandraService {
                             this.saveHistory();
                         }
                     } else if (data && typeof data.message === 'string' && typeof data.id === 'string' && typeof data.from === 'string') {
-                        // Es un mensaje general del servidor con formato predefinido
                         this.messages.push({ from: data.from, message: data.message, id: data.id });
-                        this.loading = false; // No es una respuesta de Ollama
+                        this.loading = false; 
                         this.saveHistory();
-                    } else {
+                    } else if (data.from === 'exec-pipe') {
                         // Mensaje con formato inesperado
+                        this.mensajeService.progreso$.emit(data);
+
+                    } else {
                         console.warn('ChatComponent: Mensaje WebSocket con formato inesperado:', dataAsString);
                         this.messages.push({ from: 'bot', message: String(dataAsString), id: this.userId });
                         this.loading = false;
@@ -82,8 +89,8 @@ export class WsSandraService {
                     }
                 } catch (e) {
                     // Error al parsear (podría ser un mensaje de texto plano o JSON inválido)
-                    console.error('ChatComponent: Error al parsear mensaje WebSocket:', e, 'Mensaje crudo:', dataAsString);
-                    this.messages.push({ from: 'bot', message: `Error de servidor: ${dataAsString.substring(0, 100)}...`, id: this.userId });
+                    // console.error('ChatComponent: Error al parsear mensaje WebSocket:', e, 'Mensaje crudo:', dataAsString);
+                    // this.messages.push({ from: 'bot', message: `Error de s ervidor: ${dataAsString.substring(0, 100)}...`, id: this.userId });
                     this.loading = false;
                     this.saveHistory();
                 }

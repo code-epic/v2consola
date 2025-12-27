@@ -17,6 +17,9 @@ import {
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
 import { ActivatedRoute } from "@angular/router";
+import { CompresionService } from "@services/util/compresion.service";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface MiObjeto {
   aplicacion?: string
@@ -52,13 +55,22 @@ export class BinnacleApplicationsComponent implements OnInit {
   public tempData = [];
   public rowData = [];
 
-  public ListarBitacoraRegistros : any;
+  public ListarBitacoraRegistros: any;
   public tempDataRegistros = [];
   public rowDataRegistros = [];
 
   // Pagination
   public page = 1;
   public pageSize = 7;
+
+  // Detalle del Log para el Modal
+  public detailedLog: any = null;
+  public decodedConsulta: string = '';
+  public decodedContenido: string = '';
+
+  // Estado de Navegación dentro del Modal
+  public selectedActivity: any = null;
+  public selectedActivityLogs: any[] = [];
 
   public searchValue = '';
   public searchRegistros = '';
@@ -70,6 +82,7 @@ export class BinnacleApplicationsComponent implements OnInit {
   public basicSelectedOption: number = 7;
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
+ 
 
   constructor(
     private taskService: TaskService,
@@ -77,35 +90,11 @@ export class BinnacleApplicationsComponent implements OnInit {
     private msjService: WsocketsService,
     private modalService: NgbModal,
     private route: ActivatedRoute,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private compresionService: CompresionService
   ) { }
 
   async ngOnInit() {
-    const datoBase64 = this.route.snapshot.paramMap.get('id');
-
-    if (datoBase64) {
-      const datoDecodificado = atob(datoBase64);
-      const objetoRecibido: MiObjeto = JSON.parse(datoDecodificado);
-      this.urlID = objetoRecibido;
-      console.log(objetoRecibido);
-
-      // Verificar si existe antes de acceder
-      if (objetoRecibido.aplicacion) {
-        console.log(objetoRecibido.aplicacion);
-      } else {
-        this.utilService.AlertMini('top-end', 'error', 'La propiedad aplicacion no existe en el objeto recibido.', 3000)
-      }
-    }
-
-    this.urlID.usuarios.forEach(e => {
-      this.ListarBitacora.push(e);
-    });
-
-    console.log(this.ListarBitacora);
-    this.rowData = this.ListarBitacora;
-    this.tempData = this.rowData;
-
-
     // content header
     this.contentHeader = {
       headerTitle: "Auditoría",
@@ -130,17 +119,35 @@ export class BinnacleApplicationsComponent implements OnInit {
         ],
       },
     };
+    const datoBase64 = this.route.snapshot.paramMap.get('id');
+
+    if (datoBase64) {
+      const datoDecodificado = atob(datoBase64);
+      const objetoRecibido: MiObjeto = JSON.parse(datoDecodificado);
+      this.urlID = objetoRecibido;
+
+      // Verificar si existe antes de acceder
+      if (!objetoRecibido.aplicacion) {
+        this.utilService.AlertMini('top-end', 'error', 'La propiedad aplicacion no existe en el objeto recibido.', 3000)
+      }
+    }
+
+    this.urlID.usuarios.forEach(e => {
+      this.ListarBitacora.push(e);
+    });
+
+    this.rowData = this.ListarBitacora;
+    this.tempData = this.rowData;
+
+
+
   }
 
-  async ModalExePlay(modal: any, data: any) {
-    
-   
-    this.ListarBitacoraRegistros = data.actividad
-
-
-    console.log(this.ListarBitacoraRegistros);
-    this.rowDataRegistros = this.ListarBitacoraRegistros
-    this.tempDataRegistros = this.ListarBitacoraRegistros.length
+  ModalExePlay(modal: any, data: any) {
+    this.selectedActivity = null; // Resetea la vista al abrir el modal
+    this.ListarBitacoraRegistros = data.actividad;
+    this.rowDataRegistros = [...this.ListarBitacoraRegistros];
+    this.tempDataRegistros = [...this.ListarBitacoraRegistros]; // Guardar copia para el filtro
     this.modalService.open(modal, {
       centered: true,
       size: 'xl',
@@ -150,11 +157,17 @@ export class BinnacleApplicationsComponent implements OnInit {
     });
   }
 
-  ModalVerConsulta(modal: any, data: any) {
-    this.xrs = this.msj
-    setTimeout(() => {
-      this.xrs = data.consulta ? data.consulta : 'No hay registros...';
-    }, 1000);
+  ModalVerConsulta(modal: any, log: any) {
+    this.detailedLog = log;
+
+    this.decodedConsulta = log.consulta
+      ? this.decodificar(log.consulta)
+      : 'No hay consulta para mostrar.';
+
+    this.decodedContenido = log.contenido
+      ? this.compresionService.descomprimirZip(log.contenido)
+      : 'No hay contenido para mostrar.';
+
     this.modalService.open(modal, {
       centered: true,
       size: 'xl',
@@ -163,12 +176,42 @@ export class BinnacleApplicationsComponent implements OnInit {
       windowClass: 'fondo-modal',
     });
   }
+
+  /**
+   * Muestra los logs de una actividad seleccionada dentro del modal.
+   * @param activity La fila de la actividad seleccionada.
+   */
+  viewActivityLogs(activity: any) {
+    this.selectedActivity = activity;
+    this.selectedActivityLogs = activity.logs;
+  }
+
+  /** Vuelve a la vista de la lista de actividades. */
+  goBackToActivities() {
+    this.selectedActivity = null;
+  }
+
+  /**
+   * Devuelve un ícono de Feather apropiado basado en el nombre de la actividad.
+   * @param activityName El nombre de la actividad.
+   * @returns El nombre del ícono de Feather.
+   */
+  getIconForActivity(activityName: string): string {
+    const name = activityName.toLowerCase();
+    if (name.includes('actualiza')) return 'edit-2';
+    if (name.includes('crea') || name.includes('inserta')) return 'plus-circle';
+    if (name.includes('elimina') || name.includes('borra')) return 'trash-2';
+    if (name.includes('login') || name.includes('sesión')) return 'log-in';
+    if (name.includes('consulta') || name.includes('lista')) return 'search';
+    return 'activity'; // Ícono por defecto
+  }
+
 
   filterUpdate(event: any) {
     const val = event.target.value.toLowerCase();
     // filter our data
     const temp = this.tempData.filter(function (d) {
-      return d.funcion.toLowerCase().indexOf(val) !== -1 || !val;
+      return d.id_usuario.toLowerCase().indexOf(val) !== -1 || !val;
     });
     // update the rows
     this.rowData = temp;
@@ -179,9 +222,9 @@ export class BinnacleApplicationsComponent implements OnInit {
   filterUpdateRegister(event: any) {
     const val = event.target.value.toLowerCase();
     // filter our data
-    const temps = this.tempDataRegistros.filter(function (d) {
-      return d.usuario.toLowerCase().indexOf(val) !== -1 || !val;
-    });
+    const temps = this.tempDataRegistros.filter(d => {
+      return d.nombre.toLowerCase().indexOf(val) !== -1 || !val;
+    }); // Corregido de 'usuario' a 'nombre'
     // update the rows
     this.rowDataRegistros = temps;
     // Reset to first page
@@ -229,9 +272,194 @@ export class BinnacleApplicationsComponent implements OnInit {
     this.page = 1;
   }
 
+  /**
+   * Copia un texto al portapapeles y muestra una alerta.
+   * @param text El texto a copiar.
+   */
+  copyToClipboard(text: string) {
+    navigator.clipboard.writeText(text).then(() => {
+      this.utilService.AlertMini('top-end', 'success', 'Copiado al portapapeles', 1500);
+    });
+  }
 
   cerrarModal() {
     this.modalService.dismissAll();
+  }
+
+  /**
+ * Exporta la bitácora a un documento PDF con un diseño mejorado y profesional.
+ * 
+ * Normas y Buenas Prácticas Aplicadas:
+ * 1.  **Claridad y Legibilidad**: Se utilizan fuentes estándar (Helvetica) y un diseño limpio con espaciado adecuado.
+ *     La información se presenta de forma jerárquica y fácil de leer.
+ * 2.  **Contenido Esencial (Adaptado de NIST SP 800-53 - AU-3)**: Aunque no se implementa la norma completa,
+ *     el reporte incluye información clave recomendada para pistas de auditoría:
+ *     - Quién (ID de Usuario)
+ *     - Qué (Tipo de evento/actividad)
+ *     - Cuándo (Fecha y hora)
+ *     - Información adicional (Duración de la operación)
+ * 3.  **Integridad de la Información**: Se eliminó la columna HASH a petición, pero se mantiene un formato
+ *     consistente para facilitar la revisión manual. En un entorno de alta seguridad, se recomendaría
+ *     mantener hashes o firmas digitales para garantizar la no repudiación.
+ * 4.  **Metadatos del Reporte**: La portada y el pie de página incluyen metadatos cruciales como el nombre
+ *     de la aplicación, la fecha de generación del reporte y la paginación, lo cual es vital para la
+ *     gestión de documentos.
+ * 5.  **Resumen Ejecutivo**: Se incluye un resumen al final del documento que proporciona una vista rápida
+ *     de las métricas clave, útil para análisis gerencial.
+ */
+  exportarBitacoraPDF(): void {
+    if (this.rowData.length === 0) {
+      this.utilService.AlertMini('top-end', 'warning', 'No hay datos para exportar.', 2000);
+      return;
+    }
+
+    // const doc = new jsPDF({
+    //   orientation: 'p',
+    //   unit: 'pt',
+    //   format: 'letter'
+    // });
+
+    const doc = new jsPDF();
+
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+
+
+
+    // ==========================================
+    // PÁGINA 1: PORTADA ELEGANTE
+    // ==========================================
+
+    // Titulo Principal - Azul Suave
+    doc.setFontSize(26);
+    doc.setTextColor(100, 181, 246); // Blue 300 (Pastel)
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPORTE DE BITÁCORA', pageWidth / 2, 80, { align: 'center' });
+
+    // Línea Decorativa Sutil
+    doc.setDrawColor(224, 224, 224); // Grey 300
+    doc.setLineWidth(0.5);
+    doc.line(60, 85, pageWidth - 60, 85);
+
+    // Subtítulo (Nombre del Perfil)
+    doc.setFontSize(18);
+    doc.setTextColor(97, 97, 97); // Grey 700
+    doc.text(this.urlID.aplicacion || 'Aplicación no especificada', pageWidth / 2, 100, { align: 'center' });
+
+    // Detalles Centrados
+    doc.setFontSize(12);
+    doc.setTextColor(117, 117, 117); // Grey 600
+    doc.text('Resumen General de la Aplicación', pageWidth / 2, 180, { align: 'center' });
+    doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth / 2, 122, { align: 'center' });
+
+    // Información de generación
+    // doc.setFontSize(9);
+    // doc.setTextColor(189, 189, 189); // Grey 400
+    // doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
+
+    // ==========================================
+    // PÁGINA 2+: TABLA DE LOGS
+    // ==========================================
+    doc.addPage();
+
+    const tableData = [];
+    this.rowData.forEach(user => {
+      if (user.actividad && user.actividad.length > 0) {
+        user.actividad.forEach(activity => {
+          if (activity.logs && activity.logs.length > 0) {
+            activity.logs.forEach(log => {
+              tableData.push({
+                usuario: user.id_usuario,
+                actividad: activity.nombre,
+                fecha: new Date(log.fecha).toLocaleString('es-VE'),
+                duracion: this.formatDuration(log.duracion),
+              });
+            });
+          }
+        });
+      }
+    });
+
+    autoTable(doc, {
+      startY: 27,
+      head: [['USUARIO', 'ACTIVIDAD', 'FECHA Y HORA', 'DURACIÓN']],
+      body: tableData.map(d => [d.usuario, d.actividad, d.fecha, d.duracion]),
+      theme: 'grid',
+      styles: {
+        font: 'helvetica',
+        fontSize: 9,
+        cellPadding: 3,
+        valign: 'middle',
+        lineColor: [238, 238, 238],
+        lineWidth: 0.1,
+        textColor: [97, 97, 97]
+      },
+
+      headStyles: {
+        fillColor: [255, 255, 255], // White Header
+        textColor: [100, 181, 246], // Blue Text
+        fontStyle: 'bold',
+        halign: 'left',
+        lineWidth: 0, // No borders on header
+        lineColor: [255, 255, 255]
+      },
+
+      columnStyles: {
+        0: { cellWidth: 0 },
+        3: { cellWidth: 40, halign: 'center' }
+      },
+
+      didDrawPage: (data) => {
+        // Encabezado en cada página de la tabla
+        doc.setFontSize(14);
+        doc.setTextColor(100, 181, 246);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(100, 181, 246);
+        doc.text('Registros detallados de la bitácora', 14, 20);
+
+
+
+        // doc.text('Detalle de Actividades y Logs', pageWidth / 2, 40, { align: 'center' });
+
+        // Pie de página
+        const pageCount = doc.getNumberOfPages();
+        doc.setFontSize(9);
+        doc.setTextColor(189, 189, 189); // Grey 400
+        doc.text(`Página ${data.pageNumber} de ${pageCount}`, pageWidth - 40, pageHeight - 20, { align: 'right' });
+        doc.text(`Impreso: ${new Date().toLocaleString('es-VE')}`, 40, pageHeight - 20);
+      }
+    });
+
+    // ==========================================
+    // SECCIÓN FINAL: RESUMEN
+    // ==========================================
+    let finalTableY = (doc as any).lastAutoTable.finalY;
+    if (pageHeight - finalTableY < 150) { // Si no hay espacio, agregar nueva página
+      doc.addPage();
+      finalTableY = 40;
+    }
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(97, 97, 97); // Grey 700
+    doc.text('Resumen del Reporte', 15, finalTableY + 15);
+
+    const totalUsuarios = this.rowData.length;
+    const totalActividades = this.rowData.reduce((sum, user) => sum + (user.actividad ? user.actividad.length : 0), 0);
+    const totalLogs = tableData.length;
+
+    const summaryText = `
+    - Total de Usuarios con Actividad: ${totalUsuarios}
+    - Total de Tipos de Actividad Registradas: ${totalActividades}
+    - Total de Registros (Logs): ${totalLogs}
+    `;
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(97, 97, 97); // Grey 700
+    doc.text(summaryText, 18, finalTableY + 18);
+
+    const fileName = `Bitacora_${this.urlID.aplicacion || 'Reporte'}.pdf`.replace(/ /g, '_');
+    doc.save(fileName);
   }
 
   decodificar(cadena: string): string {
@@ -244,4 +472,3 @@ export class BinnacleApplicationsComponent implements OnInit {
 
 
 }
-

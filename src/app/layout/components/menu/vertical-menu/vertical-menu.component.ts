@@ -9,6 +9,7 @@ import { CoreConfigService } from '@core/services/config.service';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { ApiService } from '@services/apicore/api.service';
+import { MensajeService } from '@services/util/mensaje.service';
 
 @Component({
   selector: 'vertical-menu',
@@ -28,6 +29,14 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
   public logoWidth: string = '36';
   public isBDV: boolean = false;
 
+  // Propiedades para el indicador de progreso
+  public blCargando: boolean = false;
+  public progressPercentage: number = 0;
+  public progressText: string = '';
+  public progressMode: 'determinate' | 'indeterminate' = 'determinate';
+  public speed: string = '';
+  public progressLabel: string = 'Sincronizando...';
+
   /**
    * Constructor
    *
@@ -42,6 +51,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     private _coreSidebarService: CoreSidebarService,
     private _router: Router,
     private apiService: ApiService,
+    private mensajeService: MensajeService
   ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -56,6 +66,21 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    * On Init
    */
   ngOnInit(): void {
+
+
+    this.mensajeService.progreso$.subscribe((progreso) => {
+      // console.log('VerticalMenuComponent: Progreso recibido:', progreso);
+      if (progreso.from === 'exec-pipe' && progreso.type === 'progress') {
+        this.progressMode = 'indeterminate';
+        this.progressLabel = 'Generando Respaldo...';
+        this.blCargando = true;
+        this.actualizarProgresoIndeterminado(progreso.message.bytes, progreso.message.speed);
+      }else if (progreso.from === 'exec-pipe' && progreso.type === 'dump_finished') {
+        this.blCargando = false;
+      }
+
+    });
+
     // Subscribe config change
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
@@ -105,7 +130,82 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     } else {
       this.logo = 'assets/images/logo/logo.png'
     }
+
+    // this.simularProgreso();
+    // this.simularProgresoIndeterminado(); // Descomenta esta línea para probar el modo indeterminado
   }
+
+  /**
+   * Simula una carga DETERMINADA para demostrar el indicador de progreso.
+   */
+  simularProgreso(): void {
+    this.blCargando = true;
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.floor(Math.random() * 10) + 5; // Incremento aleatorio
+      if (progress >= 100) {
+        progress = 100;
+        this.actualizarProgreso(progress, 25.8); // Actualiza una última vez al 100%
+        clearInterval(interval);
+        setTimeout(() => { this.blCargando = false; }, 2000); // Oculta después de 2s
+        return;
+      }
+      this.actualizarProgreso(progress, 25.8);
+    }, 800);
+  }
+  /**
+   * Actualiza los valores del indicador de progreso.
+   * @param percentage El progreso en porcentaje (0-100).
+   * @param totalSize El tamaño total de la descarga/proceso.
+   */
+  actualizarProgreso(percentage: number, totalSize: number): void {
+    this.progressPercentage = Math.round(percentage);
+    const downloaded = (totalSize * (this.progressPercentage / 100)).toFixed(1);
+    this.progressText = `${downloaded} MB de ${totalSize} MB`;
+  }
+
+
+  /**
+   * Actualiza los valores del indicador de progreso.
+   * Simula una carga INDETERMINADA (ej. dump de BD) para demostrar el indicador.
+   */
+  simularProgresoIndeterminado(): void {
+    this.progressMode = 'indeterminate';
+    this.progressLabel = 'Generando Dump BD...';
+    this.blCargando = true;
+    let bytes = 0;
+    const interval = setInterval(() => {
+      const chunk = (Math.random() * 500000) + 100000; // entre 100KB y 600KB
+      bytes += chunk;
+      const currentSpeed = chunk / 0.8; // chunk por intervalo de 800ms
+      this.actualizarProgresoIndeterminado(bytes, currentSpeed);
+
+      if (bytes > 15000000) { // Detener después de ~15MB para la demo
+        clearInterval(interval);
+        setTimeout(() => { this.blCargando = false; }, 2000);
+      }
+    }, 800);
+  }
+
+  /**
+ * Actualiza los valores del indicador de progreso INDETERMINADO.
+ * @param bytes Los bytes procesados hasta ahora.
+ * @param speedInBps La velocidad actual en bytes por segundo.
+ */
+  actualizarProgresoIndeterminado(bytes: number, speedInBps: number): void {
+    if (speedInBps > 1024 * 1024) {
+      this.speed = `${(speedInBps / (1024 * 1024)).toFixed(2)} MB/s`;
+    } else {
+      this.speed = `${(speedInBps / 1024).toFixed(1)} KB/s`;
+    }
+
+    if (bytes > 1024 * 1024) {
+      this.progressText = `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    } else {
+      this.progressText = `${(bytes / 1024).toFixed(1)} KB`;
+    }
+  }
+
 
   /**
    * On Destroy

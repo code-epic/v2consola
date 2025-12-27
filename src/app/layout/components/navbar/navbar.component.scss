@@ -13,6 +13,7 @@
   .touchspin-wrapper {
     width: 6.4rem;
   }
+
   &:focus-within {
     box-shadow: none !important;
   }
@@ -48,55 +49,232 @@ app-navbar-bookmark {
 
 
 
-.drop { filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7)); }
+.drop {
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));
+}
 
 .segundo-plano {
-position: fixed;
-z-index: 1040; /* Debe ser menor que el z-index del backdrop del modal (1050) */
-bottom: 20px;
-right: 900px;
-top: 900px;
-left: 630px;
+  position: fixed;
+  z-index: 1040;
+  /* Debe ser menor que el z-index del backdrop del modal (1050) */
+  bottom: 20px;
+  right: 900px;
+  top: 900px;
+  left: 630px;
 }
 
 .segundo-plano:before,
 .segundo-plano:after {
-content: "";
-position: absolute;
-top: 10px;
-left: 10px;
-width: 400px;
-height:400px;
-border-radius: 50%;
-background-color: #f8ebce;
-opacity: 0;
-animation: onda 1s infinite;
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background-color: #f8ebce;
+  opacity: 0;
+  animation: onda 1s infinite;
 }
 
 .segundo-plano:before {
-animation-delay: 0.2s;
+  animation-delay: 0.2s;
 }
 
 .segundo-plano:after {
-animation-delay: 0.5s;
+  animation-delay: 0.5s;
 }
 
 .segundo-plano img {
-position: relative;
-z-index: 2;
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes onda {
-0% {
+  0% {
     transform: scale(1);
-}
+  }
 
-15%{
+  15% {
     opacity: 1;
-}
+  }
 
-100% {
+  100% {
     opacity: 0;
     transform: scale(2.5);
+  }
 }
+
+.animated-dropdown {
+  animation: fadeInDown 0.3s ease-out;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ======================================================================================
+// Indicador de Progreso Circular (Mejorado)
+// ======================================================================================
+
+@keyframes progress-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+.progress-ring-wrapper {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+
+  .progress-ring {
+    transform: rotate(-90deg);
+
+    circle {
+      fill: transparent;
+      transition: stroke-dashoffset 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .progress-ring__pulse {
+      stroke: rgba(115, 103, 240, 0.3); // Color primario con alpha
+      animation: progress-pulse 2.2s infinite ease-out;
+      transform-origin: center;
+    }
+
+    .progress-ring__track {
+      stroke: #e9ecef;
+    }
+
+    .progress-ring__indicator {
+      stroke: #7367f0; // Color primario del tema
+      stroke-linecap: round;
+    }
+  }
+
+  .progress-ring__text-container {
+    position: absolute;
+    color: #434050;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+    .progress-ring__percent-sign {
+      font-size: 0.6rem;
+      font-weight: 600;
+      margin-left: 1px;
+      opacity: 0.8;
+    }
+  }
+}
+
+.dark-layout {
+  .progress-ring-wrapper {
+    .progress-ring__track {
+      stroke: #3b4253; // Color de fondo más oscuro para el tema dark
+    }
+    .progress-ring__text-container {
+      color: #d0d2d6; // Texto más claro para el tema dark
+    }
+  }
+}
+
+// ======================================================================================
+// Indicador de Progreso Circular
+// ======================================================================================
+
+@keyframes progress-pulse {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+.progress-ring-wrapper {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: help;
+
+  .progress-ring {
+    transform: rotate(-90deg);
+
+    circle {
+      fill: transparent;
+      transition: stroke-dashoffset 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    .progress-ring__pulse {
+      stroke: rgba(115, 103, 240, 0.3); // Color primario con alpha
+      animation: progress-pulse 2.2s infinite ease-out;
+      transform-origin: center;
+    }
+
+    .progress-ring__track {
+      stroke: #e9ecef;
+    }
+
+    .progress-ring__indicator {
+      stroke: #7367f0; // Color primario del tema (CoreUI)
+      stroke-linecap: round;
+    }
+  }
+
+  .progress-ring__text-container {
+    position: absolute;
+    color: #434050;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1;
+    .progress-ring__percent-sign {
+      font-size: 0.6rem;
+      font-weight: 600;
+      margin-left: 1px;
+      opacity: 0.8;
+    }
+  }
+}
+
+.dark-layout {
+  .progress-ring-wrapper {
+    .progress-ring__track {
+      stroke: #3b4253; // Color de fondo más oscuro para el tema dark
+    }
+    .progress-ring__text-container {
+      color: #d0d2d6; // Texto más claro para el tema dark
+    }
+  }
 }
