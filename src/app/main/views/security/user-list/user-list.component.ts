@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ColumnMode, DatatableComponent, SelectionType, } from "@swimlane/ngx-datatable";
@@ -16,7 +16,7 @@ import autoTable from 'jspdf-autotable';
   encapsulation: ViewEncapsulation.None,
   providers: [NgbModalConfig, NgbModal]
 })
-export class UserListComponent implements OnInit {
+export class UserListComponent implements OnInit, OnDestroy {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @BlockUI() blockUI: NgBlockUI;
@@ -62,6 +62,9 @@ export class UserListComponent implements OnInit {
 
   public lstPerfil = []; // Asegúrate de cargar esta lista, por ejemplo en ngOnInit
   public selectedProfile: string = ''; // Propiedad para el ngModel del nuevo select
+
+  // Propiedades para el manejo de bloqueos y contadores
+  private countdownIntervals = new Map<string, number>();
 
 
   constructor(
@@ -162,20 +165,40 @@ export class UserListComponent implements OnInit {
 
   async listarUsuarios() {
     this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.LISTAR_USUARIOS
+    this.xAPI.funcion = environment.functions.LISTAR_USUARIOS_BLOQUEADOS
     this.xAPI.parametros = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
+        // Limpiar contadores anteriores para evitar fugas de memoria
+        this.clearAllCountdowns();
+
         data.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
+
+        // Iniciar contadores para usuarios bloqueados
+        data.forEach(user => {
+          if (user.bloqueo) {
+            this.startCountdown(user);
+          }
+        });
+
         this.rowData = data;
         this.tempData = this.rowData;
         this.count = this.rowData.length
-        // console.log(data)
       },
       (error) => {
         console.log(error)
       }
     )
+  }
+
+  getRowClass = (row) => {
+    if (row.bloqueo) {
+      return 'row-blocked';
+    }
+    if (row.estatus == 0) {
+      return 'row-inactive';
+    }
+    return '';
   }
 
   filterUpdate(event: any) {
@@ -222,8 +245,6 @@ export class UserListComponent implements OnInit {
     this.xAPI.parametros = `${usuario.cedula},${usuario.login}`
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-
-        console.log(data)
         this.listarUsuarios()
       },
       (error) => {
@@ -232,6 +253,73 @@ export class UserListComponent implements OnInit {
     )
   }
 
+  DesbloquearUser(usuario: any) {
+    Swal.fire({
+      title: `Desbloquear Usuario`,
+      text: `¿Está seguro que desea desbloquear al usuario ${usuario.nombre}?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, Aceptar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.xAPI = {} as IAPICore;
+        this.xAPI.funcion = environment.functions.ELIMINAR_BLOQUEO_USUARIO; // Asegúrate que esta función exista en tu backend
+        this.xAPI.parametros = usuario.login;
+        this.apiService.Ejecutar(this.xAPI).subscribe(
+          () => {
+            Swal.fire('¡Desbloqueado!', 'El usuario ha sido desbloqueado.', 'success');
+            this.listarUsuarios(); // Refrescar la lista
+          },
+          (error) => {
+            console.error(error);
+            Swal.fire('Error', 'No se pudo desbloquear al usuario.', 'error');
+          }
+        );
+      }
+    });
+  }
+
+  startCountdown(user: any) {
+    // La propiedad 'expira' ya es una fecha de expiración completa en formato ISO.
+    // Simplemente la convertimos a un timestamp de JavaScript.
+    const expirationTime = new Date(user.bloqueo.expira).getTime();
+    
+    // Verificamos si la fecha es válida para evitar errores.
+    if (isNaN(expirationTime)) {
+      console.error(`Fecha de expiración inválida para el usuario ${user.login}:`, user.bloqueo.expira);
+      return;
+    }
+    const intervalId = window.setInterval(() => {
+      const now = new Date().getTime();
+      const distance = expirationTime - now;
+
+      if (distance < 0) {
+        clearInterval(this.countdownIntervals.get(user.login));
+        this.countdownIntervals.delete(user.login);
+        delete user.bloqueo; // Elimina la propiedad para actualizar la UI
+        user.tiempoRestante = 'Expirado';
+        this.rowData = [...this.rowData]; // Forzar actualización de la tabla
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      user.tiempoRestante = `${days > 0 ? days + 'd ' : ''}${hours > 0 ? hours + 'h ' : ''}${minutes}m ${seconds}s`;
+    }, 1000);
+
+    this.countdownIntervals.set(user.login, intervalId);
+  }
+
+  clearAllCountdowns() {
+    this.countdownIntervals.forEach(intervalId => clearInterval(intervalId));
+    this.countdownIntervals.clear();
+  }
 
   exportarUsuariosPDF(): void {
     const doc = new jsPDF();
@@ -443,6 +531,10 @@ export class UserListComponent implements OnInit {
 
     const fileName = `Reporte_Usuarios_${new Date().toISOString().slice(0, 10)}.pdf`;
     doc.save(fileName);
+  }
+
+  ngOnDestroy(): void {
+    this.clearAllCountdowns();
   }
 
 }

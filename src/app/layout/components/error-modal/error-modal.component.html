@@ -1,0 +1,30 @@
+<div class="modal-header">
+  <div class="d-flex align-items-center">
+    <span [data-feather]="'alert-octagon'" class="mr-1 text-danger"></span>
+    <h5 class="modal-title m-0">Error en la operación</h5>
+  </div>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+
+<div class="modal-body">
+  <div class="sql-container">
+    <div class="sql-content">
+        <pre  class="full-query">{{ errorText }}</pre>
+    </div>
+  </div>
+</div>
+
+<div class="modal-footer justify-content-between">
+  <button type="button" class="btn btn-sm btn-outline-secondary" (click)="copyError()">
+    <span [data-feather]="copyButtonIcon" [size]="14" class="mr-50"></span>
+    {{ copyButtonText }}
+  </button>
+  <div>
+    <button type="button" class="btn btn-sm btn-warning mr-1" (click)="reportError()">
+      <span [data-feather]="'flag'" [size]="14" class="mr-50"></span> Reportar Error
+    </button>
+    <button type="button" class="btn btn-sm btn-secondary" (click)="activeModal.close('Close click')">Cerrar</button>
+  </div>
+</div>

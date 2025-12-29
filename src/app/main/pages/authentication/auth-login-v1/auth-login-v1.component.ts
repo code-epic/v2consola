@@ -167,13 +167,13 @@ export class AuthLoginV1Component implements OnInit {
             this.isHidden = false;
             this.loginService.Iniciar(itk.token)
           },
-          (error) => {
+          (er) => {
             this.loading = false;
             this.isHidden = false;
             this.utilservice.AlertMini(
               "top-end",
               "error",
-              "Error al acceder a los datos de conexion del Bus Empresarial",
+              er.error.msj || "Error al acceder al sistema",
               3000
             );
           }

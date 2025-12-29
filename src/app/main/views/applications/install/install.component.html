@@ -34,24 +34,22 @@
                             <form (ngSubmit)="(HWForm.form.valid)" #HWForm="ngForm">
                                 <div id="account-details" class="content">
                                     <form #accountDetailsForm="ngForm">
-                                        <div class="content-header">
-                                            <h5 class="mb-0">Registro Aplicacion.</h5>
-                                            <small class="text-muted"></small>
-                                        </div>
+                                        
                                         <div class="row">
 
                                             <div class="form-group col-md-6" *ngIf="showAppA">
                                                 <label class="form-label" for="apli">Aplicacion</label>
                                                 <div class="ng-select-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'grid'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'grid'"
+                                                                [size]="16"></span></span>
                                                     </div>
-                                                    <ng-select [items]="dataApp" #aplicacion="ngModel" [(ngModel)]="nameApp"
-                                                        [ngModelOptions]="{standalone: true}"
+                                                    <ng-select [items]="dataApp" #aplicacion="ngModel"
+                                                        [(ngModel)]="nameApp" [ngModelOptions]="{standalone: true}"
                                                         (ngModelChange)='selectEventModuloo($event)'
                                                         [class.error]="accountDetailsForm.submitted" bindLabel="name"
-                                                        name="aplicacion" id="aplicacion" required placeholder="Seleccione"
-                                                        bindValue="identificador">
+                                                        name="aplicacion" id="aplicacion" required
+                                                        placeholder="Seleccione" bindValue="identificador">
                                                     </ng-select>
                                                 </div>
                                                 <span *ngIf="accountDetailsForm.submitted && aplicacion.invalid"
@@ -65,7 +63,8 @@
                                                 <label class="form-label" for="aplicacion">Aplicacion</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'grid'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'grid'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <input [(ngModel)]="iApp.nombre" #Apliref="ngModel"
                                                         [ngModelOptions]="{standalone: true}" required type="text"
@@ -86,7 +85,8 @@
                                                 <label class="form-label" for="proyecto">Nombre Proyecto</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'folder'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'folder'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <input [(ngModel)]="iApp.proyecto" #Proyecto="ngModel" required
                                                         type="text" name="proyecto" id="proyecto" class="form-control"
@@ -96,7 +96,8 @@
                                                 <span *ngIf="accountDetailsForm.submitted && Proyecto.invalid"
                                                     class="invalid-form">
                                                     <small class="form-text text-danger"
-                                                        *ngIf="Proyecto.errors.required">Este campo es requerido!</small>
+                                                        *ngIf="Proyecto.errors.required">Este campo es
+                                                        requerido!</small>
                                                 </span>
                                             </div>
 
@@ -104,10 +105,11 @@
                                                 <label class="form-label" for="rama">Nombre de la Rama</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span
+                                                                [data-feather]="'git-branch'" [size]="16"></span></span>
                                                     </div>
-                                                    <input [(ngModel)]="iApp.rama" #Ramas="ngModel" required
-                                                        type="text" name="rama" id="rama" class="form-control"
+                                                    <input [(ngModel)]="iApp.rama" #Ramas="ngModel" required type="text"
+                                                        name="rama" id="rama" class="form-control"
                                                         [class.error]="!Ramas.valid && accountDetailsForm.submitted" />
                                                 </div>
 
@@ -126,13 +128,14 @@
                                                 <label class="form-label" for="tipo">Tipo de instalación</label>
                                                 <div class="ng-select-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'settings'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'settings'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <ng-select [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo"
                                                         [class.error]="accountDetailsForm.submitted"
-                                                        (ngModelChange)="CapturarSeleccion($event)" bindLabel="descripcion"
-                                                        name="tipo" id="tipo" required placeholder="Seleccione"
-                                                        bindValue="id">
+                                                        (ngModelChange)="CapturarSeleccion($event)"
+                                                        bindLabel="descripcion" name="tipo" id="tipo" required
+                                                        placeholder="Seleccione" bindValue="id">
                                                         <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
                                                     </ng-select>
                                                 </div>
@@ -146,13 +149,15 @@
                                                 <label class="form-label" for="servidor">Servidor</label>
                                                 <div class="ng-select-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'server'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'server'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <ng-select #Server="ngModel" [(ngModel)]="iApp.origen"
-                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                        name="servidor" id="servidor" required
+                                                        [class.error]="accountDetailsForm.submitted"
+                                                        bindLabel="descripcion" name="servidor" id="servidor" required
                                                         placeholder="Seleccione Servidor" bindValue="id">
-                                                        <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}">{{ mdl.id
+                                                        <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}">{{
+                                                            mdl.id
                                                             }} | {{ mdl.descripcion }}</ng-option>
                                                     </ng-select>
                                                 </div>
@@ -166,12 +171,13 @@
                                                 <label class="form-label" for="sistemas">Sistema Operativo</label>
                                                 <div class="ng-select-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'monitor'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'monitor'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <ng-select [items]="sistemasOperativos" #System="ngModel"
                                                         [(ngModel)]="iApp.sistema"
-                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                        name="sistemas" id="sistemas" required
+                                                        [class.error]="accountDetailsForm.submitted"
+                                                        bindLabel="descripcion" name="sistemas" id="sistemas" required
                                                         placeholder="Seleccione Servidor" bindValue="id">
                                                     </ng-select>
                                                 </div>
@@ -187,10 +193,12 @@
                                                 <label class="form-label" for="repositorio">Repositorio Url</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'github'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'github'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <input [(ngModel)]="iApp.repositorio" #Reporef="ngModel" required
-                                                        type="text" name="repositorio" id="repositorio" class="form-control"
+                                                        type="text" name="repositorio" id="repositorio"
+                                                        class="form-control"
                                                         [class.error]="!Reporef.valid && accountDetailsForm.submitted" />
                                                 </div>
 
@@ -204,10 +212,11 @@
                                                 <label class="form-label" for="usuario">Usuario</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'user'"
+                                                                [size]="16"></span></span>
                                                     </div>
-                                                    <input [(ngModel)]="iApp.usuario" #Usuref="ngModel" required type="text"
-                                                        name="usuario" id="usuario" class="form-control"
+                                                    <input [(ngModel)]="iApp.usuario" #Usuref="ngModel" required
+                                                        type="text" name="usuario" id="usuario" class="form-control"
                                                         [class.error]="!Usuref.valid && accountDetailsForm.submitted" />
                                                 </div>
 
@@ -221,14 +230,17 @@
                                                 <label class="form-label" for="password">Password / Token</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'key'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'key'"
+                                                                [size]="16"></span></span>
                                                     </div>
-                                                    <input [(ngModel)]="iApp.clave" [type]="passwordTextType ? 'text' : 'password'"
+                                                    <input [(ngModel)]="iApp.clave"
+                                                        [type]="passwordTextType ? 'text' : 'password'"
                                                         [ngModelOptions]="{standalone: true}" class="form-control" />
                                                     <div class="input-group-append">
-                                                      <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()">
-                                                        <span [data-feather]="'eye-off'" [size]="16"></span>
-                                                      </span>
+                                                        <span class="input-group-text cursor-pointer"
+                                                            (click)="togglePasswordTextType()">
+                                                            <span [data-feather]="'eye-off'" [size]="16"></span>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -236,7 +248,8 @@
                                                 <label class="form-label" for="montaje">Punto Montaje</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'hard-drive'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span
+                                                                [data-feather]="'hard-drive'" [size]="16"></span></span>
                                                     </div>
                                                     <input [(ngModel)]="iApp.puntoMontaje"
                                                         [ngModelOptions]="{standalone: true}" type="text"
@@ -249,13 +262,14 @@
                                                 <label class="form-label" for="bdatos">Base de Datos</label>
                                                 <div class="ng-select-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'database'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <ng-select [items]="basesDatos" #Bdatos="ngModel"
                                                         [(ngModel)]="iApp.basedatos"
-                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                        name="bdatos" id="bdatos" required placeholder="Seleccione"
-                                                        bindValue="id">
+                                                        [class.error]="accountDetailsForm.submitted"
+                                                        bindLabel="descripcion" name="bdatos" id="bdatos" required
+                                                        placeholder="Seleccione" bindValue="id">
                                                     </ng-select>
                                                 </div>
                                                 <span *ngIf="accountDetailsForm.submitted && Bdatos.invalid"
@@ -268,11 +282,12 @@
                                                 <label class="form-label" for="version">Versión</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'tag'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'tag'"
+                                                                [size]="16"></span></span>
                                                     </div>
-                                                    <input [(ngModel)]="iApp.version" [readOnly]="true" #Verref="ngModel"
-                                                        required type="text" name="version" id="version"
-                                                        class="form-control"
+                                                    <input [(ngModel)]="iApp.version" [readOnly]="true"
+                                                        #Verref="ngModel" required type="text" name="version"
+                                                        id="version" class="form-control"
                                                         [class.error]="!Verref.valid && accountDetailsForm.submitted" />
                                                 </div>
 
@@ -286,13 +301,14 @@
                                                 <label class="form-label" for="lenguaje">Lenguaje</label>
                                                 <div class="ng-select-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'code'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <ng-select [items]="lenguaje" #Lenref="ngModel"
                                                         [(ngModel)]="iApp.lenguaje"
-                                                        [class.error]="accountDetailsForm.submitted" bindLabel="descripcion"
-                                                        name="lenguaje" id="lenguaje" required placeholder="Seleccione"
-                                                        bindValue="id">
+                                                        [class.error]="accountDetailsForm.submitted"
+                                                        bindLabel="descripcion" name="lenguaje" id="lenguaje" required
+                                                        placeholder="Seleccione" bindValue="id">
                                                     </ng-select>
                                                 </div>
                                                 <span *ngIf="accountDetailsForm.submitted && Lenref.invalid"
@@ -313,7 +329,8 @@
                                                 <label for="descripcion">Descripción</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span
+                                                                [data-feather]="'file-text'" [size]="16"></span></span>
                                                     </div>
                                                     <textarea [(ngModel)]="iApp.observacion" #Desref="ngModel" required
                                                         type="text" name="descripcion" id="descripcion"
@@ -336,7 +353,7 @@
                                                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                                                 <span class="align-middle d-sm-inline-block d-none">Atrás</span>
                                             </button>
-                                            <button (click)="horizontalWizardStepperNext(accountDetailsForm)"
+                                            <button (click)="horizontalWizardStepperNext(accountDetailsForm);CargarDrivers();"
                                                 type="submit" class="btn btn-primary btn-next" rippleEffect>
                                                 <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
                                                 <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
@@ -344,46 +361,94 @@
                                         </div>
                                     </form>
                                 </div>
+
+
                                 <div id="personal-info" class="content">
                                     <form #personalInfoForm="ngForm">
-                                        <div class="content-header">
-                                            <h5 class="mb-0">Conexiones</h5>
-                                        </div>
-
-                                        <div class="row">
-
+                                       <div class="row">
                                             <div class="form-group col-md-12">
-                                                <label class="form-label" for="language">Driver</label>
+                                                <label class="form-label" for="tipo">Seleccione el driver</label>
                                                 <div class="ng-select-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'hard-drive'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'settings'"
+                                                                [size]="16"></span></span>
                                                     </div>
-                                                    <ng-select [items]="ListaConexiones" [(ngModel)]="iApp.sistema"
-                                                        bindLabel="name" name="driver" id="driver" required
-                                                        placeholder="Seleccione Driver" bindValue="id">
+                                                    <ng-select [items]="drivers" #Tipo="ngModel" [(ngModel)]="driver"
+                                                    
+                                                        bindLabel="descripcion" name="name" id="id" required
+                                                        placeholder="Seleccione driver" bindLabel="name">
+                                                        <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
                                                     </ng-select>
                                                 </div>
+                                                <span *ngIf="accountDetailsForm.submitted && Tipo.invalid"
+                                                    class="invalid-form">
+                                                    <small class="form-text text-danger"
+                                                        *ngIf="Tipo.errors.required">Este campo es requerido!</small>
+                                                </span>
                                             </div>
-
+                                       </div>
+                                        
+                                        <div class="row">
                                             <div class="form-group col-md-12">
-                                                <label class="form-label" for="first-name">Archivo</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'file'" [size]="16"></span></span>
+                                                <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+                                                    <label class="form-label" for="sql-file-upload">Script de Base de Datos (.sql)</label>
+                                                    <!-- File Upload Wrapper -->
+                                                    <div class="file-upload-wrapper-pastel" 
+                                                        (click)="fileInput.click()" 
+                                                        (dragover)="onDragOver($event)" 
+                                                        (dragleave)="onDragLeave($event)" 
+                                                        (drop)="onDrop($event)" 
+                                                        [class.drag-over]="isDragOver">
+                                    
+                                                        <!-- Hidden Input -->
+                                                        <input name="archivos" 
+                                                            type="file" #fileInput hidden 
+                                                            (change)="onFileSelected($event)" accept=".sql" />
+                                    
+                                                        <!-- Prompt State -->
+                                                        <div *ngIf="!selectedFile" class="upload-prompt">
+                                                            <div class="upload-icon">
+                                                                <i [data-feather]="'upload-cloud'" [size]="48"></i>
+                                                            </div>
+                                                            <p class="upload-text">Arrastra y suelta tu archivo <strong>.sql</strong> aquí</p>
+                                                            <p class="upload-subtext">o haz clic para buscar en tu equipo</p>
+                                                            <small class="upload-limit">Límite de 1.2 GB </small>
+                                                        </div>
+                                    
+                                                        <!-- File Selected/Uploading State -->
+                                                        <div *ngIf="selectedFile" class="file-details">
+                                                            <div class="file-info">
+                                                                <div class="file-icon bg-light-primary">
+                                                                    <i [data-feather]="'database'" [size]="24" class="text-primary"></i>
+                                                                </div>
+                                                                <div class="file-meta">
+                                                                    <span class="file-name" [title]="selectedFile.name">{{ selectedFile.name }}</span>
+                                                                    <span class="file-size">{{ fileSize }}</span>
+                                                                </div>
+                                                                <button *ngIf="!isUploading" (click)="removeFile($event)" type="button" class="btn btn-icon btn-sm btn-outline-danger btn-round remove-file-btn" title="Eliminar archivo">
+                                                                    <i [data-feather]="'x'" [size]="16"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div *ngIf="isUploading" class="upload-progress-wrapper">
+                                                                <div class="progress progress-bar-primary">
+                                                                    <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                                                                </div>
+                                                                <span class="progress-percentage">{{ uploadProgress }}%</span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <input type="file" [(ngModel)]="TDFirstNameVar" required
-                                                        name="first-name" id="first-name" class="form-control"
-                                                        placeholder="John" />
-                                                </div>
-                                            </div>
+                                                    
 
+                                                </form>
+                                            </div>
                                         </div>
                                         <div class="row">
                                             <div class="form-group col-md-12">
                                                 <label class="form-label" for="country">SQL</label>
                                                 <div class="input-group-pastel">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
+                                                        <span class="input-group-text"><span [data-feather]="'database'"
+                                                                [size]="16"></span></span>
                                                     </div>
                                                     <textarea rows="7" class="form-control"></textarea>
                                                 </div>
@@ -395,12 +460,13 @@
                                             <button type="button" (click)="horizontalWizardStepperPrevious()"
                                                 class="btn btn-primary btn-prev" rippleEffect>
                                                 <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                                                <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                                                <span class="align-middle d-sm-inline-block d-none">Atrás</span>
                                             </button>
-                                            <button (click)="horizontalWizardStepperNext(personalInfoForm)"
+                                            <button (click)="ProcesarDB()"
                                                 class="btn btn-primary btn-next" rippleEffect>
-                                                <span class="align-middle d-sm-inline-block d-none">Next</span>
-                                                <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                                                
+                                                <span class="align-middle d-sm-inline-block d-none">Procesar &nbsp;</span>
+                                                <i data-feather="database" class="align-middle ml-sm-25 ml-0"></i>
                                             </button>
                                         </div>
                                     </form>

@@ -1,10 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 
 
 import { Subscription } from 'rxjs';
 import { ApiService } from "@services/apicore/api.service";
 import { SessionService, ConnectionStatus } from "@services/util/session.service";
 import { MensajeService } from '@services/util/mensaje.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ErrorModalComponent } from 'app/layout/components/error-modal/error-modal.component';
+import Swal from 'sweetalert2';
 
 interface IncomingMessage { // Para otros tipos de mensaje que no sean Ollama chunks
     message: string;
@@ -30,6 +33,7 @@ export class WsSandraService {
     private userId: string = '';
     private wsMessagesSubscription!: Subscription;
     private wsStatusSubscription!: Subscription;
+    private isErrorModalOpen = false;
 
     // Propiedades para enviar mensajes directos a IDs de cliente (si aún las usas)
     msjx: string = '';
@@ -38,11 +42,13 @@ export class WsSandraService {
     constructor(
         private sessionService: SessionService,
         private apiService: ApiService,
-        private mensajeService: MensajeService
+        private mensajeService: MensajeService,
+        private modalService: NgbModal,
+        private zone: NgZone
     ) { }
 
 
-    Run(){
+    Run() {
         this.userId = localStorage.getItem('userId') || '';
 
         // console.log('ChatComponent: userId obtenido:', this.userId);
@@ -75,10 +81,19 @@ export class WsSandraService {
                         }
                     } else if (data && typeof data.message === 'string' && typeof data.id === 'string' && typeof data.from === 'string') {
                         this.messages.push({ from: data.from, message: data.message, id: data.id });
-                        this.loading = false; 
+                        this.loading = false;
                         this.saveHistory();
                     } else if (data.from === 'exec-pipe') {
                         // Mensaje con formato inesperado
+                        // console.log(data)
+                        let msj = data.message !== undefined ? data.message : ''
+                        if (msj.error !== undefined && msj.error !== '') {
+                            this.ErrorMessage(msj.error)
+                        }
+                        if (data.type === 'restore_finished') {
+                            this.OkMessage('El proceso de restauración ha finalizado correctamente')
+                        }
+
                         this.mensajeService.progreso$.emit(data);
 
                     } else {
@@ -119,7 +134,7 @@ export class WsSandraService {
 
     }
 
-       // Nuevo método para cargar el historial desde localStorage.
+    // Nuevo método para cargar el historial desde localStorage.
     private loadHistory(): void {
         const historyString = localStorage.getItem('chat_history');
         if (historyString) {
@@ -171,7 +186,7 @@ export class WsSandraService {
         localStorage.setItem('chat_history', historyString);
     }
 
- 
+
 
     sendMClient(): void {
         let data = {
@@ -192,5 +207,43 @@ export class WsSandraService {
                 this.loading = false;
             }
         })
+    }
+
+    ErrorMessage(texto: string) {
+        this.zone.run(() => {
+            if (this.isErrorModalOpen) {
+                return; // Evita abrir múltiples modales si ya hay uno abierto.
+            }
+            this.isErrorModalOpen = true;
+
+            const modalRef = this.modalService.open(ErrorModalComponent, {
+                centered: true,
+                size: 'lg',
+                backdrop: false, // 'static' para un fondo que no cierra el modal al hacer clic.
+                keyboard: false,
+                windowClass: 'fondo-modal' // Clase CSS para estilos personalizados.
+            });
+
+            modalRef.componentInstance.errorText = texto;
+
+            // Nos aseguramos de resetear el flag cuando el modal se cierre por cualquier motivo.
+            modalRef.result.then(
+                () => { this.isErrorModalOpen = false; },
+                () => { this.isErrorModalOpen = false; }
+            );
+        });
+    }
+
+    OkMessage(texto: string) {
+        Swal.fire({
+            title: 'Felicidades',
+            text: texto,
+            icon: 'success',
+            confirmButtonColor: "#3085d6",
+            confirmButtonText: "Aceptar",
+            allowEscapeKey: true,
+        }).then((result) => {
+
+        });
     }
 }

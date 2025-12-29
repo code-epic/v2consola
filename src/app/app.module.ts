@@ -46,6 +46,7 @@ import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.ser
 import { SharedModule } from './main/license-bunker/shared.module';
 import { GithubModule } from './main/views/github/github.module';
 import { PushService } from '@services/seguridad/push.service';
+import { ErrorModalModule } from './layout/components/error-modal/error-modal.module';
 
 const appRoutes: Routes = [
   {
@@ -83,6 +84,7 @@ const appRoutes: Routes = [
     BlockUIModule.forRoot(),
     LayoutModule,
     HomeModule,
+    ErrorModalModule,
     NetworksModule,
     ApplicationsModule,
     OptionsModule,

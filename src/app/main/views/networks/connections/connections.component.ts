@@ -14,7 +14,6 @@ import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
 import { ConexionesService } from '@services/networks/connections.service';
 import { environment } from 'environments/environment';
-import { env } from 'process';
 
 
 @Component({
@@ -259,7 +258,7 @@ export class ConnectionsComponent implements OnInit {
     )
   }
 
-  CambiarVisibilidadDriver() {
+  CambiarVisibilidadDriver(e : any) {
     if (this.driver == "puenteurl") {
       this.showBaseDatos = false
       this.showPuente = true

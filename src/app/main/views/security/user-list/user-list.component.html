@@ -45,7 +45,7 @@
                     </div>
                 </div>
 
-                <ngx-datatable [rows]="rowData" [rowHeight]="62" class="bootstrap core-bootstrap striped"
+                <ngx-datatable [rows]="rowData" [rowHeight]="62" class="bootstrap core-bootstrap striped" [rowClass]="getRowClass"
                     [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true"
                     [limit]="basicSelectedOption">
 
@@ -64,15 +64,22 @@
                                 </div>
                                 <ng-template #customAvatar>
                                     <div class="avatar mr-1 ml-0" [ngClass]="{
-                                    'bg-light-success': row.estatus == '1',
-                                    'bg-light-danger': row.estatus == '0'
+                                    'bg-light-success': row.estatus == '1' && !row.bloqueo,
+                                    'bg-light-danger': row.estatus == '0',
+                                    'bg-light-warning': row.bloqueo
                                   }">
-                                        <div class="avatar-content">{{ row.nombre | initials }}</div>
+                                        <div class="avatar-content">{{ (row.nombre | initials) | slice:0:1 }}</div>
                                     </div>
                                 </ng-template>
                                 <div>
-                                    <div class="font-weight-bold">{{ row.nombre }}</div>
+                                    <div class="font-weight-bold d-flex align-items-center">
+                                        {{ row.nombre }}
+                                        <span *ngIf="row.bloqueo" class="ml-1 text-warning" [data-feather]="'lock'" [size]="14" title="Usuario bloqueado"></span>
+                                    </div>
                                     <div class="font-small-2 text-muted">CI: {{ row.cedula }}</div>
+                                    <div *ngIf="row.bloqueo && row.tiempoRestante" class="font-small-2 text-warning font-weight-bold">
+                                        Bloqueo expira en: {{ row.tiempoRestante }}
+                                    </div>
                                 </div>
                             </div>
                         </ng-template>
@@ -119,6 +126,10 @@
                             <div>
                                 <div class="font-weight-bold">{{ row.firmadigital?.tiempo | date: 'dd/MM/yyyy HH:mm:ss' }}</div>
                                 <div class="font-small-2 text-muted">Traza: {{ row.Perfil?.traza }}</div>
+                                <div *ngIf="row.estatus == 0" class="d-flex align-items-center mt-25">
+                                    <span class="bullet bullet-danger bullet-sm"></span>
+                                    <span class="font-small-2 text-danger ml-50">Inactivo</span>
+                                </div>
                             </div>
                         </ng-template>
                     </ngx-datatable-column>
@@ -133,6 +144,8 @@
                                 <div ngbDropdownMenu>
                                     <a (click)="EditarUser(row)" ngbDropdownItem><span [data-feather]="'edit'"
                                             [size]="16" [class]="'mr-50'"></span>Editar</a>
+                                     <a *ngIf="row.bloqueo" (click)="DesbloquearUser(row)" ngbDropdownItem><span [data-feather]="'unlock'"
+                                            [size]="16" [class]="'mr-50'"></span>Desbloquear</a>
                                     <a (click)="EliminarUser(row)" ngbDropdownItem><span [data-feather]="'trash'"
                                             [size]="16" [class]="'mr-50'"></span>Eliminar</a>
                                 </div>

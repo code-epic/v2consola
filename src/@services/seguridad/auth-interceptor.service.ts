@@ -32,7 +32,7 @@ export class AuthInterceptorService implements HttpInterceptor {
       switchMap(signature => {
         const secureReq = req.clone({
           setHeaders: {
-            'WEB-API-key': this.SECRET_KEY,
+            'Web-API-key': this.SECRET_KEY,
             'X-Signature': signature,
             'X-Timestamp': timestamp
           }
@@ -51,11 +51,14 @@ export class AuthInterceptorService implements HttpInterceptor {
           case 401:
             this.cerrar(err.error.msj || 'Sesión expirada');
             break;
+          case 402:
+            // this.cerrar('Pago requerido');
+            break;
           case 403:
             if (!err.error.msj) {
               this.cerrar('Acceso denegado');
             } else {
-              console.error('Error 403:', err.error.msj);
+              console.error('Error 403:', err);
             }
             break;
           case 504:

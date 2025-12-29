@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
@@ -295,6 +295,7 @@ export interface IConfiguracion {
   vigencia?: number;
   nivel?: number;
 }
+
 
 
 @Injectable({
@@ -619,6 +620,17 @@ export class ApiService {
 
   }
 
+
+  /**
+   * 
+   * @param id uuid del usuario su conexion 
+   * @param driver 
+   * @returns 
+   */
+  ExecRestore( restore ): Observable<any> {
+    var url = this.URL + "db/restore";
+    return this.http.post<any>(url, restore, this.httpOptions);
+  }
 
 
 }

@@ -7,7 +7,9 @@ import { NgSelectConfig } from '@ng-select/ng-select';
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
 import { UtilService } from '@services/util/util.service';
 import { environment } from 'environments/environment';
-
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FileService } from '@services/apicore/file.service';
+import { MensajeService } from '@services/util/mensaje.service';
 
 @Component({
   selector: 'app-install',
@@ -162,35 +164,57 @@ export class InstallComponent implements OnInit {
 
   public passwordTextType: boolean = false;
 
-
-
-  onSubmit() {
-    alert('Submitted!!');
-    return false;
-  }
-  // private
   private horizontalWizardStepper: Stepper;
-  private verticalWizardStepper: Stepper;
-  private modernWizardStepper: Stepper;
-  private modernVerticalWizardStepper: Stepper;
-  private bsStepper;
+  public driver: any = undefined
+  public drivers = []
+  public host = ''
+  public descripcion = ''
+  public identificador = ''
+  public estatus: any = null
+  public app_relacionada: any = null
 
+  public showBaseDatos = false
+  public showPuente = false
+  public lbd = 'Base de Datos'
+  public status = [
+    { id: true, name: 'ACTIVO' },
+    { id: false, name: 'INACTIVO' },
+  ]
 
 
   public ListaConexiones = []
+  public loginForm: UntypedFormGroup;
+  public submitted = false;
+  public ListaAplicaciones = []
+
+  // Propiedades para el manejo del archivo
+  public selectedFile: File | null = null;
+  public fileSize: string = '';
+  public isUploading: boolean = false;
+  public uploadProgress: number = 0;
+  public isDragOver: boolean = false;
+
+  public hash = ''
+  public archivos = []
+
+
 
 
   constructor(
     private apiService: ApiService,
+    private fileService: FileService,
     private modalService: NgbModal,
     private config: NgSelectConfig,
     private utilservice: UtilService,
     private comunicacionesService: ComunicacionesService,
     private comunicacionesServices: ComunicacionesService,
+    private mensajeService: MensajeService
   ) { }
 
   async ngOnInit() {
     await this.ListarIP();
+    await this.ListarHostname();
+    // await this.CargarDrivers();
     await this.CargarListaConexiones();
     await this.lstAplicaciones();
     this.horizontalWizardStepper = new Stepper(document.querySelector('#stepper1'), {});
@@ -221,6 +245,75 @@ export class InstallComponent implements OnInit {
 
   }
 
+  async ListarHostname() {
+    await this.comunicacionesService.Listar().subscribe(
+      (data) => {
+        this.hosts = data
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  }
+
+  // convenience getter for easy access to form fields
+  get f() {
+    return this.loginForm.controls;
+  }
+
+
+  CargarDrivers() {
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.LISTAR_DRIVERS_APLICACION
+    this.xAPI.parametros = this.iApp.nombre
+    this.drivers = [];
+    // console.log(this.xAPI)
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (datax) => {
+        this.drivers = datax.map((e) => {
+
+
+          e.name = e.descripcion + " - " + "(" + e.basedatos + ")";
+          return e;
+
+        });
+        // if(this.iApp.nombre === 'consola'){
+        //   this.drivers.push({
+        //     id: "MGDBA",
+        //     name: "Sandra Server MongoDB (MGDBA)",
+        //     driver: "mongodb",
+        //   });
+        // }
+        // console.log(this.drivers)
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+
+  CambiarVisibilidadDriver(e: any) {
+    if (this.driver == "puenteurl") {
+      this.showBaseDatos = false
+      this.showPuente = true
+    } else {
+      this.showBaseDatos = true
+      this.showPuente = false
+    } if (this.driver === 'oracle19c') {
+      this.lbd = "Oracle_SID"
+    } else {
+      this.lbd = "Base de Datos"
+    } if (this.driver == null) {
+      this.showBaseDatos = false
+      this.showPuente = false
+    }
+  }
+
+  onSubmit() {
+    alert('Submitted!!');
+    return false;
+  }
+  // private
 
   togglePasswordTextType() {
     this.passwordTextType = !this.passwordTextType;
@@ -251,7 +344,7 @@ export class InstallComponent implements OnInit {
         await data.map(e => {
           this.hosts.push(e)
         });
-        this.hosts.push({ id: 'REPOSITORIO', host: 'github.com', descripcion: '@GITHUB' }, 
+        this.hosts.push({ id: 'REPOSITORIO', host: 'github.com', descripcion: '@GITHUB' },
           { id: 'REPOSITORIO', host: 'gitlab.com', descripcion: '@GITLAB' },
           { id: 'REPOSITORIO', host: 'code-epic.io', descripcion: '@GITEA' })
       },
@@ -267,7 +360,7 @@ export class InstallComponent implements OnInit {
     this.iApp.llave = this.iApp.nombre + '.sse'
     this.xAPI.valores = JSON.stringify(this.iApp)
     if (this.iApp.identificador != null) this.xAPI.funcion = "SSB_UAplicacion"
-    console.log(this.xAPI)
+    // console.log(this.xAPI)
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
@@ -377,6 +470,11 @@ export class InstallComponent implements OnInit {
           return e
         });
         this.dataApp.push({ aplicacion: 'Crear Nuevo', name: ' Crear Nuevo' })
+
+        this.ListaAplicaciones = data.Cuerpo.map(e => {
+          e.name = e.nombre + ' : ' + e.VERSION
+          return e
+        });
       },
       (error) => {
         console.log(error)
@@ -387,8 +485,218 @@ export class InstallComponent implements OnInit {
 
 
 
+
+
+  // ... dentro de tu clase del componente
+
+  /**
+   * Maneja la selección de un archivo desde el input.
+   * @param event Evento del input file.
+   */
+  onFileSelected(event: any): void {
+    const file: File = event.target.files[0];
+    if (file) {
+      this.handleFile(file);
+    }
+    this.archivos.push(event.target.files[0])
+
+  }
+
+  /**
+   * Maneja el evento de arrastrar un archivo sobre la zona.
+   * @param event DragEvent
+   */
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
+
+  /**
+   * Maneja el evento de cuando un archivo arrastrado sale de la zona.
+   * @param event DragEvent
+   */
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  /**
+   * Maneja el evento de soltar un archivo en la zona.
+   * @param event DragEvent
+   */
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.handleFile(files[0]);
+    }
+  }
+
+  /**
+   * Procesa y valida el archivo seleccionado o soltado.
+   * @param file El archivo a procesar.
+   */
+  private handleFile(file: File): void {
+    // 1. Validar tipo de archivo (.sql)
+    if (!file.name.toLowerCase().endsWith('.sql')) {
+      this.utilservice.AlertMini('top-end', 'error', 'Por favor, sube solo archivos .sql', 4000);
+      return;
+    }
+
+    // 2. Validar tamaño del archivo (máximo 1.2GB)
+    const maxSizeInBytes = 1200 * 1024 * 1024;
+    if (file.size > maxSizeInBytes) {
+      this.utilservice.AlertMini('top-end', 'error', 'El archivo no puede superar los 1.2 GB.', 4000);
+      return;
+    }
+
+    // 3. Si es válido, actualizar el estado del componente
+    this.selectedFile = file;
+    this.fileSize = this.formatBytes(file.size);
+
+    // Aquí llamarías a tu servicio para subir el archivo.
+    // Para demostración, simulamos la subida.
+    this.simulateUpload();
+  }
+
+  /**
+   * Elimina el archivo seleccionado y resetea el estado.
+   * @param event Evento del clic para detener la propagación.
+   */
+  removeFile(event: MouseEvent): void {
+    event.stopPropagation(); // Evita que se abra el diálogo de archivo al hacer clic en el botón de eliminar.
+    this.selectedFile = null;
+    this.fileSize = '';
+    this.isUploading = false;
+    this.uploadProgress = 0;
+    // Opcional: Resetea el valor del input para poder seleccionar el mismo archivo de nuevo.
+    // @ViewChild('fileInput') fileInput: ElementRef;
+    // this.fileInput.nativeElement.value = '';
+  }
+
+  /**
+   * Formatea los bytes a un tamaño legible (KB, MB, GB).
+   * @param bytes El número de bytes.
+   * @param decimals El número de decimales.
+   */
+  private formatBytes(bytes: number, decimals = 2): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Simula el progreso de una subida de archivo para la demostración visual.
+   */
+  private simulateUpload(): void {
+    this.isUploading = true;
+    this.uploadProgress = 0;
+    const interval = setInterval(() => {
+      this.uploadProgress += 10;
+      if (this.uploadProgress >= 100) {
+        this.uploadProgress = 100;
+        clearInterval(interval);
+        // Mantiene el estado de "completado" por un momento antes de ocultar la barra.
+        setTimeout(() => {
+          this.isUploading = false;
+        }, 500);
+      }
+    }, 200);
+  }
+
+
+  ProcesarDB() {
+   
+    if (this.selectedFile == null) {
+      this.utilservice.AlertMini('top-end', 'error', 'Por favor, selecciona un archivo .sql para procesar.', 4000);
+      return;
+    }
+
+    const formElement = document.forms.namedItem("forma") as HTMLFormElement;
+    if (!formElement) {
+      console.error('No se encontró el formulario con el nombre "forma".');
+      return;
+    }
+    const frm = new FormData(formElement);
+    frm.append("archivos", this.selectedFile!, this.selectedFile!.name);
+    frm.append("identificador", btoa(this.iApp.nombre + '|' + this.iApp.version))
+    frm.append("return", 'true')
+
+    
+
+    this.fileService.EnviarArchivosProgress(frm).subscribe({
+      next: (event) => {
+        if (event.state === 'LOADING') {
+          this.mensajeService.progreso$.emit({
+            from: 'file-upload',
+            type: 'progress',
+            loaded: event.loaded,
+            total: event.total,
+            progress: event.progress
+          })
+        } else if (event.state === 'DONE') {
+          this.mensajeService.progreso$.emit({
+            from: 'file-upload',
+            type: 'finished',
+            message: 'Archivo subido con éxito.'
+          })
+          this.utilservice.AlertMini('top-end', 'success', `El archivo ${this.selectedFile.name} subio correctamente`, 2000);
+          formElement.reset();
+          let body = event.body
+          setTimeout(() => {
+            this.RealizarRestore(body)
+          }, 3000);
+
+
+          this.removeFile(new MouseEvent('click'));
+        }
+      },
+      error: (err) => {
+        console.error('Error al subir el archivo:', err);
+        this.utilservice.AlertMini('top-end', 'error', 'Ocurrió un error al subir el archivo.', 5000);
+        this.mensajeService.progreso$.emit({
+          from: 'file-upload',
+          type: 'finished',
+          message: 'Error en la subida.'
+        })
+      },
+      complete: () => {
+        
+        console.log('Subida de archivo completada.');
+      }
+    });
+  }
+
+
+
+  RealizarRestore(body:any) {
+    let Hash = body.msj.split('|')[1]
+    let Archivo = body.contenido[0].split('|')[1]  
+    
+    let restore = {
+      "id": localStorage.getItem('userId'),
+      "driver": this.driver.id,
+      "hash": Hash,
+      "file": Archivo
+    }
+    this.apiService.ExecRestore(restore).subscribe(
+      (data) => {
+        //el websocket supera los siguientes procesos
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+  
+
+  }
+
+
 }
-
-
-
-

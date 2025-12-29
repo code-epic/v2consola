@@ -207,7 +207,8 @@ export class UserComponent implements OnInit {
 
   public xaplicacion = ''
   public xperfil = ''
-  public xtraza = '1|BAJA'
+  public xtraza = 'BAJA'
+  public ntraza = 1
 
   public xoficina: any = 'TODAS'
   public xregional: any = 'TODAS'
@@ -305,6 +306,14 @@ export class UserComponent implements OnInit {
             this.configuracion = data[0]
             this.iUser.endpoint = this.configuracion.endpoints.login
             this.iUser.duraciontiempo = this.configuracion.sesion.tiempo * this.exportTime(this.configuracion.sesion.unidad)
+
+            let usuario: any = window.sessionStorage.getItem('validator')
+
+            if (usuario == undefined) {
+              this.ntraza = this.getTraza(this.configuracion.traza.nivel)
+              this.xtraza = this.configuracion.traza.nivel
+            }
+            
           }
         }
       },
@@ -361,12 +370,11 @@ export class UserComponent implements OnInit {
     // this.dataUsers = usuario.Aplicacion;
     this.tk_loadProfile(usuario)
 
-    console.log(this.iUser)
     return this.iUser
   }
 
   tk_loadProfile(usuario: Usuario) {
-
+    
     usuario.Aplicacion.forEach(usr => {
       let url = ''
       let xapp = this.getAplication(usr.id)
@@ -384,18 +392,20 @@ export class UserComponent implements OnInit {
         id: usr.id,
         idapp: xapp,
         idper: xprof,
-        traza: usr.traza,
+        firmadigital: usuario.firmadigital,
+        traza: usuario.Perfil.traza,
         nombre: usr.nombre,
         perfil: usr.perfil,
         estatus: usr.estatus,
         tiempo: usr.tiempo,
         url: url,
+        XPerfil: usuario.Perfil
       }
 
       this.lstUsersApp.push(app)
-      this.dataUsers = this.lstUsersApp
-      // console.log(this.dataUsers)
+     
     });
+    this.dataUsers = this.lstUsersApp
 
   }
 
@@ -489,14 +499,8 @@ export class UserComponent implements OnInit {
         if (usuario != undefined) {
           this.usuario = JSON.parse(usuario)
           this.xaplicacion = this.usuario.sistema
-
-
-          // if (this.usuario.Aplicacion.length > 0) {
           await this.selPerfil(this.usuario.sistema)
-          // console.log(this.usuario.Aplicacion.length, this.usuario.Aplicacion)
-          // this.blockEditApp = 'false'
           this.usuarioSave = true
-          // }
 
         }
 
@@ -563,6 +567,7 @@ export class UserComponent implements OnInit {
     let apps: any = {}
     let lstApp: SAplicacion[] = []
 
+
     await this.lstUsersApp.forEach(async (appx) => {
       apps = appx;
       let rol: SRol = {
@@ -578,7 +583,7 @@ export class UserComponent implements OnInit {
         version: appx.idapp.version,
         url: appx.idapp.url,
         perfil: appx.perfil,
-        traza: appx.traza,
+        traza: appx.XPerfil == undefined ? appx.traza : appx.XPerfil.traza,
         estatus: appx.estatus,
         comentario: 'Generado por sistema',
         tiempo: appx.tiempo,
@@ -587,6 +592,7 @@ export class UserComponent implements OnInit {
       lstApp.push(xapps)
 
     })
+
 
 
     this.usuario.Perfil.id = apps.idper == undefined ? '' : apps.idper.id
@@ -602,10 +608,10 @@ export class UserComponent implements OnInit {
     this.usuario.endpoint = this.iUser.tipoacceso == 3 ? this.iUser.endpoint : ''
     this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
     this.usuario.direccion = this.xregional.name != undefined ? this.xregional.name : this.xregional
+    this.usuario.estatus = this.iUser.estatus
 
 
     let usuario = window.sessionStorage.getItem('validator')
-
 
     if (usuario == undefined) {
       if (this.iUser.clave != '') {
@@ -629,7 +635,7 @@ export class UserComponent implements OnInit {
       direccionmac: '',
       direccionip: '',
       tiempo: new Date().toISOString(),
-      nivel: parseInt(apps.idtra),
+      nivel: apps.firmadigital != undefined ? apps.firmadigital.nivel: parseInt(apps.idtra),
       sesion: this.xsesion
     }
 
@@ -642,6 +648,7 @@ export class UserComponent implements OnInit {
       this.usuario.sistema = apps.idapp.id
       this.usuario.Aplicacion = lstApp
     }
+
 
   }
 
@@ -671,12 +678,13 @@ export class UserComponent implements OnInit {
       return false;
     }
 
+  
     app = {
       id: this.getAplication(this.xaplicacion).id,
       idapp: this.getAplication(this.xaplicacion),
       idper: this.getProfile(this.xperfil),
-      traza: this.xtraza.split('|')[1],
-      idtra: this.xtraza.split('|')[0],
+      traza: this.xtraza,
+      idtra: this.ntraza,
       nombre: this.getAplication(this.xaplicacion).nombre,
       url: this.getAplication(this.xaplicacion).url,
       tiempo: new Date().toISOString(),
@@ -684,13 +692,8 @@ export class UserComponent implements OnInit {
       estatus: 1,
     }
 
-
-    // console.log(app)
     this.lstUsersApp.push(app)
-
     this.dataUsers = this.lstUsersApp
-
-    // Limpiar la selección del combo de perfil
     this.xperfil = null;
   }
 
@@ -796,7 +799,6 @@ export class UserComponent implements OnInit {
         }
       }
     }
-
 
 
     await this.getUserApp()
@@ -957,9 +959,7 @@ export class UserComponent implements OnInit {
   }
 
   SearchLoginLDAP() {
-    // console.log(this.configuracion, this.isBDV)
     if (this.isBDV && this.iUser.tipoacceso == 3) {
-      console.log(this.configuracion.endpoints.directorioActivo)
       let cod = {
         'codUsuario': this.iUser.login
       }
@@ -1028,7 +1028,6 @@ export class UserComponent implements OnInit {
       this.xAPI.funcion = environment.functions.CONSULTAR_OFICINAS; // Asumiendo que esta es tu función de backend
       this.xAPI.parametros = this.utilservice.zfill(e.id, 2)
       this.xAPI.valores = {};
-      console.log(this.xAPI)
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
           this.dataOficina = data.Cuerpo
@@ -1177,6 +1176,17 @@ export class UserComponent implements OnInit {
         console.log(error)
       }
     )
+  }
+
+  getTraza(id) : number { 
+    switch (id) { 
+      case 'BAJA':
+        return 1
+      case 'MEDIA':
+        return 2
+      case 'ALTA':
+        return 3
+    } 
   }
 
   ngOnDestroy(): void {

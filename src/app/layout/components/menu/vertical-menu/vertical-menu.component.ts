@@ -67,19 +67,9 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    */
   ngOnInit(): void {
 
-
-    this.mensajeService.progreso$.subscribe((progreso) => {
-      // console.log('VerticalMenuComponent: Progreso recibido:', progreso);
-      if (progreso.from === 'exec-pipe' && progreso.type === 'progress') {
-        this.progressMode = 'indeterminate';
-        this.progressLabel = 'Generando Respaldo...';
-        this.blCargando = true;
-        this.actualizarProgresoIndeterminado(progreso.message.bytes, progreso.message.speed);
-      }else if (progreso.from === 'exec-pipe' && progreso.type === 'dump_finished') {
-        this.blCargando = false;
-      }
-
-    });
+    this.mensajeService.progreso$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(progreso => this.handleProgressUpdate(progreso));
 
     // Subscribe config change
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
@@ -136,6 +126,76 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Routes progress updates to the appropriate handler based on the source.
+   * @param progreso The progress event object from MensajeService.
+   */
+  private handleProgressUpdate(progreso: any): void {
+    if (!progreso || !progreso.from) {
+      return;
+    }
+
+    this.blCargando = true;
+
+    switch (progreso.from) {
+      case 'exec-pipe':
+        this.handleExecPipe(progreso);
+        break;
+      case 'file-upload':
+        this.handleFileUpload(progreso);
+        break;
+      default:
+        this.blCargando = false;
+        console.warn('VerticalMenuComponent: Fuente de progreso desconocida:', progreso.from);
+        break;
+    }
+  }
+
+  /**
+   * Handles progress events from 'exec-pipe' (backups, restores).
+   * @param progreso The progress event object.
+   */
+  private handleExecPipe(progreso: any): void {
+    switch (progreso.type) {
+      case 'progress': // Backup progress
+        this.progressMode = 'indeterminate';
+        this.progressLabel = 'Generando Respaldo...';
+        this.actualizarProgresoIndeterminado(progreso.message.bytes, progreso.message.speed);
+        break;
+      case 'dump_finished':
+        this.finishProgress('Respaldo Completado');
+        break;
+      case 'restore':
+        this.progressMode = 'determinate';
+        this.progressLabel = 'Restaurando Base de Datos...';
+        this.actualizarProgreso(progreso.message.percentage, progreso.message.total);
+        break;
+      case 'restore_finished':
+        this.finishProgress('Restauración Completada');
+        break;
+    }
+  }
+
+  /**
+   * Handles progress events from 'file-upload'.
+   * @param progreso The progress event object.
+   */
+  private handleFileUpload(progreso: any): void {
+    switch (progreso.type) {
+      case 'progress':
+        this.progressMode = 'determinate';
+        this.progressLabel = progreso.progress < 99 ? 'Subiendo Archivo...' : 'Procesando en servidor...';
+        this.progressPercentage = progreso.progress;
+        this.progressText = `${this.formatBytes(progreso.loaded)} de ${this.formatBytes(progreso.total)}`;
+        break;
+      case 'finished':
+        this.finishProgress('Subida Finalizada');
+        break;
+    }
+  }
+
+
+
+  /**
    * Simula una carga DETERMINADA para demostrar el indicador de progreso.
    */
   simularProgreso(): void {
@@ -158,10 +218,26 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    * @param percentage El progreso en porcentaje (0-100).
    * @param totalSize El tamaño total de la descarga/proceso.
    */
-  actualizarProgreso(percentage: number, totalSize: number): void {
+  actualizarProgreso(percentage: number, totalSizeInBytes: number): void {
     this.progressPercentage = Math.round(percentage);
-    const downloaded = (totalSize * (this.progressPercentage / 100)).toFixed(1);
-    this.progressText = `${downloaded} MB de ${totalSize} MB`;
+    const totalSizeInMB = totalSizeInBytes / (1024 * 1024);
+    const downloadedInMB = totalSizeInMB * (this.progressPercentage / 100);
+
+    this.progressText = `${downloadedInMB.toFixed(1)} MB de ${totalSizeInMB.toFixed(1)} MB`;
+  }
+
+  /**
+   * Formatea los bytes a un tamaño legible (KB, MB, GB).
+   * @param bytes El número de bytes.
+   * @param decimals El número de decimales.
+   */
+  private formatBytes(bytes: number, decimals = 2): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
 
@@ -204,6 +280,20 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     } else {
       this.progressText = `${(bytes / 1024).toFixed(1)} KB`;
     }
+  }
+
+  /**
+   * Finalizes the progress bar display for a completed task.
+   * @param label The final label to show (e.g., "Completed").
+   */
+  private finishProgress(label: string): void {
+    this.progressLabel = label;
+    if (this.progressMode === 'determinate' && this.progressPercentage < 100) {
+      this.progressPercentage = 100;
+    }
+    setTimeout(() => {
+      this.blCargando = false;
+    }, 2000);
   }
 
 

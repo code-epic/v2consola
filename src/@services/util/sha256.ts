@@ -92,38 +92,7 @@ export class Sha256Service {
     const hashArray = [h0, h1, h2, h3, h4, h5, h6, h7];
     return hashArray.map(h => h.toString(16).padStart(8, '0')).join('');
   }
-
-  // Dentro de Sha256Service
-  // public async hmac(message: string, key: string): Promise<string> {
-  //   const blockSize = 64; // Tamaño de bloque para SHA-256
-  //   let keyBuffer = new TextEncoder().encode(key);
-
-  //   if (keyBuffer.length > blockSize) {
-  //     const keyHash = await this.hash(key);
-  //     keyBuffer = new Uint8Array(keyHash.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
-  //   }
-
-  //   const ipad = new Uint8Array(blockSize).fill(0x36);
-  //   const opad = new Uint8Array(blockSize).fill(0x5c);
-
-  //   const paddedKey = new Uint8Array(blockSize);
-  //   paddedKey.set(keyBuffer);
-
-  //   const innerMsg = new Uint8Array(blockSize + new TextEncoder().encode(message).length);
-  //   for (let i = 0; i < blockSize; i++) ipad[i] ^= paddedKey[i];
-  //   innerMsg.set(ipad);
-  //   innerMsg.set(new TextEncoder().encode(message), blockSize);
-
-  //   const innerHash = await this.hash(Array.from(innerMsg).map(b => String.fromCharCode(b)).join(''));
-  //   const innerHashBuffer = new Uint8Array(innerHash.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
-
-  //   const outerMsg = new Uint8Array(blockSize + innerHashBuffer.length);
-  //   for (let i = 0; i < blockSize; i++) opad[i] ^= paddedKey[i];
-  //   outerMsg.set(opad);
-  //   outerMsg.set(innerHashBuffer, blockSize);
-
-  //   return await this.hash(Array.from(outerMsg).map(b => String.fromCharCode(b)).join(''));
-  // }
+  
 
   public async hmac(message: string, key: string): Promise<string> {
     const encoder = new TextEncoder();

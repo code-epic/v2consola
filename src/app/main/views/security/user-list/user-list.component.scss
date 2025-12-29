@@ -1,0 +1,21 @@
+app-user-list .datatable-body-row.row-blocked {
+  background-color: #ffeff3 !important; // Un rojo pastel muy suave
+
+  &:hover {
+    background-color: #ffeef0 !important; // Un poco más oscuro al pasar el mouse
+  }
+
+  .font-weight-bold, .text-muted, .font-small-2 {
+    color: #7d5f5f !important; // Un rojo más oscuro para contraste y legibilidad
+  }
+}
+
+
+// Estilos para filas de usuarios inactivos (naranja claro)
+app-user-list .datatable-body-row.row-inactive {
+  background-color: #fff3e0 !important; // Naranja pastel muy suave (Amber 50)
+
+  &:hover {
+    background-color: #ffe0b2 !important; // Naranja pastel un poco más oscuro (Amber 100)
+  }
+}
