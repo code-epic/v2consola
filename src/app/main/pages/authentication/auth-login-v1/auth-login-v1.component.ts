@@ -56,6 +56,12 @@ export class AuthLoginV1Component implements OnInit {
 
   // Private
   private _unsubscribeAll: Subject<any>;
+  public showTotpSection = false;
+  public otp: string[] = new Array(6).fill('');
+  public isOtpInvalid = false;
+  private tempAuthToken = ''; // To store the token from the first login step
+
+  public xWidth = '660px'
 
 
   /**
@@ -163,9 +169,26 @@ export class AuthLoginV1Component implements OnInit {
         .getLogin(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe(
           (itk) => {
+            // Find this part in your login() or loginOpt() method
+
             this.loading = false;
             this.isHidden = false;
-            this.loginService.Iniciar(itk.token)
+            let tk: any = this.loginService.getUserDecrypt(itk.token);
+
+
+            if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
+
+              this.showTotpSection = true;
+
+              this.tempAuthToken = itk.token; // Store the temporary token
+            } else {
+              // No 2FA, proceed with normal login
+              this.loginService.Iniciar(itk.token);
+            }
+
+
+
+
           },
           (er) => {
             this.loading = false;
@@ -192,7 +215,7 @@ export class AuthLoginV1Component implements OnInit {
 
 
   loginOpt() {
-
+    this.xWidth = '660px'
     this.loading = true;
     this.loginService
       .getLogin(this.usuario, this.clave)
@@ -200,7 +223,21 @@ export class AuthLoginV1Component implements OnInit {
         (itk) => {
           this.loading = false;
           this.isHidden = false;
-          this.loginService.Iniciar(itk.token)
+          // this.loginService.Iniciar(itk.token)
+          let tk: any = this.loginService.getUserDecrypt(itk.token);
+
+          // MODIFICATION STARTS HERE
+          // console.log(tk.Usuario.token)
+          if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
+            // 2FA is required, show the TOTP section
+            this.xWidth = '840px'
+            this.showTotpSection = true;
+            this.tempAuthToken = itk.token; // Store the temporary token
+          } else {
+            // No 2FA, proceed with normal login
+            this.loginService.Iniciar(itk.token);
+          }
+
         },
         (error) => {
           this.loading = false;
@@ -225,5 +262,164 @@ export class AuthLoginV1Component implements OnInit {
       }
     }
   }
+
+  /**
+   * Handles the paste event on the OTP inputs.
+   * @param event The clipboard event.
+   */
+  onPaste(event: ClipboardEvent) {
+    event.preventDefault();
+    const pastedData = event.clipboardData?.getData('text').trim();
+
+    // Check if pasted data is a 6-digit number
+    if (pastedData && /^[0-9]{6}$/.test(pastedData)) {
+      const inputs = Array.from(document.querySelectorAll('.otp-box')) as HTMLInputElement[];
+      const digits = pastedData.split('');
+
+      inputs.forEach((input, index) => {
+        if (digits[index]) {
+          input.value = digits[index];
+        }
+      });
+
+      // Focus the last input and trigger verification
+      if (inputs.length > 0) {
+        inputs[inputs.length - 1].focus();
+        this.checkAndVerify();
+      }
+    }
+  }
+
+  /**
+   * Navigates back to the username/password login view.
+   */
+  goBackToLogin() {
+    this.showTotpSection = false;
+    this.tempAuthToken = '';
+    this.isOtpInvalid = false;
+    this.otp = new Array(6).fill('');
+    this.xWidth = '660px'
+    // Also clear the actual input fields in the DOM
+    const inputs = document.querySelectorAll('.otp-box') as NodeListOf<HTMLInputElement>;
+    inputs.forEach(i => i.value = '');
+    // Optionally, focus the username/email field again
+    const emailInput = this.document.querySelector('#login-email') as HTMLInputElement;
+    if (emailInput) { emailInput.focus(); }
+  }
+
+
+  onInput(event: any, nextInput: HTMLInputElement | null) {
+    const input = event.target;
+    const value = input.value;
+
+    // Limpiar si no es número
+    if (!/^[0-9]$/.test(value)) {
+      input.value = '';
+      return;
+    }
+
+    // Mover al siguiente si hay valor
+    if (value && nextInput) {
+      nextInput.focus();
+    }
+
+    this.checkAndVerify();
+  }
+
+  onKeydown(event: KeyboardEvent, prevInput: HTMLInputElement | null) {
+    const input = event.target as HTMLInputElement;
+
+    if (event.key === 'Backspace') {
+      if (!input.value && prevInput) {
+        prevInput.focus();
+        // Opcional: borrar el valor del anterior al retroceder
+        // prevInput.value = ''; 
+      }
+    }
+  }
+
+  private checkAndVerify() {
+    // Obtenemos todos los valores directamente del DOM para máxima precisión
+    const inputs = Array.from(document.querySelectorAll('.otp-box')) as HTMLInputElement[];
+    const code = inputs.map(i => i.value).join('');
+
+    if (code.length === 6) {
+      this.otp = code.split(''); // Sincronizamos con tu lógica existente
+      this.Continuar();
+    }
+  }
+
+  // Modifica tu handleOtpError para limpiar los inputs físicos
+  private handleOtpError(alertMessage = 'Código incorrecto') {
+    this.isOtpInvalid = true;
+    const inputs = document.querySelectorAll('.otp-box') as NodeListOf<HTMLInputElement>;
+    inputs.forEach(i => i.value = '');
+    inputs[0].focus();
+    inputs.forEach(i => (i.value = ''));
+
+    // Usamos setTimeout para asegurar que el foco se aplique después de que Angular
+    // haya actualizado la vista y aplicado la clase 'shake'.
+    setTimeout(() => inputs[0]?.focus(), 0);
+
+    // Quitar la clase de animación después de 500ms para poder repetirla
+    setTimeout(() => this.isOtpInvalid = false, 500);
+    setTimeout(() => (this.isOtpInvalid = false), 500);
+
+    this.utilservice.AlertMini('top-end', 'error', alertMessage, 4000);
+  }
+
+
+  /**
+   * Validates the completed OTP code with the backend.
+   */
+  Continuar() {
+    const otpCode = this.otp.join('');
+    if (otpCode.length !== 6 || this.loading) { // Evita re-entrada si ya está cargando
+      return;
+    }
+
+    this.loading = true; // Mostrar spinner mientras valida
+    this.apiService.Validar_TOTP(otpCode, this.tempAuthToken).subscribe(
+      (data) => {
+        this.loading = false;
+        if (data.msj === 'Ok') {
+          this.apiService.MultipleSesion(this.tempAuthToken).subscribe(
+            (xdata) => {
+              console.log(xdata)
+              if (xdata.msj === 'Ok') {
+                this.loginService.Iniciar(this.tempAuthToken)
+              } else if (xdata.tipo == 99) {
+                this.handleOtpError(xdata.msj);
+                this.goBackToLogin()
+              } else {
+                this.handleOtpError('Error al validar el código. Consulta al administrador');
+              }
+            },
+            (error) => { }
+          );
+
+
+
+        } else {
+          this.handleOtpError('Error de validacion');
+        }
+      },
+      (e) => {
+        this.loading = false;
+        console.info(e.error.msj)
+        let xdata = e.error
+
+        if (xdata.tipo == 99) {
+          this.handleOtpError(xdata.msj);
+          this.goBackToLogin()
+        } else {
+          this.handleOtpError('Error al validar el código. Inténtelo de nuevo.');
+        }
+
+
+      }
+    );
+  }
+
 
 }

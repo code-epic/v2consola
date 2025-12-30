@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from 'environments/environment';
 import Swal from 'sweetalert2';
@@ -132,10 +132,10 @@ export class LoginService {
 
   //public Epic: CodeEpic = new CodeEpic
 
-  constructor(private router: Router, 
+  constructor(private router: Router,
     private utils: UtilService,
-    private http: HttpClient, 
-    private taskService: TaskService, 
+    private http: HttpClient,
+    private taskService: TaskService,
     private apiService: ApiService) {
     //environment.Url +
     this.urlGet = environment.API
@@ -178,8 +178,8 @@ export class LoginService {
 
   logout() {
     Swal.fire({
-      title: 'Desea cerrar sesión?',
-      text: "Gracias por su tiempo!",
+      title: '¿Desea cerrar sesión?',
+      text: "Gracias por su tiempo",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',
@@ -188,12 +188,36 @@ export class LoginService {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.router.navigate(["/"])
-        this.clearSession()
-
-
+        this.fin()
       }
     })
+  }
+
+
+
+  fin() {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + sessionStorage.getItem("token"),
+      }),
+    };
+
+    var url = this.urlGet + 'wusuario/logout';
+
+    setTimeout(() => {
+      this.http.post(url, {}, httpOptions).subscribe(
+        (data) => {
+          // console.info('E001: ', data)
+          this.clearSession()
+          this.router.navigate(["/"])
+        },
+        (error) => {
+          console.error(error)
+        }
+      )
+    }, 1500);
+
   }
 
   async clearSession() {
@@ -256,9 +280,8 @@ export class LoginService {
 
 
     let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo
-    this.xAPI.funcion = "_SYS_CUsuarioPerfil";
+    this.xAPI.funcion = environment.functions.CONSULTAR_USUARIO_PERFIL
     this.xAPI.parametros = cadena
-    // console.log(this.xAPI)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         try {
@@ -270,7 +293,7 @@ export class LoginService {
 
           sessionStorage.setItem("menu", JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
           let texto = Md5.hashStr(JSON.stringify(data[0].Aplicacion[0].Rol.Menu));
-          
+
           this.utils.uuidv4();
 
           sessionStorage.setItem("crypt", texto);
@@ -287,9 +310,7 @@ export class LoginService {
           });
           sessionStorage.clear();
           localStorage.clear();
-          // this.router.navigate(["/login"]).then(() => {
-          //   window.location.reload();
-          // });
+
         }
 
       },

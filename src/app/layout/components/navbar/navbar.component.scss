@@ -130,10 +130,12 @@ app-navbar-bookmark {
     transform: scale(0.9);
     opacity: 0.7;
   }
+
   70% {
     transform: scale(1.2);
     opacity: 0;
   }
+
   100% {
     transform: scale(0.9);
     opacity: 0;
@@ -180,6 +182,7 @@ app-navbar-bookmark {
     font-size: 0.85rem;
     font-weight: 700;
     line-height: 1;
+
     .progress-ring__percent-sign {
       font-size: 0.6rem;
       font-weight: 600;
@@ -194,6 +197,7 @@ app-navbar-bookmark {
     .progress-ring__track {
       stroke: #3b4253; // Color de fondo más oscuro para el tema dark
     }
+
     .progress-ring__text-container {
       color: #d0d2d6; // Texto más claro para el tema dark
     }
@@ -209,10 +213,12 @@ app-navbar-bookmark {
     transform: scale(0.9);
     opacity: 0.7;
   }
+
   70% {
     transform: scale(1.2);
     opacity: 0;
   }
+
   100% {
     transform: scale(0.9);
     opacity: 0;
@@ -259,6 +265,7 @@ app-navbar-bookmark {
     font-size: 0.85rem;
     font-weight: 700;
     line-height: 1;
+
     .progress-ring__percent-sign {
       font-size: 0.6rem;
       font-weight: 600;
@@ -273,8 +280,54 @@ app-navbar-bookmark {
     .progress-ring__track {
       stroke: #3b4253; // Color de fondo más oscuro para el tema dark
     }
+
     .progress-ring__text-container {
       color: #d0d2d6; // Texto más claro para el tema dark
     }
+  }
+}
+
+
+// Estilos para la sección TOTP en el modal de cambio de clave
+.animated-section {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.qr-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  width: 150px;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem;
+  border: 1px dashed #dfe3e7;
+  margin: 0 auto;
+
+  .spinner {
+    animation: spin 1.5s linear infinite;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

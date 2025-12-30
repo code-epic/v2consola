@@ -35,6 +35,7 @@ export const environment = {
     SYS_DRIVERS: "sys-drivers",
   },
   functions: {
+    CONSULTAR_USUARIO_PERFIL: '_SYS_CUsuarioPerfil',
     LISTAR_DRIVERS: 'LESBDrivers',
     LISTAR_DRIVERS_APLICACION: '_SYS_CDrivers',
     LISTAR_APIS_ID: '_SYS_R_ListarApisID',

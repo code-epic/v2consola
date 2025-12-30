@@ -120,6 +120,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public passwordStrengthWidth: number = 0;
 
 
+  // Agrega estas propiedades a tu clase NavbarComponent
+  public showTotpSection: boolean = false;
+  public totpQrCodeUrl: string = '';
+  public totpSecret: string = '';
+  public isTotpSecretCopied: boolean = false;
+
+
+
   /**
    * Constructor
    *
@@ -578,5 +586,66 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.modalService.dismissAll();
   }
 
+
+
+
+
+  // ... (dentro de la clase NavbarComponent)
+
+  /**
+   * Activa o desactiva la sección de configuración de TOTP.
+   * Si se activa, genera el código si no ha sido generado antes.
+   * @param event El evento del interruptor.
+   */
+  toggleTotp(event: any) {
+    const isChecked = event.target.checked;
+    this.showTotpSection = isChecked;
+
+    if (isChecked && !this.totpSecret) {
+      this.generateTotp();
+    }
+  }
+
+  /**
+   * Llama al backend para generar un nuevo secreto y código QR para TOTP.
+   */
+  async generateTotp() {
+    // Muestra un spinner mientras se genera el código
+    this.totpQrCodeUrl = '';
+    this.totpSecret = '';
+
+    // NOTA: La siguiente sección es un EJEMPLO. Debes reemplazarla con la llamada real a tu API.
+    // Asumo que tienes una función en tu API para esto.
+   
+    this.apiService.GenerarQR_TOTP('base64').subscribe(
+      (data) => {
+        // Asumiendo que tu API devuelve un objeto con 'qrCode' (sdata URL) y 'secret' (la clave)
+        this.totpQrCodeUrl = data.contenido;
+        this.totpSecret = data.msj;
+      },
+      (error) => {
+        console.error('Error al generar el código TOTP', error);
+        this.utilservice.AlertMini('top-end', 'error', 'No se pudo generar el código.', 4000);
+        this.showTotpSection = false; // Oculta la sección si hay un error
+      }
+    );
+  }
+
+  /**
+   * Copia la clave secreta de TOTP al portapapeles del usuario.
+   */
+  copyTotpSecret() {
+    if (!this.totpSecret) return;
+
+    navigator.clipboard.writeText(this.totpSecret).then(() => {
+      this.isTotpSecretCopied = true;
+      setTimeout(() => {
+        this.isTotpSecretCopied = false;
+      }, 2500);
+    }).catch(err => {
+      console.error('Error al copiar la clave TOTP:', err);
+      this.utilservice.AlertMini('top-end', 'error', 'No se pudo copiar la clave.', 3000);
+    });
+  }
 
 }

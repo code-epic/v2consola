@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2'
 import { environment } from 'environments/environment';
 import { Sha256Service } from '@services/util/sha256';
+import { LoginService } from './login.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   constructor(
     private router: Router,
-    private sha256: Sha256Service
+    private sha256: Sha256Service,
+    private loginService: LoginService
   ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -60,6 +62,7 @@ export class AuthInterceptorService implements HttpInterceptor {
             } else {
               console.error('Error 403:', err);
             }
+            
             break;
           case 504:
             this.cerrar('Error de conexión con el servidor');
@@ -80,9 +83,9 @@ export class AuthInterceptorService implements HttpInterceptor {
       confirmButtonText: 'Gracias por su tiempo!'
     }).then((result) => {
       if (result.isConfirmed) {
-        sessionStorage.removeItem('token')
-        window.location.href = '/login';
+        this.loginService.fin()
       }
     })
+
   }
 }
