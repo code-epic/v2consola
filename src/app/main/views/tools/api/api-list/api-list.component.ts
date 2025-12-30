@@ -87,7 +87,7 @@ export class ApiListComponent implements OnInit {
         type: '',
         links: [
           {
-            name: 'Home',
+            name: 'Principal',
             isLink: true,
             link: '/home'
           },
@@ -131,9 +131,13 @@ export class ApiListComponent implements OnInit {
     );
   }
 
-  onSelectChange(event) {
-    const url = "tools/api-details/" + event.funcion
-    this.ruta.navigate([url]);
+  onSelectChange(e) {
+    console.log(e)
+    // const url = "tools/api-details/" + e.funcion
+    let url = btoa(e.driver + "|" + e.aplicacion);
+    let surl = "tools/applications/api-details/" + e.funcion + "/" + url;
+    this.ruta.navigate([surl]);
+    // this.ruta.navigate([url]);
   }
 
 

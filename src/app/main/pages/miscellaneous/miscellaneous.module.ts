@@ -7,6 +7,7 @@ import { CoreCommonModule } from '@core/common.module';
 import { ErrorComponent } from './error/error.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
 import { NotAuthorizedComponent } from './not-authorized/not-authorized.component';
+import { LogoutComponent } from './logout/logout.component';
 
 
 // routing
@@ -23,10 +24,14 @@ const routes: Routes = [
     path: 'miscellaneous/not-authorized',
     component: NotAuthorizedComponent,
   },
+  {
+    path: 'miscellaneous/logout',
+    component: LogoutComponent,
+  },
 ];
 
 @NgModule({
-  declarations: [ErrorComponent,MaintenanceComponent,NotAuthorizedComponent],
+  declarations: [ErrorComponent, MaintenanceComponent, LogoutComponent],
   imports: [CommonModule, RouterModule.forChild(routes), CoreCommonModule]
 })
-export class MiscellaneousModule {}
+export class MiscellaneousModule { }

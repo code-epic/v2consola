@@ -3,14 +3,13 @@ import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from 'environments/environment';
-import Swal from 'sweetalert2';
-//import { CodeEpic, Configuracion } from 'code.epic.module'
-import jwt_decode from "jwt-decode";
 import { TaskService } from '@services/apicore/task.service';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { UtilService } from '@services/util/util.service';
 
 import { Md5 } from 'ts-md5';
-import { UtilService } from '@services/util/util.service';
+import Swal from 'sweetalert2';
+import jwt_decode from "jwt-decode";
 
 export interface IUsuario {
   nombre: string,
@@ -130,14 +129,11 @@ export class LoginService {
 
   urlGet = '';
 
-  //public Epic: CodeEpic = new CodeEpic
-
   constructor(private router: Router,
     private utils: UtilService,
     private http: HttpClient,
     private taskService: TaskService,
     private apiService: ApiService) {
-    //environment.Url +
     this.urlGet = environment.API
     this.Id = environment.ID
 
@@ -154,10 +150,8 @@ export class LoginService {
     var usuario = {
       "nombre": user,
       "clave": clave,
-    };
-    // var url = this.urlGet + 'wusuario/login';
-    var url = this.urlGet + 'wusuario/loginV2';
-    // console.info(url)
+    }
+    var url = this.urlGet + 'wusuario/loginV2'
     return this.http.post<IToken>(url, usuario);
   }
 
@@ -188,62 +182,78 @@ export class LoginService {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.fin()
+        this.router.navigate(['/miscellaneous/logout']);
       }
     })
   }
 
 
 
-  fin() {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + sessionStorage.getItem("token"),
-      }),
-    };
+  /**
+   * Orquesta el proceso de cierre de sesión completo, notificando el progreso.
+   * @param progressCallback Una función para reportar el progreso a la UI.
+   */
+  public async performLogoutProcess(progressCallback: (message: string) => void) {
+    try {
+      progressCallback('Finalizando sesión en el servidor...');
+      await this.utils.sleep(800); // Pequeña pausa para UX
+      const httpOptions = {
+        headers: new HttpHeaders({
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + sessionStorage.getItem("token"),
+        }),
+      };
+      const url = this.urlGet + 'wusuario/logout';
+      await this.http.post(url, {}, httpOptions).toPromise();
+    } catch (error) {
+      console.error("Error al contactar el servidor para logout (se procederá con la limpieza local):", error);
+      progressCallback('No se pudo contactar al servidor, limpiando localmente...');
+      await this.utils.sleep(1500);
+    } finally {
+      progressCallback('Limpiando datos de la sesión...');
+      await this.utils.sleep(800); // Pequeña pausa para UX
+      await this.clearSession();
 
-    var url = this.urlGet + 'wusuario/logout';
-
-    setTimeout(() => {
-      this.http.post(url, {}, httpOptions).subscribe(
-        (data) => {
-          // console.info('E001: ', data)
-          this.clearSession()
-          this.router.navigate(["/"])
-        },
-        (error) => {
-          console.error(error)
-        }
-      )
-    }, 1500);
-
+      progressCallback('¡Hasta pronto!');
+      await this.utils.sleep(1200); // Pequeña pausa para que el usuario lea el mensaje final.
+      this.router.navigate(['/']);
+    }
   }
 
-  async clearSession() {
-    let lstApp = []
-    await this.taskService.keys().then(
-      async lst => {
-        let cnt = lst.length;
-        for (let i = 0; i < cnt; i++) {
-          const e = lst[i];
-          this.taskService.get(e).then(
-            data => {
-              if (data.estatus) lstApp.push(data)
-              if (i == cnt - 1) this.insertCommitDB(lstApp)
-            }
-          )
-
+  /**
+   * Guarda las tareas pendientes y limpia el almacenamiento local y de sesión.
+   * Es async para asegurar que los pasos se completen antes de continuar.
+   */
+  async clearSession(): Promise<void> {
+    try {
+      const lst = await this.taskService.keys();
+      if (lst && lst.length > 0) {
+        const lstApp = [];
+        for (const e of lst) {
+          const data = await this.taskService.get(e);
+          if (data.estatus) {
+            lstApp.push(data);
+          }
+        }
+        if (lstApp.length > 0) {
+          // Convertimos el Observable a Promesa para usar await
+          await this.insertCommitDB(lstApp).toPromise();
         }
       }
-    )
-    sessionStorage.clear();
-    localStorage.clear();
+    } catch (error) {
+      console.error('Error guardando tareas pendientes durante el logout:', error);
+      // No bloqueamos el logout si esto falla, solo lo registramos.
+    } finally {
+      // Esto SIEMPRE debe ejecutarse para garantizar el cierre de sesión en el cliente.
+      sessionStorage.clear();
+      localStorage.clear();
+      await this.taskService.clear();
+    }
   }
 
 
 
-  insertCommitDB(lst) {
+  insertCommitDB(lst): Observable<any> {
     let idUser = "panel"
 
     let obj = {
@@ -259,15 +269,7 @@ export class LoginService {
       'upsert': true
     }
 
-    this.apiService.ExecColeccion(cl).subscribe(
-      x => {
-        this.taskService.clear()
-      },
-      e => {
-        this.taskService.clear()
-      }
-
-    );
+    return this.apiService.ExecColeccion(cl);
   }
 
   getUserDecrypt(itk: string) {

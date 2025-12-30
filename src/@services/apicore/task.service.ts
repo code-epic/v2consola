@@ -77,7 +77,7 @@ export class TaskService  {
     return (await dbPromise).delete("task", key);
   }
   async clear() {
-    console.log('eliminando task')
+    // console.log('eliminando task')
     return (await dbPromise).clear("task");
   }
   async keys() {

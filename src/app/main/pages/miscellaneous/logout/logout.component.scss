@@ -1,0 +1,492 @@
+// Import the base page styles
+@import '@core/scss/base/pages/page-misc.scss';
+
+// Keyframes for animations
+@keyframes float {
+  0% {
+    transform: translateY(0px) translateX(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-30px) translateX(20px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(0px) translateX(0px) rotate(360deg);
+  }
+}
+
+@keyframes float-icon {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes pulse-border {
+  0% {
+    border-color: #d9d7f1; // Lighter purple
+  }
+  50% {
+    border-color: #7367f0; // Primary purple
+  }
+  100% {
+    border-color: #d9d7f1;
+  }
+}
+
+@keyframes pulse-color {
+  0% {
+    background-color: #d9d7f1;
+  }
+  50% {
+    background-color: #7367f0;
+  }
+  100% {
+    background-color: #d9d7f1;
+  }
+}
+
+@keyframes pop-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  80% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-fade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes clock-tick {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(8deg);
+  }
+  75% {
+    transform: rotate(-8deg);
+  }
+}
+
+// Main wrapper styles
+.misc-wrapper {
+  position: relative;
+  overflow: hidden;
+  background-color: #f8f9fa;
+}
+
+// Animated background shapes
+.background-shapes {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(115, 103, 240, 0.08);
+    animation: float 20s infinite linear;
+  }
+  .shape1 {
+    width: 200px;
+    height: 200px;
+    top: 15%;
+    left: 10%;
+    animation-duration: 25s;
+  }
+  .shape2 {
+    width: 120px;
+    height: 120px;
+    top: 75%;
+    left: 80%;
+    animation-duration: 18s;
+  }
+  .shape3 {
+    width: 80px;
+    height: 80px;
+    top: 80%;
+    left: 15%;
+    animation-duration: 22s;
+  }
+}
+
+.misc-inner {
+  z-index: 1;
+}
+
+// Main animated icon
+.power-off-container {
+  display: inline-block;
+  animation: float-icon 6s ease-in-out infinite;
+}
+
+.power-off-icon {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border: 8px solid #d9d7f1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-border 2.5s infinite ease-in-out;
+}
+
+.power-off-line {
+  width: 8px;
+  height: 40px;
+  background-color: #d9d7f1;
+  position: absolute;
+  top: 10px;
+  border-radius: 4px;
+  animation: pulse-color 2.5s infinite ease-in-out;
+}
+
+// Progress Steps Container
+.logout-steps-container {
+  max-width: 400px;
+  margin: 2rem auto 0;
+  background: #fff;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+  border: 1px solid #ebe9f1;
+}
+
+.logout-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 0;
+  transition: all 0.4s ease;
+  opacity: 0; // Start hidden for animation
+  animation: slide-in-fade 0.5s forwards ease-out;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f0eff5;
+  }
+
+  .step-icon {
+    width: 32px; // Increased size for better visual
+    height: 32px;
+    margin-right: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .step-label {
+    transition: color 0.3s ease;
+  }
+
+  // Status: Pending
+  &.status-pending {
+    opacity: 0.6;
+    .step-icon {
+      background-color: #f3f2f7;
+    }
+    .pending-icon {
+      color: #a8a4c2;
+      animation: clock-tick 2s infinite ease-in-out;
+    }
+  }
+
+  // Status: In-Progress
+  &.status-in-progress {
+    font-weight: 600;
+    color: #5e5873;
+    .step-icon {
+      background-color: rgba(115, 103, 240, 0.1);
+    }
+    .spinner-border {
+      color: #7367f0 !important; // Use primary color
+    }
+  }
+
+  // Status: Done
+  &.status-done {
+    font-weight: 600;
+    color: #5e5873;
+    .step-icon {
+      background-color: rgba(40, 199, 111, 0.12); // A nice, soft green
+    }
+    .done-icon-wrapper {
+      animation: pop-in 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+    .done-icon {
+      color: #28c76f; // The success green
+    }
+    .step-label {
+      color: #4d4a61;
+    }
+  }
+
+  // Status: Error
+  &.status-error {
+    font-weight: 600;
+    color: #ea5455;
+    .step-icon {
+      background-color: rgba(234, 84, 85, 0.12);
+    }
+    .error-icon-wrapper {
+      animation: pop-in 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+    .error-icon {
+      color: #ea5455;
+    }
+  }
+}
+
+// Final Message
+.final-message {
+  min-height: 24px;
+  animation: slide-in-fade 0.5s forwards ease-out;
+  animation-delay: 500ms; // Delay to appear after steps
+  opacity: 0;
+  color: #28c76f !important; // Keep the success green for the final message
+}
+.misc-wrapper {
+    position: relative;
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+
+.background-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.shape {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(115, 103, 240, 0.08);
+    animation: float 20s infinite linear;
+}
+
+.shape1 {
+    width: 200px;
+    height: 200px;
+    top: 15%;
+    left: 10%;
+    animation-duration: 25s;
+}
+
+.shape2 {
+    width: 120px;
+    height: 120px;
+    top: 75%;
+    left: 80%;
+    animation-duration: 18s;
+}
+
+.shape3 {
+    width: 80px;
+    height: 80px;
+    top: 80%;
+    left: 15%;
+    animation-duration: 22s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px) translateX(0px) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-30px) translateX(20px) rotate(180deg);
+    }
+
+    100% {
+        transform: translateY(0px) translateX(0px) rotate(360deg);
+    }
+}
+
+.misc-inner {
+    z-index: 1;
+}
+
+/* Power-off Icon Animation */
+.power-off-container {
+    display: inline-block;
+    animation: float-icon 6s ease-in-out infinite;
+}
+
+@keyframes float-icon {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.power-off-icon {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border: 8px solid #c8c8e0;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse-border 2s infinite;
+}
+
+.power-off-line {
+    width: 8px;
+    height: 40px;
+    background-color: #c8c8e0;
+    position: absolute;
+    top: 10px;
+    border-radius: 4px;
+    animation: pulse-color 2s infinite;
+}
+
+@keyframes pulse-border {
+    0% {
+        border-color: #c8c8e0;
+    }
+
+    50% {
+        border-color: #7367F0;
+    }
+
+    100% {
+        border-color: #c8c8e0;
+    }
+}
+
+@keyframes pulse-color {
+    0% {
+        background-color: #c8c8e0;
+    }
+
+    50% {
+        background-color: #7367F0;
+    }
+
+    100% {
+        background-color: #c8c8e0;
+    }
+}
+
+/* Progress Steps */
+.logout-steps-container {
+    max-width: 400px;
+    margin: 2rem auto 0;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ebe9f1;
+}
+
+.logout-steps {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 0;
+    transition: all 0.3s ease;
+    opacity: 0.5;
+    color: #6e6b7b;
+}
+
+.step-item:not(:last-child) {
+    border-bottom: 1px solid #ebe9f1;
+}
+
+.step-item.status-in-progress,
+.step-item.status-done,
+.step-item.status-error {
+    opacity: 1;
+    font-weight: 600;
+}
+
+.step-item.status-in-progress {
+    color: #7367F0;
+}
+
+.step-item.status-done {
+    color: #28c76f;
+}
+
+.step-item.status-error {
+    color: #ea5455;
+}
+
+.step-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pending-icon {
+    width: 10px;
+    height: 10px;
+    background-color: #b9b9c3;
+    border-radius: 50%;
+}
+
+.done-icon,
+.error-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.final-message {
+    min-height: 24px;
+    /* Reserve space to prevent layout shift */
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

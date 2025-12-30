@@ -1,0 +1,55 @@
+<div class="misc-wrapper">
+  <!-- Animated background shapes from error component -->
+  <div class="background-shapes">
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+    <div class="shape shape3"></div>
+  </div>
+
+  <div class="misc-inner p-2 p-sm-3">
+    <div class="w-100 text-center">
+
+      <!-- Animated Power-off Icon -->
+      <div class="power-off-container mb-4">
+        <div class="power-off-icon">
+          <div class="power-off-line"></div>
+        </div>
+      </div>
+
+      <h1 class="mb-2 font-weight-bolder" style="color: #5e5873;">Cerrando Sesión...</h1>
+      <p class="mb-4" style="color: #6e6b7b;">
+        Estamos finalizando tu sesión de forma segura. Por favor, espera un momento.
+      </p>
+
+      <!-- Progress Steps -->
+      <div class="logout-steps-container">
+        <ul class="logout-steps">
+          <li *ngFor="let step of steps; let i = index" class="step-item" [ngClass]="'status-' + step.status" [style.animation-delay.ms]="i * 150">
+            <div class="step-icon">
+              <!-- Pending -->
+              <div *ngIf="step.status === 'pending'" class="pending-icon-wrapper">
+                <i-feather name="clock" class="pending-icon"></i-feather>
+              </div>
+              <!-- In Progress -->
+              <div *ngIf="step.status === 'in-progress'" class="spinner-border spinner-border-sm" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <!-- Done -->
+              <div *ngIf="step.status === 'done'" class="done-icon-wrapper">
+                <i-feather name="check" class="done-icon"></i-feather>
+              </div>
+              <!-- Error -->
+              <div *ngIf="step.status === 'error'" class="error-icon-wrapper">
+                <i-feather name="x-circle" class="error-icon"></i-feather>
+              </div>
+            </div>
+            <div class="step-label">{{ step.label }}</div>
+          </li>
+        </ul>
+      </div>
+
+      <p class="mt-4 font-weight-bold final-message">{{ finalMessage }}</p>
+
+    </div>
+  </div>
+</div>

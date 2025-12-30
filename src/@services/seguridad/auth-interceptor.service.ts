@@ -83,7 +83,7 @@ export class AuthInterceptorService implements HttpInterceptor {
       confirmButtonText: 'Gracias por su tiempo!'
     }).then((result) => {
       if (result.isConfirmed) {
-        this.loginService.fin()
+        this.router.navigate(['/miscellaneous/logout'])
       }
     })
 
