@@ -2396,6 +2396,258 @@ class ErrorComponent {
 
 /***/ }),
 
+/***/ 59778:
+/*!*********************************************************************!*\
+  !*** ./src/app/main/pages/miscellaneous/logout/logout.component.ts ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "LogoutComponent": () => (/* binding */ LogoutComponent)
+/* harmony export */ });
+/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 8929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var _core_services_config_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @core/services/config.service */ 52553);
+/* harmony import */ var _services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @services/seguridad/login.service */ 38072);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common */ 36895);
+/* harmony import */ var _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/flex-layout/extended */ 24784);
+
+
+ // Import timer
+
+
+
+
+
+
+
+function LogoutComponent_li_16_div_2_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](1, "i-feather", 24);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+  }
+}
+
+function LogoutComponent_li_16_div_3_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 25)(1, "span", 26);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](2, "Loading...");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+  }
+}
+
+function LogoutComponent_li_16_div_4_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](1, "i-feather", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+  }
+}
+
+function LogoutComponent_li_16_div_5_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](1, "i-feather", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+  }
+}
+
+function LogoutComponent_li_16_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "li", 16)(1, "div", 17);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](2, LogoutComponent_li_16_div_2_Template, 2, 0, "div", 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](3, LogoutComponent_li_16_div_3_Template, 3, 0, "div", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](4, LogoutComponent_li_16_div_4_Template, 2, 0, "div", 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](5, LogoutComponent_li_16_div_5_Template, 2, 0, "div", 21);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](6, "div", 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+  }
+
+  if (rf & 2) {
+    const step_r1 = ctx.$implicit;
+    const i_r2 = ctx.index;
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵstyleProp"]("animation-delay", i_r2 * 150, "ms");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngClass", "status-" + step_r1.status);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngIf", step_r1.status === "pending");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngIf", step_r1.status === "in-progress");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngIf", step_r1.status === "done");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngIf", step_r1.status === "error");
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate"](step_r1.label);
+  }
+}
+
+class LogoutComponent {
+  _coreConfigService;
+  loginService;
+  ngZone;
+  cdr;
+  steps = [{
+    key: 'SERVER_LOGOUT',
+    label: 'Finalizando sesión en el servidor',
+    status: 'pending'
+  }, {
+    key: 'CLEAR_SESSION',
+    label: 'Limpiando datos de la sesión local',
+    status: 'pending'
+  }, {
+    key: 'REDIRECT',
+    label: 'Redirigiendo',
+    status: 'pending'
+  }];
+  finalMessage = ''; // Mapea los mensajes del servicio a las claves de los pasos
+
+  messageToStepKey = {
+    'Finalizando sesión en el servidor...': 'SERVER_LOGOUT',
+    'No se pudo contactar al servidor, limpiando localmente...': 'SERVER_LOGOUT',
+    'Limpiando datos de la sesión...': 'CLEAR_SESSION',
+    '¡Hasta pronto!': 'REDIRECT'
+  };
+  coreConfig;
+  countdown = 10; // Initial countdown value
+
+  _timerSubscription; // To hold the timer subscription
+  // Private
+
+  _unsubscribeAll; // Keep for general subscriptions
+
+  constructor(_coreConfigService, loginService, ngZone, cdr) {
+    this._coreConfigService = _coreConfigService;
+    this.loginService = loginService;
+    this.ngZone = ngZone;
+    this.cdr = cdr;
+    this._unsubscribeAll = new rxjs__WEBPACK_IMPORTED_MODULE_4__.Subject(); // Configure the layout
+
+    this._coreConfigService.config = {
+      layout: {
+        navbar: {
+          hidden: true
+        },
+        footer: {
+          hidden: true
+        },
+        menu: {
+          hidden: true
+        },
+        customizer: false,
+        enableLocalStorage: false
+      }
+    };
+  }
+
+  ngOnInit() {
+    this.executeLogout();
+  }
+
+  executeLogout() {
+    var _this = this;
+
+    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      yield _this.loginService.performLogoutProcess(message => {
+        _this.ngZone.run(() => {
+          _this.updateStepStatus(message);
+        });
+      });
+    })();
+  }
+
+  updateStepStatus(message) {
+    const stepKey = this.messageToStepKey[message];
+    if (!stepKey) return;
+    const currentStepIndex = this.steps.findIndex(s => s.key === stepKey);
+    if (currentStepIndex === -1) return; // Marcar todos los pasos anteriores como 'completados'
+
+    for (let i = 0; i < currentStepIndex; i++) {
+      if (this.steps[i].status !== 'error') {
+        this.steps[i].status = 'done';
+      }
+    } // Marcar el paso actual
+
+
+    const currentStep = this.steps[currentStepIndex];
+
+    if (message.includes('No se pudo')) {
+      currentStep.status = 'error';
+    } else if (message === '¡Hasta pronto!') {
+      currentStep.status = 'done';
+      this.finalMessage = '¡Sesión cerrada con éxito!';
+    } else {
+      currentStep.status = 'in-progress';
+    }
+
+    this.cdr.detectChanges();
+  }
+  /**
+  * On destroy
+  */
+
+
+  ngOnDestroy() {
+    // Unsubscribe from all subscriptions (including the timer)
+    this._unsubscribeAll.next();
+
+    this._unsubscribeAll.complete(); // Explicitly unsubscribe from the timer if it's still active
+
+
+    if (this._timerSubscription) {
+      this._timerSubscription.unsubscribe();
+    }
+  }
+
+  static ɵfac = function LogoutComponent_Factory(t) {
+    return new (t || LogoutComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_1__.CoreConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_2__.LoginService), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__.NgZone), _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_3__.ChangeDetectorRef));
+  };
+  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({
+    type: LogoutComponent,
+    selectors: [["app-logout"]],
+    decls: 19,
+    vars: 2,
+    consts: [[1, "misc-wrapper"], [1, "background-shapes"], [1, "shape", "shape1"], [1, "shape", "shape2"], [1, "shape", "shape3"], [1, "misc-inner", "p-2", "p-sm-3"], [1, "w-100", "text-center"], [1, "power-off-container", "mb-4"], [1, "power-off-icon"], [1, "power-off-line"], [1, "mb-2", "font-weight-bolder", 2, "color", "#5e5873"], [1, "mb-4", 2, "color", "#6e6b7b"], [1, "logout-steps-container"], [1, "logout-steps"], ["class", "step-item", 3, "ngClass", "animation-delay", 4, "ngFor", "ngForOf"], [1, "mt-4", "font-weight-bold", "final-message"], [1, "step-item", 3, "ngClass"], [1, "step-icon"], ["class", "pending-icon-wrapper", 4, "ngIf"], ["class", "spinner-border spinner-border-sm", "role", "status", 4, "ngIf"], ["class", "done-icon-wrapper", 4, "ngIf"], ["class", "error-icon-wrapper", 4, "ngIf"], [1, "step-label"], [1, "pending-icon-wrapper"], ["name", "clock", 1, "pending-icon"], ["role", "status", 1, "spinner-border", "spinner-border-sm"], [1, "sr-only"], [1, "done-icon-wrapper"], ["name", "check", 1, "done-icon"], [1, "error-icon-wrapper"], ["name", "x-circle", 1, "error-icon"]],
+    template: function LogoutComponent_Template(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](2, "div", 2)(3, "div", 3)(4, "div", 4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "div", 5)(6, "div", 6)(7, "div", 7)(8, "div", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](9, "div", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](10, "h1", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](11, "Cerrando Sesi\u00F3n...");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](12, "p", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](13, " Estamos finalizando tu sesi\u00F3n de forma segura. Por favor, espera un momento. ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](14, "div", 12)(15, "ul", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtemplate"](16, LogoutComponent_li_16_Template, 8, 8, "li", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](17, "p", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()()()();
+      }
+
+      if (rf & 2) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("ngForOf", ctx.steps);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate"](ctx.finalMessage);
+      }
+    },
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_5__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_5__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_5__.NgIf, _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_6__.DefaultClassDirective],
+    styles: [".misc-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-basis: 100%;\n  min-height: 100vh;\n  width: 100%;\n  align-items: center;\n  justify-content: center;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n  position: relative;\n  max-width: 750px;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  position: absolute;\n  top: 2rem;\n  left: 2rem;\n  margin: 0;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%]   .brand-text[_ngcontent-%COMP%] {\n  font-weight: 600;\n}\n@media (max-height: 625px) {\n  .misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n    margin-top: 4rem;\n  }\n}\n@keyframes float {\n  0% {\n    transform: translateY(0px) translateX(0px) rotate(0deg);\n  }\n  50% {\n    transform: translateY(-30px) translateX(20px) rotate(180deg);\n  }\n  100% {\n    transform: translateY(0px) translateX(0px) rotate(360deg);\n  }\n}\n@keyframes float-icon {\n  0%, 100% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-15px);\n  }\n}\n@keyframes pulse-border {\n  0% {\n    border-color: #d9d7f1;\n  }\n  50% {\n    border-color: #7367f0;\n  }\n  100% {\n    border-color: #d9d7f1;\n  }\n}\n@keyframes pulse-color {\n  0% {\n    background-color: #d9d7f1;\n  }\n  50% {\n    background-color: #7367f0;\n  }\n  100% {\n    background-color: #d9d7f1;\n  }\n}\n@keyframes pop-in {\n  0% {\n    transform: scale(0);\n    opacity: 0;\n  }\n  80% {\n    transform: scale(1.2);\n    opacity: 1;\n  }\n  100% {\n    transform: scale(1);\n  }\n}\n@keyframes slide-in-fade {\n  from {\n    opacity: 0;\n    transform: translateY(20px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}\n@keyframes clock-tick {\n  0%, 100% {\n    transform: rotate(0deg);\n  }\n  25% {\n    transform: rotate(8deg);\n  }\n  75% {\n    transform: rotate(-8deg);\n  }\n}\n.misc-wrapper[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  background-color: #f8f9fa;\n}\n.background-shapes[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 0;\n}\n.background-shapes[_ngcontent-%COMP%]   .shape[_ngcontent-%COMP%] {\n  position: absolute;\n  border-radius: 50%;\n  background: rgba(115, 103, 240, 0.08);\n  animation: float 20s infinite linear;\n}\n.background-shapes[_ngcontent-%COMP%]   .shape1[_ngcontent-%COMP%] {\n  width: 200px;\n  height: 200px;\n  top: 15%;\n  left: 10%;\n  animation-duration: 25s;\n}\n.background-shapes[_ngcontent-%COMP%]   .shape2[_ngcontent-%COMP%] {\n  width: 120px;\n  height: 120px;\n  top: 75%;\n  left: 80%;\n  animation-duration: 18s;\n}\n.background-shapes[_ngcontent-%COMP%]   .shape3[_ngcontent-%COMP%] {\n  width: 80px;\n  height: 80px;\n  top: 80%;\n  left: 15%;\n  animation-duration: 22s;\n}\n.misc-inner[_ngcontent-%COMP%] {\n  z-index: 1;\n}\n.power-off-container[_ngcontent-%COMP%] {\n  display: inline-block;\n  animation: float-icon 6s ease-in-out infinite;\n}\n.power-off-icon[_ngcontent-%COMP%] {\n  position: relative;\n  width: 100px;\n  height: 100px;\n  border: 8px solid #d9d7f1;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  animation: pulse-border 2.5s infinite ease-in-out;\n}\n.power-off-line[_ngcontent-%COMP%] {\n  width: 8px;\n  height: 40px;\n  background-color: #d9d7f1;\n  position: absolute;\n  top: 10px;\n  border-radius: 4px;\n  animation: pulse-color 2.5s infinite ease-in-out;\n}\n.logout-steps-container[_ngcontent-%COMP%] {\n  max-width: 400px;\n  margin: 2rem auto 0;\n  background: #fff;\n  padding: 1rem 1.5rem;\n  border-radius: 12px;\n  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.07);\n  border: 1px solid #ebe9f1;\n}\n.logout-steps[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n.step-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  padding: 0.85rem 0;\n  transition: all 0.4s ease;\n  opacity: 0;\n  animation: slide-in-fade 0.5s forwards ease-out;\n}\n.step-item[_ngcontent-%COMP%]:not(:last-child) {\n  border-bottom: 1px solid #f0eff5;\n}\n.step-item[_ngcontent-%COMP%]   .step-icon[_ngcontent-%COMP%] {\n  width: 32px;\n  height: 32px;\n  margin-right: 1.25rem;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  border-radius: 50%;\n  transition: all 0.3s ease-in-out;\n}\n.step-item[_ngcontent-%COMP%]   .step-label[_ngcontent-%COMP%] {\n  transition: color 0.3s ease;\n}\n.step-item.status-pending[_ngcontent-%COMP%] {\n  opacity: 0.6;\n}\n.step-item.status-pending[_ngcontent-%COMP%]   .step-icon[_ngcontent-%COMP%] {\n  background-color: #f3f2f7;\n}\n.step-item.status-pending[_ngcontent-%COMP%]   .pending-icon[_ngcontent-%COMP%] {\n  color: #a8a4c2;\n  animation: clock-tick 2s infinite ease-in-out;\n}\n.step-item.status-in-progress[_ngcontent-%COMP%] {\n  font-weight: 600;\n  color: #5e5873;\n}\n.step-item.status-in-progress[_ngcontent-%COMP%]   .step-icon[_ngcontent-%COMP%] {\n  background-color: rgba(115, 103, 240, 0.1);\n}\n.step-item.status-in-progress[_ngcontent-%COMP%]   .spinner-border[_ngcontent-%COMP%] {\n  color: #7367f0 !important;\n}\n.step-item.status-done[_ngcontent-%COMP%] {\n  font-weight: 600;\n  color: #5e5873;\n}\n.step-item.status-done[_ngcontent-%COMP%]   .step-icon[_ngcontent-%COMP%] {\n  background-color: rgba(40, 199, 111, 0.12);\n}\n.step-item.status-done[_ngcontent-%COMP%]   .done-icon-wrapper[_ngcontent-%COMP%] {\n  animation: pop-in 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);\n}\n.step-item.status-done[_ngcontent-%COMP%]   .done-icon[_ngcontent-%COMP%] {\n  color: #28c76f;\n}\n.step-item.status-done[_ngcontent-%COMP%]   .step-label[_ngcontent-%COMP%] {\n  color: #4d4a61;\n}\n.step-item.status-error[_ngcontent-%COMP%] {\n  font-weight: 600;\n  color: #ea5455;\n}\n.step-item.status-error[_ngcontent-%COMP%]   .step-icon[_ngcontent-%COMP%] {\n  background-color: rgba(234, 84, 85, 0.12);\n}\n.step-item.status-error[_ngcontent-%COMP%]   .error-icon-wrapper[_ngcontent-%COMP%] {\n  animation: pop-in 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);\n}\n.step-item.status-error[_ngcontent-%COMP%]   .error-icon[_ngcontent-%COMP%] {\n  color: #ea5455;\n}\n.final-message[_ngcontent-%COMP%] {\n  min-height: 24px;\n  animation: slide-in-fade 0.5s forwards ease-out;\n  animation-delay: 500ms;\n  opacity: 0;\n  color: #28c76f !important;\n}\n.misc-wrapper[_ngcontent-%COMP%] {\n  position: relative;\n  overflow: hidden;\n  background-color: #f8f9fa;\n}\n.background-shapes[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 0;\n}\n.shape[_ngcontent-%COMP%] {\n  position: absolute;\n  border-radius: 50%;\n  background: rgba(115, 103, 240, 0.08);\n  animation: float 20s infinite linear;\n}\n.shape1[_ngcontent-%COMP%] {\n  width: 200px;\n  height: 200px;\n  top: 15%;\n  left: 10%;\n  animation-duration: 25s;\n}\n.shape2[_ngcontent-%COMP%] {\n  width: 120px;\n  height: 120px;\n  top: 75%;\n  left: 80%;\n  animation-duration: 18s;\n}\n.shape3[_ngcontent-%COMP%] {\n  width: 80px;\n  height: 80px;\n  top: 80%;\n  left: 15%;\n  animation-duration: 22s;\n}\n@keyframes float {\n  0% {\n    transform: translateY(0px) translateX(0px) rotate(0deg);\n  }\n  50% {\n    transform: translateY(-30px) translateX(20px) rotate(180deg);\n  }\n  100% {\n    transform: translateY(0px) translateX(0px) rotate(360deg);\n  }\n}\n.misc-inner[_ngcontent-%COMP%] {\n  z-index: 1;\n}\n\n.power-off-container[_ngcontent-%COMP%] {\n  display: inline-block;\n  animation: float-icon 6s ease-in-out infinite;\n}\n@keyframes float-icon {\n  0%, 100% {\n    transform: translateY(0);\n  }\n  50% {\n    transform: translateY(-15px);\n  }\n}\n.power-off-icon[_ngcontent-%COMP%] {\n  position: relative;\n  width: 100px;\n  height: 100px;\n  border: 8px solid #c8c8e0;\n  border-radius: 50%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  animation: pulse-border 2s infinite;\n}\n.power-off-line[_ngcontent-%COMP%] {\n  width: 8px;\n  height: 40px;\n  background-color: #c8c8e0;\n  position: absolute;\n  top: 10px;\n  border-radius: 4px;\n  animation: pulse-color 2s infinite;\n}\n@keyframes pulse-border {\n  0% {\n    border-color: #c8c8e0;\n  }\n  50% {\n    border-color: #7367F0;\n  }\n  100% {\n    border-color: #c8c8e0;\n  }\n}\n@keyframes pulse-color {\n  0% {\n    background-color: #c8c8e0;\n  }\n  50% {\n    background-color: #7367F0;\n  }\n  100% {\n    background-color: #c8c8e0;\n  }\n}\n\n.logout-steps-container[_ngcontent-%COMP%] {\n  max-width: 400px;\n  margin: 2rem auto 0;\n  background: #fff;\n  padding: 1.5rem;\n  border-radius: 8px;\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);\n  border: 1px solid #ebe9f1;\n}\n.logout-steps[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n.step-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  padding: 0.75rem 0;\n  transition: all 0.3s ease;\n  opacity: 0.5;\n  color: #6e6b7b;\n}\n.step-item[_ngcontent-%COMP%]:not(:last-child) {\n  border-bottom: 1px solid #ebe9f1;\n}\n.step-item.status-in-progress[_ngcontent-%COMP%], .step-item.status-done[_ngcontent-%COMP%], .step-item.status-error[_ngcontent-%COMP%] {\n  opacity: 1;\n  font-weight: 600;\n}\n.step-item.status-in-progress[_ngcontent-%COMP%] {\n  color: #7367F0;\n}\n.step-item.status-done[_ngcontent-%COMP%] {\n  color: #28c76f;\n}\n.step-item.status-error[_ngcontent-%COMP%] {\n  color: #ea5455;\n}\n.step-icon[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n  margin-right: 1rem;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.pending-icon[_ngcontent-%COMP%] {\n  width: 10px;\n  height: 10px;\n  background-color: #b9b9c3;\n  border-radius: 50%;\n}\n.done-icon[_ngcontent-%COMP%], .error-icon[_ngcontent-%COMP%] {\n  width: 20px;\n  height: 20px;\n}\n.final-message[_ngcontent-%COMP%] {\n  min-height: 24px;\n  \n  animation: fadeIn 0.5s ease-in;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n  }\n  to {\n    opacity: 1;\n  }\n}"]
+  });
+}
+
+/***/ }),
+
 /***/ 48057:
 /*!*******************************************************************************!*\
   !*** ./src/app/main/pages/miscellaneous/maintenance/maintenance.component.ts ***!
@@ -2537,13 +2789,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MiscellaneousModule": () => (/* binding */ MiscellaneousModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/common */ 36895);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 34793);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 36895);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ 34793);
 /* harmony import */ var _core_common_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @core/common.module */ 75078);
 /* harmony import */ var _error_error_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./error/error.component */ 10825);
 /* harmony import */ var _maintenance_maintenance_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./maintenance/maintenance.component */ 48057);
 /* harmony import */ var _not_authorized_not_authorized_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./not-authorized/not-authorized.component */ 17804);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var _logout_logout_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./logout/logout.component */ 59778);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 94650);
+
 
 
 
@@ -2562,23 +2816,26 @@ const routes = [{
 }, {
   path: 'miscellaneous/not-authorized',
   component: _not_authorized_not_authorized_component__WEBPACK_IMPORTED_MODULE_3__.NotAuthorizedComponent
+}, {
+  path: 'miscellaneous/logout',
+  component: _logout_logout_component__WEBPACK_IMPORTED_MODULE_4__.LogoutComponent
 }];
 class MiscellaneousModule {
   static ɵfac = function MiscellaneousModule_Factory(t) {
     return new (t || MiscellaneousModule)();
   };
-  static ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineNgModule"]({
+  static ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({
     type: MiscellaneousModule
   });
-  static ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineInjector"]({
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_5__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule.forChild(routes), _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
+  static ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_7__.RouterModule.forChild(routes), _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
   });
 }
 
 (function () {
-  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsetNgModuleScope"](MiscellaneousModule, {
-    declarations: [_error_error_component__WEBPACK_IMPORTED_MODULE_1__.ErrorComponent, _maintenance_maintenance_component__WEBPACK_IMPORTED_MODULE_2__.MaintenanceComponent, _not_authorized_not_authorized_component__WEBPACK_IMPORTED_MODULE_3__.NotAuthorizedComponent],
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_5__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_6__.RouterModule, _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
+  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetNgModuleScope"](MiscellaneousModule, {
+    declarations: [_error_error_component__WEBPACK_IMPORTED_MODULE_1__.ErrorComponent, _maintenance_maintenance_component__WEBPACK_IMPORTED_MODULE_2__.MaintenanceComponent, _logout_logout_component__WEBPACK_IMPORTED_MODULE_4__.LogoutComponent],
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_7__.RouterModule, _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
   });
 })();
 
@@ -2594,14 +2851,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "NotAuthorizedComponent": () => (/* binding */ NotAuthorizedComponent)
 /* harmony export */ });
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ 7625);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 8929);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ 7625);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 8929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _core_services_config_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @core/services/config.service */ 52553);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/router */ 34793);
-/* harmony import */ var _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @core/directives/core-ripple-effect/core-ripple-effect.directive */ 75287);
-
-
 
 
 
@@ -2619,7 +2872,7 @@ class NotAuthorizedComponent {
 
   constructor(_coreConfigService) {
     this._coreConfigService = _coreConfigService;
-    this._unsubscribeAll = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject(); // Configure the layout
+    this._unsubscribeAll = new rxjs__WEBPACK_IMPORTED_MODULE_1__.Subject(); // Configure the layout
 
     this._coreConfigService.config = {
       layout: {
@@ -2646,7 +2899,7 @@ class NotAuthorizedComponent {
 
   ngOnInit() {
     // Subscribe to config changes
-    this._coreConfigService.config.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.takeUntil)(this._unsubscribeAll)).subscribe(config => {
+    this._coreConfigService.config.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_2__.takeUntil)(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
   }
@@ -2668,9 +2921,9 @@ class NotAuthorizedComponent {
   }
 
   static ɵfac = function NotAuthorizedComponent_Factory(t) {
-    return new (t || NotAuthorizedComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_0__.CoreConfigService));
+    return new (t || NotAuthorizedComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_0__.CoreConfigService));
   };
-  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵdefineComponent"]({
+  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵdefineComponent"]({
     type: NotAuthorizedComponent,
     selectors: [["app-not-authorized"]],
     decls: 23,
@@ -2678,49 +2931,48 @@ class NotAuthorizedComponent {
     consts: [[1, "misc-wrapper"], ["href", "javascript:void(0);", 1, "brand-logo"], ["alt", "brand-logo", "height", "28", 3, "src"], [1, "brand-text", "text-primary", "ml-1"], [1, "misc-inner", "d-lg-flex", "col-lg-12", "align-items-center", "p-5"], [1, "w-100", "text-center"], [1, "mb-1"], [1, "mb-2"], [1, "btn-whatsapp"], ["alt", "Error page", "width", "200px", 1, "img-fluid", "drop", 3, "src"], [1, "mb-1", "drop"], ["align", "center", "routerLink", "/", "rippleEffect", "", 1, "btn", "btn-warning", "mb-2", "btn-sm-block"], ["align", "center", "rippleEffect", "", 1, "btn", "btn-danger", "mb-2", "btn-sm-block", 3, "click"]],
     template: function NotAuthorizedComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 0)(1, "a", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "img", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "h2", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "div", 4)(6, "div", 5)(7, "h1", 6)(8, "strong");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "h2", 6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, "Usted no est\u00E1 autorizado! \uD83D\uDD10");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](12, "p", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](13, "No tienes permisos para ingresar a esta URL, te recomendamos salir de esta p\u00E1gina");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](14, "div", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](15, "img", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](16, "p", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](17, "br");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](18, "a", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](19, "Salir de esta P\u00E1gina");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](20, " \u00A0 ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](21, "a", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function NotAuthorizedComponent_Template_a_click_21_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](0, "div", 0)(1, "a", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](2, "img", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](3, "h2", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](4);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](5, "div", 4)(6, "div", 5)(7, "h1", 6)(8, "strong");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](10, "h2", 6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](11, "Usted no est\u00E1 autorizado! \uD83D\uDD10");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](12, "p", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](13, "No tienes permisos para ingresar a esta URL, te recomendamos salir de esta p\u00E1gina");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](14, "div", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](15, "img", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](16, "p", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelement"](17, "br");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](18, "a", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](19, "Salir de esta P\u00E1gina");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](20, " \u00A0 ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementStart"](21, "a", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵlistener"]("click", function NotAuthorizedComponent_Template_a_click_21_listener() {
           return ctx.salir();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](22, "Cerrar Sesi\u00F3n");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtext"](22, "Cerrar Sesi\u00F3n");
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵelementEnd"]()()()()();
       }
 
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpropertyInterpolate"]("src", ctx.coreConfig.app.appLogoImage, _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.coreConfig.app.appName);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](ctx.coreConfig.app.appTitle);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](6);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("src", ctx.coreConfig.layout.skin === "dark" ? "assets/images/logo/logo.png" : "assets/images/logo/logo.png", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵsanitizeUrl"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵpropertyInterpolate"]("src", ctx.coreConfig.app.appLogoImage, _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsanitizeUrl"]);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate"](ctx.coreConfig.app.appName);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵtextInterpolate"](ctx.coreConfig.app.appTitle);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵadvance"](6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵproperty"]("src", ctx.coreConfig.layout.skin === "dark" ? "assets/images/logo/logo.png" : "assets/images/logo/logo.png", _angular_core__WEBPACK_IMPORTED_MODULE_3__["ɵɵsanitizeUrl"]);
       }
     },
-    dependencies: [_angular_router__WEBPACK_IMPORTED_MODULE_5__.RouterLinkWithHref, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_1__.RippleEffectDirective],
     styles: [".misc-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-basis: 100%;\n  min-height: 100vh;\n  width: 100%;\n  align-items: center;\n  justify-content: center;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n  position: relative;\n  max-width: 750px;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: center;\n  position: absolute;\n  top: 2rem;\n  left: 2rem;\n  margin: 0;\n}\n.misc-wrapper[_ngcontent-%COMP%]   .brand-logo[_ngcontent-%COMP%]   .brand-text[_ngcontent-%COMP%] {\n  font-weight: 600;\n}\n@media (max-height: 625px) {\n  .misc-wrapper[_ngcontent-%COMP%]   .misc-inner[_ngcontent-%COMP%] {\n    margin-top: 4rem;\n  }\n}\n.drop[_ngcontent-%COMP%] {\n  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.7));\n}\n.btn-whatsapp[_ngcontent-%COMP%] {\n  position: fixed;\n  z-index: -1;\n  bottom: 20px;\n  right: 740px;\n  top: 100px;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before, .btn-whatsapp[_ngcontent-%COMP%]:after {\n  content: \"\";\n  position: absolute;\n  top: 10px;\n  left: 10px;\n  width: 180px;\n  height: 180px;\n  border-radius: 50%;\n  background-color: #eda409;\n  opacity: 0;\n  animation: onda 1s infinite;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before {\n  animation-delay: 0.2s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:after {\n  animation-delay: 0.5s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n}\n@keyframes onda {\n  0% {\n    transform: scale(1);\n  }\n  15% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n    transform: scale(2.5);\n  }\n}"]
   });
 }

@@ -25,7 +25,7 @@ import { WsocketsService } from "@services/websockets/wsockets.service";
 import { TaskService } from "@services/apicore/task.service";
 import Swal from "sweetalert2";
 import { environment } from "environments/environment";
-import { ApiService } from "@services/apicore/api.service";
+import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Sha256Service } from "@services/util/sha256";
@@ -127,6 +127,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public isTotpSecretCopied: boolean = false;
   public isTotpActive: boolean = false;
 
+  public xAPI: IAPICore = {
+    funcion: '',
+    parametros: ''
+  };
+
 
 
   /**
@@ -203,7 +208,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         this.token = jwt_decode(token);
         this.usuario = this.token.Usuario.usuario;
         this.tipo = this.token.Usuario.nombre;
-        if(this.token.Usuario.token !== undefined && this.token.Usuario.token !== '') {
+        if (this.token.Usuario.token !== undefined && this.token.Usuario.token !== '') {
           this.showTotpSection = true
           this.totpSecret = this.token.Usuario.token
           this.activarSinEvento()
@@ -284,7 +289,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
 
   activarSinEvento() {
-    this.isTotpActive = true; 
+    this.isTotpActive = true;
     this.apiService.GetImageQR(this.totpSecret).subscribe(
       (data) => {
         console.log(data)
@@ -295,7 +300,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     )
   }
-  
+
   // Public Methods
   // -----------------------------------------------------------------------------------------------------
 
@@ -626,7 +631,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.showTotpSection = isChecked;
 
     if (isChecked && !this.totpSecret) {
-      this.generateTotp();
+      this.generateTotp()
+    } else {
+      this.limpiarTotp()
+      console.log('Desactivado')
     }
   }
 
@@ -640,19 +648,39 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
     // NOTA: La siguiente sección es un EJEMPLO. Debes reemplazarla con la llamada real a tu API.
     // Asumo que tienes una función en tu API para esto.
-   
-    this.apiService.GenerarQR_TOTP('base64').subscribe(
+
+    // this.apiService.GenerarQR_TOTP('base64').subscribe(
+    //   (data) => {
+    //     // Asumiendo que tu API devuelve un objeto con 'qrCode' (sdata URL) y 'secret' (la clave)
+    //     this.totpQrCodeUrl = data.contenido;
+    //     this.totpSecret = data.msj;
+    //   },
+    //   (error) => {
+    //     console.error('Error al generar el código TOTP', error);
+    //     this.utilservice.AlertMini('top-end', 'error', 'No se pudo generar el código.', 4000);
+    //     this.showTotpSection = false; // Oculta la sección si hay un error
+    //   }
+    // );
+  }
+
+  async limpiarTotp() {
+
+    this.showTotpSection = false;
+    this.xAPI = {} as IAPICore
+    this.xAPI.funcion = environment.functions.ACTUALIZAR_TOTP
+    this.xAPI.parametros = this.totpSecret
+
+    this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // Asumiendo que tu API devuelve un objeto con 'qrCode' (sdata URL) y 'secret' (la clave)
-        this.totpQrCodeUrl = data.contenido;
-        this.totpSecret = data.msj;
+        console.log(data)
+        this.totpQrCodeUrl = ''
+        this.totpSecret = ''
       },
       (error) => {
-        console.error('Error al generar el código TOTP', error);
-        this.utilservice.AlertMini('top-end', 'error', 'No se pudo generar el código.', 4000);
-        this.showTotpSection = false; // Oculta la sección si hay un error
+        console.log(error)
       }
-    );
+    )
+
   }
 
   /**
