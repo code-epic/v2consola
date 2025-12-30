@@ -649,18 +649,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
     // NOTA: La siguiente sección es un EJEMPLO. Debes reemplazarla con la llamada real a tu API.
     // Asumo que tienes una función en tu API para esto.
 
-    // this.apiService.GenerarQR_TOTP('base64').subscribe(
-    //   (data) => {
-    //     // Asumiendo que tu API devuelve un objeto con 'qrCode' (sdata URL) y 'secret' (la clave)
-    //     this.totpQrCodeUrl = data.contenido;
-    //     this.totpSecret = data.msj;
-    //   },
-    //   (error) => {
-    //     console.error('Error al generar el código TOTP', error);
-    //     this.utilservice.AlertMini('top-end', 'error', 'No se pudo generar el código.', 4000);
-    //     this.showTotpSection = false; // Oculta la sección si hay un error
-    //   }
-    // );
+    this.apiService.GenerarQR_TOTP('base64').subscribe(
+      (data) => {
+        // Asumiendo que tu API devuelve un objeto con 'qrCode' (sdata URL) y 'secret' (la clave)
+        this.totpQrCodeUrl = data.contenido;
+        this.totpSecret = data.msj;
+      },
+      (error) => {
+        console.error('Error al generar el código TOTP', error);
+        this.utilservice.AlertMini('top-end', 'error', 'No se pudo generar el código.', 4000);
+        this.showTotpSection = false; // Oculta la sección si hay un error
+      }
+    );
   }
 
   async limpiarTotp() {

@@ -25972,18 +25972,18 @@ class NavbarComponent {
       _this2.totpQrCodeUrl = '';
       _this2.totpSecret = ''; // NOTA: La siguiente sección es un EJEMPLO. Debes reemplazarla con la llamada real a tu API.
       // Asumo que tienes una función en tu API para esto.
-      // this.apiService.GenerarQR_TOTP('base64').subscribe(
-      //   (data) => {
-      //     // Asumiendo que tu API devuelve un objeto con 'qrCode' (sdata URL) y 'secret' (la clave)
-      //     this.totpQrCodeUrl = data.contenido;
-      //     this.totpSecret = data.msj;
-      //   },
-      //   (error) => {
-      //     console.error('Error al generar el código TOTP', error);
-      //     this.utilservice.AlertMini('top-end', 'error', 'No se pudo generar el código.', 4000);
-      //     this.showTotpSection = false; // Oculta la sección si hay un error
-      //   }
-      // );
+
+      _this2.apiService.GenerarQR_TOTP('base64').subscribe(data => {
+        // Asumiendo que tu API devuelve un objeto con 'qrCode' (sdata URL) y 'secret' (la clave)
+        _this2.totpQrCodeUrl = data.contenido;
+        _this2.totpSecret = data.msj;
+      }, error => {
+        console.error('Error al generar el código TOTP', error);
+
+        _this2.utilservice.AlertMini('top-end', 'error', 'No se pudo generar el código.', 4000);
+
+        _this2.showTotpSection = false; // Oculta la sección si hay un error
+      });
     })();
   }
 
@@ -61450,7 +61450,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Tue Dec 30 2025 15:16:42 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Tue Dec 30 2025 15:53:59 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
