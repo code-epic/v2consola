@@ -145,7 +145,12 @@
         <h6 class="m-0 font-weight-bolder text-secondary">Autenticación de Dos Factores (TOTP)</h6>
       </div>
       <div class="custom-control custom-switch">
-        <input type="checkbox" class="custom-control-input" id="totp-switch" (change)="toggleTotp($event)" />
+        <input type="checkbox" 
+          class="custom-control-input" 
+          id="totp-switch" 
+          (change)="toggleTotp($event)" 
+          [checked]="isTotpActive"
+        />
         <label class="custom-control-label" for="totp-switch"></label>
       </div>
     </div>

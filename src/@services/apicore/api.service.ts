@@ -667,5 +667,20 @@ export class ApiService {
     return this.http.post<any>(url, {}, httpOptions);
   }
 
+  /**
+   * @param tipo png | base64
+   * @returns QR
+   */
+  GetImageQR(id: string): Observable<any> {
+    var httpOptions = {
+      headers: new HttpHeaders({
+        Authorization: "Bearer " + this.httpOptions,
+      }),
+    };
+    var url = this.URL + "imgslocalbase64/" + id;
+    console.log(url)
+    return this.http.get(url, httpOptions);
+  }
+
 
 }

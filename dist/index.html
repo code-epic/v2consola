@@ -114,15 +114,23 @@
         const bdvKeywords = ['sicoex', 'banv', 'corp', '4201']; // Palabras clave
         let logoSrc = 'assets/images/logo/logo.png'; // Logo por defecto
         let pageTitle = 'Sandra Server'; // Título por defecto
+        let faviconSrc = 'favicon.ico'; // Favicon por defecto
 
         // Comprueba si la URL contiene alguna de las palabras clave
         if (bdvKeywords.some(keyword => url.includes(keyword))) {
           logoSrc = 'assets/images/logo/logo-bdv.png'; // Cambia al logo de BDV
           pageTitle = 'BDV Server'; // Cambia el título
+          faviconSrc = 'assets/images/bdv/favicon.ico'; // Cambia el favicon
         }
 
         // Actualiza el título de la página
         window.document.title = pageTitle;
+
+        // Actualiza el favicon
+        const link = document.querySelector("link[rel~='icon']");
+        if (link) {
+          link.href = faviconSrc;
+        }
 
         // Crea y configura la etiqueta <img> dinámicamente
         const imgElement = document.createElement('img');
@@ -136,6 +144,6 @@
       }
     })();
   </script>
-<script src="runtime.09265de3c3559c2c.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.34e1803f41b7d619.js" type="module"></script></body>
+<script src="runtime.b1fdc27e64a720a3.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.6fc5125e264bfb0e.js" type="module"></script></body>
 
 </html>

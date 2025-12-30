@@ -125,6 +125,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public totpQrCodeUrl: string = '';
   public totpSecret: string = '';
   public isTotpSecretCopied: boolean = false;
+  public isTotpActive: boolean = false;
 
 
 
@@ -171,6 +172,130 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this._unsubscribeAll = new Subject();
   }
 
+
+
+  /**
+   * On init
+   */
+  ngOnInit(): void {
+    this.msjService.lstpid$.subscribe((pid) => {
+      this.blCargando = pid.estatus;
+      this.updateProgress(pid.progress || 0);
+
+      if (!pid.estatus) {
+        this.taskService.update(pid.id);
+        this.ok("Sandra Server", pid);
+        // Opcional: Ocultar y resetear después de un tiempo
+        setTimeout(() => { this.blCargando = false; this.updateProgress(0); }, 2000);
+      }
+    });
+
+    this.msjService.pidDevice$.subscribe((pid) => {
+      this.blCargando = pid.estatus;
+      if (!pid.estatus) {
+        this.taskService.update(pid.id);
+      }
+    });
+
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      try {
+        this.token = jwt_decode(token);
+        this.usuario = this.token.Usuario.usuario;
+        this.tipo = this.token.Usuario.nombre;
+        if(this.token.Usuario.token !== undefined && this.token.Usuario.token !== '') {
+          this.showTotpSection = true
+          this.totpSecret = this.token.Usuario.token
+          this.activarSinEvento()
+        }
+      } catch (error) {
+        console.error("Error decoding token in Navbar:", error);
+        // Optional: Redirect to login or handle invalid session
+      }
+    } else {
+      // Handle case where there is no token (e.g. redirect to login)
+      // For now, ensure variables used later are safe
+      this.usuario = '';
+    }
+
+
+    // Initialize Idle Service
+    this.idleService.init();
+
+    this.bDirectorioActivo =
+      this.usuario.startsWith("NM") || this.usuario.startsWith("CT");
+
+    // get the currentUser details from localStorage
+
+    // Subscribe to the config changes
+    this._coreConfigService.config
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((config) => {
+        this.coreConfig = config;
+        this.horizontalMenu = config.layout.type === "horizontal";
+        this.hiddenMenu = config.layout.menu.hidden === true;
+        this.currentSkin = config.layout.skin;
+        // Fix: for vertical layout if default navbar fixed-top than set isFixed = true
+        if (this.coreConfig.layout.type === "vertical") {
+          setTimeout(() => {
+            if (this.coreConfig.layout.navbar.type === "fixed-top") {
+              this.isFixed = true;
+            }
+          }, 0);
+        }
+      });
+
+    // Horizontal Layout Only: Add class fixed-top to navbar below large screen
+    if (this.coreConfig.layout.type == "horizontal") {
+      // On every media(screen) change
+      this._coreMediaService.onMediaUpdate
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe(() => {
+          const isFixedTop = this._mediaObserver.isActive("bs-gt-xl");
+          if (isFixedTop) {
+            this.isFixed = false;
+          } else {
+            this.isFixed = true;
+          }
+        });
+    }
+
+    // Set the selected language from default languageOptions
+    this.selectedLanguage = _.find(this.languageOptions, {
+      id: this._translateService.currentLang,
+    });
+
+
+    let isBDV = this.apiService.ConsultaSistemaBDV()
+    if (isBDV) {
+      this.coreConfig.app.appName = ''
+      this.logo = 'assets/images/bdv/logobdv.png'
+      this.icono = 'assets/images/bdv/icon.png'
+    } else {
+      this.logo = 'assets/images/logo/logo.png'
+      this.icono = 'assets/images/logo/logo.png'
+    }
+
+    this.ws.Run();
+
+
+  }
+
+
+
+  activarSinEvento() {
+    this.isTotpActive = true; 
+    this.apiService.GetImageQR(this.totpSecret).subscribe(
+      (data) => {
+        console.log(data)
+        this.totpQrCodeUrl = data.contenido;
+      },
+      (error) => {
+        console.error('Error al generar el código TOTP', error);
+      }
+    )
+  }
+  
   // Public Methods
   // -----------------------------------------------------------------------------------------------------
 
@@ -270,107 +395,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
 
-  /**
-   * On init
-   */
-  ngOnInit(): void {
-    this.msjService.lstpid$.subscribe((pid) => {
-      this.blCargando = pid.estatus;
-      this.updateProgress(pid.progress || 0);
-
-      if (!pid.estatus) {
-        this.taskService.update(pid.id);
-        this.ok("Sandra Server", pid);
-        // Opcional: Ocultar y resetear después de un tiempo
-        setTimeout(() => { this.blCargando = false; this.updateProgress(0); }, 2000);
-      }
-    });
-
-    this.msjService.pidDevice$.subscribe((pid) => {
-      this.blCargando = pid.estatus;
-      if (!pid.estatus) {
-        this.taskService.update(pid.id);
-      }
-    });
-
-    const token = sessionStorage.getItem("token");
-    if (token) {
-      try {
-        this.token = jwt_decode(token);
-        this.usuario = this.token.Usuario.usuario;
-        this.tipo = this.token.Usuario.nombre;
-      } catch (error) {
-        console.error("Error decoding token in Navbar:", error);
-        // Optional: Redirect to login or handle invalid session
-      }
-    } else {
-      // Handle case where there is no token (e.g. redirect to login)
-      // For now, ensure variables used later are safe
-      this.usuario = '';
-    }
-
-
-    // Initialize Idle Service
-    this.idleService.init();
-
-    this.bDirectorioActivo =
-      this.usuario.startsWith("NM") || this.usuario.startsWith("CT");
-
-    // get the currentUser details from localStorage
-
-    // Subscribe to the config changes
-    this._coreConfigService.config
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((config) => {
-        this.coreConfig = config;
-        this.horizontalMenu = config.layout.type === "horizontal";
-        this.hiddenMenu = config.layout.menu.hidden === true;
-        this.currentSkin = config.layout.skin;
-        // Fix: for vertical layout if default navbar fixed-top than set isFixed = true
-        if (this.coreConfig.layout.type === "vertical") {
-          setTimeout(() => {
-            if (this.coreConfig.layout.navbar.type === "fixed-top") {
-              this.isFixed = true;
-            }
-          }, 0);
-        }
-      });
-
-    // Horizontal Layout Only: Add class fixed-top to navbar below large screen
-    if (this.coreConfig.layout.type == "horizontal") {
-      // On every media(screen) change
-      this._coreMediaService.onMediaUpdate
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe(() => {
-          const isFixedTop = this._mediaObserver.isActive("bs-gt-xl");
-          if (isFixedTop) {
-            this.isFixed = false;
-          } else {
-            this.isFixed = true;
-          }
-        });
-    }
-
-    // Set the selected language from default languageOptions
-    this.selectedLanguage = _.find(this.languageOptions, {
-      id: this._translateService.currentLang,
-    });
-
-
-    let isBDV = this.apiService.ConsultaSistemaBDV()
-    if (isBDV) {
-      this.coreConfig.app.appName = ''
-      this.logo = 'assets/images/bdv/logobdv.png'
-      this.icono = 'assets/images/bdv/icon.png'
-    } else {
-      this.logo = 'assets/images/logo/logo.png'
-      this.icono = 'assets/images/logo/logo.png'
-    }
-
-    this.ws.Run();
-
-
-  }
 
   /**
    * On destroy
