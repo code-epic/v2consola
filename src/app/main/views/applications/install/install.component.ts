@@ -196,7 +196,8 @@ export class InstallComponent implements OnInit {
 
   public hash = ''
   public archivos = []
-
+  public bDescarga = true
+  public bRestaurar = true
 
 
 
@@ -243,6 +244,18 @@ export class InstallComponent implements OnInit {
       }
     }
 
+    this.mensajeService.finalizacion$.subscribe(
+      (fx) => {
+        // console.log(fx)
+        this.bDescarga = fx.estatus
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
+
+
+
   }
 
   async ListarHostname() {
@@ -273,7 +286,7 @@ export class InstallComponent implements OnInit {
         this.drivers = datax.map((e) => {
 
 
-          e.name = e.descripcion + " - " + "(" + e.basedatos + ")";
+          e.name = this.seleccionarTipoDriver(e.driver) + ": " +e.descripcion + " - " + "(" + e.basedatos + ")";
           return e;
 
         });
@@ -290,6 +303,23 @@ export class InstallComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  seleccionarTipoDriver(id: string): string {
+    switch (id) {
+      case 'mysql6':
+        return 'MySQL Database'
+      case 'mysql8':
+        return 'MySQL Database'
+      case 'MGDBA':
+        return 'Mongo Database'
+      case 'postgres96':
+        return 'Postgres 9.6'
+      case 'postgres13':
+        return 'Postgres 13'
+      case 'oracle19c':
+        return 'Oracle 19c'
+    }
   }
 
   CambiarVisibilidadDriver(e: any) {
@@ -542,8 +572,8 @@ export class InstallComponent implements OnInit {
    */
   private handleFile(file: File): void {
     // 1. Validar tipo de archivo (.sql)
-    if (!file.name.toLowerCase().endsWith('.sql')) {
-      this.utilservice.AlertMini('top-end', 'error', 'Por favor, sube solo archivos .sql', 4000);
+    if (!file.name.toLowerCase().endsWith('.sql') && !file.name.toLowerCase().endsWith('.zip') && !file.name.toLowerCase().endsWith('.dump')) {
+      this.utilservice.AlertMini('top-end', 'error', 'Por favor, solo archivos .sql, .zip', 4000);
       return;
     }
 
@@ -605,7 +635,8 @@ export class InstallComponent implements OnInit {
         clearInterval(interval);
         // Mantiene el estado de "completado" por un momento antes de ocultar la barra.
         setTimeout(() => {
-          this.isUploading = false;
+          this.isUploading = false
+          this.bRestaurar = false
         }, 500);
       }
     }, 200);
@@ -613,11 +644,17 @@ export class InstallComponent implements OnInit {
 
 
   ProcesarDB() {
-   
+
     if (this.selectedFile == null) {
       this.utilservice.AlertMini('top-end', 'error', 'Por favor, selecciona un archivo .sql para procesar.', 4000);
       return;
     }
+
+      if (this.driver == undefined) {
+      this.utilservice.AlertMini('top-end', 'error', 'Debe seleccionar un driver de base de datos.', 4000);
+      return;
+    }
+
 
     const formElement = document.forms.namedItem("forma") as HTMLFormElement;
     if (!formElement) {
@@ -629,7 +666,7 @@ export class InstallComponent implements OnInit {
     frm.append("identificador", btoa(this.iApp.nombre + '|' + this.iApp.version))
     frm.append("return", 'true')
 
-    
+
 
     this.fileService.EnviarArchivosProgress(frm).subscribe({
       next: (event) => {
@@ -668,7 +705,7 @@ export class InstallComponent implements OnInit {
         })
       },
       complete: () => {
-        
+
         console.log('Subida de archivo completada.');
       }
     });
@@ -676,10 +713,10 @@ export class InstallComponent implements OnInit {
 
 
 
-  RealizarRestore(body:any) {
+  RealizarRestore(body: any) {
     let Hash = body.msj.split('|')[1]
-    let Archivo = body.contenido[0].split('|')[1]  
-    
+    let Archivo = body.contenido[0].split('|')[1]
+
     let restore = {
       "id": localStorage.getItem('userId'),
       "driver": this.driver.id,
@@ -694,7 +731,30 @@ export class InstallComponent implements OnInit {
         console.log(error)
       }
     )
-  
+
+
+  }
+
+  backupDatabase() {
+    if (this.driver == undefined) {
+      this.utilservice.AlertMini('top-end', 'error', 'Debe seleccionar un driver de base de datos para realizar el backup.', 4000);
+      return;
+    }
+
+    this.bDescarga = false
+
+    let dump = {
+      "id": localStorage.getItem('userId'),
+      "driver": this.driver.id,
+    }
+    this.apiService.ExecBackup(dump).subscribe(
+      (data) => {
+        //el websocket supera los siguientes procesos
+      },
+      (error) => {
+        console.log(error)
+      }
+    )
 
   }
 

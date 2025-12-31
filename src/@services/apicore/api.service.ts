@@ -8,6 +8,7 @@ import { WsocketsService } from "@services/websockets/wsockets.service";
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "./task.service";
 import { DOCUMENT } from "@angular/common";
+import { Md5 } from 'ts-md5';
 
 export interface RestoreAPI {
   nombre: string;
@@ -441,8 +442,9 @@ export class ApiService {
   }
 
 
-  DwsCdn(peticion: string) {
+  DwsCdn(peticion: string, tipo: string, filename: string) {
     let ruta = this.URL + "dwsother/" + peticion;
+    
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -452,11 +454,16 @@ export class ApiService {
     };
 
     this.http.get(ruta, httpOptions).subscribe((response: any) => {
-      console.log(response);
-      const blob = new Blob([response], { type: "application/zip" });
-      const url = window.URL.createObjectURL(blob);
-      window.open(url);
-    });
+      const blob = new Blob([response], { type: tipo })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename === ''? Md5.hashStr(peticion) : filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    })
   }
 
   getDwsCdn(tpf: WTipoArchivo): Observable<any> {
@@ -621,6 +628,19 @@ export class ApiService {
   }
 
 
+
+
+
+  /**
+   * @param id uuid del usuario su conexion 
+   * @returns 
+   */
+  ExecBackup(dump): Observable<any> {
+    var url = this.URL + "db/dump";
+    return this.http.post<any>(url, dump, this.httpOptions);
+  }
+
+
   /**
    * @param id uuid del usuario su conexion 
    * @returns 
@@ -639,18 +659,18 @@ export class ApiService {
     return this.http.post<any>(url, {}, this.httpOptions);
   }
 
-   /**
-   * @param tipo png | base64
-   * @returns QR
-   */
-  Validar_TOTP( codigo: string, tempAuthToken: string): Observable<any> {
+  /**
+  * @param tipo png | base64
+  * @returns QR
+  */
+  Validar_TOTP(codigo: string, tempAuthToken: string): Observable<any> {
     var httpOptions = {
       headers: new HttpHeaders({
         Authorization: "Bearer " + tempAuthToken,
       }),
     };
     var url = this.URL + "wusuario/vtotp";
-    return this.http.post<any>(url, {"codigo": codigo}, httpOptions);
+    return this.http.post<any>(url, { "codigo": codigo }, httpOptions);
   }
 
   /**

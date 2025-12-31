@@ -14,6 +14,9 @@ export class MensajeService {
 
   progreso$ = new EventEmitter<any>();
   progreso: any = ''
+
+  finalizacion$ = new EventEmitter<any>();
+  finalizacion: any = ''
   
   constructor() { }
 }

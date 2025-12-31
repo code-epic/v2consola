@@ -121,8 +121,6 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
       this.logo = 'assets/images/logo/logo.png'
     }
 
-    // this.simularProgreso();
-    // this.simularProgresoIndeterminado(); // Descomenta esta línea para probar el modo indeterminado
   }
 
   /**
@@ -162,8 +160,11 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
         this.actualizarProgresoIndeterminado(progreso.message.bytes, progreso.message.speed);
         break;
       case 'dump_finished':
+        // console.log(progreso.message)
         this.finishProgress('Respaldo Completado');
-        break;
+        this.apiService.DwsCdn("bck-export/" + progreso.message.file, "application/zip", progreso.message.file);
+        this.mensajeService.finalizacion$.emit({"estatus": true})
+        break
       case 'restore':
         this.progressMode = 'determinate';
         this.progressLabel = 'Restaurando Base de Datos...';
@@ -195,24 +196,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
 
 
 
-  /**
-   * Simula una carga DETERMINADA para demostrar el indicador de progreso.
-   */
-  simularProgreso(): void {
-    this.blCargando = true;
-    let progress = 0;
-    const interval = setInterval(() => {
-      progress += Math.floor(Math.random() * 10) + 5; // Incremento aleatorio
-      if (progress >= 100) {
-        progress = 100;
-        this.actualizarProgreso(progress, 25.8); // Actualiza una última vez al 100%
-        clearInterval(interval);
-        setTimeout(() => { this.blCargando = false; }, 2000); // Oculta después de 2s
-        return;
-      }
-      this.actualizarProgreso(progress, 25.8);
-    }, 800);
-  }
+
   /**
    * Actualiza los valores del indicador de progreso.
    * @param percentage El progreso en porcentaje (0-100).
@@ -238,29 +222,6 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-  }
-
-
-  /**
-   * Actualiza los valores del indicador de progreso.
-   * Simula una carga INDETERMINADA (ej. dump de BD) para demostrar el indicador.
-   */
-  simularProgresoIndeterminado(): void {
-    this.progressMode = 'indeterminate';
-    this.progressLabel = 'Generando Dump BD...';
-    this.blCargando = true;
-    let bytes = 0;
-    const interval = setInterval(() => {
-      const chunk = (Math.random() * 500000) + 100000; // entre 100KB y 600KB
-      bytes += chunk;
-      const currentSpeed = chunk / 0.8; // chunk por intervalo de 800ms
-      this.actualizarProgresoIndeterminado(bytes, currentSpeed);
-
-      if (bytes > 15000000) { // Detener después de ~15MB para la demo
-        clearInterval(interval);
-        setTimeout(() => { this.blCargando = false; }, 2000);
-      }
-    }, 800);
   }
 
   /**
@@ -293,6 +254,8 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     }
     setTimeout(() => {
       this.blCargando = false;
+
+
     }, 2000);
   }
 

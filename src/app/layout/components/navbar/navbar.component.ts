@@ -202,6 +202,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     });
 
+    
+
     const token = sessionStorage.getItem("token");
     if (token) {
       try {
@@ -474,7 +476,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               3000
             );
             this.apiService.DwsCdn(
-              "bck-export/" + environment.driver.API_CORE_ZIP
+              "bck-export/" + environment.driver.API_CORE_ZIP, "application/zip", ""
             );
             break;
           case "Descargando funciones":
@@ -485,7 +487,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
               3000
             );
             this.apiService.DwsCdn(
-              "bck-export/" + environment.driver.SYS_FUNCION_ZIP
+              "bck-export/" + environment.driver.SYS_FUNCION_ZIP, "application/zip", ""
             );
             break;
           case "Restaurando api":

@@ -3,12 +3,11 @@
     <!-- Login v1 -->
     <div class="card mb-0">
       <div class="card-body">
-        <a href="javascript:void(0);" class="brand-logo">
-          <img src="{{ coreConfig.app.appLogoImage }}" alt="brand-logo" height="30" />
-          <h2 class="brand-text text-primary ml-1">{{ coreConfig.app.appName }} Technologies</h2>
+         <a href="javascript:void(0);" class="brand-logo">
+          <img src="/assets/images/logo/sandra.png" alt="brand-logo" height="80" />
+          
         </a>
-
-        <h2 class="card mb-1 text-center"><strong>Sandra Server</strong></h2>
+        <h2 class="mb-1 text-center" style="margin-top: -20px;"><strong>Sandra Server</strong></h2>
 
         <!-- Login Form -->
         <ng-container *ngIf="!showTotpSection">
@@ -69,17 +68,17 @@
           <span class="login__circuit-mask"></span>
         </div>
 
-        <p class="text-center mt-2">
+        <!-- <p class="text-center mt-2">
           <ng-container *ngIf="!showTotpSection">
             <span>Nuevo en nuestra plataforma?</span>
             <a routerLink="/authentication/register-v1">
               <span>&nbsp;Crea una cuenta</span>
             </a>
           </ng-container>
-        </p>
+        </p> -->
 
         <div class="divider my-2" *ngIf="!showTotpSection">
-          <div class="divider-text"></div>
+          
         </div>
 
 
@@ -96,7 +95,7 @@
     </div>
     <!-- /Login v1 -->
 
-    <app-asistente-virtual></app-asistente-virtual>
+    <!-- <app-asistente-virtual></app-asistente-virtual> -->
 
   </div>
 </div>
