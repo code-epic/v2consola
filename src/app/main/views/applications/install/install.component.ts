@@ -311,7 +311,7 @@ export class InstallComponent implements OnInit {
         return 'MySQL Database'
       case 'mysql8':
         return 'MySQL Database'
-      case 'MGDBA':
+      case 'mongodb':
         return 'Mongo Database'
       case 'postgres96':
         return 'Postgres 9.6'

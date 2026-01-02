@@ -8,7 +8,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CoreCommonModule } from '@core/common.module';
 
 import { AuthLoginV1Component } from './auth-login-v1/auth-login-v1.component';
-import { environment } from 'environments/environment';
 import { AuthRegisterV1Component } from './auth-register-v1/auth-register-v1.component';
 import { AuthResetPasswordV1Component } from './auth-reset-password-v1/auth-reset-password-v1.component';
 import { AuthForgotPasswordV1Component } from './auth-forgot-password-v1/auth-forgot-password-v1.component';

@@ -31,6 +31,8 @@ export class WsSandraService {
     public ConnectionStatus = ConnectionStatus; // Hace el enum accesible en la plantilla HTML
 
     private userId: string = '';
+    private userName: string = '';
+
     private wsMessagesSubscription!: Subscription;
     private wsStatusSubscription!: Subscription;
     private isErrorModalOpen = false;
@@ -48,8 +50,9 @@ export class WsSandraService {
     ) { }
 
 
-    Run() {
+    Run(userName: string) {
         this.userId = localStorage.getItem('userId') || '';
+        this.userName = userName
 
         // console.log('ChatComponent: userId obtenido:', this.userId);
         if (!this.userId) {
@@ -127,7 +130,7 @@ export class WsSandraService {
         });
 
         // 3. Conectar al sessionService al iniciar el componente
-        this.sessionService.connect(this.userId);
+        this.sessionService.connect(this.userId, this.userName);
 
         this.obtenerSesiones();
         // console.log('ChatComponent: Inicialización completa.');

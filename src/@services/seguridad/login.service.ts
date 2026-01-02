@@ -203,7 +203,7 @@ export class LoginService {
           Authorization: "Bearer " + sessionStorage.getItem("token"),
         }),
       };
-      const url = this.urlGet + 'wusuario/logout';
+      const url = this.urlGet + 'wusuario/logout:' + localStorage.getItem("userId");
       await this.http.post(url, {}, httpOptions).toPromise();
     } catch (error) {
       console.error("Error al contactar el servidor para logout (se procederá con la limpieza local):", error);

@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
+import { LoginService } from '@services/seguridad/login.service';
 import { Subject, Observable, timer, BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import jwt_decode from "jwt-decode";
 
 interface InitialClientMessage {
   ID: string;
@@ -27,6 +29,7 @@ export class SessionService implements OnDestroy {
 
   private ws!: WebSocket;
   private userId!: string; // Almacenará el ID del usuario
+  private userName: string
 
   private messagesSubject = new Subject<string>(); // Emite mensajes entrantes (string JSON)
   public messages$: Observable<string> = this.messagesSubject.asObservable();
@@ -43,10 +46,13 @@ export class SessionService implements OnDestroy {
 
   private readonly destroy$ = new Subject<void>(); // Para desuscribirse al destruir el servicio
 
-  constructor(private http: HttpClient) {
+
+  constructor(private http: HttpClient, private loginService: LoginService) {
     this.destroy$.subscribe(() => {
       this.closeConnection();
-    });
+    })
+
+
   }
 
   ngOnDestroy(): void {
@@ -71,66 +77,74 @@ export class SessionService implements OnDestroy {
     return this.http.post<string[]>(this.apiUrl, data);
   }
 
-  public connect(userId: string): void {
-    this.userId = userId;
+  public connect(userId: string, userName: string): void {
+    if (sessionStorage.getItem('token') !== undefined) {
+      const token: any = jwt_decode(sessionStorage.getItem('token'));
+      
+      this.userId = userId;
+      this.userName = token.Usuario.usuario;;
 
-    if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
-      console.warn('WebSocketService: Ya hay una conexión activa o en proceso.');
-      return;
+
+      if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
+        console.warn('WebSocketService: Ya hay una conexión activa o en proceso.');
+        return;
+      }
+
+      this.connectionStatusSubject.next(this.reconnectAttempts === 0 ? ConnectionStatus.CONNECTING : ConnectionStatus.RECONNECTING);
+
+      // Tu URL WebSocket, ahora con el userId en la query
+      //const serverUrl = `wss://code-epic.com:8443/sandra_ws?userId=${this.userId}`;
+      const serverUrl = `wss://localhost:8443/sandra_ws?userId=${this.userId}&userName=${this.userName}`;
+
+      // console.log(`WebSocketService: Intentando conectar a ${serverUrl} (Intento ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
+
+      this.ws = new WebSocket(serverUrl);
+
+      this.ws.onopen = (event) => {
+        //  console.log('WebSocketService: Conexión establecida.', event);
+        this.connectionStatusSubject.next(ConnectionStatus.CONNECTED);
+        this.reconnectAttempts = 0;
+
+        // Mensaje inicial para que tu backend Go registre o actualice la conexión
+        const initialMsg: InitialClientMessage = {
+          ID: this.userId,
+          Message: "Evaluando conexion" // O "init_connection", como prefieras
+        };
+        this.ws.send(JSON.stringify(initialMsg));
+        this.flushMessageBuffer(); // Intenta enviar los mensajes en buffer
+      };
+
+      this.ws.onmessage = (event) => {
+        this.messagesSubject.next(event.data as string);
+      };
+
+      this.ws.onclose = (event) => {
+        // console.warn('WebSocketService: Conexión cerrada:', event);
+        this.connectionStatusSubject.next(ConnectionStatus.DISCONNECTED);
+
+        if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
+          this.reconnectAttempts++;
+          const delayMs = Math.min(this.maxReconnectInterval, this.initialReconnectInterval * Math.pow(2, this.reconnectAttempts - 1));
+
+          // console.log(`WebSocketService: Reconectando en ${delayMs / 1000} segundos...`);
+          timer(delayMs)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe(() => {
+              this.connect(this.userId, this.userName);
+            });
+        } else if (!event.wasClean) {
+          console.error('WebSocketService: Límite de intentos de reconexión alcanzado o cierre irrecuperable.');
+          this.connectionStatusSubject.next(ConnectionStatus.ERROR);
+        }
+      };
+
+      this.ws.onerror = (event) => {
+        // console.error('WebSocketService: Error en la conexión:', event);
+        // El `onclose` manejará la reconexión.
+      };
     }
 
-    this.connectionStatusSubject.next(this.reconnectAttempts === 0 ? ConnectionStatus.CONNECTING : ConnectionStatus.RECONNECTING);
 
-    // Tu URL WebSocket, ahora con el userId en la query
-    //const serverUrl = `wss://code-epic.com:8443/sandra_ws?userId=${this.userId}`;
-    const serverUrl = `wss://localhost:8443/sandra_ws?userId=${this.userId}`;
-
-    // console.log(`WebSocketService: Intentando conectar a ${serverUrl} (Intento ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
-
-    this.ws = new WebSocket(serverUrl);
-
-    this.ws.onopen = (event) => {
-      //  console.log('WebSocketService: Conexión establecida.', event);
-      this.connectionStatusSubject.next(ConnectionStatus.CONNECTED);
-      this.reconnectAttempts = 0;
-
-      // Mensaje inicial para que tu backend Go registre o actualice la conexión
-      const initialMsg: InitialClientMessage = {
-        ID: this.userId,
-        Message: "Evaluando conexion" // O "init_connection", como prefieras
-      };
-      this.ws.send(JSON.stringify(initialMsg));
-      this.flushMessageBuffer(); // Intenta enviar los mensajes en buffer
-    };
-
-    this.ws.onmessage = (event) => {
-      this.messagesSubject.next(event.data as string);
-    };
-
-    this.ws.onclose = (event) => {
-      // console.warn('WebSocketService: Conexión cerrada:', event);
-      this.connectionStatusSubject.next(ConnectionStatus.DISCONNECTED);
-
-      if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
-        this.reconnectAttempts++;
-        const delayMs = Math.min(this.maxReconnectInterval, this.initialReconnectInterval * Math.pow(2, this.reconnectAttempts - 1));
-
-        // console.log(`WebSocketService: Reconectando en ${delayMs / 1000} segundos...`);
-        timer(delayMs)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe(() => {
-            this.connect(this.userId);
-          });
-      } else if (!event.wasClean) {
-        console.error('WebSocketService: Límite de intentos de reconexión alcanzado o cierre irrecuperable.');
-        this.connectionStatusSubject.next(ConnectionStatus.ERROR);
-      }
-    };
-
-    this.ws.onerror = (event) => {
-      // console.error('WebSocketService: Error en la conexión:', event);
-      // El `onclose` manejará la reconexión.
-    };
   }
 
   public sendMessage(message: string): void {
@@ -142,8 +156,8 @@ export class SessionService implements OnDestroy {
       this.messageBuffer.push(message);
       // Si estamos desconectados o en error, intenta reconectar para vaciar el buffer
       if (this.connectionStatusSubject.value === ConnectionStatus.DISCONNECTED ||
-          this.connectionStatusSubject.value === ConnectionStatus.ERROR) {
-        this.connect(this.userId);
+        this.connectionStatusSubject.value === ConnectionStatus.ERROR) {
+        this.connect(this.userId, this.userName);
       }
     }
   }

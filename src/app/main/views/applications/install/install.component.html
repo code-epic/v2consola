@@ -421,7 +421,7 @@
                                                         <!-- Hidden Input -->
                                                         <input name="archivos" 
                                                             type="file" #fileInput hidden 
-                                                            (change)="onFileSelected($event)" accept=".sql" />
+                                                            (change)="onFileSelected($event)" accept=".sql,.dump,.zip" />
                                     
                                                         <!-- Prompt State -->
                                                         <div *ngIf="!selectedFile" class="upload-prompt">

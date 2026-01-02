@@ -183,47 +183,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
-    this.msjService.lstpid$.subscribe((pid) => {
-      this.blCargando = pid.estatus;
-      this.updateProgress(pid.progress || 0);
 
-      if (!pid.estatus) {
-        this.taskService.update(pid.id);
-        this.ok("Sandra Server", pid);
-        // Opcional: Ocultar y resetear después de un tiempo
-        setTimeout(() => { this.blCargando = false; this.updateProgress(0); }, 2000);
-      }
-    });
 
-    this.msjService.pidDevice$.subscribe((pid) => {
-      this.blCargando = pid.estatus;
-      if (!pid.estatus) {
-        this.taskService.update(pid.id);
-      }
-    });
 
-    
-
-    const token = sessionStorage.getItem("token");
-    if (token) {
-      try {
-        this.token = jwt_decode(token);
-        this.usuario = this.token.Usuario.usuario;
-        this.tipo = this.token.Usuario.nombre;
-        if (this.token.Usuario.token !== undefined && this.token.Usuario.token !== '') {
-          this.showTotpSection = true
-          this.totpSecret = this.token.Usuario.token
-          this.activarSinEvento()
-        }
-      } catch (error) {
-        console.error("Error decoding token in Navbar:", error);
-        // Optional: Redirect to login or handle invalid session
-      }
-    } else {
-      // Handle case where there is no token (e.g. redirect to login)
-      // For now, ensure variables used later are safe
-      this.usuario = '';
-    }
+    this.accionesGenerales()
 
 
     // Initialize Idle Service
@@ -283,8 +246,60 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this.icono = 'assets/images/logo/logo.png'
     }
 
-    this.ws.Run();
 
+
+
+  }
+
+
+  accionesGenerales() {
+
+    const token = sessionStorage.getItem("token");
+    if (token !== null) {
+      try {
+        this.token = jwt_decode(token);
+        this.usuario = this.token.Usuario.usuario;
+        this.tipo = this.token.Usuario.nombre;
+        if (this.token.Usuario.token !== undefined && this.token.Usuario.token !== '') {
+          this.showTotpSection = true
+          this.totpSecret = this.token.Usuario.token
+          this.activarSinEvento()
+        }
+
+
+        console.log('Iniciando conexion')
+        this.msjService.lstpid$.subscribe((pid) => {
+          this.blCargando = pid.estatus;
+          this.updateProgress(pid.progress || 0);
+
+          if (!pid.estatus) {
+            this.taskService.update(pid.id);
+            this.ok("Sandra Server", pid);
+            // Opcional: Ocultar y resetear después de un tiempo
+            setTimeout(() => { this.blCargando = false; this.updateProgress(0); }, 2000);
+          }
+        });
+
+        this.msjService.pidDevice$.subscribe((pid) => {
+          this.blCargando = pid.estatus;
+          if (!pid.estatus) {
+            this.taskService.update(pid.id);
+          }
+        });
+        // console.log(this.token.Usuario)
+        this.ws.Run(this.token.usuario);
+
+
+
+      } catch (error) {
+        console.error("Error decoding token in Navbar:", error);
+        // Optional: Redirect to login or handle invalid session
+      }
+    } else {
+      // Handle case where there is no token (e.g. redirect to login)
+      // For now, ensure variables used later are safe
+      this.usuario = '';
+    }
 
   }
 
