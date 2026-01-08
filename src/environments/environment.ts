@@ -6,10 +6,11 @@ export const environment = {
   hmr: false,
   apiUrl: 'https://localhost',
   Url: 'https://localhost', // requerido para la Fnx_Eliminar proyectos 
+  WSS: 'wss://localhost',
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Thu Jan 08 2026 11:19:08 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Thu Jan 08 2026 12:23:20 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

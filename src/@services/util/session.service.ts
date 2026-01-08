@@ -4,6 +4,7 @@ import { LoginService } from '@services/seguridad/login.service';
 import { Subject, Observable, timer, BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import jwt_decode from "jwt-decode";
+import { environment } from 'environments/environment';
 
 interface InitialClientMessage {
   ID: string;
@@ -94,7 +95,7 @@ export class SessionService implements OnDestroy {
 
       // Tu URL WebSocket, ahora con el userId en la query
       //const serverUrl = `wss://code-epic.com:8443/sandra_ws?userId=${this.userId}`;
-      const serverUrl = `wss://localhost:8443/sandra_ws?userId=${this.userId}&userName=${this.userName}`;
+      const serverUrl = `${environment.WSS}:8443/sandra_ws?userId=${this.userId}&userName=${this.userName}`;
 
       // console.log(`WebSocketService: Intentando conectar a ${serverUrl} (Intento ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
 

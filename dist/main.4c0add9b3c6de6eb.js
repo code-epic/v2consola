@@ -20556,14 +20556,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "ConnectionStatus": () => (/* binding */ ConnectionStatus),
 /* harmony export */   "SessionService": () => (/* binding */ SessionService)
 /* harmony export */ });
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 8929);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 591);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 98723);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ 7625);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ 8929);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 591);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 98723);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ 7625);
 /* harmony import */ var jwt_decode__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jwt-decode */ 21816);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 94650);
-/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common/http */ 80529);
-/* harmony import */ var _services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @services/seguridad/login.service */ 38072);
+/* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! environments/environment */ 92340);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common/http */ 80529);
+/* harmony import */ var _services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @services/seguridad/login.service */ 38072);
+
 
 
 
@@ -20591,10 +20593,10 @@ class SessionService {
   userId; // Almacenará el ID del usuario
 
   userName;
-  messagesSubject = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject(); // Emite mensajes entrantes (string JSON)
+  messagesSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject(); // Emite mensajes entrantes (string JSON)
 
   messages$ = this.messagesSubject.asObservable();
-  connectionStatusSubject = new rxjs__WEBPACK_IMPORTED_MODULE_3__.BehaviorSubject(ConnectionStatus.DISCONNECTED);
+  connectionStatusSubject = new rxjs__WEBPACK_IMPORTED_MODULE_4__.BehaviorSubject(ConnectionStatus.DISCONNECTED);
   connectionStatus$ = this.connectionStatusSubject.asObservable();
   reconnectAttempts = 0;
   maxReconnectAttempts = 5; // Límite de intentos de reconexión
@@ -20605,7 +20607,7 @@ class SessionService {
 
   messageBuffer = []; // Buffer para mensajes que no se pudieron enviar
 
-  destroy$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject(); // Para desuscribirse al destruir el servicio
+  destroy$ = new rxjs__WEBPACK_IMPORTED_MODULE_3__.Subject(); // Para desuscribirse al destruir el servicio
 
   constructor(http, loginService) {
     this.http = http;
@@ -20654,7 +20656,7 @@ class SessionService {
       this.connectionStatusSubject.next(this.reconnectAttempts === 0 ? ConnectionStatus.CONNECTING : ConnectionStatus.RECONNECTING); // Tu URL WebSocket, ahora con el userId en la query
       //const serverUrl = `wss://code-epic.com:8443/sandra_ws?userId=${this.userId}`;
 
-      const serverUrl = `wss://localhost:8443/sandra_ws?userId=${this.userId}&userName=${this.userName}`; // console.log(`WebSocketService: Intentando conectar a ${serverUrl} (Intento ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
+      const serverUrl = `${environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.WSS}:8443/sandra_ws?userId=${this.userId}&userName=${this.userName}`; // console.log(`WebSocketService: Intentando conectar a ${serverUrl} (Intento ${this.reconnectAttempts + 1}/${this.maxReconnectAttempts})`);
 
       this.ws = new WebSocket(serverUrl);
 
@@ -20684,7 +20686,7 @@ class SessionService {
           this.reconnectAttempts++;
           const delayMs = Math.min(this.maxReconnectInterval, this.initialReconnectInterval * Math.pow(2, this.reconnectAttempts - 1)); // console.log(`WebSocketService: Reconectando en ${delayMs / 1000} segundos...`);
 
-          (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.timer)(delayMs).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.takeUntil)(this.destroy$)).subscribe(() => {
+          (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.timer)(delayMs).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.takeUntil)(this.destroy$)).subscribe(() => {
             this.connect(this.userId, this.userName);
           });
         } else if (!event.wasClean) {
@@ -20739,9 +20741,9 @@ class SessionService {
   }
 
   static ɵfac = function SessionService_Factory(t) {
-    return new (t || SessionService)(_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_7__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵinject"](_services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_1__.LoginService));
+    return new (t || SessionService)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵinject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_8__.HttpClient), _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵinject"](_services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_2__.LoginService));
   };
-  static ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjectable"]({
+  static ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineInjectable"]({
     token: SessionService,
     factory: SessionService.ɵfac,
     providedIn: 'root'
@@ -61549,12 +61551,13 @@ const environment = {
     siteKey: '6LdcDsknAAAAAC44xkc214BZ2giOxN8JQsL7L9x2'
   },
   hmr: false,
-  apiUrl: 'https://localhost',
-  Url: 'https://localhost',
+  apiUrl: 'https://code-epic.com',
+  Url: 'https://code-epic.com',
+  WSS: 'wss://code-epic.com',
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Thu Jan 08 2026 11:19:08 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Thu Jan 08 2026 12:23:20 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
