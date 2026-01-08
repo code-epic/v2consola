@@ -1,6 +1,6 @@
 // src/app/services/push.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { Observable, from, throwError, Subject } from 'rxjs';
 import { tap, switchMap, catchError, map } from 'rxjs/operators';
@@ -48,6 +48,13 @@ export class PushService {
    */
   public readonly notificationClicks$ = this.notificationClicksSubject.asObservable();
 
+  public httpOptions = {
+    headers: new HttpHeaders({
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + sessionStorage.getItem("token"),
+    }),
+  };
+
   constructor(private http: HttpClient, private swPush: SwPush) { }
 
   /**
@@ -85,7 +92,15 @@ export class PushService {
    * @param userId - El ID del usuario para asociar con la suscripción.
    * @returns Un Observable con la respuesta del servidor.
    */
-  subscribeToPush(userId: string): Observable<any> {
+  subscribeToPush(userId: string, userName: string): Observable<any> {
+
+    let obj = {
+      "userId": userId,
+      "userName": userName
+    }
+
+
+
     if (!this.swPush.isEnabled) {
       console.error('Service Worker no está habilitado. Las notificaciones push no funcionarán.');
       return throwError(() => new Error('Service Worker no habilitado.'));
@@ -95,7 +110,11 @@ export class PushService {
       switchMap(vapidPublicKey => from(this.swPush.requestSubscription({
         serverPublicKey: vapidPublicKey
       }))),
-      switchMap(subscription => this.http.post(`${this.API_BASE_URL}/subscribe`, { userId, subscription })),
+      switchMap(subscription => this.http.post(`${this.API_BASE_URL}/subscribe`, {
+        "userId": userId,
+        "userName": userName,
+        "subscription": subscription
+      }, this.httpOptions)),
       catchError(err => {
         console.error('Error al suscribirse a las notificaciones push:', err);
         return throwError(() => new Error('No se pudo completar la suscripción a las notificaciones push.'));

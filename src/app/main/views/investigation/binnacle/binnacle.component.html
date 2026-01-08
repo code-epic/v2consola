@@ -57,32 +57,20 @@
     <section id="wishlist" class="grid-view wishlist-items">
       <div
         *ngFor="let product of ListarBitacora | filter: searchText:'aplicacion' | slice: (page - 1) * pageSize : page * pageSize; let i = index"
-        class="card ecommerce-card tarjeta"
+        class="card ecommerce-card tarjeta-circular"
       >
-        <a (click)="irA('/investigation/binnacle/', product)">
-          <!-- Minimalist Icon Header -->
-          <div class="item-icon-header">
-            
-            <div class="app-initial">
+        <a (click)="irA('/investigation/binnacle/', product)" class="text-decoration-none">
+          <div class="card-body text-center">
+            <div class="app-initial-circle mx-auto">
               {{ product.aplicacion.charAt(0).toUpperCase() }}
             </div>
-          </div>
-          
-          <!-- Card Content -->
-          <div class="card-body">
-            <div class="item-wrapper">
-              <div class="card-text item-description">
-                <h6 class="item-price">{{ product.aplicacion | uppercase }}</h6>
-              </div>
-            </div>
-            
-            <!-- Card Footer with Badge and Actions -->
-            <div class="item-rating d-flex justify-content-between align-items-center">
-              <div class="badge badge-success">
-                <span data-feather="layers" style="width: 14px; height: 14px; margin-right: 4px;"></span>
-                {{ product.totalUsuarios }}
-              </div>
-            
+            <h5 class="mt-2 item-name">{{ product.aplicacion | uppercase }}</h5>
+            <p class="text-muted item-description">
+              Bitácora de eventos y accesos de la aplicación.
+            </p>
+            <div class="user-count-breadcrumb">
+                <span data-feather="users" class="icon"></span>
+                <span>{{ product.totalUsuarios }} Usuarios</span>
             </div>
           </div>
         </a>
@@ -148,3 +136,4 @@
 
   </div>
 </div>
+

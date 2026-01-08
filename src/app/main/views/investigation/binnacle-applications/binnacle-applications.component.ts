@@ -96,29 +96,7 @@ export class BinnacleApplicationsComponent implements OnInit {
 
   async ngOnInit() {
     // content header
-    this.contentHeader = {
-      headerTitle: "Auditoría",
-      actionButton: true,
-      breadcrumb: {
-        type: "",
-        links: [
-          {
-            name: "Principal",
-            isLink: true,
-            link: "/home",
-          },
-          {
-            name: "Bitacora",
-            isLink: true,
-            link: "/investigation/binnacle",
-          },
-          {
-            name: this.urlID.aplicacion,
-            isLink: false,
-          },
-        ],
-      },
-    };
+  
     const datoBase64 = this.route.snapshot.paramMap.get('id');
 
     if (datoBase64) {
@@ -139,7 +117,33 @@ export class BinnacleApplicationsComponent implements OnInit {
     this.rowData = this.ListarBitacora;
     this.tempData = this.rowData;
 
-
+      this.contentHeader = {
+      headerTitle: "Auditoría",
+      actionButton: true,
+      breadcrumb: {
+        type: "",
+        links: [
+        {
+            name: 'Principal',
+            isLink: true,
+            link: '/home',
+          },
+          {
+            name: "Auditoria",
+            isLink: false,
+          },
+          {
+            name: "Bitacora",
+            isLink: true,
+            link: "/investigation/binnacle",
+          },
+          {
+            name: this.urlID.aplicacion,
+            isLink: false,
+          },
+        ],
+      },
+    };
 
   }
 

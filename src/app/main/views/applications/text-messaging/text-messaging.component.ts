@@ -106,7 +106,8 @@ export class TextMessagingComponent implements OnInit {
     this.isLoading = 0;
     const config = {
       funcion: 'Fnx_ListarDispositivosMoviles',
-      nombre: 'Listar dispositivos móviles'
+      nombre: 'Listar dispositivos móviles',
+      user_id: localStorage.getItem('userId')
     };
   
     try {
