@@ -63,6 +63,9 @@ export class AuthLoginV1Component implements OnInit {
 
   public xWidth = '660px'
 
+  public version = "1.0.0";
+  public fecha = "";
+
 
   /**
    * Constructor
@@ -126,8 +129,7 @@ export class AuthLoginV1Component implements OnInit {
     this.passwordTextType = !this.passwordTextType;
   }
 
-  public version = "1.0.0";
-  public fecha = "";
+
 
   /**
    * On init
@@ -139,7 +141,6 @@ export class AuthLoginV1Component implements OnInit {
     this.build = this.utilservice.FechaMomentL(environment.buildDateTime).replace(/\//g, '.')
 
     this.version = environment.version;
-    // this.fecha = environment.fecha;
 
     this.loginForm = this._formBuilder.group({
       email: ["", [Validators.required]],

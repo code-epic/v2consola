@@ -1126,6 +1126,8 @@ class AuthLoginV1Component {
   tempAuthToken = ''; // To store the token from the first login step
 
   xWidth = '660px';
+  version = "1.0.0";
+  fecha = "";
   /**
    * Constructor
    *
@@ -1182,20 +1184,17 @@ class AuthLoginV1Component {
   togglePasswordTextType() {
     this.passwordTextType = !this.passwordTextType;
   }
-
-  version = "1.0.0";
-  fecha = "";
   /**
    * On init
    */
+
 
   ngOnInit() {
     this.getCurrentDate();
     this.fechafinal = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime;
     this.fechaX = this.utilservice.FechaMoment(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime);
     this.build = this.utilservice.FechaMomentL(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime).replace(/\//g, '.');
-    this.version = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.version; // this.fecha = environment.fecha;
-
+    this.version = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.version;
     this.loginForm = this._formBuilder.group({
       email: ["", [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required]],
       password: ["", _angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required]
