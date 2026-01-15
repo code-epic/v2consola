@@ -45,10 +45,6 @@ export class AuthGuardGuard implements CanActivate {
     }
 
     const IDAPP = this.token.Usuario.Aplicacion[0].id
-    // console.log(this.token)
-    // console.log(IDAPP)
-    // console.log(environment.ID)
-
     if (this.token !== undefined && IDAPP == environment.ID) {
       let menu = JSON.parse(sessionStorage.getItem('menu'))
       let texto = Md5.hashStr(sessionStorage.getItem('menu'))

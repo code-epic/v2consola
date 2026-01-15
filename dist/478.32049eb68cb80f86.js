@@ -1252,19 +1252,17 @@ class AuthLoginV1Component {
     this.loading = true;
     this.loginService.getLogin(this.usuario, this.clave).subscribe(itk => {
       this.loading = false;
-      this.isHidden = false; // this.loginService.Iniciar(itk.token)
-
-      let tk = this.loginService.getUserDecrypt(itk.token); // MODIFICATION STARTS HERE
-      // console.log(tk.Usuario.token)
+      this.isHidden = false;
+      let tk = this.loginService.getUserDecrypt(itk.token);
+      this.tempAuthToken = itk.token;
 
       if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
         // 2FA is required, show the TOTP section
         this.xWidth = '840px';
         this.showTotpSection = true;
-        this.tempAuthToken = itk.token; // Store the temporary token
       } else {
         // No 2FA, proceed with normal login
-        this.loginService.Iniciar(itk.token);
+        this.loginService.Iniciar(this.tempAuthToken);
       }
     }, er => {
       this.loading = false;

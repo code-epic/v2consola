@@ -16768,15 +16768,17 @@ class ApiService {
 
 
   Validar_TOTP(codigo, tempAuthToken) {
-    var httpOptions = {
+    const options = {
       headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpHeaders({
-        Authorization: "Bearer " + tempAuthToken
+        Authorization: "Bearer " + tempAuthToken,
+        'X-Skip-Interceptor': 'true' // <--- Nuestra señal secreta
+
       })
     };
-    var url = this.URL + "wusuario/vtotp";
+    const url = this.URL + "wusuario/vtotp";
     return this.http.post(url, {
       "codigo": codigo
-    }, httpOptions);
+    }, options);
   }
   /**
    * @param tipo png | base64
@@ -16785,13 +16787,14 @@ class ApiService {
 
 
   MultipleSesion(tempAuthToken) {
-    var httpOptions = {
+    const options = {
       headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpHeaders({
-        Authorization: "Bearer " + tempAuthToken
+        Authorization: "Bearer " + tempAuthToken,
+        'X-Skip-Interceptor': 'true'
       })
     };
     var url = this.URL + "wusuario/multiplesesion";
-    return this.http.post(url, {}, httpOptions);
+    return this.http.post(url, {}, options);
   }
   /**
    * @param tipo png | base64
@@ -16800,14 +16803,9 @@ class ApiService {
 
 
   GetImageQR(id) {
-    var httpOptions = {
-      headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_6__.HttpHeaders({
-        Authorization: "Bearer " + this.httpOptions
-      })
-    };
     var url = this.URL + "imgslocalbase64/" + id;
     console.log(url);
-    return this.http.get(url, httpOptions);
+    return this.http.get(url, this.httpOptions);
   }
 
   static ɵfac = function ApiService_Factory(t) {
@@ -19164,9 +19162,7 @@ class AuthGuardGuard {
       return false;
     }
 
-    const IDAPP = this.token.Usuario.Aplicacion[0].id; // console.log(this.token)
-    // console.log(IDAPP)
-    // console.log(environment.ID)
+    const IDAPP = this.token.Usuario.Aplicacion[0].id;
 
     if (this.token !== undefined && IDAPP == environments_environment__WEBPACK_IMPORTED_MODULE_3__.environment.ID) {
       let menu = JSON.parse(sessionStorage.getItem('menu'));
@@ -19274,6 +19270,13 @@ class AuthInterceptorService {
   }
 
   intercept(req, next) {
+    if (req.headers.has('X-Skip-Interceptor')) {
+      const cleanReq = req.clone({
+        headers: req.headers.delete('X-Skip-Interceptor')
+      });
+      return next.handle(cleanReq);
+    }
+
     if (!req.body || req.method === 'GET') {
       return this.procesarPeticion(req, next);
     }
@@ -61566,7 +61569,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Sat Jan 10 2026 11:32:19 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Thu Jan 15 2026 13:19:13 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

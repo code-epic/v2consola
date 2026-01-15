@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpContextToken, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
@@ -298,7 +298,6 @@ export interface IConfiguracion {
 }
 
 
-
 @Injectable({
   providedIn: "root",
 })
@@ -444,7 +443,7 @@ export class ApiService {
 
   DwsCdn(peticion: string, tipo: string, filename: string) {
     let ruta = this.URL + "dwsother/" + peticion;
-    
+
     const httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -458,7 +457,7 @@ export class ApiService {
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = filename === ''? Md5.hashStr(peticion) : filename
+      link.download = filename === '' ? Md5.hashStr(peticion) : filename
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -664,13 +663,15 @@ export class ApiService {
   * @returns QR
   */
   Validar_TOTP(codigo: string, tempAuthToken: string): Observable<any> {
-    var httpOptions = {
+    const options = {
       headers: new HttpHeaders({
         Authorization: "Bearer " + tempAuthToken,
+        'X-Skip-Interceptor': 'true' // <--- Nuestra señal secreta
       }),
     };
-    var url = this.URL + "wusuario/vtotp";
-    return this.http.post<any>(url, { "codigo": codigo }, httpOptions);
+
+    const url = this.URL + "wusuario/vtotp";
+    return this.http.post<any>(url, { "codigo": codigo }, options);
   }
 
   /**
@@ -678,13 +679,15 @@ export class ApiService {
    * @returns QR
    */
   MultipleSesion(tempAuthToken: string): Observable<any> {
-    var httpOptions = {
+    const options = {
       headers: new HttpHeaders({
         Authorization: "Bearer " + tempAuthToken,
+        'X-Skip-Interceptor': 'true'
       }),
     };
+
     var url = this.URL + "wusuario/multiplesesion";
-    return this.http.post<any>(url, {}, httpOptions);
+    return this.http.post<any>(url, {}, options);
   }
 
   /**
@@ -692,14 +695,10 @@ export class ApiService {
    * @returns QR
    */
   GetImageQR(id: string): Observable<any> {
-    var httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: "Bearer " + this.httpOptions,
-      }),
-    };
+
     var url = this.URL + "imgslocalbase64/" + id;
     console.log(url)
-    return this.http.get(url, httpOptions);
+    return this.http.get(url, this.httpOptions);
   }
 
 
