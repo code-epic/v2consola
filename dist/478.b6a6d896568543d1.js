@@ -1192,8 +1192,8 @@ class AuthLoginV1Component {
   ngOnInit() {
     this.getCurrentDate();
     this.fechafinal = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime;
-    this.fechaX = this.utilservice.FechaMoment(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime);
-    this.build = this.utilservice.FechaMomentL(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime).replace(/\//g, '.');
+    this.fechaX = this.utilservice.FechaMoment(new Date(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime));
+    this.build = this.utilservice.FechaMomentL(new Date(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime)).replace(/\//g, '.');
     this.version = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.version;
     this.loginForm = this._formBuilder.group({
       email: ["", [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required]],
@@ -1217,7 +1217,6 @@ class AuthLoginV1Component {
     } else {
       this.loading = true;
       this.loginService.getLogin(this.loginForm.value.email, this.loginForm.value.password).subscribe(itk => {
-        // Find this part in your login() or loginOpt() method
         this.loading = false;
         this.isHidden = false;
         let tk = this.loginService.getUserDecrypt(itk.token);
@@ -1232,7 +1231,7 @@ class AuthLoginV1Component {
       }, er => {
         this.loading = false;
         this.isHidden = false;
-        this.utilservice.AlertMini("top-end", "error", er.error.msj || "Error al acceder al sistema", 3000);
+        this.utilservice.AlertMini("top-end", "error", er.error?.msj || "Error al acceder al sistema", 3000);
       });
     }
   }
@@ -1250,24 +1249,26 @@ class AuthLoginV1Component {
   loginOpt() {
     this.xWidth = '660px';
     this.loading = true;
+    console.log(this.usuario, this.clave);
     this.loginService.getLogin(this.usuario, this.clave).subscribe(itk => {
+      console.log(itk);
       this.loading = false;
       this.isHidden = false;
       let tk = this.loginService.getUserDecrypt(itk.token);
       this.tempAuthToken = itk.token;
 
       if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
-        // 2FA is required, show the TOTP section
         this.xWidth = '840px';
         this.showTotpSection = true;
       } else {
-        // No 2FA, proceed with normal login
+        console.log(this.tempAuthToken);
         this.loginService.Iniciar(this.tempAuthToken);
       }
     }, er => {
+      console.log(er);
       this.loading = false;
       this.isHidden = false;
-      this.utilservice.AlertMini("top-end", "error", er.error.msj || "Error al acceder al sistema", 3000);
+      this.utilservice.AlertMini("top-end", "error", er.error?.msj || "Error al acceder al sistema", 3000);
     });
   }
 

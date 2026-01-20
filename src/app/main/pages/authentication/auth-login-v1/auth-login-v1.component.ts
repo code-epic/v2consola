@@ -137,8 +137,8 @@ export class AuthLoginV1Component implements OnInit {
   ngOnInit(): void {
     this.getCurrentDate()
     this.fechafinal = environment.buildDateTime
-    this.fechaX = this.utilservice.FechaMoment(environment.buildDateTime)
-    this.build = this.utilservice.FechaMomentL(environment.buildDateTime).replace(/\//g, '.')
+    this.fechaX = this.utilservice.FechaMoment(new Date(environment.buildDateTime))
+    this.build = this.utilservice.FechaMomentL(new Date(environment.buildDateTime)).replace(/\//g, '.')
 
     this.version = environment.version;
 
@@ -170,7 +170,6 @@ export class AuthLoginV1Component implements OnInit {
         .getLogin(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe(
           (itk) => {
-            // Find this part in your login() or loginOpt() method
 
             this.loading = false;
             this.isHidden = false;
@@ -197,7 +196,7 @@ export class AuthLoginV1Component implements OnInit {
             this.utilservice.AlertMini(
               "top-end",
               "error",
-              er.error.msj || "Error al acceder al sistema",
+              er.error?.msj || "Error al acceder al sistema",
               3000
             );
           }
@@ -218,34 +217,33 @@ export class AuthLoginV1Component implements OnInit {
   loginOpt() {
     this.xWidth = '660px'
     this.loading = true;
+    console.log(this.usuario, this.clave)
     this.loginService
       .getLogin(this.usuario, this.clave)
       .subscribe(
         (itk) => {
+          console.log(itk)
           this.loading = false;
           this.isHidden = false;
-
           let tk: any = this.loginService.getUserDecrypt(itk.token);
           this.tempAuthToken = itk.token; 
-
           if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
-            // 2FA is required, show the TOTP section
             this.xWidth = '840px'
             this.showTotpSection = true;
-            
           } else {
-            // No 2FA, proceed with normal login
+            console.log(this.tempAuthToken)
             this.loginService.Iniciar(this.tempAuthToken);
           }
 
         },
         (er) => {
+          console.log(er)
           this.loading = false;
           this.isHidden = false;
           this.utilservice.AlertMini(
             "top-end",
             "error",
-            er.error.msj || "Error al acceder al sistema",
+            er.error?.msj || "Error al acceder al sistema",
             3000
           );
         }

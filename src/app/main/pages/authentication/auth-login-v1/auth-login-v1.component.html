@@ -3,9 +3,9 @@
     <!-- Login v1 -->
     <div class="card mb-0">
       <div class="card-body">
-         <a href="javascript:void(0);" class="brand-logo">
+        <a href="javascript:void(0);" class="brand-logo">
           <img src="/assets/images/logo/sandra.png" alt="brand-logo" height="80" />
-          
+
         </a>
         <h2 class="mb-1 text-center" style="margin-top: -20px;"><strong>Sandra Server</strong></h2>
 
@@ -32,7 +32,8 @@
               <div class="input-group input-group-merge form-password-toggle">
                 <input [type]="passwordTextType ? 'text' : 'password'" formControlName="password"
                   class="form-control form-control-merge" tabindex="2" placeholder="·········"
-                  aria-describedby="login-password" [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" />
+                  aria-describedby="login-password"
+                  [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" />
 
                 <div class="input-group-append">
                   <span class="input-group-text cursor-pointer"><i class="feather font-small-4" [ngClass]="{
@@ -78,18 +79,19 @@
         </p> -->
 
         <div class="divider my-2" *ngIf="!showTotpSection">
-          
+
         </div>
 
 
         <div class="divider my-2" [class.mt-3]="showTotpSection">
           <p class="card-text text-center"><small>
-            {{ '©' }} {{ coreConfig.app.appName }} {{ getCurrentDate() | date:'yyyy' }} - Todos los derechos reservados
-            <br>
-            {{version}}
-            <br>
-            Versión: {{ fechaX  }}
-          </small></p>
+              {{ '©' }} {{ coreConfig.app.appName }} {{ getCurrentDate() | date:'yyyy' }} - Todos los derechos
+              reservados
+              <br>
+              {{version}}
+              <br>
+              Versión: {{ fechaX }}
+            </small></p>
         </div>
       </div>
     </div>
@@ -118,14 +120,14 @@
         <form role="form" #form="ngForm" class="xform">
           <br><br>
           <h2 class="titulo" style="text-transform: uppercase; margin-bottom: 0; ">Consola</h2>
-      
+
           <input class="xinput" type="text" id="usuario" name="usuario" maxlength="12" placeholder="Usuario (*)"
             (blur)="onLoginBlur($event)" autocomplete="off" [(ngModel)]="usuario"
             [ngModelOptions]="{ standalone: true }" />
 
 
-          <input class="xinput" type="password" name="clave" id="clave" placeholder="Contraseña (*)"
-            [(ngModel)]="clave" [ngModelOptions]="{ standalone: true }" required />
+          <input class="xinput" type="password" name="clave" id="clave" placeholder="Contraseña (*)" [(ngModel)]="clave"
+            [ngModelOptions]="{ standalone: true }" required />
 
           <div class="row" style="margin-top: .5rem;">
             <button type="submit" id="submit" class="xbutton primary" (click)="loginOpt()"
@@ -137,35 +139,35 @@
           </div>
 
           <div class="row">
-            
+
             <div class="separador" style="margin-top: 20px;"></div>
             <br>
             <div>
-              <p  style="color: #494949; font-size: 11px; text-align: center;">
-              {{version}}
+              <p style="color: #494949; font-size: 11px; text-align: center;">
+                {{version}}
                 <br>
-                Versión: {{ fechaX  }}
+                Versión: {{ fechaX }}
               </p>
             </div>
           </div>
         </form>
-        
+
       </ng-container>
 
       <!-- TOTP Section -->
       <ng-container *ngIf="showTotpSection">
         <ng-container *ngTemplateOutlet="totpSection"></ng-container>
-        
+
       </ng-container>
 
-      
+
     </div>
   </div>
 
   <div class="row mt-5" style="width: 50%;">
     <div class="col-6">
     </div>
-  
+
     <div class="col-6 text-right">
     </div>
   </div>
@@ -181,20 +183,27 @@
     </p>
     <div class="otp-container" [class.shake]="isOtpInvalid">
       <div class="otp-wrapper">
-        <input #otp0 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp1)" (keydown)="onKeydown($event, null)" (paste)="onPaste($event)">
-        <input #otp1 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp2)" (keydown)="onKeydown($event, otp0)">
-        <input #otp2 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp3)" (keydown)="onKeydown($event, otp1)">
+        <input #otp0 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp1)"
+          (keydown)="onKeydown($event, null)" (paste)="onPaste($event)">
+        <input #otp1 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp2)"
+          (keydown)="onKeydown($event, otp0)">
+        <input #otp2 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp3)"
+          (keydown)="onKeydown($event, otp1)">
 
         <span class="otp-divider"></span>
 
-        <input #otp3 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp4)" (keydown)="onKeydown($event, otp2)">
-        <input #otp4 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp5)" (keydown)="onKeydown($event, otp3)">
-        <input #otp5 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, null)" (keydown)="onKeydown($event, otp4)">
+        <input #otp3 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp4)"
+          (keydown)="onKeydown($event, otp2)">
+        <input #otp4 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp5)"
+          (keydown)="onKeydown($event, otp3)">
+        <input #otp5 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, null)"
+          (keydown)="onKeydown($event, otp4)">
       </div>
 
       <p *ngIf="isOtpInvalid" class="error-text">Código incorrecto. Inténtalo de nuevo.</p>
     </div>
-    <small *ngIf="isOtpInvalid" class="text-danger mt-1 d-block">El código ingresado es incorrecto. Inténtalo de nuevo.</small>
+    <small *ngIf="isOtpInvalid" class="text-danger mt-1 d-block">El código ingresado es incorrecto. Inténtalo de
+      nuevo.</small>
 
     <div class="mt-3">
       <a href="javascript:void(0);" (click)="goBackToLogin()">

@@ -147,6 +147,7 @@ export class LoginService {
   }
 
   getLogin(user: string, clave: string): Observable<IToken> {
+    console.log(user, clave, 'accediendo a getLogin')
     var usuario = {
       "nombre": user,
       "clave": clave,
