@@ -4,6 +4,7 @@
 
 // Typography
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import '@core/scss/angular/libs/select.component.scss';
 
 // Colors - Soft Palette
 $soft-bg: #f8f9fa;
@@ -29,6 +30,11 @@ $purple-text: #9c27b0;
 
 $info-soft: #e1f5fe; // Light Cyan
 $info-text: #00bcd4;
+
+
+/* En user.component.scss */
+
+
 
 // ========================================
 // Card Header Custom
@@ -167,6 +173,11 @@ $info-text: #00bcd4;
           .ng-value {
             color: $text-primary;
             font-weight: 500;
+            
+            &.ng-value-more {
+              background-color: $primary-soft;
+              color: $primary-text;
+            }
           }
         }
         

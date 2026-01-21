@@ -188,26 +188,37 @@
                 placeholder="Tiempo" class="form-control">
             </div>
 
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-4">
               <label class="form-label" for="origen">Regional / Sucursal</label>
               <div class="input-group input-group-pastel">
                 <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'map-pin'"></span></span></div>
                 <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="xregional" [name]="xregional"
-                  [ngModelOptions]="{standalone: true}" (ngModelChange)="consultarOficinas($event)"
+                  [ngModelOptions]="{standalone: true}" (ngModelChange)="consultarOficinas($event)" 
                   (input)='onFocusedRegional($event)' bindId="id" bindLabel="name" placeholder="Regional"
                   appendTo="body" class="flex-grow-1"></ng-select>
               </div>
             </div>
 
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-8">
               <label class="form-label" for="origen">Oficina / Departamento</label>
-              <div class="input-group input-group-pastel">
+              <div class="input-group input-group-pastel align-items-start">
                 <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'map'"></span></span></div>
                 <ng-select [items]="dataOficina" [addTag]="true" [(ngModel)]="xoficina" [name]="xoficina"
                   [ngModelOptions]="{standalone: true}" bindId="id" bindLabel="name" placeholder="Oficina"
-                  appendTo="body" class="flex-grow-1"></ng-select>
+                  [multiple]="true"
+                  appendTo="body" class="flex-grow-1">
+                  <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+                    <div class="ng-value" *ngFor="let item of items | slice: 0:2">
+                      <span class="ng-value-label">{{ item.name }}</span>
+                      <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                    </div>
+                    <div class="ng-value ng-value-more" *ngIf="items.length > 2">
+                      <span class="ng-value-label">+{{ items.length - 2 }} más...</span>
+                    </div>
+                  </ng-template>
+                </ng-select>
               </div>
             </div>
           </div>

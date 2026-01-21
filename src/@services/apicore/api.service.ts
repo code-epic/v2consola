@@ -619,7 +619,7 @@ export class ApiService {
   ConsultaSistemaBDV(): boolean {
     let cadena = this.document.location.href
     const cadenaNormalizada = cadena.toLowerCase();
-    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4201'];
+    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4202'];
     return palabrasProhibidas.some(palabra =>
       cadenaNormalizada.includes(palabra)
     );

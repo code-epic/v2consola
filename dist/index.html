@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="utf-8"/>
-  <title>Sandra Server</title>
+  <title>Sandra Web Panel</title>
   <base href="."/>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -108,42 +108,173 @@
 
   <script>
     (function() {
+      // Configuración de temas
+      const config = {
+        default: {
+          logo: 'assets/images/logo/logo.png',
+          title: 'Sandra Server',
+          favicon: 'favicon.ico'
+        },
+        bdv: {
+          keywords: ['sicoex', 'banv', 'corp', '4201'],
+          logo: 'assets/images/logo/logo-bdv.png',
+          title: 'BDV Server',
+          favicon: 'assets/images/bdv/favicon.ico'
+        }
+      };
+
       const logoContainer = document.getElementById('loading-logo-container');
-      if (logoContainer) {
-        const url = window.location.href.toLowerCase(); // URL actual en minúsculas
-        const bdvKeywords = ['sicoex', 'banv', 'corp', '4201']; // Palabras clave
-        let logoSrc = 'assets/images/logo/logo.png'; // Logo por defecto
-        let pageTitle = 'Sandra Server'; // Título por defecto
-        let faviconSrc = 'favicon.ico'; // Favicon por defecto
+      if (!logoContainer) return;
 
-        // Comprueba si la URL contiene alguna de las palabras clave
-        if (bdvKeywords.some(keyword => url.includes(keyword))) {
-          logoSrc = 'assets/images/logo/logo-bdv.png'; // Cambia al logo de BDV
-          pageTitle = 'BDV Server'; // Cambia el título
-          faviconSrc = 'assets/images/bdv/favicon.ico'; // Cambia el favicon
-        }
+      const url = window.location.href.toLowerCase();
+      const isBdv = config.bdv.keywords.some(keyword => url.includes(keyword));
+      const theme = isBdv ? config.bdv : config.default;
 
-        // Actualiza el título de la página
-        window.document.title = pageTitle;
+      // Actualizar UI
+      window.document.title = theme.title;
+      
+      const link = document.querySelector("link[rel~='icon']");
+      if (link) link.href = theme.favicon;
 
-        // Actualiza el favicon
-        const link = document.querySelector("link[rel~='icon']");
-        if (link) {
-          link.href = faviconSrc;
-        }
-
-        // Crea y configura la etiqueta <img> dinámicamente
-        const imgElement = document.createElement('img');
-        imgElement.src = logoSrc;
-        imgElement.width = 200;
-        imgElement.height = 200;
-        imgElement.alt = 'Logo';
-
-        // Inserta la imagen en el contenedor
-        logoContainer.appendChild(imgElement);
-      }
+      const imgElement = new Image(200, 200);
+      imgElement.src = theme.logo;
+      imgElement.alt = 'Logo';
+      logoContainer.appendChild(imgElement);
     })();
   </script>
-<script src="runtime.c47852b68cffd2b0.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.cd60fe258fb509b5.js" type="module"></script></body>
+
+<script>
+  (function () {
+      const APP_ID = 'web-panel';
+      const MAX_BODY_LENGTH = 5000;
+      
+      // Referencias originales
+      const original = {
+        error: console.error,
+        fetch: window.fetch,
+        xhr: window.XMLHttpRequest
+      };
+
+      // Helper para comunicación con padre
+      const sendToParent = (type, message, details = null) => {
+        if (!window.parent) return;
+        window.parent.postMessage({
+          type: 'SDC_LOG',
+          app_id: APP_ID,
+          source: 'external-url',
+          payload: {
+            app_id: APP_ID,
+            source: 'external-url',
+            log_type: type,
+            message,
+            details
+          }
+        }, '*');
+      };
+      // Helper para truncar texto
+      const truncate = (str) => {
+        if (!str) return '[No Body]';
+        return str.length > MAX_BODY_LENGTH ? str.substring(0, MAX_BODY_LENGTH) + '... (truncated)' : str;
+      };
+
+      // 1. Interceptar Console Error
+      console.error = (...args) => {
+        original.error.apply(console, args);
+        const msg = args.map(a => (a instanceof Error ? `${a.message}\n${a.stack}` : a)).join(' ');
+        sendToParent('ERROR', msg);
+      };
+
+      // 2. Interceptar Fetch
+      window.fetch = async (...args) => {
+        const [resource, config] = args;
+        const url = resource.toString();
+        const method = config?.method || 'GET';
+        
+        try {
+          const response = await original.fetch(...args);
+          
+          if (response.status >= 400) {
+            let responseBody = '[No Body]';
+            try {
+              responseBody = await response.clone().text();
+            } catch (e) {}
+
+            sendToParent('FETCH', `HTTP Error ${response.status} ${method} ${url}`, {
+              url: response.url || url,
+              method,
+              status: response.status,
+              request_headers: config?.headers || {},
+              request_payload: config?.body || null,
+              response_body: truncate(responseBody),
+              source: 'external-url'
+            });
+          }
+          return response;
+        } catch (err) {
+          sendToParent('ERROR', `Fetch Exception: ${url} - ${err.message}`, { url, error: err.message });
+          throw err;
+        }
+      };
+
+      // 3. Interceptar XHR
+      window.XMLHttpRequest = function () {
+        const xhr = new original.xhr();
+        let method = 'GET';
+        let url = '';
+        let requestBody = null;
+        const requestHeaders = {};
+
+        const originalOpen = xhr.open;
+        xhr.open = (m, u, ...args) => {
+          method = m;
+          url = u;
+          return originalOpen.apply(xhr, [m, u, ...args]);
+        };
+
+        const originalSetHeader = xhr.setRequestHeader;
+        xhr.setRequestHeader = (header, value) => {
+          requestHeaders[header] = value;
+          return originalSetHeader.apply(xhr, [header, value]);
+        };
+
+        const originalSend = xhr.send;
+        xhr.send = (body) => {
+          requestBody = body;
+          return originalSend.apply(xhr, [body]);
+        };
+
+        xhr.addEventListener('loadend', () => {
+          if (xhr.status >= 400) {
+            sendToParent('FETCH', `XHR Error ${xhr.status} ${method} ${url}`, {
+              url: xhr.responseURL || url,
+              method,
+              status: xhr.status,
+              request_headers: requestHeaders,
+              request_payload: requestBody,
+              response_body: truncate(xhr.responseText),
+              source: 'external-url'
+            });
+          }
+        });
+
+        xhr.addEventListener('error', () => {
+          sendToParent('ERROR', `XHR Network Exception: ${method} ${url}`, { url, method });
+        });
+
+        return xhr;
+      };
+
+      // Restaurar propiedades estáticas
+      Object.assign(window.XMLHttpRequest, original.xhr);
+
+      sendToParent('INFO', `Monitor (XHR/Fetch) iniciado para ${APP_ID}`);
+    })();
+</script>
+
+
+
+
+
+<script src="runtime.c47852b68cffd2b0.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.95fc34b69266e39b.js" type="module"></script></body>
 
 </html>

@@ -236,6 +236,10 @@ export class UserComponent implements OnInit {
   public passwordStrengthWidth: number = 0;
   public isPasswordInvalid: boolean = false;
 
+  public endpointEstados: string = ''
+  public endpointOficinas: string = ''
+
+
   public xsesion: string = ''
 
 
@@ -253,7 +257,7 @@ export class UserComponent implements OnInit {
 
   async ngOnInit() {
     this.isBDV = this.apiService.ConsultaSistemaBDV()
-    this.consultarRegionales()
+    
     this.contentHeader = {
       headerTitle: 'Aplicaciones',
       actionButton: true,
@@ -285,7 +289,7 @@ export class UserComponent implements OnInit {
 
 
     await this.cargarConfiguracionApp()
-
+    
 
 
 
@@ -303,9 +307,12 @@ export class UserComponent implements OnInit {
       (data) => {
         if (data != null) {
           if (data.length > 0) {
+            console.log(data)
             this.configuracion = data[0]
             this.iUser.endpoint = this.configuracion.endpoints.login
             this.iUser.duraciontiempo = this.configuracion.sesion.tiempo * this.exportTime(this.configuracion.sesion.unidad)
+            this.endpointOficinas = this.configuracion.endpoints.oficinas
+            this.endpointEstados = this.configuracion.endpoints.estados
 
             let usuario: any = window.sessionStorage.getItem('validator')
 
@@ -315,6 +322,7 @@ export class UserComponent implements OnInit {
             }
             
           }
+          this.consultarRegionales()
         }
       },
       (error) => {
@@ -1003,9 +1011,26 @@ export class UserComponent implements OnInit {
 
   consultarRegionales() {
     this.dataRegional = []
+    console.log(this.endpointOficinas, this.isBDV)
     if (this.isBDV) {
       this.xAPI = {} as IAPICore
       this.xAPI.funcion = environment.functions.CONSULTAR_REGIONALES; // Asumiendo que esta es tu función de backend
+      this.xAPI.parametros = ''
+      this.xAPI.valores = {};
+
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.dataRegional = data.Cuerpo
+        },
+        (error) => {
+          console.error('Error al cargar la configuración de la aplicación:', error);
+
+        }
+      );
+    }else if(  this.endpointOficinas != ''){
+      
+      this.xAPI = {} as IAPICore
+      this.xAPI.funcion =   this.endpointOficinas // Asumiendo que esta es tu función de backend
       this.xAPI.parametros = ''
       this.xAPI.valores = {};
 
@@ -1022,11 +1047,26 @@ export class UserComponent implements OnInit {
   }
 
   consultarOficinas(e) {
+    console.log(e)
     this.dataOficina = []
     if (this.isBDV) {
       this.xAPI = {} as IAPICore
       this.xAPI.funcion = environment.functions.CONSULTAR_OFICINAS; // Asumiendo que esta es tu función de backend
       this.xAPI.parametros = this.utilservice.zfill(e.id, 2)
+      this.xAPI.valores = {};
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.dataOficina = data.Cuerpo
+        },
+        (error) => {
+          console.error('Error al cargar la configuración de la aplicación:', error);
+
+        }
+      );
+    }else if(this.endpointEstados != ''){
+      this.xAPI = {} as IAPICore
+      this.xAPI.funcion = this.endpointEstados; // Asumiendo que esta es tu función de backend
+      this.xAPI.parametros = `${ parseInt(e.id)}`
       this.xAPI.valores = {};
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
