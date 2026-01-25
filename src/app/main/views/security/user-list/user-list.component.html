@@ -144,6 +144,8 @@
                                 <div ngbDropdownMenu>
                                     <a (click)="EditarUser(row)" ngbDropdownItem><span [data-feather]="'edit'"
                                             [size]="16" [class]="'mr-50'"></span>Editar</a>
+                                    <a (click)="openChangePasswordModal(row, modalChangePass)" ngbDropdownItem><span [data-feather]="'key'"
+                                            [size]="16" [class]="'mr-50'"></span>Cambiar Clave</a>
                                      <a *ngIf="row.bloqueo" (click)="DesbloquearUser(row)" ngbDropdownItem><span [data-feather]="'unlock'"
                                             [size]="16" [class]="'mr-50'"></span>Desbloquear</a>
                                     <a (click)="EliminarUser(row)" ngbDropdownItem><span [data-feather]="'trash'"
@@ -160,3 +162,134 @@
 
     </div>
 </div>
+
+<ng-template #modalChangePass let-modal>
+    <div class="modal-header">
+        <h5 class="modal-title">Cambiar Contraseña: {{ selectedUser?.nombre }}</h5>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+        <!-- Step 1: VTOP Validation (Solo si tiene token) -->
+        <div *ngIf="isTotpStep && !isSuccess">
+            <div class="alert alert-warning p-1" role="alert">
+                <div class="d-flex align-items-center">
+                    <span [data-feather]="'lock'" class="mr-1"></span>
+                    <span>El usuario tiene 2FA activo. Ingrese el código VTOP para continuar.</span>
+                </div>
+            </div>
+            <div class="form-group text-center">
+                <label class="d-block mb-1 font-weight-bold">Código de Verificación (TOTP)</label>
+                <p class="card-text mb-2 text-muted font-small-3">
+                    Ingrese el código de 6 dígitos de su aplicación autenticadora.
+                </p>
+                <div class="otp-container justify-content-center" [class.shake]="isOtpInvalid">
+                    <div class="otp-wrapper">
+                        <input #otp0 type="tel" class="otp-box form-control" maxlength="1" (input)="onInput($event, otp1)" (keydown)="onKeydown($event, null)" (paste)="onPaste($event)">
+                        <input #otp1 type="tel" class="otp-box form-control" maxlength="1" (input)="onInput($event, otp2)" (keydown)="onKeydown($event, otp0)">
+                        <input #otp2 type="tel" class="otp-box form-control" maxlength="1" (input)="onInput($event, otp3)" (keydown)="onKeydown($event, otp1)">
+                        
+                        <span class="otp-divider"></span>
+                        
+                        <input #otp3 type="tel" class="otp-box form-control" maxlength="1" (input)="onInput($event, otp4)" (keydown)="onKeydown($event, otp2)">
+                        <input #otp4 type="tel" class="otp-box form-control" maxlength="1" (input)="onInput($event, otp5)" (keydown)="onKeydown($event, otp3)">
+                        <input #otp5 type="tel" class="otp-box form-control" maxlength="1" (input)="onInput($event, null)" (keydown)="onKeydown($event, otp4)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: New Password -->
+        <div *ngIf="!isTotpStep && !isSuccess">
+            <div class="form-group">
+                <label class="form-label font-weight-bold text-muted"><span [data-feather]="'key'" class="mr-50" [size]="14"></span>Nueva Contraseña</label>
+                <div class="input-group input-group-merge form-password-toggle">
+                    <input [type]="passwordTextType ? 'text' : 'password'" class="form-control" [(ngModel)]="newPassword" 
+                        (ngModelChange)="checkPasswordStrength($event)" (blur)="validatePassword()"
+                        [class.is-invalid]="isPasswordInvalid"
+                        placeholder="············" />
+                    <div class="input-group-append">
+                        <span class="input-group-text cursor-pointer" (click)="passwordTextType = !passwordTextType"><i class="feather font-small-4" [ngClass]="{'icon-eye-off': passwordTextType, 'icon-eye': !passwordTextType}"></i></span>
+                    </div>
+                </div>
+                <!-- Password Strength Indicator -->
+                <div class="mt-1" *ngIf="newPassword.length > 0">
+                    <div class="d-flex justify-content-between align-items-center mb-50">
+                        <small class="font-weight-bold"
+                            [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
+                            Nivel de seguridad: {{ passwordStrengthLabel }}
+                        </small>
+                        <small class="text-muted">{{ passwordStrengthWidth }}%</small>
+                    </div>
+                    <div class="progress progress-bar-primary" style="height: 6px;">
+                        <div class="progress-bar" role="progressbar" [ngClass]="passwordStrengthColor"
+                            [style.width.%]="passwordStrengthWidth" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label font-weight-bold text-muted"><span [data-feather]="'shield'" class="mr-50" [size]="14"></span>Repetir Contraseña</label>
+                <div class="input-group input-group-merge form-password-toggle">
+                    <input [type]="confirmpasswordTextType ? 'text' : 'password'" class="form-control" [(ngModel)]="confirmPassword" placeholder="············" 
+                    [class.is-invalid]="newPassword !== confirmPassword && confirmPassword.length > 0"/>
+                    <div class="input-group-append">
+                        <span class="input-group-text cursor-pointer" (click)="confirmpasswordTextType = !confirmpasswordTextType"><i class="feather font-small-4" [ngClass]="{'icon-eye-off': confirmpasswordTextType, 'icon-eye': !confirmpasswordTextType}"></i></span>
+                    </div>
+                </div>
+                <small class="text-danger" *ngIf="newPassword !== confirmPassword && confirmPassword.length > 0">
+                    <span [data-feather]="'alert-circle'" [size]="10" class="mr-50"></span>Las contraseñas no coinciden
+                </small>
+            </div>
+        </div>
+
+        <!-- Step 3: Success Message -->
+        <div *ngIf="isSuccess" class="text-center p-2">
+            <div class="text-success mb-1"><span [data-feather]="'check-circle'" [size]="45"></span></div>
+            <h4 class="text-success">¡Cambio Exitoso!</h4>
+            <p>La contraseña ha sido actualizada correctamente.</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger" (click)="modal.dismiss('cancel')" *ngIf="!isSuccess">Cancelar</button>
+        <button type="button" class="btn btn-primary" (click)="acceptChangePassword()" *ngIf="!isSuccess" [disabled]="isPasswordInvalid || newPassword !== confirmPassword || passwordStrengthWidth < 80">Aceptar</button>
+        <button type="button" class="btn btn-primary" (click)="modal.close('Ok')" *ngIf="isSuccess">Cerrar</button>
+    </div>
+</ng-template>
+
+<style>
+    .otp-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem 0;
+    }
+    .otp-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .otp-box {
+        width: 45px;
+        height: 50px;
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 0;
+    }
+    .otp-divider {
+        width: 10px;
+        height: 2px;
+        background-color: #d8d6de;
+        margin: 0 4px;
+    }
+    .shake {
+        animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+    @keyframes shake {
+        10%, 90% { transform: translate3d(-1px, 0, 0); }
+        20%, 80% { transform: translate3d(2px, 0, 0); }
+        30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+        40%, 60% { transform: translate3d(4px, 0, 0); }
+    }
+</style>

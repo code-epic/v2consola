@@ -99,7 +99,7 @@ export class RegisterApiComponent implements OnInit {
     query: "",
     alias: "",
     driver: undefined,
-    tiempoduracion: "20",
+    tiempoduracion: 20,
     tipoduracion: 0,
     bitacora: 0,
     respaldo: 0,
@@ -135,7 +135,7 @@ export class RegisterApiComponent implements OnInit {
     query: "",
     alias: "",
     driver: undefined,
-    tiempoduracion: "20",
+    tiempoduracion: 20,
     tipoduracion: 0,
   };
 

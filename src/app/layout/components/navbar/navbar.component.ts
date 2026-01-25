@@ -267,7 +267,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         }
 
 
-        console.log('Iniciando conexion')
+        // console.log('Iniciando conexion')
         this.msjService.lstpid$.subscribe((pid) => {
           this.blCargando = pid.estatus;
           this.updateProgress(pid.progress || 0);

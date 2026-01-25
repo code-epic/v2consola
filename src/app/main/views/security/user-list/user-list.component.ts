@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
 import { environment } from 'environments/environment';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { UtilService } from '@services/util/util.service';
+import { Sha256Service } from '@services/util/sha256';
 
 @Component({
   selector: 'app-user-list',
@@ -60,6 +62,23 @@ export class UserListComponent implements OnInit, OnDestroy {
   public rowData = []
 
 
+  // Variables para el Modal de Cambio de Clave
+  public selectedUser: any;
+  public vtopCode: string = '';
+  public newPassword: string = '';
+  public confirmPassword: string = '';
+  public isTotpStep: boolean = false;
+  public isSuccess: boolean = false;
+  public passwordTextType: boolean = false;
+  public confirmpasswordTextType: boolean = false;
+  // Password Strength properties
+  public passwordStrength: number = 0;
+  public passwordStrengthLabel: string = 'Sin seguridad';
+  public passwordStrengthColor: string = '';
+  public passwordStrengthWidth: number = 0;
+  public isPasswordInvalid: boolean = false;
+  public isOtpInvalid: boolean = false;
+
   public lstPerfil = []; // Asegúrate de cargar esta lista, por ejemplo en ngOnInit
   public selectedProfile: string = ''; // Propiedad para el ngModel del nuevo select
 
@@ -70,6 +89,9 @@ export class UserListComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private apiService: ApiService,
+    private modalService: NgbModal,
+    private utilService: UtilService,
+    private sha256: Sha256Service
   ) { }
 
   async ngOnInit() {
@@ -280,6 +302,177 @@ export class UserListComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  openChangePasswordModal(row: any, content: any) {
+    this.selectedUser = row;
+    this.vtopCode = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
+    this.isSuccess = false;
+    this.passwordTextType = false;
+    this.confirmpasswordTextType = false;
+    this.passwordStrength = 0;
+    this.passwordStrengthLabel = 'Sin seguridad';
+    this.passwordStrengthColor = '';
+    this.passwordStrengthWidth = 0;
+    this.isPasswordInvalid = false;
+    this.isOtpInvalid = false;
+
+    // Paso 1: Verificar si el usuario tiene token (2FA)
+    // Si tiene token, activamos el paso de validación VTOP
+    if (row.token && row.token.trim() !== '') {
+      this.isTotpStep = true;
+    } else {
+      this.isTotpStep = false;
+    }
+
+    this.modalService.open(content, { centered: true,  backdrop: false,
+      keyboard: false,
+      windowClass: "fondo-modal", size: 'md' });
+  }
+
+  async acceptChangePassword() {
+    if (this.isTotpStep) {
+      // --- Lógica del Paso 1: Validar VTOP ---
+      if (!this.vtopCode || this.vtopCode.length < 6) {
+        this.isOtpInvalid = true;
+        this.utilService.AlertMini('top-end', 'warning', 'Ingrese un código VTOP válido de 6 dígitos', 3000);
+        return;
+      }
+      // Aquí podrías llamar a una API para validar el VTOP si es necesario.
+      // Por ahora, asumimos que si el código es válido en formato, pasamos al siguiente paso.
+      this.isTotpStep = false; 
+
+    } else {
+      // --- Lógica del Paso 2: Cambiar Contraseña ---
+      if (!this.newPassword || !this.confirmPassword) {
+        this.utilService.AlertMini('top-end', 'warning', 'Por favor complete todos los campos', 3000);
+        return;
+      }
+      if (this.newPassword !== this.confirmPassword) {
+        this.utilService.AlertMini('top-end', 'error', 'Las contraseñas no coinciden', 3000);
+        return;
+      }
+      
+      if (this.isPasswordInvalid) {
+        this.utilService.AlertMini('top-end', 'error', 'La contraseña no cumple con los requisitos de seguridad', 3000);
+        return;
+      }
+
+      this.xAPI.funcion = 'ActualizarClaveUsuario'; // Asegúrate de usar el nombre correcto de tu función en BD
+      const hash = await this.sha256.hash(this.newPassword);
+      this.xAPI.parametros = `${this.selectedUser.login},${hash}`;
+      this.xAPI.valores = '';
+
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        (data) => {
+          this.isSuccess = true; // Muestra el mensaje de éxito (Paso 3)
+        },
+        (error) => {
+          console.error(error);
+          this.utilService.AlertMini('top-end', 'error', 'Error al actualizar la contraseña', 3000);
+        }
+      );
+    }
+  }
+
+  /**
+   * Check Password Strength
+   * @param password 
+   */
+  checkPasswordStrength(password: string): void {
+    let result = 0;
+    if (password) {
+      if (password.length >= 8) result += 20;
+      if (password.match(/[A-Z]/)) result += 20;
+      if (password.match(/[a-z]/)) result += 20;
+      if (password.match(/[0-9]/)) result += 20;
+      if (password.match(/[@$!%*?&]/)) result += 20;
+    }
+
+    this.passwordStrengthWidth = result;
+
+    if (result < 40) {
+      this.passwordStrengthLabel = 'Débil';
+      this.passwordStrengthColor = 'bg-danger';
+    } else if (result < 80) {
+      this.passwordStrengthLabel = 'Media';
+      this.passwordStrengthColor = 'bg-warning';
+    } else if (result === 100) {
+      this.passwordStrengthLabel = 'Fuerte';
+      this.passwordStrengthColor = 'bg-success';
+    } else {
+      this.passwordStrengthLabel = 'Buena';
+      this.passwordStrengthColor = 'bg-info';
+    }
+  }
+
+  validatePassword() {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+
+    if (this.newPassword && !passwordRegex.test(this.newPassword)) {
+      this.isPasswordInvalid = true;
+      this.utilService.AlertMini(
+        "top-end",
+        "error",
+        "La clave no cumple con los requisitos. Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
+        5000
+      );
+    } else {
+      this.isPasswordInvalid = false;
+    }
+  }
+
+  // --- Métodos para el manejo de inputs TOTP ---
+
+  onInput(event: any, nextInput: HTMLInputElement | null) {
+    const input = event.target;
+    const value = input.value;
+
+    // Limpiar si no es número
+    if (!/^[0-9]$/.test(value)) {
+      input.value = '';
+      return;
+    }
+
+    // Mover al siguiente si hay valor
+    if (value && nextInput) {
+      nextInput.focus();
+    }
+    this.updateVtopCode();
+  }
+
+  onKeydown(event: KeyboardEvent, prevInput: HTMLInputElement | null) {
+    const input = event.target as HTMLInputElement;
+    if (event.key === 'Backspace') {
+      if (!input.value && prevInput) {
+        prevInput.focus();
+      } else if (input.value) {
+        input.value = '';
+        this.updateVtopCode();
+      }
+    }
+  }
+
+  onPaste(event: ClipboardEvent) {
+    event.preventDefault();
+    const pastedData = event.clipboardData?.getData('text/plain');
+    if (pastedData) {
+      const digits = pastedData.replace(/\D/g, '').split('').slice(0, 6);
+      const inputs = document.querySelectorAll('.otp-box') as NodeListOf<HTMLInputElement>;
+      digits.forEach((digit, index) => {
+        if (inputs[index]) inputs[index].value = digit;
+      });
+      if (digits.length === 6) inputs[5]?.focus();
+      this.updateVtopCode();
+    }
+  }
+
+  updateVtopCode() {
+    const inputs = Array.from(document.querySelectorAll('.otp-box')) as HTMLInputElement[];
+    this.vtopCode = inputs.map(i => i.value).join('');
+    this.isOtpInvalid = false; // Resetear error al escribir
   }
 
   startCountdown(user: any) {

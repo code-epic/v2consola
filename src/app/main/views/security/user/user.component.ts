@@ -1047,7 +1047,7 @@ export class UserComponent implements OnInit {
   }
 
   consultarOficinas(e) {
-    console.log(e)
+    // console.log(e)
     this.dataOficina = []
     if (this.isBDV) {
       this.xAPI = {} as IAPICore

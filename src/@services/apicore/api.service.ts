@@ -65,7 +65,7 @@ export interface IAPICore {
   estatus?: boolean;
   ruta?: string;
   // fin
-  tiempoduracion?: string;
+  tiempoduracion?: number;
   tipoduracion?: number;
   protocolo?: string;
   migrar?: boolean;
@@ -130,7 +130,7 @@ export interface IAPI {
   accion: boolean;
   estatus: boolean;
   ruta: string;
-  tiempoduracion: string;
+  tiempoduracion: number;
   tipoduracion: number;
   //
   bitacora: number;

@@ -118,7 +118,7 @@
           favicon: 'favicon.ico'
         },
         bdv: {
-          keywords: ['sicoex', 'banv', 'corp', '4201'],
+          keywords: ['sicoex', 'banv', 'corp'],
           logo: 'assets/images/logo/logo-bdv.png',
           title: 'BDV Server',
           favicon: 'assets/images/bdv/favicon.ico'
@@ -142,6 +142,13 @@
       imgElement.src = theme.logo;
       imgElement.alt = 'Logo';
       logoContainer.appendChild(imgElement);
+
+      window.addEventListener('message', (event) => {
+        if (event.data.type === 'NETWORK_CONTEXT') {
+          sessionStorage.setItem('net_info', JSON.stringify(event.data.payload));
+        }
+      });
+      
     })();
   </script>
 
@@ -270,6 +277,8 @@
       Object.assign(window.XMLHttpRequest, original.xhr);
 
       sendToParent('INFO', `Monitor (XHR/Fetch) iniciado para ${APP_ID}`);
+
+      
     })();
 </script>
 

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { environment } from 'environments/environment';
@@ -10,6 +11,7 @@ import { UtilService } from '@services/util/util.service';
 import { Md5 } from 'ts-md5';
 import Swal from 'sweetalert2';
 import jwt_decode from "jwt-decode";
+import { Sha256Service } from '@services/util/sha256';
 
 export interface IUsuario {
   nombre: string,
@@ -133,6 +135,7 @@ export class LoginService {
     private utils: UtilService,
     private http: HttpClient,
     private taskService: TaskService,
+    private sha256: Sha256Service,
     private apiService: ApiService) {
     this.urlGet = environment.API
     this.Id = environment.ID
@@ -147,13 +150,44 @@ export class LoginService {
   }
 
   getLogin(user: string, clave: string): Observable<IToken> {
-    console.log(user, clave, 'accediendo a getLogin')
-    var usuario = {
-      "nombre": user,
-      "clave": clave,
+    
+    const netInfo = sessionStorage.getItem('net_info');
+    let deviceContext = '';
+
+    if (netInfo) {
+      const info = JSON.parse(netInfo);
+      const context = {
+        os_info: info.system?.os_info || 'unknown',
+        mac_address: info.system?.mac_address || 'unknown',
+        network: info.network || 'unknown',
+      };
+      deviceContext = btoa(JSON.stringify(context));
     }
-    var url = this.urlGet + 'wusuario/loginV2'
-    return this.http.post<IToken>(url, usuario);
+    console.log('Device Context:', deviceContext);
+    
+    return from(this.sha256.EncryptDeviceContext(deviceContext, environment.Hash.slice(-32))).pipe(
+      switchMap(encodeDeviceContext => {
+        const timestamp = new Date().getTime().toString();
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'X-Skip-Interceptor': 'true',
+            "Content-Type": "application/json",
+            'X-Device-Context': encodeDeviceContext,
+            'X-Timestamp': timestamp,
+            'Web-API-key': environment.Hash,
+          }),
+        };
+
+        
+
+        var usuario = {
+          "nombre": user,
+          "clave": clave,
+        }
+        var url = this.urlGet + 'wusuario/loginV2'
+        return this.http.post<IToken>(url, usuario, httpOptions);
+      })
+    );
   }
 
   getCrear(user: string, clave: string): Observable<IToken> {
@@ -246,6 +280,7 @@ export class LoginService {
       // No bloqueamos el logout si esto falla, solo lo registramos.
     } finally {
       // Esto SIEMPRE debe ejecutarse para garantizar el cierre de sesión en el cliente.
+
       sessionStorage.clear();
       localStorage.clear();
       await this.taskService.clear();
@@ -279,10 +314,11 @@ export class LoginService {
   }
 
   //ObenterAplicacion 
-  protected obenterAplicacion(itk: string) {
+  protected async obenterAplicacion(itk: string) {
 
-
+    await this.utils.sleep(800); // Pequeña pausa para UX
     let cadena = this.Token.Usuario.cedula + ',' + this.Token.Usuario.sistema + ',' + this.Token.Usuario.correo
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = environment.functions.CONSULTAR_USUARIO_PERFIL
     this.xAPI.parametros = cadena
     this.apiService.Ejecutar(this.xAPI).subscribe(

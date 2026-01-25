@@ -1,391 +1,460 @@
 {
-  "cedula": "1",
-  "nombre": "Administrador",
-  "login": "panel",
-  "correo": "code.epic.technologies@gmail.com",
-  "clave": "393a9f8b0b9d1b751bffbe860fe18d19f0639cbae7bc42123f187cf7f5187322",
-  "sucursal": "Todas",
-  "direccion": "Principal",
-  "cargo": "Administrador Core",
-  "telefono": "+584129967096",
-  "sistema": "Core - Sandra Server",
-  "token": "Autorizado",
-  "Perfil": {
-    "descripcion": "Administrador Core"
+  "_id": {
+    "$oid": "69360b75a504636963672f95"
   },
-  "Aplicacion": [
-    {
-      "id": "ID-001",
-      "nombre": "Core Sandra Server",
-      "url": "http://localhost/consola",
-      "comentario": "Usuario Core",
-      "version": "2.0.0",
-      "autor": "Code-Epic Technologies",
-      "Rol": {
-        "descripcion": "Usuario Sistema",
-        "Menu": [
+  "id": "App.Consola",
+  "nombre": "Aplicacion (Consola)",
+  "url": "http://localhost/consola",
+  "comentario": "Consola Sistema",
+  "version": "2.0.0",
+  "autor": "Code-Epic Technologies",
+  "Rol": {
+    "descripcion": "Consola Sistema",
+    "Menu": [
+      {
+        "url": "/principal",
+        "js": "",
+        "icono": "home",
+        "descripcion": "Principal",
+        "nombre": "Principal",
+        "accion": "",
+        "clase": "item",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": []
+      },
+      {
+        "url": "/redes",
+        "js": "",
+        "icono": "server",
+        "descripcion": "Redes",
+        "nombre": "Redes",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
           {
-            "url": "/principal",
+            "url": "networks/communications",
             "js": "",
-            "icono": "home",
-            "descripcion": "home",
-            "nombre": "Principal",
+            "descripcion": "Comunicaciones",
+            "icono": "hard-drive",
+            "nombre": "Comunicaciones",
             "accion": "",
             "clase": "item",
-            "color": "",
-            "Privilegio": [],
-            "SubMenu": [
-            ]
-          },
-          {
-            "url": "/redes",
-            "js": "",
-            "icono": "server",
-            "descripcion": "Redes",
-            "nombre": "Redes",
-            "accion": "",
-            "clase": "collapsible",
-            "color": "",
-            "Privilegio": [],
-            "SubMenu": [
+            "color": "bg-c-green",
+            "Privilegios": [
               {
-                "url": "networks/communications",
-                "js": "",
-                "descripcion": "Comunicaciones",
-                "icono": "hard-drive",
-                "nombre": "Comunicaciones",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-green",
-                "Privilegios": [
-                  {
-                    "metodo": "registrados",
-                    "descripcion": "Registrados",
-                    "accion": "Registrados()",
-                    "directivas": ""
-                  }
-                ]
+                "metodo": "agregar",
+                "descripcion": "Agregar",
+                "accion": "Agregar()",
+                "directivas": ""
               },
               {
-                "url": "networks/connections",
-                "js": "",
-                "descripcion": "Conexiones",
-                "icono": "link",
-                "nombre": "Conexiones",
-                "accion": "CargarUrl('control', 'buzon')",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                  {
-                    "metodo": "recibidos",
-                    "descripcion": "Recibidos",
-                    "accion": "Recibidos()",
-                    "directivas": ""
-                  }
-                ]
+                "metodo": "editar",
+                "descripcion": "Editar",
+                "accion": "Editar()",
+                "directivas": ""
+              },
+              {
+                "metodo": "escanear",
+                "descripcion": "Escanear",
+                "accion": "Escanear()",
+                "directivas": ""
               }
             ]
           },
           {
-            "url": "/herramientas",
+            "url": "networks/connections",
             "js": "",
-            "icono": "tool",
-            "descripcion": "Herramientas",
-            "nombre": "Herramientas",
-            "accion": "",
-            "clase": "collapsible",
-            "color": "",
-            "Privilegio": [],
-            "SubMenu": [
+            "descripcion": "Conexiones",
+            "icono": "link",
+            "nombre": "Conexiones",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": [
               {
-                "url": "tools/functions",
-                "js": "",
-                "descripcion": "Funciones",
-                "icono": "align-justify",
-                "nombre": "Funciones",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-green",
-                "Privilegios": [
-                  {
-                    "metodo": "registrados",
-                    "descripcion": "Registrados",
-                    "accion": "Registrados()",
-                    "directivas": ""
-                  }
-                ]
+                "metodo": "agregar",
+                "descripcion": "Agregar",
+                "accion": "Agregar()",
+                "directivas": ""
               },
               {
-                "url": "tools/applications",
-                "js": "",
-                "descripcion": "Api",
-                "icono": "edit",
-                "nombre": "Api",
-                "accion": "CargarUrl('control', 'buzon')",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                  {
-                    "metodo": "recibidos",
-                    "descripcion": "Recibidos",
-                    "accion": "Recibidos()",
-                    "directivas": ""
-                  }
-                ]
-              },
-              {
-                "url": "tools/workflow",
-                "js": "",
-                "descripcion": "WorkFlow",
-                "icono": "command",
-                "nombre": "WorkFlow",
-                "accion": "CargarUrl('control', 'buzon')",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                  {
-                    "metodo": "recibidos",
-                    "descripcion": "Recibidos",
-                    "accion": "Recibidos()",
-                    "directivas": ""
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "url": "/aplicaciones",
-            "js": "",
-            "icono": "layers",
-            "descripcion": "Aplicaciones",
-            "nombre": "Aplicaciones",
-            "accion": "",
-            "clase": "collapsible",
-            "color": "",
-            "Privilegio": [],
-            "SubMenu": [
-              {
-                "url": "applications/list",
-                "js": "",
-                "descripcion": "Listar",
-                "icono": "circle",
-                "nombre": "Listar",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-green",
-                "Privilegios": [
-                  {
-                    "metodo": "registrados",
-                    "descripcion": "Registrados",
-                    "accion": "Registrados()",
-                    "directivas": ""
-                  }
-                ]
-              },
-              {
-                "url": "applications/install",
-                "js": "",
-                "descripcion": "Registrar",
-                "icono": "circle",
-                "nombre": "Registrar",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-green",
-                "Privilegios": [
-                  {
-                    "metodo": "registrados",
-                    "descripcion": "Registrados",
-                    "accion": "Registrados()",
-                    "directivas": ""
-                  }
-                ]
-              },
-              {
-                "url": "applications/menu",
-                "js": "",
-                "descripcion": "Definir Menu",
-                "icono": "circle",
-                "nombre": "Definir Menu",
-                "accion": "CargarUrl('control', 'buzon')",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                  {
-                    "metodo": "recibidos",
-                    "descripcion": "Recibidos",
-                    "accion": "Recibidos()",
-                    "directivas": ""
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "url": "security",
-            "js": "",
-            "icono": "lock",
-            "descripcion": "Seguridad",
-            "nombre": "Seguridad",
-            "accion": "",
-            "clase": "collapsible",
-            "color": "",
-            "Privilegio": [],
-            "SubMenu": [
-              {
-                "url": "security/role",
-                "js": "",
-                "descripcion": "Roles",
-                "icono": "circle",
-                "nombre": "Roles",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-green",
-                "Privilegios": [
-                  {
-                    "metodo": "registrados",
-                    "descripcion": "Registrados",
-                    "accion": "Registrados()",
-                    "directivas": ""
-                  }
-                ]
-              },
-              {
-                "url": "security/profile",
-                "js": "",
-                "descripcion": "Perfil",
-                "icono": "circle",
-                "nombre": "Perfil",
-                "accion": "CargarUrl('control', 'buzon')",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                  {
-                    "metodo": "recibidos",
-                    "descripcion": "Recibidos",
-                    "accion": "Recibidos()",
-                    "directivas": ""
-                  }
-                ]
-              },
-              {
-                "url": "security/user",
-                "js": "",
-                "descripcion": "Usuarios",
-                "icono": "circle",
-                "nombre": "Usuarios",
-                "accion": "CargarUrl('control', 'buzon')",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                  {
-                    "metodo": "recibidos",
-                    "descripcion": "Recibidos",
-                    "accion": "Recibidos()",
-                    "directivas": ""
-                  }
-                ]
-              },
-              {
-                "url": "security/user-list",
-                "js": "",
-                "descripcion": "Lista Usuarios",
-                "icono": "circle",
-                "nombre": "Lista Usuarios",
-                "accion": "CargarUrl('control', 'buzon')",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                  {
-                    "metodo": "recibidos",
-                    "descripcion": "Recibidos",
-                    "accion": "Recibidos()",
-                    "directivas": ""
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            "url": "investigacion",
-            "js": "",
-            "icono": "lock",
-            "descripcion": "Investigación",
-            "nombre": "Investigación",
-            "accion": "",
-            "clase": "collapsible",
-            "color": "",
-            "Privilegio": [],
-            "SubMenu": [
-              {
-                "url": "investigacion/bitacora",
-                "js": "",
-                "descripcion": "Bitacora",
-                "icono": "circle",
-                "nombre": "Bitacora",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-green",
-                "Privilegios": [
-                  {
-                    "metodo": "registrados",
-                    "descripcion": "Registrados",
-                    "accion": "Registrados()",
-                    "directivas": ""
-                  }
-                ]
-              },
-              {
-                "url": "investigacion/logs",
-                "js": "",
-                "descripcion": "Logs",
-                "icono": "circle",
-                "nombre": "Logs",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-blue",
-                "Privilegios": [
-                ]
-              }
-            ]
-          },
-          {
-            "url": "options",
-            "js": "",
-            "icono": "settings",
-            "descripcion": "Opciones",
-            "nombre": "Opciones",
-            "accion": "",
-            "clase": "collapsible",
-            "color": "",
-            "Privilegio": [],
-            "SubMenu": [
-              {
-                "url": "options/update",
-                "js": "",
-                "descripcion": "Actualizar",
-                "icono": "circle",
-                "nombre": "Actualizar",
-                "accion": "",
-                "clase": "item",
-                "color": "bg-c-green",
-                "Privilegios": [
-                  {
-                    "metodo": "registrados",
-                    "descripcion": "Registrados",
-                    "accion": "Registrados()",
-                    "directivas": ""
-                  }
-                ]
+                "metodo": "editar",
+                "descripcion": "Editar",
+                "accion": "Editar()",
+                "directivas": ""
               }
             ]
           }
         ]
+      },
+      {
+        "url": "/herramientas",
+        "js": "",
+        "icono": "tool",
+        "descripcion": "Herramientas",
+        "nombre": "Herramientas",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "tools/functions",
+            "js": "",
+            "descripcion": "Funciones",
+            "icono": "align-justify",
+            "nombre": "Funciones",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": [
+              {
+                "metodo": "nuevaFuncion",
+                "descripcion": "Nueva Funcion",
+                "accion": "NuevaFuncion()",
+                "directivas": ""
+              },
+              {
+                "metodo": "editar",
+                "descripcion": "Editar",
+                "accion": "Editar()",
+                "directivas": ""
+              },
+              {
+                "metodo": "importar",
+                "descripcion": "Importar",
+                "accion": "Importar()",
+                "directivas": ""
+              },
+              {
+                "metodo": "exportar",
+                "descripcion": "Exportar",
+                "accion": "Exportar()",
+                "directivas": ""
+              }
+            ]
+          },
+          {
+            "url": "tools/applications",
+            "js": "",
+            "descripcion": "Api",
+            "icono": "edit",
+            "nombre": "Api",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": [
+              {
+                "metodo": "nuevaApi",
+                "descripcion": "Nueva Api",
+                "accion": "NuevaApi()",
+                "directivas": ""
+              },
+              {
+                "metodo": "editar",
+                "descripcion": "Editar",
+                "accion": "Editar()",
+                "directivas": ""
+              },
+              {
+                "metodo": "importar",
+                "descripcion": "Importar",
+                "accion": "Importar()",
+                "directivas": ""
+              },
+              {
+                "metodo": "exportar",
+                "descripcion": "Exportar",
+                "accion": "Exportar()",
+                "directivas": ""
+              },
+              {
+                "metodo": "imprimir",
+                "descripcion": "Imprimir",
+                "accion": "Imprimir()",
+                "directivas": ""
+              }
+            ]
+          },
+          {
+            "url": "tools/workflow",
+            "js": "",
+            "descripcion": "WorkFlow",
+            "icono": "command",
+            "nombre": "WorkFlow",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": [
+              {
+                "metodo": "salvar",
+                "descripcion": "Salvar",
+                "accion": "Salvar()",
+                "directivas": ""
+              },
+              {
+                "metodo": "editar",
+                "descripcion": "Editar",
+                "accion": "Editar()",
+                "directivas": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "url": "/aplicaciones",
+        "js": "",
+        "icono": "layers",
+        "descripcion": "Aplicaciones",
+        "nombre": "Aplicaciones",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "applications/list",
+            "js": "",
+            "descripcion": "Listar",
+            "icono": "layout",
+            "nombre": "Listar",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "applications/install",
+            "js": "",
+            "descripcion": "Registrar",
+            "icono": "box",
+            "nombre": "Registrar",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "applications/menu",
+            "js": "",
+            "descripcion": "Definir Menu",
+            "icono": "menu",
+            "nombre": "Definir Menu",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": []
+          },
+          {
+            "url": "applications/sms",
+            "js": "",
+            "descripcion": "Mensajeria",
+            "icono": "message-square",
+            "nombre": "Mensajeria",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": []
+          },
+          {
+            "url": "applications/conciliation",
+            "js": "",
+            "descripcion": "Conciliación",
+            "icono": "file-minus",
+            "nombre": "Conciliación",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": []
+          }
+        ]
+      },
+      {
+        "url": "security",
+        "js": "",
+        "icono": "lock",
+        "descripcion": "Seguridad",
+        "nombre": "Seguridad",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "security/rules",
+            "js": "",
+            "descripcion": "Reglas",
+            "icono": "package",
+            "nombre": "Reglas",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "security/role",
+            "js": "",
+            "descripcion": "Roles",
+            "icono": "key",
+            "nombre": "Roles",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "security/profile",
+            "js": "",
+            "descripcion": "Perfil",
+            "icono": "sliders",
+            "nombre": "Perfil",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": []
+          },
+          {
+            "url": "security/user",
+            "js": "",
+            "descripcion": "Crear Usuarios",
+            "icono": "user-plus",
+            "nombre": "Crear Usuarios",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": []
+          },
+          {
+            "url": "security/user-list",
+            "js": "",
+            "descripcion": "Lista Usuarios",
+            "icono": "users",
+            "nombre": "Lista Usuarios",
+            "accion": "CargarUrl('control', 'buzon')",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": [
+              {
+                "metodo": "GenerarCaucion",
+                "descripcion": "Generar Caución",
+                "accion": "GenerarCaucion()",
+                "directivas": ""
+              },
+              {
+                "metodo": "EliminarUsuario",
+                "descripcion": "Eliminar Usuario",
+                "accion": "EliminarUsuario()",
+                "directivas": ""
+              },
+              {
+                "metodo": "CambiarClave",
+                "descripcion": "Cambiar Clave",
+                "accion": "CambiarClave()",
+                "directivas": ""
+              },
+              {
+                "metodo": "DesactivarTOTP",
+                "descripcion": "Desactivar TOTP",
+                "accion": "DesactivarTOTP()",
+                "directivas": ""
+              },
+              {
+                "metodo": "Imprimir",
+                "descripcion": "Imprimir",
+                "accion": "Imprimir()",
+                "directivas": ""
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "url": "investigation",
+        "js": "",
+        "icono": "navigation",
+        "descripcion": "Auditoria",
+        "nombre": "Auditoria",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "investigation/binnacle",
+            "js": "",
+            "descripcion": "Bitacora",
+            "icono": "shopping-bag",
+            "nombre": "Bitacora",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "investigation/logs",
+            "js": "",
+            "descripcion": "Logs",
+            "icono": "book-open",
+            "nombre": "Logs",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-blue",
+            "Privilegios": []
+          }
+        ]
+      },
+      {
+        "url": "options",
+        "js": "",
+        "icono": "settings",
+        "descripcion": "Opciones",
+        "nombre": "Opciones",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "options/update",
+            "js": "",
+            "descripcion": "Actualizar",
+            "icono": "refresh-ccw",
+            "nombre": "Actualizar",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          }
+        ]
+      },
+      {
+        "url": "github",
+        "js": "",
+        "icono": "github",
+        "descripcion": "Incidencias",
+        "nombre": "Incidencias",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "github/issues",
+            "js": "",
+            "descripcion": "Registro",
+            "icono": "git-merge",
+            "nombre": "Registro",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          }
+        ]
       }
-    }
-  ],
-  "firmadigital": {
-    "direccionmac": "*",
-    "direccionip": "*",
-    "tiempo": "2042-04-01T19:07:05.851Z"
+    ]
   }
 }

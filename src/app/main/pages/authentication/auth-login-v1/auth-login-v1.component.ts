@@ -222,7 +222,6 @@ export class AuthLoginV1Component implements OnInit {
       .getLogin(this.usuario, this.clave)
       .subscribe(
         (itk) => {
-          console.log(itk)
           this.loading = false;
           this.isHidden = false;
           let tk: any = this.loginService.getUserDecrypt(itk.token);
@@ -237,7 +236,6 @@ export class AuthLoginV1Component implements OnInit {
 
         },
         (er) => {
-          console.log(er)
           this.loading = false;
           this.isHidden = false;
           this.utilservice.AlertMini(

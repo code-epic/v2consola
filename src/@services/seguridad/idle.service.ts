@@ -139,7 +139,7 @@ export class IdleService {
 
     private logout() {
         this.stop()
-        this.loginService.logout()
+        this.router.navigate(['/miscellaneous/logout']);
     }
 
     public stop() {

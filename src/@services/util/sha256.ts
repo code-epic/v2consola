@@ -92,7 +92,7 @@ export class Sha256Service {
     const hashArray = [h0, h1, h2, h3, h4, h5, h6, h7];
     return hashArray.map(h => h.toString(16).padStart(8, '0')).join('');
   }
-  
+
 
   public async hmac(message: string, key: string): Promise<string> {
     const encoder = new TextEncoder();
@@ -119,5 +119,30 @@ export class Sha256Service {
     return Array.from(new Uint8Array(signature))
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
+  }
+
+  // Usando Web Crypto API para cifrar el contexto antes de enviarlo
+  async EncryptDeviceContext(context: any, secretKey: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(JSON.stringify(context));
+
+    // Generar un IV (Vector de Inicialización) único para esta petición
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    // Importar clave (esto es un ejemplo, la clave debe ser tratada con cuidado)
+    const key = await crypto.subtle.importKey(
+      "raw", encoder.encode(secretKey), "AES-GCM", false, ["encrypt"]
+    );
+
+    const encrypted = await crypto.subtle.encrypt(
+      { name: "AES-GCM", iv: iv }, key, data
+    );
+
+    // Unimos IV + Datos Cifrados y pasamos a Base64
+    const combined = new Uint8Array(iv.length + encrypted.byteLength);
+    combined.set(iv);
+    combined.set(new Uint8Array(encrypted), iv.length);
+
+    return btoa(String.fromCharCode(...combined));
   }
 }

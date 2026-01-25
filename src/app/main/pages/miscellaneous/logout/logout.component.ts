@@ -4,6 +4,7 @@ import { LoginService } from '@services/seguridad/login.service';
 import { Subject } from 'rxjs'; // Import timer
 
 import { CoreConfigService } from '@core/services/config.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 interface LogoutStep {
@@ -43,7 +44,8 @@ export class LogoutComponent implements OnInit, OnDestroy {
     private _coreConfigService: CoreConfigService, 
     private loginService: LoginService,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private modalService: NgbModal
   ) { 
      this._unsubscribeAll = new Subject();
 
@@ -67,6 +69,7 @@ export class LogoutComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.modalService.dismissAll();
     this.executeLogout();
   }
 

@@ -34,8 +34,8 @@ export class AuthInterceptorService implements HttpInterceptor {
     if (!req.body || req.method === 'GET') {
       return this.procesarPeticion(req, next);
     }
-    let token: string = sessionStorage.getItem("token")
-
+    
+    const token: string = sessionStorage.getItem("token")
     
     const timestamp = new Date().getTime().toString();
     const payload = JSON.stringify(req.body) + timestamp;
