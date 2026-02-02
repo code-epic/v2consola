@@ -77,6 +77,7 @@ export class UserComponent implements OnInit {
     Aplicacion: [],
     firmadigital: undefined,
     endpoint: '',
+    multiplesesion: false
   }
 
   public iUser: IUser = {
@@ -97,12 +98,20 @@ export class UserComponent implements OnInit {
     duraciontiempo: 5,
     oficina: '',
     regional: '',
+    multiplesesion: false,
   }
+
+  public multiplesesion : any = false
 
   public tipoacceso = [
     // { id: 0, name: 'SELECCIONAR' },
     { id: 1, name: 'LOCAL' },
     { id: 3, name: 'DIRECTORIO ACTIVO' },
+  ]
+
+  public lstmultiplesesion = [
+    { id: false, name: 'NO' },
+    { id: true, name: 'SI' },
   ]
 
   public respaldo = [
@@ -307,7 +316,7 @@ export class UserComponent implements OnInit {
       (data) => {
         if (data != null) {
           if (data.length > 0) {
-            console.log(data)
+            // console.log(data)
             this.configuracion = data[0]
             this.iUser.endpoint = this.configuracion.endpoints.login
             this.iUser.duraciontiempo = this.configuracion.sesion.tiempo * this.exportTime(this.configuracion.sesion.unidad)
@@ -364,8 +373,11 @@ export class UserComponent implements OnInit {
     this.iUser.descripcion = usuario.cargo;
     this.iUser.oficina = usuario.sucursal;
     this.iUser.regional = usuario.direccion;
+    this.iUser.multiplesesion = usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
+
     this.xregional = usuario.direccion;
     this.xoficina = usuario.sucursal;
+    this.multiplesesion = usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
 
     // Mapeo de propiedades anidadas en 'firmadigital'
     if (usuario.firmadigital) {
@@ -617,6 +629,9 @@ export class UserComponent implements OnInit {
     this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
     this.usuario.direccion = this.xregional.name != undefined ? this.xregional.name : this.xregional
     this.usuario.estatus = this.iUser.estatus
+    console.log('this.multiplesesion',  this.multiplesesion)
+    this.usuario.multiplesesion = this.multiplesesion.id != undefined ? this.multiplesesion.id : this.multiplesesion
+
 
 
     let usuario = window.sessionStorage.getItem('validator')
@@ -902,6 +917,7 @@ export class UserComponent implements OnInit {
       duraciontiempo: 5,
       oficina: 'TODAS',
       regional: 'TODAS',
+      multiplesesion: false,
     }
     this.xoficina = 'TODAS'
     this.xregional = 'TODAS'

@@ -360,13 +360,16 @@ export class UserListComponent implements OnInit, OnDestroy {
         return;
       }
 
-      this.xAPI.funcion = 'ActualizarClaveUsuario'; // Asegúrate de usar el nombre correcto de tu función en BD
+      this.xAPI = {} as IAPICore;
+      this.xAPI.funcion = environment.functions.ACTUALIZAR_CLAVE; // Asegúrate de usar el nombre correcto de tu función en BD
       const hash = await this.sha256.hash(this.newPassword);
-      this.xAPI.parametros = `${this.selectedUser.login},${hash}`;
-      this.xAPI.valores = '';
+      this.xAPI.parametros = `${this.selectedUser.login},${hash},${new Date().toISOString()}`;
+      // console.log('Actualizar Clave con parámetros:', this.xAPI.parametros);
 
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
+          console.log(data);
+          this.modalService.dismissAll(); // Cierra el modal
           this.isSuccess = true; // Muestra el mensaje de éxito (Paso 3)
         },
         (error) => {
@@ -659,7 +662,16 @@ export class UserListComponent implements OnInit, OnDestroy {
         doc.setFontSize(10);
         doc.setTextColor(97, 97, 97);
         doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-        doc.text(value || 'N/A', 60, yPos);
+        
+        let textValue = value || 'N/A';
+        if (Array.isArray(textValue)) {
+          textValue = textValue.map(v => (typeof v === 'object' ? (v.name || v.descripcion || JSON.stringify(v)) : v)).join(', ');
+        } else if (typeof textValue === 'object') {
+          textValue = textValue.name || textValue.descripcion || JSON.stringify(textValue);
+        } else {
+          textValue = String(textValue);
+        }
+        doc.text(textValue, 60, yPos);
       };
 
       // --- Detalles del Usuario ---
@@ -723,7 +735,242 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
 
     const fileName = `Reporte_Usuarios_${new Date().toISOString().slice(0, 10)}.pdf`;
-    doc.save(fileName);
+    /* Reemplaza doc.save(fileName) por esto: */
+    // 1. Obtener el binario como string dataURI
+    const pdfDataUri = doc.output('datauristring');
+    // 2. Enviar mensaje al padre (Sandbox Bridge)
+    if (window.parent) {
+      window.parent.postMessage({
+        type: 'DOWNLOAD_PDF',
+        payload: {
+          fileName: fileName,
+          data: pdfDataUri
+        }
+      }, '*');
+    } else {
+      // Fallback para cuando no corre dentro de Sandra
+      doc.save(fileName);
+    }
+  }
+
+  GeneraCaucion(user: any) {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
+    const margin = 14;
+    let y = 20;
+
+    // --- Marca de Agua ---
+    doc.saveGraphicsState();
+    doc.setTextColor(245, 245, 245); // Gris muy claro
+    doc.setFontSize(60);
+    doc.setFont('helvetica', 'bold');
+    try {
+      // Intentar rotar texto (soportado en versiones recientes de jsPDF)
+      doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center', angle: 45 } as any);
+    } catch (e) {
+      doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center' });
+    }
+    doc.restoreGraphicsState();
+
+    // --- Encabezado ---
+    doc.setFontSize(10);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPÚBLICA BOLIVARIANA DE VENEZUELA', pageWidth / 2, y, { align: 'center' });
+    y += 5;
+    doc.text('MINISTERIO DEL PODER POPULAR PARA LA DEFENSA', pageWidth / 2, y, { align: 'center' });
+    y += 5;
+    doc.setTextColor(20, 83, 45); // Verde oscuro
+    doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, y, { align: 'center' });
+    y += 5;
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.text('DIRECCIÓN DE TECNOLOGÍA DE INFORMACIÓN Y LAS COMUNICACIONES', pageWidth / 2, y, { align: 'center' });
+    y += 5;
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 100, 100); // Gris
+    doc.text('GRUPO DE TRABAJO DE SEGURIDAD TECNOLÓGICA', pageWidth / 2, y, { align: 'center' });
+    y += 10;
+
+    // Fecha y Serial
+    const fecha = new Date().toLocaleDateString('es-VE', { day: 'numeric', month: 'long', year: 'numeric' });
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'italic');
+    doc.text(`Fuerte Tiuna, ${fecha}`, margin, y);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(185, 28, 28); // Rojo
+    doc.text(`SERIAL N° ${user.id || '0000'}/2025`, pageWidth - margin, y, { align: 'right' });
+    y += 4;
+    doc.setTextColor(0, 0, 0);
+    doc.text('Caución y Normas de Usuario', pageWidth - margin, y, { align: 'right' });
+    doc.setLineWidth(0.5);
+    doc.line(pageWidth - margin - 40, y + 1, pageWidth - margin, y + 1); // Subrayado
+    y += 5;
+
+    // --- Datos del Funcionario (Tabla) ---
+    autoTable(doc, {
+      startY: y,
+      head: [['DATOS DEL FUNCIONARIO', '', '', '']],
+      body: [
+        ['Grado:', user.grado || 'N/A', 'Apellidos y Nombres:', user.nombre],
+        ['C.I:', user.cedula, 'Unidad / Cargo:', user.cargo || user.descripcion || 'N/A'],
+        ['Usuario Sistema:', user.login, 'Teléfono:', user.telefono || 'N/A']
+      ],
+      theme: 'plain',
+      styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+      headStyles: { fillColor: [245, 245, 245], textColor: 0, fontStyle: 'bold', halign: 'center' },
+      columnStyles: {
+        0: { fontStyle: 'bold', cellWidth: 25 },
+        1: { cellWidth: 40 },
+        2: { fontStyle: 'bold', cellWidth: 35 }
+      },
+      didParseCell: (data) => {
+        if (data.section === 'head' && data.column.index === 0) {
+          data.cell.colSpan = 4;
+        }
+        if (data.section === 'body') {
+          data.cell.styles.lineWidth = 0.1;
+          data.cell.styles.lineColor = [200, 200, 200];
+        }
+        if (data.section === 'body' && data.row.index === 2 && data.column.index === 1) {
+          data.cell.styles.textColor = [29, 78, 216]; // Azul
+          data.cell.styles.fontStyle = 'bold';
+        }
+      }
+    });
+
+    y = (doc as any).lastAutoTable.finalY + 10;
+
+    // --- Bloques de Seguridad ---
+    const drawBlock = (title, text, colorRGB) => {
+      doc.setDrawColor(colorRGB[0], colorRGB[1], colorRGB[2]);
+      doc.setLineWidth(1);
+      doc.line(margin, y, margin, y + 15); // Línea vertical izquierda
+
+      doc.setFontSize(9);
+      doc.setTextColor(colorRGB[0], colorRGB[1], colorRGB[2]);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, margin + 3, y + 3);
+
+      doc.setFontSize(8);
+      doc.setTextColor(0, 0, 0);
+      doc.setFont('helvetica', 'normal');
+
+      const textLines = doc.splitTextToSize(text, pageWidth - margin * 2 - 5);
+      doc.text(textLines, margin + 3, y + 8);
+
+      const blockHeight = (textLines.length * 3.5) + 10;
+      doc.line(margin, y, margin, y + blockHeight - 2); // Ajustar altura línea vertical
+
+      return blockHeight;
+    };
+
+    y += drawBlock(
+      '1. AUTENTICACIÓN Y CREDENCIALES',
+      'La cuenta de usuario y su contraseña son estrictamente personales e intransferibles. Se requiere el uso obligatorio de la tarjeta de coordenadas (MFA/2FA). Queda prohibido fotografiar o compartir la tarjeta. La contraseña inicial debe cambiarse inmediatamente.',
+      [37, 99, 235] // Azul
+    );
+
+    y += drawBlock(
+      '2. USO DE INTRANET Y REDES',
+      'El acceso está restringido exclusivamente a redes y equipos autorizados. La información clasificada no debe ser impresa ni transferida a dispositivos externos no cifrados.',
+      [75, 85, 99] // Gris
+    );
+
+    const redHeight = drawBlock(
+      '3. AUDITORÍA Y CUMPLIMIENTO LEGAL',
+      'El usuario reconoce y acepta el monitoreo constante, registro de logs y auditorías forenses realizados por la División de Seguridad Tecnológica de la DIRTIC.',
+      [220, 38, 38] // Rojo
+    );
+    y += redHeight;
+
+    // Artículos
+    doc.setFontSize(7);
+    doc.setTextColor(153, 27, 27); // Rojo oscuro
+    doc.setFont('helvetica', 'bold');
+    doc.text('• Art 6. Acceso indebido (1-5 años)   • Art 11. Espionaje (4-8 años)', margin + 3, y);
+    y += 4;
+    doc.text('• Art 7. Sabotaje (4-8 años)          • Art 22. Revelación de data (2-6 años)', margin + 3, y);
+    y += 15;
+
+    // --- Firmas ---
+    if (y + 40 > pageHeight) {
+      doc.addPage();
+      y = 20;
+    }
+
+    const signatureY = y + 20;
+
+    // Firma Izquierda
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.5);
+    doc.line(margin + 10, signatureY, margin + 70, signatureY);
+
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.text('GLORIMAR DEL VALLE ZAPATA BARRERA', margin + 40, signatureY + 4, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('Capitán | Auditor', margin + 40, signatureY + 8, { align: 'center' });
+
+    doc.setFontSize(7);
+    doc.setTextColor(100, 100, 100);
+    doc.text('ENTREGA', margin + 40, signatureY + 12, { align: 'center' });
+
+    // Firma Derecha
+    doc.setDrawColor(0, 0, 0);
+    doc.line(pageWidth - margin - 70, signatureY, pageWidth - margin - 10, signatureY);
+
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.text((user.nombre || '').toUpperCase(), pageWidth - margin - 40, signatureY + 4, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(`${user.grado || 'Funcionario'} | Usuario`, pageWidth - margin - 40, signatureY + 8, { align: 'center' });
+
+    doc.setFontSize(7);
+    doc.setTextColor(100, 100, 100);
+    doc.text('RECIBE', pageWidth - margin - 40, signatureY + 12, { align: 'center' });
+
+    // Placeholder firma digital
+    doc.setFontSize(8);
+    doc.setTextColor(180, 180, 180);
+    doc.text('Pendiente por Firma Digital', pageWidth - margin - 40, signatureY - 5, { align: 'center' });
+
+    // --- Pie de página ---
+    const footerY = pageHeight - 15;
+    doc.setFontSize(8);
+    doc.setTextColor(0, 0, 0);
+    doc.text('[ ] Declaro conocer y aceptar las sanciones penales y disciplinarias establecidas.', pageWidth / 2, footerY, { align: 'center' });
+
+    doc.setFontSize(6);
+    doc.setTextColor(150, 150, 150);
+    doc.text('COPIA CONTROLADA - PROHIBIDA SU REPRODUCCIÓN NO AUTORIZADA', pageWidth / 2, footerY + 5, { align: 'center' });
+
+    const fileName = `Caucion_${user.login}_${new Date().toISOString().slice(0, 10)}.pdf`;
+    /* Reemplaza doc.save(fileName) por esto: */
+    // 1. Obtener el binario como string dataURI
+    const pdfDataUri = doc.output('datauristring');
+    // 2. Enviar mensaje al padre (Sandbox Bridge)
+    if (window.parent) {
+      window.parent.postMessage({
+        type: 'DOWNLOAD_PDF',
+        payload: {
+          fileName: fileName,
+          data: pdfDataUri
+        }
+      }, '*');
+    } else {
+      // Fallback para cuando no corre dentro de Sandra
+      doc.save(fileName);
+    }
   }
 
   ngOnDestroy(): void {

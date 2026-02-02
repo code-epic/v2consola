@@ -90,6 +90,7 @@ export interface Usuario {
   Perfil: Perfil;
   Aplicacion: SAplicacion[];
   firmadigital: Firmadigital;
+  multiplesesion: boolean;
 }
 
 interface AplicacionAgrupada {
@@ -104,7 +105,7 @@ interface AplicacionAgrupada {
 @Injectable({ providedIn: 'root' })
 
 export class UserService implements Usuario {
-
+  multiplesesion: boolean = false;
   cedula = '';
   nombre = '';
   descripcion = '';
@@ -162,6 +163,7 @@ export class UserService implements Usuario {
       nivel: 0,
       sesion: ''
     };
+    this.multiplesesion = false;
   }
 
   limpiarObjeto(): void {

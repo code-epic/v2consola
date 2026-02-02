@@ -400,7 +400,7 @@
                     <div class="form-group text-justify">
                       <ngx-codemirror #codemirror aria-describedby="login-codigo" [ngModelOptions]="{standalone: true}"
                         [(ngModel)]="xAPIDB.query" (ngModelChange)="setEditorContent($event)"
-                        (click)="clickRefresh($event)" tabindex="1" autofocus [options]="codeSQL">
+                        (click)="clickRefresh($event)" tabindex="1" [options]="codeSQL">
                       </ngx-codemirror>
                     </div>
                   </div>

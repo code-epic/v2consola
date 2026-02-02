@@ -116,7 +116,7 @@
           favicon: 'favicon.ico'
         },
         bdv: {
-          keywords: ['sicoex', 'banv', 'corp', '4201'],
+          keywords: ['sicoex', 'banv', 'corp'],
           logo: 'assets/images/logo/logo-bdv.png',
           title: 'BDV Server',
           favicon: 'assets/images/bdv/favicon.ico'
@@ -140,6 +140,13 @@
       imgElement.src = theme.logo;
       imgElement.alt = 'Logo';
       logoContainer.appendChild(imgElement);
+
+      window.addEventListener('message', (event) => {
+        if (event.data.type === 'NETWORK_CONTEXT') {
+          sessionStorage.setItem('net_info', JSON.stringify(event.data.payload));
+        }
+      });
+      
     })();
   </script>
 
@@ -268,6 +275,8 @@
       Object.assign(window.XMLHttpRequest, original.xhr);
 
       sendToParent('INFO', `Monitor (XHR/Fetch) iniciado para ${APP_ID}`);
+
+      
     })();
 </script>
 
@@ -275,6 +284,6 @@
 
 
 
-<script src="runtime.c47852b68cffd2b0.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.95fc34b69266e39b.js" type="module"></script></body>
+<script src="runtime.ceef0f0ff76dcd0e.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.cc98156a113dbba6.js" type="module"></script></body>
 
 </html>

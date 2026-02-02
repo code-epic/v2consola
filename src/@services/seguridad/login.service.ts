@@ -163,7 +163,7 @@ export class LoginService {
       };
       deviceContext = btoa(JSON.stringify(context));
     }
-    console.log('Device Context:', deviceContext);
+    // console.log('Device Context:', deviceContext);
     
     return from(this.sha256.EncryptDeviceContext(deviceContext, environment.Hash.slice(-32))).pipe(
       switchMap(encodeDeviceContext => {

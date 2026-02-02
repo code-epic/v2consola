@@ -15,7 +15,7 @@
             <div class="form-group">
               <label for="login-email" class="form-label">Usuario</label>
               <input type="text" formControlName="email" class="form-control" placeholder="Usuario"
-                aria-describedby="login-email" tabindex="1" autofocus
+                aria-describedby="login-email" tabindex="1"
                 [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
               <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
                 <div *ngIf="f.email.errors.required">Usuario es requerido</div>

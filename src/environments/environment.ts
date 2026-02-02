@@ -10,7 +10,7 @@ export const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Tue Jan 20 2026 21:02:53 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Mon Feb 02 2026 16:00:06 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
@@ -89,6 +89,7 @@ export const environment = {
     UPDATE_ALL_USER_PROFILE: '_SYS_UPerfilesTodos',
     CONSULTAR_GUPO_BITACORA: '_SYS_CBitacoraGrupo',
     ACTUALIZAR_TOTP  : '_SYS_UUserTOTP',
+    ACTUALIZAR_CLAVE: '_SYS_UClaveUsuario'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',

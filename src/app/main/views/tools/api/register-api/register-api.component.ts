@@ -69,21 +69,21 @@ export class RegisterApiComponent implements OnInit {
   };
 
   public xAPIDB: IAPI = {
-    puertohttp: undefined,
-    puertohttps: undefined,
-    tipo: undefined,
+    puertohttp: 8012,
+    puertohttps: 2286,
+    tipo: "",
     distribucion: 0,
-    aplicacion: undefined,
+    aplicacion: "",
     funcion: "",
     version: "0.0.1",
-    categoria: undefined,
-    funcionalidad: undefined,
+    categoria: "",
+    funcionalidad: "",
     parametros: "",
     descripcion: "",
-    metodo: undefined,
-    relacional: undefined,
+    metodo: "",
+    relacional: false,
     coleccion: "",
-    valores: undefined,
+    valores: "",
     consumidores: 100,
     cache: 0,
     logs: false,
@@ -103,6 +103,7 @@ export class RegisterApiComponent implements OnInit {
     tipoduracion: 0,
     bitacora: 0,
     respaldo: 0,
+    puente: "",
   };
 
   public xAPIAux: IAPICore = {
@@ -413,6 +414,8 @@ export class RegisterApiComponent implements OnInit {
         ],
       },
     };
+
+
   }
 
   CargarDrivers() {
@@ -482,7 +485,7 @@ export class RegisterApiComponent implements OnInit {
     this.xAPI.parametros = funcion;
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        if (data != null) {
+        if (data != null && data.length > 0) {
           this.xAPIDB = data[0];
           this.xAPIAux = data[0];
         }

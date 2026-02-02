@@ -20,6 +20,7 @@ export interface IUser {
   duraciontiempo: number
   oficina: string
   regional: string
+  multiplesesion: boolean
 }
 
 export interface IRol {

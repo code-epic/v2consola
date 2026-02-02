@@ -200,7 +200,7 @@
               </div>
             </div>
 
-            <div class="form-group col-md-8">
+            <div class="form-group col-md-5">
               <label class="form-label" for="origen">Oficina / Departamento</label>
               <div class="input-group input-group-pastel align-items-start">
                 <div class="input-group-prepend"><span class="input-group-text"><span
@@ -219,6 +219,18 @@
                     </div>
                   </ng-template>
                 </ng-select>
+              </div>
+            </div>
+
+            <div class="form-group col-md-3">
+              <label class="form-label" for="origen">Multiple Sesión</label>
+              <div class="input-group input-group-pastel">
+                <div class="input-group-prepend"><span class="input-group-text"><span
+                      [data-feather]="'map-pin'"></span></span></div>
+                <ng-select [items]="lstmultiplesesion" [addTag]="true" [(ngModel)]="multiplesesion" name="multiplesesion"
+                  [ngModelOptions]="{standalone: true}"
+                   bindValue="id" bindLabel="name" placeholder="Multiple Sesión"
+                  appendTo="body" class="flex-grow-1"></ng-select>
               </div>
             </div>
           </div>
