@@ -109,10 +109,10 @@ export class RuleComponent implements OnInit {
         if (data != null) {
           if (data.length > 0) {
             this.configuracion = data[0]
+            return
           }
-        } else {
-          this.configuracion = this.crearConfiguracionDefecto(appId)
         }
+        this.configuracion = this.crearConfiguracionDefecto(appId)
       },
       (error) => {
         console.error('Error al cargar la configuración de la aplicación:', error);
@@ -216,6 +216,17 @@ export class RuleComponent implements OnInit {
         return 3;
     }
 
+  }
+
+  onFileChange(event: any, field: string) {
+    const reader = new FileReader();
+    if (event.target.files && event.target.files.length) {
+      const [file] = event.target.files;
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        this.configuracion[field] = reader.result as string;
+      };
+    }
   }
 
 

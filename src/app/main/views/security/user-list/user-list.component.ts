@@ -86,6 +86,9 @@ export class UserListComponent implements OnInit, OnDestroy {
   private countdownIntervals = new Map<string, number>();
 
 
+  public isBDV: boolean = false
+
+
   constructor(
     private router: Router,
     private apiService: ApiService,
@@ -95,7 +98,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   ) { }
 
   async ngOnInit() {
-
+    this.isBDV = this.apiService.ConsultaSistemaBDV()
     this.ListarPerfiles();
     await this.listarUsuarios();
 

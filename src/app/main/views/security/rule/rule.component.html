@@ -240,12 +240,170 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- Card: Configuración de Cauciones -->
+                            <div class="col-12 mb-4">
+                                <div class="card shadow-sm">
+                                    <div class="card-header">
+                                        <h4 class="card-title d-flex align-items-center">
+                                            <span [data-feather]="'file-text'" class="mr-1 text-primary"></span>
+                                            Configuración de Cauciones
+                                        </h4>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <!-- Auditor -->
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="font-weight-bold">Datos del Auditor</label>
+                                                    <div class="d-flex align-items-start">
+                                                        <div class="flex-grow-1 mr-2">
+                                                            <div class="input-group input-group-merge">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><span [data-feather]="'user-check'"></span></span>
+                                                                </div>
+                                                                <input type="text" class="form-control" placeholder="Nombre y Grado" [(ngModel)]="configuracion.auditor_nombre">
+                                                            </div>
+                                                            <div class="input-group input-group-merge mt-1">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text p-0">
+                                                                        <select class="form-control border-0 bg-transparent h-100" [(ngModel)]="configuracion.auditor_nacionalidad">
+                                                                            <option value="V">V</option>
+                                                                            <option value="E">E</option>
+                                                                        </select>
+                                                                    </span>
+                                                                </div>
+                                                                <input type="text" class="form-control" placeholder="Cédula de Identidad" [(ngModel)]="configuracion.auditor_cedula">
+                                                            </div>
+                                                            <small class="text-muted">Ingrese el nombre, grado y cargo del auditor.</small>
+                                                        </div>
+                                                        <div class="upload-box-wrapper">
+                                                            <div class="upload-box" (click)="auditorInput.click()" [class.has-image]="configuracion.auditor_firma">
+                                                                <input type="file" #auditorInput hidden (change)="onFileChange($event, 'auditor_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                                                                <div *ngIf="!configuracion.auditor_firma" class="upload-placeholder">
+                                                                    <span [data-feather]="'upload'" class="text-muted"></span>
+                                                                    <div class="font-small-2 text-muted mt-1">Firma</div>
+                                                                </div>
+                                                                <img *ngIf="configuracion.auditor_firma" [src]="configuracion.auditor_firma" alt="Firma">
+                                                                <div *ngIf="configuracion.auditor_firma" class="upload-overlay">
+                                                                    <a [href]="configuracion.auditor_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
+                                                                        <span [data-feather]="'eye'"></span>
+                                                                    </a>
+                                                                    <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.auditor_firma = null; auditorInput.value = ''" title="Eliminar">
+                                                                        <span [data-feather]="'trash-2'"></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- Director -->
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="font-weight-bold">Datos del Director</label>
+                                                    <div class="d-flex align-items-start">
+                                                        <div class="flex-grow-1 mr-2">
+                                                            <div class="input-group input-group-merge">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><span [data-feather]="'user'"></span></span>
+                                                                </div>
+                                                                <input type="text" class="form-control" placeholder="Nombre y Grado" [(ngModel)]="configuracion.director_nombre">
+                                                            </div>
+                                                            <div class="input-group input-group-merge mt-1">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text p-0">
+                                                                        <select class="form-control border-0 bg-transparent h-100" [(ngModel)]="configuracion.director_nacionalidad">
+                                                                            <option value="V">V</option>
+                                                                            <option value="E">E</option>
+                                                                        </select>
+                                                                    </span>
+                                                                </div>
+                                                                <input type="text" class="form-control" placeholder="Cédula de Identidad" [(ngModel)]="configuracion.director_cedula">
+                                                            </div>
+                                                            <small class="text-muted">Ingrese el nombre, grado y cargo del director.</small>
+                                                        </div>
+                                                        <div class="upload-box-wrapper">
+                                                            <div class="upload-box" (click)="directorInput.click()" [class.has-image]="configuracion.director_firma">
+                                                                <input type="file" #directorInput hidden (change)="onFileChange($event, 'director_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                                                                <div *ngIf="!configuracion.director_firma" class="upload-placeholder">
+                                                                    <span [data-feather]="'upload'" class="text-muted"></span>
+                                                                    <div class="font-small-2 text-muted mt-1">Firma</div>
+                                                                </div>
+                                                                <img *ngIf="configuracion.director_firma" [src]="configuracion.director_firma" alt="Firma">
+                                                                <div *ngIf="configuracion.director_firma" class="upload-overlay">
+                                                                    <a [href]="configuracion.director_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
+                                                                        <span [data-feather]="'eye'"></span>
+                                                                    </a>
+                                                                    <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.director_firma = null; directorInput.value = ''" title="Eliminar">
+                                                                        <span [data-feather]="'trash-2'"></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12"><hr></div>
+
+                                            <!-- Membrete -->
+                                            <div class="col-md-12">
+                                                <label class="font-weight-bold">Membrete Institucional</label>
+                                                <div class="row">
+                                                    <div class="col-md-3">
+                                                        <div class="upload-box-wrapper h-100">
+                                                            <div class="upload-box h-100" (click)="logoInput.click()" [class.has-image]="configuracion.logo_membrete" style="min-height: 120px;">
+                                                                <input type="file" #logoInput hidden (change)="onFileChange($event, 'logo_membrete')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                                                                <div *ngIf="!configuracion.logo_membrete" class="upload-placeholder">
+                                                                    <span [data-feather]="'image'" class="text-muted" [size]="32"></span>
+                                                                    <div class="font-small-2 text-muted mt-1">Cargar Logo</div>
+                                                                </div>
+                                                                <img *ngIf="configuracion.logo_membrete" [src]="configuracion.logo_membrete" alt="Logo">
+                                                                <div *ngIf="configuracion.logo_membrete" class="upload-overlay">
+                                                                    <a [href]="configuracion.logo_membrete" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
+                                                                        <span [data-feather]="'eye'"></span>
+                                                                    </a>
+                                                                    <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.logo_membrete = null; logoInput.value = ''" title="Eliminar">
+                                                                        <span [data-feather]="'trash-2'"></span>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-9">
+                                                        <div class="input-group input-group-merge mb-1">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><span [data-feather]="'type'"></span></span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Línea 1 (Ej: República Bolivariana...)" [(ngModel)]="configuracion.membrete_l1">
+                                                        </div>
+                                                        <div class="input-group input-group-merge mb-1">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Línea 2 (Ej: Ministerio...)" [(ngModel)]="configuracion.membrete_l2">
+                                                        </div>
+                                                        <div class="input-group input-group-merge mb-1">
+                                                            <div class="input-group-prepend">
+                                                                <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
+                                                            </div>
+                                                            <input type="text" class="form-control" placeholder="Línea 3 (Ej: Dirección General...)" [(ngModel)]="configuracion.membrete_l3">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Botón de Guardar -->
                         <div class="row">
                             <div class="col-12 text-right">
-                                <button type="button" class="btn btn-primary btn-lg pulse-button" (click)="guardarConfiguracion()">
+                                <button type="button" class="btn btn-primary btn-lg shadow-lg" style="background: linear-gradient(to right, #7367F0, #CE9FFC); border: 0; border-radius: 50px; padding-left: 3rem; padding-right: 3rem;" (click)="guardarConfiguracion()">
                                     <span [data-feather]="'save'" class="mr-1"></span>
                                     Guardar Cambios
                                 </button>
@@ -306,5 +464,64 @@
       opacity: 1;
       transform: translateY(0);
     }
+  }
+
+  .upload-box-wrapper {
+    width: 120px;
+    height: 100px;
+  }
+  .col-md-3 .upload-box-wrapper {
+    width: 100%;
+    height: 100%;
+  }
+
+  .upload-box {
+    width: 100%;
+    height: 100%;
+    border: 2px dashed #d9d9d9;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    background-color: #fafafa;
+    transition: border-color 0.3s ease;
+    overflow: hidden;
+  }
+
+  .upload-box:hover {
+    border-color: #7367F0;
+    background-color: #f0f0f0;
+  }
+
+  .upload-box img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: 4px;
+  }
+
+  .upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .upload-box:hover .upload-overlay {
+    opacity: 1;
+  }
+
+  .upload-box.has-image {
+    border-style: solid;
+    border-color: #e0e0e0;
   }
 </style>

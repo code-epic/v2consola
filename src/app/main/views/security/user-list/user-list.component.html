@@ -146,7 +146,7 @@
                                             [size]="16" [class]="'mr-50'"></span>Editar</a>
                                     <a (click)="openChangePasswordModal(row, modalChangePass)" ngbDropdownItem><span [data-feather]="'key'"
                                             [size]="16" [class]="'mr-50'"></span>Cambiar Clave</a>
-                                    <a (click)="GeneraCaucion(row)" ngbDropdownItem><span [data-feather]="'printer'"
+                                    <a *ngIf="!isBDV" (click)="GeneraCaucion(row)" ngbDropdownItem><span [data-feather]="'printer'"
                                             [size]="16" [class]="'mr-50'"></span>Imprimir Caución</a>
                                      <a *ngIf="row.bloqueo" (click)="DesbloquearUser(row)" ngbDropdownItem><span [data-feather]="'unlock'"
                                             [size]="16" [class]="'mr-50'"></span>Desbloquear</a>
