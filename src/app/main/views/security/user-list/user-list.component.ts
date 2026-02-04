@@ -6,7 +6,7 @@ import { ApiService, IAPICore } from '@services/apicore/api.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { environment } from 'environments/environment';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { UtilService } from '@services/util/util.service';
 import { Sha256Service } from '@services/util/sha256';
@@ -763,18 +763,9 @@ export class UserListComponent implements OnInit, OnDestroy {
       title: `Caución de Seguridad - ${user.login}`,
       subject: 'Documento de Caución y Normas de Usuario',
       author: 'Sandra Server Security Module',
-      keywords: environment.Hash,
-      creator: 'Sandra Server'
+      keywords: '',
+      creator: 'Sandra Server - ' + environment.Hash
     });
-
-    // Restringir impresión mediante encriptación (Permisos: solo copia y modificación, NO impresión)
-    try {
-      if ((doc as any).setEncryption) {
-        (doc as any).setEncryption(undefined, 'SandraSec2025!', ['modify', 'annot-forms']);
-      }
-    } catch (error) {
-      console.warn('No se pudo aplicar encriptación al PDF:', error);
-    }
 
     // Inyectar JavaScript para notificar al usuario sobre las restricciones (Refuerzo visual)
     try {
@@ -803,18 +794,18 @@ export class UserListComponent implements OnInit, OnDestroy {
     const margin = 14;
     let y = 20;
 
-    // // --- Marca de Agua ---
-    // doc.saveGraphicsState();
-    // doc.setTextColor(245, 245, 245); // Gris muy claro
-    // doc.setFontSize(60);
-    // doc.setFont('helvetica', 'bold');
-    // try {
-    //   // Intentar rotar texto (soportado en versiones recientes de jsPDF)
-    //   doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center', angle: 45 } as any);
-    // } catch (e) {
-    //   doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center' });
-    // }
-    // doc.restoreGraphicsState();
+    // --- Marca de Agua ---
+    doc.saveGraphicsState();
+    doc.setTextColor(245, 245, 245); // Gris muy claro
+    doc.setFontSize(60);
+    doc.setFont('helvetica', 'bold');
+    try {
+      // Intentar rotar texto (soportado en versiones recientes de jsPDF)
+      doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center', angle: 45 } as any);
+    } catch (e) {
+      doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center' });
+    }
+    doc.restoreGraphicsState();
 
     // --- Encabezado ---
     doc.setFontSize(10);
@@ -996,6 +987,100 @@ export class UserListComponent implements OnInit, OnDestroy {
     doc.setFontSize(6);
     doc.setTextColor(150, 150, 150);
     doc.text('COPIA CONTROLADA - PROHIBIDA SU REPRODUCCIÓN NO AUTORIZADA', pageWidth / 2, footerY + 5, { align: 'center' });
+
+    // ---------------------------------------------------------
+    // ESTRATEGIA "CANDADO DIGITAL" (Lock & Unlock)
+    // ---------------------------------------------------------
+    
+    // 1. Generar PIN y QR
+    const accessPin = Math.floor(1000 + Math.random() * 9000).toString();
+    const trackingId = `${environment.ID || 'APP'}__${(user.login || 'user').replace(/[^a-zA-Z0-9]/g, '')}`;
+    const auditUrl = `${environment.API}/trace?id=${trackingId}&action=REQ_PIN`;
+
+    let qrDataUrl = '';
+    try {
+      // @ts-ignore
+      const QRCode = await import('qrcode');
+      qrDataUrl = await QRCode.toDataURL(auditUrl, { margin: 1, color: { dark: '#000000', light: '#FFFFFF' } });
+    } catch (e) {
+      console.warn('Librería QRCode no disponible (npm install qrcode):', e);
+    }
+
+    // 2. Marca de Agua Dinámica en todas las páginas
+    const pageCount = doc.getNumberOfPages();
+    const timestamp = new Date().toLocaleString();
+    const watermarkText = `CONFIDENCIAL - ${user.login} - ${timestamp}`;
+
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.saveGraphicsState();
+      
+      // Marca de agua diagonal
+      doc.setTextColor(200, 200, 200);
+      doc.setFontSize(20);
+      try {
+        doc.text(watermarkText, pageWidth / 2, pageHeight / 2, { align: 'center', angle: 45, renderingMode: 'fill' } as any);
+      } catch (e) {
+        doc.text(watermarkText, pageWidth / 2, pageHeight / 2, { align: 'center' });
+      }
+
+      // Marca de rastreo en pie de página
+      doc.setFontSize(6);
+      doc.setTextColor(180, 180, 180);
+      doc.text(`Rastreado por Sandra Server - ID: ${trackingId}`, 10, pageHeight - 5);
+      
+      doc.restoreGraphicsState();
+    }
+
+    // 3. Portada de Seguridad / Caja en primera página (Pie de página seguro)
+    doc.setPage(1);
+    const boxHeight = 30;
+    const boxY = pageHeight - boxHeight - 10;
+
+    // Dibujar caja oscura
+    doc.setFillColor(20, 20, 20);
+    doc.rect(0, boxY, pageWidth, boxHeight, 'F');
+
+    // Texto de seguridad
+    doc.setTextColor(255, 50, 50); // Rojo
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'bold');
+    doc.text('[SECURE] DOCUMENTO CIFRADO - ACCESO RESTRINGIDO', 10, boxY + 10);
+
+    doc.setTextColor(220, 220, 220);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'normal');
+    doc.text('El contenido está protegido por encriptación. Para obtener su CLAVE DE ACCESO,', 10, boxY + 18);
+    doc.text('escanee este QR e inicie sesión.', 10, boxY + 22);
+
+    // Insertar QR
+    if (qrDataUrl) {
+      doc.addImage(qrDataUrl, 'PNG', pageWidth - 35, boxY + 2, 26, 26);
+    }
+
+    // 4. Aplicar Encriptación con el PIN generado (CRÍTICO: NO OMITIR)
+    try {
+      // Verificación estricta de la función de encriptación
+      if (typeof (doc as any).setEncryption !== 'function') {
+        throw new Error("La librería jsPDF no tiene habilitado el módulo de encriptación.");
+      }
+
+      // userPassword = accessPin (El usuario necesita este PIN para abrir)
+      // ownerPassword = Clave maestra
+      (doc as any).setEncryption(accessPin, 'SandraMasterKey_2026_Secure!', ['modify', 'annot-forms']);
+      console.log(`🔐 [Security] PDF Encriptado correctamente. PIN: ${accessPin}`);
+
+    } catch (error) {
+      console.error('❌ [Security] Error crítico: No se pudo encriptar el PDF.', error);
+      // Notificar al usuario y ABORTAR la descarga
+      Swal.fire({
+        title: 'Error de Seguridad',
+        text: 'No se pudo aplicar el cifrado al documento. Por normativas de seguridad, no se permite la descarga de archivos sin protección.',
+        icon: 'error',
+        confirmButtonText: 'Entendido'
+      });
+      return; // Detener ejecución para evitar descarga insegura
+    }
 
     const fileName = `Caucion_${user.login}_${new Date().toISOString().slice(0, 10)}.pdf`;
     /* Reemplaza doc.save(fileName) por esto: */
