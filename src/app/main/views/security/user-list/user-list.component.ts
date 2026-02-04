@@ -756,25 +756,65 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
   }
 
-  GeneraCaucion(user: any) {
+  async GeneraCaucion(user: any) {
     const doc = new jsPDF();
+    // Agregar Metadatos al PDF
+    doc.setProperties({
+      title: `Caución de Seguridad - ${user.login}`,
+      subject: 'Documento de Caución y Normas de Usuario',
+      author: 'Sandra Server Security Module',
+      keywords: environment.Hash,
+      creator: 'Sandra Server'
+    });
+
+    // Restringir impresión mediante encriptación (Permisos: solo copia y modificación, NO impresión)
+    try {
+      if ((doc as any).setEncryption) {
+        (doc as any).setEncryption(undefined, 'SandraSec2025!', ['modify', 'annot-forms']);
+      }
+    } catch (error) {
+      console.warn('No se pudo aplicar encriptación al PDF:', error);
+    }
+
+    // Inyectar JavaScript para notificar al usuario sobre las restricciones (Refuerzo visual)
+    try {
+      if ((doc as any).addJS) {
+        (doc as any).addJS('app.alert("AVISO DE SEGURIDAD: Este documento está protegido. La función de impresión ha sido deshabilitada.");');
+      }
+    } catch (error) {
+      console.warn('No se pudo inyectar JS al PDF:', error);
+    }
+
+    // Ocultar barra de herramientas y menús para dificultar la impresión/exportación desde el visor
+    try {
+      if ((doc as any).setViewerPreferences) {
+        (doc as any).setViewerPreferences({
+          'HideToolbar': true,
+          'HideMenubar': true,
+          'HideWindowUI': true
+        });
+      }
+    } catch (error) {
+      console.warn('No se pudo establecer preferencias de visor:', error);
+    }
+
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
     const margin = 14;
     let y = 20;
 
-    // --- Marca de Agua ---
-    doc.saveGraphicsState();
-    doc.setTextColor(245, 245, 245); // Gris muy claro
-    doc.setFontSize(60);
-    doc.setFont('helvetica', 'bold');
-    try {
-      // Intentar rotar texto (soportado en versiones recientes de jsPDF)
-      doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center', angle: 45 } as any);
-    } catch (e) {
-      doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center' });
-    }
-    doc.restoreGraphicsState();
+    // // --- Marca de Agua ---
+    // doc.saveGraphicsState();
+    // doc.setTextColor(245, 245, 245); // Gris muy claro
+    // doc.setFontSize(60);
+    // doc.setFont('helvetica', 'bold');
+    // try {
+    //   // Intentar rotar texto (soportado en versiones recientes de jsPDF)
+    //   doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center', angle: 45 } as any);
+    // } catch (e) {
+    //   doc.text('EJÉRCITO BOLIVARIANO', pageWidth / 2, pageHeight / 2, { align: 'center' });
+    // }
+    // doc.restoreGraphicsState();
 
     // --- Encabezado ---
     doc.setFontSize(10);
@@ -961,6 +1001,11 @@ export class UserListComponent implements OnInit, OnDestroy {
     /* Reemplaza doc.save(fileName) por esto: */
     // 1. Obtener el binario como string dataURI
     const pdfDataUri = doc.output('datauristring');
+
+    // 2. Calcular Hash y Registrar
+    const hash = await this.sha256.hash(pdfDataUri);
+    this.registrarDocumento(user, hash, fileName);
+
     // 2. Enviar mensaje al padre (Sandbox Bridge)
     if (window.parent) {
       window.parent.postMessage({
@@ -974,6 +1019,29 @@ export class UserListComponent implements OnInit, OnDestroy {
       // Fallback para cuando no corre dentro de Sandra
       doc.save(fileName);
     }
+  }
+
+  registrarDocumento(user: any, hash: string, fileName: string) {
+    const documento = {
+      usuario: user.login,
+      nombre: user.nombre,
+      cedula: user.cedula,
+      tipo: 'CAUCION',
+      archivo: fileName,
+      hash: hash,
+      fecha: new Date().toISOString(),
+      estatus: 1
+    };
+
+    const fnx = {
+      coleccion: 'sys_documentos',
+      objeto: documento,
+      donde: JSON.stringify({ hash: hash }),
+      driver: environment.driver.PRINCIPAL,
+      upsert: true,
+    };
+
+    this.apiService.ExecColeccion(fnx).subscribe();
   }
 
   ngOnDestroy(): void {

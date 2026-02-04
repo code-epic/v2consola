@@ -394,6 +394,44 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="col-12"><hr></div>
+
+                                            <!-- Certificado Digital (Anti-Plagio) -->
+                                            <div class="col-md-12">
+                                                <div class="d-flex align-items-center mb-1">
+                                                    <span [data-feather]="'shield'" class="mr-1 text-primary"></span>
+                                                    <label class="font-weight-bold mb-0">Certificado Digital (Anti-Plagio)</label>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Archivo del Certificado (.p12 / .pfx)</label>
+                                                            <div class="custom-file">
+                                                                <input type="file" class="custom-file-input" id="certFile" (change)="onFileChange($event, 'certificado_digital')" accept=".p12,.pfx">
+                                                                <label class="custom-file-label" for="certFile">
+                                                                    {{ configuracion.certificado_digital ? 'Certificado Cargado' : 'Seleccionar Archivo' }}
+                                                                </label>
+                                                            </div>
+                                                            <small class="text-muted mt-1 d-block" *ngIf="configuracion.certificado_digital">
+                                                                <span class="text-success font-weight-bold"><span [data-feather]="'check'" [size]="10"></span> Archivo cargado correctamente</span>
+                                                                <a href="javascript:void(0)" class="text-danger ml-1" (click)="configuracion.certificado_digital = null">Eliminar</a>
+                                                            </small>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="form-group">
+                                                            <label>Contraseña del Certificado</label>
+                                                            <div class="input-group input-group-merge">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text"><span [data-feather]="'key'"></span></span>
+                                                                </div>
+                                                                <input type="password" class="form-control" placeholder="Ingrese la contraseña del certificado" [(ngModel)]="configuracion.certificado_pass">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

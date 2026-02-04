@@ -138,8 +138,10 @@ export class RuleComponent implements OnInit {
       actualizado: new Date().toISOString(),
       usuariocreado: this.token.Usuario.nombre,
       usuarioactualizado: this.token.Usuario.nombre,
-      encriptamiento: 'SHA256'
-    };
+      encriptamiento: 'SHA256',
+      certificado_digital: '',
+      certificado_pass: ''
+    } as any;
   }
 
   /**
