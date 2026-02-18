@@ -1,0 +1,444 @@
+// Network Monitoring Styles - Minimalist & Elegant Approach
+
+// Palette Minimalista
+$primary: #7367f0;
+$success: #28c76f;
+$danger: #ea5455;
+$info: #00cfe8;
+$text-main: #5e5873;
+$text-muted: #b9b9c3;
+$bg-light: #f8f8f8;
+$border-color: #ebe9f1;
+
+// Obsidian-Inspired Graph Layout - Pastel & Elegant
+
+// Pastel Palette
+$primary: #8ca1e8;      // Soft Indigo
+$success: #82e0aa;      // Pastel Mint
+$danger: #f5b7b1;       // Pastel Rose
+$info: #aed6f1;         // Pastel Sky
+$text-main: #5d6d7e;    // Blue Grey
+$text-muted: #abb2b9;   // Light Grey
+$bg-light: #fdfefe;     // Nearly White
+$border-color: #ebedef;
+
+$dark-glass: rgba(255, 255, 255, 0.90);
+$card-shadow: 0 10px 40px rgba(140, 161, 232, 0.15);
+
+.monitor-wrapper {
+    position: relative;
+    height: 85vh;
+    background: #fbfbfc; 
+    overflow: hidden;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: 12px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.03);
+    transition: all 0.3s;
+
+    // Grid Overlay
+    &::before {
+        content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
+        background-image: radial-gradient(#e5e7e9 1px, transparent 1px);
+        background-size: 40px 40px;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    // --- ZONE INDICATORS (Watermark) ---
+    .zone-indicator {
+        position: absolute;
+        font-size: 5rem;
+        font-weight: 900;
+        color: rgba(0,0,0,0.02);
+        pointer-events: none;
+        z-index: 1;
+        
+        &.web-zone { top: 10%; left: 5%; }
+        &.physical-zone { bottom: 10%; right: 5%; text-align: right; }
+    }
+
+    // --- HUD (Pastel) ---
+    .glass-hud {
+        position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+        z-index: 100;
+        display: flex; gap: 20px;
+        background: $dark-glass;
+        backdrop-filter: blur(12px);
+        padding: 8px 25px; // Compact padding
+        border-radius: 60px;
+        box-shadow: $card-shadow;
+        border: 1px solid #fff;
+        align-items: center; // Vertical align
+
+        .stat-pill {
+            display: flex; flex-direction: column; align-items: center; padding: 0 5px;
+            min-width: 50px;
+            
+            .label { font-size: 0.65rem; text-transform: uppercase; font-weight: 700; color: $text-muted; letter-spacing: 0.5px; }
+            .value { font-size: 1.1rem; font-weight: 800; color: $text-main; line-height: 1.2; }
+
+            &.web .value { color: #5dade2; }
+            &.physical .value { color: $text-main; }
+            &.online .value { color: $success; }
+            &.offline .value { color: #ec7063; }
+        }
+
+        // Refresh Button (Integrated)
+        .refresh-btn {
+            background: rgba($primary, 0.1); 
+            border: none; 
+            color: $primary; 
+            cursor: pointer;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin-left: 10px;
+            padding: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            
+            i { width: 16px; height: 16px; }
+
+            &:hover { 
+                background: $primary; 
+                color: #fff; 
+                transform: rotate(180deg) scale(1.1); 
+                box-shadow: 0 4px 12px rgba($primary, 0.4);
+            }
+            &:active { transform: rotate(180deg) scale(0.95); }
+        }
+    }
+
+    // --- GRAPH CONTAINER ---
+    .graph-container {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10;
+        
+        // Central Node (Radar Style)
+        .central-node {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 80px; height: 80px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 0 30px rgba($primary, 0.2);
+            z-index: 20;
+            border: 4px solid #fff; // White border to cut lines
+
+            // Radar Icon
+            i { 
+                color: $primary; width: 32px; height: 32px; z-index: 2; 
+                filter: drop-shadow(0 0 5px rgba($primary, 0.4));
+            }
+
+            .hub-label {
+                position: absolute; top: 110%; 
+                font-size: 0.8rem; font-weight: 700; color: $text-muted; 
+                letter-spacing: 2px;
+            }
+
+            // Radar Pulse Rings
+            &::before, &::after {
+                content: '';
+                position: absolute; top: 50%; left: 50%; offset: 0;
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                border: 1px solid rgba($primary, 0.3);
+                box-shadow: 0 0 10px rgba($primary, 0.1);
+                opacity: 0;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            &::before {
+                width: 100%; height: 100%;
+                animation: radar-wave 2.5s infinite linear;
+            }
+
+            &::after {
+                width: 100%; height: 100%;
+                animation: radar-wave 2.5s infinite linear 1.25s; // Staggered
+            }
+
+            // Inner Glow Pulse
+            .core-pulse {
+                position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba($primary, 0.1) 0%, transparent 70%);
+                animation: core-breathe 3s infinite ease-in-out;
+            }
+        }
+
+        // SVG Connections
+        .graph-connections {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;
+            
+            // Base Structure Line
+            .connection-line-base {
+                stroke: $border-color; 
+                stroke-width: 1px; 
+                opacity: 0.3; // Very subtle base
+                stroke-dasharray: 1000; stroke-dashoffset: 1000;
+                animation: dash 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            }
+
+            // Animated Flow (Current)
+            .connection-line-flow {
+                stroke: $primary; 
+                stroke-width: 1.5px; 
+                stroke-dasharray: 4 120; // Sparse dots
+                stroke-opacity: 0.4; // Subtle
+                stroke-linecap: round;
+                opacity: 0; 
+                animation: flow-current 12s infinite linear; // Very slow flow
+                
+                // Only show flow for active connections or randomly?
+                // Or show for all but faint. 
+                // Let's show for all aligned with "corriente viajando".
+                
+                &.active { 
+                    stroke: $success; 
+                    stroke-width: 2px;
+                    stroke-opacity: 0.6;
+                    animation-duration: 6s; // Faster flow for active but still slow
+                    filter: drop-shadow(0 0 2px rgba($success, 0.3));
+                }
+            }
+        }
+
+        // --- GRAPH NODES ---
+        .graph-node {
+            position: absolute;
+            width: 16px; height: 16px; // Base Size (Dot)
+            transform: translate(-50%, -50%) scale(0); // Start scale 0
+            opacity: 0; // Start hidden
+            cursor: pointer; z-index: 15;
+            animation: pop-node 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+
+            .node-shape {
+                width: 100%; height: 100%; border-radius: 50%;
+                background: #fff; border: 3px solid $text-muted;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+                transition: background 0.3s, border-color 0.3s, transform 0.3s;
+                position: relative;
+                
+                // Icon hidden by default (Dot Mode)
+                .node-icon { display: none; }
+            }
+
+            // Colors
+            &.web .node-shape { border-color: $info; color: $info; }
+            &.physical .node-shape { border-color: $text-main; color: $text-main; }
+            &.online .node-shape { background: #fff; border-color: $success; color: $success; }
+            &.offline .node-shape { background: #fff; border-color: $danger; color: $danger; }
+
+            .node-label {
+                position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%) translateY(10px);
+                background: #fff; color: $text-main;
+                padding: 6px 14px; border-radius: 20px;
+                font-size: 0.75rem; white-space: nowrap; opacity: 0; pointer-events: none;
+                transition: all 0.3s; z-index: 30;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                font-weight: 600;
+                .ip { display: block; font-size: 0.65rem; color: $text-muted; font-weight: 400; text-align: center; }
+            }
+
+            &:hover, &.selected {
+                z-index: 50; 
+                // We use !important to override the animation's end state during interactions if needed, 
+                // but usually transform changes stack. However, 'forwards' keeps the final keyframe state.
+                // Best practice: Animation fills 'scale(1)', hover scales to '1.3'.
+                // Since animation uses same property, we might need a wrapper or specificity.
+                // Let's rely on the fact that animation runs once. After it finishes, hover triggers.
+                // BUT: 'forwards' overrides hover unless we are careful.
+                // Fix: Animation ends at 'transform: translate(-50%, -50%) scale(1)'.
+                // Hover should work if it has higher specificity or uses !important for scale.
+                transform: translate(-50%, -50%) scale(1.3) !important; 
+
+                .node-label { opacity: 1; transform: translateX(-50%) translateY(0); }
+                .node-shape { box-shadow: 0 0 20px rgba($primary, 0.4); }
+            }
+        }
+    }
+
+// ... (Rest of file) ...
+
+// Keyframes (Add these at the end of file)
+@keyframes dash {
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes pop-node {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+@keyframes radar-wave {
+    0% { width: 100%; height: 100%; opacity: 0; border-width: 2px; }
+    20% { opacity: 0.8; }
+    100% { width: 400%; height: 400%; opacity: 0; border-width: 0px; }
+}
+
+@keyframes core-breathe {
+    0%, 100% { transform: scale(0.95); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+}
+
+@keyframes flow-current {
+    0% { stroke-dashoffset: 1000; opacity: 0; } // Start far away invisble
+    15% { opacity: 1; } // Fade in quickly
+    100% { stroke-dashoffset: 0; opacity: 1; } // Arrive at destination
+}
+
+    // --- DETAILED VIEW MODE (Adaptive < 20) ---
+    &.detailed-view {
+        .graph-node {
+            width: 45px; height: 45px; // Larger for icon support
+            
+            .node-shape { 
+                border-width: 2px;
+                display: flex; align-items: center; justify-content: center;
+                background: #fff; // Always white bg to show colored icon
+
+                .node-icon { 
+                    display: block; // Show icon
+                    width: 20px; height: 20px;
+                    stroke-width: 2px;
+                }
+            }
+            
+            // Override colors for Detailed View (Icon Color matches Type)
+            &.web .node-shape { border-color: lighten($info, 10%); color: $info; }
+            &.physical .node-shape { border-color: lighten($text-main, 10%); color: $text-main; }
+            &.online .node-shape { border-color: lighten($success, 10%); color: $success; box-shadow: 0 5px 15px rgba($success, 0.2); }
+            &.offline .node-shape { border-color: lighten($danger, 10%); color: $danger; opacity: 0.8; }
+
+            .node-label {
+                opacity: 0.8;
+                transform: translateX(-50%) translateY(0);
+                bottom: -45px; // Label below
+                box-shadow: none; background: transparent;
+                .name { font-size: 0.75rem; color: $text-main; font-weight: 700; }
+                .ip { display: none; } // Hide IP in default view to be cleaner
+            }
+
+            &:hover .node-label { opacity: 1; .ip { display: block; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #fff; padding: 2px 5px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); } }
+        }
+    }
+
+    // --- FLOATING DETAIL CARD (Cloud) ---
+    .floating-detail-card {
+        position: absolute;
+        bottom: 30px; right: 30px;
+        width: 320px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        z-index: 1000;
+        padding: 0;
+        overflow: hidden;
+        animation: slide-up 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        border: 1px solid #fff;
+
+        .card-header {
+            padding: 20px;
+            display: flex; align-items: center; gap: 15px;
+            background: linear-gradient(135deg, rgba($bg-light, 0.8), #fff);
+            border-bottom: 1px solid $border-color;
+            position: relative;
+
+            .icon-bubble {
+                width: 45px; height: 45px;
+                background: #fff; border-radius: 14px;
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+                color: $primary;
+            }
+
+            .header-text {
+                flex: 1;
+                h3 { margin: 0; font-size: 1rem; color: $text-main; font-weight: 700; }
+                .status-badge {
+                    font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: 600;
+                    margin-top: 4px; display: inline-block;
+                    &.online { background: rgba($success, 0.15); color: darken($success, 20%); }
+                    &.offline { background: rgba($danger, 0.15); color: darken($danger, 20%); }
+                }
+            }
+            .close-card { 
+                background: none; border: none; cursor: pointer; color: $text-muted; 
+                &:hover { color: $danger; transform: rotate(90deg); transition: 0.3s; }    
+            }
+        }
+
+        .card-body {
+            padding: 20px;
+            .info-row {
+                display: flex; justify-content: space-between; margin-bottom: 10px;
+                .label { font-size: 0.8rem; color: $text-muted; }
+                .val { font-size: 0.85rem; font-weight: 600; color: $text-main; font-family: monospace; }
+            }
+        }
+
+        .card-actions {
+            padding: 20px;
+            background: rgba($bg-light, 0.5);
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+
+            .action-btn {
+                border: none; background: #fff;
+                padding: 10px; border-radius: 12px;
+                display: flex; flex-direction: column; align-items: center; gap: 5px;
+                cursor: pointer; transition: all 0.2s;
+                color: $text-main; font-size: 0.75rem; font-weight: 600;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+
+                i { width: 18px; height: 18px; color: $primary; }
+                &:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+                &.text-danger i { color: $danger; }
+            }
+        }
+    }
+}
+
+// --- MESSAGE MODAL (Restored logic) ---
+.message-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(255,255,255,0.6); backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex; align-items: center; justify-content: center;
+    animation: fade-in 0.2s;
+
+    .glass-modal {
+        background: #fff; width: 420px; border-radius: 20px; overflow: hidden;
+        box-shadow: 0 20px 60px rgba(100,100,200,0.2);
+        animation: slide-up 0.3s; border: 1px solid #fff;
+
+        .modal-header {
+            padding: 20px; border-bottom: 1px solid $border-color; display: flex; justify-content: space-between; align-items: center;
+            h3 { font-size: 1.1rem; color: $text-main; margin: 0; font-weight: 700; }
+            .close-btn { background: none; border: none; cursor: pointer; color: $text-muted; &:hover { color: $danger; } }
+        }
+        .modal-content {
+            padding: 25px;
+            .target-info { margin-bottom: 15px; font-size: 0.9rem; strong { color: $primary; } }
+            textarea { width: 100%; height: 120px; border: 1px solid $border-color; border-radius: 12px; padding: 15px; resize: none; background: $bg-light; &:focus { outline:none; background: #fff; box-shadow: 0 0 0 2px rgba($primary, 0.2); } }
+        }
+        .modal-footer {
+            padding: 20px; background: $bg-light; display: flex; justify-content: flex-end; gap: 15px;
+            button {
+                padding: 10px 20px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer;
+                &.btn-cancel { background: transparent; color: $text-muted; }
+                &.btn-send { background: $primary; color: #fff; box-shadow: 0 4px 15px rgba($primary, 0.3); &:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba($primary, 0.4); } }
+            }
+        }
+    }
+}
+
+// Keyframes
+@keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.6; } 100% { transform: scale(1.6); opacity: 0; } }
+@keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+

@@ -33,9 +33,10 @@ import { UserComponent } from './user/user.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { UserListComponent } from './user-list/user-list.component';
 import { RuleComponent } from './rule/rule.component';
+import { MonitoreoComponent } from './monitoreo/monitoreo.component';
 
 const routes = [
-   {
+  {
     path: 'security/rules',
     component: RuleComponent,
     canActivate: [AuthGuardGuard],
@@ -55,7 +56,7 @@ const routes = [
     component: UserComponent,
     canActivate: [AuthGuardGuard],
   },
-   {
+  {
     path: 'security/user/:id',
     component: UserComponent,
     canActivate: [AuthGuardGuard],
@@ -63,6 +64,11 @@ const routes = [
   {
     path: 'security/user-list',
     component: UserListComponent,
+    canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'security/monitoreo',
+    component: MonitoreoComponent,
     canActivate: [AuthGuardGuard],
   }
 ];
@@ -72,10 +78,11 @@ const routes = [
   declarations: [
     RoleComponent,
     ProfileComponent,
-   
+
     UserComponent,
     UserListComponent,
-    RuleComponent
+    RuleComponent,
+    MonitoreoComponent
   ],
   imports: [
     RouterModule.forChild(routes),

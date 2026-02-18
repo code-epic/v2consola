@@ -369,6 +369,36 @@
                 "directivas": ""
               }
             ]
+          },
+          {
+            "url": "security/monitoreo",
+            "js": "MonitoreoFlujo()",
+            "descripcion": "Monitoreo de Red",
+            "icono": "layout",
+            "nombre": "Monitoreo de Red",
+            "accion": "monitoreo_red()",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": [
+              {
+                "metodo": "DesconectarAsistente",
+                "descripcion": "Desconectar Asistente",
+                "accion": "DesconectarAsistente()",
+                "directivas": ""
+              },
+              {
+                "metodo": "AuditarUsuario",
+                "descripcion": "Auditar Usuario",
+                "accion": "AuditarUsuario()",
+                "directivas": ""
+              },
+              {
+                "metodo": "VerLogs",
+                "descripcion": "Ver Logs",
+                "accion": "VerLogs()",
+                "directivas": ""
+              }
+            ]
           }
         ]
       },

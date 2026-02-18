@@ -701,5 +701,14 @@ export class ApiService {
     return this.http.get(url, this.httpOptions);
   }
 
+  /**
+   * @returns Conections
+   */
+  GetConnectionsWebSocket(): Observable<any> {
+
+    var url = this.URL + "sandra_sessions";
+    return this.http.get(url, this.httpOptions);
+  }
+
 
 }

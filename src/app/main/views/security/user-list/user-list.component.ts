@@ -744,7 +744,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     // 2. Enviar mensaje al padre (Sandbox Bridge)
     if (window.parent) {
       window.parent.postMessage({
-        type: 'DOWNLOAD_PDF',
+        type: 'OPEN_SSE',
         payload: {
           fileName: fileName,
           data: pdfDataUri
@@ -791,6 +791,51 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
+
+
+    const trackingId = `${environment.ID || 'APP'}__${(user.login || 'user').replace(/[^a-zA-Z0-9]/g, '')}`;
+    const auditUrl = `https://code-epic.com/v1/api/trace?id=${trackingId}&action=REQ_PIN`;
+
+    let qrDataUrl = '';
+    try {
+      // @ts-ignore
+      const QRCode = await import('qrcode');
+      qrDataUrl = await QRCode.toDataURL(auditUrl, { margin: 1, color: { dark: '#000000', light: '#FFFFFF' } });
+    } catch (e) {
+      console.warn('Librería QRCode no disponible (npm install qrcode):', e);
+    }
+
+    // --- PÁGINA 1: EL SOBRE (Capa A - Pública) ---
+    doc.setFillColor(20, 20, 20); // Fondo oscuro industrial
+    doc.rect(0, 0, pageWidth, pageHeight, 'F'); 
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.text("SANDRA SERVER ", pageWidth / 2, 40, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.text("DOCUMENTO CONFIDENCIAL", pageWidth / 2, 60, { align: 'center' });
+    
+    // QR en la primera página
+    if (qrDataUrl) {
+        const qrSize = 50;
+        doc.addImage(qrDataUrl, 'PNG', (pageWidth - qrSize) / 2, 80, qrSize, qrSize);
+    }
+    
+    doc.setFontSize(10);
+    doc.text("Escanee el código QR para desbloquear el documento.", pageWidth / 2, 140, { align: 'center' });
+
+    // Placeholder para Rust
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text("[QR_PLACEHOLDER_COORD:105,150]", pageWidth / 2, 150, { align: 'center' });
+
+    // --- PÁGINA 2: EL CONTENIDO (Capa B - Sensible) ---
+    doc.addPage();
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'normal');
+
     const margin = 14;
     let y = 20;
 
@@ -988,30 +1033,13 @@ export class UserListComponent implements OnInit, OnDestroy {
     doc.setTextColor(150, 150, 150);
     doc.text('COPIA CONTROLADA - PROHIBIDA SU REPRODUCCIÓN NO AUTORIZADA', pageWidth / 2, footerY + 5, { align: 'center' });
 
-    // ---------------------------------------------------------
-    // ESTRATEGIA "CANDADO DIGITAL" (Lock & Unlock)
-    // ---------------------------------------------------------
-    
-    // 1. Generar PIN y QR
-    const accessPin = Math.floor(1000 + Math.random() * 9000).toString();
-    const trackingId = `${environment.ID || 'APP'}__${(user.login || 'user').replace(/[^a-zA-Z0-9]/g, '')}`;
-    const auditUrl = `${environment.API}/trace?id=${trackingId}&action=REQ_PIN`;
-
-    let qrDataUrl = '';
-    try {
-      // @ts-ignore
-      const QRCode = await import('qrcode');
-      qrDataUrl = await QRCode.toDataURL(auditUrl, { margin: 1, color: { dark: '#000000', light: '#FFFFFF' } });
-    } catch (e) {
-      console.warn('Librería QRCode no disponible (npm install qrcode):', e);
-    }
 
     // 2. Marca de Agua Dinámica en todas las páginas
     const pageCount = doc.getNumberOfPages();
     const timestamp = new Date().toLocaleString();
     const watermarkText = `CONFIDENCIAL - ${user.login} - ${timestamp}`;
 
-    for (let i = 1; i <= pageCount; i++) {
+    for (let i = 2; i <= pageCount; i++) {
       doc.setPage(i);
       doc.saveGraphicsState();
       
@@ -1032,55 +1060,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       doc.restoreGraphicsState();
     }
 
-    // 3. Portada de Seguridad / Caja en primera página (Pie de página seguro)
-    doc.setPage(1);
-    const boxHeight = 30;
-    const boxY = pageHeight - boxHeight - 10;
-
-    // Dibujar caja oscura
-    doc.setFillColor(20, 20, 20);
-    doc.rect(0, boxY, pageWidth, boxHeight, 'F');
-
-    // Texto de seguridad
-    doc.setTextColor(255, 50, 50); // Rojo
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'bold');
-    doc.text('[SECURE] DOCUMENTO CIFRADO - ACCESO RESTRINGIDO', 10, boxY + 10);
-
-    doc.setTextColor(220, 220, 220);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    doc.text('El contenido está protegido por encriptación. Para obtener su CLAVE DE ACCESO,', 10, boxY + 18);
-    doc.text('escanee este QR e inicie sesión.', 10, boxY + 22);
-
-    // Insertar QR
-    if (qrDataUrl) {
-      doc.addImage(qrDataUrl, 'PNG', pageWidth - 35, boxY + 2, 26, 26);
-    }
-
-    // 4. Aplicar Encriptación con el PIN generado (CRÍTICO: NO OMITIR)
-    try {
-      // Verificación estricta de la función de encriptación
-      if (typeof (doc as any).setEncryption !== 'function') {
-        throw new Error("La librería jsPDF no tiene habilitado el módulo de encriptación.");
-      }
-
-      // userPassword = accessPin (El usuario necesita este PIN para abrir)
-      // ownerPassword = Clave maestra
-      (doc as any).setEncryption(accessPin, 'SandraMasterKey_2026_Secure!', ['modify', 'annot-forms']);
-      console.log(`🔐 [Security] PDF Encriptado correctamente. PIN: ${accessPin}`);
-
-    } catch (error) {
-      console.error('❌ [Security] Error crítico: No se pudo encriptar el PDF.', error);
-      // Notificar al usuario y ABORTAR la descarga
-      Swal.fire({
-        title: 'Error de Seguridad',
-        text: 'No se pudo aplicar el cifrado al documento. Por normativas de seguridad, no se permite la descarga de archivos sin protección.',
-        icon: 'error',
-        confirmButtonText: 'Entendido'
-      });
-      return; // Detener ejecución para evitar descarga insegura
-    }
+    
 
     const fileName = `Caucion_${user.login}_${new Date().toISOString().slice(0, 10)}.pdf`;
     /* Reemplaza doc.save(fileName) por esto: */
@@ -1094,7 +1074,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     // 2. Enviar mensaje al padre (Sandbox Bridge)
     if (window.parent) {
       window.parent.postMessage({
-        type: 'DOWNLOAD_PDF',
+        type: 'OPEN_SSE',
         payload: {
           fileName: fileName,
           data: pdfDataUri

@@ -154,7 +154,7 @@
 
 <script>
   (function () {
-      const APP_ID = 'web-panel';
+      const APP_ID = 'sandra-consola';
       const MAX_BODY_LENGTH = 5000;
       
       // Referencias originales
@@ -170,10 +170,10 @@
         window.parent.postMessage({
           type: 'SDC_LOG',
           app_id: APP_ID,
-          source: 'external-url',
+          source: 'external-proxy',
           payload: {
             app_id: APP_ID,
-            source: 'external-url',
+            source: 'external-proxy',
             log_type: type,
             message,
             details
