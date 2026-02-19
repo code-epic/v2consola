@@ -1,442 +1,243 @@
 <div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
   <div class="content-body">
-    <!-- content-header component -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-    <!-- Main Data Table Section -->
     <section class="invoice-list-wrapper">
-      <div class="card">
-
-        <!-- Card Header with Title and Export Button -->
-        <div class="card-header border-bottom">
-          <h4 class="card-title">Bitácora de Aplicación</h4>
+      
+      <!-- Loop through Methods (Groups) -->
+      <div *ngFor="let methodBlock of ListarBitacora" class="card mb-3 border shadow-sm">
+        <!-- Header with Flexbox for Alignment -->
+        <div class="card-header border-bottom p-3 d-flex justify-content-between align-items-center"
+             [ngClass]="{'bg-white': methodBlock.metodo !== 'OTRAS OPERACIONES', 'bg-light-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+          
           <div class="d-flex align-items-center">
-            <button type="button" class="btn btn-primary" (click)="exportarBitacoraPDF()" *ngIf="rowData.length > 0"
-              rippleEffect>
-              <span data-feather="download" class="mr-1"></span>Exportar PDF
-            </button>
-          </div>
-        </div>
-
-        <!-- Table Controls: Show Entries & Search -->
-        <div class="row justify-content-between align-items-center mx-0 p-1">
-          <div class="col-md-3">
-            <label class="d-flex align-items-center">
-              <span class="mr-2">Mostrar</span>
-              <select class="form-control" [(ngModel)]="basicSelectedOption">
-                <option value="10">10</option>
-                <option value="25">25</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-              </select>
-            </label>
-          </div>
-          <div class="col-md-4">
-            <div class="input-group input-group-merge">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'search'"></span></span>
-              </div>
-              <input [(ngModel)]="searchValue" name="searchValue" type="search" class="form-control"
-                placeholder="Buscar por usuario..." (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" />
+            <div class="avatar mr-2" [ngClass]="{'bg-light-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'bg-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+                <div class="avatar-content">
+                    <span [data-feather]="methodBlock.metodo !== 'OTRAS OPERACIONES' ? 'layers' : 'box'" 
+                          [ngClass]="{'text-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'text-white': methodBlock.metodo === 'OTRAS OPERACIONES'}"></span>
+                </div>
             </div>
+            <h5 class="mb-0 font-weight-bold" [ngClass]="{'text-dark': methodBlock.metodo !== 'OTRAS OPERACIONES', 'text-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+                {{ methodBlock.metodo || 'SIN MÉTODO' }}
+            </h5>
+          </div>
+
+          <!-- Total Invocations Badge (Aligned Right) -->
+          <div class="badge" [ngClass]="{'badge-light-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'badge-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+             {{ methodBlock.total_invocaciones }} Invocaciones
           </div>
         </div>
 
-
-        <table class="table table-hover table-striped bootstrap core-bootstrap user-table">
-          <thead>
-            <tr>
-              <th>
-                <div class="d-flex align-items-center">
-                  <span [data-feather]="'user'" class="mr-1 text-primary"></span>
-                  <span class="font-weight-bolder text-uppercase">USUARIO</span>
-                </div>
-              </th>
-            
-              <th style="width: 150px;">
-                <div class="d-flex align-items-center">
-                  <span [data-feather]="'database'" class="mr-1 text-warning"></span>
-                  <span class="font-weight-bolder text-uppercase">REGISTROS</span>
-                </div>
-              </th>
-              <th style="width: 100px;">
-                <div class="d-flex align-items-center justify-content-center">
-                  <span [data-feather]="'settings'" class="mr-1 text-secondary"></span>
-                  <span class="font-weight-bolder text-uppercase">ACCIÓN</span>
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let row of rowData | slice: (page - 1) * pageSize : page * pageSize; let i = index">
-              <td>
-                <div class="d-flex align-items-center">
-                  <div class="avatar mr-1 ml-0 bg-light-success">
-                    <div class="avatar-content">{{ row.id_usuario | initials }}</div>
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="thead-light">
+              <tr>
+                <th class="border-top-0 text-muted small font-weight-bold pl-3">FUNCIÓN</th>
+                <th class="border-top-0 text-muted small font-weight-bold">ÚLTIMO ACCESO</th>
+                <th class="border-top-0 text-muted small font-weight-bold">COSTO</th>
+                <th class="border-top-0 text-center text-muted small font-weight-bold">EJECUCIONES</th>
+                <th class="border-top-0 text-right text-muted small font-weight-bold pr-3">ACCIÓN</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let func of methodBlock.funciones">
+                <td class="py-2 pl-3">
+                  <div class="d-flex flex-column">
+                    <span class="font-weight-bold text-dark">{{ func.nombre_funcion }}</span>
+                    <small class="text-muted" *ngIf="methodBlock.metodo !== 'OTRAS OPERACIONES'">v{{ func.v }}</small>
                   </div>
-                  <div>
-                    <span class="font-weight-bold text-primary d-block">{{ row.id_usuario }}</span>
-                    <small class="text-muted">Usuario del sistema</small>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="badge badge-success">{{ row.actividad.length }}</div>
-              </td>
-            
-              <td class="text-center">
-                <div ngbDropdown container="body">
-                  <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm btn-flat-primary hide-arrow"
-                    rippleEffect>
-                    <span [data-feather]="'more-vertical'" [class]="'cursor-pointer'"></span>
+                </td>
+                <td class="py-2">
+                    <div class="d-flex align-items-center" *ngIf="func.ultimaFecha">
+                        <span [data-feather]="'calendar'" style="width: 14px; height: 14px;" class="text-muted mr-1"></span>
+                        <span class="text-secondary small">{{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                    </div>
+                    <span *ngIf="!func.ultimaFecha" class="text-muted small">-</span>
+                </td>
+                <td class="py-2 text-secondary">{{ func.costo_kb }}</td>
+                <td class="text-center py-2">
+                   <div class="badge badge-pill badge-light-info">{{ func.ejecuciones }}</div>
+                </td>
+                <td class="text-right py-2 pr-3">
+                  <button type="button" class="btn btn-sm btn-icon btn-flat-primary" (click)="ModalExePlay(ModalPlay, func)" ngbTooltip="Ver Logs">
+                    <span [data-feather]="'list'"></span>
                   </button>
-                  <div ngbDropdownMenu>
-                    <a (click)="ModalExePlay(ModalPlay,row)" ngbDropdownItem>
-                      <span [data-feather]="'eye'" [class]="'mr-50'"></span> Ver Registros
-                    </a>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Pagination -->
-        <div class="row mt-2" *ngIf="rowData.length > pageSize">
-          <div class="col-12">
-            <div class="d-flex justify-content-center">
-              <ngb-pagination [collectionSize]="rowData.length" [(page)]="page" [pageSize]="pageSize" [maxSize]="5"
-                [rotate]="true" [ellipses]="false" [boundaryLinks]="true" aria-label="Pagination">
-                <ng-template ngbPaginationFirst>
-                  <span data-feather="chevrons-left" class="font-weight-bolder"
-                    style="width: 18px; height: 18px;"></span>
-                </ng-template>
-                <ng-template ngbPaginationPrevious>
-                  <span data-feather="chevron-left" class="font-weight-bolder"
-                    style="width: 18px; height: 18px;"></span>
-                </ng-template>
-                <ng-template ngbPaginationNumber let-page>
-                  {{ page }}
-                </ng-template>
-                <ng-template ngbPaginationNext>
-                  <span data-feather="chevron-right" class="font-weight-bolder"
-                    style="width: 18px; height: 18px;"></span>
-                </ng-template>
-                <ng-template ngbPaginationLast>
-                  <span data-feather="chevrons-right" class="font-weight-bolder"
-                    style="width: 18px; height: 18px;"></span>
-                </ng-template>
-              </ngb-pagination>
-            </div>
-          </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-
-
       </div>
-    </section>
 
+       <!-- Empty State -->
+       <div *ngIf="ListarBitacora.length === 0" class="card">
+        <div class="card-body text-center p-5">
+          <div class="mb-2">
+            <span [data-feather]="'inbox'" style="width: 48px; height: 48px;" class="text-muted"></span>
+          </div>
+          <h4>No hay registros disponibles</h4>
+          <p class="text-muted">No se encontraron métodos ejecutados para esta aplicación.</p>
+        </div>
+      </div>
+
+    </section>
   </div>
 </div>
 
-<!-- Modal: View Records -->
+<!-- Modal: View Logs List -->
 <ng-template #ModalPlay let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <span data-feather="database" class="mr-2" [size]="20"></span>
-      Visualizar Registros
+  <div class="modal-header bg-white border-bottom">
+    <h5 class="modal-title d-flex align-items-center text-dark">
+      <span [data-feather]="'activity'" class="mr-2 text-primary"></span>
+      Detalle de Ejecuciones
     </h5>
     <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <section class="invoice-list-wrapper">
-
-      <!-- Vista de Actividades (Nivel 1) -->
-      <div *ngIf="!selectedActivity">
-        <div class="card">
-          <!-- Enhanced Modal Header -->
-          <div class="modal-records-header mb-3">
-            <div class="row align-items-center">
-              <!-- Title Section -->
-              <div class="col-lg-4 col-md-12 mb-3 mb-lg-0">
-                <div class="d-flex align-items-center">
-                  <div class="header-icon-wrapper mr-3">
-                    <div class="icon-circle bg-gradient-info">
-                      <span [data-feather]="'activity'" style="width: 24px; height: 24px;"></span>
-                    </div>
-                  </div>
-                  <div>
-                    <h4 class="mb-0 font-weight-bold text-dark">Actividades del Usuario</h4>
-                    <p class="mb-0 text-muted small">Resumen de ejecuciones por tipo</p>
-                  </div>
-                </div>
-              </div>
-              <!-- Statistics Cards -->
-              <div class="col-lg-4 col-md-6 mb-3 mb-lg-0">
-                <div class="stats-card">
-                  <div class="d-flex align-items-center justify-content-center">
-                    <div class="stat-icon bg-light-success mr-2">
-                      <span [data-feather]="'database'" style="width: 18px; height: 18px;"></span>
-                    </div>
-                    <div>
-                      <div class="stat-value">{{ rowDataRegistros.length }}</div>
-                      <div class="stat-label">Actividad{{ rowDataRegistros.length !== 1 ? 'es' : '' }}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- Search Box -->
-              <div class="col-lg-4 col-md-6">
-                <div class="search-box-enhanced">
-                  <div class="input-group">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text bg-transparent border-right-0">
-                        <span [data-feather]="'search'" class="search-icon"></span>
-                      </span>
-                    </div>
-                    <input [(ngModel)]="searchRegistros" name="searchRegistros" type="search"
-                      class="form-control border-left-0 border-right-0" placeholder="Filtrar por Acciones..."
-                      (keyup)="filterUpdateRegister($event)" (search)="filterUpdateRegister($event)" />
-                    <div class="input-group-append" *ngIf="searchRegistros">
-                      <span class="input-group-text bg-transparent border-left-0 cursor-pointer clear-btn"
-                        (click)="clearSearch()">
-                        <span [data-feather]="'x-circle'" class="clear-icon"></span>
-                      </span>
-                    </div>
-                    <div class="input-group-append" *ngIf="!searchRegistros">
-                      <span class="input-group-text bg-transparent border-left-0">
-                        <span [data-feather]="'filter'" class="filter-icon"></span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" style="max-height: 520px; overflow-y: auto;">
-            <table class="table table-hover table-striped bootstrap core-bootstrap user-table">
-              <thead>
-                <tr>
-                  <th>
-                    <div class="d-flex align-items-center">
-                  <span [data-feather]="'user'" class="mr-1 text-primary"></span>
-                  <span class="font-weight-bolder text-uppercase">ACCION</span>
-                    </div>
-                  </th>
-                  <th style="width: 200px;">
-                    <div class="d-flex align-items-center">
-                      <span [data-feather]="'calendar'" class="mr-1 text-warning"></span>
-                      <span class="font-weight-bolder text-uppercase">ÚLTIMA VEZ</span>
-                    </div>
-                  </th>
-                  <th style="width: 100px;">
-                    <div class="d-flex align-items-center justify-content-center">
-                      <span [data-feather]="'settings'" class="mr-1 text-secondary"></span>
-                      <span class="font-weight-bolder text-uppercase">TOTAL</span>
-                    </div>
-                  </th>
-                  <th style="width: 100px;">
-                    <div class="d-flex align-items-center justify-content-center">
-                      <span [data-feather]="'settings'" class="mr-1 text-secondary"></span>
-                      <span class="font-weight-bolder text-uppercase">ACCIÓN</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let row of rowDataRegistros | slice: (page - 1) * pageSize : page * pageSize; let i = index">
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <span [data-feather]="'list'" class="mr-1 text-secondary"></span>
-                      <span class="font-weight-bold text-primary">{{ row.nombre }}</span>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="badge badge-warning">
-                      <span [data-feather]="'calendar'" style="width: 14px; height: 14px; margin-right: 4px;"></span>
-                      {{ row.ultimaVez | date: 'dd/MM/yyyy HH:mm:ss' }}
-                    </div>
-                  </td>
-                  <td style="align-items: center;">
-                    <div class="d-flex align-items-center">
-                      <div class="badge badge-success">{{ row.total }}</div>
-                    </div>
-                  </td>
-                  
-                  <td class="text-center">
-                    <button (click)="viewActivityLogs(row)" class="btn btn-sm btn-primary" rippleEffect>
-                      <span [data-feather]="'zoom-in'" class="mr-50"></span>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="row mt-2" *ngIf="rowDataRegistros.length > pageSize">
-            <div class="col-12">
-              <div class="d-flex justify-content-center">
-                <ngb-pagination [collectionSize]="rowDataRegistros.length" [(page)]="page" [pageSize]="pageSize"
-                  [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" aria-label="Pagination">
-                  <ng-template ngbPaginationFirst>
-                    <span data-feather="chevrons-left" class="font-weight-bolder"
-                      style="width: 18px; height: 18px;"></span>
-                  </ng-template>
-                  <ng-template ngbPaginationPrevious>
-                    <span data-feather="chevron-left" class="font-weight-bolder"
-                      style="width: 18px; height: 18px;"></span>
-                  </ng-template>
-                  <ng-template ngbPaginationNumber let-page>
-                    {{ page }}
-                  </ng-template>
-                  <ng-template ngbPaginationNext>
-                    <span data-feather="chevron-right" class="font-weight-bolder"
-                      style="width: 18px; height: 18px;"></span>
-                  </ng-template>
-                  <ng-template ngbPaginationLast>
-                    <span data-feather="chevrons-right" class="font-weight-bolder"
-                      style="width: 18px; height: 18px;"></span>
-                  </ng-template>
-                </ngb-pagination>
-              </div>
-            </div>
-          </div>
+  
+  <div class="modal-body p-0" tabindex="0" ngbAutofocus>
+    <!-- Filter Header -->
+    <div class="bg-light p-2 border-bottom d-flex justify-content-between align-items-center">
+        <div class="ml-2">
+            <span class="text-muted small">Total: </span>
+            <span class="font-weight-bold text-dark">{{ rowDataRegistros.length }}</span>
         </div>
-      </div>
-
-      <!-- Vista de Logs (Nivel 2) -->
-      <div *ngIf="selectedActivity">
-        <div class="card">
-          <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
-            <h4 class="mb-0 font-weight-bold text-dark">
-              <span [data-feather]="'file-text'" class="mr-1"></span>
-              Logs para: <span class="text-primary">{{ selectedActivity.nombre }}</span>
-            </h4>
-            <button (click)="goBackToActivities()" class="btn btn-sm btn-outline-secondary">
-              <span [data-feather]="'arrow-left'" class="mr-50"></span> Volver a Actividades
-            </button>
-          </div>
-
-          <div class="row" style="max-height: 520px; overflow-y: auto;">
-            <table class="table table-hover table-striped bootstrap core-bootstrap user-table">
-              <thead>
-                <tr>
-                  <!-- <th>
-                    <div class="d-flex align-items-center">
-                      <span [data-feather]="'hash'" class="mr-1 text-primary"></span>
-                      <span class="font-weight-bolder text-uppercase">HASH</span>
-                    </div>
-                  </th> -->
-                  <th style="width: 200px;">
-                    <div class="d-flex align-items-center">
-                      <span [data-feather]="'calendar'" class="mr-1 text-warning"></span>
-                      <span class="font-weight-bolder text-uppercase">FECHA</span>
-                    </div>
-                  </th>
-                  <th style="width: 150px;">
-                    <div class="d-flex align-items-center">
-                      <span [data-feather]="'clock'" class="mr-1 text-info"></span>
-                      <span class="font-weight-bolder text-uppercase">DURACIÓN</span>
-                    </div>
-                  </th>
-                  <th style="width: 100px;">
-                    <div class="d-flex align-items-center justify-content-center">
-                      <span [data-feather]="'settings'" class="mr-1 text-secondary"></span>
-                      <span class="font-weight-bolder text-uppercase">ACCIÓN</span>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let log of selectedActivityLogs | slice: (page - 1) * pageSize : page * pageSize; let i = index">
-                  <!-- <td>
-                    <div class="d-flex align-items-center">
-                      <span class="font-weight-bold text-monospace text-secondary">{{ log.hash }}</span>
-                    </div>
-                  </td> -->
-                  <td>
-                    <div class="badge badge-light-warning">
-                      <span [data-feather]="'calendar'" style="width: 14px; height: 14px; margin-right: 4px;"></span>
-                      {{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}
-                    </div>
-                  </td>
-                  <td>
-                    <div class="badge badge-light-info">
-                      <span [data-feather]="'clock'" style="width: 14px; height: 14px; margin-right: 4px;"></span>
-                      {{ formatDuration(log.duracion) }}
-                    </div>
-                  </td>
-                  <td class="text-center">
-                    <button *ngIf="log.contenido || log.consulta"
-                    (click)="ModalVerConsulta(ModalConsulta, log)" class="btn btn-sm btn-primary" rippleEffect>
-                      <span [data-feather]="'eye'" class="mr-50"></span>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <div class="input-group input-group-sm w-50 mr-2"> 
+            <input type="text" class="form-control border-right-0" placeholder="Buscar..." [(ngModel)]="searchRegistros">
+            <div class="input-group-append">
+                <span class="input-group-text bg-white border-left-0"><span [data-feather]="'search'" style="width: 14px;"></span></span>
+            </div>
         </div>
-      </div>
-    </section>
-  </div>
-</ng-template>
-
-<!-- Modal: View SQL Query -->
-<ng-template #ModalConsulta let-modal >
-  <div class="modal-header bg-light py-2">
-    <h4 class="modal-title font-weight-bolder">
-      <span data-feather="file-text" class="mr-1 text-primary"></span>
-      Detalle del Registro
-    </h4>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Hash Section -->
-    <div class="d-flex align-items-center justify-content-between bg-light p-2 rounded mb-3 border">
-      <div class="d-flex align-items-center">
-        <span data-feather="key" class="mr-2 text-secondary"></span>
-        <div class="text-monospace text-muted" style="font-size: 0.8rem;">{{ detailedLog?.hash }}</div>
-      </div>
-      <button class="btn btn-sm btn-outline-primary btn-icon" (click)="copyToClipboard(detailedLog?.hash)" rippleEffect
-        placement="top" ngbTooltip="Copiar Hash">
-        <span data-feather="copy" [size]="16"></span>
-      </button>
     </div>
 
-    <!-- Tabs for Consulta and Contenido -->
-    <ul ngbNav #nav="ngbNav" class="nav-tabs nav-justified">
-      <li [ngbNavItem]="1">
-        <a ngbNavLink>
-          <span data-feather="database" class="mr-1"></span> Consulta
-        </a>
-        <ng-template ngbNavContent>
-          <div class="card mt-2">
-            <pre class="p-2 m-0 bg-dark text-light rounded" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
-          </div>
-        </ng-template>
-      </li>
-      <li [ngbNavItem]="2">
-        <a ngbNavLink>
-          <span data-feather="package" class="mr-1"></span> Contenido
-        </a>
-        <ng-template ngbNavContent>
-          <div class="card mt-2">
-            <pre class="p-2 m-0 bg-dark text-light rounded" style="max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
-          </div>
-        </ng-template>
-      </li>
-    </ul>
-    <div [ngbNavOutlet]="nav" class="mt-2"></div>
-
+    <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+      <table class="table table-hover table-striped mb-0">
+        <thead class="sticky-top bg-white shadow-sm">
+          <tr>
+            <th class="border-top-0 text-muted small pl-3">FECHA</th>
+            <th class="border-top-0 text-muted small">HASH OPERACIÓN</th>
+            <th class="border-top-0 text-right text-muted small pr-3 text-center">ACCIÓN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let log of rowDataRegistros">
+            <td class="py-2 pl-3">
+              <span class="text-dark">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+            </td>
+            <td class="py-2">
+              <div class="d-flex align-items-center">
+                <span class="font-family-monospace text-secondary small mr-2" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">{{ log.hash }}</span>
+                <a href="javascript:void(0)" class="text-muted" (click)="copyToClipboard(log.hash)">
+                    <span [data-feather]="'copy'" style="width: 12px; height: 12px;"></span>
+                </a>
+              </div>
+            </td>
+            <td class="text-right py-2 pr-3">
+              <div class="d-flex align-items-center justify-content-end">
+                <span class="font-weight-bold mr-3" [ngClass]="{'text-success': log.segundos < 0.5, 'text-warning': log.segundos >= 0.5 && log.segundos < 2, 'text-danger': log.segundos >= 2}">
+                    {{ log.formattedDuration }}
+                </span>
+                <button type="button" class="btn btn-sm btn-icon btn-flat-primary" (click)="openDetail(log, ModalDetalle)" ngbTooltip="Ver Detalle Completo">
+                    <span [data-feather]="'eye'"></span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="modal.close('Accept click')" rippleEffect>
-      <span data-feather="x-circle" class="mr-1"></span>
+  
+  <div class="modal-footer bg-light p-1">
+    <button type="button" class="btn btn-sm btn-outline-secondary" (click)="modal.close('Accept click')" rippleEffect>
       Cerrar
     </button>
   </div>
 </ng-template>
+
+<!-- Modal: View Detailed JSON -->
+<ng-template #ModalDetalle let-modal>
+    <div class="modal-header bg-white border-bottom">
+      <h5 class="modal-title d-flex align-items-center">
+        <span [data-feather]="'file-text'" class="mr-2 text-primary"></span>
+        Detalle de Transacción
+      </h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')">
+        <span>&times;</span>
+      </button>
+    </div>
+    <div class="modal-body bg-light p-3" tabindex="0" ngbAutofocus>
+        
+        <!-- Info Header -->
+        <div class="card mb-3 shadow-none border bg-white">
+            <div class="card-body p-3">
+                 <div class="row">
+                     <div class="col-md-4 border-right">
+                         <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Función</small>
+                         <span class="text-dark font-weight-bold text-truncate d-block" [title]="currentFunctionData?.nombre_funcion">{{ currentFunctionData?.nombre_funcion }}</span>
+                     </div>
+                     <div class="col-md-4 border-right pl-3">
+                         <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Fecha y Hora</small>
+                         <span class="text-dark font-weight-bold">{{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                     </div>
+                     <div class="col-md-4 pl-3">
+                         <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Duración</small>
+                         <span class="font-weight-bold" [ngClass]="{'text-success': selectedLog?.segundos < 0.5, 'text-warning': selectedLog?.segundos >= 0.5 && selectedLog?.segundos < 2, 'text-danger': selectedLog?.segundos >= 2}">
+                            {{ selectedLog?.formattedDuration }}
+                         </span>
+                     </div>
+                 </div>
+                 
+                 <div class="mt-2 pt-2 border-top d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <small class="text-muted mr-2 font-weight-bold">ID:</small>
+                        <span class="font-family-monospace small text-dark">{{ ObjDetalle._id || 'N/A' }}</span>
+                        <a href="javascript:void(0)" class="ml-2 text-muted" (click)="copyToClipboard(ObjDetalle._id)" *ngIf="ObjDetalle._id">
+                            <span [data-feather]="'copy'" style="width: 12px;"></span>
+                        </a>
+                    </div>
+                    <div class="badge badge-light-secondary d-flex align-items-center">
+                        <span [data-feather]="'hard-drive'" style="width: 10px;" class="mr-1"></span>
+                        {{ ObjDetalle.costo || 'N/A' }}
+                     </div>
+                 </div>
+            </div>
+        </div>
+  
+        <div class="row">
+            <div class="col-md-6">
+                <!-- Consulta / Input -->
+                <div class="card h-100 shadow-none border">
+                    <div class="card-header bg-white p-2 border-bottom">
+                        <h6 class="mb-0 font-weight-bold text-secondary d-flex align-items-center">
+                            <span [data-feather]="'arrow-right-circle'" class="mr-2 text-muted" style="width: 14px;"></span>
+                            Entrada (Consulta)
+                        </h6>
+                    </div>
+                    <div class="card-body p-0 position-relative">
+                        <pre class="m-0 p-2 text-muted small" style="height: 400px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <!-- Contenido / Output -->
+                <div class="card h-100 shadow-none border">
+                    <div class="card-header bg-white p-2 border-bottom">
+                        <h6 class="mb-0 font-weight-bold text-info d-flex align-items-center">
+                            <span [data-feather]="'arrow-left-circle'" class="mr-2 text-info" style="width: 14px;"></span>
+                            Salida (Contenido)
+                        </h6>
+                    </div>
+                    <div class="card-body p-0 position-relative">
+                        <pre class="m-0 p-2 text-muted small" style="height: 400px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+    </div>
+    <div class="modal-footer bg-white border-top p-2">
+        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+    </div>
+  </ng-template>

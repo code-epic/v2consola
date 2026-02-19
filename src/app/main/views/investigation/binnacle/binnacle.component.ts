@@ -78,18 +78,15 @@ export class BinnacleComponent implements OnInit {
   async CargarBitacora() {
     this.xAPI.funcion = environment.functions.CONSULTAR_GUPO_BITACORA;
     this.xAPI.parametros = ''
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      async (data) => {
-        console.log(data)
-        if (data == null) return;
-        await data.map((e) => {
-          this.ListarBitacora.push(e);
-        });
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data: any[]) => {
+        if (!data) return;
+        this.ListarBitacora = data;
         this.rowData = this.ListarBitacora;
         this.tempData = this.rowData;
       },
       (error) => {
-        console.log(error)
+        console.error(error);
       }
     )
   }

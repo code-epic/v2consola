@@ -21,11 +21,48 @@ import { CompresionService } from "@services/util/compresion.service";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-interface MiObjeto {
-  aplicacion?: string
-  usuarios?: []
-  totalUsuarios?: string
+export interface IActividad {
+  fecha: string;
+  metodo: string;
+  total: number;
 }
+
+export interface IUsuarioBitacora {
+  actividad: IActividad[];
+  id_origen: string;
+  login: string;
+  nombre: string;
+  subtotal_logs: number;
+}
+
+export interface IAplicacionBitacora {
+  aplicacion: string;
+  codigo_app: string;
+  conteo_usuarios: number;
+  usuarios: IUsuarioBitacora[];
+}
+
+export interface ILog {
+  fecha: string;
+  hash: string;
+  segundos: number;
+}
+
+export interface IFuncion {
+  costo_kb: string;
+  ejecuciones: number;
+  logs: ILog[];
+  nombre_funcion: string;
+  v: string;
+  ultimaFecha?: string;
+}
+
+export interface IMetodoBitacora {
+  funciones: IFuncion[];
+  metodo: string | null;
+  total_invocaciones: number;
+}
+
 
 @Component({
   selector: 'app-binnacle-applications',
@@ -75,14 +112,21 @@ export class BinnacleApplicationsComponent implements OnInit {
   public searchValue = '';
   public searchRegistros = '';
 
-  public urlID: MiObjeto = {}
+  public urlID: Partial<IAplicacionBitacora> = {}
 
   // public
   public contentHeader: object;
   public basicSelectedOption: number = 7;
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
- 
+
+  public ObjDetalle: any = {};
+
+  // State for Modal Navigation
+  public currentFunctionData: IFuncion | null = null;
+  public currentModalTemplate: any = null;
+  public selectedLog: any = null;
+
 
   constructor(
     private taskService: TaskService,
@@ -96,34 +140,37 @@ export class BinnacleApplicationsComponent implements OnInit {
 
   async ngOnInit() {
     // content header
-  
+
     const datoBase64 = this.route.snapshot.paramMap.get('id');
 
     if (datoBase64) {
       const datoDecodificado = atob(datoBase64);
-      const objetoRecibido: MiObjeto = JSON.parse(datoDecodificado);
+      const objetoRecibido: IAplicacionBitacora = JSON.parse(datoDecodificado);
       this.urlID = objetoRecibido;
 
       // Verificar si existe antes de acceder
       if (!objetoRecibido.aplicacion) {
         this.utilService.AlertMini('top-end', 'error', 'La propiedad aplicacion no existe en el objeto recibido.', 3000)
       }
+
+      console.log(this.urlID.usuarios[0].login);
     }
 
-    this.urlID.usuarios.forEach(e => {
-      this.ListarBitacora.push(e);
-    });
+    // this.urlID.usuarios?.forEach(e => {
+    //   this.ListarBitacora.push(e);
+    // });
 
-    this.rowData = this.ListarBitacora;
-    this.tempData = this.rowData;
+    // this.rowData = this.ListarBitacora;
+    // this.tempData = this.rowData;
+    this.LoadData();
 
-      this.contentHeader = {
+    this.contentHeader = {
       headerTitle: "Auditoría",
       actionButton: true,
       breadcrumb: {
         type: "",
         links: [
-        {
+          {
             name: 'Principal',
             isLink: true,
             link: '/home',
@@ -147,14 +194,70 @@ export class BinnacleApplicationsComponent implements OnInit {
 
   }
 
-  ModalExePlay(modal: any, data: any) {
+  LoadData() {
+    this.xAPI = {} as IAPICore;
+
+    this.xAPI.funcion = "_SYS_CLogPatterns";
+    this.xAPI.parametros = this.urlID.usuarios[0].login;
+    this.xAPI.valores = {};
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data: IMetodoBitacora[]) => {
+        const definedMethods: IMetodoBitacora[] = [];
+        const undefinedFunctions: IFuncion[] = [];
+        let undefinedInvocations = 0;
+
+        if (data && Array.isArray(data)) {
+          data.forEach(m => {
+            // Calcular log más reciente
+            if (m.funciones) {
+              m.funciones.forEach(f => {
+                if (f.logs && f.logs.length > 0) {
+                  // Ordenar por fecha desc para encontrar el último
+                  // Asumiendo formato ISO que permite comparación de strings directa, o usando Date
+                  const latest = f.logs.reduce((prev, current) => (prev.fecha > current.fecha) ? prev : current);
+                  f.ultimaFecha = latest.fecha;
+                }
+              });
+            }
+
+            if (m.metodo && m.metodo.trim() !== '') {
+              definedMethods.push(m);
+            } else {
+              if (m.funciones) {
+                undefinedFunctions.push(...m.funciones);
+              }
+              undefinedInvocations += (m.total_invocaciones || 0);
+            }
+          });
+        }
+
+        if (undefinedFunctions.length > 0) {
+          definedMethods.push({
+            metodo: 'OTRAS OPERACIONES',
+            funciones: undefinedFunctions,
+            total_invocaciones: undefinedInvocations
+          });
+        }
+
+        this.ListarBitacora = definedMethods;
+        this.rowData = this.ListarBitacora;
+        this.tempData = this.rowData;
+      });
+  }
+
+  ModalExePlay(modal: any, data: IFuncion) {
+    this.currentModalTemplate = modal;
+    this.currentFunctionData = data;
     this.selectedActivity = null; // Resetea la vista al abrir el modal
-    this.ListarBitacoraRegistros = data.actividad;
+    this.ListarBitacoraRegistros = data.logs.map(log => ({
+      ...log,
+      formattedDuration: this.formatSeconds(log.segundos)
+    }));
     this.rowDataRegistros = [...this.ListarBitacoraRegistros];
     this.tempDataRegistros = [...this.ListarBitacoraRegistros]; // Guardar copia para el filtro
     this.modalService.open(modal, {
       centered: true,
-      size: 'xl',
+      size: 'lg',
       backdrop: false,
       keyboard: false,
       windowClass: 'fondo-modal',
@@ -466,11 +569,92 @@ export class BinnacleApplicationsComponent implements OnInit {
     doc.save(fileName);
   }
 
+  formatSeconds(seconds: number): string {
+    if (!seconds) return '0 s';
+    if (seconds < 0.000001) return `${(seconds * 1000000000).toFixed(0)} ns`;
+    if (seconds < 0.001) return `${(seconds * 1000000).toFixed(2)} μs`;
+    if (seconds < 1) return `${(seconds * 1000).toFixed(2)} ms`;
+    return `${seconds.toFixed(2)} s`;
+  }
+
   decodificar(cadena: string): string {
     try {
       return atob(cadena);
     } catch (e) {
       return 'Error al decodificar la cadena';
+    }
+  }
+
+  openDetail(log: any, modal: any) {
+    this.selectedLog = log; // Save context
+    const hash = log.hash;
+    this.xAPI.funcion = "_SYS_CLogPatternsHash";
+    this.xAPI.parametros = hash;
+    this.xAPI.valores = {};
+
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data) => {
+        if (data && data.length > 0) {
+          this.ObjDetalle = data[0];
+
+          this.decodedConsulta = this.ObjDetalle.consulta ? this.decodificar(this.ObjDetalle.consulta) : '{}';
+          try {
+            this.decodedConsulta = JSON.stringify(JSON.parse(this.decodedConsulta), null, 2);
+          } catch (e) { }
+
+          if (this.ObjDetalle.contenido && this.ObjDetalle.contenido.Data) {
+            let encodedData = this.ObjDetalle.contenido.Data.replace(/\s/g, '');
+            try {
+              const firstPass = atob(encodedData);
+              // Check if it's double encoded (starts with "H4s" which is base64 for gzip header)
+              if (firstPass.length > 3 && firstPass.substring(0, 3) === 'H4s') {
+                encodedData = firstPass;
+              }
+            } catch (e) { console.error('Decode check failed', e); }
+
+            const unzip = this.compresionService.descomprimirZip(encodedData);
+            this.decodedContenido = unzip;
+
+            if (unzip) {
+              try {
+                this.decodedContenido = JSON.stringify(JSON.parse(unzip), null, 2);
+              } catch (e) { }
+            } else {
+              this.decodedContenido = "Error: No se pudo descomprimir el contenido.";
+            }
+          } else {
+            this.decodedContenido = '{}';
+          }
+
+          // Cierra el modal anterior
+          this.modalService.dismissAll();
+
+          // Abre el nuevo modal con las opciones solicitadas
+          const modalRef = this.modalService.open(modal, {
+            size: 'xl',
+            centered: true,
+            backdrop: false,
+            keyboard: false,
+            windowClass: 'fondo-modal'
+          });
+
+          // Al cerrar, reabrir el anterior
+          modalRef.result.then(() => {
+            this.reopenPrevious();
+          }, () => {
+            this.reopenPrevious();
+          });
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    );
+  }
+
+  reopenPrevious() {
+    if (this.currentModalTemplate && this.currentFunctionData) {
+      this.ModalExePlay(this.currentModalTemplate, this.currentFunctionData);
     }
   }
 

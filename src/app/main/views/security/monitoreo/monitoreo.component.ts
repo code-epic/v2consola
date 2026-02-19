@@ -111,9 +111,6 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
             },
             error => {
                 console.error('Error fetching connections:', error);
-
-                // Fallback to Mock Data if API fails (Optional, but good for dev)
-                // For now, just log error.
             }
         );
     }
@@ -152,7 +149,6 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
         setTimeout(() => feather.replace(), 100);
     }
 
-    // Select client on click (Left Click now)
     selectClient(client: Client) {
         this.selectedClient = client;
     }
@@ -204,7 +200,4 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
     viewDetails() {
         console.log('Viewing details for:', this.selectedClient);
     }
-
-    // Helper for angular template to calculate position (if needed inline, otherwise SCSS handles it)
-    // We will likely use SCSS for circular distribution
 }

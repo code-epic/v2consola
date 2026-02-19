@@ -1,4 +1,5 @@
-<!-- Contenedor principal con posición fija -->
+
+
 <div class="main-container">
   <!-- vertical-layout -->
   <ng-container *ngIf="coreConfig.layout.type === 'vertical' && showContent">
@@ -12,7 +13,6 @@
   </ng-container>
   <!-- / horizontal-layout -->
 
-  <!-- theme customizer -->
   <core-sidebar
     name="themeCustomizer"
     class="customizer d-none d-md-block"
@@ -28,13 +28,11 @@
     <core-theme-customizer></core-theme-customizer>
   </core-sidebar>
   <!-- <app-license-bunker></app-license-bunker> -->
-  <!-- / theme customizer -->
 
-  <!-- Bloqueo de herramientas de desarrollo -->
   <div *ngIf="!showContent" class="blocked-screen">
     <div class="blocked-content">
       <img src="assets/images/logo/logo.png" alt="Acceso restringido" class="blocked-image">
-      <h1>Acceso restringido</h1>
+      <h1>Acceso Restringido</h1>
       <p>El uso de herramientas de desarrollo no está permitido en esta aplicación.</p>
     </div>
   </div>
