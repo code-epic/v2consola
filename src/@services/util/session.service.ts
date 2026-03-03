@@ -17,7 +17,8 @@ export enum ConnectionStatus {
   CONNECTING = 1,
   CONNECTED = 2,
   RECONNECTING = 3,
-  ERROR = 4 // Para errores irrecuperables después de los reintentos
+  ERROR = 4, // Para errores irrecuperables después de los reintentos
+  POSSIBLE_CERT_ERROR = 5 // Cierre inmediato (probablemente problema de certificado SSL)
 }
 
 
@@ -42,6 +43,8 @@ export class SessionService implements OnDestroy {
   private maxReconnectAttempts = 5; // Límite de intentos de reconexión
   private initialReconnectInterval = 1000; // Intervalo inicial de reconexión en ms (1 segundo)
   private maxReconnectInterval = 30000; // Intervalo máximo de reconexión (30 segundos)
+
+  private hasConnectedOnce: boolean = false;
 
   private messageBuffer: string[] = []; // Buffer para mensajes que no se pudieron enviar
 
@@ -89,7 +92,7 @@ export class SessionService implements OnDestroy {
   public connect(userId: string, userName: string): void {
     if (sessionStorage.getItem('token') !== undefined) {
       const token: any = jwt_decode(sessionStorage.getItem('token'));
-      
+
       this.userId = userId;
       this.userName = token.Usuario.usuario;;
 
@@ -114,6 +117,7 @@ export class SessionService implements OnDestroy {
         //  console.log('WebSocketService: Conexión establecida.', event);
         this.connectionStatusSubject.next(ConnectionStatus.CONNECTED);
         this.reconnectAttempts = 0;
+        this.hasConnectedOnce = true;
 
         // Mensaje inicial para que tu backend Go registre o actualice la conexión
         const initialMsg: InitialClientMessage = {
@@ -131,6 +135,12 @@ export class SessionService implements OnDestroy {
       this.ws.onclose = (event) => {
         // console.warn('WebSocketService: Conexión cerrada:', event);
         this.connectionStatusSubject.next(ConnectionStatus.DISCONNECTED);
+
+        // Evalúa si es un error probable de certificado: Se cierra abruptamente sin haber conectado nunca en el primer intento.
+        if (!event.wasClean && !this.hasConnectedOnce && this.reconnectAttempts === 0) {
+          console.warn('WebSocketService: Posible error de certificado SSL detectado.');
+          this.connectionStatusSubject.next(ConnectionStatus.POSSIBLE_CERT_ERROR);
+        }
 
         if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
           this.reconnectAttempts++;

@@ -126,7 +126,10 @@ export class WsSandraService {
         this.wsStatusSubscription = this.sessionService.connectionStatus$.subscribe(status => {
             this.connectionStatus = status;
             // console.log('ChatComponent: Estado de conexión actualizado:', ConnectionStatus[status]);
-            // Puedes añadir más lógica aquí para mostrar spinners, mensajes de UI, etc.
+
+            if (status === ConnectionStatus.POSSIBLE_CERT_ERROR) {
+                this.ShowCertErrorModal();
+            }
         });
 
         // 3. Conectar al sessionService al iniciar el componente
@@ -247,6 +250,60 @@ export class WsSandraService {
             allowEscapeKey: true,
         }).then((result) => {
 
+        });
+    }
+
+    ShowCertErrorModal(): void {
+        this.zone.run(() => {
+            let hostname = window.location.hostname;
+            // Para ajustar subdominios
+            if (hostname.startsWith('consola.')) {
+                hostname = hostname.replace('consola.', '');
+            }
+
+            const targetUrl = `https://${hostname}:8443`;
+
+            Swal.fire({
+                title: '⚠️ Excepción de Seguridad Requerida',
+                html: `
+                    <div style="font-size: 15px; text-align: left; line-height: 1.5;">
+                        <p>La conexión en tiempo real fue bloqueada por el entorno cerrado (iframe/sandbox).</p>
+                        <p>El servidor local requiere autorizar un certificado <b>autofirmado</b> que tu navegador o entorno está rechazando.</p>
+                        <br/>
+                        <p><strong>Pasos para autorizar:</strong></p>
+                        <ol style="margin-top: 5px;">
+                            <li>Copia la dirección mostrada abajo (o usa el botón rojo).</li>
+                            <li>Abre tu navegador (Chrome, Firefox, Safari) y pega esta dirección.</li>
+                            <li>Selecciona <i>"Aceptar el riesgo y continuar"</i> o <i>"Configuración Avanzada &rarr; Continuar"</i>.</li>
+                            <li>Vuelve a esta pantalla y recarga la interfaz por completo.</li>
+                        </ol>
+                        <div style="margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <input type="text" id="certUrlInput" value="${targetUrl}" readonly style="width: 100%; text-align: center; padding: 10px; font-weight: bold; border: 1px solid #ccc; border-radius: 5px; background: #e9ecef; color: #495057; outline: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+                        </div>
+                    </div>
+                `,
+                width: 650,
+                icon: 'error',
+                showConfirmButton: true,
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: '<i class="fa fa-copy"></i> Copiar Dirección e Intentar Abrir',
+                cancelButtonText: 'Cerrar',
+                allowOutsideClick: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    try {
+                        navigator.clipboard.writeText(targetUrl).catch(e => console.warn('No se pudo copiar: ', e));
+                    } catch (e) { }
+
+                    try {
+                        window.open(targetUrl, '_blank');
+                    } catch (e) {
+                        console.error('No se pudo abrir la ventana, restricciones del iframe activas.');
+                    }
+                }
+            });
         });
     }
 }
