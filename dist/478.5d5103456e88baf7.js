@@ -1121,13 +1121,14 @@ class AuthLoginV1Component {
 
   _unsubscribeAll;
   showTotpSection = false;
-  otp = new Array(6).fill('');
+  otp = new Array(6).fill("");
   isOtpInvalid = false;
-  tempAuthToken = ''; // To store the token from the first login step
+  tempAuthToken = ""; // To store the token from the first login step
 
-  xWidth = '660px';
+  xWidth = "660px";
   version = "1.0.0";
   fecha = "";
+  validar_token = null;
   /**
    * Constructor
    *
@@ -1170,6 +1171,7 @@ class AuthLoginV1Component {
       }
     };
     this.bdv = this.apiService.ConsultaSistemaBDV();
+    this.validar_token = sessionStorage.getItem("token");
   } // convenience getter for easy access to form fields
 
 
@@ -1193,7 +1195,7 @@ class AuthLoginV1Component {
     this.getCurrentDate();
     this.fechafinal = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime;
     this.fechaX = this.utilservice.FechaMoment(new Date(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime));
-    this.build = this.utilservice.FechaMomentL(new Date(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime)).replace(/\//g, '.');
+    this.build = this.utilservice.FechaMomentL(new Date(environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.buildDateTime)).replace(/\//g, ".");
     this.version = environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.version;
     this.loginForm = this._formBuilder.group({
       email: ["", [_angular_forms__WEBPACK_IMPORTED_MODULE_10__.Validators.required]],
@@ -1203,6 +1205,11 @@ class AuthLoginV1Component {
     this._coreConfigService.config.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_11__.takeUntil)(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config;
     });
+
+    if (this.validar_token) {
+      this.loginService.Token = this.loginService.getUserDecrypt(this.validar_token);
+      this.loginService.obenterAplicacion(this.validar_token);
+    }
   }
 
   getCurrentDate() {
@@ -1247,7 +1254,7 @@ class AuthLoginV1Component {
   }
 
   loginOpt() {
-    this.xWidth = '660px';
+    this.xWidth = "660px";
     this.loading = true;
     console.log(this.usuario, this.clave);
     this.loginService.getLogin(this.usuario, this.clave).subscribe(itk => {
@@ -1257,7 +1264,7 @@ class AuthLoginV1Component {
       this.tempAuthToken = itk.token;
 
       if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
-        this.xWidth = '840px';
+        this.xWidth = "840px";
         this.showTotpSection = true;
       } else {
         console.log(this.tempAuthToken);
@@ -1274,7 +1281,7 @@ class AuthLoginV1Component {
     if (this.bdv && this.usuario) {
       const prefix = this.usuario.substring(0, 2).toUpperCase();
 
-      if (prefix === 'NM' || prefix === 'CT') {
+      if (prefix === "NM" || prefix === "CT") {
         this.usuario = this.usuario.toUpperCase();
       }
     }
@@ -1287,11 +1294,11 @@ class AuthLoginV1Component {
 
   onPaste(event) {
     event.preventDefault();
-    const pastedData = event.clipboardData?.getData('text').trim(); // Check if pasted data is a 6-digit number
+    const pastedData = event.clipboardData?.getData("text").trim(); // Check if pasted data is a 6-digit number
 
     if (pastedData && /^[0-9]{6}$/.test(pastedData)) {
-      const inputs = Array.from(document.querySelectorAll('.otp-box'));
-      const digits = pastedData.split('');
+      const inputs = Array.from(document.querySelectorAll(".otp-box"));
+      const digits = pastedData.split("");
       inputs.forEach((input, index) => {
         if (digits[index]) {
           input.value = digits[index];
@@ -1311,15 +1318,15 @@ class AuthLoginV1Component {
 
   goBackToLogin() {
     this.showTotpSection = false;
-    this.tempAuthToken = '';
+    this.tempAuthToken = "";
     this.isOtpInvalid = false;
-    this.otp = new Array(6).fill('');
-    this.xWidth = '660px'; // Also clear the actual input fields in the DOM
+    this.otp = new Array(6).fill("");
+    this.xWidth = "660px"; // Also clear the actual input fields in the DOM
 
-    const inputs = document.querySelectorAll('.otp-box');
-    inputs.forEach(i => i.value = ''); // Optionally, focus the username/email field again
+    const inputs = document.querySelectorAll(".otp-box");
+    inputs.forEach(i => i.value = ""); // Optionally, focus the username/email field again
 
-    const emailInput = this.document.querySelector('#login-email');
+    const emailInput = this.document.querySelector("#login-email");
 
     if (emailInput) {
       emailInput.focus();
@@ -1331,7 +1338,7 @@ class AuthLoginV1Component {
     const value = input.value; // Limpiar si no es número
 
     if (!/^[0-9]$/.test(value)) {
-      input.value = '';
+      input.value = "";
       return;
     } // Mover al siguiente si hay valor
 
@@ -1346,40 +1353,40 @@ class AuthLoginV1Component {
   onKeydown(event, prevInput) {
     const input = event.target;
 
-    if (event.key === 'Backspace') {
+    if (event.key === "Backspace") {
       if (!input.value && prevInput) {
         prevInput.focus(); // Opcional: borrar el valor del anterior al retroceder
-        // prevInput.value = ''; 
+        // prevInput.value = '';
       }
     }
   }
 
   checkAndVerify() {
     // Obtenemos todos los valores directamente del DOM para máxima precisión
-    const inputs = Array.from(document.querySelectorAll('.otp-box'));
-    const code = inputs.map(i => i.value).join('');
+    const inputs = Array.from(document.querySelectorAll(".otp-box"));
+    const code = inputs.map(i => i.value).join("");
 
     if (code.length === 6) {
-      this.otp = code.split(''); // Sincronizamos con tu lógica existente
+      this.otp = code.split(""); // Sincronizamos con tu lógica existente
 
       this.Continuar();
     }
   } // Modifica tu handleOtpError para limpiar los inputs físicos
 
 
-  handleOtpError(alertMessage = 'Código incorrecto') {
+  handleOtpError(alertMessage = "Código incorrecto") {
     this.isOtpInvalid = true;
-    const inputs = document.querySelectorAll('.otp-box');
-    inputs.forEach(i => i.value = '');
+    const inputs = document.querySelectorAll(".otp-box");
+    inputs.forEach(i => i.value = "");
     inputs[0].focus();
-    inputs.forEach(i => i.value = ''); // Usamos setTimeout para asegurar que el foco se aplique después de que Angular
+    inputs.forEach(i => i.value = ""); // Usamos setTimeout para asegurar que el foco se aplique después de que Angular
     // haya actualizado la vista y aplicado la clase 'shake'.
 
     setTimeout(() => inputs[0]?.focus(), 0); // Quitar la clase de animación después de 500ms para poder repetirla
 
     setTimeout(() => this.isOtpInvalid = false, 500);
     setTimeout(() => this.isOtpInvalid = false, 500);
-    this.utilservice.AlertMini('top-end', 'error', alertMessage, 4000);
+    this.utilservice.AlertMini("top-end", "error", alertMessage, 4000);
   }
   /**
    * Validates the completed OTP code with the backend.
@@ -1387,7 +1394,7 @@ class AuthLoginV1Component {
 
 
   Continuar() {
-    const otpCode = this.otp.join('');
+    const otpCode = this.otp.join("");
 
     if (otpCode.length !== 6 || this.loading) {
       // Evita re-entrada si ya está cargando
@@ -1399,21 +1406,21 @@ class AuthLoginV1Component {
     this.apiService.Validar_TOTP(otpCode, this.tempAuthToken).subscribe(data => {
       this.loading = false;
 
-      if (data.msj === 'Ok') {
+      if (data.msj === "Ok") {
         this.apiService.MultipleSesion(this.tempAuthToken).subscribe(xdata => {
           console.log(xdata);
 
-          if (xdata.msj === 'Ok') {
+          if (xdata.msj === "Ok") {
             this.loginService.Iniciar(this.tempAuthToken);
           } else if (xdata.tipo == 99) {
             this.handleOtpError(xdata.msj);
             this.goBackToLogin();
           } else {
-            this.handleOtpError('Error al validar el código. Consulta al administrador');
+            this.handleOtpError("Error al validar el código. Consulta al administrador");
           }
         }, error => {});
       } else {
-        this.handleOtpError('Error de validacion');
+        this.handleOtpError("Error de validacion");
       }
     }, e => {
       this.loading = false;
@@ -1424,7 +1431,7 @@ class AuthLoginV1Component {
         this.handleOtpError(xdata.msj);
         this.goBackToLogin();
       } else {
-        this.handleOtpError('Error al validar el código. Inténtelo de nuevo.');
+        this.handleOtpError("Error al validar el código. Inténtelo de nuevo.");
       }
     });
   }
@@ -2345,7 +2352,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LogoutComponent": () => (/* binding */ LogoutComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 8929);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _core_services_config_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @core/services/config.service */ 52553);
@@ -2495,7 +2502,7 @@ class LogoutComponent {
   executeLogout() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.loginService.performLogoutProcess(message => {
         _this.ngZone.run(() => {
           _this.updateStepStatus(message);

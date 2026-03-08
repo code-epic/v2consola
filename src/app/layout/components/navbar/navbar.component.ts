@@ -309,7 +309,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isTotpActive = true;
     this.apiService.GetImageQR(this.totpSecret).subscribe(
       (data) => {
-        console.log(data)
+
         this.totpQrCodeUrl = data.contenido;
       },
       (error) => {

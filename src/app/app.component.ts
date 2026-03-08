@@ -92,6 +92,8 @@ export class AppComponent implements OnInit, OnDestroy {
     this.Menu = undefined;
     // Get the application main menu
 
+    this._unsubscribeAll = new Subject();
+
     var token = sessionStorage.getItem("token");
     if (token === null) {
       this.menu = menu;
@@ -148,7 +150,6 @@ export class AppComponent implements OnInit, OnDestroy {
       this._coreTranslationService.translate(menuEnglish, menuEspanish);
 
       // Set the private defaults
-      this._unsubscribeAll = new Subject();
     }
   }
 
@@ -314,13 +315,13 @@ export class AppComponent implements OnInit, OnDestroy {
             this.coreConfig.layout.skin + "-layout",
           );
         }
+
+        let isBDV = this.apiService.ConsultaSistemaBDV();
+        let titulo = isBDV ? "BDV Server" : this.coreConfig?.app?.appTitle || "Consola";
+
+        // Set the application page title
+        this._title.setTitle(titulo);
       });
-
-    let isBDV = this.apiService.ConsultaSistemaBDV();
-    let titulo = isBDV ? "BDV Server" : this.coreConfig.app.appTitle;
-
-    // Set the application page title
-    this._title.setTitle(titulo);
   }
 
   private setupProtection(): void {

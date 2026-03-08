@@ -1,28 +1,20 @@
-
-
 <div class="main-container">
   <!-- vertical-layout -->
-  <ng-container *ngIf="coreConfig.layout.type === 'vertical' && showContent">
+  <ng-container *ngIf="coreConfig?.layout?.type === 'vertical' && showContent">
     <vertical-layout></vertical-layout>
   </ng-container>
   <!-- / vertical-layout -->
 
   <!-- horizontal-layout -->
-  <ng-container *ngIf="coreConfig.layout.type === 'horizontal' && showContent">
+  <ng-container *ngIf="coreConfig?.layout?.type === 'horizontal' && showContent">
     <horizontal-layout></horizontal-layout>
   </ng-container>
   <!-- / horizontal-layout -->
 
-  <core-sidebar
-    name="themeCustomizer"
-    class="customizer d-none d-md-block"
-    [invisibleOverlay]="true"
-    *ngIf="coreConfig.layout.customizer && showContent"
-  >
-    <a
-      class="customizer-toggle d-flex align-items-center justify-content-center"
-      (click)="toggleSidebar('themeCustomizer')"
-    >
+  <core-sidebar name="themeCustomizer" class="customizer d-none d-md-block" [invisibleOverlay]="true"
+    *ngIf="coreConfig?.layout?.customizer && showContent">
+    <a class="customizer-toggle d-flex align-items-center justify-content-center"
+      (click)="toggleSidebar('themeCustomizer')">
       <span [data-feather]="'settings'" [class]="'spinner'"></span>
     </a>
     <core-theme-customizer></core-theme-customizer>
@@ -36,5 +28,5 @@
       <p>El uso de herramientas de desarrollo no está permitido en esta aplicación.</p>
     </div>
   </div>
-  
+
 </div>

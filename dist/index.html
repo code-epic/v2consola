@@ -145,6 +145,12 @@
         if (event.data.type === 'NETWORK_CONTEXT') {
           sessionStorage.setItem('net_info', JSON.stringify(event.data.payload));
         }
+        if (event.data.type === 'SET_SESSION') {
+          sessionStorage.setItem('token', event.data.token);
+          console.log('Token recibido y guardado en el hijo');
+          // window.location.reload();
+        }
+
       });
       
     })();
@@ -284,6 +290,6 @@
 
 
 
-<script src="runtime.eda8651831d9bf9d.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.4a9a18a2e2a60936.js" type="module"></script></body>
+<script src="runtime.35e3061a4b32ab71.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.99c0e505efcad74a.js" type="module"></script></body>
 
 </html>

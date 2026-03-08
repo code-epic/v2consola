@@ -1,0 +1,187 @@
+<div class="content-wrapper container-xxl p-0">
+    <div class="chatroom-container">
+
+        <!-- Barra Lateral: Usuarios y Canales -->
+        <aside class="chat-sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    <i data-feather="users"></i>
+                    NODOS_SEGUROS
+                    <span class="status-pill">EN VIVO</span>
+                </h2>
+            </div>
+
+            <div class="sidebar-content">
+                <div class="section-title">Conexiones Activas</div>
+                <ul class="user-list">
+                    <li *ngFor="let user of users" class="user-item"
+                        [class.active]="activeUser && user.id === activeUser.id" (click)="selectUser(user)">
+                        <div class="avatar-wrapper">
+                            <div class="avatar-initials">
+                                {{ user.name.charAt(0) }}
+                            </div>
+                            <span class="status-indicator" [class.online]="user.status === 'online'"
+                                [class.busy]="user.status === 'busy'"></span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ user.name }}</div>
+                            <div class="user-status">{{ user.mac_address }}</div>
+                        </div>
+                    </li>
+                </ul>
+
+                <div class="section-title">Grupos Comunes</div>
+                <ul class="user-list">
+                    <li class="user-item">
+                        <div class="avatar-wrapper">
+                            <div class="avatar-group-icon">
+                                #
+                            </div>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name">Consola_Principal</div>
+                            <div class="user-status">Canal de Difusión</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Área Principal de Chat -->
+        <main class="chat-main">
+            <header class="chat-header">
+                <div class="active-user-info" *ngIf="activeUser">
+                    <h3>sandra-app://{{ activeUser.name }}</h3>
+                    <span class="encryption-status" *ngIf="encryptionActive">
+                        {{ activeUser.id }}
+                    </span>
+                </div>
+                <div class="header-actions">
+                    <button title="Ver Protocolos" (click)="showTools = !showTools">
+                        <i [data-feather]="showTools ? 'sidebar' : 'layout'" [inner]="true"></i>
+                    </button>
+                    <button title="Limpiar Búfer" (click)="messages = []"><i data-feather="trash-2"></i></button>
+                    <button title="Análisis Detallado"><i data-feather="info"></i></button>
+                </div>
+            </header>
+
+            <!-- Contenedor Mensajes -->
+            <section class="chat-messages" #scrollMe>
+                <div *ngFor="let msg of messages" class="message-wrapper" [class.sent]="msg.type === 'sent'"
+                    [class.received]="msg.type === 'received'">
+                    <div class="message-content" [class.console-type]="!msg.fileInfo">
+                        <!-- Texto normal -->
+                        <span *ngIf="!msg.fileInfo" class="typewriter-text">{{ msg.text }}</span>
+
+                        <!-- Tarjeta de Archivo Elegante -->
+                        <div *ngIf="msg.fileInfo" class="file-card">
+                            <div class="file-icon-container">
+                                <i [data-feather]="msg.fileInfo.icon" [inner]="true"></i>
+                                <span class="file-badge">{{ msg.fileInfo.extension }}</span>
+                            </div>
+                            <div class="file-details">
+                                <div class="file-name">{{ msg.fileInfo.name }}</div>
+                                <div class="file-meta">
+                                    <span class="file-size">{{ msg.fileInfo.size }}</span>
+                                    <span class="file-action">Listo para descargar</span>
+                                </div>
+                            </div>
+                            <div class="file-download-action">
+                                <i data-feather="download"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="message-meta">
+                        <span>{{ msg.timestamp | date:'HH:mm:ss' }}</span>
+                        <span *ngIf="msg.status">[{{ msg.status }}]</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Barra de progreso de subida -->
+            <div class="upload-progress-container" *ngIf="isUploading">
+                <div class="progress-info">
+                    <span>Subiendo documento cifrado...</span>
+                    <span>{{ uploadProgress }}%</span>
+                </div>
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
+                        [style.width.%]="uploadProgress"></div>
+                </div>
+            </div>
+
+            <!-- Área de Entrada de Mensajes -->
+            <div class="chat-input-container">
+                <div class="input-wrapper">
+                    <!-- Input de archivo oculto -->
+                    <input type="file" #fileInput style="display: none" (change)="handleFileUpload($event)">
+
+                    <input type="text" [(ngModel)]="newMessage" placeholder="Escriba un comando o mensaje..."
+                        (keyup.enter)="sendMessage()">
+
+                    <div class="action-icons">
+                        <span class="action-icon" (click)="onAttach()" title="Adjuntar Documento">
+                            <i data-feather="paperclip"></i>
+                        </span>
+                        <span class="action-icon" (click)="sendMessage()" title="Enviar (Enter)">
+                            <i data-feather="send"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Panel de Herramientas y Configuración -->
+        <aside class="chat-tools" [class.collapsed]="!showTools">
+
+            <div class="tool-section">
+                <h4>Protocolos_de_Sistema</h4>
+                <div class="setting-item">
+                    <span>Historial Persistente</span>
+                    <label class="switch">
+                        <input type="checkbox" [(ngModel)]="saveHistory">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>Cifrado_de_Capas</span>
+                    <label class="switch">
+                        <input type="checkbox" [(ngModel)]="encryptionActive">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <span>Análisis de Tráfico</span>
+                    <label class="switch">
+                        <input type="checkbox" [(ngModel)]="analyzeTraffic">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="tool-section">
+                <h4>Módulos_de_Análisis_UI</h4>
+                <button class="btn btn-light-primary btn-block btn-sm mb-1 w-100">
+                    <i data-feather="activity" class="mr-50"></i> Capturador de Paquetes
+                </button>
+                <button class="btn btn-light-danger btn-block btn-sm mb-1 w-100">
+                    <i data-feather="shield-off" class="mr-50"></i> Bloquear Navegación
+                </button>
+                <button class="btn btn-light-info btn-block btn-sm mb-1 w-100">
+                    <i data-feather="download-cloud" class="mr-50"></i> Importar Tráfico PCAP
+                </button>
+            </div>
+
+            <div class="tool-section">
+                <h4>Alias_de_Comando</h4>
+                <div class="command-chips">
+                    <span *ngFor="let cmd of availableCommands" class="command-chip" (click)="newMessage = cmd + ' '">
+                        {{ cmd }}
+                    </span>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+</div>

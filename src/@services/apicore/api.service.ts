@@ -697,7 +697,6 @@ export class ApiService {
   GetImageQR(id: string): Observable<any> {
 
     var url = this.URL + "imgslocalbase64/" + id;
-    console.log(url)
     return this.http.get(url, this.httpOptions);
   }
 
@@ -710,5 +709,13 @@ export class ApiService {
     return this.http.get(url, this.httpOptions);
   }
 
+  /**
+ * @returns Conections
+ */
+  SendMessage(data): Observable<any> {
+
+    var url = this.URL + "sandra_send-message";
+    return this.http.post<any>(url, data, this.httpOptions);
+  }
 
 }

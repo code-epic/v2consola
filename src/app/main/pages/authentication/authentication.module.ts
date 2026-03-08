@@ -11,7 +11,6 @@ import { AuthLoginV1Component } from './auth-login-v1/auth-login-v1.component';
 import { AuthRegisterV1Component } from './auth-register-v1/auth-register-v1.component';
 import { AuthResetPasswordV1Component } from './auth-reset-password-v1/auth-reset-password-v1.component';
 import { AuthForgotPasswordV1Component } from './auth-forgot-password-v1/auth-forgot-password-v1.component';
-import { AsistenteVirtualComponent } from 'app/main/asistente-virtual/asistente-virtual.component';
 
 // routing
 const routes: Routes = [
@@ -43,8 +42,7 @@ const routes: Routes = [
     AuthLoginV1Component,
     AuthRegisterV1Component,
     AuthResetPasswordV1Component,
-    AuthForgotPasswordV1Component,
-    AsistenteVirtualComponent
+    AuthForgotPasswordV1Component
   ],
   imports: [CommonModule,
     RouterModule.forChild(routes),
@@ -55,8 +53,8 @@ const routes: Routes = [
   ]
 })
 export class AuthenticationModule {
-  constructor(){
-    
+  constructor() {
+
     // console.log('iniciando modulos de autenticacion')
   }
 

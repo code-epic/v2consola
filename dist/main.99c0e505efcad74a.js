@@ -14826,7 +14826,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TaskMonitorComponent": () => (/* binding */ TaskMonitorComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 8929);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ 7625);
@@ -14935,7 +14935,7 @@ class TaskMonitorComponent {
   initProcess() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.lstApp = [];
       const lst = yield _this.taskService.keys();
 
@@ -15036,7 +15036,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CoreThemeCustomizerComponent": () => (/* binding */ CoreThemeCustomizerComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs */ 8929);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/core */ 94650);
@@ -15269,7 +15269,7 @@ class CoreThemeCustomizerComponent {
 
 
   ngOnInit() {
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {})();
   }
   /**
    * On destroy
@@ -17073,7 +17073,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TaskService": () => (/* binding */ TaskService)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var idb__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! idb */ 34735);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 94650);
 
@@ -17101,7 +17101,7 @@ class TaskService {
   };
 
   get(key) {
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return (yield dbPromise).get("task", key);
     })();
   }
@@ -17109,7 +17109,7 @@ class TaskService {
   set(key, val, app) {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.iTask.id = key;
       _this.iTask.inicio = new Date();
       _this.iTask.funcion = val;
@@ -17123,7 +17123,7 @@ class TaskService {
     var _this2 = this;
 
     this.get(key).then( /*#__PURE__*/function () {
-      var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+      var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
         _this2.iTask = data;
         _this2.iTask.fin = new Date();
         _this2.iTask.estatus = false;
@@ -17137,20 +17137,20 @@ class TaskService {
   }
 
   del(key) {
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return (yield dbPromise).delete("task", key);
     })();
   }
 
   clear() {
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // console.log('eliminando task')
       return (yield dbPromise).clear("task");
     })();
   }
 
   keys() {
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       return (yield dbPromise).getAllKeys("task");
     })();
   }
@@ -19549,7 +19549,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LoginService": () => (/* binding */ LoginService)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs */ 63527);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! rxjs/operators */ 87545);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @angular/common/http */ 80529);
@@ -19588,16 +19588,16 @@ class LoginService {
   apiService; //Dirección Get para servicios en la página WEB
 
   URL = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.API;
-  Id = '';
+  Id = "";
   SToken;
   Token;
   Usuario;
   Aplicacion;
   xAPI = {
-    funcion: '',
-    parametros: ''
+    funcion: "",
+    parametros: ""
   };
-  urlGet = '';
+  urlGet = "";
 
   constructor(router, utils, http, taskService, sha256, apiService) {
     this.router = router;
@@ -19613,7 +19613,7 @@ class LoginService {
   Iniciar(itk) {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.Token = yield _this.getUserDecrypt(itk);
       sessionStorage.setItem("token", itk);
 
@@ -19622,15 +19622,15 @@ class LoginService {
   }
 
   getLogin(user, clave) {
-    const netInfo = sessionStorage.getItem('net_info');
-    let deviceContext = '';
+    const netInfo = sessionStorage.getItem("net_info");
+    let deviceContext = "";
 
     if (netInfo) {
       const info = JSON.parse(netInfo);
       const context = {
-        os_info: info.system?.os_info || 'unknown',
-        mac_address: info.system?.mac_address || 'unknown',
-        network: info.network || 'unknown'
+        os_info: info.system?.os_info || "unknown",
+        mac_address: info.system?.mac_address || "unknown",
+        network: info.network || "unknown"
       };
       deviceContext = btoa(JSON.stringify(context));
     } // console.log('Device Context:', deviceContext);
@@ -19640,50 +19640,50 @@ class LoginService {
       const timestamp = new Date().getTime().toString();
       const httpOptions = {
         headers: new _angular_common_http__WEBPACK_IMPORTED_MODULE_11__.HttpHeaders({
-          'X-Skip-Interceptor': 'true',
+          "X-Skip-Interceptor": "true",
           "Content-Type": "application/json",
-          'X-Device-Context': encodeDeviceContext,
-          'X-Timestamp': timestamp,
-          'Web-API-key': environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.Hash
+          "X-Device-Context": encodeDeviceContext,
+          "X-Timestamp": timestamp,
+          "Web-API-key": environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.Hash
         })
       };
       var usuario = {
-        "nombre": user,
-        "clave": clave
+        nombre: user,
+        clave: clave
       };
-      var url = this.urlGet + 'wusuario/loginV2';
+      var url = this.urlGet + "wusuario/loginV2";
       return this.http.post(url, usuario, httpOptions);
     }));
   }
 
   getCrear(user, clave) {
     var usuario = {
-      "nombre": user,
-      "clave": clave
+      nombre: user,
+      clave: clave
     };
-    var url = this.urlGet + 'wusuario/crear'; // console.info(url)
+    var url = this.urlGet + "wusuario/crear"; // console.info(url)
 
     return this.http.post(url, usuario);
   }
 
   makeUser(user) {
-    var url = this.urlGet + 'identicacion';
+    var url = this.urlGet + "identicacion";
     return this.http.post(url, user);
   }
 
   logout() {
     sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire({
-      title: '¿Desea cerrar sesión?',
+      title: "¿Desea cerrar sesión?",
       text: "Gracias por su tiempo",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, cerrar',
-      cancelButtonText: 'Cancelar'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si, cerrar",
+      cancelButtonText: "Cancelar"
     }).then(result => {
       if (result.isConfirmed) {
-        this.router.navigate(['/miscellaneous/logout']);
+        this.router.navigate(["/miscellaneous/logout"]);
       }
     });
   }
@@ -19696,9 +19696,9 @@ class LoginService {
   performLogoutProcess(progressCallback) {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
-        progressCallback('Finalizando sesión en el servidor...');
+        progressCallback("Finalizando sesión en el servidor...");
         yield _this2.utils.sleep(800); // Pequeña pausa para UX
 
         const httpOptions = {
@@ -19707,21 +19707,21 @@ class LoginService {
             Authorization: "Bearer " + sessionStorage.getItem("token")
           })
         };
-        const url = _this2.urlGet + 'wusuario/logout:' + localStorage.getItem("userId");
+        const url = _this2.urlGet + "wusuario/logout:" + localStorage.getItem("userId");
         yield _this2.http.post(url, {}, httpOptions).toPromise();
       } catch (error) {
         console.error("Error al contactar el servidor para logout (se procederá con la limpieza local):", error);
-        progressCallback('No se pudo contactar al servidor, limpiando localmente...');
+        progressCallback("No se pudo contactar al servidor, limpiando localmente...");
         yield _this2.utils.sleep(1500);
       } finally {
-        progressCallback('Limpiando datos de la sesión...');
+        progressCallback("Limpiando datos de la sesión...");
         yield _this2.utils.sleep(800); // Pequeña pausa para UX
 
         yield _this2.clearSession();
-        progressCallback('¡Hasta pronto!');
+        progressCallback("¡Hasta pronto!");
         yield _this2.utils.sleep(1200); // Pequeña pausa para que el usuario lea el mensaje final.
 
-        _this2.router.navigate(['/']);
+        _this2.router.navigate(["/"]);
       }
     })();
   }
@@ -19734,7 +19734,7 @@ class LoginService {
   clearSession() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         const lst = yield _this3.taskService.keys();
 
@@ -19755,7 +19755,7 @@ class LoginService {
           }
         }
       } catch (error) {
-        console.error('Error guardando tareas pendientes durante el logout:', error); // No bloqueamos el logout si esto falla, solo lo registramos.
+        console.error("Error guardando tareas pendientes durante el logout:", error); // No bloqueamos el logout si esto falla, solo lo registramos.
       } finally {
         // Esto SIEMPRE debe ejecutarse para garantizar el cierre de sesión en el cliente.
         sessionStorage.clear();
@@ -19768,16 +19768,16 @@ class LoginService {
   insertCommitDB(lst) {
     let idUser = "panel";
     let obj = {
-      "usuario": idUser,
-      "task": lst,
-      "fecha": new Date()
+      usuario: idUser,
+      task: lst,
+      fecha: new Date()
     };
     let cl = {
-      'coleccion': environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.colecciones.USER_TASK,
-      'driver': environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.driver.PRINCIPAL,
-      'objeto': obj,
-      'donde': '{\"usuario\":\"' + idUser + '\"}',
-      'upsert': true
+      coleccion: environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.colecciones.USER_TASK,
+      driver: environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.driver.PRINCIPAL,
+      objeto: obj,
+      donde: '{\"usuario\":\"' + idUser + '\"}',
+      upsert: true
     };
     return this.apiService.ExecColeccion(cl);
   }
@@ -19785,16 +19785,16 @@ class LoginService {
   getUserDecrypt(itk) {
     var t = (0,jwt_decode__WEBPACK_IMPORTED_MODULE_4__["default"])(itk);
     return t;
-  } //ObenterAplicacion 
+  } //ObenterAplicacion
 
 
   obenterAplicacion(itk) {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this4.utils.sleep(800); // Pequeña pausa para UX
 
-      let cadena = _this4.Token.Usuario.cedula + ',' + _this4.Token.Usuario.sistema + ',' + _this4.Token.Usuario.correo;
+      let cadena = _this4.Token.Usuario.cedula + "," + _this4.Token.Usuario.sistema + "," + _this4.Token.Usuario.correo;
       _this4.xAPI = {};
       _this4.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_USUARIO_PERFIL;
       _this4.xAPI.parametros = cadena;
@@ -19817,11 +19817,11 @@ class LoginService {
             window.location.reload();
           });
         } catch (e) {
-          console.error('Error al procesar el perfil del usuario:', e);
+          console.error("Error al procesar el perfil del usuario:", e);
           sweetalert2__WEBPACK_IMPORTED_MODULE_3___default().fire({
-            title: 'Error de Perfil',
-            text: 'No se pudo cargar la configuración de su perfil. Por favor, contacte al administrador.',
-            icon: 'error'
+            title: "Error de Perfil",
+            text: "No se pudo cargar la configuración de su perfil. Por favor, contacte al administrador.",
+            icon: "error"
           });
           sessionStorage.clear();
           localStorage.clear();
@@ -19832,7 +19832,7 @@ class LoginService {
         //   window.location.reload();
         // });
 
-        console.error('Fallo conectando al perfil del usuario: ', error);
+        console.error("Fallo conectando al perfil del usuario: ", error);
       });
     })();
   }
@@ -19843,7 +19843,7 @@ class LoginService {
   static ɵprov = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_12__["ɵɵdefineInjectable"]({
     token: LoginService,
     factory: LoginService.ɵfac,
-    providedIn: 'root'
+    providedIn: "root"
   });
 }
 
@@ -20366,7 +20366,10 @@ class WsSandraService {
 
     this.wsStatusSubscription = this.sessionService.connectionStatus$.subscribe(status => {
       this.connectionStatus = status; // console.log('ChatComponent: Estado de conexión actualizado:', ConnectionStatus[status]);
-      // Puedes añadir más lógica aquí para mostrar spinners, mensajes de UI, etc.
+
+      if (status === _services_util_session_service__WEBPACK_IMPORTED_MODULE_0__.ConnectionStatus.POSSIBLE_CERT_ERROR) {
+        this.ShowCertErrorModal();
+      }
     }); // 3. Conectar al sessionService al iniciar el componente
 
     this.sessionService.connect(this.userId, this.userName);
@@ -20476,6 +20479,59 @@ class WsSandraService {
       confirmButtonText: "Aceptar",
       allowEscapeKey: true
     }).then(result => {});
+  }
+
+  ShowCertErrorModal() {
+    this.zone.run(() => {
+      let hostname = window.location.hostname; // Para ajustar subdominios
+
+      if (hostname.startsWith('consola.')) {
+        hostname = hostname.replace('consola.', '');
+      }
+
+      const targetUrl = `https://${hostname}:8443`;
+      sweetalert2__WEBPACK_IMPORTED_MODULE_2___default().fire({
+        title: '⚠️ Excepción de Seguridad Requerida',
+        html: `
+                    <div style="font-size: 15px; text-align: left; line-height: 1.5;">
+                        <p>La conexión en tiempo real fue bloqueada por el entorno cerrado (iframe/sandbox).</p>
+                        <p>El servidor local requiere autorizar un certificado <b>autofirmado</b> que tu navegador o entorno está rechazando.</p>
+                        <br/>
+                        <p><strong>Pasos para autorizar:</strong></p>
+                        <ol style="margin-top: 5px;">
+                            <li>Copia la dirección mostrada abajo (o usa el botón rojo).</li>
+                            <li>Abre tu navegador (Chrome, Firefox, Safari) y pega esta dirección.</li>
+                            <li>Selecciona <i>"Aceptar el riesgo y continuar"</i> o <i>"Configuración Avanzada &rarr; Continuar"</i>.</li>
+                            <li>Vuelve a esta pantalla y recarga la interfaz por completo.</li>
+                        </ol>
+                        <div style="margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <input type="text" id="certUrlInput" value="${targetUrl}" readonly style="width: 100%; text-align: center; padding: 10px; font-weight: bold; border: 1px solid #ccc; border-radius: 5px; background: #e9ecef; color: #495057; outline: none; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);">
+                        </div>
+                    </div>
+                `,
+        width: 650,
+        icon: 'error',
+        showConfirmButton: true,
+        showCancelButton: true,
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: '<i class="fa fa-copy"></i> Copiar Dirección e Intentar Abrir',
+        cancelButtonText: 'Cerrar',
+        allowOutsideClick: true
+      }).then(result => {
+        if (result.isConfirmed) {
+          try {
+            navigator.clipboard.writeText(targetUrl).catch(e => console.warn('No se pudo copiar: ', e));
+          } catch (e) {}
+
+          try {
+            window.open(targetUrl, '_blank');
+          } catch (e) {
+            console.error('No se pudo abrir la ventana, restricciones del iframe activas.');
+          }
+        }
+      });
+    });
   }
 
   static ɵfac = function WsSandraService_Factory(t) {
@@ -20636,7 +20692,8 @@ var ConnectionStatus = /*#__PURE__*/(() => {
     ConnectionStatus[ConnectionStatus["CONNECTING"] = 1] = "CONNECTING";
     ConnectionStatus[ConnectionStatus["CONNECTED"] = 2] = "CONNECTED";
     ConnectionStatus[ConnectionStatus["RECONNECTING"] = 3] = "RECONNECTING";
-    ConnectionStatus[ConnectionStatus["ERROR"] = 4] = "ERROR"; // Para errores irrecuperables después de los reintentos
+    ConnectionStatus[ConnectionStatus["ERROR"] = 4] = "ERROR";
+    ConnectionStatus[ConnectionStatus["POSSIBLE_CERT_ERROR"] = 5] = "POSSIBLE_CERT_ERROR"; // Cierre inmediato (probablemente problema de certificado SSL)
   })(ConnectionStatus || (ConnectionStatus = {}));
 
   return ConnectionStatus;
@@ -20662,6 +20719,7 @@ class SessionService {
 
   maxReconnectInterval = 30000; // Intervalo máximo de reconexión (30 segundos)
 
+  hasConnectedOnce = false;
   messageBuffer = []; // Buffer para mensajes que no se pudieron enviar
 
   destroy$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subject(); // Para desuscribirse al destruir el servicio
@@ -20731,7 +20789,8 @@ class SessionService {
       this.ws.onopen = event => {
         //  console.log('WebSocketService: Conexión establecida.', event);
         this.connectionStatusSubject.next(ConnectionStatus.CONNECTED);
-        this.reconnectAttempts = 0; // Mensaje inicial para que tu backend Go registre o actualice la conexión
+        this.reconnectAttempts = 0;
+        this.hasConnectedOnce = true; // Mensaje inicial para que tu backend Go registre o actualice la conexión
 
         const initialMsg = {
           ID: this.userId,
@@ -20748,7 +20807,12 @@ class SessionService {
 
       this.ws.onclose = event => {
         // console.warn('WebSocketService: Conexión cerrada:', event);
-        this.connectionStatusSubject.next(ConnectionStatus.DISCONNECTED);
+        this.connectionStatusSubject.next(ConnectionStatus.DISCONNECTED); // Evalúa si es un error probable de certificado: Se cierra abruptamente sin haber conectado nunca en el primer intento.
+
+        if (!event.wasClean && !this.hasConnectedOnce && this.reconnectAttempts === 0) {
+          console.warn('WebSocketService: Posible error de certificado SSL detectado.');
+          this.connectionStatusSubject.next(ConnectionStatus.POSSIBLE_CERT_ERROR);
+        }
 
         if (!event.wasClean && this.reconnectAttempts < this.maxReconnectAttempts) {
           this.reconnectAttempts++;
@@ -20831,7 +20895,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Sha256Service": () => (/* binding */ Sha256Service)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 94650);
 
 
@@ -20845,7 +20909,7 @@ class Sha256Service {
   hash(message) {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // Convertir mensaje a buffer UTF-8
       const msgBuffer = new TextEncoder().encode(message);
       const len = msgBuffer.length * 8; // Añadir padding (1 + ceros + longitud de 64 bits)
@@ -20926,7 +20990,7 @@ class Sha256Service {
   }
 
   hmac(message, key) {
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const encoder = new TextEncoder();
       const keyData = encoder.encode(key);
       const messageData = encoder.encode(message); // Importar la llave para HMAC
@@ -20944,7 +21008,7 @@ class Sha256Service {
 
 
   EncryptDeviceContext(context, secretKey) {
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const encoder = new TextEncoder();
       const data = encoder.encode(JSON.stringify(context)); // Generar un IV (Vector de Inicialización) único para esta petición
 
@@ -21323,29 +21387,31 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AppComponent": () => (/* binding */ AppComponent)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! @angular/common */ 36895);
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! rxjs */ 8929);
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! rxjs/operators */ 7625);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/common */ 36895);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! rxjs */ 8929);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! rxjs/operators */ 7625);
 /* harmony import */ var node_waves__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! node-waves */ 79569);
 /* harmony import */ var node_waves__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(node_waves__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var app_menu_menu__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! app/menu/menu */ 70318);
 /* harmony import */ var app_menu_i18n_en__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! app/menu/i18n/en */ 43831);
 /* harmony import */ var app_menu_i18n_es__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! app/menu/i18n/es */ 7147);
 /* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../environments/environment */ 92340);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! @angular/core */ 94650);
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! @angular/platform-browser */ 11481);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! @angular/core */ 94650);
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @angular/platform-browser */ 11481);
 /* harmony import */ var _core_services_config_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @core/services/config.service */ 52553);
 /* harmony import */ var _core_components_core_sidebar_core_sidebar_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @core/components/core-sidebar/core-sidebar.service */ 66841);
 /* harmony import */ var _core_services_loading_screen_service__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @core/services/loading-screen.service */ 35428);
 /* harmony import */ var _core_components_core_menu_core_menu_service__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @core/components/core-menu/core-menu.service */ 54278);
 /* harmony import */ var _core_services_translation_service__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @core/services/translation.service */ 63305);
-/* harmony import */ var _ngx_translate_core__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! @ngx-translate/core */ 42466);
-/* harmony import */ var _services_apicore_api_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @services/apicore/api.service */ 89780);
-/* harmony import */ var _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @core/directives/core-feather-icons/core-feather-icons */ 66279);
-/* harmony import */ var _core_components_core_sidebar_core_sidebar_component__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @core/components/core-sidebar/core-sidebar.component */ 9831);
-/* harmony import */ var _core_components_theme_customizer_theme_customizer_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @core/components/theme-customizer/theme-customizer.component */ 68347);
-/* harmony import */ var app_layout_vertical_vertical_layout_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! app/layout/vertical/vertical-layout.component */ 80836);
-/* harmony import */ var app_layout_horizontal_horizontal_layout_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! app/layout/horizontal/horizontal-layout.component */ 54487);
+/* harmony import */ var _ngx_translate_core__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! @ngx-translate/core */ 42466);
+/* harmony import */ var _services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @services/seguridad/login.service */ 38072);
+/* harmony import */ var _services_apicore_api_service__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @services/apicore/api.service */ 89780);
+/* harmony import */ var _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @core/directives/core-feather-icons/core-feather-icons */ 66279);
+/* harmony import */ var _core_components_core_sidebar_core_sidebar_component__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @core/components/core-sidebar/core-sidebar.component */ 9831);
+/* harmony import */ var _core_components_theme_customizer_theme_customizer_component__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @core/components/theme-customizer/theme-customizer.component */ 68347);
+/* harmony import */ var app_layout_vertical_vertical_layout_component__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! app/layout/vertical/vertical-layout.component */ 80836);
+/* harmony import */ var app_layout_horizontal_horizontal_layout_component__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! app/layout/horizontal/horizontal-layout.component */ 54487);
+
 
 
 
@@ -21373,54 +21439,54 @@ __webpack_require__.r(__webpack_exports__);
 
 function AppComponent_ng_container_1_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](1, "vertical-layout");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementContainerStart"](0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](1, "vertical-layout");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementContainerEnd"]();
   }
 }
 
 function AppComponent_ng_container_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementContainerStart"](0);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](1, "horizontal-layout");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementContainerEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementContainerStart"](0);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](1, "horizontal-layout");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementContainerEnd"]();
   }
 }
 
 function AppComponent_core_sidebar_3_Template(rf, ctx) {
   if (rf & 1) {
-    const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵgetCurrentView"]();
+    const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "core-sidebar", 4)(1, "a", 5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵlistener"]("click", function AppComponent_core_sidebar_3_Template_a_click_1_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵrestoreView"](_r5);
-      const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵresetView"](ctx_r4.toggleSidebar("themeCustomizer"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "core-sidebar", 4)(1, "a", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵlistener"]("click", function AppComponent_core_sidebar_3_Template_a_click_1_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵrestoreView"](_r5);
+      const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵresetView"](ctx_r4.toggleSidebar("themeCustomizer"));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](2, "span", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](3, "core-theme-customizer");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](2, "span", 6);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](3, "core-theme-customizer");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
   }
 
   if (rf & 2) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("invisibleOverlay", true);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵclassMap"]("spinner");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("data-feather", "settings");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("invisibleOverlay", true);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵclassMap"]("spinner");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("data-feather", "settings");
   }
 }
 
 function AppComponent_div_4_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "div", 7)(1, "div", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelement"](2, "img", 9);
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](3, "h1");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtext"](4, "Acceso Restringido");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](5, "p");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtext"](6, "El uso de herramientas de desarrollo no est\u00E1 permitido en esta aplicaci\u00F3n.");
-    _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]()()();
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "div", 7)(1, "div", 8);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelement"](2, "img", 9);
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](3, "h1");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtext"](4, "Acceso Restringido");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](5, "p");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtext"](6, "El uso de herramientas de desarrollo no est\u00E1 permitido en esta aplicaci\u00F3n.");
+    _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]()()();
   }
 }
 
@@ -21437,6 +21503,7 @@ class AppComponent {
   _translateService;
   appRef;
   renderer;
+  loginService;
   apiService;
   devToolsOpened = false;
   checkInterval;
@@ -21455,7 +21522,7 @@ class AppComponent {
   Menu;
   overlayElement;
 
-  constructor(document, _title, _renderer, _elementRef, _coreConfigService, _coreSidebarService, _coreLoadingScreenService, _coreMenuService, _coreTranslationService, _translateService, appRef, renderer, apiService) {
+  constructor(document, _title, _renderer, _elementRef, _coreConfigService, _coreSidebarService, _coreLoadingScreenService, _coreMenuService, _coreTranslationService, _translateService, appRef, renderer, loginService, apiService) {
     this.document = document;
     this._title = _title;
     this._renderer = _renderer;
@@ -21468,17 +21535,18 @@ class AppComponent {
     this._translateService = _translateService;
     this.appRef = appRef;
     this.renderer = renderer;
+    this.loginService = loginService;
     this.apiService = apiService; // Crear el overlay de protección
 
-    this.overlayElement = this.renderer.createElement('div');
-    this.renderer.addClass(this.overlayElement, 'devtools-overlay');
-    this.renderer.setStyle(this.overlayElement, 'display', 'none');
+    this.overlayElement = this.renderer.createElement("div");
+    this.renderer.addClass(this.overlayElement, "devtools-overlay");
+    this.renderer.setStyle(this.overlayElement, "display", "none");
     this.renderer.appendChild(document.body, this.overlayElement); // Configurar protección solo en producción
 
     if (_environments_environment__WEBPACK_IMPORTED_MODULE_4__.environment.production) {// this.disableRightClick = true; // Activar bloqueo de clic derecho
       // this.setupProtection();
       // Detectar cuando las herramientas ya estaban abiertas al cargar la página
-      // if (window.outerWidth - window.innerWidth > 160 || 
+      // if (window.outerWidth - window.innerWidth > 160 ||
       //   window.outerHeight - window.innerHeight > 160) {
       //   this.handleDevToolsOpened();
       // }
@@ -21486,17 +21554,25 @@ class AppComponent {
 
     this.Menu = undefined; // Get the application main menu
 
-    var token = sessionStorage.getItem('token');
+    var token = sessionStorage.getItem("token");
 
     if (token === null) {
       this.menu = app_menu_menu__WEBPACK_IMPORTED_MODULE_1__.menu;
     } else {
-      this.Menu = JSON.parse(sessionStorage.getItem('menu'));
+      this.Menu = JSON.parse(sessionStorage.getItem("menu"));
+
+      if (this.Menu == undefined) {
+        this.loginService.Token = this.loginService.getUserDecrypt(token);
+        this.loginService.obenterAplicacion(token); // window.location.reload();
+      } else {
+        this.menu = app_menu_menu__WEBPACK_IMPORTED_MODULE_1__.menu;
+      }
+
       this.menu = this.Menu.map(e => {
         e.id = e.nombre.toLowerCase();
         e.type = e.clase;
         e.icon = e.icono;
-        e.translate = '';
+        e.translate = "";
         e.title = e.nombre;
 
         if (e.SubMenu != undefined) {
@@ -21509,12 +21585,12 @@ class AppComponent {
           });
 
           switch (e.type) {
-            case 'item':
+            case "item":
               e.url = e.descripcion;
               break;
 
-            case 'collapsible':
-              e.url = '';
+            case "collapsible":
+              e.url = "";
               break;
 
             default:
@@ -21523,26 +21599,25 @@ class AppComponent {
         }
 
         return e;
-      });
-    } // Register the menu to the menu service
+      }); // Register the menu to the menu service
+
+      this._coreMenuService.register("main", this.menu); // Set the main menu as our current menu
 
 
-    this._coreMenuService.register('main', this.menu); // Set the main menu as our current menu
+      this._coreMenuService.setCurrentMenu("main"); // Add languages to the translation service
 
 
-    this._coreMenuService.setCurrentMenu('main'); // Add languages to the translation service
+      this._translateService.addLangs(["es", "en"]); // This language will be used as a fallback when a translation isn't found in the current language
 
 
-    this._translateService.addLangs(['es', 'en']); // This language will be used as a fallback when a translation isn't found in the current language
+      this._translateService.setDefaultLang("es"); // Set the translations for the menu
 
 
-    this._translateService.setDefaultLang('es'); // Set the translations for the menu
+      this._coreTranslationService.translate(app_menu_i18n_en__WEBPACK_IMPORTED_MODULE_2__.locale, app_menu_i18n_es__WEBPACK_IMPORTED_MODULE_3__.locale); // Set the private defaults
 
 
-    this._coreTranslationService.translate(app_menu_i18n_en__WEBPACK_IMPORTED_MODULE_2__.locale, app_menu_i18n_es__WEBPACK_IMPORTED_MODULE_3__.locale); // Set the private defaults
-
-
-    this._unsubscribeAll = new rxjs__WEBPACK_IMPORTED_MODULE_17__.Subject();
+      this._unsubscribeAll = new rxjs__WEBPACK_IMPORTED_MODULE_18__.Subject();
+    }
   }
 
   onRightClick(event) {
@@ -21561,101 +21636,101 @@ class AppComponent {
     // Init wave effect (Ripple effect)
     node_waves__WEBPACK_IMPORTED_MODULE_0__.init(); // Subscribe to config changes
 
-    this._coreConfigService.config.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_18__.takeUntil)(this._unsubscribeAll)).subscribe(config => {
+    this._coreConfigService.config.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_19__.takeUntil)(this._unsubscribeAll)).subscribe(config => {
       this.coreConfig = config; // Set application default language.
 
-      const appLanguage = this.coreConfig.app.appLanguage || 'es';
+      const appLanguage = this.coreConfig.app.appLanguage || "es";
 
       this._translateService.use(appLanguage); // Fix for ngxTranslate
 
 
       setTimeout(() => {
-        this._translateService.setDefaultLang('es');
+        this._translateService.setDefaultLang("es");
 
         this._translateService.setDefaultLang(appLanguage);
       }); // Layout
       //--------
       // Remove default classes first
 
-      this._elementRef.nativeElement.classList.remove('vertical-layout', 'vertical-menu-modern', 'horizontal-layout', 'horizontal-menu'); // Add class based on config options
+      this._elementRef.nativeElement.classList.remove("vertical-layout", "vertical-menu-modern", "horizontal-layout", "horizontal-menu"); // Add class based on config options
 
 
-      if (this.coreConfig.layout.type === 'vertical') {
-        this._elementRef.nativeElement.classList.add('vertical-layout', 'vertical-menu-modern');
-      } else if (this.coreConfig.layout.type === 'horizontal') {
-        this._elementRef.nativeElement.classList.add('horizontal-layout', 'horizontal-menu');
+      if (this.coreConfig.layout.type === "vertical") {
+        this._elementRef.nativeElement.classList.add("vertical-layout", "vertical-menu-modern");
+      } else if (this.coreConfig.layout.type === "horizontal") {
+        this._elementRef.nativeElement.classList.add("horizontal-layout", "horizontal-menu");
       } // Navbar
       //--------
       // Remove default classes first
 
 
-      this._elementRef.nativeElement.classList.remove('navbar-floating', 'navbar-static', 'navbar-sticky', 'navbar-hidden'); // Add class based on config options
+      this._elementRef.nativeElement.classList.remove("navbar-floating", "navbar-static", "navbar-sticky", "navbar-hidden"); // Add class based on config options
 
 
-      if (this.coreConfig.layout.navbar.type === 'navbar-static-top') {
-        this._elementRef.nativeElement.classList.add('navbar-static');
-      } else if (this.coreConfig.layout.navbar.type === 'fixed-top') {
-        this._elementRef.nativeElement.classList.add('navbar-sticky');
-      } else if (this.coreConfig.layout.navbar.type === 'floating-nav') {
-        this._elementRef.nativeElement.classList.add('navbar-floating');
+      if (this.coreConfig.layout.navbar.type === "navbar-static-top") {
+        this._elementRef.nativeElement.classList.add("navbar-static");
+      } else if (this.coreConfig.layout.navbar.type === "fixed-top") {
+        this._elementRef.nativeElement.classList.add("navbar-sticky");
+      } else if (this.coreConfig.layout.navbar.type === "floating-nav") {
+        this._elementRef.nativeElement.classList.add("navbar-floating");
       } else {
-        this._elementRef.nativeElement.classList.add('navbar-hidden');
+        this._elementRef.nativeElement.classList.add("navbar-hidden");
       } // Footer
       //--------
       // Remove default classes first
 
 
-      this._elementRef.nativeElement.classList.remove('footer-fixed', 'footer-static', 'footer-hidden'); // Add class based on config options
+      this._elementRef.nativeElement.classList.remove("footer-fixed", "footer-static", "footer-hidden"); // Add class based on config options
 
 
-      if (this.coreConfig.layout.footer.type === 'footer-sticky') {
-        this._elementRef.nativeElement.classList.add('footer-fixed');
-      } else if (this.coreConfig.layout.footer.type === 'footer-static') {
-        this._elementRef.nativeElement.classList.add('footer-static');
+      if (this.coreConfig.layout.footer.type === "footer-sticky") {
+        this._elementRef.nativeElement.classList.add("footer-fixed");
+      } else if (this.coreConfig.layout.footer.type === "footer-static") {
+        this._elementRef.nativeElement.classList.add("footer-static");
       } else {
-        this._elementRef.nativeElement.classList.add('footer-hidden');
+        this._elementRef.nativeElement.classList.add("footer-hidden");
       } // Blank layout
 
 
       if (this.coreConfig.layout.menu.hidden && this.coreConfig.layout.navbar.hidden && this.coreConfig.layout.footer.hidden) {
-        this._elementRef.nativeElement.classList.add('blank-page'); // ! Fix: Transition issue while coming from blank page
+        this._elementRef.nativeElement.classList.add("blank-page"); // ! Fix: Transition issue while coming from blank page
 
 
-        this._renderer.setAttribute(this._elementRef.nativeElement.getElementsByClassName('app-content')[0], 'style', 'transition:none');
+        this._renderer.setAttribute(this._elementRef.nativeElement.getElementsByClassName("app-content")[0], "style", "transition:none");
       } else {
-        this._elementRef.nativeElement.classList.remove('blank-page'); // ! Fix: Transition issue while coming from blank page
+        this._elementRef.nativeElement.classList.remove("blank-page"); // ! Fix: Transition issue while coming from blank page
 
 
         setTimeout(() => {
-          this._renderer.setAttribute(this._elementRef.nativeElement.getElementsByClassName('app-content')[0], 'style', 'transition:300ms ease all');
+          this._renderer.setAttribute(this._elementRef.nativeElement.getElementsByClassName("app-content")[0], "style", "transition:300ms ease all");
         }, 0); // If navbar hidden
 
         if (this.coreConfig.layout.navbar.hidden) {
-          this._elementRef.nativeElement.classList.add('navbar-hidden');
+          this._elementRef.nativeElement.classList.add("navbar-hidden");
         } // Menu (Vertical menu hidden)
 
 
         if (this.coreConfig.layout.menu.hidden) {
-          this._renderer.setAttribute(this._elementRef.nativeElement, 'data-col', '1-column');
+          this._renderer.setAttribute(this._elementRef.nativeElement, "data-col", "1-column");
         } else {
-          this._renderer.removeAttribute(this._elementRef.nativeElement, 'data-col');
+          this._renderer.removeAttribute(this._elementRef.nativeElement, "data-col");
         } // Footer
 
 
         if (this.coreConfig.layout.footer.hidden) {
-          this._elementRef.nativeElement.classList.add('footer-hidden');
+          this._elementRef.nativeElement.classList.add("footer-hidden");
         }
       } // Skin Class (Adding to body as it requires highest priority)
 
 
-      if (this.coreConfig.layout.skin !== '' && this.coreConfig.layout.skin !== undefined) {
-        this.document.body.classList.remove('default-layout', 'bordered-layout', 'dark-layout', 'semi-dark-layout');
-        this.document.body.classList.add(this.coreConfig.layout.skin + '-layout');
+      if (this.coreConfig.layout.skin !== "" && this.coreConfig.layout.skin !== undefined) {
+        this.document.body.classList.remove("default-layout", "bordered-layout", "dark-layout", "semi-dark-layout");
+        this.document.body.classList.add(this.coreConfig.layout.skin + "-layout");
       }
     });
 
     let isBDV = this.apiService.ConsultaSistemaBDV();
-    let titulo = isBDV ? 'BDV Server' : this.coreConfig.app.appTitle; // Set the application page title
+    let titulo = isBDV ? "BDV Server" : this.coreConfig.app.appTitle; // Set the application page title
 
     this._title.setTitle(titulo);
   }
@@ -21666,8 +21741,8 @@ class AppComponent {
 
     this.checkInterval = setInterval(() => this.checkDevTools(), 1000); // Detectar atajos de teclado
 
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F12' || e.keyCode === 123 || e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J') || e.ctrlKey && e.key === 'U') {
+    document.addEventListener("keydown", e => {
+      if (e.key === "F12" || e.keyCode === 123 || e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J") || e.ctrlKey && e.key === "U") {
         e.preventDefault();
         this.handleDevToolsOpened();
       }
@@ -21705,16 +21780,16 @@ class AppComponent {
 
   disableInteractions() {
     // Deshabilitar eventos
-    document.addEventListener('keydown', this.preventEvent, true);
-    document.addEventListener('click', this.preventEvent, true);
-    document.addEventListener('contextmenu', this.preventEvent, true);
+    document.addEventListener("keydown", this.preventEvent, true);
+    document.addEventListener("click", this.preventEvent, true);
+    document.addEventListener("contextmenu", this.preventEvent, true);
   }
 
   enableInteractions() {
     // Habilitar eventos nuevamente
-    document.removeEventListener('keydown', this.preventEvent, true);
-    document.removeEventListener('click', this.preventEvent, true);
-    document.removeEventListener('contextmenu', this.preventEvent, true);
+    document.removeEventListener("keydown", this.preventEvent, true);
+    document.removeEventListener("click", this.preventEvent, true);
+    document.removeEventListener("contextmenu", this.preventEvent, true);
   }
 
   preventEvent(e) {
@@ -21730,7 +21805,7 @@ class AppComponent {
   ngOnDestroy() {
     // Unsubscribe from all subscriptions
     clearInterval(this.checkInterval);
-    console.log('destroy code');
+    console.log("destroy code");
 
     this._unsubscribeAll.next();
 
@@ -21750,14 +21825,14 @@ class AppComponent {
   }
 
   static ɵfac = function AppComponent_Factory(t) {
-    return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_angular_common__WEBPACK_IMPORTED_MODULE_19__.DOCUMENT), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_angular_platform_browser__WEBPACK_IMPORTED_MODULE_20__.Title), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_16__.Renderer2), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_16__.ElementRef), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_5__.CoreConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_core_components_core_sidebar_core_sidebar_service__WEBPACK_IMPORTED_MODULE_6__.CoreSidebarService), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_core_services_loading_screen_service__WEBPACK_IMPORTED_MODULE_7__.CoreLoadingScreenService), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_core_components_core_menu_core_menu_service__WEBPACK_IMPORTED_MODULE_8__.CoreMenuService), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_core_services_translation_service__WEBPACK_IMPORTED_MODULE_9__.CoreTranslationService), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_ngx_translate_core__WEBPACK_IMPORTED_MODULE_21__.TranslateService), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_16__.ApplicationRef), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_16__.Renderer2), _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_10__.ApiService));
+    return new (t || AppComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_angular_common__WEBPACK_IMPORTED_MODULE_20__.DOCUMENT), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_angular_platform_browser__WEBPACK_IMPORTED_MODULE_21__.Title), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_17__.Renderer2), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_17__.ElementRef), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_core_services_config_service__WEBPACK_IMPORTED_MODULE_5__.CoreConfigService), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_core_components_core_sidebar_core_sidebar_service__WEBPACK_IMPORTED_MODULE_6__.CoreSidebarService), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_core_services_loading_screen_service__WEBPACK_IMPORTED_MODULE_7__.CoreLoadingScreenService), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_core_components_core_menu_core_menu_service__WEBPACK_IMPORTED_MODULE_8__.CoreMenuService), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_core_services_translation_service__WEBPACK_IMPORTED_MODULE_9__.CoreTranslationService), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_ngx_translate_core__WEBPACK_IMPORTED_MODULE_22__.TranslateService), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_17__.ApplicationRef), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_17__.Renderer2), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_services_seguridad_login_service__WEBPACK_IMPORTED_MODULE_10__.LoginService), _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_11__.ApiService));
   };
-  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵdefineComponent"]({
+  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵdefineComponent"]({
     type: AppComponent,
     selectors: [["app-root"]],
     hostBindings: function AppComponent_HostBindings(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵlistener"]("contextmenu", function AppComponent_contextmenu_HostBindingHandler($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵlistener"]("contextmenu", function AppComponent_contextmenu_HostBindingHandler($event) {
           return ctx.onRightClick($event);
         });
       }
@@ -21767,26 +21842,26 @@ class AppComponent {
     consts: [[1, "main-container"], [4, "ngIf"], ["name", "themeCustomizer", "class", "customizer d-none d-md-block", 3, "invisibleOverlay", 4, "ngIf"], ["class", "blocked-screen", 4, "ngIf"], ["name", "themeCustomizer", 1, "customizer", "d-none", "d-md-block", 3, "invisibleOverlay"], [1, "customizer-toggle", "d-flex", "align-items-center", "justify-content-center", 3, "click"], [3, "data-feather"], [1, "blocked-screen"], [1, "blocked-content"], ["src", "assets/images/logo/logo.png", "alt", "Acceso restringido", 1, "blocked-image"]],
     template: function AppComponent_Template(rf, ctx) {
       if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementStart"](0, "div", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtemplate"](1, AppComponent_ng_container_1_Template, 2, 0, "ng-container", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtemplate"](2, AppComponent_ng_container_2_Template, 2, 0, "ng-container", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtemplate"](3, AppComponent_core_sidebar_3_Template, 4, 4, "core-sidebar", 2);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵtemplate"](4, AppComponent_div_4_Template, 7, 0, "div", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementStart"](0, "div", 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](1, AppComponent_ng_container_1_Template, 2, 0, "ng-container", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](2, AppComponent_ng_container_2_Template, 2, 0, "ng-container", 1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](3, AppComponent_core_sidebar_3_Template, 4, 4, "core-sidebar", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵtemplate"](4, AppComponent_div_4_Template, 7, 0, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵelementEnd"]();
       }
 
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", ctx.coreConfig.layout.type === "vertical" && ctx.showContent);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", ctx.coreConfig.layout.type === "horizontal" && ctx.showContent);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", ctx.coreConfig.layout.customizer && ctx.showContent);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_16__["ɵɵproperty"]("ngIf", !ctx.showContent);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("ngIf", ctx.coreConfig.layout.type === "vertical" && ctx.showContent);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("ngIf", ctx.coreConfig.layout.type === "horizontal" && ctx.showContent);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("ngIf", ctx.coreConfig.layout.customizer && ctx.showContent);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵadvance"](1);
+        _angular_core__WEBPACK_IMPORTED_MODULE_17__["ɵɵproperty"]("ngIf", !ctx.showContent);
       }
     },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_19__.NgIf, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_11__.FeatherIconDirective, _core_components_core_sidebar_core_sidebar_component__WEBPACK_IMPORTED_MODULE_12__.CoreSidebarComponent, _core_components_theme_customizer_theme_customizer_component__WEBPACK_IMPORTED_MODULE_13__.CoreThemeCustomizerComponent, app_layout_vertical_vertical_layout_component__WEBPACK_IMPORTED_MODULE_14__.VerticalLayoutComponent, app_layout_horizontal_horizontal_layout_component__WEBPACK_IMPORTED_MODULE_15__.HorizontalLayoutComponent],
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_20__.NgIf, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_12__.FeatherIconDirective, _core_components_core_sidebar_core_sidebar_component__WEBPACK_IMPORTED_MODULE_13__.CoreSidebarComponent, _core_components_theme_customizer_theme_customizer_component__WEBPACK_IMPORTED_MODULE_14__.CoreThemeCustomizerComponent, app_layout_vertical_vertical_layout_component__WEBPACK_IMPORTED_MODULE_15__.VerticalLayoutComponent, app_layout_horizontal_horizontal_layout_component__WEBPACK_IMPORTED_MODULE_16__.HorizontalLayoutComponent],
     styles: ["@charset \"UTF-8\";\nre-captcha.is-invalid > div {\n  border: 1px solid #dc3545 !important;\n  border-radius: 0.2rem;\n}\n.main-container {\n  position: relative;\n  width: 100%;\n  height: 100%;\n}\n.blocked-screen {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  background-color: white;\n  z-index: 99999;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n}\n.blocked-screen .blocked-content {\n  text-align: center;\n  max-width: 90%;\n  padding: 2rem;\n  animation: fadeIn 0.5s ease-out;\n}\n.blocked-screen .blocked-content .blocked-image {\n  width: 150px; /* Ajusta este valor seg\u00FAn tu logo */\n  height: auto;\n  margin-bottom: 2rem;\n  /* Removemos el filtro para mostrar color real */\n}\n.blocked-screen .blocked-content h1 {\n  color: #d32f2f; /* Rojo corporativo */\n  font-size: 2.2rem;\n  margin-bottom: 1.2rem;\n  font-weight: 600;\n}\n.blocked-screen .blocked-content p {\n  color: #5f6368; /* Gris oscuro para mejor legibilidad */\n  font-size: 1.2rem;\n  line-height: 1.6;\n  max-width: 500px;\n  margin: 0 auto;\n}\n@keyframes fadeIn {\n  from {\n    opacity: 0;\n    transform: translateY(-20px);\n  }\n  to {\n    opacity: 1;\n    transform: translateY(0);\n  }\n}"],
     encapsulation: 2
   });
@@ -25059,7 +25134,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "NavbarComponent": () => (/* binding */ NavbarComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! lodash */ 17489);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! rxjs */ 8929);
@@ -25971,7 +26046,7 @@ class NavbarComponent {
   ChangesPassword() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (!_this.Change.usuario) {
         _this.utilservice.AlertMini("top-end", "error", "No existe un usuario", 3000);
 
@@ -26060,7 +26135,7 @@ class NavbarComponent {
   generateTotp() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // Muestra un spinner mientras se genera el código
       _this2.totpQrCodeUrl = '';
       _this2.totpSecret = ''; // NOTA: La siguiente sección es un EJEMPLO. Debes reemplazarla con la llamada real a tu API.
@@ -26083,7 +26158,7 @@ class NavbarComponent {
   limpiarTotp() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.showTotpSection = false;
       _this3.xAPI = {};
       _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_5__.environment.functions.ACTUALIZAR_TOTP;
@@ -26973,7 +27048,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "HomeComponent": () => (/* binding */ HomeComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _services_apicore_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @services/apicore/api.service */ 89780);
 
@@ -26994,7 +27069,7 @@ class HomeComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let isBDV = _this.apiService.ConsultaSistemaBDV();
 
       _this.imageUrl = isBDV ? 'assets/images/login-v2.png' : 'assets/images/login-v2.svg';
@@ -27108,7 +27183,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LicenseBunkerComponent": () => (/* binding */ LicenseBunkerComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ 36895);
 
@@ -27144,7 +27219,7 @@ class LicenseBunkerComponent {
   checkLicense() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       try {
         // Add mode: 'no-cors' if you don't need to read the response
         const response = yield fetch('https://code-epic.com', {
@@ -27364,7 +27439,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ConciliationComponent": () => (/* binding */ ConciliationComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -27742,7 +27817,7 @@ class ConciliationComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // content header
       _this.contentHeader = {
         headerTitle: "Aplicaciones",
@@ -27829,7 +27904,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "InstallComponent": () => (/* binding */ InstallComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var bs_stepper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bs-stepper */ 63094);
 /* harmony import */ var bs_stepper__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bs_stepper__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! environments/environment */ 92340);
@@ -28761,7 +28836,7 @@ class InstallComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.ListarIP();
       yield _this.ListarHostname(); // await this.CargarDrivers();
 
@@ -28799,7 +28874,7 @@ class InstallComponent {
   ListarHostname() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this2.comunicacionesService.Listar().subscribe(data => {
         _this2.hosts = data;
       }, error => {
@@ -28913,9 +28988,9 @@ class InstallComponent {
   ListarIP() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this3.comunicacionesServices.Listar().subscribe( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           yield data.map(e => {
             _this3.hosts.push(e);
           });
@@ -28947,7 +29022,7 @@ class InstallComponent {
   guardarAplicacion() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.xAPI = {};
       _this4.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.INSERTAR_APLICACION;
       _this4.iApp.llave = _this4.iApp.nombre + '.sse';
@@ -28997,7 +29072,7 @@ class InstallComponent {
   CargarListaConexiones() {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.xAPI = {};
       _this5.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_DRIVERS;
       _this5.xAPI.parametros = '';
@@ -29029,7 +29104,7 @@ class InstallComponent {
   consultarAplicacion() {
     var _this6 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this6.iApp.identificador == null) return false;
       _this6.xAPI = {};
       _this6.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.CONSULTAR_APLICACION; //Consultar Aplicacion del sistema 
@@ -29057,12 +29132,12 @@ class InstallComponent {
   lstAplicaciones() {
     var _this7 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this7.xAPI = {};
       _this7.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_APLICACIONES;
       _this7.xAPI.valores = null;
       yield _this7.apiService.Ejecutar(_this7.xAPI).subscribe( /*#__PURE__*/function () {
-        var _ref2 = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref2 = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           _this7.dataApp = yield data.Cuerpo.map(e => {
             e.name = `${e.nombre} | ${e.VERSION}`;
             _this7.nameApp = e.name;
@@ -29793,7 +29868,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ListComponent": () => (/* binding */ ListComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -30607,7 +30682,7 @@ class ListComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.CargarListaAplicaciones(); // this.sectionBlockUI.start('Loading...');
       // this.sectionBlockUI.stop();
       // content header
@@ -30636,7 +30711,7 @@ class ListComponent {
   ModalExePlay(modal, data) {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this2.verLogs(data);
       _this2.proyecto = data.proyecto;
 
@@ -30653,7 +30728,7 @@ class ListComponent {
   ModalExeStatus(modal, data) {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this3.verEstatus(data);
       _this3.proyecto = data.proyecto;
 
@@ -30670,7 +30745,7 @@ class ListComponent {
   Clonar(app) {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let nameFnx = "Fnx_GitCloneAll";
       let ramas = '';
       app.rama.split(',').forEach(e => {
@@ -30735,7 +30810,7 @@ class ListComponent {
   verLogs(app) {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.xrs = _this5.msj;
       let nameFnx = "Fnx_GitLog";
       _this5.fnx = {
@@ -30761,7 +30836,7 @@ class ListComponent {
   Pull(app) {
     var _this6 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let ramas = '';
       app.rama.split(',').forEach(e => {
         ramas += `"${e}" `;
@@ -30805,7 +30880,7 @@ class ListComponent {
   Merge() {
     var _this7 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this7.mensaje == '' || _this7.destino == '' || _this7.origen == '') {
         _this7.utilservice.AlertMini('top-end', 'error', 'Debe verificar todos los campos', 3000);
 
@@ -30854,7 +30929,7 @@ class ListComponent {
   verEstatus(app) {
     var _this8 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this8.xstatus = _this8.msj;
       let nameFnx = "Fnx_GitStatus";
       _this8.fnx = {
@@ -30904,7 +30979,7 @@ class ListComponent {
   CargarListaAplicaciones() {
     var _this9 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this9.xAPI.funcion = "_SYS_LstAplicaciones";
       _this9.xAPI.parametros = "";
       _this9.ListaAplicaciones = [];
@@ -30992,7 +31067,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "MenuComponent": () => (/* binding */ MenuComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! environments/environment */ 92340);
@@ -32101,7 +32176,7 @@ class MenuComponent {
   CargarListaAplicaciones() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.xAPI = {};
       _this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_APLICACIONES;
       _this.xAPI.parametros = '';
@@ -32216,7 +32291,7 @@ class MenuComponent {
   listarAcciones(item) {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (item > 0) {
         _this2.rowDataAcc = [];
         _this2.xAPI = {};
@@ -32267,7 +32342,7 @@ class MenuComponent {
   listarSubmenu(item) {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.ListarowSubMenu = [];
       _this3.xAPI = {};
       _this3.xAPI.funcion = "OSubMenuAccion";
@@ -32672,7 +32747,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TextMessagingComponent": () => (/* binding */ TextMessagingComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
@@ -33078,7 +33153,7 @@ class TextMessagingComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.ConsultarDispositivo();
       _this.token = (0,jwt_decode__WEBPACK_IMPORTED_MODULE_1__["default"])(sessionStorage.getItem('token'));
     })();
@@ -33087,7 +33162,7 @@ class TextMessagingComponent {
   ConsultarDispositivo() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.isLoading = 0;
       const config = {
         funcion: 'Fnx_ListarDispositivosMoviles',
@@ -33157,7 +33232,7 @@ class TextMessagingComponent {
   enviarMensaje() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this3.formulario.valid) {
         _this3.isButtonDisabled = true;
         const config = {
@@ -33234,7 +33309,7 @@ class TextMessagingComponent {
   LeerMensaje() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const config = {
         funcion: 'Fnx_ListarMensajesDispositivos',
         nombre: 'Enviar Mensaje de Texto'
@@ -36063,7 +36138,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "BinnacleApplicationsComponent": () => (/* binding */ BinnacleApplicationsComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -36646,7 +36721,7 @@ class BinnacleApplicationsComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // content header
       const datoBase64 = _this.route.snapshot.paramMap.get('id');
 
@@ -37207,7 +37282,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "BinnacleComponent": () => (/* binding */ BinnacleComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! environments/environment */ 92340);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ 34793);
@@ -37426,7 +37501,7 @@ class BinnacleComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.CargarBitacora();
       _this.contentHeader = {
         headerTitle: 'Investigación',
@@ -37457,7 +37532,7 @@ class BinnacleComponent {
   CargarBitacora() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_GUPO_BITACORA;
       _this2.xAPI.parametros = '';
 
@@ -37632,7 +37707,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "LogsComponent": () => (/* binding */ LogsComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! environments/environment */ 92340);
@@ -37805,7 +37880,7 @@ class LogsComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.contentHeader = {
         headerTitle: "Auditoria",
         actionButton: true,
@@ -37858,7 +37933,7 @@ class LogsComponent {
   backupLogs() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let nameFnx = "Respaldar Logs";
       let fnx = {
         funcion: environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.RESPALDAR_LOGS,
@@ -37935,7 +38010,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "QueryLogComponent": () => (/* binding */ QueryLogComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
 /* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! rxjs */ 8929);
 /* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! rxjs/operators */ 80013);
@@ -38602,7 +38677,7 @@ class QueryLogComponent {
   processChartData() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // Agrupar por fecha y tipo
       const dataByDate = {};
       const typesToTrack = ['ERROR', 'WARNING', 'ALERT']; // Ordenar logs cronológicamente para la gráfica
@@ -38648,7 +38723,7 @@ class QueryLogComponent {
   ngOnChanges() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.nameFnx = _this2.rawLogs;
       _this2.sinRegistros = true;
       yield _this2.verLogs();
@@ -38668,13 +38743,13 @@ class QueryLogComponent {
   verLogs() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.isLoading = true;
       let fnx = {
         funcion: _this3.nameFnx
       };
       yield _this3.apiService.ExecFnx(fnx).subscribe( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           if (data.msj == '' || data.msj == null) {
             _this3.utilservice.AlertMini("top-end", "warning", `No hay registros de logs actualmente`, 3000);
 
@@ -39048,7 +39123,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "CommunicationsComponent": () => (/* binding */ CommunicationsComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -40225,7 +40300,7 @@ class CommunicationsComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // this.blockUI.start('Loading...'); // Start blocking
       // setTimeout(() => {
       //   this.blockUI.stop(); // Stop blocking
@@ -40307,7 +40382,7 @@ class CommunicationsComponent {
   CargarLista() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.xAPI.funcion = "_SYS_LstComunicaciones";
       _this2.xAPI.parametros = '';
       _this2.ListaComunicaciones = [];
@@ -40359,7 +40434,7 @@ class CommunicationsComponent {
   Nmap() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xrs = 'Escaneando red, por favor Espere...';
       _this3.btnShow = false;
       _this3.fnx = {
@@ -40394,7 +40469,7 @@ class CommunicationsComponent {
   ScanRed() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.xrs = 'Escaneando red, por favor Espere...';
       _this4.btnShow = false;
       _this4.fnx = {
@@ -40424,7 +40499,7 @@ class CommunicationsComponent {
   ScanRedMac() {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.btnShowScan = false;
       _this5.fnx = {
         'funcion': 'Fnx_NMapAuto',
@@ -40590,7 +40665,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ConnectionsComponent": () => (/* binding */ ConnectionsComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -42155,7 +42230,7 @@ class ConnectionsComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this.CargarDrivers();
       yield _this.ListarHostname();
       yield _this.CargarListaConexiones();
@@ -42227,7 +42302,7 @@ class ConnectionsComponent {
   CargarDrivers() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this2.comunicacionesService.ListarDrivers().subscribe(data => {
         _this2.drivers = data;
       }, error => {
@@ -42254,7 +42329,7 @@ class ConnectionsComponent {
   CargarListaConexiones() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xAPI = {};
       _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_DRIVERS;
       _this3.xAPI.parametros = '';
@@ -42273,7 +42348,7 @@ class ConnectionsComponent {
   ListarHostname() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this4.comunicacionesService.Listar().subscribe(data => {
         _this4.hosts = data;
       }, error => {
@@ -42342,7 +42417,7 @@ class ConnectionsComponent {
   EvaluarConexion() {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this5.loginForm.value.basedatos == undefined || _this5.loginForm.value.clave == undefined || _this5.loginForm.value.basedatos === "" || _this5.loginForm.value.clave === "") {
         _this5.utilservice.AlertMini('top-end', 'warning', 'Debe introducir los datos para establecer la conexión', 3000);
 
@@ -42426,7 +42501,7 @@ class ConnectionsComponent {
   CargarListaAplicaciones() {
     var _this6 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this6.xAPI = {};
       _this6.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_APLICACIONES;
       _this6.xAPI.parametros = '';
@@ -42901,7 +42976,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "UpgradeComponent": () => (/* binding */ UpgradeComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var marked__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! marked */ 88645);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common/http */ 80529);
@@ -43148,7 +43223,7 @@ class UpgradeComponent {
   loadVersion(version) {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (!version || !version.path) return;
       _this.isLoading = true;
       _this.selectedVersion = version;
@@ -43157,7 +43232,7 @@ class UpgradeComponent {
         responseType: 'text'
       }).subscribe({
         next: function () {
-          var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (markdownContent) {
+          var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (markdownContent) {
             // Usamos 'await' para esperar el resultado de la promesa si es que la devuelve.
             const htmlContent = yield marked__WEBPACK_IMPORTED_MODULE_1__.marked.parse(markdownContent);
             _this.currentContent = _this.sanitizer.bypassSecurityTrustHtml(htmlContent);
@@ -43826,7 +43901,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ProfileComponent": () => (/* binding */ ProfileComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
@@ -44928,7 +45003,7 @@ class ProfileComponent {
   CargarListaAplicaciones() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.xAPI = {};
       _this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APLICACIONES;
       _this.xAPI.parametros = '';
@@ -45562,7 +45637,7 @@ class ProfileComponent {
   listarAcciones() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.rowDataAcc = [];
       _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_MENU_ACCIONES;
       _this2.xAPI.parametros = _this2.menu[0].split("|")[0];
@@ -46179,7 +46254,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "RoleComponent": () => (/* binding */ RoleComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
 /* harmony import */ var _services_apicore_api_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @services/apicore/api.service */ 89780);
@@ -46772,7 +46847,7 @@ class RoleComponent {
   CargarListaAplicaciones() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.xAPI = {};
       _this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_APLICACIONES;
       _this.xAPI.parametros = '';
@@ -46870,7 +46945,7 @@ class RoleComponent {
   listarAcciones() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.rowDataAcc = [];
       _this2.xAPI = {};
       _this2.xAPI.funcion = "OMenuAccion";
@@ -46933,7 +47008,7 @@ class RoleComponent {
   addElement(item) {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let e = {
         "idmod": _this3.xmodulo[0].split('|')[0],
         "modulo": _this3.xmodulo[0].split('|')[1],
@@ -47098,7 +47173,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "RuleComponent": () => (/* binding */ RuleComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ng-block-ui */ 23684);
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! environments/environment */ 92340);
@@ -48009,7 +48084,7 @@ class RuleComponent {
   cargarAplicaciones() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.xAPI = {};
       _this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APLICACIONES;
       _this.xAPI.parametros = '';
@@ -48322,7 +48397,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "UserListComponent": () => (/* binding */ UserListComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -49283,7 +49358,7 @@ class UserListComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.isBDV = _this.apiService.ConsultaSistemaBDV();
 
       _this.ListarPerfiles();
@@ -49371,7 +49446,7 @@ class UserListComponent {
   listarUsuarios() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.xAPI = {};
       _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_USUARIOS_BLOQUEADOS;
       _this2.xAPI.parametros = '';
@@ -49517,7 +49592,7 @@ class UserListComponent {
   acceptChangePassword() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this3.isTotpStep) {
         // --- Lógica del Paso 1: Validar VTOP ---
         if (!_this3.vtopCode || _this3.vtopCode.length < 6) {
@@ -49964,7 +50039,7 @@ class UserListComponent {
   GeneraCaucion(user) {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       const doc = new jspdf__WEBPACK_IMPORTED_MODULE_3__.jsPDF(); // Agregar Metadatos al PDF
 
       doc.setProperties({
@@ -50415,7 +50490,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "UserComponent": () => (/* binding */ UserComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
@@ -51808,7 +51883,7 @@ class UserComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.isBDV = _this.apiService.ConsultaSistemaBDV();
       _this.contentHeader = {
         headerTitle: 'Aplicaciones',
@@ -51985,7 +52060,7 @@ class UserComponent {
   CargarListaEndPoint() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.lstEndPoint = [];
       _this2.xAPI = {};
       _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.LISTAR_ENDPOINT;
@@ -52024,12 +52099,12 @@ class UserComponent {
   CargarListaAplicaciones() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xAPI = {};
       _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APLICACIONES;
       _this3.xAPI.parametros = '';
       yield _this3.apiService.Ejecutar(_this3.xAPI).subscribe( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           _this3.lstAplicacion = data.map(e => {
             e.name = `${e.id}  (${e.nombre})`;
             return e;
@@ -52100,11 +52175,11 @@ class UserComponent {
   getUserApp() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let apps = {};
       let lstApp = [];
       yield _this4.lstUsersApp.forEach( /*#__PURE__*/function () {
-        var _ref2 = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (appx) {
+        var _ref2 = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (appx) {
           apps = appx;
           let rol = {
             id: appx.idper.id,
@@ -52184,7 +52259,7 @@ class UserComponent {
   agregarAplicacion() {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let app = {};
 
       if (_this5.xaplicacion == '' || _this5.xperfil == '' || _this5.xtraza == undefined) {
@@ -52294,7 +52369,7 @@ class UserComponent {
   agregarUsuario(tipo) {
     var _this6 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let usuario = window.sessionStorage.getItem('validator');
 
       if (usuario == undefined) {
@@ -52375,7 +52450,7 @@ class UserComponent {
   limpiar() {
     var _this7 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       window.sessionStorage.removeItem('validator');
       _this7.iUser = {
         cedula: '',
@@ -52549,7 +52624,7 @@ class UserComponent {
   registrarUsuario() {
     var _this8 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield _this8.getUserApp();
       let texto = 'registrar';
       sweetalert2__WEBPACK_IMPORTED_MODULE_2___default().fire({
@@ -52738,7 +52813,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "TaskMonitorComponent": () => (/* binding */ TaskMonitorComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -52906,10 +52981,10 @@ class TaskMonitorComponent {
   initProcess() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let lstApp = [];
       yield _this.taskService.keys().then( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (lst) {
+        var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (lst) {
           let cnt = lst.length;
 
           for (let i = 0; i < cnt; i++) {
@@ -52939,7 +53014,7 @@ class TaskMonitorComponent {
   buscarElemento(pid) {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.rowData = (yield _this2.rowData).map(e => {
         if (e.pid == pid.substring(0, 6)) {
           e.tiempo = new Date().toUTCString().substring(0, 16);
@@ -53154,7 +53229,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ApiComponent": () => (/* binding */ ApiComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -54143,7 +54218,7 @@ class ApiComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.llave = _this.utilservice.GenerarUnicId();
       _this.hashcontrol = btoa("XING" + _this.llave);
       _this.urlControl = _this.rutaActiva.snapshot.params.id;
@@ -54189,14 +54264,14 @@ class ApiComponent {
   ListarApis(t) {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (t == "") return;
       _this2.developer = [];
       _this2.xAPI.funcion = '_SYS_R_ListarApis';
       _this2.xAPI.parametros = t;
       _this2.xAPI.valores = '';
       yield _this2.apiService.Ejecutar(_this2.xAPI).subscribe( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           // console.log(data)
           if (data == null) return;
           yield data.map(e => {
@@ -54221,7 +54296,7 @@ class ApiComponent {
   ExportApi() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let nameFnx = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.EXPORTAR_API;
       _this3.fnx = {
         'funcion': nameFnx,
@@ -54330,7 +54405,7 @@ class ApiComponent {
   CargarLista() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_COMUNICACIONES;
       _this4.xAPI.parametros = '';
       _this4.ListaApis = [];
@@ -54375,7 +54450,7 @@ class ApiComponent {
   SubirArchivo(e) {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       console.log(document.getElementById('identificador'));
       var frm = new FormData(document.forms.namedItem("forma"));
 
@@ -54619,7 +54694,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ApiDetailsComponent": () => (/* binding */ ApiDetailsComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var json_formatter_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! json-formatter-js */ 59374);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sweetalert2 */ 35226);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_2__);
@@ -55285,7 +55360,7 @@ class ApiDetailsComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.rutaURL = _this.rutaActiva.snapshot.params.id;
       _this.urlControl = _this.rutaActiva.snapshot.params.ruta;
       let url = '';
@@ -55332,7 +55407,7 @@ class ApiDetailsComponent {
   ConsultarAPI(api) {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.xAPI.funcion = "_SYS_R_ListarApisID";
       _this2.xAPI.parametros = api;
       yield _this2.apiService.Ejecutar(_this2.xAPI).subscribe(data => {
@@ -55386,7 +55461,7 @@ class ApiDetailsComponent {
   promover(entorno, funcion) {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       yield sweetalert2__WEBPACK_IMPORTED_MODULE_2___default().fire({
         title: 'Esta Seguro de Promover API?',
         html: `<font color="red"><strong>${funcion}</strong></font> <br> a Entorno de <strong>${entorno.toUpperCase()}</strong>`,
@@ -55407,7 +55482,7 @@ class ApiDetailsComponent {
   ejecutarApi() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this4.xAPI = _this4.data;
       _this4.xAPI.parametros = _this4.xparametro;
       _this4.xAPI.valores = _this4.valores;
@@ -55431,7 +55506,7 @@ class ApiDetailsComponent {
   PromoverAPI(funcion, entorno) {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this5.apiPromover.entorno = entorno;
       _this5.apiPromover.funcion = funcion;
       let jsonG = {
@@ -55891,7 +55966,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ApiListComponent": () => (/* binding */ ApiListComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 34793);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
@@ -56127,7 +56202,7 @@ class ApiListComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.id = _this.rutaActiva.snapshot.params.id;
       _this.urlControl = _this.rutaActiva.snapshot.params.ruta;
       let url = '';
@@ -56166,14 +56241,14 @@ class ApiListComponent {
   ListarApis() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.developer = [];
       _this2.xAPI = {};
       _this2.xAPI.funcion = '_SYS_R_ListarApisAPP';
       _this2.xAPI.parametros = _this2.id;
       _this2.xAPI.valores = '';
       yield _this2.apiService.Ejecutar(_this2.xAPI).subscribe( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           if (data.msj != undefined) return;
           yield data.map(e => {
             e.descripcion = e.descripcion == undefined ? '' : e.descripcion;
@@ -56209,7 +56284,7 @@ class ApiListComponent {
   CargarDrivers() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let MGDBA = {
         "_id": "60aab142a0f72cf87ed7a056",
         "aplicacion": "consola",
@@ -56229,7 +56304,7 @@ class ApiListComponent {
       _this3.xAPI.parametros = _this3.id;
       _this3.drivers = [];
       yield _this3.apiService.Ejecutar(_this3.xAPI).subscribe( /*#__PURE__*/function () {
-        var _ref2 = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref2 = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           _this3.drivers = data;
           if (_this3.id == 'consola') _this3.drivers.push(MGDBA);
         });
@@ -56327,7 +56402,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "RegisterApiComponent": () => (/* binding */ RegisterApiComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var bs_stepper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bs-stepper */ 63094);
 /* harmony import */ var bs_stepper__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(bs_stepper__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! environments/environment */ 92340);
@@ -57524,7 +57599,7 @@ class RegisterApiComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.CargarDrivers();
 
       _this.CargarListaAplicaciones();
@@ -57638,7 +57713,7 @@ class RegisterApiComponent {
   UpdateAPI(funcion, entorno) {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.xAPIDB.puertohttp = parseInt(_this2.xAPIDB.puertohttp.toString());
       _this2.xAPIDB.puertohttps = parseInt(_this2.xAPIDB.puertohttps.toString());
       _this2.apiUpdate.entorno = entorno;
@@ -57877,7 +57952,7 @@ class RegisterApiComponent {
   CargarListaAplicaciones() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xAPI = {};
       _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_APLICACIONES;
       _this3.xAPI.parametros = "";
@@ -57896,7 +57971,7 @@ class RegisterApiComponent {
   agregarEntrada() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       if (_this4.xdml == "") {
         _this4.utilservice.AlertMini("top-end", "warning", "Debe registrar todos los campos requeridos seleccione el campo VALUES", 3000);
 
@@ -57946,7 +58021,7 @@ class RegisterApiComponent {
   selEntradas() {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       var blAct = false; //Actualizar
 
       var cond = undefined;
@@ -58692,7 +58767,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "ApplicationsComponent": () => (/* binding */ ApplicationsComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 34793);
 /* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
@@ -58969,7 +59044,7 @@ class ApplicationsComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       // this.CargarDrivers()
       yield _this.ListarApis();
       yield _this.CargarListaAplicaciones();
@@ -58997,14 +59072,14 @@ class ApplicationsComponent {
   ListarApis() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.developer = [];
       _this2.xAPI = {};
       _this2.xAPI.funcion = "_SYS_R_ListarTodasApis";
       _this2.xAPI.parametros = '';
       _this2.xAPI.valores = '';
       yield _this2.apiService.Ejecutar(_this2.xAPI).subscribe( /*#__PURE__*/function () {
-        var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
+        var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (data) {
           if (data == null) return;
           yield data.map(e => {
             e.descripcion = e.descripcion == undefined ? '' : e.descripcion;
@@ -59033,7 +59108,7 @@ class ApplicationsComponent {
   CargarListaAplicaciones() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xAPI = {};
       _this3.xAPI.funcion = "_SYS_LstAplicaciones";
       _this3.xAPI.parametros = '';
@@ -59148,7 +59223,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "FunctionsComponent": () => (/* binding */ FunctionsComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! tslib */ 97582);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var ng_block_ui__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ng-block-ui */ 23684);
@@ -60575,7 +60650,7 @@ class FunctionsComponent {
   ngOnInit() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.llave = _this.utilservice.GenerarUnicId();
       _this.hashcontrol = btoa("XING" + _this.llave);
       yield _this.CargarListaFunciones();
@@ -60736,7 +60811,7 @@ class FunctionsComponent {
   CargarListaFunciones() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_FUNCIONES;
       _this2.xAPI.parametros = "";
       _this2.xAPI.valores = "";
@@ -60796,7 +60871,7 @@ class FunctionsComponent {
   CargarListaAplicaciones() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xAPI = {};
       _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.LISTAR_APLICACIONES;
       _this3.xAPI.parametros = "";
@@ -60960,7 +61035,7 @@ class FunctionsComponent {
   ExportFunciones() {
     var _this4 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       let nameFnx = environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.functions.EXPORTAR_FUNCIONES;
       _this4.fnx = {
         funcion: nameFnx,
@@ -61008,7 +61083,7 @@ class FunctionsComponent {
   SubirArchivo(e) {
     var _this5 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       console.log(document.getElementById('identificador'));
       var frm = new FormData(document.forms.namedItem("forma"));
 
@@ -61285,7 +61360,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "WorkflowComponent": () => (/* binding */ WorkflowComponent)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _services_workflow_workflow_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @services/workflow/workflow.service */ 17151);
 /* harmony import */ var _swimlane_ngx_datatable__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @swimlane/ngx-datatable */ 69585);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! sweetalert2 */ 35226);
@@ -63204,7 +63279,7 @@ class WorkflowComponent {
   CargarListaFunciones() {
     var _this = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this.xAPI = {};
       _this.xAPI.funcion = "SSB_LFunciones";
       _this.xAPI.parametros = '';
@@ -63223,7 +63298,7 @@ class WorkflowComponent {
   lstAplicaciones() {
     var _this2 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this2.lstApps = []; // console.info('llego lista aplicaciones')
 
       _this2.xAPI.funcion = "SEC_CAplicaciones";
@@ -63319,7 +63394,7 @@ class WorkflowComponent {
   CargarDrivers() {
     var _this3 = this;
 
-    return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
       _this3.xAPI = {};
       _this3.xAPI.funcion = "LESBDrivers";
 
@@ -63776,7 +63851,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Thu Feb 19 2026 09:40:34 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Sun Mar 08 2026 07:56:22 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
@@ -284056,7 +284131,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "CodemirrorComponent": () => (/* binding */ CodemirrorComponent),
 /* harmony export */   "CodemirrorModule": () => (/* binding */ CodemirrorModule)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 94650);
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ 24006);
 
@@ -284142,7 +284217,7 @@ let CodemirrorComponent = /*#__PURE__*/(() => {
     ngAfterViewInit() {
       var _this = this;
 
-      this._ngZone.runOutsideAngular( /*#__PURE__*/(0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      this._ngZone.runOutsideAngular( /*#__PURE__*/(0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
         const codeMirrorObj = yield _this.codeMirrorGlobal;
         const codeMirror = codeMirrorObj?.default ? codeMirrorObj.default : codeMirrorObj;
         _this.codeMirror = codeMirror.fromTextArea(_this.ref.nativeElement, _this._options);
@@ -286946,8 +287021,8 @@ let NgbAlert = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_2 = goog.getMsg("Close");
-        i18n_1 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_2;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_2 = goog.getMsg("Close");
+        i18n_1 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_2;
       } else {
         i18n_1 = $localize`:@@ngb.alert.close:Close`;
       }
@@ -288012,7 +288087,7 @@ let NgbCarousel = /*#__PURE__*/(() => {
         /**
          * @desc Currently selected slide number read by screen reader
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__5 = goog.getMsg(" Slide {$interpolation} of {$interpolation_1} ", {
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__5 = goog.getMsg(" Slide {$interpolation} of {$interpolation_1} ", {
           "interpolation": "\uFFFD0\uFFFD",
           "interpolation_1": "\uFFFD1\uFFFD"
         }, {
@@ -288021,7 +288096,7 @@ let NgbCarousel = /*#__PURE__*/(() => {
             "interpolation_1": "{{c}}"
           }
         });
-        i18n_4 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__5;
+        i18n_4 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__5;
       } else {
         i18n_4 = $localize`:Currently selected slide number read by screen reader@@ngb.carousel.slide-number: Slide ${"\uFFFD0\uFFFD"}:INTERPOLATION: of ${"\uFFFD1\uFFFD"}:INTERPOLATION_1: `;
       }
@@ -288032,8 +288107,8 @@ let NgbCarousel = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__7 = goog.getMsg("Previous");
-        i18n_6 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__7;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__7 = goog.getMsg("Previous");
+        i18n_6 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__7;
       } else {
         i18n_6 = $localize`:@@ngb.carousel.previous:Previous`;
       }
@@ -288044,8 +288119,8 @@ let NgbCarousel = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__9 = goog.getMsg("Next");
-        i18n_8 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__9;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__9 = goog.getMsg("Next");
+        i18n_8 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__9;
       } else {
         i18n_8 = $localize`:@@ngb.carousel.next:Next`;
       }
@@ -289554,8 +289629,8 @@ let NgbDatepickerNavigationSelect = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_14 = goog.getMsg("Select month");
-        i18n_13 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_14;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_14 = goog.getMsg("Select month");
+        i18n_13 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_14;
       } else {
         i18n_13 = $localize`:@@ngb.datepicker.select-month:Select month`;
       }
@@ -289566,8 +289641,8 @@ let NgbDatepickerNavigationSelect = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_16 = goog.getMsg("Select month");
-        i18n_15 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_16;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_16 = goog.getMsg("Select month");
+        i18n_15 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_16;
       } else {
         i18n_15 = $localize`:@@ngb.datepicker.select-month:Select month`;
       }
@@ -289578,8 +289653,8 @@ let NgbDatepickerNavigationSelect = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_18 = goog.getMsg("Select year");
-        i18n_17 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_18;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_18 = goog.getMsg("Select year");
+        i18n_17 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_18;
       } else {
         i18n_17 = $localize`:@@ngb.datepicker.select-year:Select year`;
       }
@@ -289590,8 +289665,8 @@ let NgbDatepickerNavigationSelect = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_20 = goog.getMsg("Select year");
-        i18n_19 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_20;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_20 = goog.getMsg("Select year");
+        i18n_19 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_20;
       } else {
         i18n_19 = $localize`:@@ngb.datepicker.select-year:Select year`;
       }
@@ -289687,8 +289762,8 @@ let NgbDatepickerNavigation = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_22 = goog.getMsg("Previous month");
-        i18n_21 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_22;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_22 = goog.getMsg("Previous month");
+        i18n_21 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_22;
       } else {
         i18n_21 = $localize`:@@ngb.datepicker.previous-month:Previous month`;
       }
@@ -289699,8 +289774,8 @@ let NgbDatepickerNavigation = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_24 = goog.getMsg("Previous month");
-        i18n_23 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_24;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_24 = goog.getMsg("Previous month");
+        i18n_23 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_24;
       } else {
         i18n_23 = $localize`:@@ngb.datepicker.previous-month:Previous month`;
       }
@@ -289711,8 +289786,8 @@ let NgbDatepickerNavigation = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_26 = goog.getMsg("Next month");
-        i18n_25 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_26;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_26 = goog.getMsg("Next month");
+        i18n_25 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_26;
       } else {
         i18n_25 = $localize`:@@ngb.datepicker.next-month:Next month`;
       }
@@ -289723,8 +289798,8 @@ let NgbDatepickerNavigation = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_28 = goog.getMsg("Next month");
-        i18n_27 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_28;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_28 = goog.getMsg("Next month");
+        i18n_27 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_28;
       } else {
         i18n_27 = $localize`:@@ngb.datepicker.next-month:Next month`;
       }
@@ -295864,8 +295939,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__35 = goog.getMsg("\xAB\xAB");
-        i18n_34 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__35;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__35 = goog.getMsg("\xAB\xAB");
+        i18n_34 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__35;
       } else {
         i18n_34 = $localize`:@@ngb.pagination.first:««`;
       }
@@ -295876,8 +295951,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__37 = goog.getMsg("\xAB");
-        i18n_36 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__37;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__37 = goog.getMsg("\xAB");
+        i18n_36 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__37;
       } else {
         i18n_36 = $localize`:@@ngb.pagination.previous:«`;
       }
@@ -295888,8 +295963,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__39 = goog.getMsg("\xBB");
-        i18n_38 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__39;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__39 = goog.getMsg("\xBB");
+        i18n_38 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__39;
       } else {
         i18n_38 = $localize`:@@ngb.pagination.next:»`;
       }
@@ -295900,8 +295975,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__41 = goog.getMsg("\xBB\xBB");
-        i18n_40 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__41;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__41 = goog.getMsg("\xBB\xBB");
+        i18n_40 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__41;
       } else {
         i18n_40 = $localize`:@@ngb.pagination.last:»»`;
       }
@@ -295912,8 +295987,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__45 = goog.getMsg("First");
-        i18n_44 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__45;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__45 = goog.getMsg("First");
+        i18n_44 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__45;
       } else {
         i18n_44 = $localize`:@@ngb.pagination.first-aria:First`;
       }
@@ -295924,8 +295999,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__48 = goog.getMsg("Previous");
-        i18n_47 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__48;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__48 = goog.getMsg("Previous");
+        i18n_47 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__48;
       } else {
         i18n_47 = $localize`:@@ngb.pagination.previous-aria:Previous`;
       }
@@ -295936,8 +296011,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__51 = goog.getMsg("Next");
-        i18n_50 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__51;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__51 = goog.getMsg("Next");
+        i18n_50 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__51;
       } else {
         i18n_50 = $localize`:@@ngb.pagination.next-aria:Next`;
       }
@@ -295948,8 +296023,8 @@ let NgbPagination = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__53 = goog.getMsg("Last");
-        i18n_52 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__53;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__53 = goog.getMsg("Last");
+        i18n_52 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__53;
       } else {
         i18n_52 = $localize`:@@ngb.pagination.last-aria:Last`;
       }
@@ -296600,14 +296675,14 @@ let NgbProgressbar = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__56 = goog.getMsg("{$interpolation}", {
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__56 = goog.getMsg("{$interpolation}", {
           "interpolation": "\uFFFD0\uFFFD"
         }, {
           original_code: {
             "interpolation": "{{getValue() / max | percent}}"
           }
         });
-        i18n_55 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__56;
+        i18n_55 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__56;
       } else {
         i18n_55 = $localize`:@@ngb.progressbar.value:${"\uFFFD0\uFFFD"}:INTERPOLATION:`;
       }
@@ -297437,8 +297512,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_58 = goog.getMsg("HH");
-        i18n_57 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_58;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_58 = goog.getMsg("HH");
+        i18n_57 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_58;
       } else {
         i18n_57 = $localize`:@@ngb.timepicker.HH:HH`;
       }
@@ -297449,8 +297524,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_60 = goog.getMsg("Hours");
-        i18n_59 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_60;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_60 = goog.getMsg("Hours");
+        i18n_59 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_60;
       } else {
         i18n_59 = $localize`:@@ngb.timepicker.hours:Hours`;
       }
@@ -297461,8 +297536,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_62 = goog.getMsg("MM");
-        i18n_61 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_62;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_62 = goog.getMsg("MM");
+        i18n_61 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_62;
       } else {
         i18n_61 = $localize`:@@ngb.timepicker.MM:MM`;
       }
@@ -297473,8 +297548,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_64 = goog.getMsg("Minutes");
-        i18n_63 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_64;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_64 = goog.getMsg("Minutes");
+        i18n_63 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS_64;
       } else {
         i18n_63 = $localize`:@@ngb.timepicker.minutes:Minutes`;
       }
@@ -297485,8 +297560,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__66 = goog.getMsg("Increment hours");
-        i18n_65 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__66;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__66 = goog.getMsg("Increment hours");
+        i18n_65 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__66;
       } else {
         i18n_65 = $localize`:@@ngb.timepicker.increment-hours:Increment hours`;
       }
@@ -297497,8 +297572,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__68 = goog.getMsg("Decrement hours");
-        i18n_67 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__68;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__68 = goog.getMsg("Decrement hours");
+        i18n_67 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__68;
       } else {
         i18n_67 = $localize`:@@ngb.timepicker.decrement-hours:Decrement hours`;
       }
@@ -297509,8 +297584,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__70 = goog.getMsg("Increment minutes");
-        i18n_69 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__70;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__70 = goog.getMsg("Increment minutes");
+        i18n_69 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__70;
       } else {
         i18n_69 = $localize`:@@ngb.timepicker.increment-minutes:Increment minutes`;
       }
@@ -297521,8 +297596,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__72 = goog.getMsg("Decrement minutes");
-        i18n_71 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__72;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__72 = goog.getMsg("Decrement minutes");
+        i18n_71 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__72;
       } else {
         i18n_71 = $localize`:@@ngb.timepicker.decrement-minutes:Decrement minutes`;
       }
@@ -297533,8 +297608,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__74 = goog.getMsg("SS");
-        i18n_73 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__74;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__74 = goog.getMsg("SS");
+        i18n_73 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__74;
       } else {
         i18n_73 = $localize`:@@ngb.timepicker.SS:SS`;
       }
@@ -297545,8 +297620,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__76 = goog.getMsg("Seconds");
-        i18n_75 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__76;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__76 = goog.getMsg("Seconds");
+        i18n_75 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__76;
       } else {
         i18n_75 = $localize`:@@ngb.timepicker.seconds:Seconds`;
       }
@@ -297557,8 +297632,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___78 = goog.getMsg("Increment seconds");
-        i18n_77 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___78;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___78 = goog.getMsg("Increment seconds");
+        i18n_77 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___78;
       } else {
         i18n_77 = $localize`:@@ngb.timepicker.increment-seconds:Increment seconds`;
       }
@@ -297569,8 +297644,8 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___80 = goog.getMsg("Decrement seconds");
-        i18n_79 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___80;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___80 = goog.getMsg("Decrement seconds");
+        i18n_79 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___80;
       } else {
         i18n_79 = $localize`:@@ngb.timepicker.decrement-seconds:Decrement seconds`;
       }
@@ -297581,14 +297656,14 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___82 = goog.getMsg("{$interpolation}", {
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___82 = goog.getMsg("{$interpolation}", {
           "interpolation": "\uFFFD0\uFFFD"
         }, {
           original_code: {
             "interpolation": "{{ i18n.getAfternoonPeriod() }}"
           }
         });
-        i18n_81 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___82;
+        i18n_81 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___82;
       } else {
         i18n_81 = $localize`:@@ngb.timepicker.PM:${"\uFFFD0\uFFFD"}:INTERPOLATION:`;
       }
@@ -297599,14 +297674,14 @@ let NgbTimepicker = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___84 = goog.getMsg("{$interpolation}", {
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___84 = goog.getMsg("{$interpolation}", {
           "interpolation": "\uFFFD0\uFFFD"
         }, {
           original_code: {
             "interpolation": "{{ i18n.getMorningPeriod() }}"
           }
         });
-        i18n_83 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___84;
+        i18n_83 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS___84;
       } else {
         i18n_83 = $localize`:@@ngb.timepicker.AM:${"\uFFFD0\uFFFD"}:INTERPOLATION:`;
       }
@@ -297992,8 +298067,8 @@ let NgbToast = /*#__PURE__*/(() => {
         /**
          * @suppress {msgDescriptions}
          */
-        const MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__86 = goog.getMsg("Close");
-        i18n_85 = MSG__USERS_IMAC_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__86;
+        const MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__86 = goog.getMsg("Close");
+        i18n_85 = MSG__USERS_CRASH_DEV_ANGULAR_CODE_EPIC_IO_V2CONSOLA_NODE_MODULES__NG_BOOTSTRAP_NG_BOOTSTRAP_FESM2020_NG_BOOTSTRAP_MJS__86;
       } else {
         i18n_85 = $localize`:@@ngb.toast.close-aria:Close`;
       }
@@ -311313,7 +311388,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "unwrap": () => (/* reexport safe */ _wrap_idb_value_js__WEBPACK_IMPORTED_MODULE_1__.u),
 /* harmony export */   "wrap": () => (/* reexport safe */ _wrap_idb_value_js__WEBPACK_IMPORTED_MODULE_1__.w)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 /* harmony import */ var _wrap_idb_value_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wrap-idb-value.js */ 2415);
 
 
@@ -311395,7 +311470,7 @@ function getMethod(target, prop) {
   }
 
   const method = /*#__PURE__*/function () {
-    var _ref = (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (storeName, ...args) {
+    var _ref = (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* (storeName, ...args) {
       // isWrite ? 'readwrite' : undefined gzipps better, but fails in Edge :(
       const tx = this.transaction(storeName, isWrite ? 'readwrite' : 'readonly');
       let target = tx.store;
@@ -316236,7 +316311,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "use": () => (/* binding */ Zt),
 /* harmony export */   "walkTokens": () => (/* binding */ Gt)
 /* harmony export */ });
-/* harmony import */ var _Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
+/* harmony import */ var _Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 15861);
 
 
 /**
@@ -318075,14 +318150,14 @@ var B = class {
               o = n.hooks[a],
               l = i[a];
           S.passThroughHooks.has(s) ? i[a] = p => {
-            if (this.defaults.async && S.passThroughHooksRespectAsync.has(s)) return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+            if (this.defaults.async && S.passThroughHooksRespectAsync.has(s)) return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
               let g = yield o.call(i, p);
               return l.call(i, g);
             })();
             let c = o.call(i, p);
             return l.call(i, c);
           } : i[a] = (...p) => {
-            if (this.defaults.async) return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+            if (this.defaults.async) return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
               let g = yield o.apply(i, p);
               return g === !1 && (g = yield l.apply(i, p)), g;
             })();
@@ -318137,7 +318212,7 @@ var B = class {
       if (this.defaults.async === !0 && i.async === !1) return a(new Error("marked(): The async option was set to true by an extension. Remove async: false from the parse options object to return a Promise."));
       if (typeof n > "u" || n === null) return a(new Error("marked(): input parameter is undefined or null"));
       if (typeof n != "string") return a(new Error("marked(): input parameter is of type " + Object.prototype.toString.call(n) + ", string expected"));
-      if (s.hooks && (s.hooks.options = s, s.hooks.block = e), s.async) return (0,_Users_imac_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      if (s.hooks && (s.hooks.options = s, s.hooks.block = e), s.async) return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
         let o = s.hooks ? yield s.hooks.preprocess(n) : n,
             p = yield (s.hooks ? yield s.hooks.provideLexer() : e ? x.lex : x.lexInline)(o, s),
             c = s.hooks ? yield s.hooks.processAllTokens(p) : p;

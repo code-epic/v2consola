@@ -22,16 +22,21 @@ export class FeatherIconDirective implements OnChanges {
   constructor(
     @Inject(ElementRef) private _elementRef: ElementRef,
     @Inject(ChangeDetectorRef) private _changeDetector: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnChanges(changes: SimpleChanges) {
     // Get the native element
     this._nativeElement = this._elementRef.nativeElement;
 
     // SVG parameter
-    this.name = changes.name ? changes.name.currentValue : '';
-    this.size = changes.size ? changes.size.currentValue : '14'; // Set default size 14
-    this.class = changes.class ? changes.class.currentValue : '';
+    this.name = changes.name ? changes.name.currentValue : this.name;
+    this.size = changes.size ? changes.size.currentValue : (this.size || '14');
+    this.class = changes.class ? changes.class.currentValue : (this.class || '');
+
+    // Check if icon exists
+    if (!Feather.icons[this.name]) {
+      return;
+    }
 
     // Create SVG
     const svg = Feather.icons[this.name].toSvg({
@@ -41,10 +46,15 @@ export class FeatherIconDirective implements OnChanges {
     });
 
     // Set SVG
-    if (this.inner) {
+    if (this.inner || !this._nativeElement.parentNode) {
       this._nativeElement.innerHTML = svg;
     } else {
-      this._nativeElement.outerHTML = svg;
+      try {
+        this._nativeElement.outerHTML = svg;
+      } catch (e) {
+        // Fallback to innerHTML if outerHTML fails
+        this._nativeElement.innerHTML = svg;
+      }
     }
     this._changeDetector.markForCheck();
   }

@@ -83,6 +83,10 @@ export class CoreLoadingScreenService {
    * Hide the loading screen
    */
   hide(): void {
+    if (!this.loadingScreenEl) {
+      return;
+    }
+
     this.animationPlayer = this._animationBuilder
       .build([
         style({ opacity: '1' }),
@@ -97,8 +101,13 @@ export class CoreLoadingScreenService {
       .create(this.loadingScreenEl);
 
     setTimeout(() => {
-      this.loadingScreenEl.remove();
-      this.animationPlayer.play();
+      if (this.loadingScreenEl && this.loadingScreenEl.parentNode) {
+        this.loadingScreenEl.remove();
+        this.loadingScreenEl = null; // Mark as removed
+      }
+      if (this.animationPlayer) {
+        this.animationPlayer.play();
+      }
     }, 0);
   }
 }
