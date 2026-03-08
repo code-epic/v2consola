@@ -20,7 +20,7 @@ import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
 import { Router } from "@angular/router";
 
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT } from "@angular/common";
 import { ApiService } from "@services/apicore/api.service";
 
 @Component({
@@ -32,9 +32,9 @@ import { ApiService } from "@services/apicore/api.service";
 export class AuthLoginV1Component implements OnInit {
   token: string | undefined;
   //  Public
-  public fechafinal
-  public fechaX
-  public build
+  public fechafinal;
+  public fechaX;
+  public build;
   public coreConfig: any;
   public loginForm: UntypedFormGroup;
   public submitted = false;
@@ -51,21 +51,21 @@ export class AuthLoginV1Component implements OnInit {
 
   public itk: IToken;
 
-  public bdv: boolean = true
-
+  public bdv: boolean = true;
 
   // Private
   private _unsubscribeAll: Subject<any>;
   public showTotpSection = false;
-  public otp: string[] = new Array(6).fill('');
+  public otp: string[] = new Array(6).fill("");
   public isOtpInvalid = false;
-  private tempAuthToken = ''; // To store the token from the first login step
+  private tempAuthToken = ""; // To store the token from the first login step
 
-  public xWidth = '660px'
+  public xWidth = "660px";
 
   public version = "1.0.0";
   public fecha = "";
 
+  public validar_token: string | null = null;
 
   /**
    * Constructor
@@ -83,11 +83,9 @@ export class AuthLoginV1Component implements OnInit {
     // private toastrService: ToastrService,
     private utilservice: UtilService,
     private apiService: ApiService,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {
-
-
-    this.bdv = true
+    this.bdv = true;
     if (sessionStorage.getItem("token") != undefined) {
       this.router.navigate(["home"]);
     }
@@ -109,13 +107,9 @@ export class AuthLoginV1Component implements OnInit {
         enableLocalStorage: false,
       },
     };
-    this.bdv = this.apiService.ConsultaSistemaBDV()
-
-
+    this.bdv = this.apiService.ConsultaSistemaBDV();
+    this.validar_token = sessionStorage.getItem("token");
   }
-
-
-
 
   // convenience getter for easy access to form fields
   get f() {
@@ -129,16 +123,18 @@ export class AuthLoginV1Component implements OnInit {
     this.passwordTextType = !this.passwordTextType;
   }
 
-
-
   /**
    * On init
    */
   ngOnInit(): void {
-    this.getCurrentDate()
-    this.fechafinal = environment.buildDateTime
-    this.fechaX = this.utilservice.FechaMoment(new Date(environment.buildDateTime))
-    this.build = this.utilservice.FechaMomentL(new Date(environment.buildDateTime)).replace(/\//g, '.')
+    this.getCurrentDate();
+    this.fechafinal = environment.buildDateTime;
+    this.fechaX = this.utilservice.FechaMoment(
+      new Date(environment.buildDateTime),
+    );
+    this.build = this.utilservice
+      .FechaMomentL(new Date(environment.buildDateTime))
+      .replace(/\//g, ".");
 
     this.version = environment.version;
 
@@ -153,6 +149,13 @@ export class AuthLoginV1Component implements OnInit {
       .subscribe((config) => {
         this.coreConfig = config;
       });
+
+    if (this.validar_token) {
+      this.loginService.Token = this.loginService.getUserDecrypt(
+        this.validar_token,
+      );
+      this.loginService.obenterAplicacion(this.validar_token);
+    }
   }
 
   getCurrentDate() {
@@ -170,14 +173,11 @@ export class AuthLoginV1Component implements OnInit {
         .getLogin(this.loginForm.value.email, this.loginForm.value.password)
         .subscribe(
           (itk) => {
-
             this.loading = false;
             this.isHidden = false;
             let tk: any = this.loginService.getUserDecrypt(itk.token);
 
-
             if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
-
               this.showTotpSection = true;
 
               this.tempAuthToken = itk.token; // Store the temporary token
@@ -185,10 +185,6 @@ export class AuthLoginV1Component implements OnInit {
               // No 2FA, proceed with normal login
               this.loginService.Iniciar(itk.token);
             }
-
-
-
-
           },
           (er) => {
             this.loading = false;
@@ -197,13 +193,12 @@ export class AuthLoginV1Component implements OnInit {
               "top-end",
               "error",
               er.error?.msj || "Error al acceder al sistema",
-              3000
+              3000,
             );
-          }
+          },
         );
     }
   }
-
 
   /**
    * On destroy
@@ -213,47 +208,41 @@ export class AuthLoginV1Component implements OnInit {
     this._unsubscribeAll.complete();
   }
 
-
   loginOpt() {
-    this.xWidth = '660px'
+    this.xWidth = "660px";
     this.loading = true;
-    console.log(this.usuario, this.clave)
-    this.loginService
-      .getLogin(this.usuario, this.clave)
-      .subscribe(
-        (itk) => {
-          this.loading = false;
-          this.isHidden = false;
-          let tk: any = this.loginService.getUserDecrypt(itk.token);
-          this.tempAuthToken = itk.token; 
-          if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
-            this.xWidth = '840px'
-            this.showTotpSection = true;
-          } else {
-            console.log(this.tempAuthToken)
-            this.loginService.Iniciar(this.tempAuthToken);
-          }
-
-        },
-        (er) => {
-          this.loading = false;
-          this.isHidden = false;
-          this.utilservice.AlertMini(
-            "top-end",
-            "error",
-            er.error?.msj || "Error al acceder al sistema",
-            3000
-          );
+    console.log(this.usuario, this.clave);
+    this.loginService.getLogin(this.usuario, this.clave).subscribe(
+      (itk) => {
+        this.loading = false;
+        this.isHidden = false;
+        let tk: any = this.loginService.getUserDecrypt(itk.token);
+        this.tempAuthToken = itk.token;
+        if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
+          this.xWidth = "840px";
+          this.showTotpSection = true;
+        } else {
+          console.log(this.tempAuthToken);
+          this.loginService.Iniciar(this.tempAuthToken);
         }
-      );
-
+      },
+      (er) => {
+        this.loading = false;
+        this.isHidden = false;
+        this.utilservice.AlertMini(
+          "top-end",
+          "error",
+          er.error?.msj || "Error al acceder al sistema",
+          3000,
+        );
+      },
+    );
   }
-
 
   onLoginBlur() {
     if (this.bdv && this.usuario) {
       const prefix = this.usuario.substring(0, 2).toUpperCase();
-      if (prefix === 'NM' || prefix === 'CT') {
+      if (prefix === "NM" || prefix === "CT") {
         this.usuario = this.usuario.toUpperCase();
       }
     }
@@ -265,12 +254,14 @@ export class AuthLoginV1Component implements OnInit {
    */
   onPaste(event: ClipboardEvent) {
     event.preventDefault();
-    const pastedData = event.clipboardData?.getData('text').trim();
+    const pastedData = event.clipboardData?.getData("text").trim();
 
     // Check if pasted data is a 6-digit number
     if (pastedData && /^[0-9]{6}$/.test(pastedData)) {
-      const inputs = Array.from(document.querySelectorAll('.otp-box')) as HTMLInputElement[];
-      const digits = pastedData.split('');
+      const inputs = Array.from(
+        document.querySelectorAll(".otp-box"),
+      ) as HTMLInputElement[];
+      const digits = pastedData.split("");
 
       inputs.forEach((input, index) => {
         if (digits[index]) {
@@ -291,18 +282,23 @@ export class AuthLoginV1Component implements OnInit {
    */
   goBackToLogin() {
     this.showTotpSection = false;
-    this.tempAuthToken = '';
+    this.tempAuthToken = "";
     this.isOtpInvalid = false;
-    this.otp = new Array(6).fill('');
-    this.xWidth = '660px'
+    this.otp = new Array(6).fill("");
+    this.xWidth = "660px";
     // Also clear the actual input fields in the DOM
-    const inputs = document.querySelectorAll('.otp-box') as NodeListOf<HTMLInputElement>;
-    inputs.forEach(i => i.value = '');
+    const inputs = document.querySelectorAll(
+      ".otp-box",
+    ) as NodeListOf<HTMLInputElement>;
+    inputs.forEach((i) => (i.value = ""));
     // Optionally, focus the username/email field again
-    const emailInput = this.document.querySelector('#login-email') as HTMLInputElement;
-    if (emailInput) { emailInput.focus(); }
+    const emailInput = this.document.querySelector(
+      "#login-email",
+    ) as HTMLInputElement;
+    if (emailInput) {
+      emailInput.focus();
+    }
   }
-
 
   onInput(event: any, nextInput: HTMLInputElement | null) {
     const input = event.target;
@@ -310,7 +306,7 @@ export class AuthLoginV1Component implements OnInit {
 
     // Limpiar si no es número
     if (!/^[0-9]$/.test(value)) {
-      input.value = '';
+      input.value = "";
       return;
     }
 
@@ -325,52 +321,56 @@ export class AuthLoginV1Component implements OnInit {
   onKeydown(event: KeyboardEvent, prevInput: HTMLInputElement | null) {
     const input = event.target as HTMLInputElement;
 
-    if (event.key === 'Backspace') {
+    if (event.key === "Backspace") {
       if (!input.value && prevInput) {
         prevInput.focus();
         // Opcional: borrar el valor del anterior al retroceder
-        // prevInput.value = ''; 
+        // prevInput.value = '';
       }
     }
   }
 
   private checkAndVerify() {
     // Obtenemos todos los valores directamente del DOM para máxima precisión
-    const inputs = Array.from(document.querySelectorAll('.otp-box')) as HTMLInputElement[];
-    const code = inputs.map(i => i.value).join('');
+    const inputs = Array.from(
+      document.querySelectorAll(".otp-box"),
+    ) as HTMLInputElement[];
+    const code = inputs.map((i) => i.value).join("");
 
     if (code.length === 6) {
-      this.otp = code.split(''); // Sincronizamos con tu lógica existente
+      this.otp = code.split(""); // Sincronizamos con tu lógica existente
       this.Continuar();
     }
   }
 
   // Modifica tu handleOtpError para limpiar los inputs físicos
-  private handleOtpError(alertMessage = 'Código incorrecto') {
+  private handleOtpError(alertMessage = "Código incorrecto") {
     this.isOtpInvalid = true;
-    const inputs = document.querySelectorAll('.otp-box') as NodeListOf<HTMLInputElement>;
-    inputs.forEach(i => i.value = '');
+    const inputs = document.querySelectorAll(
+      ".otp-box",
+    ) as NodeListOf<HTMLInputElement>;
+    inputs.forEach((i) => (i.value = ""));
     inputs[0].focus();
-    inputs.forEach(i => (i.value = ''));
+    inputs.forEach((i) => (i.value = ""));
 
     // Usamos setTimeout para asegurar que el foco se aplique después de que Angular
     // haya actualizado la vista y aplicado la clase 'shake'.
     setTimeout(() => inputs[0]?.focus(), 0);
 
     // Quitar la clase de animación después de 500ms para poder repetirla
-    setTimeout(() => this.isOtpInvalid = false, 500);
+    setTimeout(() => (this.isOtpInvalid = false), 500);
     setTimeout(() => (this.isOtpInvalid = false), 500);
 
-    this.utilservice.AlertMini('top-end', 'error', alertMessage, 4000);
+    this.utilservice.AlertMini("top-end", "error", alertMessage, 4000);
   }
-
 
   /**
    * Validates the completed OTP code with the backend.
    */
   Continuar() {
-    const otpCode = this.otp.join('');
-    if (otpCode.length !== 6 || this.loading) { // Evita re-entrada si ya está cargando
+    const otpCode = this.otp.join("");
+    if (otpCode.length !== 6 || this.loading) {
+      // Evita re-entrada si ya está cargando
       return;
     }
 
@@ -378,44 +378,41 @@ export class AuthLoginV1Component implements OnInit {
     this.apiService.Validar_TOTP(otpCode, this.tempAuthToken).subscribe(
       (data) => {
         this.loading = false;
-        if (data.msj === 'Ok') {
+        if (data.msj === "Ok") {
           this.apiService.MultipleSesion(this.tempAuthToken).subscribe(
             (xdata) => {
-              console.log(xdata)
-              if (xdata.msj === 'Ok') {
-                this.loginService.Iniciar(this.tempAuthToken)
+              console.log(xdata);
+              if (xdata.msj === "Ok") {
+                this.loginService.Iniciar(this.tempAuthToken);
               } else if (xdata.tipo == 99) {
                 this.handleOtpError(xdata.msj);
-                this.goBackToLogin()
+                this.goBackToLogin();
               } else {
-                this.handleOtpError('Error al validar el código. Consulta al administrador');
+                this.handleOtpError(
+                  "Error al validar el código. Consulta al administrador",
+                );
               }
             },
-            (error) => { }
+            (error) => {},
           );
-
-
-
         } else {
-          this.handleOtpError('Error de validacion');
+          this.handleOtpError("Error de validacion");
         }
       },
       (e) => {
         this.loading = false;
-        console.info(e.error.msj)
-        let xdata = e.error
+        console.info(e.error.msj);
+        let xdata = e.error;
 
         if (xdata.tipo == 99) {
           this.handleOtpError(xdata.msj);
-          this.goBackToLogin()
+          this.goBackToLogin();
         } else {
-          this.handleOtpError('Error al validar el código. Inténtelo de nuevo.');
+          this.handleOtpError(
+            "Error al validar el código. Inténtelo de nuevo.",
+          );
         }
-
-
-      }
+      },
     );
   }
-
-
 }

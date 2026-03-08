@@ -147,6 +147,12 @@
         if (event.data.type === 'NETWORK_CONTEXT') {
           sessionStorage.setItem('net_info', JSON.stringify(event.data.payload));
         }
+        if (event.data.type === 'SET_SESSION') {
+          sessionStorage.setItem('token', event.data.token);
+          console.log('Token recibido y guardado en el hijo');
+          // window.location.reload();
+        }
+
       });
       
     })();
