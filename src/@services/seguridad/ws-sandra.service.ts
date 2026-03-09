@@ -1,7 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 
 
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { ApiService } from "@services/apicore/api.service";
 import { SessionService, ConnectionStatus } from "@services/util/session.service";
 import { MensajeService } from '@services/util/mensaje.service';
@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
 interface IncomingMessage { // Para otros tipos de mensaje que no sean Ollama chunks
     message: string;
     id: string;
-    from: 'bot' | 'user' | 'system'; // 'system' para mensajes de estado/error
+    from: string;
 }
 
 
@@ -26,6 +26,7 @@ export class WsSandraService {
     public loading: boolean = false; // Indica si estamos esperando respuesta de Ollama
     public currentMessage: string = ''; // Mensaje actual en el input del usuario
     public messages: IncomingMessage[] = []; // Historial de mensajes mostrados en UI
+    public chatroomMessages$: Subject<any> = new Subject<any>(); // Canal para el Chatroom
 
     public connectionStatus: ConnectionStatus = ConnectionStatus.DISCONNECTED;
     public ConnectionStatus = ConnectionStatus; // Hace el enum accesible en la plantilla HTML
@@ -83,6 +84,16 @@ export class WsSandraService {
                             this.saveHistory();
                         }
                     } else if (data && typeof data.message === 'string' && typeof data.id === 'string' && typeof data.from === 'string') {
+                        // Enviar al canal del Chatroom
+                        this.chatroomMessages$.next({
+                            type: data.type || "chat",
+                            id: data.id,
+                            message: data.message,
+                            from: data.from,
+                            status: data.status || "Cifrado",
+                            time: data.time || new Date().toISOString(),
+                            to: data.to || "xterm"
+                        });
                         this.messages.push({ from: data.from, message: data.message, id: data.id });
                         this.loading = false;
                         this.saveHistory();

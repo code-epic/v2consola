@@ -71,7 +71,10 @@
                     [class.received]="msg.type === 'received'">
                     <div class="message-content" [class.console-type]="!msg.fileInfo">
                         <!-- Texto normal -->
-                        <span *ngIf="!msg.fileInfo" class="typewriter-text">{{ msg.text }}</span>
+                        <span *ngIf="!msg.fileInfo" class="typewriter-text">
+                            {{ msg.displayedText || msg.text }}<span class="typing-cursor"
+                                *ngIf="msg.displayedText && msg.displayedText.length < msg.text.length"></span>
+                        </span>
 
                         <!-- Tarjeta de Archivo Elegante -->
                         <div *ngIf="msg.fileInfo" class="file-card">

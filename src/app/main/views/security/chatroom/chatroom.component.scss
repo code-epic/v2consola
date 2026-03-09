@@ -9,10 +9,20 @@ $border-color: #ebe9f2;
 $text-primary: #6e6b7b; // Gris más suave (Vuexy default)
 $text-secondary: #b9b9c3;
 
-// Colores Morados (Purple)
+// Colores de Conversación (Cumpliendo: Texto gris oscuro, burbujas morado alfa / blanco)
+$text-neutral-dark: #333333; // Carbón profundo para legibilidad
+$text-neutral-soft: #636e72;
+
+// Tema Morado Original de la Plantilla
 $purple-primary: #7367f0;
 $purple-light: #f3f2fe;
-$purple-bubble-sent: rgba($purple-primary, 0.08); // Efecto alfa suave
+
+$bubble-me-bg: linear-gradient(135deg, #f1efff 0%, #e0dcfc 100%); // Morado elegante sutil
+$bubble-them-bg: #ffffff; // Blanco Puro
+$bubble-me-border: rgba($purple-primary, 0.2);
+$bubble-them-border: rgba(0, 0, 0, 0.1);
+
+
 
 .chatroom-container {
     display: flex;
@@ -22,9 +32,9 @@ $purple-bubble-sent: rgba($purple-primary, 0.08); // Efecto alfa suave
     background-color: $surface-white;
     border-radius: 0.5rem;
     overflow: hidden;
-    box-shadow: 0 4px 24px 0 rgba(0, 0, 0, 0.08);
+    box-shadow: 0 4px 24px 0 rgba($purple-primary, 0.08); // Sombra más temática
     border: 1px solid $border-color;
-    font-family: 'Montserrat', Helvetica, Arial, serif;
+    font-family: 'Outfit', 'Inter', 'Segoe UI', Roboto, sans-serif; // Fuente más moderna
     color: $text-primary;
     margin: 0;
     width: 100%; // Ocupa todo el espacio horizontal disponible
@@ -80,6 +90,23 @@ $purple-bubble-sent: rgba($purple-primary, 0.08); // Efecto alfa suave
                 list-style: none;
                 padding: 0;
                 margin: 0;
+
+                &::-webkit-scrollbar {
+                    width: 5px;
+                }
+
+                &::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+
+                &::-webkit-scrollbar-thumb {
+                    background: rgba($purple-primary, 0.1);
+                    border-radius: 10px;
+                }
+
+                &::-webkit-scrollbar-thumb:hover {
+                    background: rgba($purple-primary, 0.2);
+                }
 
                 .user-item {
                     display: flex;
@@ -250,21 +277,37 @@ $purple-bubble-sent: rgba($purple-primary, 0.08); // Efecto alfa suave
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1.2rem; // Un poco más compacto pero fluido
+
+            &::-webkit-scrollbar {
+                width: 5px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background: rgba($purple-primary, 0.1);
+                border-radius: 10px;
+            }
 
             .message-wrapper {
                 display: flex;
                 flex-direction: column;
-                max-width: 75%;
+                max-width: 80%;
+                animation: messageIn 0.3s cubic-bezier(0.1, 0.7, 1.0, 0.1) forwards;
+                opacity: 0;
 
                 &.received {
                     align-self: flex-start;
 
                     .message-content {
-                        background-color: $surface-white;
-                        color: $text-primary;
-                        border-bottom-left-radius: 0;
-                        border: 1px solid $border-color;
+                        background: $bubble-them-bg; // Usamos background para flexiblidad
+                        color: $text-neutral-dark;
+                        border-radius: 25px 25px 25px 5px;
+                        border: 1px solid $bubble-them-border;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
                     }
                 }
 
@@ -273,23 +316,37 @@ $purple-bubble-sent: rgba($purple-primary, 0.08); // Efecto alfa suave
                     align-items: flex-end;
 
                     .message-content {
-                        background-color: $purple-bubble-sent;
-                        color: $text-primary; // Texto gris suave en lugar de morado oscuro
-                        border-bottom-right-radius: 0;
-                        border: none; // Eliminamos borde para hacerlo más limpio
+                        background: $bubble-me-bg; // Usamos background para que el degradado funcione
+                        color: $text-neutral-dark;
+                        border-radius: 25px 25px 5px 25px;
+                        border: 1px solid $bubble-me-border;
+                        box-shadow: 0 4px 15px rgba($purple-primary, 0.08);
                     }
                 }
 
                 .message-content {
-                    padding: 0.8rem 1rem;
-                    border-radius: 0.8rem;
-                    font-size: 0.95rem;
+                    padding: 1rem 1.4rem;
+                    font-size: 0.98rem; // Un toque más grande para legibilidad
                     line-height: 1.5;
-                    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+                    position: relative;
+                    transition: all 0.2s ease;
+                    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif; // Tipografía ultra-moderna
+                    letter-spacing: 0.3px; // Más aire
+                    font-weight: 400; // Peso limpio y claro
+
+                    &:hover {
+                        transform: translateY(-2px);
+                    }
+
+                    .typewriter-text {
+                        display: inline-block;
+                        letter-spacing: 0.3px;
+                    }
 
                     &.console-type {
-                        font-family: 'Fira Code', monospace;
-                        font-size: 0.9rem;
+                        // Eliminamos la fuente monospace rígida y usamos la moderna del chat
+                        font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+                        font-size: 0.98rem;
                     }
 
                     // Tarjeta de Archivo Elegante
@@ -381,10 +438,14 @@ $purple-bubble-sent: rgba($purple-primary, 0.08); // Efecto alfa suave
                 }
 
                 .message-meta {
-                    margin-top: 0.4rem;
+                    margin-top: 5px;
+                    display: flex;
+                    gap: 8px;
                     font-size: 0.72rem;
                     color: $text-secondary;
-                    font-weight: 500;
+                    opacity: 0.9;
+                    font-weight: 500; // Un poco más de peso para leer mejor la hora
+                    letter-spacing: 0.3px;
                 }
             }
         }
@@ -668,5 +729,62 @@ $purple-bubble-sent: rgba($purple-primary, 0.08); // Efecto alfa suave
                 justify-content: center;
             }
         }
+    }
+}
+
+// --- Animaciones y Efectos Premium ---
+
+@keyframes messageIn {
+    0% {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes textAppear {
+    0% {
+        opacity: 0;
+        transform: translateX(-4px);
+        filter: blur(2px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+        filter: blur(0);
+    }
+}
+
+.typewriter-text {
+    display: inline-block;
+    animation: textAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    will-change: transform, opacity;
+}
+
+// Cursor parpadeante elegante
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1rem;
+    background-color: #3a3a3a;
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blinkCursor 0.8s infinite;
+}
+
+@keyframes blinkCursor {
+
+    from,
+    to {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
     }
 }

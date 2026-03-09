@@ -1,11 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
 import { ApiService } from '@services/apicore/api.service';
 import { LoginService } from '@services/seguridad/login.service';
+import { WsSandraService } from '@services/seguridad/ws-sandra.service';
 
 interface Message {
     id: string;
     sender: string;
     text: string;
+    displayedText?: string; // Para el efecto de escritura
     timestamp: Date;
     type: 'sent' | 'received';
     isTyping?: boolean;
@@ -41,7 +43,7 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
     saveHistory: boolean = true;
     encryptionActive: boolean = true;
     analyzeTraffic: boolean = false;
-    showTools: boolean = true;
+    showTools: boolean = false;
 
     // Variables de carga de archivos
     isUploading: boolean = false;
@@ -56,30 +58,66 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
     newMessage: string = '';
     availableCommands: string[] = ['/silenciar', '/limpiar', '/bloquear', '/rastrear', '/capturar'];
 
-    constructor(private apiService: ApiService, private loginService: LoginService) { }
+    constructor(
+        private apiService: ApiService,
+        private loginService: LoginService,
+        private wsSandraService: WsSandraService
+    ) { }
 
     ngOnInit(): void {
         this.scrollToBottom();
+
+        // Cargar conexiones iniciales
         this.apiService.GetConnectionsWebSocket().subscribe(
             (data: any) => {
-                console.log(data);
-                this.users = data.message.map(u => ({
-                    id: u.id,
-                    name: u.name,
-                    mac_address: u.mac_address,
-                    remote_addr: u.remote_addr,
-                    status: u.status,
-                    history: [] // Inicializar con historial vacío o cargar de algún lugar
-                }));
+                if (data && data.message) {
+                    this.users = data.message.map(u => ({
+                        id: u.id,
+                        name: u.name,
+                        mac_address: u.mac_address,
+                        remote_addr: u.remote_addr,
+                        status: u.status,
+                        history: []
+                    }));
 
-                if (this.users.length > 0 && !this.activeUser) {
-                    this.selectUser(this.users[0]);
+                    if (this.users.length > 0 && !this.activeUser) {
+                        this.selectUser(this.users[0]);
+                    }
                 }
             },
             (error: any) => {
-                console.log(error);
+                console.error('Error al obtener conexiones:', error);
             }
         );
+
+        // Suscribirse a mensajes entrantes del WebSocket
+        this.wsSandraService.chatroomMessages$.subscribe((data: any) => {
+            console.log('Mensaje recibido en Chatroom:', data);
+
+            // Buscar si el usuario existe en nuestra lista por su ID (campo 'from')
+            const sender = this.users.find(u => u.id === data.from);
+
+            const incomingMsg: Message = {
+                id: data.id || Date.now().toString(),
+                sender: sender ? sender.name : 'Desconocido',
+                text: data.message,
+                displayedText: '', // Empezamos vacío para el efecto
+                timestamp: data.time ? new Date(data.time) : new Date(),
+                type: 'received',
+                status: data.status || 'Cifrado'
+            };
+
+            if (sender) {
+                sender.history.push(incomingMsg);
+                if (this.activeUser && this.activeUser.id === sender.id) {
+                    this.messages = [...this.activeUser.history];
+                    this.typeMessage(incomingMsg);
+                }
+            } else {
+                // Si el usuario no está en la lista (ej. nueva conexión), podríamos recargar la lista o agregarlo
+                console.warn('Mensaje de remitente desconocido:', data.from);
+            }
+        });
     }
 
     ngAfterViewChecked() {
@@ -101,6 +139,7 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
             id: Date.now().toString(),
             sender: 'Admin',
             text: this.newMessage,
+            displayedText: this.newMessage,
             timestamp: new Date(),
             type: 'sent',
             status: 'Cifrado'
@@ -149,12 +188,30 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
             id: Date.now().toString(),
             sender: this.activeUser.name,
             text: "> " + text,
+            displayedText: '',
             timestamp: new Date(),
             type: 'received'
         };
 
         this.messages.push(msg);
-        this.activeUser.history.push(msg);
+        if (this.activeUser) this.activeUser.history.push(msg);
+        this.typeMessage(msg);
+    }
+
+    typeMessage(msg: Message) {
+        let i = 0;
+        const fullText = msg.text;
+        msg.displayedText = '';
+
+        const interval = setInterval(() => {
+            if (i < fullText.length) {
+                msg.displayedText += fullText.charAt(i);
+                i++;
+                this.scrollToBottom();
+            } else {
+                clearInterval(interval);
+            }
+        }, 30);
     }
 
     executeCommand(cmd: string) {
@@ -162,16 +219,21 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
             id: 'c' + Date.now(),
             sender: 'SISTEMA',
             text: `[SISTEMA] Comando ejecutado: ${cmd}`,
+            displayedText: `[SISTEMA] Comando ejecutado: ${cmd}`,
             timestamp: new Date(),
             type: 'received'
         };
         this.messages.push(msg);
-        this.activeUser.history.push(msg);
+        if (this.activeUser) this.activeUser.history.push(msg);
     }
 
     selectUser(user: User) {
         this.activeUser = user;
-        this.messages = [...user.history]; // Cargar el historial del usuario seleccionado
+        // Al seleccionar, mostramos el texto completo sin efectos de escritura para historial
+        this.messages = user.history.map(m => {
+            if (!m.displayedText) m.displayedText = m.text;
+            return m;
+        });
     }
 
     scrollToBottom(): void {
