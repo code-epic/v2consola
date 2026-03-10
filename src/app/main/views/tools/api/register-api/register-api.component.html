@@ -151,8 +151,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="16"></span></span>
                       </div>
-                      <input [(ngModel)]="xAPIDB.version" [ngModelOptions]="{standalone: true}" [disabled]="true" required
-                        type="text" name="last-namew" id="last-namew" class="form-control">
+                      <input [(ngModel)]="xAPIDB.version" [ngModelOptions]="{standalone: true}" [disabled]="true"
+                        required type="text" name="last-namew" id="last-namew" class="form-control">
                     </div>
                   </div>
                   <div class="form-group col-md-6">
@@ -262,7 +262,8 @@
                     <label class="form-label" for="metodo">Metodo</label>
                     <div class="ng-select-group-pastel">
                       <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'arrow-right-circle'" [size]="16"></span></span>
+                        <span class="input-group-text"><span [data-feather]="'arrow-right-circle'"
+                            [size]="16"></span></span>
                       </div>
                       <ng-select [items]="metodo" (ngModelChange)="onMetodo($event)" [(ngModel)]="xAPIDB.metodo"
                         [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
@@ -275,8 +276,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="relacional" [(ngModel)]="xAPIDB.relacional" [ngModelOptions]="{standalone:true}"
-                        bindLabel="name" bindId="id" bindValue="id" (ngModelChange)="clickRelacional(xAPIDB.relacional)"
+                      <ng-select [items]="relacional" [(ngModel)]="xAPIDB.relacional"
+                        [ngModelOptions]="{standalone:true}" bindLabel="name" bindId="id" bindValue="id"
+                        (ngModelChange)="clickRelacional(xAPIDB.relacional)"
                         placeholder="Seleccione Relacional"></ng-select>
                     </div>
                   </div>
@@ -323,8 +325,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'check-square'" [size]="16"></span></span>
                       </div>
-                      <input type="text" [(ngModel)]="defecto" [ngModelOptions]="{standalone: true}" class="form-control"
-                        placeholder="Valor por defecto">
+                      <input type="text" [(ngModel)]="defecto" [ngModelOptions]="{standalone: true}"
+                        class="form-control" placeholder="Valor por defecto">
                     </div>
                   </div>
 
@@ -422,7 +424,8 @@
                     <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
                     <div class="ng-select-group-pastel">
                       <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'corner-down-left'" [size]="16"></span></span>
+                        <span class="input-group-text"><span [data-feather]="'corner-down-left'"
+                            [size]="16"></span></span>
                       </div>
                       <ng-select [items]="retorn" bindLabel="descripcion" placeholder="Seleccione Valor Retorno"
                         bindId="id">
@@ -531,7 +534,8 @@
                     <label class="form-label" for="retorno">Retorno</label>
                     <div class="ng-select-group-pastel">
                       <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'corner-down-left'" [size]="16"></span></span>
+                        <span class="input-group-text"><span [data-feather]="'corner-down-left'"
+                            [size]="16"></span></span>
                       </div>
                       <ng-select [items]="retorno" [(ngModel)]="xAPIDB.retorna" [ngModelOptions]="{standalone: true}"
                         bindLabel="name" bindValue="id" placeholder="Seleccione Retorno"></ng-select>
@@ -568,8 +572,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'alert-circle'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="prioridad" [(ngModel)]="xAPIDB.prioridad" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Prioridad"></ng-select>
+                      <ng-select [items]="prioridad" [(ngModel)]="xAPIDB.prioridad"
+                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                        placeholder="Seleccione Prioridad"></ng-select>
                     </div>
                   </div>
                   <div class="form-group col-md-3">
@@ -592,7 +597,7 @@
                         bindLabel="name" bindValue="id" placeholder="Seleccione Aplicar Waf"></ng-select>
                     </div>
                   </div>
-                  
+
                 </div>
 
                 <div class="row">
@@ -602,8 +607,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'book'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.bitacora" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Bitacora"></ng-select>
+                      <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.bitacora"
+                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                        placeholder="Seleccione Bitacora"></ng-select>
                     </div>
                   </div>
 
@@ -613,8 +619,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'save'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.respaldo" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Respaldo"></ng-select>
+                      <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.respaldo"
+                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                        placeholder="Seleccione Respaldo"></ng-select>
                     </div>
                   </div>
 
@@ -628,7 +635,7 @@
                         bindLabel="name" bindValue="id" placeholder="Seleccione Estatus"></ng-select>
                     </div>
                   </div>
-                  
+
                   <div class="form-group col-md-3">
                     <label class="form-label" for="inclusionjwt">Inclusion JWT</label>
                     <div class="ng-select-group-pastel">
@@ -641,6 +648,19 @@
                     </div>
                   </div>
                 </div>
+                <div class="row">
+                  <div class="form-group col-md-3">
+                    <label class="form-label" for="hsf">Alta Seguridad Encontrada (HSF)</label>
+                    <div class="ng-select-group-pastel">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text"><span [data-feather]="'shield'" [size]="16"></span></span>
+                      </div>
+                      <ng-select [items]="hsf" [(ngModel)]="xAPIDB.hsf" [ngModelOptions]="{standalone: true}"
+                        bindLabel="name" bindValue="id" placeholder="Alta Seguridad Encontrada"></ng-select>
+                    </div>
+                  </div>
+
+                </div>
 
                 <div class="row">
                   <div class="form-group col-md-12">
@@ -649,8 +669,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
                       </div>
-                      <input required type="text" name="last-namew" [disabled]="true" [placeholder]="ruta" id="last-namew"
-                        class="form-control">
+                      <input required type="text" name="last-namew" [disabled]="true" [placeholder]="ruta"
+                        id="last-namew" class="form-control">
                     </div>
                   </div>
                 </div>

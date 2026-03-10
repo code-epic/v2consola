@@ -232,6 +232,11 @@ export class RegisterApiComponent implements OnInit {
     { id: false, name: "NO" },
   ];
 
+  public hsf = [
+    { id: true, name: "SI" },
+    { id: false, name: "NO" },
+  ];
+
 
   public retorn = [
     { id: 1, name: "BOOL", descripcion: "LOGICO" },

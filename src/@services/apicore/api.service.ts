@@ -136,7 +136,7 @@ export interface IAPI {
   bitacora: number;
   respaldo: number;
   puente?: string;
-
+  hsf?: boolean;
 }
 
 export interface WkfEstatus {
