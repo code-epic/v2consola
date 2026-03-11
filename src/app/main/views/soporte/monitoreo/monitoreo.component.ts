@@ -63,7 +63,7 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
                 type: '',
                 links: [
                     { name: 'Principal', isLink: true, link: '/home' },
-                    { name: 'Seguridad', isLink: false },
+                    { name: 'Soporte', isLink: false },
                     { name: 'Monitoreo', isLink: false },
                 ],
             },

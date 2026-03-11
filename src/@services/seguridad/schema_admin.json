@@ -369,36 +369,6 @@
                 "directivas": ""
               }
             ]
-          },
-          {
-            "url": "security/monitoreo",
-            "js": "MonitoreoFlujo()",
-            "descripcion": "Monitoreo de Red",
-            "icono": "layout",
-            "nombre": "Monitoreo de Red",
-            "accion": "monitoreo_red()",
-            "clase": "item",
-            "color": "bg-c-green",
-            "Privilegios": [
-              {
-                "metodo": "DesconectarAsistente",
-                "descripcion": "Desconectar Asistente",
-                "accion": "DesconectarAsistente()",
-                "directivas": ""
-              },
-              {
-                "metodo": "AuditarUsuario",
-                "descripcion": "Auditar Usuario",
-                "accion": "AuditarUsuario()",
-                "directivas": ""
-              },
-              {
-                "metodo": "VerLogs",
-                "descripcion": "Ver Logs",
-                "accion": "VerLogs()",
-                "directivas": ""
-              }
-            ]
           }
         ]
       },
@@ -438,6 +408,117 @@
         ]
       },
       {
+        "url": "boveda",
+        "js": "",
+        "icono": "archive",
+        "descripcion": "Boveda",
+        "nombre": "Boveda",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "boveda/authorization",
+            "js": "",
+            "descripcion": "Autorizaciones",
+            "icono": "check-circle",
+            "nombre": "Autorizaciones",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "boveda/reportes",
+            "js": "",
+            "descripcion": "Reportes",
+            "icono": "file-text",
+            "nombre": "Reportes",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "boveda/crontab",
+            "js": "",
+            "descripcion": "Crontab",
+            "icono": "clock",
+            "nombre": "Crontab",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          }
+        ]
+      },
+      {
+        "url": "soporte",
+        "js": "",
+        "icono": "life-buoy",
+        "descripcion": "Soporte",
+        "nombre": "Soporte",
+        "accion": "",
+        "clase": "collapsible",
+        "color": "",
+        "Privilegio": [],
+        "SubMenu": [
+          {
+            "url": "soporte/chatroom",
+            "js": "",
+            "descripcion": "Chatroom",
+            "icono": "message-circle",
+            "nombre": "Chatroom",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          },
+          {
+            "url": "soporte/monitoreo",
+            "js": "MonitoreoFlujo()",
+            "descripcion": "Monitoreo de Red",
+            "icono": "layout",
+            "nombre": "Monitoreo de Red",
+            "accion": "monitoreo_red()",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": [
+              {
+                "metodo": "DesconectarAsistente",
+                "descripcion": "Desconectar Asistente",
+                "accion": "DesconectarAsistente()",
+                "directivas": ""
+              },
+              {
+                "metodo": "AuditarUsuario",
+                "descripcion": "Auditar Usuario",
+                "accion": "AuditarUsuario()",
+                "directivas": ""
+              },
+              {
+                "metodo": "VerLogs",
+                "descripcion": "Ver Logs",
+                "accion": "VerLogs()",
+                "directivas": ""
+              }
+            ]
+          },
+          {
+            "url": "soporte/incidencias",
+            "js": "",
+            "descripcion": "Incidencias",
+            "icono": "alert-circle",
+            "nombre": "Incidencias",
+            "accion": "",
+            "clase": "item",
+            "color": "bg-c-green",
+            "Privilegios": []
+          }
+        ]
+      },
+      {
         "url": "options",
         "js": "",
         "icono": "settings",
@@ -454,30 +535,6 @@
             "descripcion": "Actualizar",
             "icono": "refresh-ccw",
             "nombre": "Actualizar",
-            "accion": "",
-            "clase": "item",
-            "color": "bg-c-green",
-            "Privilegios": []
-          }
-        ]
-      },
-      {
-        "url": "github",
-        "js": "",
-        "icono": "github",
-        "descripcion": "Incidencias",
-        "nombre": "Incidencias",
-        "accion": "",
-        "clase": "collapsible",
-        "color": "",
-        "Privilegio": [],
-        "SubMenu": [
-          {
-            "url": "github/issues",
-            "js": "",
-            "descripcion": "Registro",
-            "icono": "git-merge",
-            "nombre": "Registro",
             "accion": "",
             "clase": "item",
             "color": "bg-c-green",

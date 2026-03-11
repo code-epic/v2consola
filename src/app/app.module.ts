@@ -45,6 +45,8 @@ import { BlockUIModule } from 'ng-block-ui';
 import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
 import { SharedModule } from './main/license-bunker/shared.module';
 import { GithubModule } from './main/views/github/github.module';
+import { BovedaModule } from './main/views/boveda/boveda.module';
+import { SoporteModule } from './main/views/soporte/soporte.module';
 import { PushService } from '@services/seguridad/push.service';
 import { ErrorModalModule } from './layout/components/error-modal/error-modal.module';
 
@@ -96,7 +98,9 @@ const appRoutes: Routes = [
     InvestigationModule,
     NgSelectModule,
     SharedModule,
-    GithubModule
+    GithubModule,
+    BovedaModule,
+    SoporteModule
   ],
   providers: [
     {

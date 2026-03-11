@@ -33,9 +33,7 @@ import { UserComponent } from './user/user.component';
 import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { UserListComponent } from './user-list/user-list.component';
 import { RuleComponent } from './rule/rule.component';
-import { MonitoreoComponent } from './monitoreo/monitoreo.component';
 import { AsistenteVirtualComponent } from 'app/main/asistente-virtual/asistente-virtual.component';
-import { ChatroomComponent } from './chatroom/chatroom.component';
 
 const routes = [
   {
@@ -67,15 +65,6 @@ const routes = [
     path: 'security/user-list',
     component: UserListComponent,
     canActivate: [AuthGuardGuard],
-  },
-  {
-    path: 'security/monitoreo',
-    component: MonitoreoComponent,
-    canActivate: [AuthGuardGuard],
-  },
-  {
-    path: 'security/chatroom',
-    component: ChatroomComponent
   }
 ];
 
@@ -87,9 +76,7 @@ const routes = [
 
     UserComponent,
     UserListComponent,
-    RuleComponent,
-    MonitoreoComponent,
-    ChatroomComponent
+    RuleComponent
   ],
   imports: [
     RouterModule.forChild(routes),

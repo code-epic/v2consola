@@ -21,7 +21,7 @@ export const environment = {
     SYS_FUNCION_ZIP: "sys-function.zip"
   },
   colecciones: {
-    USUARIO: 'usuario', 
+    USUARIO: 'usuario',
     WUSUARIO: 'wusuario',
     USER_TASK: 'user-task',
     API_CORE_NAME: "apicore",
@@ -88,8 +88,9 @@ export const environment = {
     ACTUALIZAR_TOKENS: '_SYS_UUsuarioDuracion',
     UPDATE_ALL_USER_PROFILE: '_SYS_UPerfilesTodos',
     CONSULTAR_GUPO_BITACORA: '_SYS_CBitacoraGrupo',
-    ACTUALIZAR_TOTP  : '_SYS_UUserTOTP',
-    ACTUALIZAR_CLAVE: '_SYS_UClaveUsuario'
+    ACTUALIZAR_TOTP: '_SYS_UUserTOTP',
+    ACTUALIZAR_CLAVE: '_SYS_UClaveUsuario',
+    LISTAR_AUTHORIZATIONS: '_SYS_CBoveda'
   },
   subPath: {
     LOGIN: 'ipsfa/api/web/loginWsx',
