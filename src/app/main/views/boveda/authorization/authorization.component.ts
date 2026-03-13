@@ -7,11 +7,12 @@ import * as feather from 'feather-icons';
 import Swal from 'sweetalert2';
 
 export interface Authorization {
-  _id?: { $oid: string };
+  _id?: { $oid: string } | string;
   authid: string;
   key: string;
   user: string;
   aplication: string;
+  aplicacion?: string; // Support for alternate spelling in data
   name: string;
   id: string;
   cargo: string;
@@ -20,6 +21,13 @@ export interface Authorization {
   parametros?: any;
   elapsedTime?: string;
   isWarning?: boolean;
+
+  // WebSocket fields
+  ws_user_id?: string;
+  ws_status?: string;
+  ws_node_name?: string;
+  ws_connected_at?: string;
+  macaddress?: string;
 }
 
 @Component({
@@ -90,6 +98,9 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
     this.tempData = [...this.rowData];
     this.extractApplications();
     this.applyFilters();
+    setTimeout(() => {
+      feather.replace();
+    }, 100);
   }
 
 
@@ -100,7 +111,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
     this.xAPI.parametros = '';
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        // console.log(data)
+
         this.loadMockData(data);
       },
       (error) => {
@@ -186,13 +197,65 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
       buttonsStyling: false
     }).then((result) => {
       if (result.isConfirmed) {
-        this.rowData = this.rowData.filter(item => item.authid !== row.authid);
-        Swal.fire({
-          title: '¡Aprobado!',
-          text: 'La autorización ha sido procesada.',
-          icon: 'success',
-          customClass: { confirmButton: 'btn btn-soft-success' }
-        });
+        this.xAPI = {} as IAPICore;
+        this.xAPI.funcion = '_SYS_UBoveda';
+        this.xAPI.parametros = `${row.authid},1`;
+
+        this.apiService.Ejecutar(this.xAPI).subscribe(
+          (data) => {
+            // Prepare notification message
+            console.log(data);
+            let notificationMsg = 'La autorización ha sido procesada.';
+
+            // Notify via WebSocket if a connection is active
+            if (row.ws_user_id) {
+              notificationMsg = `La autorización ha sido procesada y se ha notificado a la PC: ${row.ws_node_name}`;
+
+
+              //  id: Date.now().toString(),
+              //             sender: 'Admin',
+              //             text: this.newMessage,
+              //             displayedText: this.newMessage,
+              //             timestamp: new Date(),
+              //             type: 'sent',
+              //             status: 'Cifrado'
+
+
+              const wsPayload = {
+                clientId: row.ws_user_id,
+                type: 'hsf',
+                message: row.authid,
+                from: row.key,
+                To: 'sandra-app',
+                status: 'approved',
+                timestamp: new Date().toISOString()
+              };
+
+              this.apiService.SendMessage(wsPayload).subscribe(
+                () => console.log(`WebSocket: Notificación enviada a ${row.ws_user_id}`),
+                (err) => console.error('WebSocket: Error al enviar notificación', err)
+              );
+            }
+
+            // Remove from local list and show success
+            this.rowData = this.rowData.filter(item => item.authid !== row.authid);
+            Swal.fire({
+              title: '¡Aprobado!',
+              text: notificationMsg,
+              icon: 'success',
+              customClass: { confirmButton: 'btn btn-soft-success' }
+            });
+          },
+          (error) => {
+            console.error('Error en aprobación:', error);
+            Swal.fire({
+              title: 'Error',
+              text: 'Hubo un problema al procesar la autorización.',
+              icon: 'error',
+              customClass: { confirmButton: 'btn btn-soft-danger' }
+            });
+          }
+        );
       }
     });
   }

@@ -149,6 +149,24 @@
     color: white !important;
 }
 
+.btn-soft-primary {
+    background-color: #7367f0 !important;
+    color: white !important;
+}
+
+.btn-soft-primary:hover {
+    background-color: #5e50ee !important;
+    
+    .icon-refresh, [data-feather="refresh-cw"] {
+        animation: spin 1s infinite linear;
+    }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
 .params-container {
     background-color: #f8f9fa;
     border: 1px solid #e9ecef;

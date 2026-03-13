@@ -47,15 +47,14 @@
                             </fieldset>
                         </div>
 
-                        <!-- Botón Exportar -->
-                        <!-- <div class="col-md-3 col-12 text-right">
-                            <button
-                                class="btn btn-primary btn-block d-flex align-items-center justify-content-center py-75 shadow-sm"
-                                style="background-color: #6f59f2 !important; border-color: #6f59f2 !important;">
-                                <span [data-feather]="'download'" [size]="16" class="mr-50"></span>
-                                <span>Exportar a PDF</span>
+                        <!-- Botón Actualizar -->
+                        <div class="col-md-3 col-12">
+                            <button (click)="LoadAuthorization()"
+                                class="btn btn-soft-primary btn-block d-flex align-items-center justify-content-center py-75 shadow-sm">
+                                <span [data-feather]="'refresh-cw'" [size]="16" class="mr-50"></span>
+                                <span>Actualizar</span>
                             </button>
-                        </div> -->
+                        </div>
                     </div>
                 </div>
 
@@ -79,7 +78,15 @@
                                         initials) | slice:0:1 }}</div>
                                 </div>
                                 <div>
-                                    <div class="font-weight-bolder mb-25 text-dark">{{ row.name }}</div>
+                                    <div class="font-weight-bolder mb-25 text-dark d-flex align-items-center">
+                                        {{ row.name }}
+                                        <span *ngIf="row.ws_user_id" [data-feather]="'monitor'" [size]="14"
+                                            class="text-success ml-50" ngbTooltip="PC Conectada ({{row.ws_node_name}})"
+                                            container="body"></span>
+                                        <div *ngIf="row.ws_user_id" class="status-dot bg-success ml-25"
+                                            style="width: 8px; height: 8px;"
+                                            [ngClass]="{'blink': row.ws_status === 'online'}"></div>
+                                    </div>
                                     <div class="font-small-2 text-muted">CI: {{ row.id }} • @{{ row.user }}</div>
                                 </div>
                             </div>
