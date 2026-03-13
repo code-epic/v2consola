@@ -1,348 +1,6 @@
 "use strict";
 (self["webpackChunkvuexy"] = self["webpackChunkvuexy"] || []).push([[478],{
 
-/***/ 90415:
-/*!***********************************************************************!*\
-  !*** ./src/app/main/asistente-virtual/asistente-virtual.component.ts ***!
-  \***********************************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "AsistenteVirtualComponent": () => (/* binding */ AsistenteVirtualComponent)
-/* harmony export */ });
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 94650);
-/* harmony import */ var _services_apicore_api_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @services/apicore/api.service */ 89780);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common */ 36895);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ 24006);
-
-
-
-
-
-const _c0 = ["chatMessages"];
-
-function AsistenteVirtualComponent_div_0_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r3 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 2)(1, "a", 3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AsistenteVirtualComponent_div_0_Template_a_click_1_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r3);
-      const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r2.chat_box());
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "img", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-  }
-}
-
-function AsistenteVirtualComponent_div_1_div_2_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 18)(1, "div", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2, " Asistente Virtual ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "span", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AsistenteVirtualComponent_div_1_div_2_Template_span_click_3_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r9);
-      const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r8.hideChat());
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](4, "i", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](5, "div", 22);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](6, "img", 23);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](7, "div", 24)(8, "p");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](9, "\u00A1Hola! Soy ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](11, "SANDRA ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](12, ", \u00BFen qu\u00E9 puedo ayudarlo?");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()();
-  }
-}
-
-function AsistenteVirtualComponent_div_1_div_3_div_18_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 36)(1, "div", 37)(2, "span", 38);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](3, "img", 39);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "div", 40);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "div", 37);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](7, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](8, "span", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](9, "img", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "div", 31);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()();
-  }
-
-  if (rf & 2) {
-    const item_r12 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", item_r12.preg, " ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtextInterpolate1"](" ", item_r12.resp, " ");
-  }
-}
-
-function AsistenteVirtualComponent_div_1_div_3_div_19_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 41)(1, "div", 42);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](2, "div", 43)(3, "div", 43)(4, "div", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-  }
-}
-
-function AsistenteVirtualComponent_div_1_div_3_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r14 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 25)(1, "div", 19);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](2, " Asistente Virtual ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](3, "span", 20);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AsistenteVirtualComponent_div_1_div_3_Template_span_click_3_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r14);
-      const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r13.hideChat());
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](4, "i", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](5, "div", 26);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](6, "div", 27)(7, "div", 28)(8, "span", 29);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](9, "img", 30);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](10, "div", 31)(11, "p", 32);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](12, "\u00A1Hola! Soy ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](13, "strong");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](14, "SANDRA IA");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](15, ", \u00BFen qu\u00E9 puedo ayudarlo? ");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](16, "span", 33);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](17, "|");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](18, AsistenteVirtualComponent_div_1_div_3_div_18_Template, 12, 2, "div", 34);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](19, AsistenteVirtualComponent_div_1_div_3_div_19_Template, 5, 0, "div", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-  }
-
-  if (rf & 2) {
-    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngForOf", ctx_r5.client);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r5.hidden);
-  }
-}
-
-const _c1 = function () {
-  return {
-    standalone: true
-  };
-};
-
-function AsistenteVirtualComponent_div_1_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r16 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵgetCurrentView"]();
-
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](0, "div", 5)(1, "div", 6);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](2, AsistenteVirtualComponent_div_1_div_2_Template, 13, 0, "div", 7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](3, AsistenteVirtualComponent_div_1_div_3_Template, 20, 2, "div", 8);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](4, "div", 9)(5, "form", 10, 11)(7, "input", 12, 13);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AsistenteVirtualComponent_div_1_Template_input_click_7_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r16);
-      const ctx_r15 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r15.ChatMessages());
-    })("ngModelChange", function AsistenteVirtualComponent_div_1_Template_input_ngModelChange_7_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r16);
-      const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r17.msj = $event);
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](9, "button", 14);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵlistener"]("click", function AsistenteVirtualComponent_div_1_Template_button_click_9_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵrestoreView"](_r16);
-      const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵresetView"](ctx_r18.ChatBot());
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelement"](10, "i", 15);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementStart"](11, "p", 16)(12, "a", 17);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtext"](13, "Powered by Code-Epic Technologies");
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵelementEnd"]()()()();
-  }
-
-  if (rf & 2) {
-    const _r6 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](6);
-
-    const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵreference"](8);
-
-    const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r1.ChatWelcome);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx_r1.ChatMessage);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵclassProp"]("error", !_r7.valid && _r6.submitted);
-    _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngModel", ctx_r1.msj)("ngModelOptions", _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵpureFunction0"](6, _c1));
-  }
-}
-
-class AsistenteVirtualComponent {
-  apiService;
-  xAPI = {
-    funcion: '',
-    parametros: ''
-  };
-  chatMessages;
-  messages = [];
-  userInput = '';
-  status = false;
-  msj;
-  preg;
-  hidden = false;
-  msjAux;
-  client = [];
-  boot = [];
-  MostrarChat = false;
-  ChatWelcome = false;
-  ChatMessage = false;
-
-  constructor(apiService) {
-    this.apiService = apiService;
-  }
-
-  ngOnInit() {
-    this.status = true; // this.escribirComoMaquina("¡Hola! Bienvenid@ Soy SANDRA IA, ¿en qué puedo ayudarlo?.", 50, "texto-maquina");
-  }
-
-  ChatBot() {
-    this.msjAux = this.msj;
-    this.msj = '';
-    this.hidden = true;
-    this.xAPI.funcion = 'CHATBOOT';
-    this.xAPI.parametros = this.msjAux;
-    this.apiService.Ejecutar(this.xAPI).subscribe(data => {
-      // console.log(data)
-      if (data.Cuerpo.length > 0) {
-        data.Cuerpo.map(e => {
-          e.preg = this.msjAux;
-          this.client.push(e);
-        });
-      } else {
-        this.client.push({
-          resp: 'Oops lo siento, en este momento estoy presentando problemas con la conexion a internet, por favor intente mas tarde!',
-          preg: this.msjAux
-        });
-      }
-
-      this.hidden = false;
-    }, error => {
-      this.client.push({
-        resp: 'Problemas con BackEnd, porfavor contacte al administrador!',
-        preg: this.msjAux
-      });
-      this.hidden = false;
-    });
-  }
-
-  chat_box() {
-    this.client = [];
-    this.msj = '';
-    this.status = false;
-    this.MostrarChat = true;
-    this.ChatWelcome = true;
-  }
-
-  ChatMessages() {
-    this.ChatWelcome = false;
-    this.ChatMessage = true;
-  }
-
-  hideChat() {
-    this.client = [];
-    this.msj = '';
-    this.MostrarChat = false;
-    this.ChatMessage = false;
-    this.status = true;
-  }
-
-  escribirComoMaquina(texto, velocidad, tipo) {
-    var i = 0;
-    var intervalo = setInterval(function () {
-      document.getElementById(tipo).textContent += texto.charAt(i);
-      i++;
-
-      if (i >= texto.length) {
-        clearInterval(intervalo);
-        document.getElementById(tipo).innerHTML += "<br>";
-        this.escribirComoMaquina(texto, velocidad);
-      }
-    }, velocidad);
-  }
-
-  enviarMensaje() {
-    const mensajeUsuario = this.userInput; // Simular respuesta del chat
-
-    const respuestaChat = 'Hola, ¿en qué puedo ayudarte?';
-    this.messages.push(mensajeUsuario);
-    this.messages.push(respuestaChat);
-    this.userInput = '';
-    this.scrollChat();
-  }
-
-  scrollChat() {
-    setTimeout(() => {
-      const chatMessagesElement = this.chatMessages.nativeElement;
-      chatMessagesElement.scrollTop = chatMessagesElement.scrollHeight;
-    }, 100);
-  }
-
-  static ɵfac = function AsistenteVirtualComponent_Factory(t) {
-    return new (t || AsistenteVirtualComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_0__.ApiService));
-  };
-  static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineComponent"]({
-    type: AsistenteVirtualComponent,
-    selectors: [["app-asistente-virtual"]],
-    viewQuery: function AsistenteVirtualComponent_Query(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵviewQuery"](_c0, 5);
-      }
-
-      if (rf & 2) {
-        let _t;
-
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵloadQuery"]()) && (ctx.chatMessages = _t.first);
-      }
-    },
-    decls: 2,
-    vars: 2,
-    consts: [["id", "chat-circle", 4, "ngIf"], ["class", "chat-box", "style", "position: auto; z-index: 1;", 4, "ngIf"], ["id", "chat-circle"], [1, "btn-whatsapp", "fondo-negro", 3, "click"], ["src", "assets/images/logo/logo.png", "width", "80%", "height", "80%", "alt", "ChatBoot"], [1, "chat-box", 2, "position", "auto", "z-index", "1"], [1, "chat-box-body"], ["class", "chat-box-welcome__header", 4, "ngIf"], ["id", "chat-box__wraper", 4, "ngIf"], [1, "chat-input-box"], [1, "chat-input__form"], ["formUsersRegister", "ngForm"], ["type", "text", "autocomplete", "off", "required", "", "id", "chat-input__text", "placeholder", "Preguntame...", 1, "chat-input__text", 3, "ngModel", "ngModelOptions", "click", "ngModelChange"], ["ChatBoot", "ngModel"], ["id", "chat-submit", 1, "chat-submit", 3, "click"], [1, "fa", "fa-send-o"], [1, "chat-box__sign"], ["href", "https://code-epic.com", "target", "_blank"], [1, "chat-box-welcome__header"], [1, "chat-box-header"], [1, "chat-box-toggle", 3, "click"], [1, "fa", "fa-minus-square-o"], ["id", "chat-box-welcome__ava"], ["src", "assets/images/logo/logo.png", 1, "chat-box-welcome_robot"], [1, "chat-box-welcome__welcome-text"], ["id", "chat-box__wraper"], [1, "chat-box-overlay"], [1, "chat-logs", 2, "overflow", "scroll", "background-image", "url('https://cdn.wallpapersafari.com/28/83/ls0Ajp.jpg')", "height", "400px"], ["id", "cm-msg-0", 1, "chat-msg", "bot", 2, "padding", "1px"], [1, "msg-avatar"], ["width", "60px", "src", "assets/images/logo/logo.png", 1, "chat-box-overlay_robot"], [1, "cm-msg-text"], [1, "maquina-escribir"], [1, "cursor"], ["class", "", 4, "ngFor", "ngForOf"], ["class", "spin-container", 4, "ngIf"], [1, ""], [1, "chat-msg", "bot"], [1, "msg-avatar-client"], ["width", "60px", "src", "assets/images/avatar.png", 1, "chat-box-overlay_robot"], [1, "cm-msg-text-client"], [1, "spin-container"], [1, "spiner"], ["aria-hidden", "true"]],
-    template: function AsistenteVirtualComponent_Template(rf, ctx) {
-      if (rf & 1) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](0, AsistenteVirtualComponent_div_0_Template, 3, 0, "div", 0);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵtemplate"](1, AsistenteVirtualComponent_div_1_Template, 14, 7, "div", 1);
-      }
-
-      if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx.status);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵproperty"]("ngIf", ctx.MostrarChat);
-      }
-    },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_2__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_2__.NgIf, _angular_forms__WEBPACK_IMPORTED_MODULE_3__["ɵNgNoValidate"], _angular_forms__WEBPACK_IMPORTED_MODULE_3__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.NgControlStatusGroup, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.RequiredValidator, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.NgModel, _angular_forms__WEBPACK_IMPORTED_MODULE_3__.NgForm],
-    styles: ["@charset \"UTF-8\";\n\nhtml[_ngcontent-%COMP%], body[_ngcontent-%COMP%] {\n  background: #efefef;\n  height: 100%;\n  font-family: \"Roboto\", \"Helvetica Neue\", Arial, sans-serif;\n}\n#center-text[_ngcontent-%COMP%] {\n  display: flex;\n  flex: 1;\n  flex-direction: column;\n  justify-content: center;\n  align-items: center;\n  height: 100%;\n}\n\n.chat-circle_robot[_ngcontent-%COMP%] {\n  margin-left: 3.5px;\n  margin-top: 3.5px;\n}\n.chat-box-overlay_robot[_ngcontent-%COMP%] {\n  margin-left: -1.5px;\n  margin-top: -0.5px;\n}\nchat-box-overlay_robot[_ngcontent-%COMP%]   .chat-box-welcome_robot[_ngcontent-%COMP%] {\n  margin-left: -50px;\n  top: -10px;\n  left: 50px;\n  right: 50px;\n}\n\n.chat-box-welcome__company-name[_ngcontent-%COMP%], .chat-box__sign[_ngcontent-%COMP%] {\n  font-family: \"Roboto\", \"Helvetica Neue\", \"Arial\", sans-serif;\n  position: relative;\n}\n\n.chat-box__sign[_ngcontent-%COMP%] {\n  font-size: 9px;\n  line-height: 20px;\n  color: #b5b5b5;\n}\n.chat-input-box[_ngcontent-%COMP%] {\n  text-align: center;\n  position: relative;\n}\n.btn#my-btn[_ngcontent-%COMP%] {\n  background: white;\n  padding-top: 13px;\n  padding-bottom: 12px;\n  border-radius: 45px;\n  padding-right: 40px;\n  padding-left: 40px;\n  color: #5865C3;\n}\n\n#chat-circle[_ngcontent-%COMP%], .chat-box-welcome__header[_ngcontent-%COMP%], .chat-box-header[_ngcontent-%COMP%], .chat-msg.bot[_ngcontent-%COMP%]    > .msg-avatar[_ngcontent-%COMP%] {\n  background-image: linear-gradient(#1ba261 60%, #1ba261 40%);\n}\n.options-btn[_ngcontent-%COMP%] {\n  border: 1px solid rgb(255, 255, 255);\n}\n.spiner[_ngcontent-%COMP%]    > *[_ngcontent-%COMP%] {\n  background: rgb(0, 0, 0);\n}\n\n#chat-circle[_ngcontent-%COMP%] {\n  position: fixed;\n  bottom: 65px;\n  right: 0px;\n  width: 100px;\n  height: 100px;\n  border-radius: 50%;\n  padding: -80px;\n  cursor: pointer;\n  background-image: linear-gradient(to top left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));\n}\n#chat-overlay[_ngcontent-%COMP%] {\n  background: rgba(255, 255, 255, 0.1);\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  border-radius: 50%;\n}\n.chat-circle_robot[_ngcontent-%COMP%] {\n  top: 100;\n  left: 100;\n  width: 80%;\n  height: 80%;\n}\n.chat-box-welcome[_ngcontent-%COMP%] {\n  background: #f8f8f8;\n  position: fixed;\n  right: 30px;\n  bottom: 50px;\n  width: 350px;\n  max-width: 85vw;\n  max-height: 100vh;\n  border-radius: 3px;\n  box-shadow: 0px 5px 35px 9px #ccc;\n}\n.chat-box-welcome__header[_ngcontent-%COMP%] {\n  height: 420px;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n}\n.chat-box__header-text[_ngcontent-%COMP%] {\n  color: white;\n  padding-left: 10px;\n  font-size: 20px;\n  padding-top: 13px;\n}\n#chat-box-welcome__ava[_ngcontent-%COMP%] {\n  border-radius: 50%;\n  position: absolute;\n  top: 98px;\n  left: 124px;\n  width: 200px;\n  height: 200px;\n  border-radius: 50%;\n  color: white;\n}\n.chat-box-welcome_robot[_ngcontent-%COMP%] {\n  height: 100px;\n  position: absolute;\n}\n.chat-box-welcome__welcome-text[_ngcontent-%COMP%] {\n  color: #fff;\n  text-align: center;\n  width: 80%;\n  position: relative;\n  top: 45%;\n  left: 50%;\n  transform: translateX(-50%);\n}\n.chat-box-welcome__welcome-text[_ngcontent-%COMP%]   p[_ngcontent-%COMP%] {\n  font-size: 20px;\n}\n\n.chat-box[_ngcontent-%COMP%] {\n  background: #f8f8f8;\n  position: fixed;\n  right: 30px;\n  bottom: 50px;\n  width: 350px;\n  max-width: 85vw;\n  max-height: 100vh;\n  border-radius: 3px;\n  box-shadow: 0px 5px 35px 9px #ccc;\n}\n.chat-box-toggle[_ngcontent-%COMP%] {\n  float: right;\n  margin-right: 15px;\n  cursor: pointer;\n}\n.chat-box-header[_ngcontent-%COMP%] {\n  position: relative;\n  height: 50px;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n  color: white;\n  padding-left: 10px;\n  font-size: 20px;\n  padding-top: 13px;\n}\n.chat-box-body[_ngcontent-%COMP%] {\n  position: relative;\n  height: 370px;\n  height: auto;\n  border-bottom: 1px solid rgba(181, 181, 181, 0.42);\n  overflow: hidden;\n}\n.chat-box-body[_ngcontent-%COMP%]:after {\n  content: \"\";\n  background-color: #F8F8F8;\n  opacity: 0.1;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  height: 100%;\n  position: absolute;\n  z-index: -1;\n}\n.chat-input__text[_ngcontent-%COMP%] {\n  background: #fff;\n  width: 95%;\n  position: relative;\n  height: 47px;\n  padding-top: 10px;\n  padding-right: 50px;\n  padding-bottom: 10px;\n  padding-left: 15px;\n  margin-top: 5px;\n  resize: none;\n  outline: none;\n  border: 1px solid #F2F0F0;\n  color: #888;\n  border-radius: 3px;\n  overflow: hidden;\n}\n.chat-input-box[_ngcontent-%COMP%]    > form[_ngcontent-%COMP%] {\n  margin-bottom: 0;\n}\n.chat-input__text[_ngcontent-%COMP%]::-webkit-input-placeholder {\n  \n  color: #ccc;\n}\n.chat-input__text[_ngcontent-%COMP%]::-moz-placeholder {\n  \n  color: #ccc;\n}\n.chat-input__text[_ngcontent-%COMP%]:-ms-input-placeholder {\n  \n  color: #ccc;\n}\n.chat-input__text[_ngcontent-%COMP%]:-moz-placeholder {\n  \n  color: #ccc;\n}\n.chat-submit[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 27px;\n  right: 10px;\n  background: transparent;\n  box-shadow: none;\n  border: none;\n  border-radius: 50%;\n  color: rgba(250, 65, 95, 0.99);\n  width: 35px;\n  height: 35px;\n}\n.chat-logs[_ngcontent-%COMP%] {\n  padding: 15px;\n  height: 370px;\n  overflow-y: scroll;\n}\n@media only screen and (max-width: 500px) {\n  .chat-logs[_ngcontent-%COMP%] {\n    height: 40vh;\n  }\n}\n.chat-msg.bot[_ngcontent-%COMP%]    > .msg-avatar[_ngcontent-%COMP%] {\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  float: left;\n}\n.chat-msg.bot[_ngcontent-%COMP%]    > .msg-avatar-client[_ngcontent-%COMP%] {\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  float: right;\n  position: relative;\n}\n.chat-msg.self[_ngcontent-%COMP%]    > .msg-avatar[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  width: 50px;\n  height: 50px;\n  border-radius: 50%;\n  float: right;\n  width: 15%;\n}\n.cm-msg-text[_ngcontent-%COMP%] {\n  background: white;\n  padding: 10px 15px 10px 15px;\n  color: #000000;\n  max-width: 75%;\n  float: left;\n  margin-left: 10px;\n  position: relative;\n  margin-bottom: 20px;\n  border-radius: 3px;\n}\n.cm-msg-text-client[_ngcontent-%COMP%] {\n  background: white;\n  padding: 10px 15px 10px 15px;\n  color: #000000;\n  max-width: 75%;\n  float: right;\n  margin-left: 10px;\n  position: relative;\n  margin-bottom: 20px;\n  border-radius: 3px;\n}\n.options-btn[_ngcontent-%COMP%] {\n  background: white;\n  padding: 10px 15px 10px 15px;\n  color: #666;\n  width: 75%;\n  margin-left: 55px;\n  position: relative;\n  margin-bottom: 20px;\n  border-radius: 3px;\n  text-align: center;\n}\n.chat-msg[_ngcontent-%COMP%] {\n  clear: both;\n}\n.chat-msg.self[_ngcontent-%COMP%]    > .cm-msg-text[_ngcontent-%COMP%] {\n  float: right;\n  background: #efefef;\n  \n}\n.cm-msg-button[_ngcontent-%COMP%]    > ul[_ngcontent-%COMP%]    > li[_ngcontent-%COMP%] {\n  list-style: none;\n  float: left;\n  width: 50%;\n}\n.cm-msg-button[_ngcontent-%COMP%] {\n  clear: both;\n  margin-bottom: 70px;\n}\n\n.spin-container[_ngcontent-%COMP%] {\n  \n  color: #666;\n  max-width: 75%;\n  \n  bottom: 4px;\n  left: 50%;\n  \n  position: absolute;\n  \n}\n.spiner[_ngcontent-%COMP%] {\n  position: absolute;\n  left: 50%;\n  top: 50%;\n  margin: -10px 0 0 -20px;\n  display: inline-block;\n  position: relative;\n  height: 20px;\n  width: 40px;\n}\n.spiner[_ngcontent-%COMP%]    > *[_ngcontent-%COMP%] {\n  position: absolute;\n  top: 5px;\n  height: 10px;\n  width: 10px;\n  border-radius: 50%;\n  \n  opacity: 0.6;\n  transform: translateX(0px);\n}\n.spiner[_ngcontent-%COMP%]    > *[_ngcontent-%COMP%]:nth-child(1) {\n  left: 0;\n  animation: mymove 1.3s infinite ease-in;\n}\n.spiner[_ngcontent-%COMP%]    > *[_ngcontent-%COMP%]:nth-child(2) {\n  left: 12px;\n  animation: mymove 1.3s 0.3s infinite ease-in;\n}\n.spiner[_ngcontent-%COMP%]    > *[_ngcontent-%COMP%]:nth-child(3) {\n  left: 24px;\n  animation: mymove 1.3s 0.6s infinite ease-in;\n}\n@keyframes mymove {\n  0%, 100%, 80% {\n    opacity: 0.6;\n    transform: scale(0.4);\n  }\n  40% {\n    opacity: 1;\n    transform: scale(1);\n  }\n}\n.fondo-negro[_ngcontent-%COMP%] {\n  filter: drop-shadow(0 5px 5px #000000);\n  border-top-left-radius: 100px;\n  border-top-right-radius: 100px;\n  border-bottom-right-radius: 100px;\n  border-bottom-left-radius: 100px;\n  z-index: -1;\n}\n.fondo-negro[_ngcontent-%COMP%] {\n  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.2901960784));\n  border-top-left-radius: 100px;\n  border-top-right-radius: 100px;\n  border-bottom-right-radius: 100px;\n  border-bottom-left-radius: 100px;\n  z-index: -1;\n}\n.btn-whatsapp[_ngcontent-%COMP%] {\n  position: fixed;\n  z-index: 999;\n  bottom: 60px;\n  right: 60px;\n  height: 100px;\n  width: 100px;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before, .btn-whatsapp[_ngcontent-%COMP%]:after {\n  content: \"\";\n  position: absolute;\n  top: 15px;\n  left: 15px;\n  width: 45px;\n  height: 45px;\n  border-radius: 50%;\n  background-color: #ffc003;\n  opacity: 0;\n  animation: onda 1.7s infinite;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:before {\n  animation-delay: 1s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]:after {\n  animation-delay: 1.3s;\n}\n.btn-whatsapp[_ngcontent-%COMP%]   img[_ngcontent-%COMP%] {\n  position: relative;\n  z-index: 2;\n}\n@keyframes onda {\n  0% {\n    transform: scale(1);\n  }\n  15% {\n    opacity: 1;\n  }\n  100% {\n    opacity: 0;\n    transform: scale(4);\n  }\n}\n.maquina-escribir[_ngcontent-%COMP%] {\n  white-space: nowrap; \n  width: 24ch; \n  animation: escribiendo 2s steps(20);\n  overflow: hidden;\n}\n.cursor[_ngcontent-%COMP%] {\n  animation: 0.6s parpadeo-cursor infinite;\n}\n@keyframes escribiendo {\n  from {\n    width: 0;\n  }\n}\n@keyframes parpadeo-cursor {\n  50% {\n    opacity: 0;\n  }\n}\n#texto-maquina[_ngcontent-%COMP%] {\n  font-family: \"Arial\", sans-serif;\n  font-size: 16px;\n  width: 200px;\n}"]
-  });
-}
-
-/***/ }),
-
 /***/ 60109:
 /*!********************************************************************************************************!*\
   !*** ./src/app/main/pages/authentication/auth-forgot-password-v1/auth-forgot-password-v1.component.ts ***!
@@ -2099,18 +1757,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AuthenticationModule": () => (/* binding */ AuthenticationModule)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/common */ 36895);
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @angular/forms */ 24006);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ 34793);
-/* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/common */ 36895);
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/forms */ 24006);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ 34793);
+/* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 65765);
 /* harmony import */ var _core_common_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @core/common.module */ 75078);
 /* harmony import */ var _auth_login_v1_auth_login_v1_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./auth-login-v1/auth-login-v1.component */ 60928);
 /* harmony import */ var _auth_register_v1_auth_register_v1_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./auth-register-v1/auth-register-v1.component */ 56436);
 /* harmony import */ var _auth_reset_password_v1_auth_reset_password_v1_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./auth-reset-password-v1/auth-reset-password-v1.component */ 10667);
 /* harmony import */ var _auth_forgot_password_v1_auth_forgot_password_v1_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./auth-forgot-password-v1/auth-forgot-password-v1.component */ 60109);
-/* harmony import */ var app_main_asistente_virtual_asistente_virtual_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! app/main/asistente-virtual/asistente-virtual.component */ 90415);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/core */ 94650);
-
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 94650);
 
 
 
@@ -2146,18 +1802,18 @@ class AuthenticationModule {
   static ɵfac = function AuthenticationModule_Factory(t) {
     return new (t || AuthenticationModule)();
   };
-  static ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineNgModule"]({
+  static ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineNgModule"]({
     type: AuthenticationModule
   });
-  static ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵdefineInjector"]({
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_8__.RouterModule.forChild(routes), _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__.NgbModule, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.ReactiveFormsModule, _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
+  static ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵdefineInjector"]({
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_7__.RouterModule.forChild(routes), _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbModule, _angular_forms__WEBPACK_IMPORTED_MODULE_9__.FormsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_9__.ReactiveFormsModule, _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
   });
 }
 
 (function () {
-  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_6__["ɵɵsetNgModuleScope"](AuthenticationModule, {
-    declarations: [_auth_login_v1_auth_login_v1_component__WEBPACK_IMPORTED_MODULE_1__.AuthLoginV1Component, _auth_register_v1_auth_register_v1_component__WEBPACK_IMPORTED_MODULE_2__.AuthRegisterV1Component, _auth_reset_password_v1_auth_reset_password_v1_component__WEBPACK_IMPORTED_MODULE_3__.AuthResetPasswordV1Component, _auth_forgot_password_v1_auth_forgot_password_v1_component__WEBPACK_IMPORTED_MODULE_4__.AuthForgotPasswordV1Component, app_main_asistente_virtual_asistente_virtual_component__WEBPACK_IMPORTED_MODULE_5__.AsistenteVirtualComponent],
-    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_7__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_8__.RouterModule, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_9__.NgbModule, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.FormsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.ReactiveFormsModule, _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
+  (typeof ngJitMode === "undefined" || ngJitMode) && _angular_core__WEBPACK_IMPORTED_MODULE_5__["ɵɵsetNgModuleScope"](AuthenticationModule, {
+    declarations: [_auth_login_v1_auth_login_v1_component__WEBPACK_IMPORTED_MODULE_1__.AuthLoginV1Component, _auth_register_v1_auth_register_v1_component__WEBPACK_IMPORTED_MODULE_2__.AuthRegisterV1Component, _auth_reset_password_v1_auth_reset_password_v1_component__WEBPACK_IMPORTED_MODULE_3__.AuthResetPasswordV1Component, _auth_forgot_password_v1_auth_forgot_password_v1_component__WEBPACK_IMPORTED_MODULE_4__.AuthForgotPasswordV1Component],
+    imports: [_angular_common__WEBPACK_IMPORTED_MODULE_6__.CommonModule, _angular_router__WEBPACK_IMPORTED_MODULE_7__.RouterModule, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_8__.NgbModule, _angular_forms__WEBPACK_IMPORTED_MODULE_9__.FormsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_9__.ReactiveFormsModule, _core_common_module__WEBPACK_IMPORTED_MODULE_0__.CoreCommonModule]
   });
 })();
 
