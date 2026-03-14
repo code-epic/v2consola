@@ -450,6 +450,26 @@ $bubble-them-border: rgba(0, 0, 0, 0.1);
             }
         }
 
+        .delivery-status {
+            display: inline-flex;
+            align-items: center;
+            margin-left: 5px;
+
+            .status-icon {
+                width: 12px;
+                height: 12px;
+                stroke: #b4b7bd;
+                
+                &.accepted {
+                    stroke: #28c76f;
+                }
+
+                &.second-check {
+                    margin-left: -7px;
+                }
+            }
+        }
+
         // Barra de progreso elegante
         .upload-progress-container {
             padding: 0.5rem 1.5rem;

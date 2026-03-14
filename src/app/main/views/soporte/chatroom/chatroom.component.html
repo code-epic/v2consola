@@ -6,7 +6,7 @@
             <div class="sidebar-header">
                 <h2>
                     <i data-feather="users"></i>
-                    NODOS_SEGUROS
+                    {{ currentUserName | uppercase }}
                     <span class="status-pill">EN VIVO</span>
                 </h2>
             </div>
@@ -97,6 +97,19 @@
                     <div class="message-meta">
                         <span>{{ msg.timestamp | date:'HH:mm:ss' }}</span>
                         <span *ngIf="msg.status">[{{ msg.status }}]</span>
+
+                        <!-- Indicador de estado de envío para mensajes del Admin (Usando SVG directo para evitar duplicación) -->
+                        <span class="delivery-status" *ngIf="msg.type === 'sent'">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" 
+                                stroke-linecap="round" stroke-linejoin="round" class="status-icon"
+                                [class.accepted]="msg.isAccepted">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <svg *ngIf="msg.isAccepted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" 
+                                stroke-linecap="round" stroke-linejoin="round" class="status-icon second-check accepted">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
                     </div>
                 </div>
             </section>

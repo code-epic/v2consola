@@ -13,6 +13,10 @@ interface IncomingMessage { // Para otros tipos de mensaje que no sean Ollama ch
     message: string;
     id: string;
     from: string;
+    to?: string;
+    time?: string;
+    status?: string;
+    isAccepted?: boolean;
 }
 
 
@@ -94,7 +98,14 @@ export class WsSandraService {
                             time: data.time || new Date().toISOString(),
                             to: data.to || "xterm"
                         });
-                        this.messages.push({ from: data.from, message: data.message, id: data.id });
+                        this.messages.push({
+                            from: data.from,
+                            message: data.message,
+                            id: data.id,
+                            to: data.to,
+                            time: data.time || new Date().toISOString(),
+                            status: data.status || "Cifrado"
+                        });
                         this.loading = false;
                         this.saveHistory();
                     } else if (data.from === 'exec-pipe') {
@@ -201,6 +212,15 @@ export class WsSandraService {
 
         const historyString = JSON.stringify(this.messages);
         localStorage.setItem('chat_history', historyString);
+    }
+
+    /**
+     * Guarda un mensaje en el historial persistente (chat_history)
+     * @param msg Objeto de mensaje compatible con IncomingMessage
+     */
+    public saveChatroomMessage(msg: IncomingMessage): void {
+        this.messages.push(msg);
+        this.saveHistory();
     }
 
 

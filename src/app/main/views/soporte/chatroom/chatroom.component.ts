@@ -3,6 +3,8 @@ import { ApiService } from '@services/apicore/api.service';
 import { LoginService } from '@services/seguridad/login.service';
 import { WsSandraService } from '@services/seguridad/ws-sandra.service';
 
+declare var feather: any;
+
 interface Message {
     id: string;
     sender: string;
@@ -12,6 +14,7 @@ interface Message {
     type: 'sent' | 'received';
     isTyping?: boolean;
     status?: string;
+    isAccepted?: boolean; // Nuevo: Para el check de enviado
     attachments?: any[];
     fileInfo?: {
         name: string;
@@ -57,28 +60,40 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
     messages: Message[] = [];
     newMessage: string = '';
     availableCommands: string[] = ['/silenciar', '/limpiar', '/bloquear', '/rastrear', '/capturar'];
+    currentUserName: string = '';
+    Token: any;
 
     constructor(
         private apiService: ApiService,
         private loginService: LoginService,
         private wsSandraService: WsSandraService
-    ) { }
+    ) {
+        this.Token = this.loginService.getUserDecrypt(sessionStorage.getItem('token'));
+    }
 
     ngOnInit(): void {
         this.scrollToBottom();
+
+        // Obtener usuario actual para filtrar y mostrar en cabecera
+        console.log(this.Token)
+        this.currentUserName = this.Token?.Usuario?.usuario || 'Admin';
 
         // Cargar conexiones iniciales
         this.apiService.GetConnectionsWebSocket().subscribe(
             (data: any) => {
                 if (data && data.message) {
-                    this.users = data.message.map(u => ({
-                        id: u.id,
-                        name: u.name,
-                        mac_address: u.mac_address,
-                        remote_addr: u.remote_addr,
-                        status: u.status,
-                        history: []
-                    }));
+                    this.users = data.message
+                        .filter(u => u.name !== this.currentUserName) // Excluir al usuario actual
+                        .map(u => ({
+                            id: u.id,
+                            name: u.name,
+                            mac_address: u.mac_address,
+                            remote_addr: u.remote_addr,
+                            status: u.status,
+                            history: []
+                        }));
+
+                    this.loadStoredHistory();
 
                     if (this.users.length > 0 && !this.activeUser) {
                         this.selectUser(this.users[0]);
@@ -120,6 +135,48 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
         });
     }
 
+    loadStoredHistory() {
+        const storedHistory = this.wsSandraService.messages;
+        if (!storedHistory || storedHistory.length === 0) return;
+
+        storedHistory.forEach((msg: any) => {
+            // Buscar usuario a quien asociar el mensaje
+            // Si el mensaje es de 'user', es un mensaje ENVIADO. Necesitamos 'to' para saber a quién.
+            // Si el mensaje es de un id de usuario, es un mensaje RECIBIDO.
+
+            if (msg.from === 'user' || msg.from === 'Admin') {
+                if (msg.to) {
+                    const targetUser = this.users.find(u => u.id === msg.to);
+                    if (targetUser) {
+                        targetUser.history.push({
+                            id: msg.id || Date.now().toString(),
+                            sender: 'Admin',
+                            text: msg.message,
+                            displayedText: msg.message,
+                            timestamp: msg.time ? new Date(msg.time) : new Date(),
+                            type: 'sent',
+                            status: msg.status || 'Cifrado',
+                            isAccepted: msg.isAccepted || false
+                        });
+                    }
+                }
+            } else {
+                const sender = this.users.find(u => u.id === msg.from);
+                if (sender) {
+                    sender.history.push({
+                        id: msg.id || Date.now().toString(),
+                        sender: sender.name,
+                        text: msg.message,
+                        displayedText: msg.message,
+                        timestamp: msg.time ? new Date(msg.time) : new Date(),
+                        type: 'received',
+                        status: msg.status || 'Cifrado'
+                    });
+                }
+            }
+        });
+    }
+
     ngAfterViewChecked() {
         this.scrollToBottom();
     }
@@ -155,47 +212,63 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
             type: 'chat',
             clientId: this.activeUser?.id, // UUID del cliente/usuario
             message: this.newMessage,
-            from: this.loginService.Usuario?.login || 'sistema', // Usuario desde JWT session
-            To: 'sandra-app' // timestamp: new Date().toISOString()
+            from: this.Token?.Usuario?.usuario || 'sistema', // Usuario desde JWT session
+            To: 'sandra-app'
         };
 
+        // Persistir en el historial local (chat_history)
+        this.wsSandraService.saveChatroomMessage({
+            from: 'Admin',
+            to: this.activeUser?.id,
+            message: this.newMessage,
+            id: msgHistory.id,
+            time: msgHistory.timestamp.toISOString(),
+            status: msgHistory.status
+        });
+
+        const originalId = msgHistory.id;
+        const originalMessage = this.newMessage;
         this.newMessage = '';
-        console.log(payload);
+        
         this.apiService.SendMessage(payload).subscribe(
             (data: any) => {
-                console.log('Mensaje enviado exitosamente:', data);
+                console.log('Respuesta del servidor:', data);
+                
+                // Si el servidor confirma la entrega
+                if (data && data.status === 'success' || (data.message && data.message.includes('enviado'))) {
+                    // Buscar el mensaje original en la lista actual y en el historial del usuario activo
+                    const msgToUpdate = this.messages.find(m => m.id === originalId);
+                    if (msgToUpdate) {
+                        msgToUpdate.isAccepted = true;
+                        msgToUpdate.status = 'Enviado';
+                    }
+
+                    if (this.activeUser) {
+                        const histMsg = this.activeUser.history.find(m => m.id === originalId);
+                        if (histMsg) {
+                            histMsg.isAccepted = true;
+                            histMsg.status = 'Enviado';
+                        }
+                    }
+
+                    // Actualizar en el historial persistente (buscando en el array de WsSandraService)
+                    const persistentMsg = this.wsSandraService.messages.find(m => m.id === originalId);
+                    if (persistentMsg) {
+                        persistentMsg.isAccepted = true;
+                        persistentMsg.status = 'Enviado';
+                        // Forzar guardado en localStorage
+                        localStorage.setItem('chat_history', JSON.stringify(this.wsSandraService.messages));
+                    }
+                }
             },
             (error: any) => {
                 console.error('Error al enviar mensaje:', error);
+                const msgToUpdate = this.messages.find(m => m.id === originalId);
+                if (msgToUpdate) {
+                    msgToUpdate.status = 'Error';
+                }
             }
         );
-
-        // Simulacro de respuesta local (opcional)
-        setTimeout(() => {
-            this.mockResponse();
-        }, 1500);
-    }
-
-    mockResponse() {
-        const responses = [
-            "Recibido. Procesando análisis de paquetes...",
-            "Advertencia: Tráfico inusual detectado en el puerto 443.",
-            "Acceso concedido. ID de Sesión: " + Math.random().toString(36).substring(7).toUpperCase()
-        ];
-        const text = responses[Math.floor(Math.random() * responses.length)];
-
-        const msg: Message = {
-            id: Date.now().toString(),
-            sender: this.activeUser.name,
-            text: "> " + text,
-            displayedText: '',
-            timestamp: new Date(),
-            type: 'received'
-        };
-
-        this.messages.push(msg);
-        if (this.activeUser) this.activeUser.history.push(msg);
-        this.typeMessage(msg);
     }
 
     typeMessage(msg: Message) {
@@ -291,6 +364,16 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
                 if (this.activeUser) {
                     this.activeUser.history.push(msgHistory);
                 }
+
+                // Persistir en el historial local (chat_history)
+                this.wsSandraService.saveChatroomMessage({
+                    from: 'Admin',
+                    to: this.activeUser?.id,
+                    message: payload.message,
+                    id: msgHistory.id,
+                    time: msgHistory.timestamp.toISOString(),
+                    status: msgHistory.status
+                });
 
                 this.apiService.SendMessage(payload).subscribe();
                 this.uploadProgress = 0;
