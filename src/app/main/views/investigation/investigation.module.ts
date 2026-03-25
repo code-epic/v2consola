@@ -18,6 +18,8 @@ import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.mo
 import { LogsComponent } from './logs/logs.component';
 import { BinnacleComponent } from './binnacle/binnacle.component';
 import { BinnacleApplicationsComponent } from './binnacle-applications/binnacle-applications.component';
+import { TrazaComponent } from './binnacle/traza/traza.component';
+import { EventComponent } from './binnacle/events/events.component';
 import { QueryLogComponent } from './query-log/query-log.component';
 import { ChartsModule } from 'ng2-charts';
 
@@ -38,10 +40,27 @@ const routes = [
     component: BinnacleApplicationsComponent,
     canActivate: [AuthGuardGuard],
   },
+  {
+    path: 'investigation/binnacle/traza/:id',
+    component: TrazaComponent,
+    canActivate: [AuthGuardGuard],
+  },
+  {
+    path: 'investigation/events/:id',
+    component: EventComponent,
+    canActivate: [AuthGuardGuard],
+  },
 ];
 
 @NgModule({
-  declarations: [LogsComponent, BinnacleComponent, QueryLogComponent, BinnacleApplicationsComponent],
+  declarations: [
+    LogsComponent, 
+    BinnacleComponent, 
+    QueryLogComponent, 
+    BinnacleApplicationsComponent,
+    TrazaComponent,
+    EventComponent
+  ],
   imports: [
     RouterModule.forChild(routes),
     CommonModule,

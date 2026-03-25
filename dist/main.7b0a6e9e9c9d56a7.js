@@ -20358,7 +20358,10 @@ class WsSandraService {
           this.messages.push({
             from: data.from,
             message: data.message,
-            id: data.id
+            id: data.id,
+            to: data.to,
+            time: data.time || new Date().toISOString(),
+            status: data.status || "Cifrado"
           });
           this.loading = false;
           this.saveHistory();
@@ -20465,6 +20468,16 @@ class WsSandraService {
   saveHistory() {
     const historyString = JSON.stringify(this.messages);
     localStorage.setItem('chat_history', historyString);
+  }
+  /**
+   * Guarda un mensaje en el historial persistente (chat_history)
+   * @param msg Objeto de mensaje compatible con IncomingMessage
+   */
+
+
+  saveChatroomMessage(msg) {
+    this.messages.push(msg);
+    this.saveHistory();
   }
 
   sendMClient() {
@@ -53393,12 +53406,12 @@ __webpack_require__.r(__webpack_exports__);
 const _c0 = ["scrollMe"];
 const _c1 = ["fileInput"];
 
-function ChatroomComponent_li_13_Template(rf, ctx) {
+function ChatroomComponent_li_14_Template(rf, ctx) {
   if (rf & 1) {
     const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
 
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "li", 54);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_li_13_Template_li_click_0_listener() {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_li_14_Template_li_click_0_listener() {
       const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r9);
       const user_r7 = restoredCtx.$implicit;
       const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
@@ -53432,7 +53445,7 @@ function ChatroomComponent_li_13_Template(rf, ctx) {
   }
 }
 
-function ChatroomComponent_div_28_span_3_Template(rf, ctx) {
+function ChatroomComponent_div_29_span_3_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 59);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
@@ -53446,12 +53459,12 @@ function ChatroomComponent_div_28_span_3_Template(rf, ctx) {
   }
 }
 
-function ChatroomComponent_div_28_Template(rf, ctx) {
+function ChatroomComponent_div_29_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 57)(1, "h3");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, ChatroomComponent_div_28_span_3_Template, 2, 1, "span", 58);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, ChatroomComponent_div_29_span_3_Template, 2, 1, "span", 58);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
   }
 
@@ -53464,17 +53477,17 @@ function ChatroomComponent_div_28_Template(rf, ctx) {
   }
 }
 
-function ChatroomComponent_div_38_span_2_span_2_Template(rf, ctx) {
+function ChatroomComponent_div_39_span_2_span_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "span", 68);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](0, "span", 69);
   }
 }
 
-function ChatroomComponent_div_38_span_2_Template(rf, ctx) {
+function ChatroomComponent_div_39_span_2_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 66);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 67);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](2, ChatroomComponent_div_38_span_2_span_2_Template, 1, 0, "span", 67);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](2, ChatroomComponent_div_39_span_2_span_2_Template, 1, 0, "span", 68);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
   }
 
@@ -53487,24 +53500,24 @@ function ChatroomComponent_div_38_span_2_Template(rf, ctx) {
   }
 }
 
-function ChatroomComponent_div_38_div_3_Template(rf, ctx) {
+function ChatroomComponent_div_39_div_3_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 69)(1, "div", 70);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 70)(1, "div", 71);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "i", 21);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "span", 71);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](3, "span", 72);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](4);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "div", 72)(6, "div", 73);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](5, "div", 73)(6, "div", 74);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](7);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "div", 74)(9, "span", 75);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "div", 75)(9, "span", 76);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](10);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](11, "span", 76);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](11, "span", 77);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](12, "Listo para descargar");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "div", 77);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](14, "i", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "div", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](14, "i", 79);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
   }
 
@@ -53521,7 +53534,7 @@ function ChatroomComponent_div_38_div_3_Template(rf, ctx) {
   }
 }
 
-function ChatroomComponent_div_38_span_8_Template(rf, ctx) {
+function ChatroomComponent_div_39_span_8_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
@@ -53535,17 +53548,47 @@ function ChatroomComponent_div_38_span_8_Template(rf, ctx) {
   }
 }
 
-function ChatroomComponent_div_38_Template(rf, ctx) {
+function ChatroomComponent_div_39_span_9__svg_svg_3_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "svg", 84);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](1, "polyline", 82);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+  }
+}
+
+function ChatroomComponent_div_39_span_9_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 80);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnamespaceSVG"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](1, "svg", 81);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](2, "polyline", 82);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, ChatroomComponent_div_39_span_9__svg_svg_3_Template, 2, 0, "svg", 83);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
+  }
+
+  if (rf & 2) {
+    const msg_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]().$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵclassProp"]("accepted", msg_r11.isAccepted);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", msg_r11.isAccepted);
+  }
+}
+
+function ChatroomComponent_div_39_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 60)(1, "div", 61);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](2, ChatroomComponent_div_38_span_2_Template, 3, 2, "span", 62);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, ChatroomComponent_div_38_div_3_Template, 15, 5, "div", 63);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](2, ChatroomComponent_div_39_span_2_Template, 3, 2, "span", 62);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](3, ChatroomComponent_div_39_div_3_Template, 15, 5, "div", 63);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "div", 64)(5, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](6);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpipe"](7, "date");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](8, ChatroomComponent_div_38_span_8_Template, 2, 1, "span", 65);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](8, ChatroomComponent_div_39_span_8_Template, 2, 1, "span", 65);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](9, ChatroomComponent_div_39_span_9_Template, 4, 3, "span", 66);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
   }
 
@@ -53559,22 +53602,24 @@ function ChatroomComponent_div_38_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", msg_r11.fileInfo);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpipeBind2"](7, 10, msg_r11.timestamp, "HH:mm:ss"));
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpipeBind2"](7, 11, msg_r11.timestamp, "HH:mm:ss"));
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", msg_r11.status);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", msg_r11.type === "sent");
   }
 }
 
-function ChatroomComponent_div_39_Template(rf, ctx) {
+function ChatroomComponent_div_40_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 79)(1, "div", 80)(2, "span");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 85)(1, "div", 86)(2, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](3, "Subiendo documento cifrado...");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](4, "span");
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "div", 81);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](7, "div", 82);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](6, "div", 87);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](7, "div", 88);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
   }
 
@@ -53587,25 +53632,25 @@ function ChatroomComponent_div_39_Template(rf, ctx) {
   }
 }
 
-function ChatroomComponent_span_88_Template(rf, ctx) {
+function ChatroomComponent_span_89_Template(rf, ctx) {
   if (rf & 1) {
-    const _r21 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
+    const _r24 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 83);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_span_88_Template_span_click_0_listener() {
-      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r21);
-      const cmd_r19 = restoredCtx.$implicit;
-      const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵresetView"](ctx_r20.newMessage = cmd_r19 + " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "span", 89);
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_span_89_Template_span_click_0_listener() {
+      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵrestoreView"](_r24);
+      const cmd_r22 = restoredCtx.$implicit;
+      const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵresetView"](ctx_r23.newMessage = cmd_r22 + " ");
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
   }
 
   if (rf & 2) {
-    const cmd_r19 = ctx.$implicit;
+    const cmd_r22 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", cmd_r19, " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", cmd_r22, " ");
   }
 }
 
@@ -53628,19 +53673,26 @@ class ChatroomComponent {
   messages = [];
   newMessage = '';
   availableCommands = ['/silenciar', '/limpiar', '/bloquear', '/rastrear', '/capturar'];
+  currentUserName = '';
+  Token;
 
   constructor(apiService, loginService, wsSandraService) {
     this.apiService = apiService;
     this.loginService = loginService;
     this.wsSandraService = wsSandraService;
+    this.Token = this.loginService.getUserDecrypt(sessionStorage.getItem('token'));
   }
 
   ngOnInit() {
-    this.scrollToBottom(); // Cargar conexiones iniciales
+    this.scrollToBottom(); // Obtener usuario actual para filtrar y mostrar en cabecera
+
+    console.log(this.Token);
+    this.currentUserName = this.Token?.Usuario?.usuario || 'Admin'; // Cargar conexiones iniciales
 
     this.apiService.GetConnectionsWebSocket().subscribe(data => {
       if (data && data.message) {
-        this.users = data.message.map(u => ({
+        this.users = data.message.filter(u => u.name !== this.currentUserName) // Excluir al usuario actual
+        .map(u => ({
           id: u.id,
           name: u.name,
           mac_address: u.mac_address,
@@ -53648,6 +53700,7 @@ class ChatroomComponent {
           status: u.status,
           history: []
         }));
+        this.loadStoredHistory();
 
         if (this.users.length > 0 && !this.activeUser) {
           this.selectUser(this.users[0]);
@@ -53681,6 +53734,48 @@ class ChatroomComponent {
       } else {
         // Si el usuario no está en la lista (ej. nueva conexión), podríamos recargar la lista o agregarlo
         console.warn('Mensaje de remitente desconocido:', data.from);
+      }
+    });
+  }
+
+  loadStoredHistory() {
+    const storedHistory = this.wsSandraService.messages;
+    if (!storedHistory || storedHistory.length === 0) return;
+    storedHistory.forEach(msg => {
+      // Buscar usuario a quien asociar el mensaje
+      // Si el mensaje es de 'user', es un mensaje ENVIADO. Necesitamos 'to' para saber a quién.
+      // Si el mensaje es de un id de usuario, es un mensaje RECIBIDO.
+      if (msg.from === 'user' || msg.from === 'Admin') {
+        if (msg.to) {
+          const targetUser = this.users.find(u => u.id === msg.to);
+
+          if (targetUser) {
+            targetUser.history.push({
+              id: msg.id || Date.now().toString(),
+              sender: 'Admin',
+              text: msg.message,
+              displayedText: msg.message,
+              timestamp: msg.time ? new Date(msg.time) : new Date(),
+              type: 'sent',
+              status: msg.status || 'Cifrado',
+              isAccepted: msg.isAccepted || false
+            });
+          }
+        }
+      } else {
+        const sender = this.users.find(u => u.id === msg.from);
+
+        if (sender) {
+          sender.history.push({
+            id: msg.id || Date.now().toString(),
+            sender: sender.name,
+            text: msg.message,
+            displayedText: msg.message,
+            timestamp: msg.time ? new Date(msg.time) : new Date(),
+            type: 'received',
+            status: msg.status || 'Cifrado'
+          });
+        }
       }
     });
   }
@@ -53719,37 +53814,60 @@ class ChatroomComponent {
       type: 'chat',
       clientId: this.activeUser?.id,
       message: this.newMessage,
-      from: this.loginService.Usuario?.login || 'sistema',
-      To: 'sandra-app' // timestamp: new Date().toISOString()
+      from: this.Token?.Usuario?.usuario || 'sistema',
+      To: 'sandra-app'
+    }; // Persistir en el historial local (chat_history)
 
-    };
+    this.wsSandraService.saveChatroomMessage({
+      from: 'Admin',
+      to: this.activeUser?.id,
+      message: this.newMessage,
+      id: msgHistory.id,
+      time: msgHistory.timestamp.toISOString(),
+      status: msgHistory.status
+    });
+    const originalId = msgHistory.id;
+    const originalMessage = this.newMessage;
     this.newMessage = '';
-    console.log(payload);
     this.apiService.SendMessage(payload).subscribe(data => {
-      console.log('Mensaje enviado exitosamente:', data);
+      console.log('Respuesta del servidor:', data); // Si el servidor confirma la entrega
+
+      if (data && data.status === 'success' || data.message && data.message.includes('enviado')) {
+        // Buscar el mensaje original en la lista actual y en el historial del usuario activo
+        const msgToUpdate = this.messages.find(m => m.id === originalId);
+
+        if (msgToUpdate) {
+          msgToUpdate.isAccepted = true;
+          msgToUpdate.status = 'Enviado';
+        }
+
+        if (this.activeUser) {
+          const histMsg = this.activeUser.history.find(m => m.id === originalId);
+
+          if (histMsg) {
+            histMsg.isAccepted = true;
+            histMsg.status = 'Enviado';
+          }
+        } // Actualizar en el historial persistente (buscando en el array de WsSandraService)
+
+
+        const persistentMsg = this.wsSandraService.messages.find(m => m.id === originalId);
+
+        if (persistentMsg) {
+          persistentMsg.isAccepted = true;
+          persistentMsg.status = 'Enviado'; // Forzar guardado en localStorage
+
+          localStorage.setItem('chat_history', JSON.stringify(this.wsSandraService.messages));
+        }
+      }
     }, error => {
       console.error('Error al enviar mensaje:', error);
-    }); // Simulacro de respuesta local (opcional)
+      const msgToUpdate = this.messages.find(m => m.id === originalId);
 
-    setTimeout(() => {
-      this.mockResponse();
-    }, 1500);
-  }
-
-  mockResponse() {
-    const responses = ["Recibido. Procesando análisis de paquetes...", "Advertencia: Tráfico inusual detectado en el puerto 443.", "Acceso concedido. ID de Sesión: " + Math.random().toString(36).substring(7).toUpperCase()];
-    const text = responses[Math.floor(Math.random() * responses.length)];
-    const msg = {
-      id: Date.now().toString(),
-      sender: this.activeUser.name,
-      text: "> " + text,
-      displayedText: '',
-      timestamp: new Date(),
-      type: 'received'
-    };
-    this.messages.push(msg);
-    if (this.activeUser) this.activeUser.history.push(msg);
-    this.typeMessage(msg);
+      if (msgToUpdate) {
+        msgToUpdate.status = 'Error';
+      }
+    });
   }
 
   typeMessage(msg) {
@@ -53839,8 +53957,17 @@ class ChatroomComponent {
 
         if (this.activeUser) {
           this.activeUser.history.push(msgHistory);
-        }
+        } // Persistir en el historial local (chat_history)
 
+
+        this.wsSandraService.saveChatroomMessage({
+          from: 'Admin',
+          to: this.activeUser?.id,
+          message: payload.message,
+          id: msgHistory.id,
+          time: msgHistory.timestamp.toISOString(),
+          status: msgHistory.status
+        });
         this.apiService.SendMessage(payload).subscribe();
         this.uploadProgress = 0;
       }
@@ -53884,138 +54011,141 @@ class ChatroomComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵqueryRefresh"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵloadQuery"]()) && (ctx.fileInput = _t.first);
       }
     },
-    decls: 89,
-    vars: 13,
-    consts: [[1, "content-wrapper", "container-xxl", "p-0"], [1, "chatroom-container"], [1, "chat-sidebar"], [1, "sidebar-header"], ["data-feather", "users"], [1, "status-pill"], [1, "sidebar-content"], [1, "section-title"], [1, "user-list"], ["class", "user-item", 3, "active", "click", 4, "ngFor", "ngForOf"], [1, "user-item"], [1, "avatar-wrapper"], [1, "avatar-group-icon"], [1, "user-info"], [1, "user-name"], [1, "user-status"], [1, "chat-main"], [1, "chat-header"], ["class", "active-user-info", 4, "ngIf"], [1, "header-actions"], ["title", "Ver Protocolos", 3, "click"], [3, "data-feather", "inner"], ["title", "Limpiar B\u00FAfer", 3, "click"], ["data-feather", "trash-2"], ["title", "An\u00E1lisis Detallado"], ["data-feather", "info"], [1, "chat-messages"], ["scrollMe", ""], ["class", "message-wrapper", 3, "sent", "received", 4, "ngFor", "ngForOf"], ["class", "upload-progress-container", 4, "ngIf"], [1, "chat-input-container"], [1, "input-wrapper"], ["type", "file", 2, "display", "none", 3, "change"], ["fileInput", ""], ["type", "text", "placeholder", "Escriba un comando o mensaje...", 3, "ngModel", "ngModelChange", "keyup.enter"], [1, "action-icons"], ["title", "Adjuntar Documento", 1, "action-icon", 3, "click"], ["data-feather", "paperclip"], ["title", "Enviar (Enter)", 1, "action-icon", 3, "click"], ["data-feather", "send"], [1, "chat-tools"], [1, "tool-section"], [1, "setting-item"], [1, "switch"], ["type", "checkbox", 3, "ngModel", "ngModelChange"], [1, "slider"], [1, "btn", "btn-light-primary", "btn-block", "btn-sm", "mb-1", "w-100"], ["data-feather", "activity", 1, "mr-50"], [1, "btn", "btn-light-danger", "btn-block", "btn-sm", "mb-1", "w-100"], ["data-feather", "shield-off", 1, "mr-50"], [1, "btn", "btn-light-info", "btn-block", "btn-sm", "mb-1", "w-100"], ["data-feather", "download-cloud", 1, "mr-50"], [1, "command-chips"], ["class", "command-chip", 3, "click", 4, "ngFor", "ngForOf"], [1, "user-item", 3, "click"], [1, "avatar-initials"], [1, "status-indicator"], [1, "active-user-info"], ["class", "encryption-status", 4, "ngIf"], [1, "encryption-status"], [1, "message-wrapper"], [1, "message-content"], ["class", "typewriter-text", 4, "ngIf"], ["class", "file-card", 4, "ngIf"], [1, "message-meta"], [4, "ngIf"], [1, "typewriter-text"], ["class", "typing-cursor", 4, "ngIf"], [1, "typing-cursor"], [1, "file-card"], [1, "file-icon-container"], [1, "file-badge"], [1, "file-details"], [1, "file-name"], [1, "file-meta"], [1, "file-size"], [1, "file-action"], [1, "file-download-action"], ["data-feather", "download"], [1, "upload-progress-container"], [1, "progress-info"], [1, "progress"], ["role", "progressbar", 1, "progress-bar", "progress-bar-striped", "progress-bar-animated", "bg-primary"], [1, "command-chip", 3, "click"]],
+    decls: 90,
+    vars: 16,
+    consts: [[1, "content-wrapper", "container-xxl", "p-0"], [1, "chatroom-container"], [1, "chat-sidebar"], [1, "sidebar-header"], ["data-feather", "users"], [1, "status-pill"], [1, "sidebar-content"], [1, "section-title"], [1, "user-list"], ["class", "user-item", 3, "active", "click", 4, "ngFor", "ngForOf"], [1, "user-item"], [1, "avatar-wrapper"], [1, "avatar-group-icon"], [1, "user-info"], [1, "user-name"], [1, "user-status"], [1, "chat-main"], [1, "chat-header"], ["class", "active-user-info", 4, "ngIf"], [1, "header-actions"], ["title", "Ver Protocolos", 3, "click"], [3, "data-feather", "inner"], ["title", "Limpiar B\u00FAfer", 3, "click"], ["data-feather", "trash-2"], ["title", "An\u00E1lisis Detallado"], ["data-feather", "info"], [1, "chat-messages"], ["scrollMe", ""], ["class", "message-wrapper", 3, "sent", "received", 4, "ngFor", "ngForOf"], ["class", "upload-progress-container", 4, "ngIf"], [1, "chat-input-container"], [1, "input-wrapper"], ["type", "file", 2, "display", "none", 3, "change"], ["fileInput", ""], ["type", "text", "placeholder", "Escriba un comando o mensaje...", 3, "ngModel", "ngModelChange", "keyup.enter"], [1, "action-icons"], ["title", "Adjuntar Documento", 1, "action-icon", 3, "click"], ["data-feather", "paperclip"], ["title", "Enviar (Enter)", 1, "action-icon", 3, "click"], ["data-feather", "send"], [1, "chat-tools"], [1, "tool-section"], [1, "setting-item"], [1, "switch"], ["type", "checkbox", 3, "ngModel", "ngModelChange"], [1, "slider"], [1, "btn", "btn-light-primary", "btn-block", "btn-sm", "mb-1", "w-100"], ["data-feather", "activity", 1, "mr-50"], [1, "btn", "btn-light-danger", "btn-block", "btn-sm", "mb-1", "w-100"], ["data-feather", "shield-off", 1, "mr-50"], [1, "btn", "btn-light-info", "btn-block", "btn-sm", "mb-1", "w-100"], ["data-feather", "download-cloud", 1, "mr-50"], [1, "command-chips"], ["class", "command-chip", 3, "click", 4, "ngFor", "ngForOf"], [1, "user-item", 3, "click"], [1, "avatar-initials"], [1, "status-indicator"], [1, "active-user-info"], ["class", "encryption-status", 4, "ngIf"], [1, "encryption-status"], [1, "message-wrapper"], [1, "message-content"], ["class", "typewriter-text", 4, "ngIf"], ["class", "file-card", 4, "ngIf"], [1, "message-meta"], [4, "ngIf"], ["class", "delivery-status", 4, "ngIf"], [1, "typewriter-text"], ["class", "typing-cursor", 4, "ngIf"], [1, "typing-cursor"], [1, "file-card"], [1, "file-icon-container"], [1, "file-badge"], [1, "file-details"], [1, "file-name"], [1, "file-meta"], [1, "file-size"], [1, "file-action"], [1, "file-download-action"], ["data-feather", "download"], [1, "delivery-status"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "3", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "status-icon"], ["points", "20 6 9 17 4 12"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "3", "stroke-linecap", "round", "stroke-linejoin", "round", "class", "status-icon second-check accepted", 4, "ngIf"], ["viewBox", "0 0 24 24", "fill", "none", "stroke", "currentColor", "stroke-width", "3", "stroke-linecap", "round", "stroke-linejoin", "round", 1, "status-icon", "second-check", "accepted"], [1, "upload-progress-container"], [1, "progress-info"], [1, "progress"], ["role", "progressbar", 1, "progress-bar", "progress-bar-striped", "progress-bar-animated", "bg-primary"], [1, "command-chip", 3, "click"]],
     template: function ChatroomComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](0, "div", 0)(1, "div", 1)(2, "aside", 2)(3, "div", 3)(4, "h2");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](5, "i", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](6, " NODOS_SEGUROS ");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](7, "span", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](8, "EN VIVO");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpipe"](7, "uppercase");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](8, "span", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](9, "EN VIVO");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](9, "div", 6)(10, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](11, "Conexiones Activas");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](10, "div", 6)(11, "div", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](12, "Conexiones Activas");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](12, "ul", 8);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](13, ChatroomComponent_li_13_Template, 10, 9, "li", 9);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](13, "ul", 8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](14, ChatroomComponent_li_14_Template, 10, 9, "li", 9);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](14, "div", 7);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](15, "Grupos Comunes");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](15, "div", 7);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](16, "Grupos Comunes");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](16, "ul", 8)(17, "li", 10)(18, "div", 11)(19, "div", 12);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](20, " # ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](17, "ul", 8)(18, "li", 10)(19, "div", 11)(20, "div", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](21, " # ");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](21, "div", 13)(22, "div", 14);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](23, "Consola_Principal");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](22, "div", 13)(23, "div", 14);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](24, "Consola_Principal");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](24, "div", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](25, "Canal de Difusi\u00F3n");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](25, "div", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](26, "Canal de Difusi\u00F3n");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](26, "main", 16)(27, "header", 17);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](28, ChatroomComponent_div_28_Template, 4, 2, "div", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](29, "div", 19)(30, "button", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_button_click_30_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](27, "main", 16)(28, "header", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](29, ChatroomComponent_div_29_Template, 4, 2, "div", 18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](30, "div", 19)(31, "button", 20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_button_click_31_listener() {
           return ctx.showTools = !ctx.showTools;
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](31, "i", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](32, "i", 21);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](32, "button", 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_button_click_32_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](33, "button", 22);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_button_click_33_listener() {
           return ctx.messages = [];
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](33, "i", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](34, "i", 23);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](34, "button", 24);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](35, "i", 25);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](35, "button", 24);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](36, "i", 25);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](36, "section", 26, 27);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](38, ChatroomComponent_div_38_Template, 9, 13, "div", 28);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](37, "section", 26, 27);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](39, ChatroomComponent_div_39_Template, 10, 14, "div", 28);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](39, ChatroomComponent_div_39_Template, 8, 3, "div", 29);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](40, "div", 30)(41, "div", 31)(42, "input", 32, 33);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("change", function ChatroomComponent_Template_input_change_42_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](40, ChatroomComponent_div_40_Template, 8, 3, "div", 29);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](41, "div", 30)(42, "div", 31)(43, "input", 32, 33);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("change", function ChatroomComponent_Template_input_change_43_listener($event) {
           return ctx.handleFileUpload($event);
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](44, "input", 34);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_44_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](45, "input", 34);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_45_listener($event) {
           return ctx.newMessage = $event;
-        })("keyup.enter", function ChatroomComponent_Template_input_keyup_enter_44_listener() {
+        })("keyup.enter", function ChatroomComponent_Template_input_keyup_enter_45_listener() {
           return ctx.sendMessage();
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](45, "div", 35)(46, "span", 36);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_span_click_46_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](46, "div", 35)(47, "span", 36);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_span_click_47_listener() {
           return ctx.onAttach();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](47, "i", 37);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](48, "i", 37);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](48, "span", 38);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_span_click_48_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](49, "span", 38);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("click", function ChatroomComponent_Template_span_click_49_listener() {
           return ctx.sendMessage();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](49, "i", 39);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](50, "i", 39);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](50, "aside", 40)(51, "div", 41)(52, "h4");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](53, "Protocolos_de_Sistema");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](51, "aside", 40)(52, "div", 41)(53, "h4");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](54, "Protocolos_de_Sistema");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](54, "div", 42)(55, "span");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](56, "Historial Persistente");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](55, "div", 42)(56, "span");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](57, "Historial Persistente");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](57, "label", 43)(58, "input", 44);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_58_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](58, "label", 43)(59, "input", 44);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_59_listener($event) {
           return ctx.saveHistory = $event;
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](59, "span", 45);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](60, "span", 45);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](60, "div", 42)(61, "span");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](62, "Cifrado_de_Capas");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](61, "div", 42)(62, "span");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](63, "Cifrado_de_Capas");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](63, "label", 43)(64, "input", 44);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_64_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](64, "label", 43)(65, "input", 44);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_65_listener($event) {
           return ctx.encryptionActive = $event;
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](65, "span", 45);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](66, "span", 45);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](66, "div", 42)(67, "span");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](68, "An\u00E1lisis de Tr\u00E1fico");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](67, "div", 42)(68, "span");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](69, "An\u00E1lisis de Tr\u00E1fico");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](69, "label", 43)(70, "input", 44);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_70_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](70, "label", 43)(71, "input", 44);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵlistener"]("ngModelChange", function ChatroomComponent_Template_input_ngModelChange_71_listener($event) {
           return ctx.analyzeTraffic = $event;
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](71, "span", 45);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](72, "span", 45);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](72, "div", 41)(73, "h4");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](74, "M\u00F3dulos_de_An\u00E1lisis_UI");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](73, "div", 41)(74, "h4");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](75, "M\u00F3dulos_de_An\u00E1lisis_UI");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](75, "button", 46);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](76, "i", 47);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](77, " Capturador de Paquetes ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](76, "button", 46);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](77, "i", 47);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](78, " Capturador de Paquetes ");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](78, "button", 48);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](79, "i", 49);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](80, " Bloquear Navegaci\u00F3n ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](79, "button", 48);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](80, "i", 49);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](81, " Bloquear Navegaci\u00F3n ");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](81, "button", 50);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](82, "i", 51);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](83, " Importar Tr\u00E1fico PCAP ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](82, "button", 50);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelement"](83, "i", 51);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](84, " Importar Tr\u00E1fico PCAP ");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](84, "div", 41)(85, "h4");
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](86, "Alias_de_Comando");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](85, "div", 41)(86, "h4");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtext"](87, "Alias_de_Comando");
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](87, "div", 52);
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](88, ChatroomComponent_span_88_Template, 2, 1, "span", 53);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementStart"](88, "div", 52);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtemplate"](89, ChatroomComponent_span_89_Template, 2, 1, "span", 53);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵelementEnd"]()()()()();
       }
 
       if (rf & 2) {
-        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](6);
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵtextInterpolate1"](" ", _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵpipeBind1"](7, 14, ctx.currentUserName), " ");
+        _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](8);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngForOf", ctx.users);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵadvance"](15);
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngIf", ctx.activeUser);
@@ -54039,8 +54169,8 @@ class ChatroomComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_4__["ɵɵproperty"]("ngForOf", ctx.availableCommands);
       }
     },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_5__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_5__.NgIf, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.CheckboxControlValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgModel, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_3__.FeatherIconDirective, _angular_common__WEBPACK_IMPORTED_MODULE_5__.DatePipe],
-    styles: [".chatroom-container[_ngcontent-%COMP%] {\n  display: flex;\n  height: calc(100vh - 120px);\n  min-height: 480px;\n  background-color: #ffffff;\n  border-radius: 0.5rem;\n  overflow: hidden;\n  box-shadow: 0 4px 24px 0 rgba(115, 103, 240, 0.08);\n  border: 1px solid #ebe9f2;\n  font-family: \"Outfit\", \"Inter\", \"Segoe UI\", Roboto, sans-serif;\n  color: #6e6b7b;\n  margin: 0;\n  width: 100%;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%] {\n  width: 280px;\n  background-color: #fcfcfd;\n  border-right: 1px solid #ebe9f2;\n  display: flex;\n  flex-direction: column;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%] {\n  padding: 1.5rem;\n  border-bottom: 1px solid #ebe9f2;\n  background-color: #ffffff;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-size: 1.1rem;\n  font-weight: 600;\n  margin: 0;\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%]   .status-pill[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  background-color: #f3f2fe;\n  color: #7367f0;\n  padding: 0.2rem 0.6rem;\n  border-radius: 4px;\n  font-weight: 700;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow-y: auto;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .section-title[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n  font-size: 0.72rem;\n  text-transform: uppercase;\n  letter-spacing: 1px;\n  padding: 1.5rem 1.25rem 0.5rem;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 5px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: rgba(115, 103, 240, 0.1);\n  border-radius: 10px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar-thumb:hover {\n  background: rgba(115, 103, 240, 0.2);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  padding: 0.75rem 1.25rem;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  gap: 1rem;\n  border-left: 3px solid transparent;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]:hover {\n  background-color: rgba(115, 103, 240, 0.05);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item.active[_ngcontent-%COMP%] {\n  background-color: #f3f2fe;\n  border-left-color: #7367f0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item.active[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%] {\n  position: relative;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .avatar-initials[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  background-color: #f3f2fe;\n  color: #7367f0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: 700;\n  font-size: 1.1rem;\n  border: 2px solid rgba(115, 103, 240, 0.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .status-indicator[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 1px;\n  right: 1px;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  border: 2px solid #fff;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .status-indicator.online[_ngcontent-%COMP%] {\n  background-color: #28c76f;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .status-indicator.busy[_ngcontent-%COMP%] {\n  background-color: #ff9f43;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-group-icon[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  background: #f3f2fe;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #7367f0;\n  font-weight: 700;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%] {\n  flex: 1;\n  white-space: nowrap;\n  overflow: hidden;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  font-size: 0.95rem;\n  font-weight: 500;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%]   .user-status[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n  font-size: 0.82rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  background-color: #f8f8fb;\n  min-width: 0;\n  overflow: hidden;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%] {\n  padding: 0 1.5rem;\n  background-color: #ffffff;\n  border-bottom: 1px solid #ebe9f2;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  height: 65px;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .active-user-info[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.8rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .active-user-info[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  margin: 0;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .active-user-info[_ngcontent-%COMP%]   .encryption-status[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: #7367f0;\n  background: #f3f2fe;\n  padding: 2px 10px;\n  border-radius: 12px;\n  font-weight: 700;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  background: transparent;\n  border: none;\n  color: #b9b9c3;\n  cursor: pointer;\n  padding: 0.5rem;\n  border-radius: 50%;\n  transition: all 0.2s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:hover {\n  color: #7367f0;\n  background-color: rgba(115, 103, 240, 0.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 1.2rem;\n  height: 1.2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%] {\n  flex: 1;\n  padding: 1.5rem;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 1.2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 5px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: rgba(115, 103, 240, 0.1);\n  border-radius: 10px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  max-width: 80%;\n  animation: messageIn 0.3s cubic-bezier(0.1, 0.7, 1, 0.1) forwards;\n  opacity: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.received[_ngcontent-%COMP%] {\n  align-self: flex-start;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.received[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%] {\n  background: #ffffff;\n  color: #333333;\n  border-radius: 25px 25px 25px 5px;\n  border: 1px solid rgba(0, 0, 0, 0.1);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.sent[_ngcontent-%COMP%] {\n  align-self: flex-end;\n  align-items: flex-end;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.sent[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%] {\n  background: linear-gradient(135deg, #f1efff 0%, #e0dcfc 100%);\n  color: #333333;\n  border-radius: 25px 25px 5px 25px;\n  border: 1px solid rgba(115, 103, 240, 0.2);\n  box-shadow: 0 4px 15px rgba(115, 103, 240, 0.08);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%] {\n  padding: 1rem 1.4rem;\n  font-size: 0.98rem;\n  line-height: 1.5;\n  position: relative;\n  transition: all 0.2s ease;\n  font-family: \"Outfit\", \"Inter\", system-ui, -apple-system, sans-serif;\n  letter-spacing: 0.3px;\n  font-weight: 400;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .typewriter-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  letter-spacing: 0.3px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content.console-type[_ngcontent-%COMP%] {\n  font-family: \"Outfit\", \"Inter\", system-ui, -apple-system, sans-serif;\n  font-size: 0.98rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n  min-width: 280px;\n  padding: 0.5rem 0;\n  cursor: pointer;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%] {\n  position: relative;\n  width: 48px;\n  height: 48px;\n  background-color: rgba(115, 103, 240, 0.1);\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n  color: #7367f0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%]   .file-badge[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: -4px;\n  right: -4px;\n  font-size: 0.6rem;\n  background-color: #7367f0;\n  color: white;\n  padding: 1px 4px;\n  border-radius: 4px;\n  font-weight: 800;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow: hidden;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-name[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  font-weight: 600;\n  font-size: 0.9rem;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  margin-bottom: 2px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-meta[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.8rem;\n  font-size: 0.75rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-meta[_ngcontent-%COMP%]   .file-size[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-meta[_ngcontent-%COMP%]   .file-action[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-weight: 500;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n  transition: color 0.2s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%]:hover {\n  color: #7367f0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 1.2rem;\n  height: 1.2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-meta[_ngcontent-%COMP%] {\n  margin-top: 5px;\n  display: flex;\n  gap: 8px;\n  font-size: 0.72rem;\n  color: #b9b9c3;\n  opacity: 0.9;\n  font-weight: 500;\n  letter-spacing: 0.3px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%] {\n  padding: 0.5rem 1.5rem;\n  background-color: #ffffff;\n  border-top: 1px solid #ebe9f2;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%]   .progress-info[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  font-size: 0.75rem;\n  margin-bottom: 0.4rem;\n  color: #7367f0;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%]   .progress[_ngcontent-%COMP%] {\n  height: 6px;\n  border-radius: 3px;\n  background-color: #f3f2fe;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%]   .progress[_ngcontent-%COMP%]   .progress-bar[_ngcontent-%COMP%] {\n  box-shadow: none;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%] {\n  padding: 1rem 1.5rem;\n  background-color: #ffffff;\n  border-top: 1px solid #ebe9f2;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.8rem;\n  background-color: #f7f7f9;\n  padding: 0 1.2rem;\n  border-radius: 2rem;\n  align-items: center;\n  border: 1px solid #ebe9f2;\n  height: 48px;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background 0s, border-color 0s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]:focus-within {\n  border-color: #7367f0;\n  background-color: #ffffff;\n  box-shadow: 0 0 8px rgba(115, 103, 240, 0.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  flex: 1;\n  background: transparent;\n  border: none;\n  color: #6e6b7b;\n  outline: none;\n  font-size: 1rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]::placeholder {\n  color: #b9b9c3;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 1.1rem;\n  color: #b9b9c3;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%] {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: all 0.2s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%]:hover {\n  color: #7367f0;\n  transform: scale(1.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 1.25rem;\n  height: 1.25rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%] {\n  width: 280px;\n  background-color: #ffffff;\n  border-left: 1px solid #ebe9f2;\n  padding: 1.5rem;\n  overflow-y: auto;\n  overflow-x: hidden;\n  flex-shrink: 0;\n  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);\n  opacity: 1;\n  visibility: visible;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools.collapsed[_ngcontent-%COMP%] {\n  width: 0;\n  padding-left: 0;\n  padding-right: 0;\n  border-left: 0 solid transparent;\n  opacity: 0;\n  visibility: hidden;\n  transform: translateX(20px);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%] {\n  margin-bottom: 2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-size: 0.8rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  margin-bottom: 1.2rem;\n  border-bottom: 1px solid #ebe9f2;\n  padding-bottom: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .setting-item[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 1rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .setting-item[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  font-size: 0.85rem;\n  font-weight: 500;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%] {\n  margin-bottom: 0.8rem;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 14px;\n  height: 14px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .command-chips[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .command-chips[_ngcontent-%COMP%]   .command-chip[_ngcontent-%COMP%] {\n  background-color: #f3f2fe;\n  color: #7367f0;\n  padding: 0.35rem 0.75rem;\n  border-radius: 5px;\n  font-size: 0.78rem;\n  font-weight: 700;\n  cursor: pointer;\n  transition: all 0.2s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .command-chips[_ngcontent-%COMP%]   .command-chip[_ngcontent-%COMP%]:hover {\n  background: #7367f0;\n  color: #fff;\n}\n.btn-light-primary[_ngcontent-%COMP%] {\n  background-color: rgba(115, 103, 240, 0.12) !important;\n  color: #7367f0 !important;\n  border: none;\n}\n.btn-light-primary[_ngcontent-%COMP%]:hover {\n  background-color: rgba(115, 103, 240, 0.2) !important;\n}\n.btn-light-danger[_ngcontent-%COMP%] {\n  background-color: rgba(234, 84, 85, 0.12) !important;\n  color: #ea5455 !important;\n  border: none;\n}\n.btn-light-danger[_ngcontent-%COMP%]:hover {\n  background-color: rgba(234, 84, 85, 0.2) !important;\n}\n.btn-light-info[_ngcontent-%COMP%] {\n  background-color: rgba(0, 207, 232, 0.12) !important;\n  color: #00cfe8 !important;\n  border: none;\n}\n.btn-light-info[_ngcontent-%COMP%]:hover {\n  background-color: rgba(0, 207, 232, 0.2) !important;\n}\n.switch[_ngcontent-%COMP%] {\n  position: relative;\n  display: inline-block;\n  width: 38px;\n  height: 20px;\n}\n.switch[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  opacity: 0;\n  width: 0;\n  height: 0;\n}\n.switch[_ngcontent-%COMP%]   .slider[_ngcontent-%COMP%] {\n  position: absolute;\n  cursor: pointer;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: #dae1e7;\n  transition: 0.4s;\n  border-radius: 20px;\n}\n.switch[_ngcontent-%COMP%]   .slider[_ngcontent-%COMP%]:before {\n  position: absolute;\n  content: \"\";\n  height: 14px;\n  width: 14px;\n  left: 3px;\n  bottom: 3px;\n  background-color: white;\n  transition: 0.4s;\n  border-radius: 50%;\n}\n.switch[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .slider[_ngcontent-%COMP%] {\n  background-color: #7367f0;\n}\n.switch[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .slider[_ngcontent-%COMP%]:before {\n  transform: translateX(18px);\n}\n@media (max-width: 1199.98px) {\n  .chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%] {\n    display: none;\n  }\n}\n@media (max-width: 991.98px) {\n  .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%] {\n    width: 75px;\n  }\n  .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .section-title[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .status-pill[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%] {\n    justify-content: center;\n  }\n}\n@keyframes messageIn {\n  0% {\n    opacity: 0;\n    transform: translateY(12px) scale(0.98);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0) scale(1);\n  }\n}\n@keyframes textAppear {\n  0% {\n    opacity: 0;\n    transform: translateX(-4px);\n    filter: blur(2px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateX(0);\n    filter: blur(0);\n  }\n}\n.typewriter-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  animation: textAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;\n  will-change: transform, opacity;\n}\n.typing-cursor[_ngcontent-%COMP%] {\n  display: inline-block;\n  width: 2px;\n  height: 1rem;\n  background-color: #3a3a3a;\n  margin-left: 2px;\n  vertical-align: middle;\n  animation: blinkCursor 0.8s infinite;\n}\n@keyframes blinkCursor {\n  from, to {\n    opacity: 1;\n  }\n  50% {\n    opacity: 0;\n  }\n}"]
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_5__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_5__.NgIf, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.CheckboxControlValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_6__.NgModel, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_3__.FeatherIconDirective, _angular_common__WEBPACK_IMPORTED_MODULE_5__.UpperCasePipe, _angular_common__WEBPACK_IMPORTED_MODULE_5__.DatePipe],
+    styles: [".chatroom-container[_ngcontent-%COMP%] {\n  display: flex;\n  height: calc(100vh - 120px);\n  min-height: 480px;\n  background-color: #ffffff;\n  border-radius: 0.5rem;\n  overflow: hidden;\n  box-shadow: 0 4px 24px 0 rgba(115, 103, 240, 0.08);\n  border: 1px solid #ebe9f2;\n  font-family: \"Outfit\", \"Inter\", \"Segoe UI\", Roboto, sans-serif;\n  color: #6e6b7b;\n  margin: 0;\n  width: 100%;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%] {\n  width: 280px;\n  background-color: #fcfcfd;\n  border-right: 1px solid #ebe9f2;\n  display: flex;\n  flex-direction: column;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%] {\n  padding: 1.5rem;\n  border-bottom: 1px solid #ebe9f2;\n  background-color: #ffffff;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-size: 1.1rem;\n  font-weight: 600;\n  margin: 0;\n  display: flex;\n  align-items: center;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%]   .status-pill[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  background-color: #f3f2fe;\n  color: #7367f0;\n  padding: 0.2rem 0.6rem;\n  border-radius: 4px;\n  font-weight: 700;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow-y: auto;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .section-title[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n  font-size: 0.72rem;\n  text-transform: uppercase;\n  letter-spacing: 1px;\n  padding: 1.5rem 1.25rem 0.5rem;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%] {\n  list-style: none;\n  padding: 0;\n  margin: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 5px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: rgba(115, 103, 240, 0.1);\n  border-radius: 10px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]::-webkit-scrollbar-thumb:hover {\n  background: rgba(115, 103, 240, 0.2);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  padding: 0.75rem 1.25rem;\n  cursor: pointer;\n  transition: all 0.2s ease;\n  gap: 1rem;\n  border-left: 3px solid transparent;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]:hover {\n  background-color: rgba(115, 103, 240, 0.05);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item.active[_ngcontent-%COMP%] {\n  background-color: #f3f2fe;\n  border-left-color: #7367f0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item.active[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%] {\n  position: relative;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .avatar-initials[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  background-color: #f3f2fe;\n  color: #7367f0;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-weight: 700;\n  font-size: 1.1rem;\n  border: 2px solid rgba(115, 103, 240, 0.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .status-indicator[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: 1px;\n  right: 1px;\n  width: 10px;\n  height: 10px;\n  border-radius: 50%;\n  border: 2px solid #fff;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .status-indicator.online[_ngcontent-%COMP%] {\n  background-color: #28c76f;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-wrapper[_ngcontent-%COMP%]   .status-indicator.busy[_ngcontent-%COMP%] {\n  background-color: #ff9f43;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .avatar-group-icon[_ngcontent-%COMP%] {\n  width: 40px;\n  height: 40px;\n  border-radius: 50%;\n  background: #f3f2fe;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  color: #7367f0;\n  font-weight: 700;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%] {\n  flex: 1;\n  white-space: nowrap;\n  overflow: hidden;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%]   .user-name[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  font-size: 0.95rem;\n  font-weight: 500;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-content[_ngcontent-%COMP%]   .user-list[_ngcontent-%COMP%]   .user-item[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%]   .user-status[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n  font-size: 0.82rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%] {\n  flex: 1;\n  display: flex;\n  flex-direction: column;\n  background-color: #f8f8fb;\n  min-width: 0;\n  overflow: hidden;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%] {\n  padding: 0 1.5rem;\n  background-color: #ffffff;\n  border-bottom: 1px solid #ebe9f2;\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  height: 65px;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .active-user-info[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.8rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .active-user-info[_ngcontent-%COMP%]   h3[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  margin: 0;\n  font-size: 0.95rem;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .active-user-info[_ngcontent-%COMP%]   .encryption-status[_ngcontent-%COMP%] {\n  font-size: 0.7rem;\n  color: #7367f0;\n  background: #f3f2fe;\n  padding: 2px 10px;\n  border-radius: 12px;\n  font-weight: 700;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%] {\n  background: transparent;\n  border: none;\n  color: #b9b9c3;\n  cursor: pointer;\n  padding: 0.5rem;\n  border-radius: 50%;\n  transition: all 0.2s;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]:hover {\n  color: #7367f0;\n  background-color: rgba(115, 103, 240, 0.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-header[_ngcontent-%COMP%]   .header-actions[_ngcontent-%COMP%]   button[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 1.2rem;\n  height: 1.2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%] {\n  flex: 1;\n  padding: 1.5rem;\n  overflow-y: auto;\n  display: flex;\n  flex-direction: column;\n  gap: 1.2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]::-webkit-scrollbar {\n  width: 5px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]::-webkit-scrollbar-track {\n  background: transparent;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]::-webkit-scrollbar-thumb {\n  background: rgba(115, 103, 240, 0.1);\n  border-radius: 10px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  max-width: 80%;\n  animation: messageIn 0.3s cubic-bezier(0.1, 0.7, 1, 0.1) forwards;\n  opacity: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.received[_ngcontent-%COMP%] {\n  align-self: flex-start;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.received[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%] {\n  background: #ffffff;\n  color: #333333;\n  border-radius: 25px 25px 25px 5px;\n  border: 1px solid rgba(0, 0, 0, 0.1);\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.sent[_ngcontent-%COMP%] {\n  align-self: flex-end;\n  align-items: flex-end;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper.sent[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%] {\n  background: linear-gradient(135deg, #f1efff 0%, #e0dcfc 100%);\n  color: #333333;\n  border-radius: 25px 25px 5px 25px;\n  border: 1px solid rgba(115, 103, 240, 0.2);\n  box-shadow: 0 4px 15px rgba(115, 103, 240, 0.08);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%] {\n  padding: 1rem 1.4rem;\n  font-size: 0.98rem;\n  line-height: 1.5;\n  position: relative;\n  transition: all 0.2s ease;\n  font-family: \"Outfit\", \"Inter\", system-ui, -apple-system, sans-serif;\n  letter-spacing: 0.3px;\n  font-weight: 400;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]:hover {\n  transform: translateY(-2px);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .typewriter-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  letter-spacing: 0.3px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content.console-type[_ngcontent-%COMP%] {\n  font-family: \"Outfit\", \"Inter\", system-ui, -apple-system, sans-serif;\n  font-size: 0.98rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 1rem;\n  min-width: 280px;\n  padding: 0.5rem 0;\n  cursor: pointer;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%] {\n  position: relative;\n  width: 48px;\n  height: 48px;\n  background-color: rgba(115, 103, 240, 0.1);\n  border-radius: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 24px;\n  height: 24px;\n  color: #7367f0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-icon-container[_ngcontent-%COMP%]   .file-badge[_ngcontent-%COMP%] {\n  position: absolute;\n  bottom: -4px;\n  right: -4px;\n  font-size: 0.6rem;\n  background-color: #7367f0;\n  color: white;\n  padding: 1px 4px;\n  border-radius: 4px;\n  font-weight: 800;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%] {\n  flex: 1;\n  overflow: hidden;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-name[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  font-weight: 600;\n  font-size: 0.9rem;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  margin-bottom: 2px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-meta[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  gap: 0.8rem;\n  font-size: 0.75rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-meta[_ngcontent-%COMP%]   .file-size[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-details[_ngcontent-%COMP%]   .file-meta[_ngcontent-%COMP%]   .file-action[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-weight: 500;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%] {\n  color: #b9b9c3;\n  transition: color 0.2s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%]:hover {\n  color: #7367f0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-content[_ngcontent-%COMP%]   .file-card[_ngcontent-%COMP%]   .file-download-action[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 1.2rem;\n  height: 1.2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-messages[_ngcontent-%COMP%]   .message-wrapper[_ngcontent-%COMP%]   .message-meta[_ngcontent-%COMP%] {\n  margin-top: 5px;\n  display: flex;\n  gap: 8px;\n  font-size: 0.72rem;\n  color: #b9b9c3;\n  opacity: 0.9;\n  font-weight: 500;\n  letter-spacing: 0.3px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .delivery-status[_ngcontent-%COMP%] {\n  display: inline-flex;\n  align-items: center;\n  margin-left: 5px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .delivery-status[_ngcontent-%COMP%]   .status-icon[_ngcontent-%COMP%] {\n  width: 12px;\n  height: 12px;\n  stroke: #b4b7bd;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .delivery-status[_ngcontent-%COMP%]   .status-icon.accepted[_ngcontent-%COMP%] {\n  stroke: #28c76f;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .delivery-status[_ngcontent-%COMP%]   .status-icon.second-check[_ngcontent-%COMP%] {\n  margin-left: -7px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%] {\n  padding: 0.5rem 1.5rem;\n  background-color: #ffffff;\n  border-top: 1px solid #ebe9f2;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%]   .progress-info[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  font-size: 0.75rem;\n  margin-bottom: 0.4rem;\n  color: #7367f0;\n  font-weight: 600;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%]   .progress[_ngcontent-%COMP%] {\n  height: 6px;\n  border-radius: 3px;\n  background-color: #f3f2fe;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .upload-progress-container[_ngcontent-%COMP%]   .progress[_ngcontent-%COMP%]   .progress-bar[_ngcontent-%COMP%] {\n  box-shadow: none;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%] {\n  padding: 1rem 1.5rem;\n  background-color: #ffffff;\n  border-top: 1px solid #ebe9f2;\n  flex-shrink: 0;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 0.8rem;\n  background-color: #f7f7f9;\n  padding: 0 1.2rem;\n  border-radius: 2rem;\n  align-items: center;\n  border: 1px solid #ebe9f2;\n  height: 48px;\n  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background 0s, border-color 0s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]:focus-within {\n  border-color: #7367f0;\n  background-color: #ffffff;\n  box-shadow: 0 0 8px rgba(115, 103, 240, 0.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  flex: 1;\n  background: transparent;\n  border: none;\n  color: #6e6b7b;\n  outline: none;\n  font-size: 1rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]::placeholder {\n  color: #b9b9c3;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 1.1rem;\n  color: #b9b9c3;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%] {\n  cursor: pointer;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  transition: all 0.2s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%]:hover {\n  color: #7367f0;\n  transform: scale(1.1);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-main[_ngcontent-%COMP%]   .chat-input-container[_ngcontent-%COMP%]   .input-wrapper[_ngcontent-%COMP%]   .action-icons[_ngcontent-%COMP%]   .action-icon[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 1.25rem;\n  height: 1.25rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%] {\n  width: 280px;\n  background-color: #ffffff;\n  border-left: 1px solid #ebe9f2;\n  padding: 1.5rem;\n  overflow-y: auto;\n  overflow-x: hidden;\n  flex-shrink: 0;\n  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);\n  opacity: 1;\n  visibility: visible;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools.collapsed[_ngcontent-%COMP%] {\n  width: 0;\n  padding-left: 0;\n  padding-right: 0;\n  border-left: 0 solid transparent;\n  opacity: 0;\n  visibility: hidden;\n  transform: translateX(20px);\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%] {\n  margin-bottom: 2rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   h4[_ngcontent-%COMP%] {\n  color: #7367f0;\n  font-size: 0.8rem;\n  font-weight: 700;\n  text-transform: uppercase;\n  margin-bottom: 1.2rem;\n  border-bottom: 1px solid #ebe9f2;\n  padding-bottom: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .setting-item[_ngcontent-%COMP%] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 1rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .setting-item[_ngcontent-%COMP%]   span[_ngcontent-%COMP%] {\n  color: #6e6b7b;\n  font-size: 0.85rem;\n  font-weight: 500;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%] {\n  margin-bottom: 0.8rem;\n  font-weight: 600;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%]   i[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%]   svg[_ngcontent-%COMP%] {\n  width: 14px;\n  height: 14px;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .command-chips[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 0.5rem;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .command-chips[_ngcontent-%COMP%]   .command-chip[_ngcontent-%COMP%] {\n  background-color: #f3f2fe;\n  color: #7367f0;\n  padding: 0.35rem 0.75rem;\n  border-radius: 5px;\n  font-size: 0.78rem;\n  font-weight: 700;\n  cursor: pointer;\n  transition: all 0.2s;\n}\n.chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%]   .tool-section[_ngcontent-%COMP%]   .command-chips[_ngcontent-%COMP%]   .command-chip[_ngcontent-%COMP%]:hover {\n  background: #7367f0;\n  color: #fff;\n}\n.btn-light-primary[_ngcontent-%COMP%] {\n  background-color: rgba(115, 103, 240, 0.12) !important;\n  color: #7367f0 !important;\n  border: none;\n}\n.btn-light-primary[_ngcontent-%COMP%]:hover {\n  background-color: rgba(115, 103, 240, 0.2) !important;\n}\n.btn-light-danger[_ngcontent-%COMP%] {\n  background-color: rgba(234, 84, 85, 0.12) !important;\n  color: #ea5455 !important;\n  border: none;\n}\n.btn-light-danger[_ngcontent-%COMP%]:hover {\n  background-color: rgba(234, 84, 85, 0.2) !important;\n}\n.btn-light-info[_ngcontent-%COMP%] {\n  background-color: rgba(0, 207, 232, 0.12) !important;\n  color: #00cfe8 !important;\n  border: none;\n}\n.btn-light-info[_ngcontent-%COMP%]:hover {\n  background-color: rgba(0, 207, 232, 0.2) !important;\n}\n.switch[_ngcontent-%COMP%] {\n  position: relative;\n  display: inline-block;\n  width: 38px;\n  height: 20px;\n}\n.switch[_ngcontent-%COMP%]   input[_ngcontent-%COMP%] {\n  opacity: 0;\n  width: 0;\n  height: 0;\n}\n.switch[_ngcontent-%COMP%]   .slider[_ngcontent-%COMP%] {\n  position: absolute;\n  cursor: pointer;\n  top: 0;\n  left: 0;\n  right: 0;\n  bottom: 0;\n  background-color: #dae1e7;\n  transition: 0.4s;\n  border-radius: 20px;\n}\n.switch[_ngcontent-%COMP%]   .slider[_ngcontent-%COMP%]:before {\n  position: absolute;\n  content: \"\";\n  height: 14px;\n  width: 14px;\n  left: 3px;\n  bottom: 3px;\n  background-color: white;\n  transition: 0.4s;\n  border-radius: 50%;\n}\n.switch[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .slider[_ngcontent-%COMP%] {\n  background-color: #7367f0;\n}\n.switch[_ngcontent-%COMP%]   input[_ngcontent-%COMP%]:checked    + .slider[_ngcontent-%COMP%]:before {\n  transform: translateX(18px);\n}\n@media (max-width: 1199.98px) {\n  .chatroom-container[_ngcontent-%COMP%]   .chat-tools[_ngcontent-%COMP%] {\n    display: none;\n  }\n}\n@media (max-width: 991.98px) {\n  .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%] {\n    width: 75px;\n  }\n  .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .user-info[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .section-title[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%]   h2[_ngcontent-%COMP%], .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .status-pill[_ngcontent-%COMP%] {\n    display: none;\n  }\n  .chatroom-container[_ngcontent-%COMP%]   .chat-sidebar[_ngcontent-%COMP%]   .sidebar-header[_ngcontent-%COMP%] {\n    justify-content: center;\n  }\n}\n@keyframes messageIn {\n  0% {\n    opacity: 0;\n    transform: translateY(12px) scale(0.98);\n  }\n  100% {\n    opacity: 1;\n    transform: translateY(0) scale(1);\n  }\n}\n@keyframes textAppear {\n  0% {\n    opacity: 0;\n    transform: translateX(-4px);\n    filter: blur(2px);\n  }\n  100% {\n    opacity: 1;\n    transform: translateX(0);\n    filter: blur(0);\n  }\n}\n.typewriter-text[_ngcontent-%COMP%] {\n  display: inline-block;\n  animation: textAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;\n  will-change: transform, opacity;\n}\n.typing-cursor[_ngcontent-%COMP%] {\n  display: inline-block;\n  width: 2px;\n  height: 1rem;\n  background-color: #3a3a3a;\n  margin-left: 2px;\n  vertical-align: middle;\n  animation: blinkCursor 0.8s infinite;\n}\n@keyframes blinkCursor {\n  from, to {\n    opacity: 1;\n  }\n  50% {\n    opacity: 0;\n  }\n}"]
   });
 }
 
@@ -65839,7 +65969,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Fri Mar 13 2026 09:20:41 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Thu Mar 19 2026 13:06:12 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

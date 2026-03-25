@@ -1,0 +1,245 @@
+.bg-light-secondary {
+    background-color: #f7f8fc !important;
+}
+
+/* Stepper Styles */
+.traza-stepper {
+    .step-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: all 0.3s ease;
+        &.active {
+            opacity: 1;
+            .step-circle {
+                background: #7367f0;
+                color: white;
+                box-shadow: 0 0 10px rgba(115, 103, 240, 0.4);
+            }
+            .step-label {
+                color: #7367f0;
+                font-weight: 600;
+            }
+        }
+    }
+    .step-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #f0f0f0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+    .step-line {
+        height: 2px;
+        width: 60px;
+        background: #f0f0f0;
+        margin: 0 15px;
+        margin-top: -20px;
+        &.active {
+            background: #7367f0;
+        }
+    }
+}
+
+/* User Card Slim - Optimized for 100+ items */
+.user-card-slim {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(115, 103, 240, 0.1);
+    border-radius: 16px;
+    cursor: pointer;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+    .user-info-wrapper {
+        min-width: 0; // Essential for text-truncate in flexbox
+    }
+
+    .slim-action-arrow {
+        transition: transform 0.3s ease;
+        opacity: 0.5;
+    }
+
+    &:hover {
+        transform: translateY(-3px) scale(1.02);
+        background: white;
+        border-color: rgba(115, 103, 240, 0.4);
+        box-shadow: 0 12px 24px rgba(115, 103, 240, 0.15);
+        z-index: 10;
+
+        .slim-action-arrow {
+            transform: translateX(4px);
+            opacity: 1;
+        }
+
+        .avatar {
+            transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(115, 103, 240, 0.2) !important;
+        }
+    }
+}
+
+/* Svelte Progress Bar XL - Ultra Visible & Neon */
+.svelte-progress-container-xl {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: rgba(115, 103, 240, 0.15);
+    z-index: 1000;
+    overflow: hidden;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 4px 15px rgba(115, 103, 240, 0.5);
+    pointer-events: none;
+}
+
+.svelte-progress-bar-xl {
+    height: 100%;
+    background: linear-gradient(90deg, #7367f0, #ff9f43, #7367f0);
+    width: 60%;
+    position: absolute;
+    animation: svelte-loading-xl 1.5s infinite ease-in-out;
+}
+
+@keyframes svelte-loading-xl {
+    0% { left: -40%; }
+    100% { left: 100%; }
+}
+
+/* Premium Glow Button */
+.btn-premium-glow {
+    background: linear-gradient(135deg, #7367f0 0%, #a49cf4 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(115, 103, 240, 0.3);
+    transition: all 0.3s ease;
+    
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(115, 103, 240, 0.5);
+        color: white;
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+/* Fix Pagination sr-only & visually-hidden */
+::ng-deep {
+    .pagination {
+        .sr-only, 
+        .visually-hidden,
+        span[aria-hidden="true"] + span, // Target (current) spans
+        .page-link span:not(.material-symbols-outlined) {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            position: absolute !important;
+        }
+
+        .page-link {
+            border: none !important;
+            background: transparent !important;
+            color: #7367f0 !important;
+            font-size: 0.95rem !important;
+            padding: 0.6rem 1rem !important;
+            border-radius: 50% !important;
+            margin: 0 2px !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            
+            &:hover {
+                background: rgba(115, 103, 240, 0.15) !important;
+            }
+        }
+
+        .page-item.active .page-link {
+            background: #7367f0 !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(115, 103, 240, 0.4) !important;
+        }
+
+        .page-item.disabled .page-link {
+            color: #b9b9c3 !important;
+            opacity: 0.5;
+        }
+    }
+}
+
+.icon-wrapper-mini {
+    width: 32px;
+    height: 32px;
+    background: rgba(115, 103, 240, 0.08);
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7367f0;
+}
+
+.extra-small-font {
+    font-size: 0.75rem;
+}
+
+/* Fallback for animate.css if missing */
+.animate__animated {
+    animation-duration: 0.8s;
+    animation-fill-mode: both;
+}
+
+.animate__fadeInUp {
+    animation-name: fadeInUpFix;
+}
+
+@keyframes fadeInUpFix {
+    from { opacity: 0; transform: translate3d(0, 30px, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* Premium Export Card */
+.premium-export-card {
+    background: linear-gradient(135deg, #7367f0, #9e95f5) !important;
+    border: none;
+    box-shadow: 0 10px 20px rgba(115, 103, 240, 0.3);
+}
+
+.border-dashed {
+    border: 1px dashed #d8d6de !important;
+}
+
+.font-small-3 {
+    font-size: 1.2rem !important;
+}
+
+.user-info {
+    max-width: calc(100% - 40px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate__fadeIn {
+    animation: fadeIn 0.5s ease-out forwards;
+}

@@ -322,6 +322,8 @@ export class ApiService {
     contenido: "",
   };
 
+  private _url = environment.API;
+
   constructor(
     private taskService: TaskService,
     private utilService: UtilService,
@@ -717,5 +719,87 @@ export class ApiService {
     var url = this.URL + "sandra_send-message";
     return this.http.post<any>(url, data, this.httpOptions);
   }
+
+
+
+  public async postStream<T>(endpoint: string, body: unknown, onRow: (row: T) => void): Promise<void> {
+    const url = this._resolveUrl(endpoint);
+    console.log(`[ApiService] Iniciando XHR stream para: ${url}`);
+
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url, true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Authorization', `Bearer ${sessionStorage.getItem('token')}`);
+
+      let lastIndex = 0;
+      let rowCount = 0;
+
+      xhr.onprogress = () => {
+        const currentResponse = xhr.responseText;
+        const newContent = currentResponse.substring(lastIndex);
+        const lines = newContent.split('\n');
+
+        // El último elemento se guarda si no termina en newline (o se procesará al final)
+        if (newContent.endsWith('\n')) {
+          lastIndex = currentResponse.length;
+        } else {
+          lastIndex = currentResponse.lastIndexOf('\n') + 1;
+        }
+
+        for (const line of lines) {
+          const trimmedLine = line.trim();
+          if (trimmedLine) {
+            try {
+              const row = JSON.parse(trimmedLine) as T;
+              rowCount++;
+              onRow(row);
+            } catch (e) {
+              // Puede ser un fragmento parcial si el split no fue exacto, lo ignoramos hasta que esté completo
+            }
+          }
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          console.log(`[ApiService] XHR Stream finalizado. Total filas: ${rowCount}`);
+          resolve();
+        } else {
+          reject(new Error(`HTTP Error ${xhr.status}: ${xhr.statusText}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('Network Error during XHR stream.'));
+      };
+
+      xhr.send(JSON.stringify(body));
+    });
+  }
+
+
+  /**
+   * Construye la URL completa manejando slashes y dominios
+   */
+  private _resolveUrl(endpoint: string): string {
+    if (/^https?:\/\//.test(endpoint)) return endpoint;
+
+    // Asegurar que la URL base termine en /
+    const baseUrl = this._url.endsWith('/') ? this._url : `${this._url}/`;
+    // Limpiar el endpoint de slash inicial
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+
+    let url = baseUrl + cleanEndpoint;
+
+    // Regla: si el endpoint inicia con 'crud' o 'fnx' y NO contiene ya el hash, lo anexamos.
+    // Se asume que estos endpoints requieren la firma del hash.
+    if ((cleanEndpoint.startsWith('crud')) && !cleanEndpoint.includes(environment.Hash)) {
+      url += ':' + environment.Hash;
+    }
+
+    return url;
+  }
+
 
 }

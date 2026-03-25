@@ -73,13 +73,27 @@ export class BinnacleComponent implements OnInit {
     this.ruta.navigate([base + '/' + datoCodificado]);
   }
 
-
+  getMaterialIcon(nombre: string): string {
+    const icons = [
+      'apps', 'dashboard', 'terminal', 'memory', 'database',
+      'developer_board', 'cloud', 'security', 'dns', 'bug_report',
+      'api', 'integration_instructions', 'web', 'code', 'build'
+    ];
+    if (!nombre) return icons[0];
+    let hash = 0;
+    for (let i = 0; i < nombre.length; i++) {
+      hash = nombre.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const index = Math.abs(hash) % icons.length;
+    return icons[index];
+  }
 
   async CargarBitacora() {
-    this.xAPI.funcion = environment.functions.CONSULTAR_GUPO_BITACORA;
+    this.xAPI.funcion = environment.functions.CONSULTAR_APPS_LOGS;
     this.xAPI.parametros = ''
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data: any[]) => {
+        console.log(data);
         if (!data) return;
         this.ListarBitacora = data;
         this.rowData = this.ListarBitacora;

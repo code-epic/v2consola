@@ -29,7 +29,7 @@
           <ng-select 
             [items]="rowData" 
             [(ngModel)]="selectCustomSelected" 
-            bindLabel="funcion" 
+            bindLabel="nombre" 
             bindValue="id"
             [searchable]="true" 
             placeholder="Seleccione API específica" 
@@ -40,10 +40,10 @@
             <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
               <div class="card">
                 <div class="card-body">
-                  <h5 class="card-title">{{ item.funcion }}</h5>
-                  <h6 class="card-subtitle mb-2 text-muted">{{ item.descripcion }}</h6>
+                  <h5 class="card-title">{{ item.nombre }}</h5>
+                  <h6 class="card-subtitle mb-2 text-muted">{{ item.comentario }}</h6>
                   <p class="card-text">
-                    {{ item.tipo }} • {{ item.aplicacion }}
+                    {{ item.autor }} • {{ item.version }}
                   </p>
                 </div>
               </div>
@@ -56,30 +56,42 @@
     <!-- Application Cards Grid -->
     <section id="wishlist" class="grid-view wishlist-items">
       <div
-        *ngFor="let product of ListarBitacora | filter: searchText:'aplicacion' | slice: (page - 1) * pageSize : page * pageSize; let i = index"
-        class="card ecommerce-card tarjeta-circular"
+        *ngFor="let product of ListarBitacora | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize; let i = index"
+        class="card binnacle-elegant-card"
       >
-        <a (click)="irA('/investigation/binnacle/', product)" class="text-decoration-none">
-          <div class="card-body text-center">
-            <div class="app-initial-circle mx-auto">
-              {{ product.aplicacion.charAt(0).toUpperCase() }}
+        <div class="binnacle-card-body">
+          <div class="d-flex align-items-center mb-1">
+            <div class="binnacle-icon-wrapper">
+              <span class="material-symbols-outlined">{{ getMaterialIcon(product.nombre) }}</span>
             </div>
-            <h5 class="mt-2 item-name">{{ product.aplicacion | uppercase }}</h5>
-            <p class="text-muted item-description">
-              Bitácora de eventos y accesos de la aplicación.
-            </p>
-            <div class="user-count-breadcrumb">
-                <span data-feather="users" class="icon"></span>
-                <span>{{ product.conteo_usuarios }} Usuarios</span>
+            <div class="overflow-hidden" style="flex: 1">
+              <h5 class="binnacle-card-title" [title]="product.nombre">{{ product.nombre || 'Aplicación' }}</h5>
+              <div class="binnacle-card-subtitle">
+                <span data-feather="tag" class="icon"></span>
+                <span class="text-truncate">{{ product.version || 'v1.0.0' }}</span>
+              </div>
             </div>
           </div>
-        </a>
+          
+          <p class="binnacle-card-desc" [title]="product.comentario">
+            {{ product.comentario || 'Sin descripción disponible.' }}
+          </p>
+
+          <div class="binnacle-card-actions">
+            <button class="btn btn-outline-primary btn-sm rounded-pill" (click)="irA('/investigation/binnacle/traza/', product)">
+              <span class="material-symbols-outlined me-50">history</span> Traza
+            </button>
+            <button class="btn btn-flat-secondary btn-sm rounded-pill" (click)="irA('/investigation/events/', product)">
+              <span class="material-symbols-outlined me-50">event_note</span> Eventos
+            </button>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Empty State (when no results) -->
     <section 
-      *ngIf="(ListarBitacora | filter: searchText:'aplicacion').length === 0" 
+      *ngIf="(ListarBitacora | filter: searchText:'nombre').length === 0" 
       class="empty-state"
     >
       <div class="empty-icon">
@@ -90,12 +102,12 @@
     </section>
 
     <!-- Pagination -->
-    <section id="ecommerce-pagination" *ngIf="(ListarBitacora | filter: searchText:'aplicacion').length > 0">
+    <section id="ecommerce-pagination" *ngIf="(ListarBitacora | filter: searchText:'nombre').length > 0">
       <div class="row">
         <div class="col-sm-12">
           <div class="d-flex justify-content-center">
             <ngb-pagination 
-              [collectionSize]="(ListarBitacora | filter: searchText:'aplicacion').length" 
+              [collectionSize]="(ListarBitacora | filter: searchText:'nombre').length" 
               [(page)]="page"
               [pageSize]="pageSize" 
               [maxSize]="5" 

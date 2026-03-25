@@ -1,0 +1,126 @@
+<div class="content-wrapper container-xxl p-0">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+    <div class="content-body">
+
+        <!-- Stepper Navigation -->
+        <div class="card mb-2">
+            <div class="card-body p-1">
+                <div class="d-flex justify-content-center align-items-center traza-stepper">
+                    <div class="step-item" [class.active]="currentStep >= 1" (click)="goToStep(1)">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Usuarios</span>
+                    </div>
+                    <div class="step-line" [class.active]="currentStep >= 2"></div>
+                    <div class="step-item" [class.active]="currentStep >= 2"
+                        (click)="currentStep >= 2 ? goToStep(2) : null">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">Eventos</span>
+                    </div>
+                    <div class="step-line" [class.active]="currentStep >= 3"></div>
+                    <div class="step-item" [class.active]="currentStep >= 3"
+                        (click)="currentStep >= 3 ? goToStep(3) : null">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">Análisis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 1: User Selection -->
+        <section *ngIf="currentStep === 1" class="animate__animated animate__fadeIn">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h4 class="card-title mb-0">Selección de Investigado (Eventos)</h4>
+                            <small class="text-muted">Directorio de usuarios con actividad en {{ appData?.nombre }}</small>
+                        </div>
+                        <div class="input-group input-group-merge w-25">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Filtrar por nombre..."
+                                [(ngModel)]="searchText">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div *ngFor="let user of usuarios | filter: searchText:'nombre'"
+                            class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
+                            <div class="user-card-slim animate__animated animate__fadeInUp" (click)="selectUser(user)">
+                                <div class="card-body p-1">
+                                    <div class="d-flex align-items-center">
+                                        <!-- Mini Avatar -->
+                                        <div class="avatar avatar-md bg-light-primary shadow-sm mr-1">
+                                            <span class="avatar-content font-small-3">{{ user.nombre ? user.nombre.charAt(0) : 'U' }}</span>
+                                        </div>
+                                        
+                                        <!-- Info Column -->
+                                        <div class="user-info-wrapper overflow-hidden flex-grow-1">
+                                            <h6 class="mb-0 text-truncate font-weight-bolder text-primary" [title]="user.nombre">
+                                                {{ user.nombre }}
+                                            </h6>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-muted font-small-2 text-truncate mr-1" [title]="user.perfil">
+                                                    {{ user.perfil }}
+                                                </span>
+                                                <span class="badge badge-light-secondary badge-pill font-small-1 py-0 px-50">
+                                                    {{ user.login }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Simple Action Arrow -->
+                                        <div class="slim-action-arrow ml-50">
+                                            <span class="material-symbols-outlined font-small-3 text-primary">chevron_right</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="usuarios.length === 0" class="col-12 text-center py-3">
+                            <p class="text-muted italic">No se encontraron usuarios para {{ appData?.nombre }}.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 2: Events List -->
+        <section *ngIf="currentStep === 2" class="animate__animated animate__fadeIn">
+            <div class="card">
+                <div class="card-header border-bottom d-flex justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-icon btn-flat-secondary mr-1 rounded-pill" (click)="goToStep(1)">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <h4 class="card-title mb-0">Eventos de {{ selectedUser?.nombre }}</h4>
+                    </div>
+                    <button class="btn btn-primary btn-sm rounded-pill" (click)="goToStep(3)">
+                        Ver Informe Final <span class="material-symbols-outlined font-small-3 ml-50">description</span>
+                    </button>
+                </div>
+                 <div class="card-body py-5 text-center">
+                    <span class="material-symbols-outlined display-1 text-primary mb-1">analytics</span>
+                    <h3>Auditoría de Eventos Progresiva</h3>
+                    <p class="text-muted">Procesando {{ events.length }} eventos para {{ selectedUser?.login }} en tiempo real...</p>
+                 </div>
+            </div>
+        </section>
+
+        <!-- Phase 3: Analysis -->
+        <section *ngIf="currentStep === 3" class="animate__animated animate__fadeIn">
+           <div class="card">
+             <div class="card-body text-center py-5">
+               <span class="material-symbols-outlined display-1 text-success mb-1">task_alt</span>
+               <h4>Informe de Eventos Generado para {{ selectedUser?.nombre }}</h4>
+               <p class="text-muted">Se han analizado {{ events.length }} registros de actividad.</p>
+               <div class="mt-2">
+                 <button class="btn btn-success mr-1" (click)="exportCSV()">Excel</button>
+                 <button class="btn btn-danger" (click)="exportPDF()">PDF</button>
+               </div>
+             </div>
+           </div>
+        </section>
+    </div>
+</div>

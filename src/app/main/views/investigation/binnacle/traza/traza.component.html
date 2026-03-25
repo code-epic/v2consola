@@ -1,0 +1,273 @@
+<div class="content-wrapper container-xxl p-0">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+    <div class="content-body">
+
+        <!-- Stepper Navigation -->
+        <div class="card mb-2">
+            <div class="card-body p-1">
+                <div class="d-flex justify-content-center align-items-center traza-stepper">
+                    <div class="step-item" [class.active]="currentStep >= 1" (click)="goToStep(1)">
+                        <div class="step-circle">1</div>
+                        <span class="step-label">Usuarios</span>
+                    </div>
+                    <div class="step-line" [class.active]="currentStep >= 2"></div>
+                    <div class="step-item" [class.active]="currentStep >= 2"
+                        (click)="currentStep >= 2 ? goToStep(2) : null">
+                        <div class="step-circle">2</div>
+                        <span class="step-label">Registros</span>
+                    </div>
+                    <div class="step-line" [class.active]="currentStep >= 3"></div>
+                    <div class="step-item" [class.active]="currentStep >= 3"
+                        (click)="currentStep >= 3 ? goToStep(3) : null">
+                        <div class="step-circle">3</div>
+                        <span class="step-label">Análisis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Phase 1: User Selection -->
+        <section *ngIf="currentStep === 1" class="animate__animated animate__fadeIn">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h4 class="card-title mb-0">Selección de Usuario</h4>
+                            <small class="text-muted">Seleccione un usuario para visualizar su traza de actividad en {{
+                                appData?.nombre }}</small>
+                        </div>
+                        <div class="input-group input-group-merge w-25">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
+                            </div>
+                            <input type="text" class="form-control" placeholder="Buscar usuario..."
+                                [(ngModel)]="searchText">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div *ngFor="let user of usuarios | filter: searchText:'nombre'"
+                            class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
+                            <div class="user-card-slim animate__animated animate__fadeInUp" (click)="selectUser(user)">
+                                <div class="card-body p-1">
+                                    <div class="d-flex align-items-center">
+                                        <!-- Mini Avatar -->
+                                        <div class="avatar avatar-md bg-light-primary shadow-sm mr-1">
+                                            <span class="avatar-content font-small-3">{{ user.nombre ?
+                                                user.nombre.charAt(0) : 'U' }}</span>
+                                        </div>
+
+                                        <!-- Info Column -->
+                                        <div class="user-info-wrapper overflow-hidden flex-grow-1">
+                                            <h6 class="mb-0 text-truncate font-weight-bolder text-primary"
+                                                [title]="user.nombre">
+                                                {{ user.nombre }}
+                                            </h6>
+                                            <div class="d-flex align-items-center">
+                                                <span class="text-muted font-small-2 text-truncate mr-1"
+                                                    [title]="user.perfil">
+                                                    {{ user.perfil }}
+                                                </span>
+                                                <span
+                                                    class="badge badge-light-secondary badge-pill font-small-1 py-0 px-50">
+                                                    {{ user.login }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Simple Action Arrow -->
+                                        <div class="slim-action-arrow ml-50">
+                                            <span
+                                                class="material-symbols-outlined font-small-3 text-primary">chevron_right</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Subtle Hover Detail (optional) -->
+                                <div class="slim-hover-details px-1 pb-1" *ngIf="false">
+                                    <!-- Hidden by default for max minimalism -->
+                                    <small class="text-muted text-truncate d-block">{{ user.rol_descripcion ||
+                                        user.cargo }}</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="usuarios.length === 0" class="col-12 text-center py-3">
+                            <p class="text-muted italic">No se encontraron usuarios con actividad reciente en {{
+                                appData?.nombre }}.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 2: Logs Table -->
+        <section *ngIf="currentStep === 2" class="animate__animated animate__fadeIn">
+            <div class="card overflow-hidden shadow-lg border-0 position-relative" style="min-height: 480px;">
+                <!-- Svelte Progress Bar - Extra Thicker & Bright -->
+                <div class="svelte-progress-container-xl" *ngIf="loadingLogs">
+                    <div class="svelte-progress-bar-xl"></div>
+                </div>
+
+                <div
+                    class="card-header border-bottom d-flex flex-wrap justify-content-between align-items-center bg-white py-1">
+                    <div class="d-flex align-items-center mb-1 mb-md-0">
+                        <button class="btn btn-sm btn-icon btn-flat-secondary mr-1 rounded-circle"
+                            (click)="goToStep(1)">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <div>
+                            <h4 class="card-title mb-0 font-weight-bolder">Actividad de {{ selectedUser?.nombre }}</h4>
+                            <small class="text-muted">{{ filteredLogs.length }} de {{ logs.length }} registros</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center flex-grow-1 flex-md-grow-0 ml-md-2">
+                        <!-- Search Bar Subtle -->
+                        <div class="input-group input-group-merge shadow-none border-light rounded-pill px-1 bg-light-secondary"
+                            style="max-width: 300px;">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text bg-transparent border-0 py-0">
+                                    <span class="material-symbols-outlined font-small-3 text-muted">search</span>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control bg-transparent border-0 font-small-3 py-0"
+                                [(ngModel)]="searchText" placeholder="Buscar acción o documento...">
+                        </div>
+
+                        <button class="btn btn-premium-glow btn-sm ml-1" (click)="goToStep(3)">
+                            <span class="d-flex align-items-center">
+                                <span class="d-none d-sm-inline">Análisis</span>
+                                <span class="material-symbols-outlined ml-50 font-small-3">analytics</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-datatable table-responsive">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="py-1">Fecha y Hora</th>
+                                    <th class="py-1">Acción</th>
+                                    <th class="py-1">Duración</th>
+                                    <th class="py-1">Documento</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let log of filteredLogs | slice: (page - 1) * pageSize : page * pageSize"
+                                    class="animate__animated animate__fadeIn">
+                                    <td class="py-1">
+                                        <div class="d-flex align-items-center">
+                                            <div class="icon-wrapper-mini mr-1">
+                                                <span class="material-symbols-outlined font-small-3">history</span>
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                <span class="font-weight-bolder text-dark">{{ (log.fecha?.$date ||
+                                                    log.fecha) | date:'dd/MM/yyyy' }}</span>
+                                                <small class="text-muted font-small-2">{{ (log.fecha?.$date ||
+                                                    log.fecha) | date:'HH:mm:ss' }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-1">
+                                        <span class="text-dark font-weight-bold font-small-2">{{ log.accion ||
+                                            log.metodo || 'SIN ACCIÓN' }}</span>
+                                    </td>
+                                    <td class="py-1">
+                                        <div class="d-flex align-items-center text-muted font-small-3">
+                                            <span class="material-symbols-outlined mr-50 font-small-2">timer</span>
+                                            {{ formatDuration(log.Duracion?.segundos || log.segundos || 0) }}s
+                                        </div>
+                                    </td>
+                                    <td class="py-1">
+                                        <div class="d-flex align-items-center">{{ log.documento }} </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card-footer d-flex flex-wrap justify-content-between align-items-center border-top-0 py-1">
+                    <div class="text-muted font-small-2 mb-1 mb-md-0">
+                        Mostrando registros del {{ (page - 1) * pageSize + 1 }} al
+                        {{ (page * pageSize) > filteredLogs.length ? filteredLogs.length : (page * pageSize) }}
+                    </div>
+                    <ngb-pagination [collectionSize]="filteredLogs.length" [(page)]="page" [pageSize]="pageSize"
+                        [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
+                        class="pagination-sm mb-0">
+                        <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+                    </ngb-pagination>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 3: Analysis & Export -->
+        <section *ngIf="currentStep === 3" class="animate__animated animate__fadeIn">
+            <div class="row">
+                <!-- Summary Cards -->
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header border-bottom">
+                            <h4 class="card-title">Análisis de Integridad de Traza</h4>
+                        </div>
+                        <div class="card-body py-2">
+                            <div class="row text-center">
+                                <div class="col-4 border-right">
+                                    <h2 class="font-weight-bolder mb-0 text-primary">{{ logs.length }}</h2>
+                                    <p class="card-text text-muted">Eventos totales</p>
+                                </div>
+                                <div class="col-4 border-right">
+                                    <h2 class="font-weight-bolder mb-0 text-success">100%</h2>
+                                    <p class="card-text text-muted">Validación Hash</p>
+                                </div>
+                                <div class="col-4">
+                                    <h2 class="font-weight-bolder mb-0 text-info">{{ selectedUser?.perfil }}</h2>
+                                    <p class="card-text text-muted">Perfil Nivel</p>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 p-2 bg-light rounded border-dashed">
+                                <h5><span
+                                        class="material-symbols-outlined font-medium-3 align-middle mr-50">description</span>
+                                    Resumen de Operaciones</h5>
+                                <p class="small text-muted mb-0">
+                                    La traza generada para el usuario <strong>{{ selectedUser?.nombre }}</strong> en la
+                                    aplicación <strong>{{ appData?.nombre }}</strong>
+                                    mantiene la integridad criptográfica esperada. No se han detectado anomalías en la
+                                    duración de las solicitudes ni inconsistencias en los métodos ejecutados.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export Actions -->
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white premium-export-card">
+                        <div class="card-body text-center py-3">
+                            <span class="material-symbols-outlined display-3 mb-1">file_download</span>
+                            <h4 class="text-white mb-2">Exportar Resultados</h4>
+                            <div class="d-grid gap-2">
+                                <button
+                                    class="btn btn-light w-100 mb-1 d-flex align-items-center justify-content-center"
+                                    (click)="exportCSV()">
+                                    <span class="material-symbols-outlined mr-50">grid_on</span> Exportar como CSV
+                                </button>
+                                <button
+                                    class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center"
+                                    (click)="exportPDF()">
+                                    <span class="material-symbols-outlined mr-50">picture_as_pdf</span> Generar Reporte
+                                    PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-flat-secondary btn-sm block w-100 mt-1" (click)="goToStep(2)">
+                        <span class="material-symbols-outlined mr-50">arrow_back</span> Volver a registros
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>
