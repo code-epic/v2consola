@@ -14,7 +14,7 @@
                     <div class="step-item" [class.active]="currentStep >= 2"
                         (click)="currentStep >= 2 ? goToStep(2) : null">
                         <div class="step-circle">2</div>
-                        <span class="step-label">Eventos</span>
+                        <span class="step-label">Patrones</span>
                     </div>
                     <div class="step-line" [class.active]="currentStep >= 3"></div>
                     <div class="step-item" [class.active]="currentStep >= 3"
@@ -30,34 +30,30 @@
         <section *ngIf="currentStep === 1" class="animate__animated animate__fadeIn">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
                         <div>
-                            <h4 class="card-title mb-0">Selección de Investigado (Eventos)</h4>
-                            <small class="text-muted">Directorio de usuarios con actividad en {{ appData?.nombre }}</small>
+                            <h4 class="card-title mb-0">Investigación de Patrones (Eventos)</h4>
+                            <small class="text-muted">{{ filteredUsers.length }} de {{ usuarios.length }} usuarios encontrados</small>
                         </div>
-                        <div class="input-group input-group-merge w-25">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
+                        <div class="d-flex align-items-center" style="min-width: 320px;">
+                            <span class="search-label-mini d-none d-md-inline">Filtrar</span>
+                            <div class="premium-search-box flex-grow-1">
+                                <span class="material-symbols-outlined">search</span>
+                                <input type="text" [(ngModel)]="searchText" placeholder="Nombre, login o perfil...">
                             </div>
-                            <input type="text" class="form-control" placeholder="Filtrar por nombre..."
-                                [(ngModel)]="searchText">
                         </div>
                     </div>
 
                     <div class="row">
-                        <div *ngFor="let user of usuarios | filter: searchText:'nombre'"
-                            class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
+                        <div *ngFor="let user of filteredUsers" class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
                             <div class="user-card-slim animate__animated animate__fadeInUp" (click)="selectUser(user)">
                                 <div class="card-body p-1">
                                     <div class="d-flex align-items-center">
-                                        <!-- Mini Avatar -->
-                                        <div class="avatar avatar-md bg-light-primary shadow-sm mr-1">
+                                        <div class="avatar avatar-md bg-light-info shadow-sm mr-1">
                                             <span class="avatar-content font-small-3">{{ user.nombre ? user.nombre.charAt(0) : 'U' }}</span>
                                         </div>
-                                        
-                                        <!-- Info Column -->
                                         <div class="user-info-wrapper overflow-hidden flex-grow-1">
-                                            <h6 class="mb-0 text-truncate font-weight-bolder text-primary" [title]="user.nombre">
+                                            <h6 class="mb-0 text-truncate font-weight-bolder text-info" [title]="user.nombre">
                                                 {{ user.nombre }}
                                             </h6>
                                             <div class="d-flex align-items-center">
@@ -69,10 +65,8 @@
                                                 </span>
                                             </div>
                                         </div>
-
-                                        <!-- Simple Action Arrow -->
                                         <div class="slim-action-arrow ml-50">
-                                            <span class="material-symbols-outlined font-small-3 text-primary">chevron_right</span>
+                                            <span class="material-symbols-outlined font-small-3 text-info">chevron_right</span>
                                         </div>
                                     </div>
                                 </div>
@@ -86,41 +80,222 @@
             </div>
         </section>
 
-        <!-- Phase 2: Events List -->
+        <!-- Phase 2: Patrones de Actividad (Grouped Cards) -->
         <section *ngIf="currentStep === 2" class="animate__animated animate__fadeIn">
-            <div class="card">
-                <div class="card-header border-bottom d-flex justify-content-between">
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-sm btn-icon btn-flat-secondary mr-1 rounded-pill" (click)="goToStep(1)">
-                            <span class="material-symbols-outlined">arrow_back</span>
-                        </button>
-                        <h4 class="card-title mb-0">Eventos de {{ selectedUser?.nombre }}</h4>
-                    </div>
-                    <button class="btn btn-primary btn-sm rounded-pill" (click)="goToStep(3)">
-                        Ver Informe Final <span class="material-symbols-outlined font-small-3 ml-50">description</span>
+            <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-sm btn-icon btn-flat-secondary mr-1 rounded-pill" (click)="goToStep(1)">
+                        <span class="material-symbols-outlined">arrow_back</span>
                     </button>
+                    <div>
+                        <h4 class="mb-0 font-weight-bolder">Patrones de {{ selectedUser?.nombre }}</h4>
+                        <small class="text-muted">Análisis de invocaciones por método y función</small>
+                    </div>
                 </div>
-                 <div class="card-body py-5 text-center">
-                    <span class="material-symbols-outlined display-1 text-primary mb-1">analytics</span>
-                    <h3>Auditoría de Eventos Progresiva</h3>
-                    <p class="text-muted">Procesando {{ events.length }} eventos para {{ selectedUser?.login }} en tiempo real...</p>
-                 </div>
+                <button class="btn btn-premium-glow" (click)="goToStep(3)">
+                    Generar Análisis <span class="material-symbols-outlined font-small-2 ml-50">analytics</span>
+                </button>
+            </div>
+
+            <div class="row mx-0">
+                <div *ngFor="let methodBlock of ListarBitacora" class="col-12 px-0 mb-2">
+                    <div class="card border shadow-sm overflow-hidden" [class.bg-light-analysis]="methodBlock.metodo === 'OTRAS OPERACIONES'">
+                        <div class="card-header border-bottom py-1 px-2 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-wrapper-mini mr-1" [class.bg-light-info]="methodBlock.metodo !== 'OTRAS OPERACIONES'">
+                                    <span class="material-symbols-outlined font-medium-1" [class.text-info]="methodBlock.metodo !== 'OTRAS OPERACIONES'">
+                                        {{ methodBlock.metodo === 'OTRAS OPERACIONES' ? 'category' : 'layers' }}
+                                    </span>
+                                </div>
+                                <h5 class="mb-0 font-weight-bolder">{{ methodBlock.metodo || 'SIN MÉTODO' }}</h5>
+                            </div>
+                            <span class="badge badge-light-info badge-pill">{{ methodBlock.total_invocaciones }} INVOCACIONES</span>
+                        </div>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th class="py-1 pl-2">FUNCIÓN / OPERACIÓN</th>
+                                        <th class="py-1">ÚLTIMO ACCESO</th>
+                                        <th class="py-1 text-center">EJECUCIONES</th>
+                                        <th class="py-1 text-right pr-2">DETALLE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let func of methodBlock.funciones">
+                                        <td class="py-1 pl-2">
+                                            <div class="d-flex flex-column">
+                                                <span class="font-weight-bolder text-dark">{{ func.nombre_funcion }}</span>
+                                                <small class="text-muted">Versión: {{ func.v }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="py-1">
+                                            <div class="d-flex align-items-center text-secondary small">
+                                                <span class="material-symbols-outlined font-small-3 mr-50">calendar_today</span>
+                                                {{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}
+                                            </div>
+                                        </td>
+                                        <td class="py-1 text-center">
+                                            <div class="badge badge-pill badge-light-secondary font-small-2">{{ func.ejecuciones }}</div>
+                                        </td>
+                                        <td class="py-1 text-right pr-2">
+                                            <button class="btn btn-sm btn-icon btn-flat-info rounded-circle" (click)="ModalExePlay(ModalPlay, func)">
+                                                <span class="material-symbols-outlined font-small-3">visibility</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Phase 3: Analysis -->
         <section *ngIf="currentStep === 3" class="animate__animated animate__fadeIn">
-           <div class="card">
-             <div class="card-body text-center py-5">
-               <span class="material-symbols-outlined display-1 text-success mb-1">task_alt</span>
-               <h4>Informe de Eventos Generado para {{ selectedUser?.nombre }}</h4>
-               <p class="text-muted">Se han analizado {{ events.length }} registros de actividad.</p>
-               <div class="mt-2">
-                 <button class="btn btn-success mr-1" (click)="exportCSV()">Excel</button>
-                 <button class="btn btn-danger" (click)="exportPDF()">PDF</button>
-               </div>
-             </div>
-           </div>
+            <div class="card stats-card-premium text-center py-5">
+                <div class="mb-2">
+                    <span class="material-symbols-outlined display-3 text-success">verified_user</span>
+                </div>
+                <h3 class="font-weight-bolder">INFORME DE PATRONES GENERADO</h3>
+                <p class="text-muted mx-auto" style="max-width: 500px;">
+                    El análisis de auditoría para <strong>{{ selectedUser?.nombre }}</strong> ha sido completado. 
+                    Se han agrupado los eventos por patrones de comportamiento y costo computacional.
+                </p>
+                <div class="mt-3 d-flex justify-content-center gap-1">
+                    <button class="btn btn-nav-action" (click)="goToStep(2)">
+                        <span class="material-symbols-outlined mr-50 font-small-3">arrow_back</span> REVISAR PATRONES
+                    </button>
+                    <button class="btn btn-nav-action" (click)="goToStep(1)">
+                        <span class="material-symbols-outlined mr-50 font-small-3">logout</span> FINALIZAR
+                    </button>
+                </div>
+            </div>
         </section>
     </div>
 </div>
+
+<!-- Modal: Logs List -->
+<ng-template #ModalPlay let-modal>
+    <div class="modal-header bg-white border-bottom pb-1">
+        <h5 class="modal-title d-flex align-items-center font-weight-bolder">
+            <span class="material-symbols-outlined mr-50 text-info">list_alt</span>
+            LISTADO DE EJECUCIONES
+        </h5>
+        <button type="button" class="close" (click)="modal.dismiss()">&times;</button>
+    </div>
+    
+    <div class="modal-body p-0">
+        <div class="bg-light p-1 border-bottom d-flex justify-content-between align-items-center">
+            <div class="ml-1">
+                <span class="text-muted small">Total registros: </span>
+                <span class="font-weight-bolder">{{ rowDataRegistros.length }}</span>
+            </div>
+            <div class="premium-search-box" style="width: 250px; height: 32px;">
+                <span class="material-symbols-outlined font-small-3">search</span>
+                <input type="text" [(ngModel)]="searchRegistros" placeholder="Buscar por hash...">
+            </div>
+        </div>
+
+        <div class="table-responsive" style="max-height: 450px;">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="sticky-top bg-white">
+                    <tr>
+                        <th class="py-1 pl-2 small">FECHA</th>
+                        <th class="py-1 small">HASH OPERACIÓN</th>
+                        <th class="py-1 text-right pr-2 small">ACCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let log of rowDataRegistros">
+                        <td class="py-1 pl-2 text-dark small">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+                        <td class="py-1">
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted font-small-2 font-family-monospace text-truncate" style="max-width: 140px;" [title]="log.hash">{{ log.hash }}</span>
+                                <button class="btn btn-sm btn-icon btn-flat-secondary" (click)="copyToClipboard(log.hash)">
+                                    <span class="material-symbols-outlined font-small-2">content_copy</span>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="py-1 text-right pr-2 border-left">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <span class="font-weight-bolder mr-1 font-small-2">{{ log.formattedDuration }}</span>
+                                <button class="btn btn-sm btn-flat-info rounded-circle" (click)="openDetail(log, ModalDetalle)">
+                                    <span class="material-symbols-outlined font-small-3">visibility</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Modal: JSON Detail with Decompression -->
+<ng-template #ModalDetalle let-modal>
+    <div class="modal-header bg-white border-bottom pb-1">
+        <h5 class="modal-title d-flex align-items-center font-weight-bolder">
+            <span class="material-symbols-outlined mr-50 text-primary">analytics</span>
+            DETALLE DE TRANSACCIÓN
+        </h5>
+        <button type="button" class="close" (click)="modal.dismiss()">&times;</button>
+    </div>
+    
+    <div class="modal-body bg-light p-2">
+        <!-- Header Info Card -->
+        <div class="card mb-1 shadow-none border bg-white">
+            <div class="card-body p-1">
+                <div class="row align-items-center">
+                    <div class="col-md-4 border-right">
+                        <small class="text-muted d-block text-uppercase font-small-1">Operación</small>
+                        <span class="text-dark font-weight-bolder text-truncate d-block">{{ currentFunctionData?.nombre_funcion }}</span>
+                    </div>
+                    <div class="col-md-4 border-right px-1">
+                        <small class="text-muted d-block text-uppercase font-small-1">Fecha y Hora</small>
+                        <span class="text-dark font-weight-bolder d-block">{{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                    </div>
+                    <div class="col-md-4 px-1">
+                        <small class="text-muted d-block text-uppercase font-small-1">Procesamiento</small>
+                        <span class="text-info font-weight-bolder d-block">{{ selectedLog?.formattedDuration }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row match-height">
+            <div class="col-md-6 mb-1">
+                <div class="card h-100 shadow-none border mb-0">
+                    <div class="card-header bg-white p-50 border-bottom">
+                        <h6 class="mb-0 font-weight-bolder small d-flex align-items-center">
+                            <span class="material-symbols-outlined mr-50 font-small-3">input</span>
+                            INPUT (DECODIFICADO)
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <pre class="m-0 p-1 bg-light font-small-2" style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">{{ decodedConsulta }}</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mb-1">
+                <div class="card h-100 shadow-none border mb-0">
+                    <div class="card-header bg-white p-50 border-bottom">
+                        <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-info">
+                            <span class="material-symbols-outlined mr-50 font-small-3">output</span>
+                            OUTPUT (DESCOMPRIMIDO)
+                        </h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <pre class="m-0 p-1 bg-info-light font-small-2" style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">{{ decodedContenido }}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-footer bg-white p-50">
+        <button class="btn btn-sm btn-secondary" (click)="modal.close()">CERRAR DETALLE</button>
+    </div>
+</ng-template>

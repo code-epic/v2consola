@@ -4,8 +4,6 @@ import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { environment } from "environments/environment";
 import * as jspdf from 'jspdf';
 import 'jspdf-autotable';
-import * as XLSX from 'xlsx';
-import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-traza',
@@ -100,14 +98,26 @@ export class TrazaComponent implements OnInit {
     this.cargarLogs(user.login || user.usuario || user.cedula);
     this.currentStep = 2;
   }
+  
+  get filteredUsers() {
+    if (!this.searchText) return this.usuarios;
+    const search = this.searchText.toLowerCase();
+    return this.usuarios.filter(user =>
+      (user.nombre?.toLowerCase().includes(search)) ||
+      (user.login?.toLowerCase().includes(search)) ||
+      (user.perfil?.toLowerCase().includes(search))
+    );
+  }
 
   get filteredLogs() {
     if (!this.searchText) return this.logs;
     const search = this.searchText.toLowerCase();
     return this.logs.filter(log =>
       (log.accion?.toLowerCase().includes(search)) ||
+      (log.metodo?.toLowerCase().includes(search)) ||
       (log.documento?.toLowerCase().includes(search)) ||
-      (log.hash?.toLowerCase().includes(search))
+      (log.hash?.toLowerCase().includes(search)) ||
+      (log.login?.toLowerCase().includes(search))
     );
   }
 
@@ -116,6 +126,26 @@ export class TrazaComponent implements OnInit {
     // Si el número es mayor a 1 millón, asumimos que son nanosegundos/microsegundos
     if (ns > 1000000) return (ns / 1000000000).toFixed(3);
     return ns.toFixed(3);
+  }
+
+  get actionStats() {
+    const stats: { [key: string]: number } = {};
+    if (this.logs.length === 0) return [];
+
+    this.logs.forEach(log => {
+      const acc = log.accion || log.metodo || 'OTRO';
+      stats[acc] = (stats[acc] || 0) + 1;
+    });
+
+    const total = this.logs.length;
+    return Object.entries(stats)
+      .map(([name, count]) => ({
+        name,
+        count,
+        percent: (count / total) * 100
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5); // Solo las top 5 acciones para el gráfico
   }
 
   async cargarLogs(login: string) {
@@ -152,56 +182,183 @@ export class TrazaComponent implements OnInit {
   exportCSV() {
     if (this.logs.length === 0) return;
 
-    const worksheet = XLSX.utils.json_to_sheet(this.logs.map(log => ({
-      Fecha: this.formatDate(log.fecha?.$date || log.fecha),
-      Metodo: log.metodo,
-      Segundos: log.segundos,
-      Hash: log.hash
-    })));
+    const dataToExport = this.logs.map(log => ({
+      'Fecha y Hora': this.formatDate(log.fecha?.$date || log.fecha),
+      'Acción': log.accion.toUpperCase() || '---',
+      'Duración (s)': this.formatDuration(log.Duracion?.segundos || log.segundos || 0),
+      'Documento': log.documento.toUpperCase() || '---'
+    }));
 
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Traza');
-    const excelBuffer: any = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
-    this.saveAsExcelFile(excelBuffer, `Traza_${this.selectedUser.nombre}_${new Date().getTime()}`);
+    const filename = `Traza_${this.selectedUser.nombre || 'Auditoria'}_${new Date().getTime()}.csv`;
+    this.downloadCSV(dataToExport, filename);
+  }
+
+  downloadCSV(data: any[], filename: string) {
+    if (data.length === 0) return;
+    const separator = ';';
+    const keys = Object.keys(data[0]);
+    const csvContent =
+      keys.join(separator) +
+      '\n' +
+      data.map(row => {
+        return keys.map(k => {
+          let cell = row[k] === null || row[k] === undefined ? '' : row[k];
+          cell = cell.toString().replace(/"/g, '""');
+          if (cell.search(/("|,|\n)/g) >= 0) {
+            cell = `"${cell}"`;
+          }
+          return cell;
+        }).join(separator);
+      }).join('\n');
+
+    // Adaptación para Sandra Sandbox Bridge
+    const csvBase64 = btoa(unescape(encodeURIComponent("\ufeff" + csvContent)));
+    const csvDataUri = `data:text/csv;base64,${csvBase64}`;
+
+    if (window.parent && window !== window.parent) {
+      window.parent.postMessage({
+        type: 'OPEN_CSV',
+        payload: {
+          fileName: filename,
+          data: csvDataUri
+        }
+      }, '*');
+    } else {
+      // Fallback para cuando no corre dentro de Sandra
+      const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
   }
 
   exportPDF() {
     if (this.logs.length === 0) return;
 
     const doc = new jspdf.jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+    const pageHeight = doc.internal.pageSize.height;
 
-    // Header
+    // ==========================================
+    // PAGINA 1: PORTADA
+    // ==========================================
+
+    // Titulo Principal - Azul Suave
+    doc.setFontSize(26);
+    doc.setTextColor(100, 181, 246); // Blue 300 (Pastel)
+    doc.setFont('helvetica', 'bold');
+    doc.text('REPORTE DE TRAZA', pageWidth / 2, 80, { align: 'center' });
+
+    // Línea Decorativa Sutil
+    doc.setDrawColor(224, 224, 224); // Grey 300
+    doc.setLineWidth(0.5);
+    doc.line(60, 85, pageWidth - 60, 85);
+
+    // Subtítulo (Nombre del Usuario)
     doc.setFontSize(18);
-    doc.text('Reporte de Traza de Actividad', 14, 22);
+    doc.setTextColor(97, 97, 97); // Grey 700
+    doc.text((this.selectedUser?.nombre || 'Usuario Desconocido').toUpperCase(), pageWidth / 2, 100, { align: 'center' });
+
+    // Detalles Centrados
+    doc.setFontSize(12);
+    doc.setTextColor(117, 117, 117); // Grey 600
+    doc.text(`Identificador: ${this.selectedUser?.login || 'N/A'}`, pageWidth / 2, 115, { align: 'center' });
+    doc.text(`Aplicación Origen: ${this.appData?.nombre || 'N/A'}`, pageWidth / 2, 122, { align: 'center' });
+
+    // Nota Informativa
     doc.setFontSize(11);
-    doc.text(`Usuario: ${this.selectedUser.nombre} (${this.selectedUser.login})`, 14, 30);
-    doc.text(`Aplicación: ${this.appData.nombre}`, 14, 36);
-    doc.text(`Fecha de Generación: ${new Date().toLocaleString()}`, 14, 42);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(158, 158, 158); // Grey 500
+    const note = `Este reporte contiene la traza de actividad detallada con un total de ${this.logs.length} registros auditados.`;
+    const splitNote = doc.splitTextToSize(note, pageWidth - 80);
+    doc.text(splitNote, pageWidth / 2, 140, { align: 'center' });
+
+    // Fecha en el pie de la primera página
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(189, 189, 189); // Grey 400
+    doc.text(`Generado el: ${new Date().toLocaleString()}`, pageWidth / 2, pageHeight - 20, { align: 'center' });
+
+    // ==========================================
+    // PAGINA 2+: TABLA DE ACTIVIDAD
+    // ==========================================
+    doc.addPage();
+
+    // Encabezado P2
+    doc.setFontSize(14);
+    doc.setTextColor(100, 181, 246);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Historial de Actividad', 14, 20);
 
     const tableData = this.logs.map(log => [
       this.formatDate(log.fecha?.$date || log.fecha),
-      log.metodo,
-      log.segundos.toFixed(3) + 's',
-      log.hash.substring(0, 15) + '...'
+      log.accion.toUpperCase() || log.metodo.toUpperCase() || '---',
+      this.formatDuration(log.Duracion?.segundos || log.segundos || 0) + 's',
+      log.documento.toUpperCase() || '---'
     ]);
 
     (doc as any).autoTable({
-      startY: 50,
-      head: [['Fecha', 'Método', 'Duración', 'Hash']],
+      startY: 25,
+      head: [['FECHA Y HORA', 'ACCIÓN', 'DURACIÓN', 'DOCUMENTO']],
       body: tableData,
-      theme: 'striped',
-      headStyles: { fillColor: [115, 103, 240] }
+      theme: 'grid',
+      styles: {
+        font: 'helvetica',
+        fontSize: 8,
+        cellPadding: 3,
+        valign: 'middle',
+        lineColor: [238, 238, 238],
+        lineWidth: 0.1,
+        textColor: [97, 97, 97]
+      },
+      headStyles: {
+        fillColor: [255, 255, 255],
+        textColor: [100, 181, 246],
+        fontStyle: 'bold',
+        halign: 'left',
+        lineWidth: 0,
+        lineColor: [255, 255, 255]
+      },
+      alternateRowStyles: {
+        fillColor: [250, 250, 250]
+      }
     });
 
-    doc.save(`Traza_${this.selectedUser.nombre}.pdf`);
+    // Paginación Minimalista
+    const pageCount = doc.getNumberOfPages();
+    for (let i = 2; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8);
+      doc.setTextColor(200);
+      doc.text(`${i} / ${pageCount}`, pageWidth - 14, pageHeight - 10, { align: 'right' });
+    }
+
+    const fileName = `Traza_${this.selectedUser.nombre || 'Auditoria'}.pdf`.replace(/ /g, '_');
+
+    // Sandbox Bridge Download
+    const pdfDataUri = doc.output('datauristring');
+    if (window.parent) {
+      window.parent.postMessage({
+        type: 'OPEN_PDF',
+        payload: {
+          fileName: fileName,
+          data: pdfDataUri
+        }
+      }, '*');
+    } else {
+      doc.save(fileName);
+    }
   }
 
   private formatDate(date: any): string {
     return new Date(date).toLocaleString();
   }
 
-  private saveAsExcelFile(buffer: any, fileName: string): void {
-    const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-    saveAs(data, fileName + '.xlsx');
-  }
 }

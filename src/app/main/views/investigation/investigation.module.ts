@@ -46,7 +46,7 @@ const routes = [
     canActivate: [AuthGuardGuard],
   },
   {
-    path: 'investigation/events/:id',
+    path: 'investigation/binnacle/events/:id',
     component: EventComponent,
     canActivate: [AuthGuardGuard],
   },
@@ -54,9 +54,9 @@ const routes = [
 
 @NgModule({
   declarations: [
-    LogsComponent, 
-    BinnacleComponent, 
-    QueryLogComponent, 
+    LogsComponent,
+    BinnacleComponent,
+    QueryLogComponent,
     BinnacleApplicationsComponent,
     TrazaComponent,
     EventComponent

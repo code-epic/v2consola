@@ -7,15 +7,9 @@
       <div class="row">
         <div class="col-12">
           <div class="input-group input-group-merge">
-            <input 
-              type="text" 
-              class="form-control search-product" 
-              id="shop-search" 
-              placeholder="Buscar aplicaciones por nombre..." 
-              [(ngModel)]="searchText" 
-              aria-label="Search..." 
-              aria-describedby="shop-search" 
-            />
+            <input type="text" class="form-control search-product" id="shop-search"
+              placeholder="Buscar aplicaciones por nombre..." [(ngModel)]="searchText" aria-label="Search..."
+              aria-describedby="shop-search" />
             <div class="input-group-append">
               <span class="input-group-text">
                 <i data-feather="search" class="text-muted"></i>
@@ -23,20 +17,12 @@
             </div>
           </div>
         </div>
-        
+
         <!-- API Search Dropdown (if needed) -->
         <div class="col-12 mt-3" *ngIf="searchType === 'api'">
-          <ng-select 
-            [items]="rowData" 
-            [(ngModel)]="selectCustomSelected" 
-            bindLabel="nombre" 
-            bindValue="id"
-            [searchable]="true" 
-            placeholder="Seleccione API específica" 
-            [hideSelected]="false" 
-            (change)="LinkRuta($event)"
-            appendTo="body"
-          >
+          <ng-select [items]="rowData" [(ngModel)]="selectCustomSelected" bindLabel="nombre" bindValue="id"
+            [searchable]="true" placeholder="Seleccione API específica" [hideSelected]="false"
+            (change)="LinkRuta($event)" appendTo="body">
             <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
               <div class="card">
                 <div class="card-body">
@@ -57,8 +43,7 @@
     <section id="wishlist" class="grid-view wishlist-items">
       <div
         *ngFor="let product of ListarBitacora | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize; let i = index"
-        class="card binnacle-elegant-card"
-      >
+        class="card binnacle-elegant-card">
         <div class="binnacle-card-body">
           <div class="d-flex align-items-center mb-1">
             <div class="binnacle-icon-wrapper">
@@ -72,16 +57,18 @@
               </div>
             </div>
           </div>
-          
+
           <p class="binnacle-card-desc" [title]="product.comentario">
             {{ product.comentario || 'Sin descripción disponible.' }}
           </p>
 
           <div class="binnacle-card-actions">
-            <button class="btn btn-outline-primary btn-sm rounded-pill" (click)="irA('/investigation/binnacle/traza/', product)">
+            <button class="btn btn-outline-primary btn-sm rounded-pill"
+              (click)="irA('/investigation/binnacle/traza/', product)">
               <span class="material-symbols-outlined me-50">history</span> Traza
             </button>
-            <button class="btn btn-flat-secondary btn-sm rounded-pill" (click)="irA('/investigation/events/', product)">
+            <button class="btn btn-flat-secondary btn-sm rounded-pill"
+              (click)="irA('/investigation/binnacle/events/', product)">
               <span class="material-symbols-outlined me-50">event_note</span> Eventos
             </button>
           </div>
@@ -90,10 +77,7 @@
     </section>
 
     <!-- Empty State (when no results) -->
-    <section 
-      *ngIf="(ListarBitacora | filter: searchText:'nombre').length === 0" 
-      class="empty-state"
-    >
+    <section *ngIf="(ListarBitacora | filter: searchText:'nombre').length === 0" class="empty-state">
       <div class="empty-icon">
         <span data-feather="inbox" style="width: 64px; height: 64px;"></span>
       </div>
@@ -106,16 +90,9 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="d-flex justify-content-center">
-            <ngb-pagination 
-              [collectionSize]="(ListarBitacora | filter: searchText:'nombre').length" 
-              [(page)]="page"
-              [pageSize]="pageSize" 
-              [maxSize]="5" 
-              [rotate]="true" 
-              [ellipses]="false" 
-              [boundaryLinks]="true"
-              aria-label="Pagination"
-            >
+            <ngb-pagination [collectionSize]="(ListarBitacora | filter: searchText:'nombre').length" [(page)]="page"
+              [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
+              aria-label="Pagination">
               <!-- First Page -->
               <ng-template ngbPaginationFirst>
                 <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
@@ -138,7 +115,8 @@
 
               <!-- Last Page -->
               <ng-template ngbPaginationLast>
-                <span data-feather="chevrons-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
+                <span data-feather="chevrons-right" class="font-weight-bolder"
+                  style="width: 18px; height: 18px;"></span>
               </ng-template>
             </ngb-pagination>
           </div>
@@ -148,4 +126,3 @@
 
   </div>
 </div>
-

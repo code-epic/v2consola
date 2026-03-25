@@ -33,21 +33,20 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
                             <h4 class="card-title mb-0">Selección de Usuario</h4>
-                            <small class="text-muted">Seleccione un usuario para visualizar su traza de actividad en {{
-                                appData?.nombre }}</small>
+                            <small class="text-muted">{{ filteredUsers.length }} de {{ usuarios.length }} usuarios encontrados</small>
                         </div>
-                        <div class="input-group input-group-merge w-25">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i data-feather="search" class="text-muted"></i></span>
+                        <div class="d-flex align-items-center" style="min-width: 320px;">
+                            <span class="search-label-mini d-none d-md-inline">Filtrar</span>
+                            <div class="premium-search-box flex-grow-1">
+                                <span class="material-symbols-outlined">search</span>
+                                <input type="text" [(ngModel)]="searchText" placeholder="Nombre, login o perfil...">
                             </div>
-                            <input type="text" class="form-control" placeholder="Buscar usuario..."
-                                [(ngModel)]="searchText">
                         </div>
                     </div>
 
                     <div class="row">
-                        <div *ngFor="let user of usuarios | filter: searchText:'nombre'"
-                            class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
+                        <div *ngFor="let user of filteredUsers"
+                             class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
                             <div class="user-card-slim animate__animated animate__fadeInUp" (click)="selectUser(user)">
                                 <div class="card-body p-1">
                                     <div class="d-flex align-items-center">
@@ -121,16 +120,10 @@
                     </div>
 
                     <div class="d-flex align-items-center flex-grow-1 flex-md-grow-0 ml-md-2">
-                        <!-- Search Bar Subtle -->
-                        <div class="input-group input-group-merge shadow-none border-light rounded-pill px-1 bg-light-secondary"
-                            style="max-width: 300px;">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text bg-transparent border-0 py-0">
-                                    <span class="material-symbols-outlined font-small-3 text-muted">search</span>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control bg-transparent border-0 font-small-3 py-0"
-                                [(ngModel)]="searchText" placeholder="Buscar acción o documento...">
+                        <!-- Premium Search Box -->
+                        <div class="premium-search-box" style="width: 280px;">
+                            <span class="material-symbols-outlined">filter_list</span>
+                            <input type="text" [(ngModel)]="searchText" placeholder="Acción, login o documento...">
                         </div>
 
                         <button class="btn btn-premium-glow btn-sm ml-1" (click)="goToStep(3)">
@@ -170,7 +163,7 @@
                                     </td>
                                     <td class="py-1">
                                         <span class="text-dark font-weight-bold font-small-2">{{ log.accion ||
-                                            log.metodo || 'SIN ACCIÓN' }}</span>
+                                            log.metodo || 'SIN ACCIÓN' | uppercase}}</span>
                                     </td>
                                     <td class="py-1">
                                         <div class="d-flex align-items-center text-muted font-small-3">
@@ -201,69 +194,123 @@
             </div>
         </section>
 
-        <!-- Phase 3: Analysis & Export -->
+        <!-- Phase 3: Analysis        <!-- Phase 3: Analysis & Export -->
         <section *ngIf="currentStep === 3" class="animate__animated animate__fadeIn">
-            <div class="row">
-                <!-- Summary Cards -->
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header border-bottom">
-                            <h4 class="card-title">Análisis de Integridad de Traza</h4>
+            <!-- Key Metrics Row -->
+            <div class="row mb-2">
+                <div class="col-md-4 mb-1 mb-md-0 px-1">
+                    <div class="stats-card-premium">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper-mini mr-1">
+                                <span class="material-symbols-outlined">analytics</span>
+                            </div>
+                            <div>
+                                <h3 class="font-weight-bolder mb-0">{{ logs.length }}</h3>
+                                <p class="small text-muted mb-0">Eventos Totales</p>
+                            </div>
                         </div>
-                        <div class="card-body py-2">
-                            <div class="row text-center">
-                                <div class="col-4 border-right">
-                                    <h2 class="font-weight-bolder mb-0 text-primary">{{ logs.length }}</h2>
-                                    <p class="card-text text-muted">Eventos totales</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-1 mb-md-0 px-1">
+                    <div class="stats-card-premium">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper-mini mr-1">
+                                <span class="material-symbols-outlined" style="color: #28c76f;">verified_user</span>
+                            </div>
+                            <div>
+                                <h3 class="font-weight-bolder mb-0">VÁLIDO</h3>
+                                <p class="small text-muted mb-0">Integridad Criptográfica</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 px-1">
+                    <div class="stats-card-premium">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper-mini mr-1">
+                                <span class="material-symbols-outlined">shield_person</span>
+                            </div>
+                            <div class="user-info">
+                                <h3 class="font-weight-bolder mb-0 text-truncate" title="{{ selectedUser?.perfil }}">{{
+                                    selectedUser?.perfil }}</h3>
+                                <p class="small text-muted mb-0">Nivel de Acceso</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Analysis Row -->
+            <div class="row mb-2">
+                <!-- Statistics Detail -->
+                <div class="col-lg-8 px-1">
+                    <div class="card stats-card-premium h-100 mb-0">
+                        <div class="card-header border-bottom-0 pb-1">
+                            <div class="d-flex align-items-center">
+                                <span class="material-symbols-outlined mr-50 text-primary">leaderboard</span>
+                                <h4 class="card-title font-weight-bolder mb-0">DISTRIBUCIÓN DE ACTIVIDAD</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div *ngFor="let stat of actionStats"
+                                class="analysis-chart-item animate__animated animate__fadeInLeft">
+                                <div class="chart-label">
+                                    <span>{{ stat.name }}</span>
+                                    <span class="text-muted">{{ stat.count }} ops</span>
                                 </div>
-                                <div class="col-4 border-right">
-                                    <h2 class="font-weight-bolder mb-0 text-success">100%</h2>
-                                    <p class="card-text text-muted">Validación Hash</p>
-                                </div>
-                                <div class="col-4">
-                                    <h2 class="font-weight-bolder mb-0 text-info">{{ selectedUser?.perfil }}</h2>
-                                    <p class="card-text text-muted">Perfil Nivel</p>
+                                <div class="analysis-bar-wrapper">
+                                    <div class="bar-filled" [style.width.%]="stat.percent"></div>
                                 </div>
                             </div>
 
-                            <div class="mt-3 p-2 bg-light rounded border-dashed">
-                                <h5><span
-                                        class="material-symbols-outlined font-medium-3 align-middle mr-50">description</span>
-                                    Resumen de Operaciones</h5>
-                                <p class="small text-muted mb-0">
-                                    La traza generada para el usuario <strong>{{ selectedUser?.nombre }}</strong> en la
-                                    aplicación <strong>{{ appData?.nombre }}</strong>
-                                    mantiene la integridad criptográfica esperada. No se han detectado anomalías en la
-                                    duración de las solicitudes ni inconsistencias en los métodos ejecutados.
-                                </p>
+                            <div class="mt-2 p-1 rounded bg-light-analysis border-dashed">
+                                <div class="d-flex align-items-center">
+                                    <span class="material-symbols-outlined text-muted mr-50">info</span>
+                                    <p class="small text-muted mb-0">
+                                        Análisis detallado para <strong>{{ selectedUser?.nombre }}</strong>.
+                                        Los patrones auditados confirman una operación íntegra.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Export Actions -->
-                <div class="col-md-4">
-                    <div class="card bg-primary text-white premium-export-card">
-                        <div class="card-body text-center py-3">
-                            <span class="material-symbols-outlined display-3 mb-1">file_download</span>
-                            <h4 class="text-white mb-2">Exportar Resultados</h4>
-                            <div class="d-grid gap-2">
-                                <button
-                                    class="btn btn-light w-100 mb-1 d-flex align-items-center justify-content-center"
-                                    (click)="exportCSV()">
-                                    <span class="material-symbols-outlined mr-50">grid_on</span> Exportar como CSV
-                                </button>
-                                <button
-                                    class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center"
-                                    (click)="exportPDF()">
-                                    <span class="material-symbols-outlined mr-50">picture_as_pdf</span> Generar Reporte
-                                    PDF
-                                </button>
-                            </div>
+                <!-- Export & Finish -->
+                <div class="col-lg-4 px-1">
+                    <div class="export-card-clean d-flex flex-column align-items-center justify-content-center">
+                        <div class="mb-2">
+                            <span class="material-symbols-outlined display-4 text-muted opacity-50">description</span>
+                        </div>
+                        <h4 class="font-weight-bolder mb-50">REPORTE FINAL</h4>
+                        <p class="text-muted small mb-2 px-1">Selecciona el formato de exportación</p>
+
+                        <div class="w-100 px-1">
+                            <button class="btn btn-export-premium" (click)="exportCSV()">
+                                <span class="material-symbols-outlined">table_view</span>
+                                DESCARGAR CSV
+                            </button>
+
+                            <button class="btn btn-export-premium" (click)="exportPDF()">
+                                <span class="material-symbols-outlined">picture_as_pdf</span>
+                                GENERAR REPORTE PDF
+                            </button>
                         </div>
                     </div>
-                    <button class="btn btn-flat-secondary btn-sm block w-100 mt-1" (click)="goToStep(2)">
-                        <span class="material-symbols-outlined mr-50">arrow_back</span> Volver a registros
+                </div>
+            </div>
+
+            <!-- Footer Navigation -->
+            <div class="analysis-footer-nav row mx-0 px-1">
+                <div class="col-12 d-flex justify-content-between p-0 border-top pt-2">
+                    <button class="btn btn-nav-action" (click)="goToStep(2)">
+                        <span class="material-symbols-outlined">keyboard_backspace</span>
+                        VOLVER A LOS REGISTROS
+                    </button>
+
+                    <button class="btn btn-nav-action" (click)="goToStep(1)">
+                        <span class="material-symbols-outlined">person_pin</span>
+                        CAMBIAR DE USUARIO
                     </button>
                 </div>
             </div>
