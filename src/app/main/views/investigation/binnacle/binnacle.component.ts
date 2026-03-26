@@ -13,7 +13,8 @@ import { environment } from "environments/environment";
 export class BinnacleComponent implements OnInit {
 
   // Control de vista
-  public isListView = false; 
+  public isListView = false;
+  public showSchema = false;
 
   // Modal / JSON de estructura
   public jsonEstructura = {
@@ -37,6 +38,7 @@ export class BinnacleComponent implements OnInit {
   public contentHeader: object;
 
   public ListarBitacora = [];
+  public ListarAuditoriaLogs = [];
 
   xAPI: IAPICore = {
     funcion: '',
@@ -45,8 +47,9 @@ export class BinnacleComponent implements OnInit {
   };
 
   public page = 1;
-  public pageSize = 8;
+  public pageSize = 10;
   public pageBasic = 1;
+  public filterActividad = '';
 
   public developer = [];
   public rowData = [];
@@ -122,33 +125,46 @@ export class BinnacleComponent implements OnInit {
     )
   }
 
+  CargarReporteAuditoriaLogs(print: boolean = true) {
+    this.xAPI.funcion = environment.functions.CONSULTAR_APPS_AUDITORIA_LOGS;
+    this.xAPI.parametros = ''
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data: any[]) => {
+        if (!data) return;
+        this.ListarAuditoriaLogs = data;
+        if (print) {
+          this.ImprimirReporteLog();
+        }
+      },
+      (error) => {
+        console.error(error);
+      }
+    )
+  }
+
   // ==========================================
   // Exportación y Gestión Global
   // ==========================================
 
   ImprimirReporteLog() {
-    if (this.ListarBitacora.length === 0) return;
+    if (this.ListarAuditoriaLogs.length === 0) return;
 
     // Generar Cabecera CSV
     let csvContent = "Usuario,Usuario_SO,Fecha,Hora,IP,MAC,Computer_Name,Tipo_Actividad,Resultado,Resultado_Host,Porcion_Libre\n";
 
     // Recorrer los datos de la bitácora actual para llenar el CSV
-    this.ListarBitacora.forEach(item => {
-      // Como BinnacleComponent muestra 'aplicaciones' para entrar luego a la traza, 
-      // si el usuario quiere el CSV global, generaremos un pseudo-registro por aplicación 
-      // o usaremos los datos disponibles a nivel app.
-      // Ajusta esto a los datos reales si 'ListarBitacora' tiene eventos globales.
-      const usuario = item.autor || 'N/A';
-      const userSo = 'N/A';
-      const fecha = this.formatDate(new Date()); 
-      const hora = this.formatTime(new Date());
-      const ip = item.ip || '127.0.0.1';
-      const mac = item.mac || '00:00:00:00:00:00';
-      const compName = 'N/A';
-      const tipo = 'Consulta'; // Por defecto estado base
-      const result = '0';
-      const hostResult = '200';
-      const libre = `Aplicación: ${item.nombre}. ${item.comentario || ''}`.substring(0, 100);
+    this.ListarAuditoriaLogs.forEach(e => {
+      const usuario = e.usuario
+      const userSo = e.usuarioSo || e.usuario
+      const fecha = e.fecha
+      const hora = e.hora
+      const ip = e.ip
+      const mac = e.mac
+      const compName = e.computerName
+      const tipo = e.tipo.toUpperCase()
+      const result = e.resultado
+      const hostResult = e.resultadoHost
+      const libre = e.libre
 
       // Limpiar comas para evitar saltos en CSV
       const cleanLibre = libre.replace(/,/g, ';');
@@ -185,25 +201,12 @@ export class BinnacleComponent implements OnInit {
   MostrarListadoGlobal() {
     // Alternar entre la vista de tarjetas y la vista de listado/tabla
     this.isListView = !this.isListView;
+    this.page = 1;
+    if (this.isListView) {
+      this.CargarReporteAuditoriaLogs(false);
+    }
   }
 
-  // Utilidades para formato
-  private formatDate(date: Date): string {
-    const d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
 
-    return [year, month.padStart(2, '0'), day.padStart(2, '0')].join('');
-  }
-
-  private formatTime(date: Date): string {
-    const d = new Date(date),
-      hours = '' + d.getHours(),
-      minutes = '' + d.getMinutes(),
-      seconds = '' + d.getSeconds();
-
-    return [hours.padStart(2, '0'), minutes.padStart(2, '0'), seconds.padStart(2, '0')].join(':');
-  }
 
 }

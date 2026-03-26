@@ -91,6 +91,7 @@ export const environment = {
     CONSULTAR_APPS_LOGS: '_SYS_CAppsLogs',
     CONSULTAR_APPS_USUARIO: '_SYS_CAppsUsers',
     CONSULTAR_APPS_USUARIO_LOGS: '_SYS_CAppsUsersLogs',
+    CONSULTAR_APPS_AUDITORIA_LOGS: '_SYS_CAuditoriasLog',
     ACTUALIZAR_TOTP: '_SYS_UUserTOTP',
     ACTUALIZAR_CLAVE: '_SYS_UClaveUsuario',
     LISTAR_AUTHORIZATIONS: '_SYS_CBoveda'

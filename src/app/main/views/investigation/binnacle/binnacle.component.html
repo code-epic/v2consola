@@ -7,28 +7,47 @@
       <div class="row">
         <div class="col-12 mb-2">
           <div class="d-flex justify-content-between align-items-center flex-wrap">
-            
+
             <!-- Barra de Búsqueda -->
-            <div class="flex-grow-1 mr-2 mb-1 mb-md-0" style="max-width: 600px;">
-              <div class="input-group input-group-merge">
-                <input type="text" class="form-control search-product" id="shop-search"
-                  placeholder="Buscar aplicaciones por nombre..." [(ngModel)]="searchText" aria-label="Search..."
-                  aria-describedby="shop-search" />
+            <div class="d-flex align-items-center flex-grow-1 mr-2 mb-1 mb-md-0" style="max-width: 800px;">
+              <div class="input-group input-group-merge mr-1" style="max-width: 400px;">
+                <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar..."
+                  [(ngModel)]="searchText" aria-label="Search..." aria-describedby="shop-search" />
                 <div class="input-group-append">
                   <span class="input-group-text">
                     <i data-feather="search" class="text-muted"></i>
                   </span>
                 </div>
               </div>
+
+              <!-- Filtro de Actividad (Solo en Listado) -->
+              <div class="ml-1" *ngIf="isListView" style="min-width: 180px;">
+                <select class="form-control" [(ngModel)]="filterActividad" (change)="page = 1">
+                  <option value="">Todas las Actividades</option>
+                  <option value="LOGOUT">LOGOUT</option>
+                  <option value="LOGIN">LOGIN</option>
+                  <option value="CONSULTAR">CONSULTAR</option>
+                  <option value="INCLUIR">INCLUIR</option>
+                  <option value="MODIFICAR">MODIFICAR</option>
+                  <option value="ELIMINAR">ELIMINAR</option>
+                </select>
+              </div>
             </div>
 
             <!-- Botones de Acción -->
             <div class="d-flex align-items-center">
-              <button class="btn btn-outline-secondary mr-1 d-flex align-items-center" (click)="ImprimirReporteLog()" rippleEffect title="Imprimir Reporte CSV">
+              <button *ngIf="isListView" class="btn btn-outline-info mr-1 d-flex align-items-center"
+                (click)="showSchema = !showSchema" rippleEffect title="Ver Esquema de Datos">
+                <span data-feather="info" class="mr-50" style="width: 16px; height: 16px;"></span>
+                <span class="d-none d-sm-inline">{{ showSchema ? 'Ocultar Esquema' : 'Esquema' }}</span>
+              </button>
+              <button class="btn btn-outline-secondary mr-1 d-flex align-items-center"
+                (click)="CargarReporteAuditoriaLogs()" rippleEffect title="Imprimir Reporte CSV">
                 <span data-feather="printer" class="mr-50" style="width: 16px; height: 16px;"></span>
                 <span class="d-none d-sm-inline">Imprimir Reporte</span>
               </button>
-              <button class="btn btn-primary d-flex align-items-center" (click)="MostrarListadoGlobal()" rippleEffect title="Ver Listado Global">
+              <button class="btn btn-primary d-flex align-items-center" (click)="MostrarListadoGlobal()" rippleEffect
+                title="Ver Listado Global">
                 <span data-feather="list" class="mr-50" style="width: 16px; height: 16px;"></span>
                 <span class="d-none d-sm-inline">Listado Global</span>
               </button>
@@ -97,66 +116,91 @@
     <!-- Global List View (Activo cuando isListView es true) -->
     <section class="global-list-view" *ngIf="isListView">
       <div class="row">
-        
         <!-- Tarjeta de Esquema (JSON) -->
-        <div class="col-md-4">
+        <div class="col-md-4 animate__animated animate__fadeInLeft" *ngIf="showSchema">
           <div class="card card-pastel">
             <div class="card-header-pastel-primary">
               <span data-feather="terminal" class="header-icon-white mr-50"></span>
               <h5 class="mb-0 text-white">Esquema de Auditoría</h5>
+              <button type="button" class="close text-white ml-auto" (click)="showSchema = false">
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <div class="card-body p-0 custom-scroll" style="max-height: 400px; overflow-y: auto;">
-              <!-- Usaremos un bloque de pre/code similar a como se muestra el JSON -->
-              <pre class="m-0 p-1 bg-light-analysis font-small-2" style="font-family: 'JetBrains Mono', monospace; color: #5e5873;">{{ jsonEstructura | json }}</pre>
+            <div class="card-body p-0 custom-scroll" style="max-height: 480px; overflow-y: auto;">
+              <pre class="m-0 p-1 bg-light-analysis font-small-2"
+                style="font-family: 'JetBrains Mono', monospace; color: #5e5873;">{{ jsonEstructura | json }}</pre>
             </div>
           </div>
         </div>
 
         <!-- Tabla Lógica Global -->
-        <div class="col-md-8">
-            <div class="card">
-              <div class="card-header d-flex justify-content-between align-items-center border-bottom p-1">
-                <h5 class="mb-0 d-flex align-items-center">
-                  <span data-feather="database" class="mr-50 text-secondary"></span>
-                  Estructura Base para CSV
-                </h5>
-              </div>
-              <div class="table-responsive custom-scroll" style="max-height: 400px; overflow-y: auto;">
-                <table class="table table-hover table-sm font-small-2">
-                  <thead class="thead-light">
-                    <tr>
-                      <th>Usuario / Autor</th>
-                      <th>IP</th>
-                      <th>MAC</th>
-                      <th>Tipo Actv</th>
-                      <th>Resultado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let item of ListarBitacora | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize">
-                      <td>
-                        <span class="font-weight-bold">{{ item.autor || 'N/A' }}</span><br>
-                        <small class="text-muted">{{ item.nombre }}</small>
-                      </td>
-                      <td>{{ item.ip || '127.0.0.1' }}</td>
-                      <td>{{ item.mac || '00:00:00:00:00:00' }}</td>
-                      <td>
-                        <span class="badge badge-light-info">Consulta</span>
-                      </td>
-                      <td>
-                        <span class="badge badge-light-success">0 (Exitoso)</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+        <div [ngClass]="showSchema ? 'col-md-8' : 'col-12'" class="animate__animated animate__fadeIn">
+          <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center border-bottom p-1">
+              <h5 class="mb-0 d-flex align-items-center">
+                <span data-feather="database" class="mr-50 text-secondary"></span>
+                Estructura Base para CSV
+              </h5>
             </div>
+            <div class="table-responsive custom-scroll" style="max-height: 480px; overflow-y: auto;">
+              <table class="table table-hover table-sm font-small-2">
+                <thead class="thead-light">
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Fecha / Hora</th>
+                    <th>IP / Host</th>
+                    <th>MAC</th>
+                    <th>Actividad</th>
+                    <th>Resultado</th>
+                    <!-- <th>Resultado Host</th> -->
+                    <th>Otros</th>
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let item of ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo' | slice: (page - 1) * pageSize : page * pageSize">
+                    <td>
+                      <span class="font-weight-bold">{{ item.usuario }}</span><br>
+                      <small class="text-muted" *ngIf="item.usuarioSo">{{ item.usuarioSo }}</small>
+                    </td>
+                    <td>
+                      <span class="text-muted">{{ item.fecha }}</span><br>
+                      <small>{{ item.hora }}</small>
+                    </td>
+                    <td>
+                      {{ item.ip }}<br>
+                      <small class="text-secondary">{{ item.computerName }}</small>
+                    </td>
+                    <td>{{ item.mac }}</td>
+                    <td>
+                      <span class="badge badge-light-info text-uppercase">{{ item.tipo }}</span>
+                    </td>
+                    <td>
+                      <span class="badge"
+                        [ngClass]="item.resultado == '0' ? 'badge-light-success' : 'badge-light-danger'">
+                        {{ item.resultado == '0' ? 'Exitoso' : 'Fallido' }}
+                      </span>
+                    </td>
+                    <!-- <td>{{ item.resultadoHost }}</td> -->
+                    <td>
+                      <small class="text-truncate d-inline-block" style="max-width: 300px;" [title]="item.libre">{{
+                        item.libre }}</small>
+                    </td>
+
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Empty State (when no results) -->
-    <section *ngIf="(ListarBitacora | filter: searchText:'nombre').length === 0" class="empty-state">
+    <section
+      *ngIf="(!isListView && (ListarBitacora | filter: searchText:'nombre').length === 0) || (isListView && (ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo').length === 0)"
+      class="empty-state">
       <div class="empty-icon">
         <span data-feather="inbox" style="width: 64px; height: 64px;"></span>
       </div>
@@ -165,13 +209,15 @@
     </section>
 
     <!-- Pagination -->
-    <section id="ecommerce-pagination" *ngIf="(ListarBitacora | filter: searchText:'nombre').length > 0">
+    <section id="ecommerce-pagination"
+      *ngIf="(!isListView && (ListarBitacora | filter: searchText:'nombre').length > 0) || (isListView && (ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo').length > 0)">
       <div class="row">
         <div class="col-sm-12">
           <div class="d-flex justify-content-center">
-            <ngb-pagination [collectionSize]="(ListarBitacora | filter: searchText:'nombre').length" [(page)]="page"
-              [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
-              aria-label="Pagination">
+            <ngb-pagination
+              [collectionSize]="!isListView ? (ListarBitacora | filter: searchText:'nombre').length : (ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo').length"
+              [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false"
+              [boundaryLinks]="true" aria-label="Pagination">
               <!-- First Page -->
               <ng-template ngbPaginationFirst>
                 <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
