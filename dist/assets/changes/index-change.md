@@ -1,3 +1,4 @@
+- [v1.0.6](v1.0.6-23MAR2025.md) - Bóveda, Soporte & SRE
 - [v1.0.5](v1.0.5-28DIC2025.md) - Base de datos & Autenticación 
 - [v1.0.4](v1.0.4-04DIC2025.md) - Avance en Seguridad y Perfil
 - [v1.0.3](v1.0.3-26NOV2025.md) - Cambios en la Arquitectura
