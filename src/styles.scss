@@ -27,7 +27,52 @@
   
 @import 'codemirror/lib/codemirror.css';
 @import 'codemirror/theme/idea';
-@import 'codemirror/theme/material';
+
+/* =========================================================================================
+   SOPORTE GLOBAL PARA CODEMIRROR - TEMA CLARO / PASTEL
+   ========================================================================================= */
+
+.CodeMirror {
+  background-color: #ffffff !important;
+  color: #2d2d2d !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Menlo', monospace !important;
+  border-radius: 8px;
+}
+
+/* Forzamos el fondo de todas las líneas para evitar el efecto 'veteado' oscuro */
+.CodeMirror-code {
+  background-color: #ffffff !important;
+}
+
+.CodeMirror-line {
+  background-color: transparent !important;
+  color: #2d2d2d !important;
+}
+
+/* Corrección de la Línea Activa (Solución al 'click en negro') */
+.CodeMirror-activeline-background {
+  background-color: rgba(115, 103, 240, 0.08) !important; /* Púrpura pastel suave */
+}
+
+/* Corrección de Selección de Texto */
+.CodeMirror-selected {
+  background-color: #d1d8ff !important;
+}
+
+/* Gutters (Número de línea) */
+.CodeMirror-gutters {
+  background-color: #f8f9fa !important;
+  border-right: 1px solid #dae1e7 !important;
+}
+
+.CodeMirror-linenumber {
+  color: #adb5bd !important;
+}
+
+/* Cursor visible y vibrante */
+.CodeMirror-cursor {
+  border-left: 2px solid #7367f0 !important;
+}
 
 @import 'codemirror/addon/fold/foldgutter.css';
 @import 'codemirror/addon/lint/lint.css';

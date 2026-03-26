@@ -37,7 +37,7 @@ export class RegisterApiComponent implements OnInit {
   };
 
   public codeJson: any = {
-    theme: "material",
+    theme: "idea",
     mode: "application/ld+json",
     lineNumbers: true,
     lineWrapping: true,
@@ -53,7 +53,7 @@ export class RegisterApiComponent implements OnInit {
   };
 
   public codeSQL: any = {
-    theme: "material",
+    theme: "idea",
     mode: "text/x-sql",
     lineNumbers: true,
     lineWrapping: true,
@@ -377,6 +377,17 @@ export class RegisterApiComponent implements OnInit {
       {}
     );
 
+    // [Auto-Refresh CodeMirror] Escuchamos el cambio de paso del stepper
+    // para refrescar los editores cuando se vuelvan visibles en el Paso 2
+    document.querySelector("#stepper1").addEventListener('show.bs-stepper', (event: any) => {
+      // El paso de configuración de código suele ser el índice 1 (Paso 2)
+      if (event.detail.to === 1) {
+        setTimeout(() => {
+          this.clickRefresh(null); // Esto fuerza la redibujada de ngx-codemirror
+        }, 250); // Delay necesario para esperar que la animación del stepper finalice
+      }
+    });
+
     this.contentHeader = {
       headerTitle: "Herramientas",
       actionButton: true,
@@ -668,7 +679,7 @@ export class RegisterApiComponent implements OnInit {
 
   clickRefresh(event) {
     this.codeJson = {
-      theme: "material",
+      theme: "idea",
       mode: "application/ld+json",
       lineNumbers: true,
       lineWrapping: true,
@@ -684,7 +695,7 @@ export class RegisterApiComponent implements OnInit {
     };
 
     this.codeSQL = {
-      theme: "material",
+      theme: "idea",
       mode: "text/x-sql",
       lineNumbers: true,
       lineWrapping: true,

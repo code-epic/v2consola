@@ -127,7 +127,7 @@ export class UpgradeComponent implements OnInit {
           console.error(`Error al cargar el archivo de la versión ${version.version}:`, err);
           const errorHtml = `
             <div class="text-center p-5 my-4 empty-state">
-              <img src="assets/images/illustration/server-down.svg" height="200" alt="Contenido no encontrado" class="mb-4">
+              <img src="assets/images/illustration/server-down.webp" height="200" alt="Contenido no encontrado" class="mb-4">
               <h2 class="font-weight-bold text-danger">Contenido No Disponible</h2>
               <p class="lead text-muted" style="font-size: 1.1rem; letter-spacing: 0.5px;">
                 Lo sentimos, no se pudo cargar el detalle para la versión

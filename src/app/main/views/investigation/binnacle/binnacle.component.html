@@ -5,19 +5,37 @@
     <!-- Enhanced Search Bar -->
     <section id="ecommerce-searchbar" class="ecommerce-searchbar">
       <div class="row">
-        <div class="col-12">
-          <div class="input-group input-group-merge">
-            <input type="text" class="form-control search-product" id="shop-search"
-              placeholder="Buscar aplicaciones por nombre..." [(ngModel)]="searchText" aria-label="Search..."
-              aria-describedby="shop-search" />
-            <div class="input-group-append">
-              <span class="input-group-text">
-                <i data-feather="search" class="text-muted"></i>
-              </span>
+        <div class="col-12 mb-2">
+          <div class="d-flex justify-content-between align-items-center flex-wrap">
+            
+            <!-- Barra de Búsqueda -->
+            <div class="flex-grow-1 mr-2 mb-1 mb-md-0" style="max-width: 600px;">
+              <div class="input-group input-group-merge">
+                <input type="text" class="form-control search-product" id="shop-search"
+                  placeholder="Buscar aplicaciones por nombre..." [(ngModel)]="searchText" aria-label="Search..."
+                  aria-describedby="shop-search" />
+                <div class="input-group-append">
+                  <span class="input-group-text">
+                    <i data-feather="search" class="text-muted"></i>
+                  </span>
+                </div>
+              </div>
             </div>
+
+            <!-- Botones de Acción -->
+            <div class="d-flex align-items-center">
+              <button class="btn btn-outline-secondary mr-1 d-flex align-items-center" (click)="ImprimirReporteLog()" rippleEffect title="Imprimir Reporte CSV">
+                <span data-feather="printer" class="mr-50" style="width: 16px; height: 16px;"></span>
+                <span class="d-none d-sm-inline">Imprimir Reporte</span>
+              </button>
+              <button class="btn btn-primary d-flex align-items-center" (click)="MostrarListadoGlobal()" rippleEffect title="Ver Listado Global">
+                <span data-feather="list" class="mr-50" style="width: 16px; height: 16px;"></span>
+                <span class="d-none d-sm-inline">Listado Global</span>
+              </button>
+            </div>
+
           </div>
         </div>
-
         <!-- API Search Dropdown (if needed) -->
         <div class="col-12 mt-3" *ngIf="searchType === 'api'">
           <ng-select [items]="rowData" [(ngModel)]="selectCustomSelected" bindLabel="nombre" bindValue="id"
@@ -39,8 +57,8 @@
       </div>
     </section>
 
-    <!-- Application Cards Grid -->
-    <section id="wishlist" class="grid-view wishlist-items">
+    <!-- Application Cards Grid (Default Vista) -->
+    <section id="wishlist" class="grid-view wishlist-items" *ngIf="!isListView">
       <div
         *ngFor="let product of ListarBitacora | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize; let i = index"
         class="card binnacle-elegant-card">
@@ -72,6 +90,67 @@
               <span class="material-symbols-outlined me-50">event_note</span> Eventos
             </button>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Global List View (Activo cuando isListView es true) -->
+    <section class="global-list-view" *ngIf="isListView">
+      <div class="row">
+        
+        <!-- Tarjeta de Esquema (JSON) -->
+        <div class="col-md-4">
+          <div class="card card-pastel">
+            <div class="card-header-pastel-primary">
+              <span data-feather="terminal" class="header-icon-white mr-50"></span>
+              <h5 class="mb-0 text-white">Esquema de Auditoría</h5>
+            </div>
+            <div class="card-body p-0 custom-scroll" style="max-height: 400px; overflow-y: auto;">
+              <!-- Usaremos un bloque de pre/code similar a como se muestra el JSON -->
+              <pre class="m-0 p-1 bg-light-analysis font-small-2" style="font-family: 'JetBrains Mono', monospace; color: #5e5873;">{{ jsonEstructura | json }}</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla Lógica Global -->
+        <div class="col-md-8">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center border-bottom p-1">
+                <h5 class="mb-0 d-flex align-items-center">
+                  <span data-feather="database" class="mr-50 text-secondary"></span>
+                  Estructura Base para CSV
+                </h5>
+              </div>
+              <div class="table-responsive custom-scroll" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-hover table-sm font-small-2">
+                  <thead class="thead-light">
+                    <tr>
+                      <th>Usuario / Autor</th>
+                      <th>IP</th>
+                      <th>MAC</th>
+                      <th>Tipo Actv</th>
+                      <th>Resultado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of ListarBitacora | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize">
+                      <td>
+                        <span class="font-weight-bold">{{ item.autor || 'N/A' }}</span><br>
+                        <small class="text-muted">{{ item.nombre }}</small>
+                      </td>
+                      <td>{{ item.ip || '127.0.0.1' }}</td>
+                      <td>{{ item.mac || '00:00:00:00:00:00' }}</td>
+                      <td>
+                        <span class="badge badge-light-info">Consulta</span>
+                      </td>
+                      <td>
+                        <span class="badge badge-light-success">0 (Exitoso)</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
         </div>
       </div>
     </section>

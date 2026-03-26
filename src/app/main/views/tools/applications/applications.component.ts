@@ -13,7 +13,7 @@ import { Router } from "@angular/router";
 export class ApplicationsComponent implements OnInit {
   searchType: string = "conexiones"; // Valor inicial del select
   searchText: string = ''; // Para el input de búsqueda normal
-  selectCustomSelected = []; // Para el ng-select
+  selectCustomSelected: any = null; // Para el ng-select
 
   public contentHeader: object;
   closeResult: string = '';
@@ -81,15 +81,14 @@ export class ApplicationsComponent implements OnInit {
     this.xAPI.funcion = "_SYS_R_ListarTodasApis";
     this.xAPI.parametros = '';
     this.xAPI.valores = '';
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      async (data) => {
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data: any[]) => {
         if (data == null) return;
 
-        await data.map((e) => {
+        this.rowData = data.map((e) => {
           e.descripcion = e.descripcion == undefined ? '' : e.descripcion;
-          this.selectCustomSelected.push(e);
+          return e;
         });
-        this.rowData = this.selectCustomSelected;
         this.tempData = this.rowData;
       },
       (error) => {

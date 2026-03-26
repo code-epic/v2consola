@@ -64,6 +64,13 @@ export class ApiDetailsComponent implements OnInit {
   xparametro: string = ''
   valores: string = ''
 
+  public codeMirrorOptions: any = {
+    lineNumbers: true,
+    theme: 'idea',
+    mode: 'javascript',
+    lineWrapping: true
+  };
+
   public data
   public urlControl = ''
   public driversAPP
@@ -221,15 +228,21 @@ export class ApiDetailsComponent implements OnInit {
       (data) => {
         if (data !== null) {
           this.utilservice.AlertMini('top-end', 'success', 'Consulta Exitosa!', 3000)
-          const formatter = new JSONFormatter(data);
-          document.getElementById("xrs").appendChild(formatter.render());
+          this.xresultado = data; // Almacenamos el resultado para exportación
+          
+          const container = document.getElementById("xrs");
+          if (container) {
+            container.innerHTML = ''; // Limpiar antes de mostrar nuevo resultado
+            const formatter = new JSONFormatter(data);
+            container.appendChild(formatter.render());
+          }
         } else {
-          this.resultado = null
+          this.xresultado = null
           this.utilservice.AlertMini('top-end', 'error', 'La API respondio NULL', 3000)
         }
       },
       (error) => {
-        this.resultado = error;
+        this.xresultado = error;
       }
     )
   }
@@ -265,5 +278,50 @@ export class ApiDetailsComponent implements OnInit {
   }
 
 
+  exportResultadoJSON() {
+    if (!this.xresultado) {
+      this.utilservice.AlertMini('top-end', 'warning', 'No hay datos para exportar', 3000);
+      return;
+    }
+
+    const filename = `export_api_${this.xAPI.id}_${new Date().getTime()}.json`;
+    const jsonContent = JSON.stringify(this.xresultado, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonContent);
+
+    if (window.parent && window !== window.parent) {
+      window.parent.postMessage({
+        type: 'OPEN_TXT',
+        payload: {
+          fileName: filename,
+          data: dataUri
+        }
+      }, '*');
+      this.utilservice.AlertMini('top-end', 'info', 'Exportando JSON via Puente...', 2000);
+    } else {
+      // Fallback descarga directa
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      window.URL.revokeObjectURL(url);
+    }
+  }
+
+  copyToClipboard(text?: string) {
+    const content = text || (this.xresultado ? JSON.stringify(this.xresultado, null, 2) : '');
+    if (!content) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Nada que copiar', 2000);
+      return;
+    }
+
+    navigator.clipboard.writeText(content).then(() => {
+      this.utilservice.AlertMini('top-end', 'success', 'Copiado al portapapeles', 2000);
+    }).catch(err => {
+      console.error('Error al copiar:', err);
+      this.utilservice.AlertMini('top-end', 'error', 'Error al copiar', 2000);
+    });
+  }
 
 }

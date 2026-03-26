@@ -476,8 +476,8 @@ $pastel-pink: #ffe8f5;
 /* Input Map Panel Pastel */
 .input-map-panel-pastel {
   .json-viewer-container {
-    background-color: #1e1e2e;
-    border: 1px solid #2d2d3d;
+    background-color: #f8f9fc;
+    border: 1px solid #e5e7eb;
     border-radius: 8px;
     padding: 1.25rem;
     max-height: 450px;
@@ -485,6 +485,7 @@ $pastel-pink: #ffe8f5;
     font-family: 'Fira Code', 'Monaco', 'Menlo', 'Consolas', monospace;
     font-size: 0.875rem;
     line-height: 1.6;
+    color: #4a5568;
   }
 }
 

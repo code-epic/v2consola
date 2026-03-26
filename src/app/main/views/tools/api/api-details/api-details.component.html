@@ -1,530 +1,532 @@
 <div class="content-wrapper container-xxl p-0">
-    <app-content-header [contentHeader]="contentHeader"></app-content-header>
-    <div class="content-body">
-      <section class="app-ecommerce-details">
-        <div class="card">
-          <div class="card-body">
-            <!-- Header Section -->
-            <div class="row mb-3">
-              <div class="col-12">
-                <div class="api-header-pastel">
-                  <div class="api-icon-container-pastel">
-                    <span [data-feather]="'cpu'" [size]="20" class="api-icon"></span>
+  <app-content-header [contentHeader]="contentHeader"></app-content-header>
+  <div class="content-body">
+    <section class="app-ecommerce-details">
+      <div class="card">
+        <div class="card-body">
+          <!-- Header Section -->
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="api-header-pastel">
+                <div class="api-icon-container-pastel">
+                  <span [data-feather]="'cpu'" [size]="20" class="api-icon"></span>
+                </div>
+                <div class="api-title-container">
+                  <div class="d-flex align-items-center flex-wrap mb-1">
+                    <h2 class="api-title mb-0 mr-2">{{ xAPI.funcion }}</h2>
+                    <div class="badge badge-pastel-primary mr-1">{{ xAPI.categoria }}</div>
+                    <div class="badge badge-pastel-info" *ngIf="xAPI.metodo">{{ xAPI.metodo }}</div>
                   </div>
-                  <div class="api-title-container">
-                    <div class="d-flex align-items-center flex-wrap mb-1">
-                      <h2 class="api-title mb-0 mr-2">{{ xAPI.funcion }}</h2>
-                      <div class="badge badge-pastel-primary mr-1">{{ xAPI.categoria }}</div>
-                      <div class="badge badge-pastel-info" *ngIf="xAPI.metodo">{{ xAPI.metodo }}</div>
-                    </div>
-                    <p class="api-subtitle mb-1">{{ xAPI.descripcion || xAPI.driver }}</p>
-                    <div class="api-meta d-flex align-items-center text-muted flex-wrap">
-                      <span class="d-flex align-items-center mr-3 mb-1">
-                        <span [data-feather]="'user'" [size]="12" class="mr-1"></span>
-                        <small>{{ xAPI.autor?.split('|')[1] || xAPI.autor }}</small>
-                      </span>
-                      <span class="d-flex align-items-center mb-1">
-                        <span [data-feather]="'calendar'" [size]="12" class="mr-1"></span>
-                        <small>{{ xAPI.fecha | date:'medium' }}</small>
-                      </span>
-                    </div>
+                  <p class="api-subtitle mb-1">{{ xAPI.descripcion || xAPI.driver }}</p>
+                  <div class="api-meta d-flex align-items-center text-muted flex-wrap">
+                    <span class="d-flex align-items-center mr-3 mb-1">
+                      <span [data-feather]="'user'" [size]="12" class="mr-1"></span>
+                      <small>{{ xAPI.autor?.split('|')[1] || xAPI.autor }}</small>
+                    </span>
+                    <span class="d-flex align-items-center mb-1">
+                      <span [data-feather]="'calendar'" [size]="12" class="mr-1"></span>
+                      <small>{{ xAPI.fecha | date:'medium' }}</small>
+                    </span>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            <!-- Main Content Row -->
-            <div class="row">
-              <!-- Left Column: Details & Config -->
-              <div class="col-lg-8">
-                <!-- Status Cards Row -->
-                <div class="row mb-3">
-                  <div class="col-md-4 mb-2">
-                    <div class="stat-card-pastel stat-card-status-pastel" [ngClass]="{'active': xAPI.estatus, 'inactive': !xAPI.estatus}">
-                      <div class="stat-icon-pastel">
-                        <span [data-feather]="'check-circle'" [size]="20"></span>
-                      </div>
-                      <div class="stat-info">
-                        <small>Estatus</small>
-                        <strong>{{ xAPI.estatus ? 'ACTIVO' : 'INACTIVO' }}</strong>
-                      </div>
+          <!-- Main Content Row -->
+          <div class="row">
+            <!-- Left Column: Details & Config -->
+            <div class="col-lg-8">
+              <!-- Status Cards Row -->
+              <div class="row mb-3">
+                <div class="col-md-4 mb-2">
+                  <div class="stat-card-pastel stat-card-status-pastel"
+                    [ngClass]="{'active': xAPI.estatus, 'inactive': !xAPI.estatus}">
+                    <div class="stat-icon-pastel">
+                      <span [data-feather]="'check-circle'" [size]="20"></span>
+                    </div>
+                    <div class="stat-info">
+                      <small>Estatus</small>
+                      <strong>{{ xAPI.estatus ? 'ACTIVO' : 'INACTIVO' }}</strong>
                     </div>
                   </div>
-                  <div class="col-md-4 mb-2">
-                    <div class="stat-card-pastel stat-card-version-pastel">
-                      <div class="stat-icon-pastel">
-                        <span [data-feather]="'git-branch'" [size]="20"></span>
-                      </div>
-                      <div class="stat-info">
-                        <small>Versión</small>
-                        <strong>{{ xAPI.version }}</strong>
-                      </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <div class="stat-card-pastel stat-card-version-pastel">
+                    <div class="stat-icon-pastel">
+                      <span [data-feather]="'git-branch'" [size]="20"></span>
+                    </div>
+                    <div class="stat-info">
+                      <small>Versión</small>
+                      <strong>{{ xAPI.version }}</strong>
                     </div>
                   </div>
-                  <div class="col-md-4 mb-2">
-                    <div class="stat-card-pastel stat-card-env-pastel">
-                      <div class="stat-icon-pastel">
-                        <span [data-feather]="'server'" [size]="20"></span>
-                      </div>
-                      <div class="stat-info">
-                        <small>Entorno</small>
-                        <strong>{{ xAPI.entorno | uppercase }}</strong>
-                      </div>
+                </div>
+                <div class="col-md-4 mb-2">
+                  <div class="stat-card-pastel stat-card-env-pastel">
+                    <div class="stat-icon-pastel">
+                      <span [data-feather]="'server'" [size]="20"></span>
+                    </div>
+                    <div class="stat-info">
+                      <small>Entorno</small>
+                      <strong>{{ xAPI.entorno | uppercase }}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="description-panel-pastel card-pastel mb-3">
+                <div class="card-header-pastel">
+                  <span [data-feather]="'file-text'" [size]="18" class="header-icon"></span>
+                  <h5 class="mb-0">Descripción</h5>
+                </div>
+                <div class="card-body-pastel">
+                  <div class="markdown-container">
+                    <div [innerHTML]="xAPI.descripcion || '*No hay descripción disponible para esta API.*'"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Technical Details & Configuration Row -->
+              <div class="row">
+                <!-- Technical Details -->
+                <div class="col-md-6 mb-3">
+                  <div class="card-pastel h-100">
+                    <div class="card-header-pastel">
+                      <span [data-feather]="'settings'" [size]="18" class="header-icon"></span>
+                      <h5 class="mb-0">Detalles Técnicos</h5>
+                    </div>
+                    <div class="card-body-pastel p-0">
+                      <ul class="config-list-pastel">
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'hard-drive'" [size]="16" class="icon-pastel-purple"></span>
+                            <span>Driver</span>
+                          </span>
+                          <span class="item-value">{{ xAPI.driver }}</span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'globe'" [size]="16" class="icon-pastel-blue"></span>
+                            <span>Protocolo</span>
+                          </span>
+                          <span class="item-value">{{ xAPI.protocolo }}</span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'anchor'" [size]="16" class="icon-pastel-orange"></span>
+                            <span>Puertos</span>
+                          </span>
+                          <span class="item-value">{{ xAPI.puertohttp }} / {{ xAPI.puertohttps }}</span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'users'" [size]="16" class="icon-pastel-green"></span>
+                            <span>Consumidores</span>
+                          </span>
+                          <span class="item-value">{{ xAPI.consumidores }}</span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'alert-circle'" [size]="16" class="icon-pastel-red"></span>
+                            <span>Prioridad</span>
+                          </span>
+                          <span class="item-value">{{ xAPI.prioridad }}</span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'clock'" [size]="16" class="icon-pastel-orange"></span>
+                            <span>Duración</span>
+                          </span>
+                          <span class="item-value">{{ xAPI.tiempoduracion }}ms</span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'tool'" [size]="16" class="icon-pastel-purple"></span>
+                            <span>Funcionalidad</span>
+                          </span>
+                          <span class="item-value">{{ xAPI.funcionalidad }}</span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'zap'" [size]="16" class="icon-pastel-yellow"></span>
+                            <span>Cache</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.cache === 1 ? 'active' : 'inactive'">
+                            <span *ngIf="xAPI.cache === 1" [data-feather]="'check'" [size]="16"></span>
+                            <span *ngIf="xAPI.cache !== 1" [data-feather]="'x'" [size]="16"></span>
+                          </span>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
 
-                <!-- Description -->
-                <div class="description-panel-pastel card-pastel mb-3">
-                  <div class="card-header-pastel">
-                    <span [data-feather]="'file-text'" [size]="18" class="header-icon"></span>
-                    <h5 class="mb-0">Descripción</h5>
-                  </div>
-                  <div class="card-body-pastel">
-                    <div class="markdown-container">
-                      <div [innerHTML]="xAPI.descripcion || '*No hay descripción disponible para esta API.*'"></div>
+                <!-- Configuration -->
+                <div class="col-md-6 mb-3">
+                  <div class="card-pastel h-100">
+                    <div class="card-header-pastel">
+                      <span [data-feather]="'sliders'" [size]="18" class="header-icon"></span>
+                      <h5 class="mb-0">Configuración</h5>
                     </div>
-                  </div>
-                </div>
-
-                <!-- Technical Details & Configuration Row -->
-                <div class="row">
-                  <!-- Technical Details -->
-                  <div class="col-md-6 mb-3">
-                    <div class="card-pastel h-100">
-                      <div class="card-header-pastel">
-                        <span [data-feather]="'settings'" [size]="18" class="header-icon"></span>
-                        <h5 class="mb-0">Detalles Técnicos</h5>
-                      </div>
-                      <div class="card-body-pastel p-0">
-                        <ul class="config-list-pastel">
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'hard-drive'" [size]="16" class="icon-pastel-purple"></span>
-                              <span>Driver</span>
-                            </span>
-                            <span class="item-value">{{ xAPI.driver }}</span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'globe'" [size]="16" class="icon-pastel-blue"></span>
-                              <span>Protocolo</span>
-                            </span>
-                            <span class="item-value">{{ xAPI.protocolo }}</span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'anchor'" [size]="16" class="icon-pastel-orange"></span>
-                              <span>Puertos</span>
-                            </span>
-                            <span class="item-value">{{ xAPI.puertohttp }} / {{ xAPI.puertohttps }}</span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'users'" [size]="16" class="icon-pastel-green"></span>
-                              <span>Consumidores</span>
-                            </span>
-                            <span class="item-value">{{ xAPI.consumidores }}</span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'alert-circle'" [size]="16" class="icon-pastel-red"></span>
-                              <span>Prioridad</span>
-                            </span>
-                            <span class="item-value">{{ xAPI.prioridad }}</span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'clock'" [size]="16" class="icon-pastel-orange"></span>
-                              <span>Duración</span>
-                            </span>
-                            <span class="item-value">{{ xAPI.tiempoduracion }}ms</span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'tool'" [size]="16" class="icon-pastel-purple"></span>
-                              <span>Funcionalidad</span>
-                            </span>
-                            <span class="item-value">{{ xAPI.funcionalidad }}</span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'zap'" [size]="16" class="icon-pastel-yellow"></span>
-                              <span>Cache</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.cache === 1 ? 'active' : 'inactive'">
-                              <span *ngIf="xAPI.cache === 1" [data-feather]="'check'" [size]="16"></span>
-                              <span *ngIf="xAPI.cache !== 1" [data-feather]="'x'" [size]="16"></span>
-                            </span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Configuration -->
-                  <div class="col-md-6 mb-3">
-                    <div class="card-pastel h-100">
-                      <div class="card-header-pastel">
-                        <span [data-feather]="'sliders'" [size]="18" class="header-icon"></span>
-                        <h5 class="mb-0">Configuración</h5>
-                      </div>
-                      <div class="card-body-pastel p-0">
-                        <ul class="config-list-pastel">
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'file-text'" [size]="16" class="icon-pastel-blue"></span>
-                              <span>Logs</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.logs ? 'active' : 'inactive'">
-                              <div *ngIf="xAPI.logs">
-                                <span  [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                              <div *ngIf="!xAPI.logs">
-                                <span  [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            </span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'activity'" [size]="16" class="icon-pastel-green"></span>
-                              <span>Traza</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.traza ? 'active' : 'inactive'">
-                              <div *ngIf="xAPI.traza">
-                                <span  [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                              <div *ngIf="!xAPI.traza">
-                                <span  [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            </span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'layers'" [size]="16" class="icon-pastel-purple"></span>
-                              <span>Concurrencia</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.concurrencia ? 'active' : 'inactive'">
-                              <div *ngIf="xAPI.concurrencia">
-                                <span  [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                              <div *ngIf="!xAPI.concurrencia">
-                                <span  [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                              <!-- <span *ngIf="xAPI.concurrencia" [data-feather]="'check'" [size]="16"></span>
+                    <div class="card-body-pastel p-0">
+                      <ul class="config-list-pastel">
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'file-text'" [size]="16" class="icon-pastel-blue"></span>
+                            <span>Logs</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.logs ? 'active' : 'inactive'">
+                            <div *ngIf="xAPI.logs">
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            </div>
+                            <div *ngIf="!xAPI.logs">
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            </div>
+                          </span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'activity'" [size]="16" class="icon-pastel-green"></span>
+                            <span>Traza</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.traza ? 'active' : 'inactive'">
+                            <div *ngIf="xAPI.traza">
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            </div>
+                            <div *ngIf="!xAPI.traza">
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            </div>
+                          </span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'layers'" [size]="16" class="icon-pastel-purple"></span>
+                            <span>Concurrencia</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.concurrencia ? 'active' : 'inactive'">
+                            <div *ngIf="xAPI.concurrencia">
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            </div>
+                            <div *ngIf="!xAPI.concurrencia">
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            </div>
+                            <!-- <span *ngIf="xAPI.concurrencia" [data-feather]="'check'" [size]="16"></span>
                               <span *ngIf="!xAPI.concurrencia" [data-feather]="'x'" [size]="16"></span> -->
-                            </span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'arrow-right-circle'" [size]="16" class="icon-pastel-orange"></span>
-                              <span>Migrar</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.migrar ? 'active' : 'inactive'">
-                              <div *ngIf="xAPI.migrar">
-                                <span  [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                              <div *ngIf="!xAPI.migrar">
-                                <span  [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                              <!-- <span *ngIf="xAPI.migrar" [data-feather]="'check'" [size]="16"></span>
+                          </span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'arrow-right-circle'" [size]="16" class="icon-pastel-orange"></span>
+                            <span>Migrar</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.migrar ? 'active' : 'inactive'">
+                            <div *ngIf="xAPI.migrar">
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            </div>
+                            <div *ngIf="!xAPI.migrar">
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            </div>
+                            <!-- <span *ngIf="xAPI.migrar" [data-feather]="'check'" [size]="16"></span>
                               <span *ngIf="!xAPI.migrar" [data-feather]="'x'" [size]="16"></span> -->
-                            </span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'database'" [size]="16" class="icon-pastel-purple"></span>
-                              <span>Relacional</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.relacional ? 'active' : 'inactive'">
-                              <div *ngIf="xAPI.relacional">
-                                <span  [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                              <div *ngIf="!xAPI.relacional">
-                                <span  [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                              <!-- <span *ngIf="xAPI.relacional" [data-feather]="'check'" [size]="16"></span>
+                          </span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'database'" [size]="16" class="icon-pastel-purple"></span>
+                            <span>Relacional</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.relacional ? 'active' : 'inactive'">
+                            <div *ngIf="xAPI.relacional">
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            </div>
+                            <div *ngIf="!xAPI.relacional">
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            </div>
+                            <!-- <span *ngIf="xAPI.relacional" [data-feather]="'check'" [size]="16"></span>
                               <span *ngIf="!xAPI.relacional" [data-feather]="'x'" [size]="16"></span> -->
-                            </span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'corner-down-left'" [size]="16" class="icon-pastel-blue"></span>
-                              <span>Retorna</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.retorna ? 'active' : 'inactive'">
-                              <div *ngIf="xAPI.retorna">
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                              <div *ngIf="!xAPI.retorna">
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            </span>
-                          </li>
-                          <li class="config-item-pastel">
-                            <span class="item-label-pastel">
-                              <span [data-feather]="'command'" [size]="16" class="icon-pastel-pink"></span>
-                              <span>Totalizar</span>
-                            </span>
-                            <span class="item-status-pastel" [ngClass]="xAPI.totalizar === 'S' ? 'active' : 'inactive'">
-                              <div *ngIf="xAPI.totalizar === 'S'">
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                              <div *ngIf="xAPI.totalizar !== 'S'">
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            </span>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Right Column: Control Panel -->
-              <div class="col-lg-4">
-                <div class="control-panel-pastel-sticky">
-                  <div class="card-pastel">
-                    <div class="card-header-pastel-primary">
-                      <span [data-feather]="'command'" [size]="18" class="header-icon-white"></span>
-                      <h5 class="mb-0">Panel de Control</h5>
-                    </div>
-                    <div class="card-body-pastel">
-                      <!-- Lifecycle Actions -->
-                      <div class="action-section-pastel mb-3">
-                        <div class="section-label-pastel">
-                          <span [data-feather]="'git-merge'" [size]="14"></span>
-                          <span>Ciclo de Vida</span>
-                        </div>
-                        <div class="action-buttons-pastel">
-                          <button type="button" class="btn-pastel btn-pastel-primary" 
-                                  (click)="promover('calidad', xAPI.funcion, 'promover')" 
-                                  *ngIf="xAPI.entorno == 'desarrollo'" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'chevrons-up'" [size]="18"></span>
-                            </span>
-                            <span>Promover a Calidad</span>
-                          </button>
-                          <button type="button" class="btn-pastel btn-pastel-success" 
-                                  *ngIf="xAPI.entorno == 'calidad'" 
-                                  (click)="promover('produccion', xAPI.funcion, 'instalar')" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'upload-cloud'" [size]="18"></span>
-                            </span>
-                            <span>Instalar en Producción</span>
-                          </button>
-                          <button type="button" class="btn-pastel btn-pastel-danger" 
-                                  *ngIf="xAPI.entorno != 'desarrollo'" 
-                                  (click)="promover('desarrollo', xAPI.funcion, 'reversar')" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'rotate-ccw'" [size]="18"></span>
-                            </span>
-                            <span>Reversar a Desarrollo</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- Operations -->
-                      <div class="action-section-pastel mb-3">
-                        <div class="section-label-pastel">
-                          <span [data-feather]="'tool'" [size]="14"></span>
-                          <span>Operaciones</span>
-                        </div>
-                        <div class="action-buttons-pastel">
-                          <button type="button" class="btn-pastel btn-pastel-warning" 
-                                  *ngIf="xAPI.entorno != 'produccion'" 
-                                  [routerLink]="'/tools/applications/update-api/'+xAPI.funcion+ '/' + urlControl" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'edit'" [size]="18"></span>
-                            </span>
-                            <span>Modificar API</span>
-                          </button>
-                          <button type="button" class="btn-pastel btn-pastel-info" 
-                                  (click)="ModalProbar(ModalProbarApi,xAPI)" 
-                                  *ngIf="xAPI.entorno != 'produccion'" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'play-circle'" [size]="18"></span>
-                            </span>
-                            <span>{{xAPI.entorno == 'calidad' ? 'Probar Versión' : 'Probar API'}}</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      <!-- Navigation -->
-                      <div class="action-section-pastel">
-                        <div class="action-buttons-pastel">
-                          <button [routerLink]="'/tools/applications/api-list/' + xAPI.driver + '/' + rutaURL" 
-                                  class="btn-pastel btn-pastel-secondary" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'arrow-left'" [size]="18"></span>
-                            </span>
-                            <span>Volver al Listado</span>
-                          </button>
-                        </div>
-                      </div>
+                          </span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'corner-down-left'" [size]="16" class="icon-pastel-blue"></span>
+                            <span>Retorna</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.retorna ? 'active' : 'inactive'">
+                            <div *ngIf="xAPI.retorna">
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            </div>
+                            <div *ngIf="!xAPI.retorna">
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            </div>
+                          </span>
+                        </li>
+                        <li class="config-item-pastel">
+                          <span class="item-label-pastel">
+                            <span [data-feather]="'command'" [size]="16" class="icon-pastel-pink"></span>
+                            <span>Totalizar</span>
+                          </span>
+                          <span class="item-status-pastel" [ngClass]="xAPI.totalizar === 'S' ? 'active' : 'inactive'">
+                            <div *ngIf="xAPI.totalizar === 'S'">
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            </div>
+                            <div *ngIf="xAPI.totalizar !== 'S'">
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            </div>
+                          </span>
+                        </li>
+                      </ul>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Full Width Input Map Section -->
-            <div class="row mt-3">
-              <div class="col-12">
-                <div class="input-map-panel-pastel card-pastel">
-                  <div class="card-header-pastel">
-                    <span [data-feather]="'map'" [size]="18" class="header-icon"></span>
-                    <h5 class="mb-0">Mapa de Entrada</h5>
+            <!-- Right Column: Control Panel -->
+            <div class="col-lg-4">
+              <div class="control-panel-pastel-sticky">
+                <div class="card-pastel">
+                  <div class="card-header-pastel-primary">
+                    <span [data-feather]="'command'" [size]="18" class="header-icon-white"></span>
+                    <h5 class="mb-0">Panel de Control</h5>
                   </div>
                   <div class="card-body-pastel">
-                    <div class="json-viewer-container">
-                      <div id="xrsx"></div>
+                    <!-- Lifecycle Actions -->
+                    <div class="action-section-pastel mb-3">
+                      <div class="section-label-pastel">
+                        <span [data-feather]="'git-merge'" [size]="14"></span>
+                        <span>Ciclo de Vida</span>
+                      </div>
+                      <div class="action-buttons-pastel">
+                        <button type="button" class="btn-pastel btn-pastel-primary"
+                          (click)="promover('calidad', xAPI.funcion, 'promover')" *ngIf="xAPI.entorno == 'desarrollo'"
+                          rippleEffect>
+                          <span class="btn-icon-pastel">
+                            <span [data-feather]="'chevrons-up'" [size]="18"></span>
+                          </span>
+                          <span>Promover a Calidad</span>
+                        </button>
+                        <button type="button" class="btn-pastel btn-pastel-success" *ngIf="xAPI.entorno == 'calidad'"
+                          (click)="promover('produccion', xAPI.funcion, 'instalar')" rippleEffect>
+                          <span class="btn-icon-pastel">
+                            <span [data-feather]="'upload-cloud'" [size]="18"></span>
+                          </span>
+                          <span>Instalar en Producción</span>
+                        </button>
+                        <button type="button" class="btn-pastel btn-pastel-danger" *ngIf="xAPI.entorno != 'desarrollo'"
+                          (click)="promover('desarrollo', xAPI.funcion, 'reversar')" rippleEffect>
+                          <span class="btn-icon-pastel">
+                            <span [data-feather]="'rotate-ccw'" [size]="18"></span>
+                          </span>
+                          <span>Reversar a Desarrollo</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Operations -->
+                    <div class="action-section-pastel mb-3">
+                      <div class="section-label-pastel">
+                        <span [data-feather]="'tool'" [size]="14"></span>
+                        <span>Operaciones</span>
+                      </div>
+                      <div class="action-buttons-pastel">
+                        <button type="button" class="btn-pastel btn-pastel-warning" *ngIf="xAPI.entorno != 'produccion'"
+                          [routerLink]="'/tools/applications/update-api/'+xAPI.funcion+ '/' + urlControl" rippleEffect>
+                          <span class="btn-icon-pastel">
+                            <span [data-feather]="'edit'" [size]="18"></span>
+                          </span>
+                          <span>Modificar API</span>
+                        </button>
+                        <button type="button" class="btn-pastel btn-pastel-info"
+                          (click)="ModalProbar(ModalProbarApi,xAPI)" *ngIf="xAPI.entorno != 'produccion'" rippleEffect>
+                          <span class="btn-icon-pastel">
+                            <span [data-feather]="'play-circle'" [size]="18"></span>
+                          </span>
+                          <span>{{xAPI.entorno == 'calidad' ? 'Probar Versión' : 'Probar API'}}</span>
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="action-section-pastel">
+                      <div class="action-buttons-pastel">
+                        <button [routerLink]="'/tools/applications/api-list/' + xAPI.driver + '/' + rutaURL"
+                          class="btn-pastel btn-pastel-secondary" rippleEffect>
+                          <span class="btn-icon-pastel">
+                            <span [data-feather]="'arrow-left'" [size]="18"></span>
+                          </span>
+                          <span>Volver al Listado</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        
-        </div>
-      </section>
-  
-      
-    </div>
-  </div>
-  
 
-
-
-<ng-template #ModalProbarApi let-modal>
-  <div class="modal-header modal-header-pastel">
-    <div class="d-flex align-items-center">
-      <div class="modal-icon-container">
-        <span [data-feather]="'aperture'" [size]="20"></span>
-      </div>
-      <h5 class="modal-title mb-0" id="myModalLabel160">Laboratorio de Pruebas API</h5>
-    </div>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body modal-body-pastel" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-
-      <ul ngbNav #navCenter="ngbNav" class="nav-tabs nav-tabs-pastel justify-content-center">
-        <li ngbNavItem>
-          <a ngbNavLink class="nav-link-pastel">
-            <span [data-feather]="'activity'" [size]="16" class="mr-1"></span>
-            Laboratorio de Pruebas
-          </a>
-          <ng-template ngbNavContent>
-
-            <div class="row mt-3">
-              <div class="col-xl-6 col-md-6 col-12 mb-2">
-                <div class="form-group-pastel">
-                  <label class="form-label-pastel">
-                    <span [data-feather]="'terminal'" [size]="14" class="mr-1"></span>
-                    Parámetros
-                  </label>
-                  <div class="input-wrapper-pastel">
-                    <input type="text" class="form-control-pastel" [ngModelOptions]="{standalone: true}" [(ngModel)]="xparametro"
-                      value="{{xparametro}}" id="basicInput" autocomplete="off" placeholder="Ingrese parámetros de prueba" />
+          <!-- Full Width Input Map Section -->
+          <div class="row mt-3">
+            <div class="col-12">
+              <div class="input-map-panel-pastel card-pastel">
+                <div class="card-header-pastel">
+                  <span [data-feather]="'map'" [size]="18" class="header-icon"></span>
+                  <h5 class="mb-0">Mapa de Entrada</h5>
+                </div>
+                <div class="card-body-pastel">
+                  <div class="json-viewer-container">
+                    <div id="xrsx"></div>
                   </div>
                 </div>
               </div>
-              <div class="col-xl-6 col-md-6 col-12 mb-2">
-                <div class="form-group-pastel">
-                  <label class="form-label-pastel">
-                    <span [data-feather]="'link-2'" [size]="14" class="mr-1"></span>
-                    URL API
-                  </label>
-                  <div class="input-group input-group-pastel">
-                    <input type="text" class="form-control-pastel" [ngModelOptions]="{standalone: true}" [(ngModel)]="xentorno"
-                      value="{{xentorno}}" placeholder="" [attr.disabled]="true" />
-                    <div class="input-group-append">
-                      <button class="btn-execute-pastel" (click)="ejecutarApi()" type="button">
-                        <span [data-feather]="'play'" [size]="16"></span>
-                        <span class="ml-1">Ejecutar</span>
-                      </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+
+    <ng-template #ModalProbarApi let-modal>
+      <div class="modal-header modal-header-pastel">
+        <div class="d-flex align-items-center">
+          <div class="modal-icon-container">
+            <span [data-feather]="'aperture'" [size]="20"></span>
+          </div>
+          <h5 class="modal-title mb-0" id="myModalLabel160">Laboratorio de Pruebas API</h5>
+        </div>
+        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body bg-light p-2" tabindex="0" ngbAutofocus>
+        <!-- Header Info Card -->
+        <div class="card mb-1 shadow-none border bg-white rounded-lg overflow-hidden">
+          <div class="card-body p-1">
+            <div class="row align-items-center">
+              <div class="col-md-5 border-right">
+                <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Servicio API</small>
+                <span class="text-dark font-weight-bolder text-truncate d-block" [title]="xAPI?.funcion">{{
+                  xAPI?.funcion }}</span>
+              </div>
+              <div class="col-md-5 border-right px-1">
+                <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">URL / Entorno</small>
+                <span class="text-primary font-weight-bolder text-truncate d-block" [title]="xentorno">{{ xentorno
+                  }}</span>
+              </div>
+              <div class="col-md-2 px-1 text-center">
+                <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Protocolo</small>
+                <span class="badge badge-light-primary font-weight-bolder">{{ xAPI?.protocolo || 'HTTPS' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul ngbNav #navCenter="ngbNav" class="nav-tabs nav-tabs-pastel mb-1 border-0">
+          <li ngbNavItem>
+            <a ngbNavLink class="nav-link-pastel small font-weight-bold d-flex align-items-center">
+              <span [data-feather]="'terminal'" [size]="14" class="mr-50"></span>
+              CONSOLA DE PRUEBAS
+            </a>
+            <ng-template ngbNavContent>
+              <div class="row match-height mt-1">
+                <!-- Input Column -->
+                <div class="col-md-6 mb-1">
+                  <div class="card h-100 shadow-none border mb-0 rounded-lg">
+                    <div class="card-header bg-white p-50 border-bottom">
+                      <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-dark">
+                        <span [data-feather]="'log-in'" [size]="14" class="mr-50 text-secondary"></span>
+                        CONFIGURACIÓN DE ENTRADA
+                      </h6>
+                    </div>
+                    <div class="card-body p-1">
+                      <div class="form-group mb-1">
+                        <label class="small text-muted font-weight-bold text-uppercase">Parámetros (Query Path)</label>
+                        <div class="input-group input-group-merge border-light-2">
+                          <input type="text" class="form-control form-control-sm bg-light-analysis border-0"
+                            [(ngModel)]="xparametro" placeholder="Ej: ?id=001 o /parametro" autocomplete="off" />
+                        </div>
+                      </div>
+                      <div class="form-group mb-0">
+                        <label class="small text-muted font-weight-bold text-uppercase">Valores JSON (Payload)</label>
+                        <div class="code-editor-premium shadow-sm mt-50">
+                          <ngx-codemirror [(ngModel)]="valores" [options]="codeMirrorOptions"></ngx-codemirror>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Output Column -->
+                <div class="col-md-6 mb-1">
+                  <div class="card h-100 shadow-none border mb-0 rounded-lg">
+                    <div class="card-header bg-white p-50 border-bottom d-flex justify-content-between">
+                      <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-primary">
+                        <span [data-feather]="'log-out'" [size]="14" class="mr-50"></span>
+                        RESPUESTA DEL SERVIDOR
+                      </h6>
+                      <div class="d-flex align-items-center">
+                        <button class="btn btn-sm btn-icon btn-flat-secondary rounded-circle mr-50"
+                          (click)="copyToClipboard()" title="Copiar al portapapeles">
+                          <span [data-feather]="'copy'" [size]="14" class="text-secondary"></span>
+                        </button>
+                        <button class="btn btn-sm btn-icon btn-flat-secondary rounded-circle mr-50"
+                          (click)="exportResultadoJSON()" title="Exportar JSON">
+                          <span [data-feather]="'download'" [size]="14" class="text-secondary"></span>
+                        </button>
+                        <button class="btn btn-sm btn-icon btn-flat-primary rounded-circle" (click)="ejecutarApi()"
+                          title="Ejecutar">
+                          <span [data-feather]="'play'" [size]="14" class="text-primary"></span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body p-0">
+                      <div id="xrs" class="json-viewer-premium"></div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-xl-6 col-md-6 col-12 mb-2">
-                <div class="form-group-pastel">
-                  <label class="form-label-pastel">
-                    <span [data-feather]="'edit'" [size]="14" class="mr-1"></span>
-                    Valores de Entrada
-                  </label>
-                  <div class="code-editor-wrapper-pastel">
-                    <ngx-codemirror
-                    [ngModelOptions]="{standalone: true}" 
-                    [(ngModel)]="valores"
-                    [options]="codeMirrorOptions"
-                    ></ngx-codemirror>
-                  </div>
+            </ng-template>
+          </li>
+          <li ngbNavItem>
+            <a ngbNavLink class="nav-link-pastel small font-weight-bold d-flex align-items-center">
+              <span [data-feather]="'code'" [size]="14" class="mr-50"></span>
+              FRAGMENTO DE CÓDIGO (JS)
+            </a>
+            <ng-template ngbNavContent>
+              <div class="card shadow-none border rounded-lg mt-1 overflow-hidden">
+                <div class="card-header bg-white p-50 border-bottom d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0 font-weight-bolder small text-secondary">EJEMPLO DE IMPLEMENTACIÓN</h6>
+                  <button class="btn btn-sm btn-flat-secondary py-0 px-1 font-small-2"
+                    (click)="copyToClipboard(codeTypeJs)">
+                    COPIAR CÓDIGO
+                  </button>
+                </div>
+                <div class="card-body p-0">
+                  <textarea [(ngModel)]="codeTypeJs" class="form-control border-0 font-small-2 bg-light-analysis"
+                    rows="15"
+                    style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem !important; color: #5e5873;"
+                    readonly></textarea>
                 </div>
               </div>
-              <div class="col-xl-6 col-md-6 col-12 mb-2">
-                <div class="form-group-pastel">
-                  <label class="form-label-pastel">
-                    <span [data-feather]="'check-circle'" [size]="14" class="mr-1"></span>
-                    Resultado
-                  </label>
-                  <div class="json-viewer-container">
-                    <div id="xrs"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="navCenter"></div>
+      </div>
 
-          </ng-template>
-        </li>
-        <li ngbNavItem>
-          <a ngbNavLink class="nav-link-pastel">
-            <!-- <span [data-feather]="'file-text'" [size]="16" class="mr-1"></span> -->
-            Fragmento de Código
-          </a>
-          <ng-template ngbNavContent>
-            <div class="code-snippet-container-pastel mt-3">
-              <div class="code-snippet-header">
-                <span>Ejemplo de Implementación</span>
-              </div>
-              <fieldset class="form-label-group mb-0">
-                <textarea [ngModelOptions]="{standalone: true}" [(ngModel)]="codeTypeJs"
-                    value="{{codeTypeJs}}" #textLength [maxlength]="99999999999"
-                    class="form-control-code-pastel char-textarea" id="textarea-counter" rows="17"
-                    placeholder="Ejemplo de ejecución"></textarea>
-                <label for="textarea-counter">Ejemplo de ejecución</label>
-              </fieldset>
-              <div class="code-snippet-footer">
-                <small class="textarea-counter-value">
-                  <span *ngIf="textLength" class="char-count">{{ textLength.value.length }}</span>
-                  <span *ngIf="!textLength" class="char-count">0</span>
-                  <span class="ml-1">caracteres</span>
-                </small>
-              </div>
-            </div>
-          </ng-template>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="navCenter" class="mt-2"></div>
-
-    </div>
-
-  </div>
-  <div class="modal-footer modal-footer-pastel">
-    <button type="button" class="btn-modal-pastel btn-modal-success" (click)="ejecutarApi()" rippleEffect>
-      <span [data-feather]="'play'" [size]="16"></span>
-      <span class="ml-1">Ejecutar Prueba</span>
-    </button>
-    <button type="button" class="btn-modal-pastel btn-modal-secondary" (click)="modal.close('Accept click')" rippleEffect>
-      <span [data-feather]="'x'" [size]="16"></span>
-      <span class="ml-1">Cerrar</span>
-    </button>
-  </div>
-
-</ng-template>
+      <div class="modal-footer modal-footer-pastel">
+        <button type="button" class="btn-modal-pastel btn-modal-success" (click)="ejecutarApi()" rippleEffect>
+          <span [data-feather]="'play'" [size]="16"></span>
+          <span class="ml-1">Ejecutar Prueba</span>
+        </button>
+        <button type="button" class="btn-modal-pastel btn-modal-secondary" (click)="modal.close('Accept click')"
+          rippleEffect>
+          <span [data-feather]="'x'" [size]="16"></span>
+          <span class="ml-1">Cerrar</span>
+        </button>
+      </div>
+    </ng-template>

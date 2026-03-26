@@ -43,7 +43,7 @@ export class FunctionsComponent implements OnInit {
   @BlockUI("section-block") sectionBlockUI: NgBlockUI
 
   public codeMirrorOptions: any = {
-    theme: "material",
+    theme: "idea",
     mode: "text/x-sh",
     lineNumbers: true,
     lineWrapping: true,
@@ -309,7 +309,7 @@ export class FunctionsComponent implements OnInit {
 
   clickRefresh(event) {
     this.codeMirrorOptions = {
-      theme: "material",
+      theme: "idea",
       mode: "text/x-sh",
       lineNumbers: true,
       lineWrapping: true,

@@ -390,7 +390,7 @@
                     </label>
                     <div class="form-group text-justify">
                       <ngx-codemirror [ngModelOptions]="{standalone: true}" [(ngModel)]="xAPIDB.entradas"
-                        (ngModelChange)="setEditorContent($event)" (click)="clickRefresh($event)" [options]="codeJson">
+                        (ngModelChange)="setEditorContent($event)" [options]="codeJson">
                       </ngx-codemirror>
                     </div>
                   </div>
@@ -401,8 +401,8 @@
                     </label>
                     <div class="form-group text-justify">
                       <ngx-codemirror #codemirror aria-describedby="login-codigo" [ngModelOptions]="{standalone: true}"
-                        [(ngModel)]="xAPIDB.query" (ngModelChange)="setEditorContent($event)"
-                        (click)="clickRefresh($event)" tabindex="1" [options]="codeSQL">
+                        [(ngModel)]="xAPIDB.query" (ngModelChange)="setEditorContent($event)" tabindex="1"
+                        [options]="codeSQL">
                       </ngx-codemirror>
                     </div>
                   </div>

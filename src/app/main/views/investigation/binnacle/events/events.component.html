@@ -33,7 +33,8 @@
                     <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
                         <div>
                             <h4 class="card-title mb-0">Investigación de Patrones (Eventos)</h4>
-                            <small class="text-muted">{{ filteredUsers.length }} de {{ usuarios.length }} usuarios encontrados</small>
+                            <small class="text-muted">{{ filteredUsers.length }} de {{ usuarios.length }} usuarios
+                                encontrados</small>
                         </div>
                         <div class="d-flex align-items-center" style="min-width: 320px;">
                             <span class="search-label-mini d-none d-md-inline">Filtrar</span>
@@ -49,24 +50,29 @@
                             <div class="user-card-slim animate__animated animate__fadeInUp" (click)="selectUser(user)">
                                 <div class="card-body p-1">
                                     <div class="d-flex align-items-center">
-                                        <div class="avatar avatar-md bg-light-info shadow-sm mr-1">
-                                            <span class="avatar-content font-small-3">{{ user.nombre ? user.nombre.charAt(0) : 'U' }}</span>
+                                        <div class="avatar avatar-md bg-light-primary shadow-sm mr-1">
+                                            <span class="avatar-content font-small-3 text-primary">{{ user.nombre ?
+                                                user.nombre.charAt(0) : 'U' }}</span>
                                         </div>
                                         <div class="user-info-wrapper overflow-hidden flex-grow-1">
-                                            <h6 class="mb-0 text-truncate font-weight-bolder text-info" [title]="user.nombre">
+                                            <h6 class="mb-0 text-truncate font-weight-bolder text-primary"
+                                                [title]="user.nombre">
                                                 {{ user.nombre }}
                                             </h6>
                                             <div class="d-flex align-items-center">
-                                                <span class="text-muted font-small-2 text-truncate mr-1" [title]="user.perfil">
+                                                <span class="text-muted font-small-2 text-truncate mr-1"
+                                                    [title]="user.perfil">
                                                     {{ user.perfil }}
                                                 </span>
-                                                <span class="badge badge-light-secondary badge-pill font-small-1 py-0 px-50">
+                                                <span
+                                                    class="badge badge-light-secondary badge-pill font-small-1 py-0 px-50">
                                                     {{ user.login }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="slim-action-arrow ml-50">
-                                            <span class="material-symbols-outlined font-small-3 text-info">chevron_right</span>
+                                            <span
+                                                class="material-symbols-outlined font-small-3 text-primary">chevron_right</span>
                                         </div>
                                     </div>
                                 </div>
@@ -80,7 +86,7 @@
             </div>
         </section>
 
-        <!-- Phase 2: Patrones de Actividad (Grouped Cards) -->
+        <!-- Phase 2: Patrones de Actividad -->
         <section *ngIf="currentStep === 2" class="animate__animated animate__fadeIn">
             <div class="d-flex align-items-center justify-content-between mb-2 px-1">
                 <div class="d-flex align-items-center">
@@ -88,89 +94,213 @@
                         <span class="material-symbols-outlined">arrow_back</span>
                     </button>
                     <div>
-                        <h4 class="mb-0 font-weight-bolder">Patrones de {{ selectedUser?.nombre }}</h4>
+                        <h4 class="mb-0 font-weight-bolder text-dark">Patrones de {{ selectedUser?.nombre }}</h4>
                         <small class="text-muted">Análisis de invocaciones por método y función</small>
                     </div>
                 </div>
                 <button class="btn btn-premium-glow" (click)="goToStep(3)">
-                    Generar Análisis <span class="material-symbols-outlined font-small-2 ml-50">analytics</span>
+                    GENERAR ANÁLISIS <span class="material-symbols-outlined font-small-2 ml-50">analytics</span>
                 </button>
             </div>
 
-            <div class="row mx-0">
-                <div *ngFor="let methodBlock of ListarBitacora" class="col-12 px-0 mb-2">
-                    <div class="card border shadow-sm overflow-hidden" [class.bg-light-analysis]="methodBlock.metodo === 'OTRAS OPERACIONES'">
-                        <div class="card-header border-bottom py-1 px-2 d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="icon-wrapper-mini mr-1" [class.bg-light-info]="methodBlock.metodo !== 'OTRAS OPERACIONES'">
-                                    <span class="material-symbols-outlined font-medium-1" [class.text-info]="methodBlock.metodo !== 'OTRAS OPERACIONES'">
-                                        {{ methodBlock.metodo === 'OTRAS OPERACIONES' ? 'category' : 'layers' }}
-                                    </span>
+            <!-- Enhanced Table Area -->
+            <div class="card overflow-hidden shadow-sm border-0 position-relative" style="min-height: 400px;">
+                <!-- Svelte Progress Bar - Integrated from Traza Style -->
+                <div class="svelte-progress-container-xl" *ngIf="loading"
+                    style="position: absolute; top:0; left:0; width:100%; height:4px; z-index:100; overflow:hidden;">
+                    <div class="svelte-progress-bar-xl"
+                        style="height:100%; background: linear-gradient(90deg, #7367f0, #ff9f43, #7367f0); width: 60%; position: absolute; animation: svelte-loading-xl 1.5s infinite ease-in-out;">
+                    </div>
+                </div>
+
+                <div class="row mx-0">
+                    <div *ngFor="let methodBlock of ListarBitacora" class="col-12 px-0 mb-2 border-bottom">
+                        <div class="card shadow-none border-0 overflow-hidden mb-0"
+                            [class.bg-light-analysis]="methodBlock.metodo === 'OTRAS OPERACIONES'">
+                            <div
+                                class="card-header py-1 px-2 d-flex justify-content-between align-items-center bg-transparent">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-wrapper-mini mr-1">
+                                        <span class="material-symbols-outlined font-medium-1 text-primary">
+                                            {{ methodBlock.metodo === 'OTRAS OPERACIONES' ? 'category' : 'layers' }}
+                                        </span>
+                                    </div>
+                                    <h5 class="mb-0 font-weight-bolder text-dark">{{ methodBlock.metodo || 'SIN MÉTODO'
+                                        }}</h5>
                                 </div>
-                                <h5 class="mb-0 font-weight-bolder">{{ methodBlock.metodo || 'SIN MÉTODO' }}</h5>
+                                <span class="badge badge-light-primary badge-pill">{{ methodBlock.total_invocaciones }}
+                                    INVOCACIONES</span>
                             </div>
-                            <span class="badge badge-light-info badge-pill">{{ methodBlock.total_invocaciones }} INVOCACIONES</span>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0">
-                                <thead class="bg-light">
-                                    <tr>
-                                        <th class="py-1 pl-2">FUNCIÓN / OPERACIÓN</th>
-                                        <th class="py-1">ÚLTIMO ACCESO</th>
-                                        <th class="py-1 text-center">EJECUCIONES</th>
-                                        <th class="py-1 text-right pr-2">DETALLE</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let func of methodBlock.funciones">
-                                        <td class="py-1 pl-2">
-                                            <div class="d-flex flex-column">
-                                                <span class="font-weight-bolder text-dark">{{ func.nombre_funcion }}</span>
-                                                <small class="text-muted">Versión: {{ func.v }}</small>
-                                            </div>
-                                        </td>
-                                        <td class="py-1">
-                                            <div class="d-flex align-items-center text-secondary small">
-                                                <span class="material-symbols-outlined font-small-3 mr-50">calendar_today</span>
-                                                {{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}
-                                            </div>
-                                        </td>
-                                        <td class="py-1 text-center">
-                                            <div class="badge badge-pill badge-light-secondary font-small-2">{{ func.ejecuciones }}</div>
-                                        </td>
-                                        <td class="py-1 text-right pr-2">
-                                            <button class="btn btn-sm btn-icon btn-flat-info rounded-circle" (click)="ModalExePlay(ModalPlay, func)">
-                                                <span class="material-symbols-outlined font-small-3">visibility</span>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead class="bg-light">
+                                        <tr>
+                                            <th class="py-1 pl-2">FUNCIÓN / OPERACIÓN</th>
+                                            <th class="py-1">ÚLTIMO ACCESO</th>
+                                            <th class="py-1 text-center">EJECUCIONES</th>
+                                            <th class="py-1 text-right pr-2">DETALLE</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let func of methodBlock.funciones">
+                                            <td class="py-1 pl-2">
+                                                <div class="d-flex flex-column">
+                                                    <span class="font-weight-bolder text-dark">{{ func.nombre_funcion
+                                                        }}</span>
+                                                    <small class="text-muted font-small-2">Versión: {{ func.v }}</small>
+                                                </div>
+                                            </td>
+                                            <td class="py-1">
+                                                <div class="d-flex align-items-center text-muted small">
+                                                    <span
+                                                        class="material-symbols-outlined font-small-3 mr-50 text-secondary">calendar_today</span>
+                                                    {{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}
+                                                </div>
+                                            </td>
+                                            <td class="py-1 text-center">
+                                                <div class="badge badge-pill badge-light-secondary font-small-2">{{
+                                                    func.ejecuciones }}</div>
+                                            </td>
+                                            <td class="py-1 text-right pr-2">
+                                                <button class="btn btn-sm btn-icon btn-flat-primary rounded-circle"
+                                                    (click)="ModalExePlay(ModalPlay, func)">
+                                                    <span
+                                                        class="material-symbols-outlined font-small-3">visibility</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Phase 3: Analysis -->
+        <!-- Phase 3: SRE Analysis & Reports -->
         <section *ngIf="currentStep === 3" class="animate__animated animate__fadeIn">
-            <div class="card stats-card-premium text-center py-5">
-                <div class="mb-2">
-                    <span class="material-symbols-outlined display-3 text-success">verified_user</span>
+            <!-- SRE Key Metrics Row -->
+            <div class="row mb-2">
+                <div class="col-md-3 mb-1 px-1">
+                    <div class="stats-card-premium">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper-mini mr-1">
+                                <span class="material-symbols-outlined">analytics</span>
+                            </div>
+                            <div>
+                                <h3 class="font-weight-bolder mb-0">{{ totalInvocations }}</h3>
+                                <p class="small text-muted mb-0">Total Invocaciones</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="font-weight-bolder">INFORME DE PATRONES GENERADO</h3>
-                <p class="text-muted mx-auto" style="max-width: 500px;">
-                    El análisis de auditoría para <strong>{{ selectedUser?.nombre }}</strong> ha sido completado. 
-                    Se han agrupado los eventos por patrones de comportamiento y costo computacional.
-                </p>
-                <div class="mt-3 d-flex justify-content-center gap-1">
-                    <button class="btn btn-nav-action" (click)="goToStep(2)">
-                        <span class="material-symbols-outlined mr-50 font-small-3">arrow_back</span> REVISAR PATRONES
-                    </button>
-                    <button class="btn btn-nav-action" (click)="goToStep(1)">
-                        <span class="material-symbols-outlined mr-50 font-small-3">logout</span> FINALIZAR
-                    </button>
+                <div class="col-md-3 mb-1 px-1">
+                    <div class="stats-card-premium">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper-mini mr-1">
+                                <span class="material-symbols-outlined text-info">speed</span>
+                            </div>
+                            <div>
+                                <h3 class="font-weight-bolder mb-0">{{ formatSeconds(sreMetrics.avgLatency) }}</h3>
+                                <p class="small text-muted mb-0">Latencia Media</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-1 px-1">
+                    <div class="stats-card-premium">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper-mini mr-1">
+                                <span class="material-symbols-outlined text-danger">warning</span>
+                            </div>
+                            <div>
+                                <h3 class="font-weight-bolder mb-0">{{ sreMetrics.criticalCount }}</h3>
+                                <p class="small text-muted mb-0">Eventos Críticos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-1 px-1">
+                    <div class="stats-card-premium">
+                        <div class="d-flex align-items-center">
+                            <div class="icon-wrapper-mini mr-1">
+                                <span class="material-symbols-outlined text-success">verified_user</span>
+                            </div>
+                            <div>
+                                <h3 class="font-weight-bolder mb-0">INTEGRO</h3>
+                                <p class="small text-muted mb-0">Estado Auditoría</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Analysis Content -->
+            <div class="row">
+                <!-- Activity Distribution Chart (matching Traza) -->
+                <div class="col-lg-8 px-1">
+                    <div class="card stats-card-premium h-100 mb-0">
+                        <div class="card-header border-bottom-0 pb-1">
+                            <div class="d-flex align-items-center">
+                                <span class="material-symbols-outlined mr-50 text-primary">leaderboard</span>
+                                <h4 class="card-title font-weight-bolder mb-0">CARGA POR MÉTODO (DISTRIBUCIÓN)</h4>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div *ngFor="let stat of actionStats" class="analysis-chart-item animate__animated animate__fadeInLeft">
+                                <div class="chart-label d-flex justify-content-between">
+                                    <span class="font-weight-bold">{{ stat.name }}</span>
+                                    <span class="text-muted">{{ stat.count }} inyectados</span>
+                                </div>
+                                <div class="analysis-bar-wrapper">
+                                    <div class="bar-filled" [style.width.%]="stat.percent"></div>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 p-1 rounded bg-light-analysis border-dashed">
+                                <div class="d-flex align-items-center">
+                                    <span class="material-symbols-outlined text-info mr-50">info</span>
+                                    <p class="small text-muted mb-0">
+                                        Análisis SRE: La distribución refleja los servicios con mayor impacto en el rendimiento. 
+                                        Los eventos críticos corresponden a latencias superiores a 2.0s.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export & User Info -->
+                <div class="col-lg-4 px-1 d-flex flex-column">
+                    <div class="card shadow-sm border-0 mb-2 flex-grow-1">
+                        <div class="card-body text-center py-4">
+                            <div class="avatar avatar-xl bg-light-primary shadow-sm mb-1 mx-auto" style="width: 70px; height: 70px;">
+                                <div class="avatar-content" style="font-size: 1.8rem;">{{ selectedUser?.nombre?.charAt(0) }}</div>
+                            </div>
+                            <h4 class="font-weight-bolder mb-0">{{ selectedUser?.nombre }}</h4>
+                            <small class="text-muted d-block mb-2">{{ selectedUser?.perfil }}</small>
+                            <hr class="w-100 my-2">
+                            
+                            <h6 class="text-uppercase text-muted font-weight-bold small mb-2">Generar Reportes</h6>
+                            <button class="btn btn-export-premium w-100 mb-1" (click)="exportCSV()">
+                                <span class="material-symbols-outlined mr-50">table_view</span> DESCARGAR CSV
+                            </button>
+                            <button class="btn btn-export-premium w-100" (click)="exportPDF()">
+                                <span class="material-symbols-outlined mr-50">picture_as_pdf</span> GENERAR PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <button class="btn btn-nav-action px-1" (click)="goToStep(2)">
+                            <span class="material-symbols-outlined mr-50">undo</span> VOLVER
+                        </button>
+                        <button class="btn btn-nav-action px-1" (click)="goToStep(1)">
+                            <span class="material-symbols-outlined mr-50">logout</span> FINALIZAR
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -180,18 +310,18 @@
 <!-- Modal: Logs List -->
 <ng-template #ModalPlay let-modal>
     <div class="modal-header bg-white border-bottom pb-1">
-        <h5 class="modal-title d-flex align-items-center font-weight-bolder">
-            <span class="material-symbols-outlined mr-50 text-info">list_alt</span>
+        <h5 class="modal-title d-flex align-items-center font-weight-bolder text-dark">
+            <span class="material-symbols-outlined mr-50 text-primary">list_alt</span>
             LISTADO DE EJECUCIONES
         </h5>
-        <button type="button" class="close" (click)="modal.dismiss()">&times;</button>
+        <button type="button" class="close text-secondary" (click)="modal.dismiss()">&times;</button>
     </div>
-    
+
     <div class="modal-body p-0">
         <div class="bg-light p-1 border-bottom d-flex justify-content-between align-items-center">
             <div class="ml-1">
                 <span class="text-muted small">Total registros: </span>
-                <span class="font-weight-bolder">{{ rowDataRegistros.length }}</span>
+                <span class="font-weight-bolder text-primary">{{ rowDataRegistros.length }}</span>
             </div>
             <div class="premium-search-box" style="width: 250px; height: 32px;">
                 <span class="material-symbols-outlined font-small-3">search</span>
@@ -205,6 +335,7 @@
                     <tr>
                         <th class="py-1 pl-2 small">FECHA</th>
                         <th class="py-1 small">HASH OPERACIÓN</th>
+                        <th class="py-1 small">ACCION</th>
                         <th class="py-1 text-right pr-2 small">ACCIÓN</th>
                     </tr>
                 </thead>
@@ -213,16 +344,21 @@
                         <td class="py-1 pl-2 text-dark small">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
                         <td class="py-1">
                             <div class="d-flex align-items-center">
-                                <span class="text-muted font-small-2 font-family-monospace text-truncate" style="max-width: 140px;" [title]="log.hash">{{ log.hash }}</span>
-                                <button class="btn btn-sm btn-icon btn-flat-secondary" (click)="copyToClipboard(log.hash)">
+                                <span class="text-muted font-small-2 font-family-monospace text-truncate"
+                                    style="max-width: 140px;" [title]="log.hash">{{ log.hash }}</span>
+                                <button class="btn btn-sm btn-icon btn-flat-secondary"
+                                    (click)="copyToClipboard(log.hash)">
                                     <span class="material-symbols-outlined font-small-2">content_copy</span>
                                 </button>
                             </div>
                         </td>
+                        <td class="py-1 font-small-2">{{ log.metodo }}</td>
                         <td class="py-1 text-right pr-2 border-left">
                             <div class="d-flex align-items-center justify-content-end">
-                                <span class="font-weight-bolder mr-1 font-small-2">{{ log.formattedDuration }}</span>
-                                <button class="btn btn-sm btn-flat-info rounded-circle" (click)="openDetail(log, ModalDetalle)">
+                                <span class="font-weight-bolder mr-1 font-small-2 text-dark">{{ log.formattedDuration
+                                    }}</span>
+                                <button class="btn btn-sm btn-flat-primary rounded-circle"
+                                    (click)="openDetail(log, ModalDetalle)">
                                     <span class="material-symbols-outlined font-small-3">visibility</span>
                                 </button>
                             </div>
@@ -237,29 +373,34 @@
 <!-- Modal: JSON Detail with Decompression -->
 <ng-template #ModalDetalle let-modal>
     <div class="modal-header bg-white border-bottom pb-1">
-        <h5 class="modal-title d-flex align-items-center font-weight-bolder">
+        <h5 class="modal-title d-flex align-items-center font-weight-bolder text-dark">
             <span class="material-symbols-outlined mr-50 text-primary">analytics</span>
             DETALLE DE TRANSACCIÓN
         </h5>
-        <button type="button" class="close" (click)="modal.dismiss()">&times;</button>
+        <button type="button" class="close text-secondary" (click)="modal.dismiss()">&times;</button>
     </div>
-    
+
     <div class="modal-body bg-light p-2">
         <!-- Header Info Card -->
-        <div class="card mb-1 shadow-none border bg-white">
+        <div class="card mb-1 shadow-none border bg-white rounded-lg overflow-hidden">
             <div class="card-body p-1">
                 <div class="row align-items-center">
                     <div class="col-md-4 border-right">
-                        <small class="text-muted d-block text-uppercase font-small-1">Operación</small>
-                        <span class="text-dark font-weight-bolder text-truncate d-block">{{ currentFunctionData?.nombre_funcion }}</span>
+                        <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Operación</small>
+                        <span class="text-dark font-weight-bolder text-truncate d-block">{{
+                            currentFunctionData?.nombre_funcion }}</span>
                     </div>
-                    <div class="col-md-4 border-right px-1">
-                        <small class="text-muted d-block text-uppercase font-small-1">Fecha y Hora</small>
-                        <span class="text-dark font-weight-bolder d-block">{{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                    <div class="col-md-4 border-right px-1 text-center">
+                        <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Fecha y
+                            Hora</small>
+                        <span class="text-dark font-weight-bolder d-block">{{ selectedLog?.fecha | date:'dd/MM/yyyy
+                            HH:mm:ss' }}</span>
                     </div>
-                    <div class="col-md-4 px-1">
-                        <small class="text-muted d-block text-uppercase font-small-1">Procesamiento</small>
-                        <span class="text-info font-weight-bolder d-block">{{ selectedLog?.formattedDuration }}</span>
+                    <div class="col-md-4 px-1 text-center">
+                        <small
+                            class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Procesamiento</small>
+                        <span class="text-primary font-weight-bolder d-block">{{ selectedLog?.formattedDuration
+                            }}</span>
                     </div>
                 </div>
             </div>
@@ -267,35 +408,37 @@
 
         <div class="row match-height">
             <div class="col-md-6 mb-1">
-                <div class="card h-100 shadow-none border mb-0">
+                <div class="card h-100 shadow-none border mb-0 rounded-lg">
                     <div class="card-header bg-white p-50 border-bottom">
-                        <h6 class="mb-0 font-weight-bolder small d-flex align-items-center">
-                            <span class="material-symbols-outlined mr-50 font-small-3">input</span>
+                        <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-dark">
+                            <span class="material-symbols-outlined mr-50 font-small-3 text-secondary">input</span>
                             INPUT (DECODIFICADO)
                         </h6>
                     </div>
                     <div class="card-body p-0">
-                        <pre class="m-0 p-1 bg-light font-small-2" style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">{{ decodedConsulta }}</pre>
+                        <pre class="m-0 p-1 bg-light font-small-2 border-0"
+                            style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
                     </div>
                 </div>
             </div>
             <div class="col-md-6 mb-1">
-                <div class="card h-100 shadow-none border mb-0">
+                <div class="card h-100 shadow-none border mb-0 rounded-lg">
                     <div class="card-header bg-white p-50 border-bottom">
-                        <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-info">
+                        <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-primary">
                             <span class="material-symbols-outlined mr-50 font-small-3">output</span>
                             OUTPUT (DESCOMPRIMIDO)
                         </h6>
                     </div>
                     <div class="card-body p-0">
-                        <pre class="m-0 p-1 bg-info-light font-small-2" style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;">{{ decodedContenido }}</pre>
+                        <pre class="m-0 p-1 bg-info-light font-small-2 border-0"
+                            style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="modal-footer bg-white p-50">
-        <button class="btn btn-sm btn-secondary" (click)="modal.close()">CERRAR DETALLE</button>
+        <button class="btn btn-sm btn-nav-action" (click)="modal.close()">CERRAR DETALLE</button>
     </div>
 </ng-template>

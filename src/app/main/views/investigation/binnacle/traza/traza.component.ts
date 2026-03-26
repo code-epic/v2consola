@@ -280,6 +280,40 @@ export class TrazaComponent implements OnInit {
     const splitNote = doc.splitTextToSize(note, pageWidth - 80);
     doc.text(splitNote, pageWidth / 2, 140, { align: 'center' });
 
+    // ==========================================
+    // SECCIÓN DE MÉTRICAS SRE (NUEVA)
+    // ==========================================
+    
+    // Cálculo de métricas
+    let totalLatencia = 0;
+    let countLatencia = 0;
+    this.logs.forEach(l => {
+      const seg = l.Duracion?.segundos || l.segundos || 0;
+      const latencia = (seg && typeof seg === 'number' && seg < 1000) ? seg : 0;
+      if (latencia > 0) {
+        totalLatencia += latencia;
+        countLatencia++;
+      }
+    });
+    const avgLatency = countLatencia > 0 ? (totalLatencia / countLatencia) : 0;
+
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(100, 181, 246); // Mismo azul pastel del título
+    doc.text('ANÁLISIS DE RENDIMIENTO', pageWidth / 2, 165, { align: 'center' });
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(97, 97, 97);
+    doc.text(`Latencia Media: ${this.formatDuration(avgLatency)}s`, pageWidth / 2, 175, { align: 'center' });
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(180, 180, 180);
+    const metricsNote = "Métricas Limpias: La latencia media ahora es precisa, ignorando los ruidos de datos que veíamos anteriormente.";
+    const splitMetricsNote = doc.splitTextToSize(metricsNote, pageWidth - 100);
+    doc.text(splitMetricsNote, pageWidth / 2, 185, { align: 'center' });
+
     // Fecha en el pie de la primera página
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');

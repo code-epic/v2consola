@@ -44,6 +44,15 @@ export class EventComponent implements OnInit {
   public selectedUser: any = null;
   public ListarBitacora: IMetodoBitacora[] = [];
   public currentStep: number = 1;
+  public loading: boolean = false;
+  public totalInvocations: number = 0;
+  public totalFunctions: number = 0;
+  public actionStats: any[] = [];
+  public sreMetrics: any = {
+    avgLatency: 0,
+    maxLatency: 0,
+    criticalCount: 0
+  };
 
   // Modal State
   public rowDataRegistros: any[] = [];
@@ -129,6 +138,9 @@ export class EventComponent implements OnInit {
   }
 
   async cargarEventos(login: string) {
+    this.loading = true;
+    this.totalInvocations = 0;
+    this.totalFunctions = 0;
     this.ListarBitacora = [];
     this.xAPI.funcion = "_SYS_CLogPatterns";
     this.xAPI.parametros = login;
@@ -138,6 +150,9 @@ export class EventComponent implements OnInit {
       await this.apiService.postStream<IMetodoBitacora>('crudstream', this.xAPI, (row) => {
         this.zone.run(() => {
           // Procesamiento de metadatos de la fila en tiempo real
+          console.log("row.init");
+          console.log(row);
+          console.log("row.end");
           if (row.funciones) {
             row.funciones.forEach(f => {
               if (f.logs && f.logs.length > 0) {
@@ -154,12 +169,175 @@ export class EventComponent implements OnInit {
           }
 
           this.ListarBitacora.push(row);
+          // Actualización de contadores globales para análisis
+          this.totalInvocations += row.total_invocaciones;
+          this.totalFunctions += row.funciones ? row.funciones.length : 0;
+
           // Ordenar por volumen de invocaciones para mantener jerarquía
           this.ListarBitacora.sort((a, b) => b.total_invocaciones - a.total_invocaciones);
         });
       });
     } catch (error) {
       console.error('[EventComponent] Stream Error:', error);
+    } finally {
+      this.loading = false;
+      this.actualizarEstadisticas();
+    }
+  }
+
+  actualizarEstadisticas() {
+    let statsMap = new Map<string, number>();
+    let total = 0;
+    let totalLatencia = 0;
+    let countLatencia = 0;
+    let maxLat = 0;
+    let criticals = 0;
+
+    this.ListarBitacora.forEach(metodo => {
+      const nombreMetodo = metodo.metodo || 'OTROS';
+      statsMap.set(nombreMetodo, (statsMap.get(nombreMetodo) || 0) + metodo.total_invocaciones);
+      total += metodo.total_invocaciones;
+
+      metodo.funciones.forEach(f => {
+        f.logs.forEach(l => {
+          // Filtrado SRE: Ignorar valores sospechosos (> 1000s) que suelen ser timestamps o errores de red
+          const latencia = (l.segundos && typeof l.segundos === 'number' && l.segundos < 1000) ? l.segundos : 0;
+          if (latencia > 0) {
+            totalLatencia += latencia;
+            countLatencia++;
+            if (latencia > maxLat) maxLat = latencia;
+            if (latencia > 2) criticals++; 
+          }
+        });
+      });
+    });
+
+    this.actionStats = Array.from(statsMap.entries()).map(([name, count]) => ({
+      name,
+      count,
+      percent: total > 0 ? (count / total) * 100 : 0
+    })).sort((a, b) => b.count - a.count);
+
+    this.sreMetrics = {
+      avgLatency: countLatencia > 0 ? (totalLatencia / countLatencia) : 0,
+      maxLatency: maxLat,
+      criticalCount: criticals
+    };
+  }
+
+  exportCSV() {
+    const dataToExport: any[] = [];
+    this.ListarBitacora.forEach(m => {
+      m.funciones.forEach(f => {
+        f.logs.forEach(l => {
+          dataToExport.push({
+            'Método': m.metodo,
+            'Función': f.nombre_funcion,
+            'Versión': f.v,
+            'Fecha': l.fecha,
+            'Latencia (s)': l.segundos,
+            'Hash': l.hash
+          });
+        });
+      });
+    });
+
+    const filename = `Reporte_Eventos_${this.selectedUser?.nombre || 'User'}_${new Date().getTime()}.csv`;
+    this.downloadCSV(dataToExport, filename);
+  }
+
+  downloadCSV(data: any[], filename: string) {
+    if (data.length === 0) return;
+    const separator = ';';
+    const keys = Object.keys(data[0]);
+    const csvContent = keys.join(separator) + '\n' +
+      data.map(row => keys.map(k => {
+        let cell = row[k] === null || row[k] === undefined ? '' : row[k];
+        cell = cell.toString().replace(/"/g, '""');
+        return cell.search(/("|,|\n)/g) >= 0 ? `"${cell}"` : cell;
+      }).join(separator)).join('\n');
+
+    // Adaptación para Sandra Sandbox Bridge
+    const csvBase64 = btoa(unescape(encodeURIComponent("\ufeff" + csvContent)));
+    const csvDataUri = `data:text/csv;base64,${csvBase64}`;
+
+    if (window.parent && window !== window.parent) {
+      window.parent.postMessage({
+        type: 'OPEN_CSV',
+        payload: {
+          fileName: filename,
+          data: csvDataUri
+        }
+      }, '*');
+    } else {
+      // Fallback para cuando no corre dentro de Sandra
+      const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+  }
+
+  exportPDF() {
+    const doc = new jspdf.jsPDF();
+    const pageWidth = doc.internal.pageSize.width;
+
+    // Portada
+    doc.setFontSize(22);
+    doc.setTextColor(115, 103, 240); // Indigo
+    doc.text('REPORTE DE AUDITORÍA SRE', pageWidth / 2, 50, { align: 'center' });
+
+    doc.setFontSize(14);
+    doc.setTextColor(100);
+    doc.text(`Análisis de Patrones: ${this.selectedUser?.nombre}`, pageWidth / 2, 65, { align: 'center' });
+    doc.text(`Identificador: ${this.selectedUser?.login}`, pageWidth / 2, 72, { align: 'center' });
+
+    // Métricas Resumen
+    doc.setFontSize(12);
+    doc.text('RESUMEN DE RENDIMIENTO', 20, 100);
+    doc.setFontSize(10);
+    doc.text(`- Invocaciones Totales: ${this.totalInvocations}`, 25, 110);
+    doc.text(`- Latencia Promedio: ${this.formatSeconds(this.sreMetrics.avgLatency)}`, 25, 117);
+    doc.text(`- Latencia Máxima: ${this.formatSeconds(this.sreMetrics.maxLatency)}`, 25, 124);
+    doc.text(`- Eventos Críticos (>2s): ${this.sreMetrics.criticalCount}`, 25, 131);
+
+    // Tabla de Funciones
+    const tableData: any[] = [];
+    this.ListarBitacora.forEach(m => {
+      m.funciones.forEach(f => {
+        tableData.push([m.metodo, f.nombre_funcion, f.ejecuciones, f.v]);
+      });
+    });
+
+    (doc as any).autoTable({
+      startY: 150,
+      head: [['MÉTODO', 'FUNCIÓN', 'EJECUCIONES', 'VER']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [115, 103, 240] }
+    });
+
+    const fileName = `Auditoria_SRE_${this.selectedUser?.nombre || 'User'}.pdf`.replace(/ /g, '_');
+
+    // Sandbox Bridge Download
+    const pdfDataUri = doc.output('datauristring');
+    if (window.parent && window !== window.parent) {
+      window.parent.postMessage({
+        type: 'OPEN_PDF',
+        payload: {
+          fileName: fileName,
+          data: pdfDataUri
+        }
+      }, '*');
+    } else {
+      doc.save(fileName);
     }
   }
 
@@ -170,7 +348,7 @@ export class EventComponent implements OnInit {
       ...log,
       formattedDuration: this.formatSeconds(log.segundos)
     }));
-    
+
     this.modalService.open(modal, {
       centered: true,
       size: 'lg',
@@ -180,43 +358,67 @@ export class EventComponent implements OnInit {
     });
   }
 
-  async openDetail(log: any, modal: any) {
+  openDetail(log: any, modal: any) {
     this.selectedLog = log;
     this.xAPI.funcion = "_SYS_CLogPatternsHash";
     this.xAPI.parametros = log.hash;
 
-    try {
-      // También usamos postStream aquí para mantener consistencia arquitectónica
-      await this.apiService.postStream<any>('crudstream', this.xAPI, (row) => {
-        this.zone.run(() => {
-          this.ObjDetalle = row;
-          this.decodedConsulta = this.ObjDetalle.consulta ? this.decodificar(this.ObjDetalle.consulta) : '{}';
-          try { this.decodedConsulta = JSON.stringify(JSON.parse(this.decodedConsulta), null, 2); } catch (e) { }
+    this.apiService.Ejecutar(this.xAPI).subscribe(
+      (data: any) => {
+        console.log("data.init")
+        console.log(data)
+        console.log("data.end")
+        if (!data) return;
+        this.ObjDetalle = Array.isArray(data) ? data[0] : data;
 
-          if (this.ObjDetalle.contenido && this.ObjDetalle.contenido.Data) {
-            let encodedData = this.ObjDetalle.contenido.Data.replace(/\s/g, '');
-            const unzip = this.compresionService.descomprimirZip(encodedData);
-            this.decodedContenido = unzip;
-            try { this.decodedContenido = JSON.stringify(JSON.parse(unzip), null, 2); } catch (e) { }
+        // Decodificar Consulta (Input)
+        this.decodedConsulta = this.ObjDetalle.consulta ? this.decodificar(this.ObjDetalle.consulta) : '{}';
+        try {
+          this.decodedConsulta = JSON.stringify(JSON.parse(this.decodedConsulta), null, 2);
+        } catch (e) { }
+
+        // Decodificar y Descomprimir Contenido (Output)
+        if (this.ObjDetalle.contenido && this.ObjDetalle.contenido.Data) {
+          let encodedData = this.ObjDetalle.contenido.Data.replace(/\s/g, '');
+          
+          try {
+            const firstPass = atob(encodedData);
+            // Verificación de doble codificación (H4s es el inicio de un GZIP en Base64)
+            if (firstPass.length > 3 && firstPass.substring(0, 3) === 'H4s') {
+              encodedData = firstPass;
+            }
+          } catch (e) { }
+
+          const unzip = this.compresionService.descomprimirZip(encodedData);
+          console.log("[EventComponent] Unzip success:", !!unzip, "Length:", unzip?.length);
+          this.decodedContenido = unzip;
+
+          if (unzip) {
+            try {
+              this.decodedContenido = JSON.stringify(JSON.parse(unzip), null, 2);
+            } catch (e) { 
+               console.warn("[EventComponent] JSON parse failed for unzip content");
+            }
           } else {
-            this.decodedContenido = '{}';
+            this.decodedContenido = "Error: No se pudo descomprimir el contenido.";
           }
+        } else {
+          this.decodedContenido = '{}';
+        }
 
-          this.modalService.dismissAll();
-          const modalRef = this.modalService.open(modal, {
-            size: 'xl',
-            centered: true,
-            backdrop: false,
-            keyboard: false,
-            windowClass: 'fondo-modal'
-          });
-
-          modalRef.result.then(() => this.reopenPrevious(), () => this.reopenPrevious());
+        this.modalService.dismissAll();
+        const modalRef = this.modalService.open(modal, {
+          size: 'xl',
+          centered: true,
+          backdrop: false,
+          keyboard: false,
+          windowClass: 'fondo-modal'
         });
-      });
-    } catch (error) {
-      console.error('[EventComponent] Detail Stream Error:', error);
-    }
+
+        modalRef.result.then(() => this.reopenPrevious(), () => this.reopenPrevious());
+      },
+      (error) => console.error('[EventComponent] Detail Error:', error)
+    );
   }
 
   reopenPrevious() {
@@ -226,10 +428,11 @@ export class EventComponent implements OnInit {
   }
 
   formatSeconds(seconds: number): string {
-    if (!seconds) return '0 s';
-    if (seconds < 0.001) return `${(seconds * 1000000).toFixed(2)} μs`;
-    if (seconds < 1) return `${(seconds * 1000).toFixed(2)} ms`;
-    return `${seconds.toFixed(2)} s`;
+    if (seconds === undefined || seconds === null) return '0.00ms';
+    if (seconds < 0.000001) return (seconds * 1000000).toFixed(2) + 'μs';
+    if (seconds < 0.001) return (seconds * 1000).toFixed(2) + 'ms';
+    if (seconds < 1) return (seconds * 1000).toFixed(2) + 'ms';
+    return seconds.toFixed(2) + 's';
   }
 
   decodificar(cadena: string): string {
