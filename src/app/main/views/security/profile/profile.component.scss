@@ -353,3 +353,83 @@ button {
     }
   }
 }
+
+/* Premium Search Box Styling */
+.premium-search-box {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ebe9f1;
+    border-radius: 50rem;
+    padding: 0.4rem 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+
+    &:focus-within {
+        border-color: #7367f0;
+        box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+        background: #fff;
+        transform: translateY(-1px);
+    }
+
+    input {
+        flex: 1;
+        outline: none !important;
+        font-size: 0.9rem;
+        color: #6e6b7b;
+        border: none !important;
+        background: transparent !important;
+
+        &::placeholder {
+            color: #b9b9c3;
+            font-weight: 400;
+        }
+    }
+}
+
+/* Fix Pagination sr-only & visually-hidden */
+::ng-deep {
+    .pagination {
+        .sr-only, 
+        .visually-hidden,
+        span[aria-hidden="true"] + span,
+        .page-link span:not(.material-symbols-outlined) {
+            display: none !important;
+            visibility: hidden !important;
+            width: 0 !important;
+            height: 0 !important;
+            padding: 0 !important;
+            position: absolute !important;
+        }
+
+        .page-link {
+            border: none !important;
+            background: transparent !important;
+            color: #7367f0 !important;
+            font-size: 0.95rem !important;
+            padding: 0.6rem 1rem !important;
+            border-radius: 50% !important;
+            margin: 0 2px !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            
+            &:hover {
+                background: rgba(115, 103, 240, 0.15) !important;
+            }
+        }
+
+        .page-item.active .page-link {
+            background: #7367f0 !important;
+            color: white !important;
+            box-shadow: 0 4px 10px rgba(115, 103, 240, 0.4) !important;
+        }
+
+        .page-item.disabled .page-link {
+            color: #b9b9c3 !important;
+            opacity: 0.5;
+        }
+    }
+}

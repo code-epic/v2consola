@@ -154,17 +154,17 @@ export class BinnacleComponent implements OnInit {
 
     // Recorrer los datos de la bitácora actual para llenar el CSV
     this.ListarAuditoriaLogs.forEach(e => {
-      const usuario = e.usuario
-      const userSo = e.usuarioSo || e.usuario
-      const fecha = e.fecha
-      const hora = e.hora
-      const ip = e.ip
-      const mac = e.mac
-      const compName = e.computerName
-      const tipo = e.tipo.toUpperCase()
-      const result = e.resultado
-      const hostResult = e.resultadoHost
-      const libre = e.libre
+      const usuario = e.usuario || 'N/A'
+      const userSo = e.usuarioSo || usuario
+      const fecha = e.fecha || ''
+      const hora = e.hora || ''
+      const ip = e.ip || ''
+      const mac = e.mac || ''
+      const compName = e.computerName || ''
+      const tipo = (e.tipo || '').toUpperCase()
+      const result = e.resultado || ''
+      const hostResult = e.resultadoHost || ''
+      const libre = e.libre || ''
 
       // Limpiar comas para evitar saltos en CSV
       const cleanLibre = libre.replace(/,/g, ';');

@@ -20,10 +20,23 @@ export class TrazaComponent implements OnInit {
   public loadingLogs = false; // Estado para el progress bar sutil
   public currentStep: number = 1;
 
-  // Pagination
+  // Pagination for Logs
   public page: number = 1;
-  public pageSize: number = 10; // Aumentado para mejor visualización
-  public searchText: string = ''; // Texto de búsqueda
+  public pageSize: number = 10;
+
+  // Pagination for Users
+  public userPage: number = 1;
+  public userPageSize: number = 25; // 25 cards per page
+
+  private _searchText: string = '';
+  public get searchText(): string {
+    return this._searchText;
+  }
+  public set searchText(value: string) {
+    this._searchText = value;
+    this.userPage = 1; // Reset to first page on search
+    this.page = 1;     // Reset log page as well
+  }
 
   public xAPI: IAPICore = {
     funcion: '',

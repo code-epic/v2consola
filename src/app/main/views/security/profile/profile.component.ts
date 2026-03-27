@@ -126,7 +126,8 @@ export class ProfileComponent implements OnInit {
   }
 
   public SelectionType = SelectionType
-  public basicSelectedOption: number = 100
+  public basicSelectedOption: number = 10;
+  public page: number = 1;
 
   public Perfil: IPerfil = {
     id: "",
@@ -175,6 +176,7 @@ export class ProfileComponent implements OnInit {
   public ColumnMode = ColumnMode
   public chkBoxSelected = []
   public lstPerfil = []
+  public tempPerfil = []
   public SelectOn = []
   public blApp: boolean = true
   public xaplicacion = ''
@@ -273,6 +275,7 @@ export class ProfileComponent implements OnInit {
             return (a.aplicacion || '').localeCompare(b.aplicacion || '');
           });
           this.lstPerfil = data
+          this.tempPerfil = data
         }
 
 
@@ -302,6 +305,23 @@ export class ProfileComponent implements OnInit {
       this.desactivo = 'false'
 
     }
+  }
+
+  filterUpdate(event) {
+    const val = event.target.value.toLowerCase();
+
+    // filter our data
+    const temp = this.tempPerfil.filter(function (d) {
+      return (d.nombre?.toLowerCase().indexOf(val) !== -1) || 
+             (d.descripcion?.toLowerCase().indexOf(val) !== -1) || 
+             (d.llave?.toLowerCase().indexOf(val) !== -1) || !val;
+    });
+
+    // update the rows
+    this.lstPerfil = temp;
+    // Whenever the filter changes, always go back to the first page
+    this.page = 1;
+    this.table.offset = 0;
   }
 
   onSelect({ selected }) {

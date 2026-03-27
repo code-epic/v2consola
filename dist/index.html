@@ -40,7 +40,8 @@
     .loading {
       position: absolute;
       left: 50%;
-      top: calc(35% + 240px); /* Aumentada la distancia */
+      top: calc(35% + 240px);
+      /* Aumentada la distancia */
       width: 200px;
       height: 4px;
       background-color: #f0f0f0;
@@ -57,7 +58,8 @@
       left: 0;
       width: 50%;
       height: 100%;
-      background-color: #ff9500; /* Naranja principal */
+      background-color: #ff9500;
+      /* Naranja principal */
       border-radius: 2px;
       animation: progressBar 2.5s ease-in-out infinite;
     }
@@ -68,10 +70,12 @@
         transform: translateX(-50%) translateY(0) scale(1);
         opacity: 1;
       }
+
       50% {
         transform: translateX(-50%) translateY(-10px) scale(1.03);
         opacity: 0.95;
       }
+
       100% {
         transform: translateX(-50%) translateY(0) scale(1);
         opacity: 1;
@@ -84,13 +88,16 @@
         left: -50%;
         width: 50%;
       }
+
       40% {
         width: 35%;
       }
+
       50% {
         left: 50%;
         width: 30%;
       }
+
       100% {
         left: 100%;
         width: 70%;
@@ -107,7 +114,7 @@
   <app-root> </app-root>
 
   <script>
-    (function() {
+    (function () {
       // Configuración de temas
       const config = {
         default: {
@@ -132,7 +139,7 @@
 
       // Actualizar UI
       window.document.title = theme.title;
-      
+
       const link = document.querySelector("link[rel~='icon']");
       if (link) link.href = theme.favicon;
 
@@ -146,23 +153,23 @@
           sessionStorage.setItem('net_info', JSON.stringify(event.data.payload));
         }
         if (event.data.type === 'SET_SESSION') {
-          sessionStorage.setItem('token', event.data.token);
-          console.log('Token recibido y guardado en el hijo');
+          sessionStorage.setItem('token_sandra', event.data.token);
           // window.location.reload();
         }
 
       });
-      
+
     })();
   </script>
 
-<script>
-  (function () {
+  <script>
+    (function () {
       const APP_ID = 'sandra-consola';
       const MAX_BODY_LENGTH = 5000;
-      
+
       // Referencias originales
       const original = {
+        log: console.log,
         error: console.error,
         fetch: window.fetch,
         xhr: window.XMLHttpRequest
@@ -197,20 +204,31 @@
         sendToParent('ERROR', msg);
       };
 
+      console.log = (...args) => {
+        original.log.apply(console, args);
+        const msg = args.map(a => {
+          if (a instanceof Error) return `${a.message}\\n${a.stack}`;
+          if (typeof a === 'object' && a !== null) return JSON.stringify(a, null, 2); // <- ¡Esta lógica serializa los objetos!
+          return a;
+        }).join(' ');
+
+        sendToParent('LOG', msg);
+      };
+
       // 2. Interceptar Fetch
       window.fetch = async (...args) => {
         const [resource, config] = args;
         const url = resource.toString();
         const method = config?.method || 'GET';
-        
+
         try {
           const response = await original.fetch(...args);
-          
+
           if (response.status >= 400) {
             let responseBody = '[No Body]';
             try {
               responseBody = await response.clone().text();
-            } catch (e) {}
+            } catch (e) { }
 
             sendToParent('FETCH', `HTTP Error ${response.status} ${method} ${url}`, {
               url: response.url || url,
@@ -280,16 +298,16 @@
       // Restaurar propiedades estáticas
       Object.assign(window.XMLHttpRequest, original.xhr);
 
-      sendToParent('INFO', `Monitor (XHR/Fetch) iniciado para ${APP_ID}`);
+      // sendToParent('INFO', `Monitor (XHR/Fetch) iniciado para ${APP_ID}`);
 
-      
+
     })();
-</script>
+  </script>
 
 
 
 
 
-<script src="runtime.a416c04cfdf6d4c1.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.aaf5b6ec340dbdc9.js" type="module"></script></body>
+<script src="runtime.a416c04cfdf6d4c1.js" type="module"></script><script src="polyfills.9f0e2963f7a9a1e2.js" type="module"></script><script src="scripts.4c365bdac1e5b112.js" defer></script><script src="main.811f9ceae9c70c90.js" type="module"></script></body>
 
 </html>

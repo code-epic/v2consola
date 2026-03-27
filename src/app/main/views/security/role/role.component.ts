@@ -43,6 +43,8 @@ export class RoleComponent implements OnInit {
   public titleBtnModal: string = ''
 
   public basicSelectedOption: number = 10;
+  public page: number = 1;
+
   public searchAccion = ''
   public searchSubMenu = ''
 
@@ -50,6 +52,7 @@ export class RoleComponent implements OnInit {
 
   public rowData = []
   public lstRoles = []
+  public tempRoles = []
   public temprowData = []
   public countSubMenu
 
@@ -323,11 +326,27 @@ export class RoleComponent implements OnInit {
         });
 
         this.lstRoles = lst
+        this.tempRoles = lst
       },
       (error) => {
         console.log(error)
       }
     )
+  }
+
+  filterUpdate(event) {
+    const val = event.target.value.toLowerCase();
+
+    // filter our data
+    const temp = this.tempRoles.filter(function (d) {
+      return d.rol.toLowerCase().indexOf(val) !== -1 || d.observacion.toLowerCase().indexOf(val) !== -1 || d.app.toLowerCase().indexOf(val) !== -1 || !val;
+    });
+
+    // update the rows
+    this.lstRoles = temp;
+    // Whenever the filter changes, always go back to the first page
+    this.page = 1; 
+    this.table.offset = 0;
   }
 
   LimpiarMenu() {
