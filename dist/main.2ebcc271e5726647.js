@@ -38535,160 +38535,169 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function BinnacleComponent_div_13_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r8 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 26)(1, "select", 27);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("ngModelChange", function BinnacleComponent_div_13_Template_select_ngModelChange_1_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r8);
-      const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r7.filterActividad = $event);
-    })("change", function BinnacleComponent_div_13_Template_select_change_1_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r8);
-      const ctx_r9 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r9.page = 1);
+function BinnacleComponent_div_3_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 27);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](1, "div", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+  }
+}
+
+function BinnacleComponent_div_14_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r9 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
+
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 29)(1, "select", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("ngModelChange", function BinnacleComponent_div_14_Template_select_ngModelChange_1_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r9);
+      const ctx_r8 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r8.filterActividad = $event);
+    })("change", function BinnacleComponent_div_14_Template_select_change_1_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r9);
+      const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r10.page = 1);
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "option", 28);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "option", 31);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](3, "Todas las Actividades");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](4, "option", 29);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](4, "option", 32);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](5, "LOGOUT");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "option", 30);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "option", 33);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](7, "LOGIN");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](8, "option", 31);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](8, "option", 34);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](9, "CONSULTAR");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](10, "option", 32);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](10, "option", 35);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](11, "INCLUIR");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](12, "option", 33);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](12, "option", 36);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](13, "MODIFICAR");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](14, "option", 34);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](14, "option", 37);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](15, "ELIMINAR");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
   }
 
   if (rf & 2) {
-    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngModel", ctx_r0.filterActividad);
-  }
-}
-
-function BinnacleComponent_button_15_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r11 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
-
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "button", 35);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_button_15_Template_button_click_0_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r11);
-      const ctx_r10 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r10.showSchema = !ctx_r10.showSchema);
-    });
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](1, "span", 36);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "span", 18);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
-  }
-
-  if (rf & 2) {
     const ctx_r1 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](ctx_r1.showSchema ? "Ocultar Esquema" : "Esquema");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngModel", ctx_r1.filterActividad);
   }
 }
 
-function BinnacleComponent_div_24_ng_template_2_Template(rf, ctx) {
+function BinnacleComponent_button_16_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 40)(1, "div", 41)(2, "h5", 42);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](4, "h6", 43);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "p", 44);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](7);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
-  }
+    const _r12 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
 
-  if (rf & 2) {
-    const item_r13 = ctx.item;
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r13.nombre);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r13.comentario);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate2"](" ", item_r13.autor, " \u2022 ", item_r13.version, " ");
-  }
-}
-
-function BinnacleComponent_div_24_Template(rf, ctx) {
-  if (rf & 1) {
-    const _r17 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
-
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 37)(1, "ng-select", 38);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("ngModelChange", function BinnacleComponent_div_24_Template_ng_select_ngModelChange_1_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r17);
-      const ctx_r16 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r16.selectCustomSelected = $event);
-    })("change", function BinnacleComponent_div_24_Template_ng_select_change_1_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r17);
-      const ctx_r18 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r18.LinkRuta($event));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "button", 38);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_button_16_Template_button_click_0_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r12);
+      const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r11.showSchema = !ctx_r11.showSchema);
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](2, BinnacleComponent_div_24_ng_template_2_Template, 8, 4, "ng-template", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](1, "span", 39);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "span", 19);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
   }
 
   if (rf & 2) {
     const ctx_r2 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("items", ctx_r2.rowData)("ngModel", ctx_r2.selectCustomSelected)("searchable", true)("hideSelected", false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](ctx_r2.showSchema ? "Ocultar Esquema" : "Esquema");
   }
 }
 
-function BinnacleComponent_section_25_div_1_Template(rf, ctx) {
+function BinnacleComponent_div_25_ng_template_2_Template(rf, ctx) {
   if (rf & 1) {
-    const _r23 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 43)(1, "div", 44)(2, "h5", 45);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](4, "h6", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "p", 47);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](7);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
+  }
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 47)(1, "div", 48)(2, "div", 49)(3, "div", 50)(4, "span", 51);
+  if (rf & 2) {
+    const item_r14 = ctx.item;
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r14.nombre);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r14.comentario);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate2"](" ", item_r14.autor, " \u2022 ", item_r14.version, " ");
+  }
+}
+
+function BinnacleComponent_div_25_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r18 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
+
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 40)(1, "ng-select", 41);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("ngModelChange", function BinnacleComponent_div_25_Template_ng_select_ngModelChange_1_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r18);
+      const ctx_r17 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r17.selectCustomSelected = $event);
+    })("change", function BinnacleComponent_div_25_Template_ng_select_change_1_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r18);
+      const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r19.LinkRuta($event));
+    });
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](2, BinnacleComponent_div_25_ng_template_2_Template, 8, 4, "ng-template", 42);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
+  }
+
+  if (rf & 2) {
+    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("items", ctx_r3.rowData)("ngModel", ctx_r3.selectCustomSelected)("searchable", true)("hideSelected", false);
+  }
+}
+
+function BinnacleComponent_section_26_div_1_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r24 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
+
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 50)(1, "div", 51)(2, "div", 52)(3, "div", 53)(4, "span", 54);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "div", 52)(7, "h5", 53);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "div", 55)(7, "h5", 56);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](8);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](9, "div", 54);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](10, "span", 55);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](11, "span", 56);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](9, "div", 57);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](10, "span", 58);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](11, "span", 59);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](12);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](13, "p", 57);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](13, "p", 60);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](14);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](15, "div", 58)(16, "button", 59);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_section_25_div_1_Template_button_click_16_listener() {
-      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r23);
-      const product_r20 = restoredCtx.$implicit;
-      const ctx_r22 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r22.irA("/investigation/binnacle/traza/", product_r20));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](15, "div", 61)(16, "button", 62);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_section_26_div_1_Template_button_click_16_listener() {
+      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r24);
+      const product_r21 = restoredCtx.$implicit;
+      const ctx_r23 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r23.irA("/investigation/binnacle/traza/", product_r21));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](17, "span", 60);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](17, "span", 63);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](18, "history");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](19, " Traza ");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](20, "button", 61);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_section_25_div_1_Template_button_click_20_listener() {
-      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r23);
-      const product_r20 = restoredCtx.$implicit;
-      const ctx_r24 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r24.irA("/investigation/binnacle/events/", product_r20));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](20, "button", 64);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_section_26_div_1_Template_button_click_20_listener() {
+      const restoredCtx = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r24);
+      const product_r21 = restoredCtx.$implicit;
+      const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r25.irA("/investigation/binnacle/events/", product_r21));
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](21, "span", 60);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](21, "span", 63);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](22, "event_note");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](23, " Eventos ");
@@ -38696,93 +38705,93 @@ function BinnacleComponent_section_25_div_1_Template(rf, ctx) {
   }
 
   if (rf & 2) {
-    const product_r20 = ctx.$implicit;
-    const ctx_r19 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
+    const product_r21 = ctx.$implicit;
+    const ctx_r20 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](5);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](ctx_r19.getMaterialIcon(product_r20.nombre));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](ctx_r20.getMaterialIcon(product_r21.nombre));
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", product_r20.nombre);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", product_r21.nombre);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](product_r20.nombre || "Aplicaci\u00F3n");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](product_r21.nombre || "Aplicaci\u00F3n");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](product_r20.version || "v1.0.0");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](product_r21.version || "v1.0.0");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", product_r20.comentario);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", product_r21.comentario);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", product_r20.comentario || "Sin descripci\u00F3n disponible.", " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", product_r21.comentario || "Sin descripci\u00F3n disponible.", " ");
   }
 }
 
-function BinnacleComponent_section_25_Template(rf, ctx) {
+function BinnacleComponent_section_26_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 45);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](1, BinnacleComponent_section_25_div_1_Template, 24, 6, "div", 46);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 48);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](1, BinnacleComponent_section_26_div_1_Template, 24, 6, "div", 49);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](2, "slice");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](3, "filter");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
   }
 
   if (rf & 2) {
-    const ctx_r3 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](2, 1, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](3, 5, ctx_r3.ListarBitacora, ctx_r3.searchText, "nombre"), (ctx_r3.page - 1) * ctx_r3.pageSize, ctx_r3.page * ctx_r3.pageSize));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](2, 1, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](3, 5, ctx_r4.ListarBitacora, ctx_r4.searchText, "nombre"), (ctx_r4.page - 1) * ctx_r4.pageSize, ctx_r4.page * ctx_r4.pageSize));
   }
 }
 
-function BinnacleComponent_section_26_div_2_Template(rf, ctx) {
+function BinnacleComponent_section_27_div_2_Template(rf, ctx) {
   if (rf & 1) {
-    const _r28 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
+    const _r29 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 72)(1, "div", 73)(2, "div", 74);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](3, "span", 75);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](4, "h5", 76);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 75)(1, "div", 76)(2, "div", 77);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](3, "span", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](4, "h5", 79);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](5, "Esquema de Auditor\u00EDa");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "button", 77);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_section_26_div_2_Template_button_click_6_listener() {
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r28);
-      const ctx_r27 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r27.showSchema = false);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "button", 80);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_section_27_div_2_Template_button_click_6_listener() {
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r29);
+      const ctx_r28 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r28.showSchema = false);
     });
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](7, "span", 78);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](7, "span", 81);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](8, "\u00D7");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](9, "div", 79)(10, "pre", 80);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](9, "div", 82)(10, "pre", 83);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](11);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](12, "json");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()()();
   }
 
   if (rf & 2) {
-    const ctx_r25 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
+    const ctx_r26 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"](2);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](11);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind1"](12, 1, ctx_r25.jsonEstructura));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind1"](12, 1, ctx_r26.jsonEstructura));
   }
 }
 
-function BinnacleComponent_section_26_tr_28_small_5_Template(rf, ctx) {
+function BinnacleComponent_section_27_tr_28_small_5_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "small", 83);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "small", 86);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
   }
 
   if (rf & 2) {
-    const item_r29 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]().$implicit;
+    const item_r30 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]().$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.usuarioSo);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.usuarioSo);
   }
 }
 
-function BinnacleComponent_section_26_tr_28_Template(rf, ctx) {
+function BinnacleComponent_section_27_tr_28_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "tr")(1, "td")(2, "span", 81);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "tr")(1, "td")(2, "span", 84);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](3);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](4, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](5, BinnacleComponent_section_26_tr_28_small_5_Template, 2, 1, "small", 82);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](5, BinnacleComponent_section_27_tr_28_small_5_Template, 2, 1, "small", 85);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "td")(7, "span", 83);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](6, "td")(7, "span", 86);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](8);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](9, "br");
@@ -38792,61 +38801,61 @@ function BinnacleComponent_section_26_tr_28_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](12, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](13);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](14, "br");
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](15, "small", 84);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](15, "small", 87);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](16);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](17, "td");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](18);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](19, "td")(20, "span", 85);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](19, "td")(20, "span", 88);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](21);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](22, "td")(23, "span", 86);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](22, "td")(23, "span", 89);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](24);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](25, "td")(26, "small", 87);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](25, "td")(26, "small", 90);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](27);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
   }
 
   if (rf & 2) {
-    const item_r29 = ctx.$implicit;
+    const item_r30 = ctx.$implicit;
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.usuario);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.usuario);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", item_r29.usuarioSo);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", item_r30.usuarioSo);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.fecha);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.fecha);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.hora);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.hora);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", item_r29.ip, "");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", item_r30.ip, "");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.computerName);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.computerName);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.mac);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.mac);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](3);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.tipo);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.tipo);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngClass", item_r29.resultado == "0" ? "badge-light-success" : "badge-light-danger");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngClass", item_r30.resultado == "0" ? "badge-light-success" : "badge-light-danger");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", item_r29.resultado == "0" ? "Exitoso" : "Fallido", " ");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", item_r30.resultado == "0" ? "Exitoso" : "Fallido", " ");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", item_r29.libre);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("title", item_r30.libre);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r29.libre);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate"](item_r30.libre);
   }
 }
 
-function BinnacleComponent_section_26_Template(rf, ctx) {
+function BinnacleComponent_section_27_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 62)(1, "div", 4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](2, BinnacleComponent_section_26_div_2_Template, 13, 3, "div", 63);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](3, "div", 64)(4, "div", 40)(5, "div", 65)(6, "h5", 66);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](7, "span", 67);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 65)(1, "div", 5);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](2, BinnacleComponent_section_27_div_2_Template, 13, 3, "div", 66);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](3, "div", 67)(4, "div", 43)(5, "div", 68)(6, "h5", 69);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](7, "span", 70);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](8, " Estructura Base para CSV ");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](9, "div", 68)(10, "table", 69)(11, "thead", 70)(12, "tr")(13, "th");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](9, "div", 71)(10, "table", 72)(11, "thead", 73)(12, "tr")(13, "th");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](14, "Usuario");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](15, "th");
@@ -38868,7 +38877,7 @@ function BinnacleComponent_section_26_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](26, "Otros");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](27, "tbody");
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](28, BinnacleComponent_section_26_tr_28_Template, 28, 12, "tr", 71);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](28, BinnacleComponent_section_27_tr_28_Template, 28, 12, "tr", 74);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](29, "slice");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](30, "filter");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](31, "filter");
@@ -38876,20 +38885,20 @@ function BinnacleComponent_section_26_Template(rf, ctx) {
   }
 
   if (rf & 2) {
-    const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    const ctx_r5 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", ctx_r4.showSchema);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", ctx_r5.showSchema);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngClass", ctx_r4.showSchema ? "col-md-8" : "col-12");
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngClass", ctx_r5.showSchema ? "col-md-8" : "col-12");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](25);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](29, 3, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](30, 7, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](31, 11, ctx_r4.ListarAuditoriaLogs, ctx_r4.searchText, "usuario"), ctx_r4.filterActividad, "tipo"), (ctx_r4.page - 1) * ctx_r4.pageSize, ctx_r4.page * ctx_r4.pageSize));
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngForOf", _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](29, 3, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](30, 7, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](31, 11, ctx_r5.ListarAuditoriaLogs, ctx_r5.searchText, "usuario"), ctx_r5.filterActividad, "tipo"), (ctx_r5.page - 1) * ctx_r5.pageSize, ctx_r5.page * ctx_r5.pageSize));
   }
 }
 
-function BinnacleComponent_section_27_Template(rf, ctx) {
+function BinnacleComponent_section_28_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 88)(1, "div", 89);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](2, "span", 90);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 91)(1, "div", 92);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](2, "span", 93);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](3, "h4");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](4, "No se encontraron aplicaciones");
@@ -38900,72 +38909,73 @@ function BinnacleComponent_section_27_Template(rf, ctx) {
   }
 }
 
-function BinnacleComponent_section_31_ng_template_8_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "span", 100);
-  }
-}
-
-function BinnacleComponent_section_31_ng_template_9_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "span", 101);
-  }
-}
-
-function BinnacleComponent_section_31_ng_template_10_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](0);
-  }
-
-  if (rf & 2) {
-    const page_r37 = ctx.$implicit;
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", page_r37, " ");
-  }
-}
-
-function BinnacleComponent_section_31_ng_template_11_Template(rf, ctx) {
-  if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "span", 102);
-  }
-}
-
-function BinnacleComponent_section_31_ng_template_12_Template(rf, ctx) {
+function BinnacleComponent_section_32_ng_template_8_Template(rf, ctx) {
   if (rf & 1) {
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "span", 103);
   }
 }
 
-function BinnacleComponent_section_31_Template(rf, ctx) {
+function BinnacleComponent_section_32_ng_template_9_Template(rf, ctx) {
   if (rf & 1) {
-    const _r39 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "span", 104);
+  }
+}
 
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 91)(1, "div", 4)(2, "div", 92)(3, "div", 93)(4, "ngb-pagination", 94);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("pageChange", function BinnacleComponent_section_31_Template_ngb_pagination_pageChange_4_listener($event) {
-      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r39);
-      const ctx_r38 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
-      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r38.page = $event);
+function BinnacleComponent_section_32_ng_template_10_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](0);
+  }
+
+  if (rf & 2) {
+    const page_r38 = ctx.$implicit;
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtextInterpolate1"](" ", page_r38, " ");
+  }
+}
+
+function BinnacleComponent_section_32_ng_template_11_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "span", 105);
+  }
+}
+
+function BinnacleComponent_section_32_ng_template_12_Template(rf, ctx) {
+  if (rf & 1) {
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](0, "span", 106);
+  }
+}
+
+function BinnacleComponent_section_32_Template(rf, ctx) {
+  if (rf & 1) {
+    const _r40 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵgetCurrentView"]();
+
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "section", 94)(1, "div", 5)(2, "div", 95)(3, "div", 96)(4, "ngb-pagination", 97);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("pageChange", function BinnacleComponent_section_32_Template_ngb_pagination_pageChange_4_listener($event) {
+      _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵrestoreView"](_r40);
+      const ctx_r39 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+      return _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵresetView"](ctx_r39.page = $event);
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](5, "filter");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](6, "filter");
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](7, "filter");
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](8, BinnacleComponent_section_31_ng_template_8_Template, 1, 0, "ng-template", 95);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](9, BinnacleComponent_section_31_ng_template_9_Template, 1, 0, "ng-template", 96);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](10, BinnacleComponent_section_31_ng_template_10_Template, 1, 1, "ng-template", 97);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](11, BinnacleComponent_section_31_ng_template_11_Template, 1, 0, "ng-template", 98);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](12, BinnacleComponent_section_31_ng_template_12_Template, 1, 0, "ng-template", 99);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](8, BinnacleComponent_section_32_ng_template_8_Template, 1, 0, "ng-template", 98);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](9, BinnacleComponent_section_32_ng_template_9_Template, 1, 0, "ng-template", 99);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](10, BinnacleComponent_section_32_ng_template_10_Template, 1, 1, "ng-template", 100);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](11, BinnacleComponent_section_32_ng_template_11_Template, 1, 0, "ng-template", 101);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](12, BinnacleComponent_section_32_ng_template_12_Template, 1, 0, "ng-template", 102);
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()()()();
   }
 
   if (rf & 2) {
-    const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
+    const ctx_r7 = _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵnextContext"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](4);
-    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("collectionSize", !ctx_r6.isListView ? _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](5, 7, ctx_r6.ListarBitacora, ctx_r6.searchText, "nombre").length : _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](6, 11, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](7, 15, ctx_r6.ListarAuditoriaLogs, ctx_r6.searchText, "usuario"), ctx_r6.filterActividad, "tipo").length)("page", ctx_r6.page)("pageSize", ctx_r6.pageSize)("maxSize", 5)("rotate", true)("ellipses", false)("boundaryLinks", true);
+    _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("collectionSize", !ctx_r7.isListView ? _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](5, 7, ctx_r7.ListarBitacora, ctx_r7.searchText, "nombre").length : _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](6, 11, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](7, 15, ctx_r7.ListarAuditoriaLogs, ctx_r7.searchText, "usuario"), ctx_r7.filterActividad, "tipo").length)("page", ctx_r7.page)("pageSize", ctx_r7.pageSize)("maxSize", 5)("rotate", true)("ellipses", false)("boundaryLinks", true);
   }
 }
 
 class BinnacleComponent {
   ruta;
-  apiService; // Control de vista
+  apiService;
+  zone; // Control de vista
 
   isListView = false;
   showSchema = false; // Modal / JSON de estructura
@@ -38992,6 +39002,7 @@ class BinnacleComponent {
   contentHeader;
   ListarBitacora = [];
   ListarAuditoriaLogs = [];
+  loadingStreaming = false;
   xAPI = {
     funcion: '',
     parametros: '',
@@ -39005,9 +39016,10 @@ class BinnacleComponent {
   rowData = [];
   tempData = [];
 
-  constructor(ruta, apiService) {
+  constructor(ruta, apiService, zone) {
     this.ruta = ruta;
     this.apiService = apiService;
+    this.zone = zone;
   }
 
   ngOnInit() {
@@ -39058,33 +39070,57 @@ class BinnacleComponent {
     var _this2 = this;
 
     return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this2.ListarBitacora = [];
+      _this2.loadingStreaming = true;
       _this2.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APPS_LOGS;
       _this2.xAPI.parametros = '';
 
-      _this2.apiService.Ejecutar(_this2.xAPI).subscribe(data => {
-        if (!data) return;
-        _this2.ListarBitacora = data;
-        _this2.rowData = _this2.ListarBitacora;
-        _this2.tempData = _this2.rowData;
-      }, error => {
+      try {
+        yield _this2.apiService.postStream('crudstream', _this2.xAPI, row => {
+          _this2.zone.run(() => {
+            _this2.ListarBitacora.push(row);
+
+            _this2.rowData = _this2.ListarBitacora;
+            _this2.tempData = _this2.rowData;
+          });
+        });
+      } catch (error) {
         console.error(error);
-      });
+      } finally {
+        _this2.zone.run(() => {
+          _this2.loadingStreaming = false;
+        });
+      }
     })();
   }
 
   CargarReporteAuditoriaLogs(print = true) {
-    this.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APPS_AUDITORIA_LOGS;
-    this.xAPI.parametros = '';
-    this.apiService.Ejecutar(this.xAPI).subscribe(data => {
-      if (!data) return;
-      this.ListarAuditoriaLogs = data;
+    var _this3 = this;
 
-      if (print) {
-        this.ImprimirReporteLog();
+    return (0,_Users_crash_dev_angular_code_epic_io_v2consola_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this3.ListarAuditoriaLogs = [];
+      _this3.loadingStreaming = true;
+      _this3.xAPI.funcion = environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.functions.CONSULTAR_APPS_AUDITORIA_LOGS;
+      _this3.xAPI.parametros = '';
+
+      try {
+        yield _this3.apiService.postStream('crudstream', _this3.xAPI, row => {
+          _this3.zone.run(() => {
+            _this3.ListarAuditoriaLogs.push(row);
+          });
+        });
+
+        if (print) {
+          _this3.ImprimirReporteLog();
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        _this3.zone.run(() => {
+          _this3.loadingStreaming = false;
+        });
       }
-    }, error => {
-      console.error(error);
-    });
+    })();
   } // ==========================================
   // Exportación y Gestión Global
   // ==========================================
@@ -39149,66 +39185,70 @@ class BinnacleComponent {
   }
 
   static ɵfac = function BinnacleComponent_Factory(t) {
-    return new (t || BinnacleComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_8__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_2__.ApiService));
+    return new (t || BinnacleComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_angular_router__WEBPACK_IMPORTED_MODULE_8__.Router), _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_services_apicore_api_service__WEBPACK_IMPORTED_MODULE_2__.ApiService), _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdirectiveInject"](_angular_core__WEBPACK_IMPORTED_MODULE_7__.NgZone));
   };
   static ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵdefineComponent"]({
     type: BinnacleComponent,
     selectors: [["app-binnacle"]],
     hostAttrs: [1, "ecommerce-application"],
-    decls: 35,
-    vars: 33,
-    consts: [[1, "content-wrapper", "container-xxl", "p-0"], [3, "contentHeader"], [1, "content-body"], ["id", "ecommerce-searchbar", 1, "ecommerce-searchbar"], [1, "row"], [1, "col-12", "mb-2"], [1, "d-flex", "justify-content-between", "align-items-center", "flex-wrap"], [1, "d-flex", "align-items-center", "flex-grow-1", "mr-2", "mb-1", "mb-md-0", 2, "max-width", "800px"], [1, "input-group", "input-group-merge", "mr-1", 2, "max-width", "400px"], ["type", "text", "id", "shop-search", "placeholder", "Buscar...", "aria-label", "Search...", "aria-describedby", "shop-search", 1, "form-control", "search-product", 3, "ngModel", "ngModelChange"], [1, "input-group-append"], [1, "input-group-text"], ["data-feather", "search", 1, "text-muted"], ["class", "ml-1", "style", "min-width: 180px;", 4, "ngIf"], [1, "d-flex", "align-items-center"], ["class", "btn btn-outline-info mr-1 d-flex align-items-center", "rippleEffect", "", "title", "Ver Esquema de Datos", 3, "click", 4, "ngIf"], ["rippleEffect", "", "title", "Imprimir Reporte CSV", 1, "btn", "btn-outline-secondary", "mr-1", "d-flex", "align-items-center", 3, "click"], ["data-feather", "printer", 1, "mr-50", 2, "width", "16px", "height", "16px"], [1, "d-none", "d-sm-inline"], ["rippleEffect", "", "title", "Ver Listado Global", 1, "btn", "btn-primary", "d-flex", "align-items-center", 3, "click"], ["data-feather", "list", 1, "mr-50", 2, "width", "16px", "height", "16px"], ["class", "col-12 mt-3", 4, "ngIf"], ["id", "wishlist", "class", "grid-view wishlist-items", 4, "ngIf"], ["class", "global-list-view", 4, "ngIf"], ["class", "empty-state", 4, "ngIf"], ["id", "ecommerce-pagination", 4, "ngIf"], [1, "ml-1", 2, "min-width", "180px"], [1, "form-control", 3, "ngModel", "ngModelChange", "change"], ["value", ""], ["value", "LOGOUT"], ["value", "LOGIN"], ["value", "CONSULTAR"], ["value", "INCLUIR"], ["value", "MODIFICAR"], ["value", "ELIMINAR"], ["rippleEffect", "", "title", "Ver Esquema de Datos", 1, "btn", "btn-outline-info", "mr-1", "d-flex", "align-items-center", 3, "click"], ["data-feather", "info", 1, "mr-50", 2, "width", "16px", "height", "16px"], [1, "col-12", "mt-3"], ["bindLabel", "nombre", "bindValue", "id", "placeholder", "Seleccione API espec\u00EDfica", "appendTo", "body", 3, "items", "ngModel", "searchable", "hideSelected", "ngModelChange", "change"], ["ng-option-tmp", ""], [1, "card"], [1, "card-body"], [1, "card-title"], [1, "card-subtitle", "mb-2", "text-muted"], [1, "card-text"], ["id", "wishlist", 1, "grid-view", "wishlist-items"], ["class", "card binnacle-elegant-card", 4, "ngFor", "ngForOf"], [1, "card", "binnacle-elegant-card"], [1, "binnacle-card-body"], [1, "d-flex", "align-items-center", "mb-1"], [1, "binnacle-icon-wrapper"], [1, "material-symbols-outlined"], [1, "overflow-hidden", 2, "flex", "1"], [1, "binnacle-card-title", 3, "title"], [1, "binnacle-card-subtitle"], ["data-feather", "tag", 1, "icon"], [1, "text-truncate"], [1, "binnacle-card-desc", 3, "title"], [1, "binnacle-card-actions"], [1, "btn", "btn-outline-primary", "btn-sm", "rounded-pill", 3, "click"], [1, "material-symbols-outlined", "me-50"], [1, "btn", "btn-flat-secondary", "btn-sm", "rounded-pill", 3, "click"], [1, "global-list-view"], ["class", "col-md-4 animate__animated animate__fadeInLeft", 4, "ngIf"], [1, "animate__animated", "animate__fadeIn", 3, "ngClass"], [1, "card-header", "d-flex", "justify-content-between", "align-items-center", "border-bottom", "p-1"], [1, "mb-0", "d-flex", "align-items-center"], ["data-feather", "database", 1, "mr-50", "text-secondary"], [1, "table-responsive", "custom-scroll", 2, "max-height", "480px", "overflow-y", "auto"], [1, "table", "table-hover", "table-sm", "font-small-2"], [1, "thead-light"], [4, "ngFor", "ngForOf"], [1, "col-md-4", "animate__animated", "animate__fadeInLeft"], [1, "card", "card-pastel"], [1, "card-header-pastel-primary"], ["data-feather", "terminal", 1, "header-icon-white", "mr-50"], [1, "mb-0", "text-white"], ["type", "button", 1, "close", "text-white", "ml-auto", 3, "click"], ["aria-hidden", "true"], [1, "card-body", "p-0", "custom-scroll", 2, "max-height", "480px", "overflow-y", "auto"], [1, "m-0", "p-1", "bg-light-analysis", "font-small-2", 2, "font-family", "'JetBrains Mono', monospace", "color", "#5e5873"], [1, "font-weight-bold"], ["class", "text-muted", 4, "ngIf"], [1, "text-muted"], [1, "text-secondary"], [1, "badge", "badge-light-info", "text-uppercase"], [1, "badge", 3, "ngClass"], [1, "text-truncate", "d-inline-block", 2, "max-width", "300px", 3, "title"], [1, "empty-state"], [1, "empty-icon"], ["data-feather", "inbox", 2, "width", "64px", "height", "64px"], ["id", "ecommerce-pagination"], [1, "col-sm-12"], [1, "d-flex", "justify-content-center"], ["aria-label", "Pagination", 3, "collectionSize", "page", "pageSize", "maxSize", "rotate", "ellipses", "boundaryLinks", "pageChange"], ["ngbPaginationFirst", ""], ["ngbPaginationPrevious", ""], ["ngbPaginationNumber", ""], ["ngbPaginationNext", ""], ["ngbPaginationLast", ""], ["data-feather", "chevrons-left", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"], ["data-feather", "chevron-left", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"], ["data-feather", "chevron-right", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"], ["data-feather", "chevrons-right", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"]],
+    decls: 36,
+    vars: 34,
+    consts: [[1, "content-wrapper", "container-xxl", "p-0"], [3, "contentHeader"], [1, "content-body", "position-relative"], ["class", "svelte-progress-container", 4, "ngIf"], ["id", "ecommerce-searchbar", 1, "ecommerce-searchbar"], [1, "row"], [1, "col-12", "mb-2"], [1, "d-flex", "justify-content-between", "align-items-center", "flex-wrap"], [1, "d-flex", "align-items-center", "flex-grow-1", "mr-2", "mb-1", "mb-md-0", 2, "max-width", "800px"], [1, "input-group", "input-group-merge", "mr-1", 2, "max-width", "400px"], ["type", "text", "id", "shop-search", "placeholder", "Buscar...", "aria-label", "Search...", "aria-describedby", "shop-search", 1, "form-control", "search-product", 3, "ngModel", "ngModelChange"], [1, "input-group-append"], [1, "input-group-text"], ["data-feather", "search", 1, "text-muted"], ["class", "ml-1", "style", "min-width: 180px;", 4, "ngIf"], [1, "d-flex", "align-items-center"], ["class", "btn btn-outline-info mr-1 d-flex align-items-center", "rippleEffect", "", "title", "Ver Esquema de Datos", 3, "click", 4, "ngIf"], ["rippleEffect", "", "title", "Imprimir Reporte CSV", 1, "btn", "btn-outline-secondary", "mr-1", "d-flex", "align-items-center", 3, "click"], ["data-feather", "printer", 1, "mr-50", 2, "width", "16px", "height", "16px"], [1, "d-none", "d-sm-inline"], ["rippleEffect", "", "title", "Ver Listado Global", 1, "btn", "btn-primary", "d-flex", "align-items-center", 3, "click"], ["data-feather", "list", 1, "mr-50", 2, "width", "16px", "height", "16px"], ["class", "col-12 mt-3", 4, "ngIf"], ["id", "wishlist", "class", "grid-view wishlist-items", 4, "ngIf"], ["class", "global-list-view", 4, "ngIf"], ["class", "empty-state", 4, "ngIf"], ["id", "ecommerce-pagination", 4, "ngIf"], [1, "svelte-progress-container"], [1, "svelte-progress-bar"], [1, "ml-1", 2, "min-width", "180px"], [1, "form-control", 3, "ngModel", "ngModelChange", "change"], ["value", ""], ["value", "LOGOUT"], ["value", "LOGIN"], ["value", "CONSULTAR"], ["value", "INCLUIR"], ["value", "MODIFICAR"], ["value", "ELIMINAR"], ["rippleEffect", "", "title", "Ver Esquema de Datos", 1, "btn", "btn-outline-info", "mr-1", "d-flex", "align-items-center", 3, "click"], ["data-feather", "info", 1, "mr-50", 2, "width", "16px", "height", "16px"], [1, "col-12", "mt-3"], ["bindLabel", "nombre", "bindValue", "id", "placeholder", "Seleccione API espec\u00EDfica", "appendTo", "body", 3, "items", "ngModel", "searchable", "hideSelected", "ngModelChange", "change"], ["ng-option-tmp", ""], [1, "card"], [1, "card-body"], [1, "card-title"], [1, "card-subtitle", "mb-2", "text-muted"], [1, "card-text"], ["id", "wishlist", 1, "grid-view", "wishlist-items"], ["class", "card binnacle-elegant-card", 4, "ngFor", "ngForOf"], [1, "card", "binnacle-elegant-card"], [1, "binnacle-card-body"], [1, "d-flex", "align-items-center", "mb-1"], [1, "binnacle-icon-wrapper"], [1, "material-symbols-outlined"], [1, "overflow-hidden", 2, "flex", "1"], [1, "binnacle-card-title", 3, "title"], [1, "binnacle-card-subtitle"], ["data-feather", "tag", 1, "icon"], [1, "text-truncate"], [1, "binnacle-card-desc", 3, "title"], [1, "binnacle-card-actions"], [1, "btn", "btn-outline-primary", "btn-sm", "rounded-pill", 3, "click"], [1, "material-symbols-outlined", "me-50"], [1, "btn", "btn-flat-secondary", "btn-sm", "rounded-pill", 3, "click"], [1, "global-list-view"], ["class", "col-md-4 animate__animated animate__fadeInLeft", 4, "ngIf"], [1, "animate__animated", "animate__fadeIn", 3, "ngClass"], [1, "card-header", "d-flex", "justify-content-between", "align-items-center", "border-bottom", "p-1"], [1, "mb-0", "d-flex", "align-items-center"], ["data-feather", "database", 1, "mr-50", "text-secondary"], [1, "table-responsive", "custom-scroll", 2, "max-height", "480px", "overflow-y", "auto"], [1, "table", "table-hover", "table-sm", "font-small-2"], [1, "thead-light"], [4, "ngFor", "ngForOf"], [1, "col-md-4", "animate__animated", "animate__fadeInLeft"], [1, "card", "card-pastel"], [1, "card-header-pastel-primary"], ["data-feather", "terminal", 1, "header-icon-white", "mr-50"], [1, "mb-0", "text-white"], ["type", "button", 1, "close", "text-white", "ml-auto", 3, "click"], ["aria-hidden", "true"], [1, "card-body", "p-0", "custom-scroll", 2, "max-height", "480px", "overflow-y", "auto"], [1, "m-0", "p-1", "bg-light-analysis", "font-small-2", 2, "font-family", "'JetBrains Mono', monospace", "color", "#5e5873"], [1, "font-weight-bold"], ["class", "text-muted", 4, "ngIf"], [1, "text-muted"], [1, "text-secondary"], [1, "badge", "badge-light-info", "text-uppercase"], [1, "badge", 3, "ngClass"], [1, "text-truncate", "d-inline-block", 2, "max-width", "300px", 3, "title"], [1, "empty-state"], [1, "empty-icon"], ["data-feather", "inbox", 2, "width", "64px", "height", "64px"], ["id", "ecommerce-pagination"], [1, "col-sm-12"], [1, "d-flex", "justify-content-center"], ["aria-label", "Pagination", 3, "collectionSize", "page", "pageSize", "maxSize", "rotate", "ellipses", "boundaryLinks", "pageChange"], ["ngbPaginationFirst", ""], ["ngbPaginationPrevious", ""], ["ngbPaginationNumber", ""], ["ngbPaginationNext", ""], ["ngbPaginationLast", ""], ["data-feather", "chevrons-left", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"], ["data-feather", "chevron-left", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"], ["data-feather", "chevron-right", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"], ["data-feather", "chevrons-right", 1, "font-weight-bolder", 2, "width", "18px", "height", "18px"]],
     template: function BinnacleComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](1, "app-content-header", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "div", 2)(3, "section", 3)(4, "div", 4)(5, "div", 5)(6, "div", 6)(7, "div", 7)(8, "div", 8)(9, "input", 9);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("ngModelChange", function BinnacleComponent_Template_input_ngModelChange_9_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](2, "div", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](3, BinnacleComponent_div_3_Template, 2, 0, "div", 3);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](4, "section", 4)(5, "div", 5)(6, "div", 6)(7, "div", 7)(8, "div", 8)(9, "div", 9)(10, "input", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("ngModelChange", function BinnacleComponent_Template_input_ngModelChange_10_listener($event) {
           return ctx.searchText = $event;
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](10, "div", 10)(11, "span", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](12, "i", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](11, "div", 11)(12, "span", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](13, "i", 13);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](13, BinnacleComponent_div_13_Template, 16, 1, "div", 13);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](14, BinnacleComponent_div_14_Template, 16, 1, "div", 14);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](14, "div", 14);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](15, BinnacleComponent_button_15_Template, 4, 1, "button", 15);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](16, "button", 16);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_Template_button_click_16_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](15, "div", 15);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](16, BinnacleComponent_button_16_Template, 4, 1, "button", 16);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](17, "button", 17);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_Template_button_click_17_listener() {
           return ctx.CargarReporteAuditoriaLogs();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](17, "span", 17);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](18, "span", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](19, "Imprimir Reporte");
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](18, "span", 18);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](19, "span", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](20, "Imprimir Reporte");
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](20, "button", 19);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_Template_button_click_20_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](21, "button", 20);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵlistener"]("click", function BinnacleComponent_Template_button_click_21_listener() {
           return ctx.MostrarListadoGlobal();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](21, "span", 20);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](22, "span", 18);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](23, "Listado Global");
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelement"](22, "span", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementStart"](23, "span", 19);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtext"](24, "Listado Global");
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](24, BinnacleComponent_div_24_Template, 3, 4, "div", 21);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](25, BinnacleComponent_div_25_Template, 3, 4, "div", 22);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](25, BinnacleComponent_section_25_Template, 4, 9, "section", 22);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](26, BinnacleComponent_section_26_Template, 32, 15, "section", 23);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](27, BinnacleComponent_section_27_Template, 7, 0, "section", 24);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](28, "filter");
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](26, BinnacleComponent_section_26_Template, 4, 9, "section", 23);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](27, BinnacleComponent_section_27_Template, 32, 15, "section", 24);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](28, BinnacleComponent_section_28_Template, 7, 0, "section", 25);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](29, "filter");
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](30, "filter");
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](31, BinnacleComponent_section_31_Template, 13, 19, "section", 25);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](32, "filter");
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](31, "filter");
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵtemplate"](32, BinnacleComponent_section_32_Template, 13, 19, "section", 26);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](33, "filter");
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](34, "filter");
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipe"](35, "filter");
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵelementEnd"]()();
       }
 
       if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("contentHeader", ctx.contentHeader);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](8);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", ctx.loadingStreaming);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](7);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngModel", ctx.searchText);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](4);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", ctx.isListView);
@@ -39221,13 +39261,13 @@ class BinnacleComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", ctx.isListView);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", !ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](28, 9, ctx.ListarBitacora, ctx.searchText, "nombre").length === 0 || ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](29, 13, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](30, 17, ctx.ListarAuditoriaLogs, ctx.searchText, "usuario"), ctx.filterActividad, "tipo").length === 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", !ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](29, 10, ctx.ListarBitacora, ctx.searchText, "nombre").length === 0 || ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](30, 14, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](31, 18, ctx.ListarAuditoriaLogs, ctx.searchText, "usuario"), ctx.filterActividad, "tipo").length === 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵadvance"](4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", !ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](32, 21, ctx.ListarBitacora, ctx.searchText, "nombre").length > 0 || ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](33, 25, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](34, 29, ctx.ListarAuditoriaLogs, ctx.searchText, "usuario"), ctx.filterActividad, "tipo").length > 0);
+        _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵproperty"]("ngIf", !ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](33, 22, ctx.ListarBitacora, ctx.searchText, "nombre").length > 0 || ctx.isListView && _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](34, 26, _angular_core__WEBPACK_IMPORTED_MODULE_7__["ɵɵpipeBind3"](35, 30, ctx.ListarAuditoriaLogs, ctx.searchText, "usuario"), ctx.filterActividad, "tipo").length > 0);
       }
     },
     dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_9__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_9__.NgForOf, _angular_common__WEBPACK_IMPORTED_MODULE_9__.NgIf, app_layout_components_content_header_content_header_component__WEBPACK_IMPORTED_MODULE_3__.ContentHeaderComponent, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgSelectOption, _angular_forms__WEBPACK_IMPORTED_MODULE_10__["ɵNgSelectMultipleOption"], _angular_forms__WEBPACK_IMPORTED_MODULE_10__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.SelectControlValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_10__.NgModel, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__.NgbPagination, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__.NgbPaginationFirst, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__.NgbPaginationLast, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__.NgbPaginationNext, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__.NgbPaginationNumber, _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_11__.NgbPaginationPrevious, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_12__.NgSelectComponent, _ng_select_ng_select__WEBPACK_IMPORTED_MODULE_12__.NgOptionTemplateDirective, _core_directives_core_ripple_effect_core_ripple_effect_directive__WEBPACK_IMPORTED_MODULE_4__.RippleEffectDirective, _core_directives_core_feather_icons_core_feather_icons__WEBPACK_IMPORTED_MODULE_5__.FeatherIconDirective, _angular_flex_layout_extended__WEBPACK_IMPORTED_MODULE_13__.DefaultClassDirective, _angular_common__WEBPACK_IMPORTED_MODULE_9__.JsonPipe, _angular_common__WEBPACK_IMPORTED_MODULE_9__.SlicePipe, _core_pipes_filter_pipe__WEBPACK_IMPORTED_MODULE_6__.FilterPipe],
-    styles: ["@import url(\"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200\");\n@import url(\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\");\n.ecommerce-application .content-body {\n  position: relative;\n}\n.ecommerce-application .body-content-overlay {\n  position: fixed !important;\n  z-index: 12 !important;\n}\n.ecommerce-application .sidebar-shop {\n  margin-top: 0.85rem;\n  width: 260px;\n  z-index: 998;\n}\n.ecommerce-application .sidebar-shop .filter-heading {\n  margin-bottom: 1.75rem;\n}\n.ecommerce-application .sidebar-shop .filter-title {\n  margin-bottom: 1rem;\n  margin-top: 2.5rem;\n}\n.ecommerce-application .sidebar-shop .price-range li:not(:last-child),\n.ecommerce-application .sidebar-shop .categories-list li:not(:last-child) {\n  margin-bottom: 0.75rem;\n}\n.ecommerce-application .sidebar-shop .brand-list li {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 0.75rem;\n}\n.ecommerce-application .sidebar-shop .range-slider.noUi-horizontal .noUi-handle .noUi-tooltip {\n  opacity: 0;\n  transform: translate(-50%, -15%);\n}\n.ecommerce-application .sidebar-shop .range-slider.noUi-horizontal .noUi-handle .noUi-tooltip:before {\n  content: \"$ \";\n}\n.ecommerce-application .sidebar-shop .range-slider.noUi-horizontal .noUi-handle:active .noUi-tooltip {\n  opacity: 1;\n}\n.ecommerce-application .sidebar-shop .ratings-list {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 0.5rem;\n}\n.ecommerce-application .sidebar-shop .ratings-list:last-child {\n  margin-bottom: 2.5rem;\n}\n.ecommerce-application .sidebar-shop .ratings-list ul {\n  margin-bottom: 0;\n}\n.ecommerce-application .sidebar-shop .ratings-list ul .ratings-list-item svg,\n.ecommerce-application .sidebar-shop .ratings-list ul .ratings-list-item i {\n  width: 1.25rem;\n  height: 1.25rem;\n  font-size: 1.25rem;\n}\n.ecommerce-application .filled-star {\n  fill: #ff9f43;\n  stroke: #ff9f43;\n  color: #ff9f43;\n}\n.ecommerce-application .unfilled-star {\n  stroke: #babfc7;\n  color: #babfc7;\n}\n.ecommerce-application .ecommerce-header-items {\n  display: flex;\n  justify-content: space-between;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler {\n  display: flex;\n  align-items: center;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler {\n  padding-left: 0;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler:active, .ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler:focus {\n  outline: 0;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler .navbar-toggler-icon {\n  height: auto;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler .navbar-toggler-icon i,\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler .navbar-toggler-icon svg {\n  color: #6e6b7b;\n  height: 1.5rem;\n  width: 1.5rem;\n  font-size: 1.5rem;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .search-results {\n  font-weight: 500;\n  color: #5e5873;\n}\n.ecommerce-application .ecommerce-searchbar .input-group {\n  box-shadow: 0 2px 8px 0 rgba(34, 41, 47, 0.14);\n  border-radius: 0.3rem;\n}\n.ecommerce-application .search-product,\n.ecommerce-application .input-group-text {\n  height: 48px;\n  border: none;\n  font-size: 0.95rem;\n  padding-left: 1.25rem;\n}\n.ecommerce-application .search-product::placeholder,\n.ecommerce-application .input-group-text::placeholder {\n  font-size: 0.95rem;\n}\n.ecommerce-application .ecommerce-card:hover {\n  transform: translateY(-5px);\n  box-shadow: 0 4px 25px 0 rgba(34, 41, 47, 0.25);\n}\n.ecommerce-application .ecommerce-card .item-rating ul {\n  margin-bottom: 0;\n}\n.ecommerce-application .ecommerce-card .item-rating svg,\n.ecommerce-application .ecommerce-card .item-rating i {\n  height: 1.143rem;\n  width: 1.143rem;\n  font-size: 1.143rem;\n}\n.ecommerce-application .ecommerce-card .item-name {\n  margin-bottom: 0;\n}\n.ecommerce-application .ecommerce-card .item-name a {\n  font-weight: 600;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ecommerce-application .ecommerce-card .item-description {\n  font-size: 0.875rem;\n}\n.ecommerce-application .ecommerce-card .btn-wishlist span,\n.ecommerce-application .ecommerce-card .btn-cart span {\n  vertical-align: text-top;\n}\n.ecommerce-application .ecommerce-card .btn-wishlist i,\n.ecommerce-application .ecommerce-card .btn-wishlist svg,\n.ecommerce-application .ecommerce-card .btn-cart i,\n.ecommerce-application .ecommerce-card .btn-cart svg {\n  margin-right: 0.25rem;\n  vertical-align: text-top;\n}\n.ecommerce-application .ecommerce-card .btn-wishlist i.text-danger,\n.ecommerce-application .ecommerce-card .btn-wishlist svg.text-danger,\n.ecommerce-application .ecommerce-card .btn-cart i.text-danger,\n.ecommerce-application .ecommerce-card .btn-cart svg.text-danger {\n  fill: #ea5455;\n}\n.ecommerce-application .grid-view:not(.wishlist-items),\n.ecommerce-application .list-view:not(.wishlist-items) {\n  margin-top: 2rem;\n}\n.ecommerce-application .grid-view {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  column-gap: 2rem;\n}\n.ecommerce-application .grid-view.wishlist-items {\n  grid-template-columns: 1fr 1fr 1fr 1fr;\n}\n.ecommerce-application .grid-view .ecommerce-card {\n  overflow: hidden;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-img {\n  padding-top: 0.5rem;\n  min-height: 15.85rem;\n  display: flex;\n  align-items: center;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n}\n.ecommerce-application .grid-view .ecommerce-card .shipping,\n.ecommerce-application .grid-view .ecommerce-card .item-company,\n.ecommerce-application .grid-view .ecommerce-card .item-options .item-price {\n  display: none;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-options {\n  display: flex;\n  flex-wrap: wrap;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-options .btn-cart,\n.ecommerce-application .grid-view .ecommerce-card .item-options .btn-wishlist {\n  flex-grow: 1;\n  border-radius: 0;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-name {\n  margin-top: 0.75rem;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-description {\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  margin-top: 0.2rem;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-price {\n  font-weight: 600;\n}\n.ecommerce-application .grid-view .ecommerce-card .card-body {\n  padding: 1rem;\n}\n.ecommerce-application .list-view {\n  display: grid;\n  grid-template-columns: 1fr;\n}\n.ecommerce-application .list-view .ecommerce-card {\n  overflow: hidden;\n  display: grid;\n  grid-template-columns: 1fr 2fr 1fr;\n}\n.ecommerce-application .list-view .ecommerce-card .item-img {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 50px;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body {\n  padding: 1.5rem 1rem;\n  border-right: 1px solid #ebe9f1;\n  display: flex;\n  flex-direction: column;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-wrapper {\n  order: 2;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-name {\n  order: 1;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-description {\n  order: 3;\n  display: -webkit-box;\n  -webkit-line-clamp: 5;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-price {\n  display: none;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-rating {\n  margin-bottom: 0.3rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-company {\n  display: inline-flex;\n  font-weight: 400;\n  margin: 0.3rem 0 0.5rem;\n  font-size: 0.875rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-company .company-name {\n  font-weight: 600;\n  margin-left: 0.25rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options {\n  padding: 1rem;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .item-wrapper {\n  position: relative;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .item-wrapper .item-cost .item-price {\n  color: #7367f0;\n  margin-bottom: 0;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .shipping {\n  margin-top: 0.75rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .btn-wishlist,\n.ecommerce-application .list-view .ecommerce-card .item-options .btn-cart {\n  margin-top: 1rem;\n}\n.ecommerce-application .checkout-tab-steps .bs-stepper-header,\n.ecommerce-application .checkout-tab-steps .bs-stepper-content {\n  padding: 0;\n  margin: 0;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-img img {\n  width: 100px;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-name {\n  order: 0 !important;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-company,\n.ecommerce-application .checkout-items .ecommerce-card .item-rating {\n  margin-bottom: 0.4rem !important;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-quantity {\n  display: flex;\n  align-items: center;\n}\n.ecommerce-application .checkout-items .ecommerce-card .delivery-date {\n  margin-top: 1.2rem;\n  margin-bottom: 0.25rem;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-options .btn {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.ecommerce-application .checkout-options .coupons:focus-within {\n  box-shadow: none;\n}\n.ecommerce-application .checkout-options .coupons input {\n  border: none;\n  padding-left: 0;\n  color: #6e6b7b;\n  font-weight: 600;\n}\n.ecommerce-application .checkout-options .coupons input::placeholder {\n  color: #6e6b7b;\n  font-weight: 600;\n}\n.ecommerce-application .checkout-options .coupons .input-group-append {\n  margin: 0;\n}\n.ecommerce-application .checkout-options .coupons .input-group-text {\n  height: auto;\n  font-weight: 600;\n  padding: inherit;\n}\n.ecommerce-application .checkout-options .price-details .price-title {\n  font-weight: 600;\n  margin-bottom: 0.75rem;\n  margin-top: 1.5rem;\n}\n.ecommerce-application .checkout-options .price-details .price-detail {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 0.75rem;\n}\n.ecommerce-application .checkout-options .price-details .price-detail .detail-title.detail-total {\n  font-weight: 600;\n}\n.ecommerce-application .payment-type .gift-card {\n  cursor: pointer;\n}\n.ecommerce-application .checkout-tab-steps {\n  background-color: transparent !important;\n  box-shadow: none !important;\n}\n.ecommerce-application .checkout-tab-steps .bs-stepper-header {\n  border: none;\n}\n@media (min-width: 992px) {\n  .ecommerce-application .ecommerce-header-items .shop-sidebar-toggler {\n    display: none;\n  }\n  .ecommerce-application .product-checkout.list-view {\n    grid-template-columns: 2fr 1fr;\n    column-gap: 2rem;\n  }\n}\n@media (max-width: 1199.98px) {\n  .ecommerce-application .ecommerce-header-items .btn-group {\n    align-items: center;\n  }\n  .ecommerce-application .ecommerce-header-items .btn-group .btn-icon {\n    padding: 0.6rem 0.736rem;\n  }\n  .ecommerce-application .grid-view.wishlist-items {\n    grid-template-columns: 1fr 1fr 1fr;\n  }\n  .ecommerce-application .body-content-overlay {\n    position: fixed;\n    opacity: 0;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n  }\n  .ecommerce-application .body-content-overlay.show {\n    opacity: 1;\n  }\n  .ecommerce-application.horizontal-layout .body-content-overlay {\n    z-index: 998 !important;\n  }\n  .ecommerce-application.horizontal-layout .sidebar-shop {\n    z-index: 999 !important;\n  }\n}\n@media (max-width: 991.98px) {\n  .ecommerce-application .sidebar-left .sidebar .card {\n    border-radius: 0;\n    margin: 0;\n  }\n  .ecommerce-application .sidebar-left .sidebar .sidebar-shop {\n    transform: translateX(-112%);\n    transition: all 0.25s ease;\n    position: fixed;\n    top: 0;\n    left: 0;\n    height: 100%;\n    overflow-y: scroll;\n    margin: 0;\n  }\n  .ecommerce-application .sidebar-left .sidebar .sidebar-shop.show {\n    transition: all 0.25s ease;\n    transform: translateX(0);\n  }\n  .ecommerce-application .grid-view {\n    grid-template-columns: 1fr 1fr;\n  }\n  .ecommerce-application .ecommerce-header-items .result-toggler .search-results {\n    display: none;\n  }\n}\n@media (max-width: 767.98px) {\n  .ecommerce-application .grid-view.wishlist-items {\n    grid-template-columns: 1fr 1fr;\n  }\n  .ecommerce-application .list-view .ecommerce-card {\n    grid-template-columns: 1fr;\n  }\n  .ecommerce-application .list-view .ecommerce-card .item-img {\n    padding-top: 2rem;\n    padding-bottom: 2rem;\n  }\n  .ecommerce-application .list-view .ecommerce-card .card-body {\n    border: none;\n  }\n}\n@media (max-width: 575.98px) {\n  .ecommerce-application .grid-view,\n.ecommerce-application .grid-view.wishlist-items {\n    grid-template-columns: 1fr;\n  }\n}\n.ecommerce-searchbar {\n  padding: 24px;\n  background: white;\n  border-radius: 8px;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);\n  margin-bottom: 24px;\n}\n.ecommerce-searchbar .input-group-merge {\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);\n  border-radius: 8px;\n  transition: all 0.3s ease;\n  overflow: hidden;\n}\n.ecommerce-searchbar .input-group-merge:focus-within {\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);\n  transform: translateY(-1px);\n}\n.ecommerce-searchbar .input-group-merge .form-control {\n  border: 1px solid #ebe9f1;\n  border-right: none;\n  padding: 0.75rem 1rem;\n  color: #5e5873;\n  font-weight: 500;\n  height: 44px;\n}\n.ecommerce-searchbar .input-group-merge .form-control::placeholder {\n  color: #d4d4db;\n  font-weight: 400;\n}\n.ecommerce-searchbar .input-group-merge .form-control:focus {\n  box-shadow: none;\n  border-color: #ebe9f1;\n}\n.ecommerce-searchbar .input-group-merge .input-group-append .input-group-text {\n  background: #f8f9fa;\n  border: 1px solid #ebe9f1;\n  border-left: none;\n  height: 44px;\n  padding: 0.75rem 1rem;\n}\n.ecommerce-searchbar .input-group-merge .input-group-append .input-group-text i {\n  color: #b9b9c3;\n}\n::ng-deep .ecommerce-searchbar ng-select .ng-select-container {\n  background: white;\n  border: 1px solid #ebe9f1;\n  min-height: 44px;\n  border-radius: 8px;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);\n  transition: all 0.3s ease;\n}\n::ng-deep .ecommerce-searchbar ng-select .ng-select-container:hover {\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);\n}\n::ng-deep .ecommerce-searchbar ng-select.ng-select-opened .ng-select-container {\n  border-color: #2196f3;\n}\n::ng-deep .ng-dropdown-panel {\n  background-color: white;\n  border: 1px solid #ebe9f1;\n  border-radius: 8px;\n  box-shadow: 0 8px 24px rgba(34, 41, 47, 0.15);\n  margin-top: 4px;\n  z-index: 1050 !important;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {\n  padding: 0;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option:hover {\n  background-color: #e3f2fd;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card {\n  margin: 8px;\n  border-radius: 8px;\n  border: 1px solid #ebe9f1;\n  transition: all 0.2s ease;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-body {\n  padding: 1rem;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-title {\n  font-weight: 600;\n  color: #5e5873;\n  font-size: 0.95rem;\n  margin-bottom: 0.5rem;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-subtitle {\n  color: #b9b9c3;\n  font-size: 0.85rem;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-text {\n  color: #b9b9c3;\n  font-size: 0.8rem;\n  margin-top: 0.5rem;\n}\n.grid-view.wishlist-items {\n  padding: 24px;\n  background: white;\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n  gap: 24px;\n  width: 100%;\n  margin-top: 10px;\n}\n.ecommerce-card.tarjeta {\n  width: 100%;\n  height: 100%;\n  min-height: 320px;\n  margin: 0;\n  border-radius: 12px;\n  border: 1px solid #ebe9f1;\n  box-shadow: 0 4px 24px rgba(34, 41, 47, 0.05);\n  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n  overflow: hidden;\n  background: white;\n  position: relative;\n}\n.ecommerce-card.tarjeta:hover {\n  transform: translateY(-8px);\n  box-shadow: 0 12px 32px rgba(34, 41, 47, 0.15);\n  border-color: #2196f3;\n}\n.ecommerce-card.tarjeta:hover .badge {\n  transform: scale(1.05);\n}\n.ecommerce-card.tarjeta a {\n  text-decoration: none;\n  color: inherit;\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.ecommerce-card.tarjeta .item-icon-header {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 2.5rem 2rem;\n  background: linear-gradient(135deg, #f8f9fa 0%, #fbfdff 100%);\n  min-height: 200px;\n  position: relative;\n  transition: all 0.3s ease;\n}\n.ecommerce-card.tarjeta .item-icon-header .icon-container {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);\n  margin-bottom: 1rem;\n  transition: all 0.3s ease;\n}\n.ecommerce-card.tarjeta .item-icon-header .icon-container .app-icon {\n  width: 40px;\n  height: 40px;\n  color: #2196f3;\n}\n.ecommerce-card.tarjeta .item-icon-header .app-initial {\n  width: 56px;\n  height: 56px;\n  border-radius: 12px;\n  background: linear-gradient(135deg, #2196f3 0%, #0c7cd5 100%);\n  color: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.8rem;\n  font-weight: 700;\n  font-family: \"Inter\", sans-serif;\n  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);\n  transition: all 0.3s ease;\n}\n.ecommerce-card.tarjeta:hover .item-icon-header .icon-container {\n  transform: scale(1.1) rotate(5deg);\n  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);\n}\n.ecommerce-card.tarjeta:hover .item-icon-header .app-initial {\n  transform: scale(1.05);\n  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);\n}\n.ecommerce-card.tarjeta .card-body {\n  padding: 1.5rem;\n  flex-grow: 1;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.ecommerce-card.tarjeta .card-body .item-wrapper {\n  margin-bottom: 1rem;\n}\n.ecommerce-card.tarjeta .card-body .item-wrapper .item-description .item-price {\n  font-family: \"Inter\", sans-serif;\n  font-weight: 700;\n  font-size: 1.1rem;\n  color: #5e5873;\n  margin: 0;\n  letter-spacing: -0.3px;\n  line-height: 1.4;\n}\n.ecommerce-card.tarjeta .card-body .item-rating {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-top: auto;\n}\n.ecommerce-card.tarjeta .card-body .item-rating .badge {\n  padding: 0.5rem 1rem;\n  font-weight: 600;\n  font-size: 0.85rem;\n  letter-spacing: 0.3px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, #e8f5e9 0%, #f3faf3 100%);\n  color: #4caf50;\n  border: none;\n  transition: all 0.2s ease;\n}\n.ecommerce-card.tarjeta .card-body .item-rating span[data-feather] {\n  color: #f44336;\n  cursor: pointer;\n  padding: 0.5rem;\n  border-radius: 6px;\n  transition: all 0.2s ease;\n}\n.ecommerce-card.tarjeta .card-body .item-rating span[data-feather]:hover {\n  background: #ffebee;\n  transform: scale(1.1);\n}\n#ecommerce-pagination {\n  margin-top: 3rem;\n  margin-bottom: 2rem;\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item {\n  margin: 0 4px;\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item .page-link {\n  border-radius: 8px;\n  border: 1px solid #ebe9f1;\n  color: #5e5873;\n  padding: 0.5rem 0.75rem;\n  font-weight: 500;\n  transition: all 0.2s ease;\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item .page-link:hover {\n  background: #e3f2fd;\n  border-color: #2196f3;\n  color: #2196f3;\n  transform: translateY(-2px);\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item .page-link:focus {\n  box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item.active .page-link {\n  background: linear-gradient(135deg, #2196f3 0%, #0c7cd5 100%);\n  border-color: #2196f3;\n  color: white;\n  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item.disabled .page-link {\n  background: #f8f9fa;\n  border-color: #ebe9f1;\n  color: #b9b9c3;\n  cursor: not-allowed;\n}\n@media (max-width: 992px) {\n  .grid-view.wishlist-items {\n    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n    gap: 20px;\n  }\n}\n@media (max-width: 768px) {\n  .grid-view.wishlist-items {\n    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));\n    gap: 16px;\n  }\n  .ecommerce-card.tarjeta {\n    min-height: 280px;\n  }\n  .ecommerce-card.tarjeta .item-icon-header {\n    min-height: 160px;\n    padding: 2rem 1.5rem;\n  }\n  .ecommerce-card.tarjeta .item-icon-header .icon-container {\n    width: 64px;\n    height: 64px;\n  }\n  .ecommerce-card.tarjeta .item-icon-header .icon-container .app-icon {\n    width: 32px;\n    height: 32px;\n  }\n  .ecommerce-card.tarjeta .item-icon-header .app-initial {\n    width: 48px;\n    height: 48px;\n    font-size: 1.5rem;\n  }\n  .ecommerce-card.tarjeta .card-body {\n    padding: 1rem;\n  }\n  .ecommerce-searchbar {\n    padding: 16px;\n  }\n}\n@media (max-width: 576px) {\n  .grid-view.wishlist-items {\n    grid-template-columns: 1fr;\n    gap: 16px;\n  }\n  .ecommerce-card.tarjeta {\n    min-height: 260px;\n  }\n}\n.content-body {\n  overflow-x: hidden;\n  width: 100%;\n  padding: 0 1rem;\n}\n.empty-state {\n  text-align: center;\n  padding: 4rem 2rem;\n}\n.empty-state .empty-icon {\n  width: 120px;\n  height: 120px;\n  margin: 0 auto 2rem;\n  border-radius: 50%;\n  background: linear-gradient(135deg, #f8f9fa 0%, #fbfdff 100%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.empty-state .empty-icon span {\n  color: #b9b9c3;\n  opacity: 0.6;\n}\n.empty-state h4 {\n  color: #5e5873;\n  font-weight: 600;\n  margin-bottom: 1rem;\n}\n.empty-state p {\n  color: #b9b9c3;\n  font-size: 0.95rem;\n}\n@keyframes binnacleFloatPulse {\n  0% {\n    transform: translateY(0);\n    filter: drop-shadow(0 0 0 rgba(115, 103, 240, 0));\n  }\n  50% {\n    transform: translateY(-4px);\n    filter: drop-shadow(0 4px 10px rgba(115, 103, 240, 0.3));\n  }\n  100% {\n    transform: translateY(0);\n    filter: drop-shadow(0 0 0 rgba(115, 103, 240, 0));\n  }\n}\n.binnacle-elegant-card {\n  border: 1px solid rgba(130, 134, 139, 0.15);\n  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);\n  background: linear-gradient(150deg, #ffffff 0%, #f7f8fc 100%);\n  border-radius: 12px;\n  box-shadow: 0 4px 15px 0 rgba(34, 41, 47, 0.04);\n  position: relative;\n  overflow: hidden;\n  z-index: 1;\n}\n.binnacle-elegant-card::before {\n  content: \"\";\n  position: absolute;\n  top: -40px;\n  right: -40px;\n  width: 140px;\n  height: 140px;\n  border-radius: 50%;\n  background: radial-gradient(circle, rgba(115, 103, 240, 0.08) 0%, rgba(115, 103, 240, 0) 70%);\n  z-index: -1;\n  pointer-events: none;\n  transition: transform 0.5s ease;\n}\n.binnacle-elegant-card:hover {\n  transform: translateY(-4px);\n  box-shadow: 0 12px 28px 0 rgba(115, 103, 240, 0.12);\n  border-color: rgba(115, 103, 240, 0.3);\n}\n.binnacle-elegant-card:hover::before {\n  transform: scale(1.3) translate(-5px, 5px);\n}\n.binnacle-elegant-card .binnacle-card-body {\n  padding: 1.25rem;\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.binnacle-elegant-card .binnacle-icon-wrapper {\n  width: 52px;\n  height: 52px;\n  min-width: 52px;\n  border-radius: 12px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: linear-gradient(135deg, rgba(115, 103, 240, 0.15) 0%, rgba(115, 103, 240, 0.04) 100%);\n  color: #7367F0;\n  margin-right: 1.25rem;\n  border: 1px solid rgba(115, 103, 240, 0.08);\n}\n.binnacle-elegant-card .binnacle-icon-wrapper .material-symbols-outlined {\n  font-size: 26px;\n  animation: binnacleFloatPulse 3s ease-in-out infinite;\n}\n.binnacle-elegant-card .binnacle-card-title {\n  font-size: 1.1rem;\n  font-weight: 600;\n  color: #5e5873;\n  line-height: 1.2;\n  margin-bottom: 0.5rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.binnacle-elegant-card .binnacle-card-subtitle {\n  font-size: 0.85rem;\n  color: #b9b9c3;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.binnacle-elegant-card .binnacle-card-subtitle .icon {\n  width: 14px;\n  height: 14px;\n}\n.binnacle-elegant-card .binnacle-card-desc {\n  font-size: 0.9rem;\n  color: #6e6b7b;\n  margin-top: 1rem;\n  flex-grow: 1;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  line-clamp: 2;\n  -webkit-box-orient: vertical;\n}\n.binnacle-elegant-card .binnacle-card-actions {\n  margin-top: 1.25rem;\n  padding-top: 1rem;\n  border-top: 1px solid rgba(130, 134, 139, 0.1);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.5rem;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: 6px;\n  font-weight: 500;\n  padding: 0.5rem;\n  transition: all 0.2s ease;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn .material-symbols-outlined {\n  font-size: 18px;\n  margin: 0 !important;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn.btn-outline-primary:hover {\n  background-color: rgba(115, 103, 240, 0.08);\n  color: #7367F0;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn.btn-flat-secondary {\n  background-color: #f0f2f5;\n  border: 1px solid transparent;\n  color: #4b4b4b;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn.btn-flat-secondary:hover {\n  background-color: #e4e6e9;\n  color: #222222;\n}"],
+    styles: ["@import url(\"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200\");\n@import url(\"https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap\");\n.ecommerce-application .content-body {\n  position: relative;\n}\n.ecommerce-application .body-content-overlay {\n  position: fixed !important;\n  z-index: 12 !important;\n}\n.ecommerce-application .sidebar-shop {\n  margin-top: 0.85rem;\n  width: 260px;\n  z-index: 998;\n}\n.ecommerce-application .sidebar-shop .filter-heading {\n  margin-bottom: 1.75rem;\n}\n.ecommerce-application .sidebar-shop .filter-title {\n  margin-bottom: 1rem;\n  margin-top: 2.5rem;\n}\n.ecommerce-application .sidebar-shop .price-range li:not(:last-child),\n.ecommerce-application .sidebar-shop .categories-list li:not(:last-child) {\n  margin-bottom: 0.75rem;\n}\n.ecommerce-application .sidebar-shop .brand-list li {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-bottom: 0.75rem;\n}\n.ecommerce-application .sidebar-shop .range-slider.noUi-horizontal .noUi-handle .noUi-tooltip {\n  opacity: 0;\n  transform: translate(-50%, -15%);\n}\n.ecommerce-application .sidebar-shop .range-slider.noUi-horizontal .noUi-handle .noUi-tooltip:before {\n  content: \"$ \";\n}\n.ecommerce-application .sidebar-shop .range-slider.noUi-horizontal .noUi-handle:active .noUi-tooltip {\n  opacity: 1;\n}\n.ecommerce-application .sidebar-shop .ratings-list {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 0.5rem;\n}\n.ecommerce-application .sidebar-shop .ratings-list:last-child {\n  margin-bottom: 2.5rem;\n}\n.ecommerce-application .sidebar-shop .ratings-list ul {\n  margin-bottom: 0;\n}\n.ecommerce-application .sidebar-shop .ratings-list ul .ratings-list-item svg,\n.ecommerce-application .sidebar-shop .ratings-list ul .ratings-list-item i {\n  width: 1.25rem;\n  height: 1.25rem;\n  font-size: 1.25rem;\n}\n.ecommerce-application .filled-star {\n  fill: #ff9f43;\n  stroke: #ff9f43;\n  color: #ff9f43;\n}\n.ecommerce-application .unfilled-star {\n  stroke: #babfc7;\n  color: #babfc7;\n}\n.ecommerce-application .ecommerce-header-items {\n  display: flex;\n  justify-content: space-between;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler {\n  display: flex;\n  align-items: center;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler {\n  padding-left: 0;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler:active, .ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler:focus {\n  outline: 0;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler .navbar-toggler-icon {\n  height: auto;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler .navbar-toggler-icon i,\n.ecommerce-application .ecommerce-header-items .result-toggler .shop-sidebar-toggler .navbar-toggler-icon svg {\n  color: #6e6b7b;\n  height: 1.5rem;\n  width: 1.5rem;\n  font-size: 1.5rem;\n}\n.ecommerce-application .ecommerce-header-items .result-toggler .search-results {\n  font-weight: 500;\n  color: #5e5873;\n}\n.ecommerce-application .ecommerce-searchbar .input-group {\n  box-shadow: 0 2px 8px 0 rgba(34, 41, 47, 0.14);\n  border-radius: 0.3rem;\n}\n.ecommerce-application .search-product,\n.ecommerce-application .input-group-text {\n  height: 48px;\n  border: none;\n  font-size: 0.95rem;\n  padding-left: 1.25rem;\n}\n.ecommerce-application .search-product::placeholder,\n.ecommerce-application .input-group-text::placeholder {\n  font-size: 0.95rem;\n}\n.ecommerce-application .ecommerce-card:hover {\n  transform: translateY(-5px);\n  box-shadow: 0 4px 25px 0 rgba(34, 41, 47, 0.25);\n}\n.ecommerce-application .ecommerce-card .item-rating ul {\n  margin-bottom: 0;\n}\n.ecommerce-application .ecommerce-card .item-rating svg,\n.ecommerce-application .ecommerce-card .item-rating i {\n  height: 1.143rem;\n  width: 1.143rem;\n  font-size: 1.143rem;\n}\n.ecommerce-application .ecommerce-card .item-name {\n  margin-bottom: 0;\n}\n.ecommerce-application .ecommerce-card .item-name a {\n  font-weight: 600;\n  display: -webkit-box;\n  -webkit-line-clamp: 1;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ecommerce-application .ecommerce-card .item-description {\n  font-size: 0.875rem;\n}\n.ecommerce-application .ecommerce-card .btn-wishlist span,\n.ecommerce-application .ecommerce-card .btn-cart span {\n  vertical-align: text-top;\n}\n.ecommerce-application .ecommerce-card .btn-wishlist i,\n.ecommerce-application .ecommerce-card .btn-wishlist svg,\n.ecommerce-application .ecommerce-card .btn-cart i,\n.ecommerce-application .ecommerce-card .btn-cart svg {\n  margin-right: 0.25rem;\n  vertical-align: text-top;\n}\n.ecommerce-application .ecommerce-card .btn-wishlist i.text-danger,\n.ecommerce-application .ecommerce-card .btn-wishlist svg.text-danger,\n.ecommerce-application .ecommerce-card .btn-cart i.text-danger,\n.ecommerce-application .ecommerce-card .btn-cart svg.text-danger {\n  fill: #ea5455;\n}\n.ecommerce-application .grid-view:not(.wishlist-items),\n.ecommerce-application .list-view:not(.wishlist-items) {\n  margin-top: 2rem;\n}\n.ecommerce-application .grid-view {\n  display: grid;\n  grid-template-columns: 1fr 1fr 1fr;\n  column-gap: 2rem;\n}\n.ecommerce-application .grid-view.wishlist-items {\n  grid-template-columns: 1fr 1fr 1fr 1fr;\n}\n.ecommerce-application .grid-view .ecommerce-card {\n  overflow: hidden;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-img {\n  padding-top: 0.5rem;\n  min-height: 15.85rem;\n  display: flex;\n  align-items: center;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-wrapper {\n  display: flex;\n  justify-content: space-between;\n  align-items: baseline;\n}\n.ecommerce-application .grid-view .ecommerce-card .shipping,\n.ecommerce-application .grid-view .ecommerce-card .item-company,\n.ecommerce-application .grid-view .ecommerce-card .item-options .item-price {\n  display: none;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-options {\n  display: flex;\n  flex-wrap: wrap;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-options .btn-cart,\n.ecommerce-application .grid-view .ecommerce-card .item-options .btn-wishlist {\n  flex-grow: 1;\n  border-radius: 0;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-name {\n  margin-top: 0.75rem;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-description {\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n  margin-top: 0.2rem;\n}\n.ecommerce-application .grid-view .ecommerce-card .item-price {\n  font-weight: 600;\n}\n.ecommerce-application .grid-view .ecommerce-card .card-body {\n  padding: 1rem;\n}\n.ecommerce-application .list-view {\n  display: grid;\n  grid-template-columns: 1fr;\n}\n.ecommerce-application .list-view .ecommerce-card {\n  overflow: hidden;\n  display: grid;\n  grid-template-columns: 1fr 2fr 1fr;\n}\n.ecommerce-application .list-view .ecommerce-card .item-img {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 50px;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body {\n  padding: 1.5rem 1rem;\n  border-right: 1px solid #ebe9f1;\n  display: flex;\n  flex-direction: column;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-wrapper {\n  order: 2;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-name {\n  order: 1;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-description {\n  order: 3;\n  display: -webkit-box;\n  -webkit-line-clamp: 5;\n  -webkit-box-orient: vertical;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-price {\n  display: none;\n}\n.ecommerce-application .list-view .ecommerce-card .card-body .item-rating {\n  margin-bottom: 0.3rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-company {\n  display: inline-flex;\n  font-weight: 400;\n  margin: 0.3rem 0 0.5rem;\n  font-size: 0.875rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-company .company-name {\n  font-weight: 600;\n  margin-left: 0.25rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options {\n  padding: 1rem;\n  display: flex;\n  flex-direction: column;\n  justify-content: center;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .item-wrapper {\n  position: relative;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .item-wrapper .item-cost .item-price {\n  color: #7367f0;\n  margin-bottom: 0;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .shipping {\n  margin-top: 0.75rem;\n}\n.ecommerce-application .list-view .ecommerce-card .item-options .btn-wishlist,\n.ecommerce-application .list-view .ecommerce-card .item-options .btn-cart {\n  margin-top: 1rem;\n}\n.ecommerce-application .checkout-tab-steps .bs-stepper-header,\n.ecommerce-application .checkout-tab-steps .bs-stepper-content {\n  padding: 0;\n  margin: 0;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-img img {\n  width: 100px;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-name {\n  order: 0 !important;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-company,\n.ecommerce-application .checkout-items .ecommerce-card .item-rating {\n  margin-bottom: 0.4rem !important;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-quantity {\n  display: flex;\n  align-items: center;\n}\n.ecommerce-application .checkout-items .ecommerce-card .delivery-date {\n  margin-top: 1.2rem;\n  margin-bottom: 0.25rem;\n}\n.ecommerce-application .checkout-items .ecommerce-card .item-options .btn {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.ecommerce-application .checkout-options .coupons:focus-within {\n  box-shadow: none;\n}\n.ecommerce-application .checkout-options .coupons input {\n  border: none;\n  padding-left: 0;\n  color: #6e6b7b;\n  font-weight: 600;\n}\n.ecommerce-application .checkout-options .coupons input::placeholder {\n  color: #6e6b7b;\n  font-weight: 600;\n}\n.ecommerce-application .checkout-options .coupons .input-group-append {\n  margin: 0;\n}\n.ecommerce-application .checkout-options .coupons .input-group-text {\n  height: auto;\n  font-weight: 600;\n  padding: inherit;\n}\n.ecommerce-application .checkout-options .price-details .price-title {\n  font-weight: 600;\n  margin-bottom: 0.75rem;\n  margin-top: 1.5rem;\n}\n.ecommerce-application .checkout-options .price-details .price-detail {\n  display: flex;\n  justify-content: space-between;\n  margin-bottom: 0.75rem;\n}\n.ecommerce-application .checkout-options .price-details .price-detail .detail-title.detail-total {\n  font-weight: 600;\n}\n.ecommerce-application .payment-type .gift-card {\n  cursor: pointer;\n}\n.ecommerce-application .checkout-tab-steps {\n  background-color: transparent !important;\n  box-shadow: none !important;\n}\n.ecommerce-application .checkout-tab-steps .bs-stepper-header {\n  border: none;\n}\n@media (min-width: 992px) {\n  .ecommerce-application .ecommerce-header-items .shop-sidebar-toggler {\n    display: none;\n  }\n  .ecommerce-application .product-checkout.list-view {\n    grid-template-columns: 2fr 1fr;\n    column-gap: 2rem;\n  }\n}\n@media (max-width: 1199.98px) {\n  .ecommerce-application .ecommerce-header-items .btn-group {\n    align-items: center;\n  }\n  .ecommerce-application .ecommerce-header-items .btn-group .btn-icon {\n    padding: 0.6rem 0.736rem;\n  }\n  .ecommerce-application .grid-view.wishlist-items {\n    grid-template-columns: 1fr 1fr 1fr;\n  }\n  .ecommerce-application .body-content-overlay {\n    position: fixed;\n    opacity: 0;\n    width: 100%;\n    height: 100%;\n    top: 0;\n    left: 0;\n    right: 0;\n    bottom: 0;\n  }\n  .ecommerce-application .body-content-overlay.show {\n    opacity: 1;\n  }\n  .ecommerce-application.horizontal-layout .body-content-overlay {\n    z-index: 998 !important;\n  }\n  .ecommerce-application.horizontal-layout .sidebar-shop {\n    z-index: 999 !important;\n  }\n}\n@media (max-width: 991.98px) {\n  .ecommerce-application .sidebar-left .sidebar .card {\n    border-radius: 0;\n    margin: 0;\n  }\n  .ecommerce-application .sidebar-left .sidebar .sidebar-shop {\n    transform: translateX(-112%);\n    transition: all 0.25s ease;\n    position: fixed;\n    top: 0;\n    left: 0;\n    height: 100%;\n    overflow-y: scroll;\n    margin: 0;\n  }\n  .ecommerce-application .sidebar-left .sidebar .sidebar-shop.show {\n    transition: all 0.25s ease;\n    transform: translateX(0);\n  }\n  .ecommerce-application .grid-view {\n    grid-template-columns: 1fr 1fr;\n  }\n  .ecommerce-application .ecommerce-header-items .result-toggler .search-results {\n    display: none;\n  }\n}\n@media (max-width: 767.98px) {\n  .ecommerce-application .grid-view.wishlist-items {\n    grid-template-columns: 1fr 1fr;\n  }\n  .ecommerce-application .list-view .ecommerce-card {\n    grid-template-columns: 1fr;\n  }\n  .ecommerce-application .list-view .ecommerce-card .item-img {\n    padding-top: 2rem;\n    padding-bottom: 2rem;\n  }\n  .ecommerce-application .list-view .ecommerce-card .card-body {\n    border: none;\n  }\n}\n@media (max-width: 575.98px) {\n  .ecommerce-application .grid-view,\n.ecommerce-application .grid-view.wishlist-items {\n    grid-template-columns: 1fr;\n  }\n}\n.ecommerce-searchbar {\n  padding: 24px;\n  background: white;\n  border-radius: 8px;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);\n  margin-bottom: 24px;\n}\n.ecommerce-searchbar .input-group-merge {\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);\n  border-radius: 8px;\n  transition: all 0.3s ease;\n  overflow: hidden;\n}\n.ecommerce-searchbar .input-group-merge:focus-within {\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);\n  transform: translateY(-1px);\n}\n.ecommerce-searchbar .input-group-merge .form-control {\n  border: 1px solid #ebe9f1;\n  border-right: none;\n  padding: 0.75rem 1rem;\n  color: #5e5873;\n  font-weight: 500;\n  height: 44px;\n}\n.ecommerce-searchbar .input-group-merge .form-control::placeholder {\n  color: #d4d4db;\n  font-weight: 400;\n}\n.ecommerce-searchbar .input-group-merge .form-control:focus {\n  box-shadow: none;\n  border-color: #ebe9f1;\n}\n.ecommerce-searchbar .input-group-merge .input-group-append .input-group-text {\n  background: #f8f9fa;\n  border: 1px solid #ebe9f1;\n  border-left: none;\n  height: 44px;\n  padding: 0.75rem 1rem;\n}\n.ecommerce-searchbar .input-group-merge .input-group-append .input-group-text i {\n  color: #b9b9c3;\n}\n::ng-deep .ecommerce-searchbar ng-select .ng-select-container {\n  background: white;\n  border: 1px solid #ebe9f1;\n  min-height: 44px;\n  border-radius: 8px;\n  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);\n  transition: all 0.3s ease;\n}\n::ng-deep .ecommerce-searchbar ng-select .ng-select-container:hover {\n  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);\n}\n::ng-deep .ecommerce-searchbar ng-select.ng-select-opened .ng-select-container {\n  border-color: #2196f3;\n}\n::ng-deep .ng-dropdown-panel {\n  background-color: white;\n  border: 1px solid #ebe9f1;\n  border-radius: 8px;\n  box-shadow: 0 8px 24px rgba(34, 41, 47, 0.15);\n  margin-top: 4px;\n  z-index: 1050 !important;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {\n  padding: 0;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option:hover {\n  background-color: #e3f2fd;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card {\n  margin: 8px;\n  border-radius: 8px;\n  border: 1px solid #ebe9f1;\n  transition: all 0.2s ease;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card:hover {\n  transform: translateY(-2px);\n  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-body {\n  padding: 1rem;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-title {\n  font-weight: 600;\n  color: #5e5873;\n  font-size: 0.95rem;\n  margin-bottom: 0.5rem;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-subtitle {\n  color: #b9b9c3;\n  font-size: 0.85rem;\n}\n::ng-deep .ng-dropdown-panel .ng-dropdown-panel-items .ng-option .card .card-text {\n  color: #b9b9c3;\n  font-size: 0.8rem;\n  margin-top: 0.5rem;\n}\n.grid-view.wishlist-items {\n  padding: 24px;\n  background: white;\n  display: grid;\n  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));\n  gap: 24px;\n  width: 100%;\n  margin-top: 10px;\n}\n.ecommerce-card.tarjeta {\n  width: 100%;\n  height: 100%;\n  min-height: 320px;\n  margin: 0;\n  border-radius: 12px;\n  border: 1px solid #ebe9f1;\n  box-shadow: 0 4px 24px rgba(34, 41, 47, 0.05);\n  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);\n  overflow: hidden;\n  background: white;\n  position: relative;\n}\n.ecommerce-card.tarjeta:hover {\n  transform: translateY(-8px);\n  box-shadow: 0 12px 32px rgba(34, 41, 47, 0.15);\n  border-color: #2196f3;\n}\n.ecommerce-card.tarjeta:hover .badge {\n  transform: scale(1.05);\n}\n.ecommerce-card.tarjeta a {\n  text-decoration: none;\n  color: inherit;\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.ecommerce-card.tarjeta .item-icon-header {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 2.5rem 2rem;\n  background: linear-gradient(135deg, #f8f9fa 0%, #fbfdff 100%);\n  min-height: 200px;\n  position: relative;\n  transition: all 0.3s ease;\n}\n.ecommerce-card.tarjeta .item-icon-header .icon-container {\n  width: 80px;\n  height: 80px;\n  border-radius: 50%;\n  background: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);\n  margin-bottom: 1rem;\n  transition: all 0.3s ease;\n}\n.ecommerce-card.tarjeta .item-icon-header .icon-container .app-icon {\n  width: 40px;\n  height: 40px;\n  color: #2196f3;\n}\n.ecommerce-card.tarjeta .item-icon-header .app-initial {\n  width: 56px;\n  height: 56px;\n  border-radius: 12px;\n  background: linear-gradient(135deg, #2196f3 0%, #0c7cd5 100%);\n  color: white;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  font-size: 1.8rem;\n  font-weight: 700;\n  font-family: \"Inter\", sans-serif;\n  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);\n  transition: all 0.3s ease;\n}\n.ecommerce-card.tarjeta:hover .item-icon-header .icon-container {\n  transform: scale(1.1) rotate(5deg);\n  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);\n}\n.ecommerce-card.tarjeta:hover .item-icon-header .app-initial {\n  transform: scale(1.05);\n  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);\n}\n.ecommerce-card.tarjeta .card-body {\n  padding: 1.5rem;\n  flex-grow: 1;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n.ecommerce-card.tarjeta .card-body .item-wrapper {\n  margin-bottom: 1rem;\n}\n.ecommerce-card.tarjeta .card-body .item-wrapper .item-description .item-price {\n  font-family: \"Inter\", sans-serif;\n  font-weight: 700;\n  font-size: 1.1rem;\n  color: #5e5873;\n  margin: 0;\n  letter-spacing: -0.3px;\n  line-height: 1.4;\n}\n.ecommerce-card.tarjeta .card-body .item-rating {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  margin-top: auto;\n}\n.ecommerce-card.tarjeta .card-body .item-rating .badge {\n  padding: 0.5rem 1rem;\n  font-weight: 600;\n  font-size: 0.85rem;\n  letter-spacing: 0.3px;\n  border-radius: 8px;\n  background: linear-gradient(135deg, #e8f5e9 0%, #f3faf3 100%);\n  color: #4caf50;\n  border: none;\n  transition: all 0.2s ease;\n}\n.ecommerce-card.tarjeta .card-body .item-rating span[data-feather] {\n  color: #f44336;\n  cursor: pointer;\n  padding: 0.5rem;\n  border-radius: 6px;\n  transition: all 0.2s ease;\n}\n.ecommerce-card.tarjeta .card-body .item-rating span[data-feather]:hover {\n  background: #ffebee;\n  transform: scale(1.1);\n}\n#ecommerce-pagination {\n  margin-top: 3rem;\n  margin-bottom: 2rem;\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item {\n  margin: 0 4px;\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item .page-link {\n  border-radius: 8px;\n  border: 1px solid #ebe9f1;\n  color: #5e5873;\n  padding: 0.5rem 0.75rem;\n  font-weight: 500;\n  transition: all 0.2s ease;\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item .page-link:hover {\n  background: #e3f2fd;\n  border-color: #2196f3;\n  color: #2196f3;\n  transform: translateY(-2px);\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item .page-link:focus {\n  box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item.active .page-link {\n  background: linear-gradient(135deg, #2196f3 0%, #0c7cd5 100%);\n  border-color: #2196f3;\n  color: white;\n  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);\n}\n#ecommerce-pagination ::ng-deep .pagination .page-item.disabled .page-link {\n  background: #f8f9fa;\n  border-color: #ebe9f1;\n  color: #b9b9c3;\n  cursor: not-allowed;\n}\n@media (max-width: 992px) {\n  .grid-view.wishlist-items {\n    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));\n    gap: 20px;\n  }\n}\n@media (max-width: 768px) {\n  .grid-view.wishlist-items {\n    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));\n    gap: 16px;\n  }\n  .ecommerce-card.tarjeta {\n    min-height: 280px;\n  }\n  .ecommerce-card.tarjeta .item-icon-header {\n    min-height: 160px;\n    padding: 2rem 1.5rem;\n  }\n  .ecommerce-card.tarjeta .item-icon-header .icon-container {\n    width: 64px;\n    height: 64px;\n  }\n  .ecommerce-card.tarjeta .item-icon-header .icon-container .app-icon {\n    width: 32px;\n    height: 32px;\n  }\n  .ecommerce-card.tarjeta .item-icon-header .app-initial {\n    width: 48px;\n    height: 48px;\n    font-size: 1.5rem;\n  }\n  .ecommerce-card.tarjeta .card-body {\n    padding: 1rem;\n  }\n  .ecommerce-searchbar {\n    padding: 16px;\n  }\n}\n@media (max-width: 576px) {\n  .grid-view.wishlist-items {\n    grid-template-columns: 1fr;\n    gap: 16px;\n  }\n  .ecommerce-card.tarjeta {\n    min-height: 260px;\n  }\n}\n.content-body {\n  overflow-x: hidden;\n  width: 100%;\n  padding: 0 1rem;\n}\n.empty-state {\n  text-align: center;\n  padding: 4rem 2rem;\n}\n.empty-state .empty-icon {\n  width: 120px;\n  height: 120px;\n  margin: 0 auto 2rem;\n  border-radius: 50%;\n  background: linear-gradient(135deg, #f8f9fa 0%, #fbfdff 100%);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n}\n.empty-state .empty-icon span {\n  color: #b9b9c3;\n  opacity: 0.6;\n}\n.empty-state h4 {\n  color: #5e5873;\n  font-weight: 600;\n  margin-bottom: 1rem;\n}\n.empty-state p {\n  color: #b9b9c3;\n  font-size: 0.95rem;\n}\n@keyframes binnacleFloatPulse {\n  0% {\n    transform: translateY(0);\n    filter: drop-shadow(0 0 0 rgba(115, 103, 240, 0));\n  }\n  50% {\n    transform: translateY(-4px);\n    filter: drop-shadow(0 4px 10px rgba(115, 103, 240, 0.3));\n  }\n  100% {\n    transform: translateY(0);\n    filter: drop-shadow(0 0 0 rgba(115, 103, 240, 0));\n  }\n}\n.binnacle-elegant-card {\n  border: 1px solid rgba(130, 134, 139, 0.15);\n  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);\n  background: linear-gradient(150deg, #ffffff 0%, #f7f8fc 100%);\n  border-radius: 12px;\n  box-shadow: 0 4px 15px 0 rgba(34, 41, 47, 0.04);\n  position: relative;\n  overflow: hidden;\n  z-index: 1;\n}\n.binnacle-elegant-card::before {\n  content: \"\";\n  position: absolute;\n  top: -40px;\n  right: -40px;\n  width: 140px;\n  height: 140px;\n  border-radius: 50%;\n  background: radial-gradient(circle, rgba(115, 103, 240, 0.08) 0%, rgba(115, 103, 240, 0) 70%);\n  z-index: -1;\n  pointer-events: none;\n  transition: transform 0.5s ease;\n}\n.binnacle-elegant-card:hover {\n  transform: translateY(-4px);\n  box-shadow: 0 12px 28px 0 rgba(115, 103, 240, 0.12);\n  border-color: rgba(115, 103, 240, 0.3);\n}\n.binnacle-elegant-card:hover::before {\n  transform: scale(1.3) translate(-5px, 5px);\n}\n.binnacle-elegant-card .binnacle-card-body {\n  padding: 1.25rem;\n  display: flex;\n  flex-direction: column;\n  height: 100%;\n}\n.binnacle-elegant-card .binnacle-icon-wrapper {\n  width: 52px;\n  height: 52px;\n  min-width: 52px;\n  border-radius: 12px;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  background: linear-gradient(135deg, rgba(115, 103, 240, 0.15) 0%, rgba(115, 103, 240, 0.04) 100%);\n  color: #7367F0;\n  margin-right: 1.25rem;\n  border: 1px solid rgba(115, 103, 240, 0.08);\n}\n.binnacle-elegant-card .binnacle-icon-wrapper .material-symbols-outlined {\n  font-size: 26px;\n  animation: binnacleFloatPulse 3s ease-in-out infinite;\n}\n.binnacle-elegant-card .binnacle-card-title {\n  font-size: 1.1rem;\n  font-weight: 600;\n  color: #5e5873;\n  line-height: 1.2;\n  margin-bottom: 0.5rem;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  white-space: nowrap;\n}\n.binnacle-elegant-card .binnacle-card-subtitle {\n  font-size: 0.85rem;\n  color: #b9b9c3;\n  display: flex;\n  align-items: center;\n  gap: 4px;\n}\n.binnacle-elegant-card .binnacle-card-subtitle .icon {\n  width: 14px;\n  height: 14px;\n}\n.binnacle-elegant-card .binnacle-card-desc {\n  font-size: 0.9rem;\n  color: #6e6b7b;\n  margin-top: 1rem;\n  flex-grow: 1;\n  overflow: hidden;\n  display: -webkit-box;\n  -webkit-line-clamp: 2;\n  line-clamp: 2;\n  -webkit-box-orient: vertical;\n}\n.binnacle-elegant-card .binnacle-card-actions {\n  margin-top: 1.25rem;\n  padding-top: 1rem;\n  border-top: 1px solid rgba(130, 134, 139, 0.1);\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  gap: 0.5rem;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn {\n  flex: 1;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  gap: 6px;\n  font-weight: 500;\n  padding: 0.5rem;\n  transition: all 0.2s ease;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn .material-symbols-outlined {\n  font-size: 18px;\n  margin: 0 !important;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn.btn-outline-primary:hover {\n  background-color: rgba(115, 103, 240, 0.08);\n  color: #7367F0;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn.btn-flat-secondary {\n  background-color: #f0f2f5;\n  border: 1px solid transparent;\n  color: #4b4b4b;\n}\n.binnacle-elegant-card .binnacle-card-actions .btn.btn-flat-secondary:hover {\n  background-color: #e4e6e9;\n  color: #222222;\n}\n.svelte-progress-container {\n  position: absolute;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 4px;\n  z-index: 100;\n  background: rgba(115, 103, 240, 0.05);\n  overflow: hidden;\n}\n.svelte-progress-container .svelte-progress-bar {\n  height: 100%;\n  width: 30%;\n  background: linear-gradient(90deg, rgba(115, 103, 240, 0.1) 0%, rgba(115, 103, 240, 0.8) 50%, rgba(115, 103, 240, 0.1) 100%);\n  box-shadow: 0 0 10px rgba(115, 103, 240, 0.4);\n  animation: svelte-glimmer 1.5s infinite ease-in-out;\n}\n@keyframes svelte-glimmer {\n  0% {\n    transform: translateX(-100%);\n  }\n  100% {\n    transform: translateX(350%);\n  }\n}"],
     encapsulation: 2
   });
 }
@@ -69058,7 +69098,7 @@ const environment = {
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Fri Mar 27 2026 14:24:36 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Fri Mar 27 2026 15:14:53 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',

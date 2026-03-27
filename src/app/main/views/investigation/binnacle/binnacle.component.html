@@ -1,6 +1,10 @@
 <div class="content-wrapper container-xxl p-0">
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
-  <div class="content-body">
+  <div class="content-body position-relative">
+    <!-- Svelte Progress Bar - Sutil pero visible -->
+    <div class="svelte-progress-container" *ngIf="loadingStreaming">
+      <div class="svelte-progress-bar"></div>
+    </div>
 
     <!-- Enhanced Search Bar -->
     <section id="ecommerce-searchbar" class="ecommerce-searchbar">

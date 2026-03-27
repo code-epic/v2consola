@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, NgZone } from "@angular/core";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { Router } from "@angular/router";
 import { environment } from "environments/environment";
@@ -39,6 +39,7 @@ export class BinnacleComponent implements OnInit {
 
   public ListarBitacora = [];
   public ListarAuditoriaLogs = [];
+  public loadingStreaming = false;
 
   xAPI: IAPICore = {
     funcion: '',
@@ -57,7 +58,8 @@ export class BinnacleComponent implements OnInit {
 
   constructor(
     private ruta: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private zone: NgZone
   ) { }
 
 
@@ -110,36 +112,51 @@ export class BinnacleComponent implements OnInit {
   }
 
   async CargarBitacora() {
+    this.ListarBitacora = [];
+    this.loadingStreaming = true;
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_LOGS;
     this.xAPI.parametros = ''
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data: any[]) => {
-        if (!data) return;
-        this.ListarBitacora = data;
-        this.rowData = this.ListarBitacora;
-        this.tempData = this.rowData;
-      },
-      (error) => {
-        console.error(error);
-      }
-    )
+
+    try {
+      await this.apiService.postStream<any>('crudstream', this.xAPI, (row) => {
+        this.zone.run(() => {
+          this.ListarBitacora.push(row);
+          this.rowData = this.ListarBitacora;
+          this.tempData = this.rowData;
+        });
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.zone.run(() => {
+        this.loadingStreaming = false;
+      });
+    }
   }
 
-  CargarReporteAuditoriaLogs(print: boolean = true) {
+  async CargarReporteAuditoriaLogs(print: boolean = true) {
+    this.ListarAuditoriaLogs = [];
+    this.loadingStreaming = true;
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_AUDITORIA_LOGS;
     this.xAPI.parametros = ''
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data: any[]) => {
-        if (!data) return;
-        this.ListarAuditoriaLogs = data;
-        if (print) {
-          this.ImprimirReporteLog();
-        }
-      },
-      (error) => {
-        console.error(error);
+
+    try {
+      await this.apiService.postStream<any>('crudstream', this.xAPI, (row) => {
+        this.zone.run(() => {
+          this.ListarAuditoriaLogs.push(row);
+        });
+      });
+      
+      if (print) {
+        this.ImprimirReporteLog();
       }
-    )
+    } catch (error) {
+      console.error(error);
+    } finally {
+      this.zone.run(() => {
+        this.loadingStreaming = false;
+      });
+    }
   }
 
   // ==========================================

@@ -644,3 +644,34 @@ $info-text: #00bcd4;
     }
   }
 }
+
+// ========================================
+// Svelte Streaming Progress Bar
+// ========================================
+.svelte-progress-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  z-index: 100;
+  background: rgba(115, 103, 240, 0.05);
+  overflow: hidden;
+
+  .svelte-progress-bar {
+    height: 100%;
+    width: 30%;
+    background: linear-gradient(90deg, 
+      rgba(115, 103, 240, 0.1) 0%, 
+      rgba(115, 103, 240, 0.8) 50%, 
+      rgba(115, 103, 240, 0.1) 100%
+    );
+    box-shadow: 0 0 10px rgba(115, 103, 240, 0.4);
+    animation: svelte-glimmer 1.5s infinite ease-in-out;
+  }
+}
+
+@keyframes svelte-glimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
