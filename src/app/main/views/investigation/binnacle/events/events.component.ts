@@ -39,7 +39,19 @@ export interface IMetodoBitacora {
 export class EventComponent implements OnInit {
 
   public contentHeader: any;
-  public searchText: string = '';
+  
+  // Pagination for Users
+  public userPage: number = 1;
+  public userPageSize: number = 25;
+
+  private _searchText: string = '';
+  public get searchText(): string {
+    return this._searchText;
+  }
+  public set searchText(value: string) {
+    this._searchText = value;
+    this.userPage = 1; // Reset to first page on search
+  }
   public usuarios: any[] = [];
   public selectedUser: any = null;
   public ListarBitacora: IMetodoBitacora[] = [];

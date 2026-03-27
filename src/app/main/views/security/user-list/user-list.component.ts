@@ -330,9 +330,11 @@ export class UserListComponent implements OnInit, OnDestroy {
       this.isTotpStep = false;
     }
 
-    this.modalService.open(content, { centered: true,  backdrop: false,
+    this.modalService.open(content, {
+      centered: true, backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal", size: 'md' });
+      windowClass: "fondo-modal", size: 'md'
+    });
   }
 
   async acceptChangePassword() {
@@ -345,7 +347,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       }
       // Aquí podrías llamar a una API para validar el VTOP si es necesario.
       // Por ahora, asumimos que si el código es válido en formato, pasamos al siguiente paso.
-      this.isTotpStep = false; 
+      this.isTotpStep = false;
 
     } else {
       // --- Lógica del Paso 2: Cambiar Contraseña ---
@@ -357,7 +359,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.utilService.AlertMini('top-end', 'error', 'Las contraseñas no coinciden', 3000);
         return;
       }
-      
+
       if (this.isPasswordInvalid) {
         this.utilService.AlertMini('top-end', 'error', 'La contraseña no cumple con los requisitos de seguridad', 3000);
         return;
@@ -485,7 +487,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     // La propiedad 'expira' ya es una fecha de expiración completa en formato ISO.
     // Simplemente la convertimos a un timestamp de JavaScript.
     const expirationTime = new Date(user.bloqueo.expira).getTime();
-    
+
     // Verificamos si la fecha es válida para evitar errores.
     if (isNaN(expirationTime)) {
       console.error(`Fecha de expiración inválida para el usuario ${user.login}:`, user.bloqueo.expira);
@@ -665,7 +667,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         doc.setFontSize(10);
         doc.setTextColor(97, 97, 97);
         doc.setFont('helvetica', isBold ? 'bold' : 'normal');
-        
+
         let textValue = value || 'N/A';
         if (Array.isArray(textValue)) {
           textValue = textValue.map(v => (typeof v === 'object' ? (v.name || v.descripcion || JSON.stringify(v)) : v)).join(', ');
@@ -741,17 +743,18 @@ export class UserListComponent implements OnInit, OnDestroy {
     /* Reemplaza doc.save(fileName) por esto: */
     // 1. Obtener el binario como string dataURI
     const pdfDataUri = doc.output('datauristring');
-    // 2. Enviar mensaje al padre (Sandbox Bridge)
-    if (window.parent) {
+
+    // Sandra Sandbox Bridge detection
+    if (window.parent && window !== window.parent) {
       window.parent.postMessage({
-        type: 'OPEN_SSE',
+        type: 'OPEN_PDF',
         payload: {
           fileName: fileName,
           data: pdfDataUri
         }
       }, '*');
     } else {
-      // Fallback para cuando no corre dentro de Sandra
+      // Direct browser download
       doc.save(fileName);
     }
   }
@@ -807,22 +810,22 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     // --- PÁGINA 1: EL SOBRE (Capa A - Pública) ---
     doc.setFillColor(20, 20, 20); // Fondo oscuro industrial
-    doc.rect(0, 0, pageWidth, pageHeight, 'F'); 
-    
+    doc.rect(0, 0, pageWidth, pageHeight, 'F');
+
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
     doc.text("SANDRA SERVER ", pageWidth / 2, 40, { align: 'center' });
-    
+
     doc.setFontSize(12);
     doc.text("DOCUMENTO CONFIDENCIAL", pageWidth / 2, 60, { align: 'center' });
-    
+
     // QR en la primera página
     if (qrDataUrl) {
-        const qrSize = 50;
-        doc.addImage(qrDataUrl, 'PNG', (pageWidth - qrSize) / 2, 80, qrSize, qrSize);
+      const qrSize = 50;
+      doc.addImage(qrDataUrl, 'PNG', (pageWidth - qrSize) / 2, 80, qrSize, qrSize);
     }
-    
+
     doc.setFontSize(10);
     doc.text("Escanee el código QR para desbloquear el documento.", pageWidth / 2, 140, { align: 'center' });
 
@@ -1042,7 +1045,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     for (let i = 2; i <= pageCount; i++) {
       doc.setPage(i);
       doc.saveGraphicsState();
-      
+
       // Marca de agua diagonal
       doc.setTextColor(200, 200, 200);
       doc.setFontSize(20);
@@ -1056,11 +1059,11 @@ export class UserListComponent implements OnInit, OnDestroy {
       doc.setFontSize(6);
       doc.setTextColor(180, 180, 180);
       doc.text(`Rastreado por Sandra Server - ID: ${trackingId}`, 10, pageHeight - 5);
-      
+
       doc.restoreGraphicsState();
     }
 
-    
+
 
     const fileName = `Caucion_${user.login}_${new Date().toISOString().slice(0, 10)}.pdf`;
     /* Reemplaza doc.save(fileName) por esto: */
@@ -1071,8 +1074,9 @@ export class UserListComponent implements OnInit, OnDestroy {
     const hash = await this.sha256.hash(pdfDataUri);
     this.registrarDocumento(user, hash, fileName);
 
-    // 2. Enviar mensaje al padre (Sandbox Bridge)
-    if (window.parent) {
+
+    // Sandra Sandbox Bridge detection
+    if (window.parent && window !== window.parent) {
       window.parent.postMessage({
         type: 'OPEN_SSE',
         payload: {
@@ -1081,7 +1085,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         }
       }, '*');
     } else {
-      // Fallback para cuando no corre dentro de Sandra
+      // Direct browser download
       doc.save(fileName);
     }
   }

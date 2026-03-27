@@ -46,7 +46,8 @@
                     </div>
 
                     <div class="row">
-                        <div *ngFor="let user of filteredUsers" class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
+                        <div *ngFor="let user of filteredUsers | slice: (userPage - 1) * userPageSize : userPage * userPageSize" 
+                             class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
                             <div class="user-card-slim animate__animated animate__fadeInUp" (click)="selectUser(user)">
                                 <div class="card-body p-1">
                                     <div class="d-flex align-items-center">
@@ -81,6 +82,20 @@
                         <div *ngIf="usuarios.length === 0" class="col-12 text-center py-3">
                             <p class="text-muted italic">No se encontraron usuarios para {{ appData?.nombre }}.</p>
                         </div>
+                    </div>
+
+                    <!-- User Pagination Footer Centered (Always Visible) -->
+                    <div class="d-flex flex-column align-items-center mt-3 border-top pt-2 px-1 text-center">
+                        <div class="text-muted font-small-2 mb-1">
+                            Mostrando usuarios del {{ (userPage - 1) * userPageSize + 1 }} al
+                            {{ (userPage * userPageSize) > filteredUsers.length ? filteredUsers.length : (userPage * userPageSize) }}
+                            de {{ filteredUsers.length }} encontrados
+                        </div>
+                        <ngb-pagination [collectionSize]="filteredUsers.length" [(page)]="userPage" [pageSize]="userPageSize"
+                            [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
+                            class="pagination-sm mb-0">
+                            <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+                        </ngb-pagination>
                     </div>
                 </div>
             </div>

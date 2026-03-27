@@ -1567,20 +1567,19 @@ export class ProfileComponent implements OnInit {
     }
 
     const fileName = `Reporte_${this.Perfil.nombre || 'Perfil'}.pdf`.replace(/ /g, '_');
-    /* Reemplaza doc.save(fileName) por esto: */
-    // 1. Obtener el binario como string dataURI
     const pdfDataUri = doc.output('datauristring');
-    // 2. Enviar mensaje al padre (Sandbox Bridge)
-    if (window.parent) {
+
+    // Sandra Sandbox Bridge detection
+    if (window.parent && window !== window.parent) {
       window.parent.postMessage({
-        type: 'DOWNLOAD_PDF',
+        type: 'OPEN_PDF',
         payload: {
           fileName: fileName,
           data: pdfDataUri
         }
       }, '*');
     } else {
-      // Fallback para cuando no corre dentro de Sandra
+      // Direct browser download
       doc.save(fileName);
     }
   }
