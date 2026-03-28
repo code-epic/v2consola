@@ -213,7 +213,7 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
             clientId: this.activeUser?.id, // UUID del cliente/usuario
             message: this.newMessage,
             from: this.Token?.Usuario?.usuario || 'sistema', // Usuario desde JWT session
-            To: 'sandra-app'
+            To: this.activeUser?.name
         };
 
         // Persistir en el historial local (chat_history)
@@ -229,11 +229,11 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
         const originalId = msgHistory.id;
         const originalMessage = this.newMessage;
         this.newMessage = '';
-        
+
         this.apiService.SendMessage(payload).subscribe(
             (data: any) => {
                 console.log('Respuesta del servidor:', data);
-                
+
                 // Si el servidor confirma la entrega
                 if (data && data.status === 'success' || (data.message && data.message.includes('enviado'))) {
                     // Buscar el mensaje original en la lista actual y en el historial del usuario activo
