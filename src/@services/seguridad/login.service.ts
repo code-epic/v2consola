@@ -7,6 +7,7 @@ import { environment } from "environments/environment";
 import { TaskService } from "@services/apicore/task.service";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
+import { SessionService } from "@services/util/session.service";
 
 import { Md5 } from "ts-md5";
 import Swal from "sweetalert2";
@@ -133,6 +134,7 @@ export class LoginService {
     private taskService: TaskService,
     private sha256: Sha256Service,
     private apiService: ApiService,
+    private sessionService: SessionService,
   ) {
     this.urlGet = environment.API;
     this.Id = environment.ID;
@@ -227,6 +229,9 @@ export class LoginService {
     progressCallback: (message: string) => void,
   ) {
     try {
+      progressCallback("Cerrando conexiones en tiempo real...");
+      this.sessionService.closeConnection();
+
       progressCallback("Finalizando sesión en el servidor...");
       await this.utils.sleep(800); // Pequeña pausa para UX
       const httpOptions = {
@@ -313,8 +318,16 @@ export class LoginService {
   }
 
   getUserDecrypt(itk: string) {
-    var t = jwt_decode(itk);
-    return t;
+    if (!itk || itk === 'undefined' || itk === 'null') {
+      return null;
+    }
+    try {
+      var t = jwt_decode(itk);
+      return t;
+    } catch (error) {
+      console.error('Error decodificando token en getUserDecrypt:', error);
+      return null;
+    }
   }
 
   //ObenterAplicacion

@@ -135,8 +135,6 @@ export class CoreMenuService {
    */
   getCurrentMenu(): any {
     if (!this._currentMenuKey) {
-      console.warn(`The current menu is not set.`);
-
       return;
     }
 

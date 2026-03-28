@@ -3377,7 +3377,7 @@ __webpack_require__.r(__webpack_exports__);
 
  // Attach $localize to the global context, as a side-effect of this module.
 
-globalThis.$localize = _angular_localize__WEBPACK_IMPORTED_MODULE_0__["ɵ$localize"]; //# sourceMappingURL=init.mjs.map
+globalThis.$localize = _angular_localize__WEBPACK_IMPORTED_MODULE_0__["ɵ$localize"]; 
 
 /***/ }),
 
@@ -4663,7 +4663,7 @@ function stripBlock(messagePart, rawMessagePart) {
 // DO NOT ADD public exports to this file.
 
 
- //# sourceMappingURL=localize.mjs.map
+ 
 
 /***/ })
 
