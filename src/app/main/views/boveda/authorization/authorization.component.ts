@@ -108,7 +108,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
     // Asumo que tienes una función similar a la de profile.component.ts
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_AUTHORIZATIONS // O la función que corresponda
-    this.xAPI.parametros = '';
+    this.xAPI.parametros = '0';
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
 
@@ -245,6 +245,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
               icon: 'success',
               customClass: { confirmButton: 'btn btn-soft-success' }
             });
+            this.LoadAuthorization();
           },
           (error) => {
             console.error('Error en aprobación:', error);
