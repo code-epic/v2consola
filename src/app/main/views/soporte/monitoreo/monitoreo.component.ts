@@ -25,7 +25,8 @@ export interface NetworkMessage {
     selector: 'app-monitoreo',
     templateUrl: './monitoreo.component.html',
     styleUrls: ['./monitoreo.component.scss'],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class MonitoreoComponent implements OnInit, AfterViewInit {
 

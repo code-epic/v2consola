@@ -8,9 +8,10 @@ interface Mensaje {
 
 
 @Component({
-  selector: 'app-asistente-virtual',
-  templateUrl: './asistente-virtual.component.html',
-  styleUrls: ['./asistente-virtual.component.scss']
+    selector: 'app-asistente-virtual',
+    templateUrl: './asistente-virtual.component.html',
+    styleUrls: ['./asistente-virtual.component.scss'],
+    standalone: false
 })
 export class AsistenteVirtualComponent implements OnInit {
 

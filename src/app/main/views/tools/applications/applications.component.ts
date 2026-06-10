@@ -4,11 +4,12 @@ import { NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from "@angular/router";
 
 @Component({
-  selector: "app-applications",
-  templateUrl: "./applications.component.html",
-  styleUrls: ["./applications.component.scss"],
-  encapsulation: ViewEncapsulation.None,
-  host: { class: "ecommerce-application" },
+    selector: "app-applications",
+    templateUrl: "./applications.component.html",
+    styleUrls: ["./applications.component.scss"],
+    encapsulation: ViewEncapsulation.None,
+    host: { class: "ecommerce-application" },
+    standalone: false
 })
 export class ApplicationsComponent implements OnInit {
   searchType: string = "conexiones"; // Valor inicial del select

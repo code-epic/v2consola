@@ -12,11 +12,12 @@ import { windowWhen } from 'rxjs/operators';
 
 
 @Component({
-  selector: 'app-role',
-  templateUrl: './role.component.html',
-  styleUrls: ['./role.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    selector: 'app-role',
+    templateUrl: './role.component.html',
+    styleUrls: ['./role.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 
 

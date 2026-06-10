@@ -7,10 +7,11 @@ import { Subject } from 'rxjs';
 import { CoreConfigService } from '@core/services/config.service';
 
 @Component({
-  selector: 'app-auth-reset-password-v1',
-  templateUrl: './auth-reset-password-v1.component.html',
-  styleUrls: ['./auth-reset-password-v1.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-auth-reset-password-v1',
+    templateUrl: './auth-reset-password-v1.component.html',
+    styleUrls: ['./auth-reset-password-v1.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AuthResetPasswordV1Component implements OnInit {
   // Public

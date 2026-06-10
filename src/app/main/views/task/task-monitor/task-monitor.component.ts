@@ -17,11 +17,12 @@ import { TaskService } from '@services/apicore/task.service';
 
 
 @Component({
-  selector: 'app-task-monitor',
-  templateUrl: './task-monitor.component.html',
-  styleUrls: ['./task-monitor.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    selector: 'app-task-monitor',
+    templateUrl: './task-monitor.component.html',
+    styleUrls: ['./task-monitor.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class TaskMonitorComponent implements OnInit {
 

@@ -17,11 +17,12 @@ import JSONFormatter from 'json-formatter-js';
 
 
 @Component({
-  selector: 'app-communications',
-  templateUrl: './communications.component.html',
-  styleUrls: ['./communications.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    selector: 'app-communications',
+    templateUrl: './communications.component.html',
+    styleUrls: ['./communications.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 
 export class CommunicationsComponent implements OnInit {

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-crontab',
-  templateUrl: './crontab.component.html',
-  styleUrls: ['./crontab.component.scss']
+    selector: 'app-crontab',
+    templateUrl: './crontab.component.html',
+    styleUrls: ['./crontab.component.scss'],
+    standalone: false
 })
 export class CrontabComponent implements OnInit {
   public contentHeader: any;

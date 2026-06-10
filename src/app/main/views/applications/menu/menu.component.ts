@@ -7,11 +7,12 @@ import { environment } from 'environments/environment';
 
 
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    selector: 'app-menu',
+    templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class MenuComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;

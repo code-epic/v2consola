@@ -13,10 +13,11 @@ import { IUsuario, LoginService, Usuario } from '@services/seguridad/login.servi
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-auth-register-v1',
-  templateUrl: './auth-register-v1.component.html',
-  styleUrls: ['./auth-register-v1.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-auth-register-v1',
+    templateUrl: './auth-register-v1.component.html',
+    styleUrls: ['./auth-register-v1.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AuthRegisterV1Component implements OnInit {
   // Public

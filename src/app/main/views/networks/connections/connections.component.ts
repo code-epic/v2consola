@@ -17,11 +17,12 @@ import { environment } from 'environments/environment';
 
 
 @Component({
-  selector: 'app-connections',
-  templateUrl: './connections.component.html',
-  styleUrls: ['./connections.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    selector: 'app-connections',
+    templateUrl: './connections.component.html',
+    styleUrls: ['./connections.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class ConnectionsComponent implements OnInit {
 

@@ -31,11 +31,12 @@ import { TaskService } from "@services/apicore/task.service"
 import { env } from "process"
 
 @Component({
-  selector: "app-functions",
-  templateUrl: "./functions.component.html",
-  styleUrls: ["./functions.component.scss"],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal],
+    selector: "app-functions",
+    templateUrl: "./functions.component.html",
+    styleUrls: ["./functions.component.scss"],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class FunctionsComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent

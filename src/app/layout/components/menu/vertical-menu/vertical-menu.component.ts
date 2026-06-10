@@ -11,10 +11,11 @@ import { ApiService } from '@services/apicore/api.service';
 import { MensajeService } from '@services/util/mensaje.service';
 
 @Component({
-  selector: 'vertical-menu',
-  templateUrl: './vertical-menu.component.html',
-  styleUrls: ['./vertical-menu.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'vertical-menu',
+    templateUrl: './vertical-menu.component.html',
+    styleUrls: ['./vertical-menu.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class VerticalMenuComponent implements OnInit, OnDestroy {
   coreConfig: any;

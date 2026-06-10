@@ -9,11 +9,12 @@ import Swal from 'sweetalert2';
 
 
 @Component({
-  selector: 'app-api-details',
-  templateUrl: './api-details.component.html',
-  styleUrls: ['./api-details.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  host: { class: 'ecommerce-application' }
+    selector: 'app-api-details',
+    templateUrl: './api-details.component.html',
+    styleUrls: ['./api-details.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    host: { class: 'ecommerce-application' },
+    standalone: false
 })
 
 

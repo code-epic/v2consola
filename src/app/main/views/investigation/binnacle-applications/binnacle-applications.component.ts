@@ -65,11 +65,12 @@ export interface IMetodoBitacora {
 
 
 @Component({
-  selector: 'app-binnacle-applications',
-  templateUrl: './binnacle-applications.component.html',
-  styleUrls: ['./binnacle-applications.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal],
+    selector: 'app-binnacle-applications',
+    templateUrl: './binnacle-applications.component.html',
+    styleUrls: ['./binnacle-applications.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class BinnacleApplicationsComponent implements OnInit {
 

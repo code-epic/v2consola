@@ -8,8 +8,9 @@ import {
   HostListener,
   ApplicationRef,
   ViewEncapsulation,
+  DOCUMENT
 } from "@angular/core";
-import { DOCUMENT } from "@angular/common";
+
 import { Title } from "@angular/platform-browser";
 
 import { Subject } from "rxjs";
@@ -33,10 +34,11 @@ import { ApiService } from "@services/apicore/api.service";
 import { LoginService } from "@services/seguridad/login.service";
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.scss"],
-  encapsulation: ViewEncapsulation.None,
+    selector: "app-root",
+    templateUrl: "./app.component.html",
+    styleUrls: ["./app.component.scss"],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AppComponent implements OnInit, OnDestroy {
   devToolsOpened = false;

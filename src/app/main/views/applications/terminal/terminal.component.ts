@@ -3,9 +3,10 @@ import { Terminal } from 'xterm';
 import { FitAddon } from '@xterm/addon-fit';
 
 @Component({
-  selector: 'app-terminal',
-  templateUrl: './terminal.component.html',
-  styleUrls: ['./terminal.component.scss']
+    selector: 'app-terminal',
+    templateUrl: './terminal.component.html',
+    styleUrls: ['./terminal.component.scss'],
+    standalone: false
 })
 export class TerminalComponent implements AfterViewInit, OnDestroy {
   @ViewChild('terminalContainer') terminalContainer!: ElementRef;

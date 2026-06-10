@@ -11,9 +11,10 @@ export interface snippetCode {
 }
 
 @Component({
-  selector: 'core-card-snippet',
-  templateUrl: './card-snippet.component.html',
-  styleUrls: ['./card-snippet.component.scss']
+    selector: 'core-card-snippet',
+    templateUrl: './card-snippet.component.html',
+    styleUrls: ['./card-snippet.component.scss'],
+    standalone: false
 })
 export class CoreCardSnippetComponent implements OnInit {
   // public

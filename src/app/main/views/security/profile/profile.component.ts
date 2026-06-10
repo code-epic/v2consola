@@ -91,11 +91,12 @@ interface PerfilSave {
 
 
 @Component({
-  selector: "app-profile",
-  templateUrl: "./profile.component.html",
-  styleUrls: ["./profile.component.scss"],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal],
+    selector: "app-profile",
+    templateUrl: "./profile.component.html",
+    styleUrls: ["./profile.component.scss"],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class ProfileComponent implements OnInit {
 

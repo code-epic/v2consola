@@ -12,10 +12,11 @@ import { FileService } from '@services/apicore/file.service';
 import { MensajeService } from '@services/util/mensaje.service';
 
 @Component({
-  selector: 'app-install',
-  templateUrl: './install.component.html',
-  styleUrls: ['./install.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-install',
+    templateUrl: './install.component.html',
+    styleUrls: ['./install.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 
 

@@ -3,11 +3,12 @@ import { ApiService } from '@services/apicore/api.service'
 
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  host: { class: 'ecommerce-application' }
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    host: { class: 'ecommerce-application' },
+    standalone: false
 })
 export class HomeComponent implements OnInit {
 

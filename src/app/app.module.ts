@@ -11,7 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 //import { HttpClientModule } from '@angular/common/http';
 import { NgSelectModule } from '@ng-select/ng-select';
 
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 import 'hammerjs';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -62,57 +62,51 @@ const appRoutes: Routes = [
 ];
 
 
-@NgModule({
-  declarations: [AppComponent],
-  schemas: [NO_ERRORS_SCHEMA,CUSTOM_ELEMENTS_SCHEMA],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    HttpClientModule,
-    RouterModule.forRoot(appRoutes, {
-      scrollPositionRestoration: 'enabled', // Add options right here
-      useHash: true
-    }),
-    TranslateModule.forRoot(),
-    CodemirrorModule,
-    RecaptchaV3Module,
-    NgbModule,
-    ToastrModule.forRoot(),
-    CoreModule.forRoot(coreConfig),
-    CoreCommonModule,
-    CoreSidebarModule,
-    CoreThemeCustomizerModule,
-    BlockUIModule.forRoot(),
-    LayoutModule,
-    HomeModule,
-    ErrorModalModule,
-    NetworksModule,
-    ApplicationsModule,
-    OptionsModule,
-    FormsModule,
-    ReactiveFormsModule,
-    SecurityModule,
-    ToolsModule,
-    TaskModule,
-    InvestigationModule,
-    NgSelectModule,
-    SharedModule,
-    GithubModule,
-    BovedaModule,
-    SoporteModule
-  ],
-  providers: [
-    {
-      provide: RECAPTCHA_V3_SITE_KEY,
-      useValue: environment.recaptcha.siteKey,
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
-      multi: true
-    },
-    PushService,
-  ],
-  bootstrap: [AppComponent]
-})
+@NgModule({ declarations: [AppComponent],
+    schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        RouterModule.forRoot(appRoutes, {
+            scrollPositionRestoration: 'enabled', // Add options right here
+            useHash: true
+        }),
+        TranslateModule.forRoot(),
+        CodemirrorModule,
+        RecaptchaV3Module,
+        NgbModule,
+        ToastrModule.forRoot(),
+        CoreModule.forRoot(coreConfig),
+        CoreCommonModule,
+        CoreSidebarModule,
+        CoreThemeCustomizerModule,
+        BlockUIModule.forRoot(),
+        LayoutModule,
+        HomeModule,
+        ErrorModalModule,
+        NetworksModule,
+        ApplicationsModule,
+        OptionsModule,
+        FormsModule,
+        ReactiveFormsModule,
+        SecurityModule,
+        ToolsModule,
+        TaskModule,
+        InvestigationModule,
+        NgSelectModule,
+        SharedModule,
+        GithubModule,
+        BovedaModule,
+        SoporteModule], providers: [
+        {
+            provide: RECAPTCHA_V3_SITE_KEY,
+            useValue: environment.recaptcha.siteKey,
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptorService,
+            multi: true
+        },
+        PushService,
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }

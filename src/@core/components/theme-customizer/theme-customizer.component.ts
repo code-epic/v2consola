@@ -13,10 +13,11 @@ import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-dat
 
 
 @Component({
-  selector: 'core-theme-customizer',
-  templateUrl: './theme-customizer.component.html',
-  styleUrls: ['./theme-customizer.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'core-theme-customizer',
+    templateUrl: './theme-customizer.component.html',
+    styleUrls: ['./theme-customizer.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
 

@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import * as SqlFormatter from 'sql-formatter';
 
 @Pipe({
-  name: 'sqlFormat'
+    name: 'sqlFormat',
+    standalone: false
 })
 export class SqlFormatPipe implements PipeTransform {
   transform(value: string): string {

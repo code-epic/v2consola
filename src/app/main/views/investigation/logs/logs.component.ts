@@ -12,10 +12,11 @@ import Swal from 'sweetalert2';
 
 
 @Component({
-  selector: 'app-logs',
-  templateUrl: './logs.component.html',
-  styleUrls: ['./logs.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-logs',
+    templateUrl: './logs.component.html',
+    styleUrls: ['./logs.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 
 

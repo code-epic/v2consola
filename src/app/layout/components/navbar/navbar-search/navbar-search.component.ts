@@ -1,12 +1,13 @@
-import { DOCUMENT } from '@angular/common';
+
 import { Router } from '@angular/router';
-import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild, DOCUMENT } from '@angular/core';
 
 import { SearchService } from 'app/layout/components/navbar/navbar-search/search.service';
 
 @Component({
-  selector: 'app-navbar-search',
-  templateUrl: './navbar-search.component.html'
+    selector: 'app-navbar-search',
+    templateUrl: './navbar-search.component.html',
+    standalone: false
 })
 export class NavbarSearchComponent implements OnInit {
   // Public

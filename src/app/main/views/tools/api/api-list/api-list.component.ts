@@ -4,11 +4,12 @@ import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-api-list',
-  templateUrl: './api-list.component.html',
-  styleUrls: ['./api-list.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  host: { class: 'ecommerce-application' }
+    selector: 'app-api-list',
+    templateUrl: './api-list.component.html',
+    styleUrls: ['./api-list.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    host: { class: 'ecommerce-application' },
+    standalone: false
 })
 export class ApiListComponent implements OnInit {
 

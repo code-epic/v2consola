@@ -10,9 +10,10 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 
 @Component({
-  selector: 'app-workflow',
-  templateUrl: './workflow.component.html',
-  styleUrls: ['./workflow.component.scss']
+    selector: 'app-workflow',
+    templateUrl: './workflow.component.html',
+    styleUrls: ['./workflow.component.scss'],
+    standalone: false
 })
 export class WorkflowComponent implements OnInit {
 

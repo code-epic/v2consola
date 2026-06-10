@@ -6,9 +6,10 @@ import { Subject } from 'rxjs';
 import { CoreConfigService } from '@core/services/config.service';
 
 @Component({
-  selector: 'app-maintenance',
-  templateUrl: './maintenance.component.html',
-  styleUrls: ['./maintenance.component.scss']
+    selector: 'app-maintenance',
+    templateUrl: './maintenance.component.html',
+    styleUrls: ['./maintenance.component.scss'],
+    standalone: false
 })
 export class MaintenanceComponent implements OnInit {
   public coreConfig: any;

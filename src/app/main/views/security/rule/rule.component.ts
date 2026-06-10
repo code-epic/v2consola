@@ -11,10 +11,11 @@ import jwt_decode from "jwt-decode";
 
 
 @Component({
-  selector: 'app-rule',
-  templateUrl: './rule.component.html',
-  styleUrls: ['./rule.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-rule',
+    templateUrl: './rule.component.html',
+    styleUrls: ['./rule.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class RuleComponent implements OnInit {
 

@@ -5,8 +5,9 @@ import { BlockUIService } from 'ng-block-ui';
 import { CoreBlockUiComponent } from '@core/components/core-card/core-block-ui/core-block-ui.component';
 
 @Component({
-  selector: 'core-card',
-  templateUrl: './core-card.component.html'
+    selector: 'core-card',
+    templateUrl: './core-card.component.html',
+    standalone: false
 })
 export class CoreCardComponent implements OnInit {
   // public

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Inject } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, Inject, DOCUMENT } from "@angular/core";
 import {
   NgForm,
   UntypedFormBuilder,
@@ -20,14 +20,15 @@ import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
 import { Router } from "@angular/router";
 
-import { DOCUMENT } from "@angular/common";
+
 import { ApiService } from "@services/apicore/api.service";
 
 @Component({
-  selector: "app-auth-login-v1",
-  templateUrl: "./auth-login-v1.component.html",
-  styleUrls: ["./auth-login-v1.component.scss"],
-  encapsulation: ViewEncapsulation.None,
+    selector: "app-auth-login-v1",
+    templateUrl: "./auth-login-v1.component.html",
+    styleUrls: ["./auth-login-v1.component.scss"],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AuthLoginV1Component implements OnInit {
   token: string | undefined;

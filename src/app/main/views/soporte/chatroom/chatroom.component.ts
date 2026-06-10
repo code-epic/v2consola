@@ -36,7 +36,8 @@ interface User {
 @Component({
     selector: 'app-chatroom',
     templateUrl: './chatroom.component.html',
-    styleUrls: ['./chatroom.component.scss']
+    styleUrls: ['./chatroom.component.scss'],
+    standalone: false
 })
 export class ChatroomComponent implements OnInit, AfterViewChecked {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;

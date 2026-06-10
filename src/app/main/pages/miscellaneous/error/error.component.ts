@@ -7,9 +7,10 @@ import { Subject, timer } from 'rxjs'; // Import timer
 import { CoreConfigService } from '@core/services/config.service';
 
 @Component({
-  selector: 'app-error',
-  templateUrl: './error.component.html',
-  styleUrls: ['./error.component.scss']
+    selector: 'app-error',
+    templateUrl: './error.component.html',
+    styleUrls: ['./error.component.scss'],
+    standalone: false
 })
 export class ErrorComponent implements OnInit, OnDestroy { // Implement OnDestroy
   public coreConfig: any;

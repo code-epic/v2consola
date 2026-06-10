@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-incidencias',
-  templateUrl: './incidencias.component.html',
-  styleUrls: ['./incidencias.component.scss']
+    selector: 'app-incidencias',
+    templateUrl: './incidencias.component.html',
+    styleUrls: ['./incidencias.component.scss'],
+    standalone: false
 })
 export class IncidenciasComponent implements OnInit {
   public contentHeader: any;

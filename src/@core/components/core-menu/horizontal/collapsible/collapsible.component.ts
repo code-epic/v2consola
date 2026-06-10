@@ -9,8 +9,9 @@ import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
 
 
 @Component({
-  selector: '[core-menu-horizontal-collapsible]',
-  templateUrl: './collapsible.component.html'
+    selector: '[core-menu-horizontal-collapsible]',
+    templateUrl: './collapsible.component.html',
+    standalone: false
 })
 export class CoreMenuHorizontalCollapsibleComponent implements OnInit, OnDestroy {
   coreConfig: any;

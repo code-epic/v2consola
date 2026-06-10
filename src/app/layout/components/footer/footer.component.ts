@@ -9,8 +9,9 @@ import { VERSION } from '@angular/core';
 
 
 @Component({
-  selector: 'footer',
-  templateUrl: './footer.component.html'
+    selector: 'footer',
+    templateUrl: './footer.component.html',
+    standalone: false
 })
 export class FooterComponent implements OnInit, OnDestroy {
   public coreConfig: any;

@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { SystemInfoService } from '@services/apicore/system-info.service';
 
 @Component({
-  selector: 'app-system-info',
-  templateUrl: './system-info.component.html',
-  styleUrls: ['./system-info.component.scss']
+    selector: 'app-system-info',
+    templateUrl: './system-info.component.html',
+    styleUrls: ['./system-info.component.scss'],
+    standalone: false
 })
 export class SystemInfoComponent implements OnInit {
   systemInfo: any = null;

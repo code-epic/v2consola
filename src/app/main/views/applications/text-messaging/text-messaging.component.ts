@@ -13,11 +13,12 @@ import { WsocketsService } from '@services/websockets/wsockets.service';
 import { UtilService } from '@services/util/util.service';
 
 @Component({
-  selector: 'app-text-messaging',
-  templateUrl: './text-messaging.component.html',
-  styleUrls: ['./text-messaging.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    selector: 'app-text-messaging',
+    templateUrl: './text-messaging.component.html',
+    styleUrls: ['./text-messaging.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class TextMessagingComponent implements OnInit {
 

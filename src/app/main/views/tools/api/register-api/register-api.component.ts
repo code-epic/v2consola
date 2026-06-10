@@ -11,9 +11,10 @@ const clave =
 import { enc } from "crypto-js";
 
 @Component({
-  selector: "app-register-api",
-  templateUrl: "./register-api.component.html",
-  styleUrls: ["./register-api.component.scss"],
+    selector: "app-register-api",
+    templateUrl: "./register-api.component.html",
+    styleUrls: ["./register-api.component.scss"],
+    standalone: false
 })
 export class RegisterApiComponent implements OnInit {
   // public

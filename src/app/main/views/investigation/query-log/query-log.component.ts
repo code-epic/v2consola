@@ -27,11 +27,12 @@ interface QueryLog {
 
 
 @Component({
-  selector: 'app-query-log',
-  templateUrl: './query-log.component.html',
-  styleUrls: ['./query-log.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal],
+    selector: 'app-query-log',
+    templateUrl: './query-log.component.html',
+    styleUrls: ['./query-log.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class QueryLogComponent implements OnInit, OnDestroy {
 

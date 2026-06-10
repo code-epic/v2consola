@@ -4,11 +4,12 @@ import { Router } from "@angular/router";
 import { environment } from "environments/environment";
 
 @Component({
-  selector: 'app-binnacle',
-  templateUrl: './binnacle.component.html',
-  styleUrls: ['./binnacle.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  host: { class: "ecommerce-application" },
+    selector: 'app-binnacle',
+    templateUrl: './binnacle.component.html',
+    styleUrls: ['./binnacle.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    host: { class: "ecommerce-application" },
+    standalone: false
 })
 export class BinnacleComponent implements OnInit {
 

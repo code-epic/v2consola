@@ -8,7 +8,8 @@ import { takeUntil } from 'rxjs/operators';
 @Component({
     selector: 'app-task-monitor',
     templateUrl: './task-monitor.component.html',
-    styleUrls: ['./task-monitor.component.scss']
+    styleUrls: ['./task-monitor.component.scss'],
+    standalone: false
 })
 export class TaskMonitorComponent implements OnInit, OnDestroy {
     public count;

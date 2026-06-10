@@ -22,11 +22,12 @@ import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
 
 @Component({
-  selector: "app-list",
-  templateUrl: "./list.component.html",
-  styleUrls: ["./list.component.scss"],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal],
+    selector: "app-list",
+    templateUrl: "./list.component.html",
+    styleUrls: ["./list.component.scss"],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class ListComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;

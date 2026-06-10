@@ -6,10 +6,11 @@ import * as jspdf from 'jspdf';
 import 'jspdf-autotable';
 
 @Component({
-  selector: 'app-traza',
-  templateUrl: './traza.component.html',
-  styleUrls: ['./traza.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-traza',
+    templateUrl: './traza.component.html',
+    styleUrls: ['./traza.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class TrazaComponent implements OnInit {
 

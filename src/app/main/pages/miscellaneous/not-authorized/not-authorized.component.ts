@@ -6,9 +6,10 @@ import { Subject } from 'rxjs';
 import { CoreConfigService } from '@core/services/config.service';
 
 @Component({
-  selector: 'app-not-authorized',
-  templateUrl: './not-authorized.component.html',
-  styleUrls: ['./not-authorized.component.scss']
+    selector: 'app-not-authorized',
+    templateUrl: './not-authorized.component.html',
+    styleUrls: ['./not-authorized.component.scss'],
+    standalone: false
 })
 export class NotAuthorizedComponent implements OnInit {
   public coreConfig: any;

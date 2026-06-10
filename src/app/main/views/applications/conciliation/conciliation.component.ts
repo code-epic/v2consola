@@ -22,11 +22,12 @@ import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
 
 @Component({
-  selector: 'app-conciliation',
-  templateUrl: './conciliation.component.html',
-  styleUrls: ['./conciliation.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal],
+    selector: 'app-conciliation',
+    templateUrl: './conciliation.component.html',
+    styleUrls: ['./conciliation.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class ConciliationComponent implements OnInit {
 

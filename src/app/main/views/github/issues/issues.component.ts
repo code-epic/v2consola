@@ -16,10 +16,11 @@ import jwt_decode from "jwt-decode";
 
 
 @Component({
-  selector: 'app-issues',
-  templateUrl: './issues.component.html',
-  styleUrls: ['./issues.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-issues',
+    templateUrl: './issues.component.html',
+    styleUrls: ['./issues.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class IssuesComponent implements OnInit, OnDestroy {
 

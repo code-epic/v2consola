@@ -31,11 +31,12 @@ export interface Authorization {
 }
 
 @Component({
-  selector: 'app-authorization',
-  templateUrl: './authorization.component.html',
-  styleUrls: ['./authorization.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  providers: [NgbModalConfig, NgbModal]
+    selector: 'app-authorization',
+    templateUrl: './authorization.component.html',
+    styleUrls: ['./authorization.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    providers: [NgbModalConfig, NgbModal],
+    standalone: false
 })
 export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;

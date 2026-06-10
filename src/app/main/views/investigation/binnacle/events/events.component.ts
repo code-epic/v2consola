@@ -31,10 +31,11 @@ export interface IMetodoBitacora {
 }
 
 @Component({
-  selector: 'app-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'app-events',
+    templateUrl: './events.component.html',
+    styleUrls: ['./events.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class EventComponent implements OnInit {
 

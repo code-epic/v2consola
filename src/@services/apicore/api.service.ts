@@ -1,5 +1,5 @@
 import { HttpClient, HttpContext, HttpContextToken, HttpHeaders } from '@angular/common/http';
-import { Inject, Injectable } from "@angular/core";
+import { Inject, Injectable, DOCUMENT } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import Swal, { SweetAlertIcon } from "sweetalert2";
@@ -7,7 +7,7 @@ import { environment } from "../../environments/environment";
 import { WsocketsService } from "@services/websockets/wsockets.service";
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "./task.service";
-import { DOCUMENT } from "@angular/common";
+
 import { Md5 } from 'ts-md5';
 
 export interface RestoreAPI {
