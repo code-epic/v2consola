@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 
 import { BehaviorSubject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -33,11 +33,13 @@ export class CoreMediaService {
    * @private
    */
   private _init(): void {
-    this._mediaObserver.media$.pipe(debounceTime(500), distinctUntilChanged()).subscribe((change: MediaChange) => {
-      // console.log('subscription: ', change);
-      if (this.currentMediaQuery !== change.mqAlias) {
-        this.currentMediaQuery = change.mqAlias;
-        this.onMediaUpdate.next(change.mqAlias);
+    this._mediaObserver.asObservable().pipe(debounceTime(500)).subscribe((changes: MediaChange[]) => {
+      if (changes && changes.length > 0) {
+        const change = changes[0];
+        if (this.currentMediaQuery !== change.mqAlias) {
+          this.currentMediaQuery = change.mqAlias;
+          this.onMediaUpdate.next(change.mqAlias);
+        }
       }
     });
   }
