@@ -3,9 +3,6 @@ import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
 import { ApiService, IAPICore } from '@services/apicore/api.service';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
-
-
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectConfig } from '@ng-select/ng-select';
@@ -27,8 +24,6 @@ import { environment } from 'environments/environment';
 export class ConnectionsComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
   public xAPI: IAPICore = {
@@ -67,6 +62,7 @@ export class ConnectionsComponent implements OnInit {
   public showPuente = false
   private _unsubscribeAll: Subject<any>;
 
+  public searchValue: string = ''
   public ListaConexiones = []
   public tempData = [];
   public rowData = [];
@@ -147,9 +143,6 @@ export class ConnectionsComponent implements OnInit {
       puerto: ['', [Validators.required]],
       descripcion: ['', [Validators.required]],
     });
-
-    // this.sectionBlockUI.start('Loading...');
-    // this.sectionBlockUI.stop();
 
     // content header
     this.contentHeader = {

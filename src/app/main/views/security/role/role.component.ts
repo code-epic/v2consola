@@ -6,7 +6,6 @@ import { UtilService } from '@services/util/util.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import { environment } from 'environments/environment';
 import JSONFormatter from 'json-formatter-js';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { windowWhen } from 'rxjs/operators';
 
 
@@ -24,8 +23,6 @@ import { windowWhen } from 'rxjs/operators';
 
 export class RoleComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
   public contentHeader: object;
 

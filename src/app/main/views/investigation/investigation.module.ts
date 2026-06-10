@@ -12,7 +12,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
-import { BlockUIModule } from 'ng-block-ui';
 import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.module';
 import { LogsComponent } from './logs/logs.component';
 import { BinnacleComponent } from './binnacle/binnacle.component';
@@ -68,7 +67,6 @@ const routes = [
     NgbModule,
     NgSelectModule,
     CoreDirectivesModule,
-    BlockUIModule,
     CorePipesModule,
     CoreSidebarModule,
     CoreCommonModule,

@@ -23,7 +23,6 @@ import {
 } from '@swimlane/ngx-datatable'
 import { environment } from 'environments/environment'
 
-import { BlockUI, NgBlockUI } from 'ng-block-ui'
 import Swal from 'sweetalert2'
 
 
@@ -39,8 +38,6 @@ import Swal from 'sweetalert2'
 })
 export class UserComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent
-  @BlockUI() blockUI: NgBlockUI
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI
 
   public contentHeader: object
 

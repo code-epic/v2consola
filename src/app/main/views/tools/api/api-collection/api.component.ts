@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore, ProcessID, RestoreAPI } from '@services/apicore/api.service';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { PdfService } from '@services/pdf/pdf.service';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -28,9 +27,6 @@ export class ApiComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
   @ViewChild('tableRowDetails') tableRowDetails: any;
-
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
   public codeMirrorOptions: any = {

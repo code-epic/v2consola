@@ -6,8 +6,6 @@ import {
 } from "@swimlane/ngx-datatable";
 
 import { ApiService, IAPICore, ProcessID } from "@services/apicore/api.service";
-import { BlockUI, NgBlockUI } from "ng-block-ui";
-
 import Swal from "sweetalert2";
 
 import { environment } from "environments/environment";
@@ -32,8 +30,6 @@ import { TaskService } from "@services/apicore/task.service";
 export class ConciliationComponent implements OnInit {
 
    @ViewChild(DatatableComponent) table: DatatableComponent;
-    @BlockUI() blockUI: NgBlockUI;
-    @BlockUI("section-block") sectionBlockUI: NgBlockUI;
   
     public xAPI: IAPICore = {
       funcion: "",
@@ -78,6 +74,8 @@ export class ConciliationComponent implements OnInit {
     public rowData = [];
   
   
+    public searchValue: string = '';
+    public lenguaje: any[] = [];
     public fnx;
     public status = false;
   
@@ -133,6 +131,7 @@ export class ConciliationComponent implements OnInit {
       this.table.offset = 0;
     }
   
+    filterLenguaje(event: any): void { }
 
   }
   

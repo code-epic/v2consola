@@ -11,8 +11,6 @@ import {
   ProcessID,
   RestoreAPI,
 } from "@services/apicore/api.service"
-import { BlockUI, NgBlockUI } from "ng-block-ui"
-
 import { WsocketsService } from "@services/websockets/wsockets.service"
 import {
   NgbModal,
@@ -40,8 +38,6 @@ import { env } from "process"
 })
 export class FunctionsComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent
-  @BlockUI() blockUI: NgBlockUI
-  @BlockUI("section-block") sectionBlockUI: NgBlockUI
 
   public codeMirrorOptions: any = {
     theme: "idea",
@@ -131,6 +127,7 @@ export class FunctionsComponent implements OnInit {
   public showBaseDatos = false
   public showPuente = false
 
+  public searchValue: string = ''
   public ListaFunciones = []
   public tempData = []
   public rowData = []

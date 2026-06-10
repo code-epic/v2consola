@@ -1,4 +1,4 @@
-<div class="content-wrapper container-xxl p-0" *blockUI="'section-block'">
+<div class="content-wrapper container-xxl p-0">
     <div class="content-body">
         <!-- content-header component -->
         <app-content-header [contentHeader]="contentHeader"></app-content-header>
@@ -95,7 +95,7 @@
                         <ng-template let-row="row" ngx-datatable-cell-template>
                             <div>
                                 <div class="font-weight-bold">{{ row.Perfil?.descripcion }}</div>
-                                <div class="font-small-2 text-muted">{{ row.cargo | slice:0:50}}</div>
+                                <div class="font-small-2 text-muted">{{ row.cargo | slice:0:30}} ...mas</div>
                             </div>
                         </ng-template>
                     </ngx-datatable-column>

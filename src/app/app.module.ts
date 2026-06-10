@@ -16,7 +16,7 @@ import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@a
 import 'hammerjs';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
-import { ToastrModule } from 'ngx-toastr'; // For auth after login toast
+
 
 import { CoreModule } from '@core/core.module';
 import { CoreCommonModule } from '@core/common.module';
@@ -41,7 +41,6 @@ import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 // Recaptcha V3
 import { RECAPTCHA_V3_SITE_KEY, RecaptchaV3Module } from 'ng-recaptcha';
 import { environment } from 'environments/environment';
-import { BlockUIModule } from 'ng-block-ui';
 import { AuthInterceptorService } from '@services/seguridad/auth-interceptor.service';
 import { SharedModule } from './main/license-bunker/shared.module';
 import { GithubModule } from './main/views/github/github.module';
@@ -74,12 +73,10 @@ const appRoutes: Routes = [
         CodemirrorModule,
         RecaptchaV3Module,
         NgbModule,
-        ToastrModule.forRoot(),
         CoreModule.forRoot(coreConfig),
         CoreCommonModule,
         CoreSidebarModule,
         CoreThemeCustomizerModule,
-        BlockUIModule.forRoot(),
         LayoutModule,
         HomeModule,
         ErrorModalModule,

@@ -13,7 +13,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
-import { BlockUIModule } from 'ng-block-ui';
 import { FunctionsComponent } from './functions/functions.component';
 import { ApiComponent } from './api/api-collection/api.component';
 import { WorkflowComponent } from './workflow/workflow.component';
@@ -91,7 +90,6 @@ const routes = [
     NgbModule,
     NgSelectModule,
     CoreDirectivesModule,
-    BlockUIModule,
     CorePipesModule,
     CoreSidebarModule,
     CoreCommonModule,

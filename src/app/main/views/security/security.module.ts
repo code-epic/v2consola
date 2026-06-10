@@ -23,7 +23,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
-import { BlockUIModule } from 'ng-block-ui';
 
 
 import { RoleComponent } from './role/role.component';
@@ -89,7 +88,6 @@ const routes = [
     NgbModule,
     NgSelectModule,
     CoreDirectivesModule,
-    BlockUIModule,
     CorePipesModule,
     CoreSidebarModule,
     CoreCommonModule,

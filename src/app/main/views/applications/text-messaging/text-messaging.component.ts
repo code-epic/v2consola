@@ -3,7 +3,6 @@ import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore, ProcessID } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import jwt_decode from "jwt-decode";
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { Subject } from 'rxjs';
 import { AngularFileUploaderComponent } from 'angular-file-uploader';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -27,9 +26,6 @@ export class TextMessagingComponent implements OnInit {
 
   private fileUpload1: AngularFileUploaderComponent
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
-  @BlockUI('modal-section-block') modalsectionBlockUI: NgBlockUI;
   @ViewChild('CapturarLote') modalSubirXLS: TemplateRef<any>;
 
 

@@ -1,22 +1,11 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, HostListener, EventEmitter, Output } from '@angular/core';
 
-import { BlockUIService } from 'ng-block-ui';
-
-import { CoreBlockUiComponent } from '@core/components/core-card/core-block-ui/core-block-ui.component';
-
 @Component({
     selector: 'core-card',
     templateUrl: './core-card.component.html',
     standalone: false
 })
 export class CoreCardComponent implements OnInit {
-  // public
-  // Generate random string  assign to specific core-card to only block that specific card
-  public coreCardId: string = Math.random().toString(36).substring(2);
-
-  // To pass core-block-ui component values to _CoreBlockUiComponent variable
-  public _CoreBlockUiComponent = CoreBlockUiComponent;
-
   // default status before click event
   public onclickEvent = {
     collapseStatus: false,
@@ -48,12 +37,7 @@ export class CoreCardComponent implements OnInit {
   @ViewChild('coreCard') private coreCard: ElementRef;
   @ViewChild('cardHeader') private cardHeader: ElementRef;
 
-  /**
-   * Constructor
-   *
-   * @param {BlockUIService} blockUIService
-   */
-  constructor(private blockUIService: BlockUIService) {
+  constructor() {
     this.events = new EventEmitter<any>();
   }
 
@@ -92,11 +76,9 @@ export class CoreCardComponent implements OnInit {
    * ng On Changes
    */
   ngOnChanges(changes: any) {
+    // TODO: implement loading state
     if (changes.isReload?.currentValue === true) {
       this.events.emit('reload');
-      this.blockUIService.start(this.coreCardId);
-    } else if (changes.isReload?.currentValue === false) {
-      this.blockUIService.stop(this.coreCardId);
     }
   }
 
@@ -139,13 +121,11 @@ export class CoreCardComponent implements OnInit {
    * Reload
    */
   reload() {
+    // TODO: implement loading state
     this.isReload = true;
     this.events.emit('reload');
-    this.blockUIService.start(this.coreCardId);
 
-    // block-ui timeout
     setTimeout(() => {
-      this.blockUIService.stop(this.coreCardId);
       this.isReload = false;
     }, this.reloadTime);
   }

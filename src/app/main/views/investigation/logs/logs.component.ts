@@ -7,7 +7,6 @@ import { WsocketsService } from '@services/websockets/wsockets.service';
 import { ColumnMode, SelectionType } from '@swimlane/ngx-datatable';
 import { environment } from 'environments/environment';
 
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import Swal from 'sweetalert2';
 
 
@@ -22,8 +21,7 @@ import Swal from 'sweetalert2';
 
 export class LogsComponent implements OnInit {
 
-  @BlockUI() blockUI: NgBlockUI
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI
+
 
   public contentHeader: object;
 

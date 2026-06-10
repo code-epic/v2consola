@@ -5,6 +5,9 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "skipLibCheck": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
     "declaration": false,
     "module": "es2022",
     "moduleResolution": "bundler",
@@ -39,6 +42,7 @@
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": false,
-    "strictInjectionParameters": false
+    "strictInjectionParameters": false,
+    "strictTemplates": false
   }
 }

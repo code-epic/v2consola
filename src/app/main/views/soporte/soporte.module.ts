@@ -7,7 +7,6 @@ import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
 import { CoreCommonModule } from '@core/common.module';
 import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
 import { CoreCardModule } from '@core/components/core-card/core-card.module';
-import { BlockUIModule } from 'ng-block-ui';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -48,8 +47,7 @@ const routes: Routes = [
     CoreCardModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule,
-    BlockUIModule.forRoot()
+    NgbModule
   ]
 })
 export class SoporteModule { }

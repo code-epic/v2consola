@@ -6,8 +6,6 @@ import {
 } from "@swimlane/ngx-datatable";
 
 import { ApiService, IAPICore, ProcessID } from "@services/apicore/api.service";
-import { BlockUI, NgBlockUI } from "ng-block-ui";
-
 import Swal from "sweetalert2";
 
 import { environment } from "environments/environment";
@@ -31,8 +29,6 @@ import { TaskService } from "@services/apicore/task.service";
 })
 export class ListComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI("section-block") sectionBlockUI: NgBlockUI;
 
   public xAPI: IAPICore = {
     funcion: "",
@@ -97,6 +93,7 @@ export class ListComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
+  public searchValue: string = ''
   public origen: string = ''
   public destino: string = ''
   public mensaje: string = ''
@@ -112,9 +109,6 @@ export class ListComponent implements OnInit {
 
   async ngOnInit() {
     await this.CargarListaAplicaciones();
-
-    // this.sectionBlockUI.start('Loading...');
-    // this.sectionBlockUI.stop();
 
     // content header
     this.contentHeader = {

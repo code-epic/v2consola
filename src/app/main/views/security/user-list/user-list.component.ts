@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { ColumnMode, DatatableComponent, SelectionType, } from "@swimlane/ngx-datatable";
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import Swal from 'sweetalert2';
@@ -22,8 +21,6 @@ import { Sha256Service } from '@services/util/sha256';
 export class UserListComponent implements OnInit, OnDestroy {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
   public xAPI: IAPICore = {
@@ -57,6 +54,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   public SelectionType = SelectionType;
 
 
+  public searchValue: string = '';
   public contentHeader: object;
   public count: number = 0;
   public tempData = []

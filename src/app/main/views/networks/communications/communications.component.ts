@@ -3,10 +3,6 @@ import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
 import { ApiService, IAPICore } from '@services/apicore/api.service';
-// import { BlockUI, NgBlockUI } from 'ng-block-ui';
-
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
-
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectConfig } from '@ng-select/ng-select';
@@ -28,8 +24,6 @@ import JSONFormatter from 'json-formatter-js';
 export class CommunicationsComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  @BlockUI() blockUI: NgBlockUI;
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
 
   public xAPI: IAPICore = {
@@ -125,11 +119,6 @@ export class CommunicationsComponent implements OnInit {
 
 
   async ngOnInit() {
-
-    // this.blockUI.start('Loading...'); // Start blocking
-    // setTimeout(() => {
-    //   this.blockUI.stop(); // Stop blocking
-    // }, 2000);
 
     await this.CargarLista()
 

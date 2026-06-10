@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ApiService, IAPICore, IConfiguracion } from '@services/apicore/api.service';
 import { UtilService } from '@services/util/util.service';
-import { BlockUI, NgBlockUI } from 'ng-block-ui';
 import { environment } from 'environments/environment';
 import Swal from 'sweetalert2';
 import jwt_decode from "jwt-decode";
@@ -18,8 +17,6 @@ import jwt_decode from "jwt-decode";
     standalone: false
 })
 export class RuleComponent implements OnInit {
-
-  @BlockUI('section-block') sectionBlockUI: NgBlockUI;
 
   public contentHeader: object;
 
