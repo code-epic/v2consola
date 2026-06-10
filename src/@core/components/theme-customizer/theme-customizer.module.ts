@@ -3,12 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import {
-  PerfectScrollbarConfigInterface,
-  PerfectScrollbarModule,
-  PERFECT_SCROLLBAR_CONFIG
-} from 'ngx-perfect-scrollbar';
-
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CoreSidebarModule } from '@core/components/core-sidebar/core-sidebar.module';
 
@@ -17,13 +11,6 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { SystemInfoComponent } from '@core/components/system-info/system-info.component';
 import { TaskMonitorComponent } from '../task-monitor/task-monitor.component';
 
-
-
-const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
-  suppressScrollX: true,
-  wheelPropagation: false
-};
-
 @NgModule({
   declarations: [CoreThemeCustomizerComponent, SystemInfoComponent, TaskMonitorComponent],
   imports: [
@@ -31,16 +18,9 @@ const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     FormsModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    PerfectScrollbarModule,
     CoreDirectivesModule,
     CoreSidebarModule,
     NgbNavModule
-  ],
-  providers: [
-    {
-      provide: PERFECT_SCROLLBAR_CONFIG,
-      useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    }
   ],
   exports: [CoreThemeCustomizerComponent]
 })

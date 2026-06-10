@@ -3,7 +3,6 @@ import { Router, NavigationEnd } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { take, takeUntil, filter } from 'rxjs/operators';
-import { PerfectScrollbarDirective } from 'ngx-perfect-scrollbar';
 
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
@@ -57,7 +56,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     this._unsubscribeAll = new Subject();
   }
 
-  @ViewChild(PerfectScrollbarDirective, { static: false }) directiveRef?: PerfectScrollbarDirective;
+  @ViewChild('scrollRef', { static: false }) directiveRef?: any;
 
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
@@ -265,7 +264,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions
-    this._unsubscribeAll.next();
+    this._unsubscribeAll.next(undefined);
     this._unsubscribeAll.complete();
   }
 
@@ -276,7 +275,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    * On Sidebar scroll set isScrolled as true
    */
   onSidebarScroll(): void {
-    if (this.directiveRef.position(true).y > '3') {
+    if (this.directiveRef?.position(true).y > '3') {
       this.isScrolled = true;
     } else {
       this.isScrolled = false;

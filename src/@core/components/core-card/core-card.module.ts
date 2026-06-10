@@ -11,9 +11,6 @@ import { CoreBlockUiComponent } from '@core/components/core-card/core-block-ui/c
 @NgModule({
   declarations: [CoreCardComponent, CoreBlockUiComponent],
   imports: [CommonModule, NgbModule, BlockUIModule.forRoot({ template: CoreBlockUiComponent }), CoreCommonModule],
-  exports: [CoreCardComponent],
-  entryComponents: [
-    CoreBlockUiComponent // Make sure to add ng-block-ui custom block component to the entry components
-  ]
+  exports: [CoreCardComponent]
 })
 export class CoreCardModule {}

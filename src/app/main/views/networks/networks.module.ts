@@ -18,7 +18,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { NgSelectModule } from '@ng-select/ng-select';
 
-import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CorePipesModule } from '@core/pipes/pipes.module';
@@ -59,7 +58,6 @@ const routes = [
     NgxDatatableModule,
     NgbModule,
     NgSelectModule,
-    Ng2FlatpickrModule,
     CoreDirectivesModule,
     BlockUIModule,
     CorePipesModule,

@@ -220,8 +220,8 @@
           <div class="d-flex justify-content-center">
             <ngb-pagination
               [collectionSize]="!isListView ? (ListarBitacora | filter: searchText:'nombre').length : (ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo').length"
-              [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true" [ellipses]="false"
-              [boundaryLinks]="true" aria-label="Pagination">
+              [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true"
+              aria-label="Pagination">
               <!-- First Page -->
               <ng-template ngbPaginationFirst>
                 <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>

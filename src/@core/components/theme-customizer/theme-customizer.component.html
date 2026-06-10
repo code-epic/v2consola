@@ -1,10 +1,10 @@
-<div class="customizer-content" [perfectScrollbar]>
+<div class="customizer-content">
   <!-- Customizer header -->
   <div class="customizer-header px-2 pt-1 pb-0 position-relative">
     <h4 class="mb-0">Monitoreo de Procesos</h4>
     <p class="m-0">Sandra Server</p>
 
-    <a class="customizer-close" (click)="toggleSidebar('themeCustomizer')"><span [data-feather]="'x'"></span></a>
+    <a class="customizer-close" (click)="toggleSidebar('themeCustomizer')"><span data-feather="x"></span></a>
   </div>
 
   <hr />
@@ -12,13 +12,13 @@
 
   <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
     <li ngbNavItem>
-      <a ngbNavLink><span [data-feather]="'monitor'"></span></a>
+      <a ngbNavLink><span data-feather="monitor"></span></a>
       <ng-template ngbNavContent>
         <app-task-monitor></app-task-monitor>
       </ng-template>
     </li>
     <li ngbNavItem>
-      <a ngbNavLink><span [data-feather]="'settings'"></span></a>
+      <a ngbNavLink><span data-feather="settings"></span></a>
       <ng-template ngbNavContent>
 
         <app-system-info></app-system-info>
@@ -26,7 +26,7 @@
       </ng-template>
     </li>
     <li ngbNavItem>
-      <a ngbNavLink><span [data-feather]="'award'"></span></a>
+      <a ngbNavLink><span data-feather="award"></span></a>
       <ng-template ngbNavContent>
 
         <div class="certificate-upload-container">

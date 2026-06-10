@@ -204,7 +204,7 @@ export class AuthLoginV1Component implements OnInit {
    * On destroy
    */
   ngOnDestroy(): void {
-    this._unsubscribeAll.next();
+    this._unsubscribeAll.next(undefined);
     this._unsubscribeAll.complete();
   }
 

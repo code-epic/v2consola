@@ -82,7 +82,7 @@ export class ErrorComponent implements OnInit, OnDestroy { // Implement OnDestro
    */
   ngOnDestroy(): void {
     // Unsubscribe from all subscriptions (including the timer)
-    this._unsubscribeAll.next();
+    this._unsubscribeAll.next(undefined);
     this._unsubscribeAll.complete();
 
     // Explicitly unsubscribe from the timer if it's still active

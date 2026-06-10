@@ -1316,7 +1316,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
    */
   ngOnDestroy(): void {
     // Unsubscribe from all observables to prevent memory leaks
-    this.destroy$.next();
+    this.destroy$.next(undefined);
     this.destroy$.complete();
 
     // Clean up specific subscriptions

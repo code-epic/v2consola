@@ -401,7 +401,7 @@ export class AppComponent implements OnInit, OnDestroy {
     // Unsubscribe from all subscriptions
     clearInterval(this.checkInterval);
     console.log("destroy code");
-    this._unsubscribeAll.next();
+    this._unsubscribeAll.next(undefined);
     this._unsubscribeAll.complete();
   }
 

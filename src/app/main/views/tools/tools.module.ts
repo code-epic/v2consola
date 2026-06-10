@@ -10,7 +10,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
@@ -91,7 +90,6 @@ const routes = [
     NgxDatatableModule,
     NgbModule,
     NgSelectModule,
-    Ng2FlatpickrModule,
     CoreDirectivesModule,
     BlockUIModule,
     CorePipesModule,

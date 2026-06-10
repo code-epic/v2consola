@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,7 +9,6 @@ import { CoreCardModule } from '@core/components/core-card/core-card.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbPaginationModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { Ng2FlatpickrModule } from 'ng2-flatpickr';
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { CorePipesModule } from '@core/pipes/pipes.module';
 import { CoreSidebarModule } from '@core/components';
@@ -21,9 +20,6 @@ import { BinnacleApplicationsComponent } from './binnacle-applications/binnacle-
 import { TrazaComponent } from './binnacle/traza/traza.component';
 import { EventComponent } from './binnacle/events/events.component';
 import { QueryLogComponent } from './query-log/query-log.component';
-import { ChartsModule } from 'ng2-charts';
-
-
 const routes = [
   {
     path: 'investigation/logs',
@@ -71,7 +67,6 @@ const routes = [
     ReactiveFormsModule,
     NgbModule,
     NgSelectModule,
-    Ng2FlatpickrModule,
     CoreDirectivesModule,
     BlockUIModule,
     CorePipesModule,
@@ -79,8 +74,8 @@ const routes = [
     CoreCommonModule,
     CardSnippetModule,
     NgbPaginationModule,
-    NgbNavModule,
-    ChartsModule
-  ]
+    NgbNavModule
+  ],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class InvestigationModule { }

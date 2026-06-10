@@ -103,7 +103,7 @@
                             de {{ filteredUsers.length }} encontrados
                         </div>
                         <ngb-pagination [collectionSize]="filteredUsers.length" [(page)]="userPage" [pageSize]="userPageSize"
-                            [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
+                            [maxSize]="5" [rotate]="true"
                             class="pagination-sm mb-0">
                             <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
                         </ngb-pagination>
@@ -200,7 +200,7 @@
                         {{ (page * pageSize) > filteredLogs.length ? filteredLogs.length : (page * pageSize) }}
                     </div>
                     <ngb-pagination [collectionSize]="filteredLogs.length" [(page)]="page" [pageSize]="pageSize"
-                        [maxSize]="5" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
+                        [maxSize]="5" [rotate]="true"
                         class="pagination-sm mb-0">
                         <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
                     </ngb-pagination>
