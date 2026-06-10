@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, HostListener, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, HostListener, ViewEncapsulation, ElementRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
 import { Subject } from 'rxjs';
@@ -57,7 +57,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     this._unsubscribeAll = new Subject();
   }
 
-  @ViewChild('scrollRef', { static: false }) directiveRef?: any;
+  @ViewChild('mainMenuContent', { static: false }) mainMenuContent?: ElementRef;
 
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
@@ -98,7 +98,10 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         setTimeout(() => {
-          this.directiveRef.scrollToElement('.navigation .active', -180, 500);
+          const activeEl = this.mainMenuContent?.nativeElement?.querySelector('.navigation .active');
+          if (activeEl) {
+            activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
         });
       });
 
@@ -276,11 +279,8 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    * On Sidebar scroll set isScrolled as true
    */
   onSidebarScroll(): void {
-    if (this.directiveRef?.position(true).y > '3') {
-      this.isScrolled = true;
-    } else {
-      this.isScrolled = false;
-    }
+    const scrollTop = this.mainMenuContent?.nativeElement?.scrollTop || 0;
+    this.isScrolled = scrollTop > 3;
   }
 
   /**
