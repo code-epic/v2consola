@@ -14,7 +14,6 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 import { zoneInterceptor } from '@services/seguridad/zone-interceptor';
 
-import 'hammerjs';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { TranslateModule } from '@ngx-translate/core';
 

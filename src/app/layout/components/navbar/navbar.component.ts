@@ -6,7 +6,7 @@ import {
   HostListener,
   ViewEncapsulation,
 } from "@angular/core";
-import { MediaObserver } from "@angular/flex-layout";
+import { BreakpointObserver } from "@angular/cdk/layout";
 
 import * as _ from "lodash";
 import { Subject } from "rxjs";
@@ -16,6 +16,7 @@ import { TranslateService } from "@ngx-translate/core";
 import { CoreSidebarService } from "@core/components/core-sidebar/core-sidebar.service";
 import { CoreConfigService } from "@core/services/config.service";
 import { CoreMediaService } from "@core/services/media.service";
+import { resolveBreakpoint } from "app/layout/custom-breakpoints";
 import jwt_decode from "jwt-decode";
 
 import { coreConfig } from "app/app-config";
@@ -142,7 +143,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @param {CoreConfigService} _coreConfigService
    * @param {CoreSidebarService} _coreSidebarService
    * @param {CoreMediaService} _coreMediaService
-   * @param {MediaObserver} _mediaObserver
+   * @param {BreakpointObserver} _breakpointObserver
    * @param {TranslateService} _translateService
    */
   constructor(
@@ -151,7 +152,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private _coreConfigService: CoreConfigService,
     private _coreMediaService: CoreMediaService,
     private _coreSidebarService: CoreSidebarService,
-    private _mediaObserver: MediaObserver,
+    private _breakpointObserver: BreakpointObserver,
     public _translateService: TranslateService,
     private loginService: LoginService,
     private apiService: ApiService,
@@ -222,7 +223,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       this._coreMediaService.onMediaUpdate
         .pipe(takeUntil(this._unsubscribeAll))
         .subscribe(() => {
-          const isFixedTop = this._mediaObserver.isActive("bs-gt-xl");
+          const isFixedTop = this._breakpointObserver.isMatched(resolveBreakpoint("bs-gt-xl"));
           if (isFixedTop) {
             this.isFixed = false;
           } else {

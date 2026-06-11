@@ -131,17 +131,7 @@
             <ng-template let-row="row" ngx-datatable-cell-template>
               <div>
                 <span class="font-weight-bold">
-                  <div class="badge badge-glow" [ngClass]="{
-                      'badge-success': row.lenguaje == 'PHP',
-                      'badge-warning': row.lenguaje == 'PYTHON',
-                      'badge-primary': row.lenguaje == 'RUST',
-                      'badge-secondary': row.lenguaje == 'BASH',
-                      'badge-info': row.lenguaje == 'SHELL',
-                      'badge-primary': row.lenguaje == 'NJS',
-                      'badge-danger': row.lenguaje == 'GO',
-                      'badge-danger': row.lenguaje == 'C++',
-                      'badge-warning': row.lenguaje == 'RDN'
-                    }">
+                  <div class="badge badge-glow" [ngClass]="getBadgeClass(row.lenguaje)">
                     {{ row.lenguaje}}
                   </div>
                 </span>

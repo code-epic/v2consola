@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MediaChange, MediaObserver } from '@angular/flex-layout';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 
 import { BehaviorSubject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
@@ -14,9 +14,9 @@ export class CoreMediaService {
   /**
    * Constructor
    *
-   * @param {MediaObserver} _mediaObserver
+   * @param {BreakpointObserver} _breakpointObserver
    */
-  constructor(private _mediaObserver: MediaObserver) {
+  constructor(private _breakpointObserver: BreakpointObserver) {
     // Set the defaults
     this.currentMediaQuery = '';
 
@@ -33,14 +33,35 @@ export class CoreMediaService {
    * @private
    */
   private _init(): void {
-    this._mediaObserver.asObservable().pipe(debounceTime(500)).subscribe((changes: MediaChange[]) => {
-      if (changes && changes.length > 0) {
-        const change = changes[0];
-        if (this.currentMediaQuery !== change.mqAlias) {
-          this.currentMediaQuery = change.mqAlias;
-          this.onMediaUpdate.next(change.mqAlias);
+    // Observamos todos los breakpoints Bootstrap para detectar cambios
+    this._breakpointObserver
+      .observe([
+        '(max-width: 575.98px)',
+        '(min-width: 576px) and (max-width: 767.98px)',
+        '(min-width: 768px) and (max-width: 991.98px)',
+        '(min-width: 992px) and (max-width: 1199.98px)',
+        '(min-width: 1200px)'
+      ])
+      .pipe(debounceTime(500))
+      .subscribe((state: BreakpointState) => {
+        if (state.breakpoints['(max-width: 575.98px)']) {
+          this._emitChange('bs-xs');
+        } else if (state.breakpoints['(min-width: 576px) and (max-width: 767.98px)']) {
+          this._emitChange('bs-sm');
+        } else if (state.breakpoints['(min-width: 768px) and (max-width: 991.98px)']) {
+          this._emitChange('bs-md');
+        } else if (state.breakpoints['(min-width: 992px) and (max-width: 1199.98px)']) {
+          this._emitChange('bs-lg');
+        } else if (state.breakpoints['(min-width: 1200px)']) {
+          this._emitChange('bs-xl');
         }
-      }
-    });
+      });
+  }
+
+  private _emitChange(alias: string): void {
+    if (this.currentMediaQuery !== alias) {
+      this.currentMediaQuery = alias;
+      this.onMediaUpdate.next(alias);
+    }
   }
 }

@@ -1,25 +1,26 @@
-import { BREAKPOINT } from '@angular/flex-layout';
+// Breakpoints alineados con Bootstrap 4 (usados por BreakpointObserver de CDK)
+export const BS_BREAKPOINTS: Record<string, string> = {
+  'bs-xs': '(max-width: 575.98px)',
+  'bs-sm': '(min-width: 576px) and (max-width: 767.98px)',
+  'bs-md': '(min-width: 768px) and (max-width: 991.98px)',
+  'bs-lg': '(min-width: 992px) and (max-width: 1199.98px)',
+  'bs-xl': '(min-width: 1200px)',
 
-const BS_BREAKPOINTS = [
-  { alias: 'bs-xs', overlapping: false, mediaQuery: '(max-width: 575.98px)', suffix: 'BsXs' },
-  { alias: 'bs-sm', overlapping: false, mediaQuery: '(min-width: 576px) and (max-width: 767.98px)', suffix: 'BsSm' },
-  { alias: 'bs-md', overlapping: false, mediaQuery: '(min-width: 768px) and (max-width: 991.98px)', suffix: 'BsMd' },
-  { alias: 'bs-lg', overlapping: false, mediaQuery: '(min-width: 992px) and (max-width: 1199.98px)', suffix: 'BsLg' },
-  { alias: 'bs-xl', overlapping: false, mediaQuery: '(min-width: 1200px)', suffix: 'BsXl' },
+  'bs-gt-sm': '(min-width: 576px)',
+  'bs-gt-md': '(min-width: 768px)',
+  'bs-gt-lg': '(min-width: 992px)',
+  'bs-gt-xl': '(min-width: 1200px)',
 
-  { alias: 'bs-gt-sm', overlapping: false, mediaQuery: '(min-width: 576px)', suffix: 'BsGtSm' },
-  { alias: 'bs-gt-md', overlapping: false, mediaQuery: '(min-width: 768px)', suffix: 'BsGtMd' },
-  { alias: 'bs-gt-lg', overlapping: false, mediaQuery: '(min-width: 992px)', suffix: 'BsGtLg' },
-  { alias: 'bs-gt-xl', overlapping: false, mediaQuery: '(min-width: 1200px)', suffix: 'BsGtXl' },
-
-  { alias: 'bs-lt-sm', overlapping: false, mediaQuery: '(max-width: 575.98px)', suffix: 'BsLtSm' },
-  { alias: 'bs-lt-md', overlapping: false, mediaQuery: '(max-width: 767.98px)', suffix: 'BsLtMd' },
-  { alias: 'bs-lt-lg', overlapping: false, mediaQuery: '(max-width: 991.98px)', suffix: 'BsLtLg' },
-  { alias: 'bs-lt-xl', overlapping: false, mediaQuery: '(max-width: 1199.98px)', suffix: 'BsLtXl' }
-];
-
-export const CustomBreakPointsProvider = {
-  provide: BREAKPOINT,
-  useValue: BS_BREAKPOINTS,
-  multi: true
+  'bs-lt-sm': '(max-width: 575.98px)',
+  'bs-lt-md': '(max-width: 767.98px)',
+  'bs-lt-lg': '(max-width: 991.98px)',
+  'bs-lt-xl': '(max-width: 1199.98px)'
 };
+
+/**
+ * Convierte un alias de breakpoint Bootstrap a un media query string.
+ * Ej: resolveBreakpoint('bs-gt-xl') → '(min-width: 1200px)'
+ */
+export function resolveBreakpoint(alias: string): string {
+  return BS_BREAKPOINTS[alias] || alias;
+}

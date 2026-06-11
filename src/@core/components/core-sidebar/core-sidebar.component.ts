@@ -16,13 +16,14 @@ import {
 } from '@angular/core';
 import { animate, AnimationBuilder, AnimationPlayer, style } from '@angular/animations';
 
-import { MediaObserver } from '@angular/flex-layout';
+import { BreakpointObserver } from '@angular/cdk/layout';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CoreMediaService } from '@core/services/media.service';
 import { CoreConfigService } from '@core/services/config.service';
+import { resolveBreakpoint } from 'app/layout/custom-breakpoints';
 
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 
@@ -102,7 +103,7 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
    * @param {CoreMediaService} _coreMediaService
    * @param {CoreSidebarService} _coreSidebarService
    * @param {AnimationBuilder} _animationBuilder
-   * @param {MediaObserver} _mediaObserver
+   * @param {BreakpointObserver} _breakpointObserver
    */
   constructor(
     @Inject(DOCUMENT) private document: any,
@@ -113,7 +114,7 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     private _coreMediaService: CoreMediaService,
     private _coreSidebarService: CoreSidebarService,
     private _animationBuilder: AnimationBuilder,
-    private _mediaObserver: MediaObserver
+    private _breakpointObserver: BreakpointObserver
   ) {
     // Set Defaults
     this.isOpened = false;
@@ -245,7 +246,7 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     // On every media(screen) change
     this._coreMediaService.onMediaUpdate.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
       // Get the collapsible status
-      const isCollapsible = this._mediaObserver.isActive(this.collapsibleSidebar);
+      const isCollapsible = this._breakpointObserver.isMatched(resolveBreakpoint(this.collapsibleSidebar));
       //! On screen resize set the config collapsed state if we have else this.collapsed
       this._wasCollapsed = this._coreConfig.layout.menu.collapsed || this.collapsed;
 

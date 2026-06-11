@@ -830,5 +830,19 @@ export class FunctionsComponent implements OnInit {
     );
   }
 
+  getBadgeClass(lenguaje: string): Record<string, boolean> {
+    const map: Record<string, string> = {
+      'PHP': 'badge-success',
+      'PYTHON': 'badge-warning',
+      'RUST': 'badge-primary',
+      'BASH': 'badge-secondary',
+      'SHELL': 'badge-info',
+      'NJS': 'badge-primary',
+      'GO': 'badge-danger',
+      'C++': 'badge-danger',
+      'RDN': 'badge-warning'
+    };
+    return { [map[lenguaje] || 'badge-secondary']: true };
+  }
 
 }

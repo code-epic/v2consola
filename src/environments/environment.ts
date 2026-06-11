@@ -3,14 +3,13 @@ export const environment = {
   recaptcha: {
     siteKey: '6LdcDsknAAAAAC44xkc214BZ2giOxN8JQsL7L9x2',
   },
-  hmr: false,
   apiUrl: 'https://localhost',
-  Url: 'https://localhost', // requerido para la Fnx_Eliminar proyectos 
+  Url: 'https://localhost', // requerido para la Fnx_Eliminar proyectos
   WSS: 'wss://localhost',
   API: '/v1/api/',
   ID: 'App.Consola',
   Hash: '551582bbd1370fffe7c7198a854490e9.sse',
-  buildDateTime: 'Wed Jun 10 2026 20:45:06 GMT-0400 (Venezuela Time)',
+  buildDateTime: 'Thu Jun 11 2026 12:55:54 GMT-0400 (Venezuela Time)',
   version: 'Broglie 1.0.1-1b419f3',
   fecha: '2025-04-12 05:08:00',
   BD: 'code-epic',
@@ -101,12 +100,3 @@ export const environment = {
     RECOVERY: 'wusuario/login'
   }
 };
-
-/*
- * For easier debugging in development mode, you can import the following file
- * to ignore zone related error stack frames such as `zone.run`, `zoneDelegate.invokeTask`.
- *
- * This import should be commented out in production mode because it will have a negative impact
- * on performance if an error is thrown.
- */
-// import 'zone.js/plugins/zone-error';  // Included with Angular CLI.

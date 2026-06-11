@@ -4,8 +4,6 @@ import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
-import { hmrBootstrap } from './hmr';
-
 import 'codemirror/lib/codemirror';
 import 'codemirror/mode/javascript/javascript';
 import 'codemirror/mode/markdown/markdown';
@@ -28,19 +26,7 @@ if (environment.production) {
   enableProdMode();
 }
 
-const bootstrap = () => platformBrowserDynamic().bootstrapModule(AppModule);
-
-if (environment.hmr) {
-  if (module['hot']) {
-    hmrBootstrap(module, bootstrap);
-  } else {
-    console.error('HMR is not enabled for webpack-dev-server!');
-    console.log('Are you using the --hmr flag for ng serve?');
-  }
-} else {
-  bootstrap().catch(err => {
-    // console.error('Error durante el arranque de la aplicación:', err);
-
+platformBrowserDynamic().bootstrapModule(AppModule).catch(err => {
     // Si el error es por un token inválido (común en librerías JWT),
     // limpiamos el almacenamiento para evitar que el error persista
     // y recargamos la página para que el usuario pueda iniciar sesión de nuevo.
@@ -50,4 +36,3 @@ if (environment.hmr) {
       window.location.reload();
     }
   });
-}

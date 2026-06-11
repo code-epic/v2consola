@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CoreDirectivesModule } from '@core/directives/directives';
@@ -17,7 +16,6 @@ import { TaskMonitorComponent } from '../task-monitor/task-monitor.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    FlexLayoutModule,
     CoreDirectivesModule,
     CoreSidebarModule,
     NgbNavModule
