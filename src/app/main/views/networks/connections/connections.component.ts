@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
@@ -65,7 +65,8 @@ export class ConnectionsComponent implements OnInit {
   public searchValue: string = ''
   public ListaConexiones = []
   public tempData = [];
-  public rowData = [];
+  public rowData = []
+  public isLoading: boolean = false;;
 
   public driver = undefined
   public drivers = []
@@ -113,6 +114,7 @@ export class ConnectionsComponent implements OnInit {
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -229,14 +231,20 @@ export class ConnectionsComponent implements OnInit {
     this.xAPI.parametros = ''
     this.ListaConexiones = []
     this.count = 0
+    this.isLoading = true;
+    this.cdr.detectChanges();
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.rowData = data;
         this.tempData = this.rowData;
         this.count = this.rowData.length
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error)
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     )
   }

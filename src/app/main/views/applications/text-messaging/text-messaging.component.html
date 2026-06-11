@@ -70,7 +70,7 @@
 
 
         <ngx-datatable [rows]="rowsMensajes" rowHeight="auto" class="bootstrap core-bootstrap"
-          [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50">
+          [limit]="selectedOption" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
           
 
           <ngx-datatable-column name="Nombre Contacto" prop="nombre" width="400">

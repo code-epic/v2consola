@@ -44,7 +44,7 @@
 
                                     <ngx-datatable [rows]="lstPerfil" [rowHeight]="58" class="bootstrap core-bootstrap"
                                         [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" 
-                                        [scrollbarH]="true" [limit]="basicSelectedOption" [count]="lstPerfil.length">
+                                        [scrollbarH]="true" [limit]="basicSelectedOption" [count]="lstPerfil.length" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
                                         <ngx-datatable-column name="APLICACION / ROL" prop="llave" [width]="10">
                                             <ng-template ngx-datatable-header-template>

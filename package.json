@@ -62,7 +62,7 @@
     "@fullcalendar/interaction": "^5.11.0",
     "@fullcalendar/list": "^5.11.0",
     "@fullcalendar/timegrid": "^5.11.0",
-    "@ng-bootstrap/ng-bootstrap": "^15.0.1",
+    "@ng-bootstrap/ng-bootstrap": "^20.0.0",
     "@ng-select/ng-select": "^10.0.0",
     "@ngx-translate/core": "16.0.0",
     "@popperjs/core": "^2.11.5",

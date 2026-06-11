@@ -87,7 +87,7 @@
 
         <!-- <div id="tuHTML"> -->
         <ngx-datatable #tableRowDetails class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
-          [headerHeight]="40" [footerHeight]="50" [rowHeight]="58" [limit]="10" [rows]="rowData" [scrollbarH]="true">
+          [headerHeight]="40" [footerHeight]="50" [rowHeight]="58" [limit]="10" [rows]="rowData" [scrollbarH]="true" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
           <ngx-datatable-row-detail [rowHeight]="'auto'">
             <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>

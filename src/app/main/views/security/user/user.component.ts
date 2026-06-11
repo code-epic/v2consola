@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap'
 import { ApiService, IAPICore, IConfiguracion } from '@services/apicore/api.service'
 
@@ -256,6 +256,7 @@ export class UserComponent implements OnInit {
     private userService: UserService,
     private sha256: Sha256Service,
     private modalService: NgbModal,
+    private cd: ChangeDetectorRef
 
   ) {
     this.userService.iniciarObjeto()
@@ -297,7 +298,7 @@ export class UserComponent implements OnInit {
 
     await this.cargarConfiguracionApp()
     
-
+  
 
 
   }
@@ -330,6 +331,7 @@ export class UserComponent implements OnInit {
             
           }
           this.consultarRegionales()
+        
         }
       },
       (error) => {

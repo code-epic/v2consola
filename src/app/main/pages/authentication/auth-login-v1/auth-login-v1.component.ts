@@ -190,11 +190,14 @@ export class AuthLoginV1Component implements OnInit {
           (er) => {
             this.loading = false;
             this.isHidden = false;
+            // Diagnóstico: mostrar error real en consola
+            console.error('[LOGIN_ERROR]', er, er.error || '(sin error.http)');
+            const msg = er.error?.msj || (typeof er === 'string' ? er : 'Error al acceder al sistema');
             this.utilservice.AlertMini(
               "top-end",
               "error",
-              er.error?.msj || "Error al acceder al sistema",
-              3000,
+              msg,
+              5000,
             );
           },
         );
@@ -230,11 +233,13 @@ export class AuthLoginV1Component implements OnInit {
       (er) => {
         this.loading = false;
         this.isHidden = false;
+        console.error('[LOGIN_OPT_ERROR]', er, er.error || '(sin error.http)');
+        const msg = er.error?.msj || (typeof er === 'string' ? er : 'Error al acceder al sistema');
         this.utilservice.AlertMini(
           "top-end",
           "error",
-          er.error?.msj || "Error al acceder al sistema",
-          3000,
+          msg,
+          5000,
         );
       },
     );

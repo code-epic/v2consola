@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ColumnMode, DatatableComponent, SelectionType, } from "@swimlane/ngx-datatable";
 import { ApiService, IAPICore } from '@services/apicore/api.service';
@@ -59,6 +59,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   public count: number = 0;
   public tempData = []
   public rowData = []
+  public isLoading: boolean = false;
 
 
   // Variables para el Modal de Cambio de Clave
@@ -79,7 +80,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   public isOtpInvalid: boolean = false;
 
   public lstPerfil = []; // Asegúrate de cargar esta lista, por ejemplo en ngOnInit
-  public selectedProfile: string = ''; // Propiedad para el ngModel del nuevo select
+  public selectedProfile: string = undefined; // Propiedad para el ngModel del nuevo select
 
   // Propiedades para el manejo de bloqueos y contadores
   private countdownIntervals = new Map<string, number>();
@@ -93,7 +94,8 @@ export class UserListComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private modalService: NgbModal,
     private utilService: UtilService,
-    private sha256: Sha256Service
+    private sha256: Sha256Service,
+    private cdr: ChangeDetectorRef
   ) { }
 
   async ngOnInit() {
@@ -188,11 +190,12 @@ export class UserListComponent implements OnInit, OnDestroy {
 
 
   async listarUsuarios() {
+    this.isLoading = true;
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_USUARIOS_BLOQUEADOS
     this.xAPI.parametros = ''
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
+    await this.apiService.Ejecutar(this.xAPI).subscribe({
+      next: (data) => {
         // Limpiar contadores anteriores para evitar fugas de memoria
         this.clearAllCountdowns();
 
@@ -208,11 +211,15 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.rowData = data;
         this.tempData = this.rowData;
         this.count = this.rowData.length
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      (error) => {
-        console.log(error)
+      error: (error) => {
+        console.log(error);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
-    )
+    })
   }
 
   getRowClass = (row) => {

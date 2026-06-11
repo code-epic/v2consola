@@ -132,7 +132,7 @@ export class ProfileComponent implements OnInit {
     nombre: "",
     descripcion: "",
     estatus: 1,
-    aplicacion: 0,
+    aplicacion: undefined,
   }
 
   public showDiv: boolean = false
@@ -142,6 +142,7 @@ export class ProfileComponent implements OnInit {
   public dataRol: any[] = []
   public datamenu = []
   public rowData = []
+  public isLoading: boolean = false;
   public temprowData = []
   public countSubMenu
   public rowDataAcc = []
@@ -274,6 +275,7 @@ export class ProfileComponent implements OnInit {
           });
           this.lstPerfil = data
           this.tempPerfil = data
+          this.cd.detectChanges()
         }
 
 

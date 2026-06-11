@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
@@ -43,6 +43,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
 
   public contentHeader: any;
   public ColumnMode = ColumnMode;
+  public isLoading: boolean = false;
   public rowData: Authorization[] = [];
   public tempData: Authorization[] = [];
   public basicSelectedOption: number = 10;
@@ -61,7 +62,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
   };
 
 
-  constructor(private modalService: NgbModal, private apiService: ApiService) { }
+  constructor(private modalService: NgbModal, private apiService: ApiService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.contentHeader = {
@@ -110,13 +111,19 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_AUTHORIZATIONS // O la función que corresponda
     this.xAPI.parametros = '0';
+    this.isLoading = true;
+    this.cdr.detectChanges();
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
 
         this.loadMockData(data);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error al cargar perfiles', error);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     );
   }

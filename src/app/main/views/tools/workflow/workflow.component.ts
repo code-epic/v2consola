@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter } from '@angular/core'
+import { Component, OnInit, ViewChild, Output, EventEmitter, ChangeDetectorRef } from '@angular/core'
 import { ApiService, IAPICore, WkfDescripcionRed, WkfEstado, WkfEstatus, WkfFrom, WkfZRed, wkfRed, wkfTransicion } from '@services/apicore/api.service'
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service'
 import { UtilService } from '@services/util/util.service'
@@ -156,6 +156,7 @@ export class WorkflowComponent implements OnInit {
   public tempData = []
   public rowForm = []
   public rowData = []
+  public isLoading: boolean = false;
   public ListaTransiciones = []
   public rowDataTransiciones = []
   public tempDataTransiciones = []
@@ -195,6 +196,7 @@ export class WorkflowComponent implements OnInit {
     private comunicacionesService: ComunicacionesService,
     private wkf: WorkflowService,
     private modalService: NgbModal,
+    private cdr: ChangeDetectorRef
   ) { }
 
 
@@ -261,12 +263,18 @@ export class WorkflowComponent implements OnInit {
     this.xAPI.funcion = "SEC_CAplicaciones"
     this.xAPI.parametros = ''
     this.xAPI.valores = null
+    this.isLoading = true;
+    this.cdr.detectChanges();
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstApps = data.Cuerpo
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error(error)
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     )
   }

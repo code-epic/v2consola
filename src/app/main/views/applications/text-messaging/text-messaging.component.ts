@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, TemplateRef, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, TemplateRef, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore, ProcessID } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
@@ -82,8 +82,8 @@ export class TextMessagingComponent implements OnInit {
     private modalService: NgbModal,
     private taskService: TaskService,
     private msjService: WsocketsService,
-    private ws: WsocketsService
-
+    private ws: WsocketsService,
+    private cdr: ChangeDetectorRef
   ) {
     this.formulario = this.fb.group({
       phoneNumbers: ['', [Validators.required, Validators.pattern(/^(\+[0-9]+)(,\+[0-9]+)*$/)]], // Permite números con + y separados por comas
@@ -101,6 +101,7 @@ export class TextMessagingComponent implements OnInit {
 
   async ConsultarDispositivo() {
     this.isLoading = 0;
+    this.cdr.detectChanges();
     const config = {
       funcion: 'Fnx_ListarDispositivosMoviles',
       nombre: 'Listar dispositivos móviles',
@@ -142,8 +143,10 @@ export class TextMessagingComponent implements OnInit {
         this.mensajeNoDispositivos = ""; // Limpiar el mensaje si hay dispositivos
         this.dispositivoSeleccionado = this.listaDispositivos[0]; // Seleccionar el primer dispositivo
         this.isLoading = 1;
+        this.cdr.detectChanges();
         } else {
           this.isLoading = 2;
+          this.cdr.detectChanges();
           this.listaDispositivos = []; // Limpiar la lista si no hay dispositivos
           this.mensajeNoDispositivos = "❌ No hay dispositivos conectados"; // Guardar el mensaje
           this.dispositivoSeleccionado = "❌ No hay dispositivos conectados"; // Limpiar la selección  
@@ -151,6 +154,7 @@ export class TextMessagingComponent implements OnInit {
   
       } else {
         this.isLoading = 2;
+        this.cdr.detectChanges();
       }
     } catch (error) {
       console.log(error);
@@ -255,10 +259,12 @@ export class TextMessagingComponent implements OnInit {
             });
             this.rowsMensajes = this.listaMensajesDispositivos
             this.tempDataMensajes = this.rowsMensajes
+            this.cdr.detectChanges();
             console.log(this.rowsMensajes)
             
           } else {
             this.isLoading = 2
+            this.cdr.detectChanges();
           }
         }
 

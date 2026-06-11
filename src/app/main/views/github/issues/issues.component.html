@@ -359,7 +359,7 @@
                          [headerHeight]="40" 
                          [footerHeight]="50" 
                          [scrollbarH]="true"
-                         [limit]="basicSelectedOption">
+                         [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
             <!-- Issue Title & Info Column -->
             <ngx-datatable-column name="ISSUE" [width]="450">

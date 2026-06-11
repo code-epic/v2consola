@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
@@ -31,6 +31,7 @@ export class TaskMonitorComponent implements OnInit {
   public ListaComunicaciones = []
   public basicSelectedOption: number = 10;
   public ColumnMode = ColumnMode;
+  public isLoading: boolean = false;
   public tempData = [];
   public rowData = [
 
@@ -38,6 +39,7 @@ export class TaskMonitorComponent implements OnInit {
 
 
   constructor(private taskService: TaskService, private msjService: WsocketsService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -83,6 +85,8 @@ export class TaskMonitorComponent implements OnInit {
   }
 
   async initProcess() {
+    this.isLoading = true;
+    this.cdr.detectChanges();
     let lstApp = []
     await this.taskService.keys().then(
       async lst => {
@@ -102,13 +106,21 @@ export class TaskMonitorComponent implements OnInit {
                   estatus: data.estatus
                 }
               )
-              if (i == cnt - 1) this.insertCommitDB(lstApp)
+              if (i == cnt - 1) {
+                this.insertCommitDB(lstApp)
+                this.isLoading = false;
+                this.cdr.detectChanges();
+              }
             }
           )
 
         }
       }
-    )
+    ).catch(error => {
+      console.error(error);
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    })
   }
 
   async buscarElemento(pid: string) {

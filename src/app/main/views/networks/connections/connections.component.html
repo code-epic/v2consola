@@ -71,7 +71,7 @@
 
         <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
           [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
-          [limit]="basicSelectedOption">
+          [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
 
           <ngx-datatable-column [width]="100">

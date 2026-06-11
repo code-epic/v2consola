@@ -51,7 +51,7 @@
 
                                     <ngx-datatable [rows]="lstRoles" [rowHeight]="58" class="bootstrap core-bootstrap"
                                         [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" 
-                                        [scrollbarH]="true" [limit]="basicSelectedOption" [count]="lstRoles.length">
+                                        [scrollbarH]="true" [limit]="basicSelectedOption" [count]="lstRoles.length" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
                                         <ngx-datatable-column name="DESCRIPCION" prop="observacion" [width]="20">
                                             <ng-template let-observacion="value" let-row="row" ngx-datatable-cell-template>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Subject } from 'rxjs';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
@@ -62,7 +62,8 @@ export class CommunicationsComponent implements OnInit {
 
   public ListaComunicaciones = []
   public tempData = [];
-  public rowData = [];
+  public rowData = []
+  public isLoading: boolean = false;;
 
   public sDispositivo
   public hostIP
@@ -109,6 +110,7 @@ export class CommunicationsComponent implements OnInit {
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -213,6 +215,7 @@ export class CommunicationsComponent implements OnInit {
         this.rowData = data;
         this.count = this.rowData.length
         this.tempData = this.rowData;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error)

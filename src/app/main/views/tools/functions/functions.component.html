@@ -92,7 +92,7 @@
 
         <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
           [columnMode]="ColumnMode.flex" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
-          [limit]="basicSelectedOption">
+          [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
           <ngx-datatable-column [flexGrow]="2">
             <ng-template ngx-datatable-header-template>

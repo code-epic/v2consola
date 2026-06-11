@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { UtilService } from '@services/util/util.service';
@@ -72,6 +72,7 @@ export class MenuComponent implements OnInit {
   public searchAccion = ''
   public searchSubMenu = ''
 
+  public isLoading: boolean = false;
   public tempDataAcciones = []
   public rowDataAcciones = []
   public countAcciones
@@ -126,6 +127,7 @@ export class MenuComponent implements OnInit {
     private apiService: ApiService,
     private utilservice: UtilService,
     private modalService: NgbModal,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -159,6 +161,8 @@ export class MenuComponent implements OnInit {
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.parametros = ''
+    this.isLoading = true;
+    this.cdr.detectChanges();
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstAplicaciones = data.Cuerpo.map(e => {
@@ -166,9 +170,13 @@ export class MenuComponent implements OnInit {
           e.name = e.nombre + ' : ' + e.VERSION
           return e
         });
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error)
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     )
   }

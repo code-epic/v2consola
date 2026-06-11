@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -54,6 +54,7 @@ export class ApiListComponent implements OnInit {
     private ruta: Router,
     private rutaActiva: ActivatedRoute,
     private config: NgbModalConfig,
+    private cdr: ChangeDetectorRef,
     private apiService: ApiService,
   ) {
     config.backdrop = false;
@@ -125,6 +126,7 @@ export class ApiListComponent implements OnInit {
         this.rowData = this.selectCustomSelected;
         this.count = this.rowData.length
         this.tempData = this.rowData;
+        this.cdr.detectChanges()
       },
       (error) => {
         console.error(error)
@@ -174,7 +176,7 @@ export class ApiListComponent implements OnInit {
         this.drivers = data
         if (this.id == 'consola')
           this.drivers.push(MGDBA)
-
+        this.cdr.detectChanges()
       },
       (error) => {
         console.log(error)

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from "@angular/core";
 import {
   ColumnMode,
   DatatableComponent,
@@ -71,7 +71,8 @@ export class ConciliationComponent implements OnInit {
   
     public ListaAplicaciones = [];
     public tempData = [];
-    public rowData = [];
+    public rowData = []
+  public isLoading: boolean = false;;
   
   
     public searchValue: string = '';
@@ -89,6 +90,7 @@ export class ConciliationComponent implements OnInit {
       private taskService: TaskService,
       private apiService: ApiService,
       private msjService: WsocketsService,
+      private cdr: ChangeDetectorRef,
     ) {}
   
     async ngOnInit() {

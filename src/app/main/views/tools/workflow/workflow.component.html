@@ -289,7 +289,7 @@
                       <div class="col-md-12">
                         <ngx-datatable [rows]="rowEstado" [rowHeight]="58"
                           class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
+                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
 
                           <ngx-datatable-column name="#" prop="id" [width]="10">

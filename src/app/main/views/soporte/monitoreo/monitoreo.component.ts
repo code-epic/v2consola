@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, HostListener, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, HostListener, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '@services/apicore/api.service';
 import * as feather from 'feather-icons';
 
@@ -54,7 +54,7 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
         offline: 0
     };
 
-    constructor(private apiService: ApiService) { }
+    constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) { }
 
     ngOnInit(): void {
         this.contentHeader = {
@@ -147,6 +147,7 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
             offline: this.clients.filter(c => c.status === 'offline').length
         };
 
+        this.cdr.detectChanges();
         setTimeout(() => feather.replace(), 100);
     }
 

@@ -47,7 +47,7 @@
 
                 <ngx-datatable [rows]="rowData" [rowHeight]="62" class="bootstrap core-bootstrap striped" [rowClass]="getRowClass"
                     [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50" [scrollbarH]="true"
-                    [limit]="basicSelectedOption">
+                    [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading">
 
                     <ngx-datatable-column prop="nombre" [width]="250">
                         <ng-template ngx-datatable-header-template>

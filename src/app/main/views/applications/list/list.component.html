@@ -59,7 +59,7 @@
 
         <ngx-datatable [rows]="rowData" [rowHeight]="60" class="bootstrap core-bootstrap minimalist-table"
           [limit]="basicSelectedOption" [columnMode]="ColumnMode.force" [headerHeight]="45" [footerHeight]="45"
-          [scrollbarH]="true">
+          [scrollbarH]="true" [class.loading]="isLoading" [loadingIndicator]="isLoading">
 
           <!-- Application Name & Avatar -->
           <ngx-datatable-column name="APLICACION" [width]="280">

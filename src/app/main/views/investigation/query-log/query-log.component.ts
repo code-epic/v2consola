@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, TemplateRef, ViewEncapsulation, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, TemplateRef, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { ApiService } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Subscription } from 'rxjs';
@@ -195,6 +195,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef
   ) {
     moment.locale('es');
   }
@@ -269,6 +270,8 @@ export class QueryLogComponent implements OnInit, OnDestroy {
             3000
           )
           this.sinRegistros = false;
+          this.isLoading = false;
+          this.cdr.detectChanges();
           return;
         }
         setTimeout(() => {
@@ -279,10 +282,12 @@ export class QueryLogComponent implements OnInit, OnDestroy {
               this.filterLogs(); // Esto mantiene todos los registros filtrados
               this.processChartData(); // Call the new chart data processing method
               this.isLoading = false;
+              this.cdr.detectChanges();
             },
             (error) => {
               console.log(error);
               this.isLoading = false;
+              this.cdr.detectChanges();
             }
           );
         }, 3000);
@@ -290,6 +295,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       (error) => {
         console.log(error);
         this.isLoading = false;
+        this.cdr.detectChanges();
       }
     );
   }

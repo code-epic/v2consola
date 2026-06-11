@@ -1,5 +1,5 @@
 // src/app/components/system-info/system-info.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { SystemInfoService } from '@services/apicore/system-info.service';
 
 @Component({
@@ -12,7 +12,7 @@ export class SystemInfoComponent implements OnInit {
   systemInfo: any = null;
   isLoading = true;
 
-  constructor(private systemInfoService: SystemInfoService) { }
+  constructor(private systemInfoService: SystemInfoService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.systemInfoService.getSystemInfo().subscribe({
@@ -20,10 +20,12 @@ export class SystemInfoComponent implements OnInit {
         // Asegúrate de manejar el array o el objeto directamente
         this.systemInfo = Array.isArray(data) ? data[0] : data;
         this.isLoading = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error loading system info:', err);
         this.isLoading = false;
+        this.cdr.detectChanges();
         // Opcional: Inicializar con datos vacíos para evitar errores
         this.systemInfo = this.getEmptySystemInfo();
       }

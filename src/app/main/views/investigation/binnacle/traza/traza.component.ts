@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, NgZone } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, NgZone, ChangeDetectorRef } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { environment } from "environments/environment";
@@ -53,7 +53,8 @@ export class TrazaComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
-    private zone: NgZone // Importante para streaming
+    private zone: NgZone, // Importante para streaming
+    private cdr: ChangeDetectorRef // Para detectar cambios en streaming
   ) { }
 
   ngOnInit(): void {
@@ -92,7 +93,7 @@ export class TrazaComponent implements OnInit {
   }
 
   cargarUsuarios() {
-    console.log(this.appData);
+    // console.log(this.appData);
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_USUARIO;
     this.xAPI.parametros = this.appData.id;
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -100,6 +101,7 @@ export class TrazaComponent implements OnInit {
         if (!data) return;
         console.log(data);
         this.usuarios = data;
+        this.cdr.detectChanges(); // Asegura que la vista se actualice con los usuarios cargados
       },
       (error) => {
         console.error(error);
@@ -186,6 +188,7 @@ export class TrazaComponent implements OnInit {
       this.zone.run(() => {
         this.loadingLogs = false;
       });
+      this.cdr.detectChanges();
     }
   }
 

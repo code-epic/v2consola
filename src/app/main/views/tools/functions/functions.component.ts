@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core"
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from "@angular/core"
 import {
   ColumnMode,
   DatatableComponent,
@@ -131,6 +131,7 @@ export class FunctionsComponent implements OnInit {
   public ListaFunciones = []
   public tempData = []
   public rowData = []
+  public isLoading: boolean = false;
 
   public driver = undefined
   public drivers = []
@@ -229,6 +230,7 @@ export class FunctionsComponent implements OnInit {
     private utilservice: UtilService,
     private msjService: WsocketsService,
     private taskService: TaskService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   // convenience getter for easy access to form fields
@@ -400,6 +402,8 @@ export class FunctionsComponent implements OnInit {
     this.xAPI.valores = ""
     this.ListaFunciones = []
     this.count = 0
+    this.isLoading = true;
+    this.cdr.detectChanges();
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.map((e) => {
@@ -408,9 +412,13 @@ export class FunctionsComponent implements OnInit {
         this.rowData = this.ListaFunciones
         this.count = this.rowData.length
         this.tempData = this.rowData
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error)
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     )
   }

@@ -151,41 +151,46 @@ export class LoginService {
     let deviceContext = "";
 
     if (netInfo) {
-      const info = JSON.parse(netInfo);
-      const context = {
-        os_info: info.system?.os_info || "unknown",
-        mac_address: info.system?.mac_address || "unknown",
-        network: info.network || "unknown",
-      };
-      deviceContext = btoa(JSON.stringify(context));
+      try {
+        const info = JSON.parse(netInfo);
+        const context = {
+          os_info: info.system?.os_info || "unknown",
+          mac_address: info.system?.mac_address || "unknown",
+          network: info.network || "unknown",
+        };
+        deviceContext = btoa(JSON.stringify(context));
+      } catch (e) {
+        console.warn('[LoginService] Error parseando net_info:', e);
+      }
     }
-    // console.log('Device Context:', deviceContext);
 
-    return from(
-      this.sha256.EncryptDeviceContext(
-        deviceContext,
-        environment.Hash.slice(-32),
-      ),
-    ).pipe(
-      switchMap((encodeDeviceContext) => {
-        const timestamp = new Date().getTime().toString();
-        const httpOptions = {
-          headers: new HttpHeaders({
-            "X-Skip-Interceptor": "true",
-            "Content-Type": "application/json",
-            "X-Device-Context": encodeDeviceContext,
-            "X-Timestamp": timestamp,
-            "Web-API-key": environment.Hash,
-          }),
-        };
+    const timestamp = new Date().getTime().toString();
+    const usuario = { nombre: user, clave: clave };
+    const url = this.urlGet + "wusuario/loginV2";
 
-        var usuario = {
-          nombre: user,
-          clave: clave,
-        };
-        var url = this.urlGet + "wusuario/loginV2";
-        return this.http.post<IToken>(url, usuario, httpOptions);
-      }),
+    // Fallback: si falla la criptografía (crypto.subtle no disponible),
+    // hacemos el POST sin X-Device-Context (el servidor lo tolera)
+    const cryptoPromise = this.sha256.EncryptDeviceContext(
+      deviceContext,
+      environment.Hash.slice(-32),
+    ).catch((cryptoErr) => {
+      console.warn('[LoginService] crypto.subtle falló, continuando sin device context:', cryptoErr);
+      return "";
+    });
+
+    const httpOptions = (ctx: string) => {
+      const headers: any = {
+        "X-Skip-Interceptor": "true",
+        "Content-Type": "application/json",
+        "X-Timestamp": timestamp,
+        "Web-API-key": environment.Hash,
+      };
+      if (ctx) headers["X-Device-Context"] = ctx;
+      return { headers: new HttpHeaders(headers) };
+    };
+
+    return from(cryptoPromise).pipe(
+      switchMap((ctx) => this.http.post<IToken>(url, usuario, httpOptions(ctx))),
     );
   }
 

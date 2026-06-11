@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, NgZone } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, NgZone, ChangeDetectorRef } from "@angular/core";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { Router } from "@angular/router";
 import { environment } from "environments/environment";
@@ -60,7 +60,8 @@ export class BinnacleComponent implements OnInit {
   constructor(
     private ruta: Router,
     private apiService: ApiService,
-    private zone: NgZone
+    private zone: NgZone,
+    private cdr:  ChangeDetectorRef
   ) { }
 
 
@@ -132,6 +133,7 @@ export class BinnacleComponent implements OnInit {
       this.zone.run(() => {
         this.loadingStreaming = false;
       });
+      this.cdr.detectChanges();
     }
   }
 

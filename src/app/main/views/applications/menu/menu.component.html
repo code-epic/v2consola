@@ -275,7 +275,7 @@
 
                                             <ngx-datatable [rows]="rowDataAcc" [rowHeight]="58"
                                                 class="bootstrap core-bootstrap bordered-table" [limit]="10"
-                                                [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
+                                                [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
 
                                                 <ngx-datatable-column name="NOMBRE" prop="accnomb" [width]="300">

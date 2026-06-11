@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from "@angular/core";
 import {
   ColumnMode,
   DatatableComponent,
@@ -77,8 +77,10 @@ export class ListComponent implements OnInit {
 
   public ListaAplicaciones = [];
   public tempData = [];
+
   public rowData = [];
 
+  public isLoading: boolean = false;
   public lenguaje = [
     { id: 1, name: "PHP" },
     { id: 0, name: "TSC" },
@@ -105,6 +107,7 @@ export class ListComponent implements OnInit {
     private msjService: WsocketsService,
     private modalService: NgbModal,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   async ngOnInit() {
@@ -420,22 +423,27 @@ export class ListComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  async CargarListaAplicaciones() {
+  CargarListaAplicaciones() {
+    this.isLoading = true;
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.parametros = "";
     this.ListaAplicaciones = [];
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
+    this.apiService.Ejecutar(this.xAPI).subscribe({
+      next: (data) => {
         data.Cuerpo.map((e) => {
           this.ListaAplicaciones.push(e);
         });
         this.rowData = this.ListaAplicaciones;
         this.tempData = this.rowData;
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
-      (error) => {
+      error: (error) => {
         console.log(error);
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
-    );
+    });
   }
 
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore, ProcessID, RestoreAPI } from '@services/apicore/api.service';
 import { PdfService } from '@services/pdf/pdf.service';
@@ -96,7 +96,8 @@ export class ApiComponent implements OnInit {
 
   public ListaApis = []
   public tempData = [];
-  public rowData = [];
+  public rowData = []
+  public isLoading: boolean = false;;
 
   public sDispositivo
 
@@ -168,6 +169,7 @@ export class ApiComponent implements OnInit {
     private pdf: PdfService,
     private taskService: TaskService,
     private msjService: WsocketsService,
+    private cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -235,10 +237,16 @@ export class ApiComponent implements OnInit {
     this.xAPI.funcion = '_SYS_R_ListarApis'
     this.xAPI.parametros = t
     this.xAPI.valores = ''
+    this.isLoading = true;
+    this.cdr.detectChanges();
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
         // console.log(data)
-        if (data == null) return
+        if (data == null) {
+          this.isLoading = false;
+          this.cdr.detectChanges();
+          return;
+        }
 
         await data.map(e => {
           e.descripcion = e.descripcion == undefined ? '' : e.descripcion
@@ -247,9 +255,13 @@ export class ApiComponent implements OnInit {
         this.rowData = this.developer;
         this.count = this.rowData.length
         this.tempData = this.rowData;
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error(error)
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     );
   }

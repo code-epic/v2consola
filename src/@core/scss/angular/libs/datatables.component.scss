@@ -179,6 +179,71 @@ $datatables-dark-active-bg-color: $theme-dark-card-bg;
   }
 }
 
+// ==========================================
+// Loading Overlay para ngx-datatable
+// ==========================================
+.ngx-datatable {
+  position: relative;
+
+  &.loading {
+    // Oscurecer el contenido mientras carga
+    .datatable-body {
+      opacity: 0.4;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    // Overlay con spinner y mensaje
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      backdrop-filter: blur(1px);
+    }
+
+    // Spinner + texto mediante pseudo-elemento anidado
+    .datatable-body {
+      position: relative;
+
+      &::before {
+        content: 'Por favor espere...';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 11;
+        color: #666;
+        font-size: 1rem;
+        font-weight: 500;
+        padding: 1.5rem 2rem;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      // Spinner antes del texto
+      &::before {
+        padding-left: 3rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Ccircle cx='12' cy='12' r='10' opacity='0.3'/%3E%3Cpath d='M12 2a10 10 0 0 1 10 10'%3E%3CanimateTransform attributeName='transform' type='rotate' from='0 12 12' to='360 12 12' dur='1s' repeatCount='indefinite'/%3E%3C/path%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: 1rem center;
+        background-size: 1.5rem;
+      }
+    }
+  }
+}
+
 // dark layout style
 .dark-layout {
   .datatable-header-inner,

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { IRol } from '@services/seguridad/rol.service';
@@ -49,6 +49,7 @@ export class RoleComponent implements OnInit {
 
 
   public rowData = []
+  public isLoading: boolean = false;
   public lstRoles = []
   public tempRoles = []
   public temprowData = []
@@ -114,6 +115,7 @@ export class RoleComponent implements OnInit {
     private apiService: ApiService,
     private utilservice: UtilService,
     private modalService: NgbModal,
+    private cdr: ChangeDetectorRef
   ) { }
 
 
@@ -306,6 +308,8 @@ export class RoleComponent implements OnInit {
     this.xAPI.parametros = ''
     this.xAPI.valores = ''
     this.lstRoles = []
+    this.isLoading = true;
+    this.cdr.detectChanges();
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         let lst = []
@@ -325,9 +329,13 @@ export class RoleComponent implements OnInit {
 
         this.lstRoles = lst
         this.tempRoles = lst
+        this.isLoading = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error)
+        this.isLoading = false;
+        this.cdr.detectChanges();
       }
     )
   }
