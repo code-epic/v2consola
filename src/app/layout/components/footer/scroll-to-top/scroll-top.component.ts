@@ -1,11 +1,13 @@
 import { Component, OnInit, Inject, HostListener, DOCUMENT } from '@angular/core';
-
+import { CommonModule } from '@angular/common';
+import { CoreDirectivesModule } from '@core/directives/directives';
 
 @Component({
     selector: 'app-scroll-top',
     templateUrl: './scroll-top.component.html',
     styleUrls: ['./scroll-top.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, CoreDirectivesModule]
 })
 export class ScrollTopComponent implements OnInit {
   windowScrolled: boolean;

@@ -1,15 +1,22 @@
 
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild, DOCUMENT } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { CoreCommonModule } from '@core/common.module';
 import { SearchService } from 'app/layout/components/navbar/navbar-search/search.service';
 
 @Component({
     selector: 'app-navbar-bookmark',
     templateUrl: './navbar-bookmark.component.html',
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, NgbTooltipModule, CoreCommonModule]
 })
 export class NavbarBookmarkComponent implements OnInit {
   // Public
+  bookmarkTextCtrl = new FormControl('');
   public bookmarkText = '';
   public openBookmarkRef = false;
   public activeIndex = 0;
@@ -23,21 +30,21 @@ export class NavbarBookmarkComponent implements OnInit {
   @HostListener('keydown.escape') fn() {
     this.removeOverlay();
     this.openBookmarkRef = false;
-    this.bookmarkText = '';
+    this.bookmarkTextCtrl.setValue('');
   }
   @HostListener('document:click', ['$event']) clickout(event) {
     // Close Bookmark if Clicked on Overlay
     if (event.target.className === 'content-overlay') {
       this.removeOverlay();
       this.openBookmarkRef = false;
-      this.bookmarkText = '';
+      this.bookmarkTextCtrl.setValue('');
     }
 
     // Close Bookmark if clicked Outside of Container
     if (!(event.target.nodeName === 'INPUT') && this.openBookmarkRef === true) {
       this.removeOverlay();
       this.openBookmarkRef = false;
-      this.bookmarkText = '';
+      this.bookmarkTextCtrl.setValue('');
     }
   }
 

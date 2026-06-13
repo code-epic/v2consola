@@ -34,60 +34,125 @@
           <form #certificateForm="ngForm" (ngSubmit)="onSubmit()">
             <div class="form-group">
               <label for="certificateName">Nombre del Certificado:</label>
-              <input type="text" id="certificateName" name="certificateName" 
-                     [(ngModel)]="certificateData.name" required 
-                     class="form-control" placeholder="Ej: mi-sitio-web">
+              <input type="text" id="certificateName" name="certificateName"
+                [(ngModel)]="certificateData.name" required
+                class="form-control" placeholder="Ej: mi-sitio-web">
               <small class="text-muted">Asigne un nombre descriptivo al certificado</small>
             </div>
-        
+
             <div class="form-group">
               <label for="publicCertificate">Certificado Público (CRT/PEM):</label>
-              <input type="file" id="publicCertificate" name="publicCertificate" 
-                     (change)="onFileSelected($event, 'publicCert')" accept=".crt,.pem,.cer" required
-                     class="form-control-file">
+              <input type="file" id="publicCertificate" name="publicCertificate"
+                (change)="onFileSelected($event, 'publicCert')" accept=".crt,.pem,.cer" required
+                class="form-control-file">
               <small class="text-muted">Seleccione el archivo del certificado público (.crt, .pem)</small>
             </div>
-        
+
             <div class="form-group">
               <label for="privateKey">Clave Privada (KEY):</label>
-              <input type="file" id="privateKey" name="privateKey" 
-                     (change)="onFileSelected($event, 'privateKey')" accept=".key,.pem" required
-                     class="form-control-file">
+              <input type="file" id="privateKey" name="privateKey"
+                (change)="onFileSelected($event, 'privateKey')" accept=".key,.pem" required
+                class="form-control-file">
               <small class="text-muted">Seleccione el archivo de la clave privada (.key)</small>
             </div>
-        
+
             <div class="form-group">
               <label for="password">Contraseña (opcional):</label>
-              <input type="password" id="password" name="password" 
-                     [(ngModel)]="certificateData.password"
-                     class="form-control" placeholder="Si el certificado está protegido por contraseña">
+              <input type="password" id="password" name="password"
+                [(ngModel)]="certificateData.password"
+                class="form-control" placeholder="Si el certificado está protegido por contraseña">
             </div>
-        
+
             <div class="form-actions">
               <button type="submit" class="btn btn-primary" [disabled]="!certificateForm.valid || uploading">
-                <span *ngIf="!uploading">Subir Certificado</span>
-                <span *ngIf="uploading">
-                  <i class="fa fa-spinner fa-spin"></i> Procesando...
-                </span>
+                @if (!uploading) {
+                  <span>Subir Certificado</span>
+                }
+                @if (uploading) {
+                  <span>
+                    <i class="fa fa-spinner fa-spin"></i> Procesando...
+                  </span>
+                }
               </button>
               <button type="button" class="btn btn-secondary" (click)="resetForm()">Cancelar</button>
             </div>
-        
-            <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-              {{ errorMessage }}
-            </div>
-        
-            <div *ngIf="successMessage" class="alert alert-success mt-3">
-              {{ successMessage }}
-            </div>
+
+            @if (errorMessage) {
+              <div class="alert alert-danger mt-3">
+                {{ errorMessage }}
+              </div>
+            }
+
+            @if (successMessage) {
+              <div class="alert alert-success mt-3">
+                {{ successMessage }}
+              </div>
+            }
           </form>
         </div>
 
+
+      </ng-template>
+    </li>
+    <li ngbNavItem>
+      <a ngbNavLink><span data-feather="download"></span></a>
+      <ng-template ngbNavContent>
+        <div class="certificates-list-container">
+          <div class="d-flex align-items-center justify-content-between mb-1">
+            <h5 class="mb-0">
+              <span data-feather="archive" class="mr-50"></span>
+              Certificados Almacenados
+            </h5>
+            <button class="btn btn-sm btn-outline-primary" (click)="loadCertificates()" [disabled]="loadingCerts">
+              <span data-feather="refresh-cw"></span>
+            </button>
+          </div>
+
+          @if (loadingCerts) {
+            <p class="text-muted text-center py-2 mb-0">Cargando certificados...</p>
+          } @else if (certificates.length === 0) {
+            <p class="text-muted text-center py-2 mb-0">No hay certificados disponibles</p>
+          } @else {
+            <ul class="cert-list">
+              @for (cert of certificates; track cert.path) {
+                <li class="cert-item">
+                  <div class="cert-info">
+                    <span class="cert-icon">
+                      <i [attr.data-feather]="cert.is_key ? 'key' : 'award'"></i>
+                    </span>
+                    <div class="cert-detail">
+                      <span class="cert-name">{{ cert.name }}</span>
+                      @if (cert.subject) {
+                        <small class="cert-subject">{{ cert.subject }}</small>
+                      }
+                      @if (cert.expires) {
+                        <small class="cert-expires">Vence: {{ cert.expires | date:'dd/MM/yyyy' }}</small>
+                      }
+                      <small class="cert-size">{{ formatSize(cert.size) }}</small>
+                    </div>
+                  </div>
+                  @if (!cert.is_key) {
+                    <div class="cert-download">
+                      <span class="format-label">Descargar:</span>
+                      <ul class="format-list">
+                        <li><button class="fmt-btn" (click)="downloadCertificate(cert, 'pem')">PEM</button></li>
+                        <li><button class="fmt-btn" (click)="downloadCertificate(cert, 'der')">DER</button></li>
+                        <li><button class="fmt-btn" (click)="downloadCertificate(cert, 'p7b')">PKCS7</button></li>
+                        <li><button class="fmt-btn" (click)="downloadCertificate(cert, 'p12')">PKCS12</button></li>
+                      </ul>
+                    </div>
+                  }
+                </li>
+              }
+            </ul>
+          }
+        </div>
       </ng-template>
     </li>
   </ul>
+
   <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
-  
+
 
 
 </div>

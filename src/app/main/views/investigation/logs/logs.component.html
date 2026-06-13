@@ -9,14 +9,15 @@
           <div class="col-md-12 col-12">
 
 
-               <!-- Log Selection Grid -->
-              <section class="log-selection-section">
-                <div class="log-selection-grid">
-                  <div *ngFor="let option of logOptions" 
-                      class="log-option-card" 
-                      [class.active]="selectedLogType === option.id"
-                      [class]="option.class"
-                      (click)="selectOption(option)">
+            <!-- Log Selection Grid -->
+            <section class="log-selection-section">
+              <div class="log-selection-grid">
+                @for (option of logOptions; track option) {
+                  <div
+                    class="log-option-card"
+                    [class.active]="selectedLogType === option.id"
+                    [class]="option.class"
+                    (click)="selectOption(option)">
                     <div class="card-icon">
                       <i [data-feather]="option.icon"></i>
                     </div>
@@ -28,15 +29,18 @@
                       <i data-feather="arrow-right"></i>
                     </div>
                   </div>
-                </div>
+                }
+              </div>
 
-                <!-- Log Viewer Container with Animation -->
-                <div class="log-viewer-wrapper" *ngIf="nameFnx!=''">
+              <!-- Log Viewer Container with Animation -->
+              @if (nameFnx!='') {
+                <div class="log-viewer-wrapper">
                   <div class="log-viewer-container slide-up-fade">
                     <app-query-log [rawLogs]="nameFnx"></app-query-log>
                   </div>
                 </div>
-              </section>
+              }
+            </section>
 
 
           </div>
@@ -44,6 +48,6 @@
       </div>
     </section>
 
-   
+
   </div>
 </div>

@@ -31,7 +31,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [ErrorComponent, MaintenanceComponent, LogoutComponent],
-  imports: [CommonModule, RouterModule.forChild(routes), CoreCommonModule]
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    CoreCommonModule,
+    ErrorComponent,
+    MaintenanceComponent,
+    LogoutComponent,
+    NotAuthorizedComponent
+  ]
 })
 export class MiscellaneousModule { }

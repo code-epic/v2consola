@@ -1,6 +1,14 @@
-import { Component, OnInit, ViewEncapsulation, NgZone, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, NgZone, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule, Router } from "@angular/router";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { CoreCommonModule } from "@core/common.module";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
+import { NgSelectModule } from "@ng-select/ng-select";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
-import { Router } from "@angular/router";
 import { environment } from "environments/environment";
 
 @Component({
@@ -9,7 +17,18 @@ import { environment } from "environments/environment";
     styleUrls: ['./binnacle.component.scss'],
     encapsulation: ViewEncapsulation.None,
     host: { class: "ecommerce-application" },
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        NgbModule,
+        CoreCommonModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        ContentHeaderComponent,
+        NgSelectModule
+    ]
 })
 export class BinnacleComponent implements OnInit {
 
@@ -32,15 +51,18 @@ export class BinnacleComponent implements OnInit {
     "Porción Libre": "Área para información adicional (Ej: Motivo de login fallido)."
   };
 
-  searchType: string = "conexiones"; // Valor inicial del select
-  searchText: string = ''; // Para el input de búsqueda normal
-  selectCustomSelected = []; // Para el ng-select
+  searchType: string = "conexiones";
+  searchTextCtrl = new FormControl('');
+  get searchText() { return this.searchTextCtrl.value; }
+  selectCustomSelectedCtrl = new FormControl([]);
+  get selectCustomSelected() { return this.selectCustomSelectedCtrl.value; }
 
   public contentHeader: object;
 
   public ListarBitacora = [];
   public ListarAuditoriaLogs = [];
-  public loadingStreaming = false;
+  private _loadingStreaming = signal<boolean>(false);
+  get loadingStreaming() { return this._loadingStreaming(); }
 
   xAPI: IAPICore = {
     funcion: '',
@@ -51,7 +73,8 @@ export class BinnacleComponent implements OnInit {
   public page = 1;
   public pageSize = 10;
   public pageBasic = 1;
-  public filterActividad = '';
+  filterActividadCtrl = new FormControl('');
+  get filterActividad() { return this.filterActividadCtrl.value; }
 
   public developer = [];
   public rowData = [];
@@ -61,7 +84,6 @@ export class BinnacleComponent implements OnInit {
     private ruta: Router,
     private apiService: ApiService,
     private zone: NgZone,
-    private cdr:  ChangeDetectorRef
   ) { }
 
 
@@ -115,7 +137,7 @@ export class BinnacleComponent implements OnInit {
 
   async CargarBitacora() {
     this.ListarBitacora = [];
-    this.loadingStreaming = true;
+    this._loadingStreaming.set(true);
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_LOGS;
     this.xAPI.parametros = ''
 
@@ -131,15 +153,14 @@ export class BinnacleComponent implements OnInit {
       console.error(error);
     } finally {
       this.zone.run(() => {
-        this.loadingStreaming = false;
+        this._loadingStreaming.set(false);
       });
-      this.cdr.detectChanges();
     }
   }
 
   async CargarReporteAuditoriaLogs(print: boolean = true) {
     this.ListarAuditoriaLogs = [];
-    this.loadingStreaming = true;
+    this._loadingStreaming.set(true);
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_AUDITORIA_LOGS;
     this.xAPI.parametros = ''
 
@@ -157,7 +178,7 @@ export class BinnacleComponent implements OnInit {
       console.error(error);
     } finally {
       this.zone.run(() => {
-        this.loadingStreaming = false;
+        this._loadingStreaming.set(false);
       });
     }
   }

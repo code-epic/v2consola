@@ -1,32 +1,36 @@
 <div class="main-container">
   <!-- vertical-layout -->
-  <ng-container *ngIf="coreConfig?.layout?.type === 'vertical' && showContent">
+  @if (coreConfig?.layout?.type === 'vertical' && showContent) {
     <vertical-layout></vertical-layout>
-  </ng-container>
+  }
   <!-- / vertical-layout -->
 
   <!-- horizontal-layout -->
-  <ng-container *ngIf="coreConfig?.layout?.type === 'horizontal' && showContent">
+  @if (coreConfig?.layout?.type === 'horizontal' && showContent) {
     <horizontal-layout></horizontal-layout>
-  </ng-container>
+  }
   <!-- / horizontal-layout -->
 
-  <core-sidebar name="themeCustomizer" class="customizer d-none d-md-block" [invisibleOverlay]="true"
-    *ngIf="coreConfig?.layout?.customizer && showContent">
-    <a class="customizer-toggle d-flex align-items-center justify-content-center"
-      (click)="toggleSidebar('themeCustomizer')">
-      <span [data-feather]="'settings'" [class]="'spinner'"></span>
-    </a>
-    <core-theme-customizer></core-theme-customizer>
-  </core-sidebar>
+  @if (coreConfig?.layout?.customizer && showContent) {
+    <core-sidebar name="themeCustomizer" class="customizer d-none d-md-block" [invisibleOverlay]="true"
+      >
+      <a class="customizer-toggle d-flex align-items-center justify-content-center"
+        (click)="toggleSidebar('themeCustomizer')">
+        <span [data-feather]="'settings'" [class]="'spinner'"></span>
+      </a>
+      <core-theme-customizer></core-theme-customizer>
+    </core-sidebar>
+  }
   <!-- <app-license-bunker></app-license-bunker> -->
 
-  <div *ngIf="!showContent" class="blocked-screen">
-    <div class="blocked-content">
-      <img src="assets/images/logo/logo.png" alt="Acceso restringido" class="blocked-image">
-      <h1>Acceso Restringido</h1>
-      <p>El uso de herramientas de desarrollo no está permitido en esta aplicación.</p>
+  @if (!showContent) {
+    <div class="blocked-screen">
+      <div class="blocked-content">
+        <img src="assets/images/logo/logo.png" alt="Acceso restringido" class="blocked-image">
+        <h1>Acceso Restringido</h1>
+        <p>El uso de herramientas de desarrollo no está permitido en esta aplicación.</p>
+      </div>
     </div>
-  </div>
+  }
 
 </div>

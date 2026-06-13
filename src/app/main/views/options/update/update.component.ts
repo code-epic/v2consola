@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
+
 @Component({
     selector: 'app-update',
     templateUrl: './update.component.html',
     styleUrls: ['./update.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [ContentHeaderComponent]
 })
 export class UpdateComponent implements OnInit {
 

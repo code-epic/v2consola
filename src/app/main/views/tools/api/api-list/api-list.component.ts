@@ -1,7 +1,17 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ViewChild, signal } from '@angular/core';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { ActivatedRoute, Router } from '@angular/router';
+
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 @Component({
     selector: 'app-api-list',
@@ -9,7 +19,17 @@ import { ActivatedRoute, Router } from '@angular/router';
     styleUrls: ['./api-list.component.scss'],
     encapsulation: ViewEncapsulation.None,
     host: { class: 'ecommerce-application' },
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        NgbModule,
+        NgSelectModule,
+        ContentHeaderComponent,
+    ]
 })
 export class ApiListComponent implements OnInit {
 
@@ -25,22 +45,26 @@ export class ApiListComponent implements OnInit {
     parametros: ''
   };
 
-  public searchText: string = '';
+  searchTextCtrl = new FormControl('');
+  get searchText() { return this.searchTextCtrl.value; }
   public page = 1;
   public pageSize = 8;
   public pageBasic = 1;
 
-  public drivers = []
+  private _drivers = signal<any[]>([]);
+  get drivers() { return this._drivers(); }
 
 
-  public selectCustomSelected = [];
+  selectCustomSelectedCtrl = new FormControl([]);
+  get selectCustomSelected() { return this.selectCustomSelectedCtrl.value; }
 
 
 
   public id: string = ''
 
 
-  public rowData = []
+  private _rowData = signal<any[]>([]);
+  get rowData() { return this._rowData(); }
   public developer = []
   public count
   public tempData = []
@@ -54,7 +78,6 @@ export class ApiListComponent implements OnInit {
     private ruta: Router,
     private rutaActiva: ActivatedRoute,
     private config: NgbModalConfig,
-    private cdr: ChangeDetectorRef,
     private apiService: ApiService,
   ) {
     config.backdrop = false;
@@ -121,12 +144,11 @@ export class ApiListComponent implements OnInit {
         if (data.msj != undefined) return
         await data.map(e => {
           e.descripcion = e.descripcion == undefined ? '' : e.descripcion
-          this.selectCustomSelected.push(e)
+          this.selectCustomSelectedCtrl.value.push(e)
         })
-        this.rowData = this.selectCustomSelected;
-        this.count = this.rowData.length
-        this.tempData = this.rowData;
-        this.cdr.detectChanges()
+        this._rowData.set(this.selectCustomSelected);
+        this.count = this._rowData().length
+        this.tempData = this._rowData();
       },
       (error) => {
         console.error(error)
@@ -170,13 +192,12 @@ export class ApiListComponent implements OnInit {
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = '_SYS_R_ListarDriver'
     this.xAPI.parametros = this.id
-    this.drivers = []
+    this._drivers.set([])
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
-        this.drivers = data
+        this._drivers.set(data)
         if (this.id == 'consola')
-          this.drivers.push(MGDBA)
-        this.cdr.detectChanges()
+          this._drivers.update(arr => [...arr, MGDBA])
       },
       (error) => {
         console.log(error)

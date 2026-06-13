@@ -11,34 +11,34 @@
         <!-- Invoice List Header -->
         <!-- Table Header & Controls -->
         <div class="card-header-custom">
-          
+
           <!-- Top Section: Title & Search -->
           <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
             <div class="header-title-group">
               <h4 class="content-header-title mb-0">Gestión de APIs</h4>
               <small class="text-muted">Administración y monitoreo de endpoints</small>
             </div>
-            
+
             <div class="header-search">
               <div class="input-group input-group-merge">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><span [data-feather]="'search'" [size]="16"></span></span>
                 </div>
-                <input type="text" class="form-control" placeholder="Buscar por nombre, hash o función..." 
-                  [(ngModel)]="searchValue" (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" />
+                <input type="text" class="form-control" placeholder="Buscar por nombre, hash o función..."
+                  [formControl]="searchValueCtrl" (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" />
               </div>
             </div>
           </div>
 
           <!-- Bottom Section: Filters & Actions -->
           <div class="d-flex justify-content-between align-items-center flex-wrap actions-bar">
-            
+
             <!-- Left: Filters -->
             <div class="d-flex align-items-center flex-wrap actions-left">
               <div class="d-flex align-items-center mr-2 mb-1 mb-md-0">
                 <span class="text-muted mr-1">Mostrar</span>
                 <div class="pagination-select-wrapper">
-                  <select class="form-control form-control-sm" [(ngModel)]="basicSelectedOption">
+                  <select class="form-control form-control-sm" [formControl]="basicSelectedOptionCtrl">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -46,9 +46,9 @@
                   </select>
                 </div>
               </div>
-              
+
               <div class="status-filter mb-1 mb-md-0">
-                <ng-select [items]="status" [(ngModel)]="sDispositivo" bindLabel="name" bindValue="id" 
+                <ng-select [items]="status" [formControl]="sDispositivoCtrl" bindLabel="name" bindValue="id"
                   placeholder="Filtrar por Estatus" (change)="filterStatus($event)" class="custom-select-soft">
                   <ng-template ng-label-tmp let-item="item">
                     <span [data-feather]="'filter'" [size]="14" class="mr-1"></span>
@@ -60,12 +60,12 @@
 
             <!-- Right: Action Buttons -->
             <div class="actions-right mb-1 mb-md-0">
-              <button type="button" [routerLink]="'/tools/applications/register-api/Registrar/'+ urlControl" 
+              <button type="button" [routerLink]="'/tools/applications/register-api/Registrar/'+ urlControl"
                 class="btn btn-primary mr-1" rippleEffect>
                 <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
                 <span class="align-middle">Nueva API</span>
               </button>
-              
+
               <div class="btn-group">
                 <button type="button" (click)="ModalExportarArchivo(ModalExportar)" class="btn btn-outline-secondary" rippleEffect title="Exportar">
                   <span [data-feather]="'download'" [size]="16"></span>
@@ -92,10 +92,10 @@
           <ngx-datatable-row-detail [rowHeight]="'auto'">
             <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
               <div class="detail-row-wrapper">
-                
+
                 <!-- Info Grid -->
                 <div class="detail-grid">
-                  
+
                   <!-- General Info Card -->
                   <div class="detail-card theme-pastel-blue">
                     <div class="detail-card-header">
@@ -233,12 +233,12 @@
                     <div class="detail-card-body">
                       <div class="technical-stack">
                         <!-- Description Section -->
-                      
-                        
-                          <div class="description-content custom-scroll">
-                            <div class="description-text markdown-body">
-                              {{ row.descripcion ? row.descripcion : 'No hay descripción disponible para este endpoint.' }}
-                            </div>
+
+
+                        <div class="description-content custom-scroll">
+                          <div class="description-text markdown-body">
+                            {{ row.descripcion ? row.descripcion : 'No hay descripción disponible para este endpoint.' }}
+                          </div>
                         </div>
 
 
@@ -271,18 +271,19 @@
             </ng-template>
             <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
               <div class="d-flex align-items-center">
-                <div *ngIf="row.length > 0; else customAvatar">
-                  <img class="rounded-circle mr-1" src="{{ row.avatar }}" height="32" width="32"
-                    alt="datatable-avatar" />
-                </div>
-                <ng-template #customAvatar>
+                @if (row.length > 0) {
+                  <div>
+                    <img class="rounded-circle mr-1" src="{{ row.avatar }}" height="32" width="32"
+                      alt="datatable-avatar" />
+                  </div>
+                } @else {
                   <div class="avatar mr-1 ml-0" [ngClass]="{
                       'bg-light-success': row.estatus == true,
                       'bg-light-danger': row.estatus == false
                     }">
                     <div class="avatar-content">{{ row.funcion.toUpperCase() | initials }}</div>
                   </div>
-                </ng-template>
+                }
                 <div class="cell-line-height">
                   <span class="font-weight-bold d-block "><strong>{{ row.funcion }}</strong></span>
                   <span class="text-muted font-small-2">
@@ -400,7 +401,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
                   </div>
-                  <input type="text" [(ngModel)]="IExportAPI.usuario" [ngModelOptions]="{standalone: true}"
+                  <input type="text" [formControl]="exportUsuarioCtrl"
                     class="form-control" placeholder="Ingrese nombre de usuario" />
                 </div>
               </div>
@@ -411,7 +412,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
                   </div>
-                  <input type="password" [(ngModel)]="IExportAPI.clave" [ngModelOptions]="{standalone: true}"
+                  <input type="password" [formControl]="exportClaveCtrl"
                     class="form-control" placeholder="Ingrese contraseña" />
                 </div>
               </div>
@@ -429,66 +430,66 @@
 
       <hr>
 
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" tabindex="4" (click)="SubirArchivo()" rippleEffect>Subir Archivo</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
     </div>
 
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="SubirArchivo()" rippleEffect>Subir Archivo</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-  </div>
-
-</ng-template>
+  </ng-template>
 
 
 
-<ng-template #ModalExportar let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Credenciales: Exportar APIS</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <div class="form-row">
-        <div class="form-group col-md-12">
-          <form method="post"  id="frmExport" name="frmExport">
-            
-            <div class="row">
+  <ng-template #ModalExportar let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">Credenciales: Exportar APIS</h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+      <!-- Invoice -->
+      <div class="col-xl-12 col-md-12 col-12">
+        <!-- Header Starts -->
+        <div class="form-row">
+          <div class="form-group col-md-12">
+            <form method="post"  id="frmExport" name="frmExport">
 
-              <div class="col-md-12">
-                <label>Nombre de Usuario</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
+              <div class="row">
+
+                <div class="col-md-12">
+                  <label>Nombre de Usuario</label>
+                  <div class="input-group-pastel">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
+                    </div>
+                    <input type="text" [formControl]="exportUsuarioCtrl"
+                      class="form-control" placeholder="Ingrese nombre de usuario" />
                   </div>
-                  <input type="text" [(ngModel)]="IExportAPI.usuario" [ngModelOptions]="{standalone: true}"
-                    class="form-control" placeholder="Ingrese nombre de usuario" />
+                </div>
+
+                <div class="col-md-12">
+                  <label>Contraseña</label>
+                  <div class="input-group-pastel">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
+                    </div>
+                    <input type="password" [formControl]="exportClaveCtrl"
+                      class="form-control" placeholder="Ingrese contraseña" />
+                  </div>
                 </div>
               </div>
-
-              <div class="col-md-12">
-                <label>Contraseña</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
-                  </div>
-                  <input type="password" [(ngModel)]="IExportAPI.clave" [ngModelOptions]="{standalone: true}"
-                    class="form-control" placeholder="Ingrese contraseña" />
-                </div>
-              </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" tabindex="4" (click)="ExportApi()" rippleEffect>Exportar APIS</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
     </div>
 
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="ExportApi()" rippleEffect>Exportar APIS</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-  </div>
-
-</ng-template>
+  </ng-template>

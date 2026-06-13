@@ -4,10 +4,10 @@ import { ErrorModalComponent } from './error-modal.component';
 import { CoreCommonModule } from '@core/common.module';
 
 @NgModule({
-  declarations: [ErrorModalComponent],
   imports: [
     CommonModule,
-    CoreCommonModule
+    CoreCommonModule,
+    ErrorModalComponent
   ],
   exports: [ErrorModalComponent]
 })

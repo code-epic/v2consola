@@ -5,34 +5,34 @@
       <div class="card">
         <!-- Header Custom -->
         <div class="card-header-custom">
-          
+
           <!-- Top Section: Title & Search -->
           <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
             <div class="header-title-group">
               <h4 class="content-header-title mb-0">Gestión de Funciones</h4>
               <small class="text-muted">Administración de funciones y procesos del sistema</small>
             </div>
-            
+
             <div class="header-search">
               <div class="input-group input-group-merge">
                 <div class="input-group-prepend">
                   <span class="input-group-text"><span [data-feather]="'search'" [size]="16"></span></span>
                 </div>
-                <input type="text" class="form-control" placeholder="Buscar por nombre o descripción..." 
-                  [(ngModel)]="searchValue" (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" />
+                <input type="text" class="form-control" placeholder="Buscar por nombre o descripción..."
+                  [formControl]="searchValueCtrl" (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" />
               </div>
             </div>
           </div>
 
           <!-- Bottom Section: Filters & Actions -->
           <div class="d-flex justify-content-between align-items-center flex-wrap actions-bar">
-            
+
             <!-- Left: Filters -->
             <div class="d-flex align-items-center flex-wrap actions-left">
               <div class="d-flex align-items-center mr-2 mb-1 mb-md-0">
                 <span class="text-muted mr-1">Mostrar</span>
                 <div class="pagination-select-wrapper">
-                  <select class="form-control form-control-sm" [(ngModel)]="basicSelectedOption">
+                  <select class="form-control form-control-sm" [formControl]="basicSelectedOptionCtrl">
                     <option value="10">10</option>
                     <option value="25">25</option>
                     <option value="50">50</option>
@@ -40,144 +40,147 @@
                   </select>
                 </div>
               </div>
-              
+
               <!-- <div class="status-filter mb-1 mb-md-0">
-                <ng-select [items]="status" bindLabel="name" bindId="id" bindValue="id"
-                  placeholder="Filtrar por Estatus" (change)="filterStatus($event)" class="custom-select-soft">
-                  <ng-template ng-label-tmp let-item="item">
-                    <span [data-feather]="'filter'" [size]="14" class="mr-1"></span>
-                    {{ item.name }}
-                  </ng-template>
-                </ng-select>
-              </div> -->
-            </div>
+              <ng-select [items]="status" bindLabel="name" bindId="id" bindValue="id"
+                placeholder="Filtrar por Estatus" (change)="filterStatus($event)" class="custom-select-soft">
+                <ng-template ng-label-tmp let-item="item">
+                  <span [data-feather]="'filter'" [size]="14" class="mr-1"></span>
+                  {{ item.name }}
+                </ng-template>
+              </ng-select>
+            </div> -->
+          </div>
 
-            <!-- Right: Action Buttons -->
-            <div class="actions-right mb-1 mb-md-0">
-              <!-- <button type="button" (click)="ModalAdd(ModalAddFunction)" class="btn btn-info" rippleEffect>
-                <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
-                <span class="align-middle">Agregar</span>
-              </button>
-              
-              <button type="button" (click)="ModalExportarArchivo(ModalExportar)" class="btn btn-primary" rippleEffect>
-                <span [data-feather]="'download'" [size]="16" class="mr-50"></span>
-                <span class="align-middle">Exportar</span>
-              </button>
-              
-              <button type="button" (click)="ModalSubirArchivo(ModalSubir)" class="btn btn-warning" rippleEffect>
-                <span [data-feather]="'upload'" [size]="16" class="mr-50"></span>
-                <span class="align-middle">Importar</span>
-              </button> -->
+          <!-- Right: Action Buttons -->
+          <div class="actions-right mb-1 mb-md-0">
+            <!-- <button type="button" (click)="ModalAdd(ModalAddFunction)" class="btn btn-info" rippleEffect>
+            <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
+            <span class="align-middle">Agregar</span>
+          </button>
 
-              <button type="button"  (click)="ModalAdd(ModalAddFunction)" class="btn btn-primary mr-1" rippleEffect>
-                <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
-                <span class="align-middle">Nueva Función</span>
-              </button>
-              
-              <div class="btn-group">
-                <button type="button" (click)="ModalExportarArchivo(ModalExportar)" class="btn btn-outline-secondary" rippleEffect title="Exportar">
-                  <span [data-feather]="'download'" [size]="16"></span>
-                </button>
-                <button type="button" (click)="ModalSubirArchivo(ModalSubir)" class="btn btn-outline-secondary" rippleEffect title="Importar">
-                  <span [data-feather]="'upload'" [size]="16"></span>
-                </button>
-              
-              </div>
-            
-            </div>
+          <button type="button" (click)="ModalExportarArchivo(ModalExportar)" class="btn btn-primary" rippleEffect>
+            <span [data-feather]="'download'" [size]="16" class="mr-50"></span>
+            <span class="align-middle">Exportar</span>
+          </button>
+
+          <button type="button" (click)="ModalSubirArchivo(ModalSubir)" class="btn btn-warning" rippleEffect>
+            <span [data-feather]="'upload'" [size]="16" class="mr-50"></span>
+            <span class="align-middle">Importar</span>
+          </button> -->
+
+          <button type="button"  (click)="ModalAdd(ModalAddFunction)" class="btn btn-primary mr-1" rippleEffect>
+            <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
+            <span class="align-middle">Nueva Función</span>
+          </button>
+
+          <div class="btn-group">
+            <button type="button" (click)="ModalExportarArchivo(ModalExportar)" class="btn btn-outline-secondary" rippleEffect title="Exportar">
+              <span [data-feather]="'download'" [size]="16"></span>
+            </button>
+            <button type="button" (click)="ModalSubirArchivo(ModalSubir)" class="btn btn-outline-secondary" rippleEffect title="Importar">
+              <span [data-feather]="'upload'" [size]="16"></span>
+            </button>
 
           </div>
+
         </div>
-        <!--/ Header Custom -->
 
-        <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-          [columnMode]="ColumnMode.flex" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
-          [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+      </div>
+    </div>
+    <!--/ Header Custom -->
 
-          <ngx-datatable-column [flexGrow]="2">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'code'" [size]="14" class="mr-50"></span>
-              <span>FUNCIÓN</span>
-            </ng-template>
-            <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-              <div class="d-flex align-items-center">
-                <div *ngIf="row.length > 0; else customAvatar">
-                  <img class="rounded-circle mr-1" src="{{ row.avatar }}" height="32" width="32"
-                    alt="datatable-avatar" />
-                </div>
-                <ng-template #customAvatar>
+    <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
+      [columnMode]="ColumnMode.flex" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
+      [limit]="basicSelectedOptionCtrl.value" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+
+      <ngx-datatable-column [flexGrow]="2">
+        <ng-template ngx-datatable-header-template>
+          <span [data-feather]="'code'" [size]="14" class="mr-50"></span>
+          <span>FUNCIÓN</span>
+        </ng-template>
+        <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+          <div class="d-flex align-items-center">
+            @if (row.length > 0) {
+              <div>
+                <img class="rounded-circle mr-1" src="{{ row.avatar }}" height="32" width="32"
+                  alt="datatable-avatar" />
+              </div>
+            } @else {
                   <div class="avatar mr-1 ml-0" [ngClass]="{
                         'bg-light-success': row.estatus == true,
                         'bg-light-danger': row.estatus == false
                       }">
-                    <div class="avatar-content">{{ row.nombre.toUpperCase() | initials }}</div>
-                  </div>
-                </ng-template>
-                <div class="cell-line-height">
-                  <span class="font-weight-bold d-block"><strong>{{ row.nombre }}</strong></span>
-                  <span class="text-muted font-small-2">
-                    <strong>V {{ row.version | uppercase }}</strong>
-                  </span>
-                </div>
+                <div class="avatar-content">{{ row.nombre.toUpperCase() | initials }}</div>
               </div>
-            </ng-template>
-          </ngx-datatable-column>
+            }
+            <div class="cell-line-height">
+              <span class="font-weight-bold d-block"><strong>{{ row.nombre }}</strong></span>
+              <span class="text-muted font-small-2">
+                <strong>V {{ row.version | uppercase }}</strong>
+              </span>
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
 
-          <ngx-datatable-column [flexGrow]="1">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'cpu'" [size]="14" class="mr-50"></span>
-              <span>LENGUAJE</span>
-            </ng-template>
-            <ng-template let-row="row" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">
-                  <div class="badge badge-glow" [ngClass]="getBadgeClass(row.lenguaje)">
-                    {{ row.lenguaje}}
-                  </div>
-                </span>
+      <ngx-datatable-column [flexGrow]="1">
+        <ng-template ngx-datatable-header-template>
+          <span [data-feather]="'cpu'" [size]="14" class="mr-50"></span>
+          <span>LENGUAJE</span>
+        </ng-template>
+        <ng-template let-row="row" ngx-datatable-cell-template>
+          <div>
+            <span class="font-weight-bold">
+              <div class="badge badge-glow" [ngClass]="getBadgeClass(row.lenguaje)">
+                {{ row.lenguaje}}
               </div>
-            </ng-template>
-          </ngx-datatable-column>
+            </span>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
 
-          <ngx-datatable-column prop="descripcion" [flexGrow]="6" [cellClass]="'description-cell'">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'file-text'" [size]="14" class="mr-50"></span>
-              <span>DESCRIPCIÓN</span>
-            </ng-template>
-            <ng-template let-descripcion="value" ngx-datatable-cell-template>
-              <div class="d-flex align-items-center" style="flex: 1; min-width: 0;">
-                <span class="font-weight-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" [title]="descripcion | uppercase">
-                  {{ descripcion.slice(0, 70) + '...' | uppercase }}
-                </span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
+      <ngx-datatable-column prop="descripcion" [flexGrow]="6" [cellClass]="'description-cell'">
+        <ng-template ngx-datatable-header-template>
+          <span [data-feather]="'file-text'" [size]="14" class="mr-50"></span>
+          <span>DESCRIPCIÓN</span>
+        </ng-template>
+        <ng-template let-descripcion="value" ngx-datatable-cell-template>
+          <div class="d-flex align-items-center" style="flex: 1; min-width: 0;">
+            <span class="font-weight-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;" [title]="descripcion | uppercase">
+              {{ descripcion.slice(0, 70) + '...' | uppercase }}
+            </span>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
 
-          <ngx-datatable-column [flexGrow]="1" [sortable]="false">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'more-horizontal'" [size]="14"></span>
-            </ng-template>
-            <ng-template ngx-datatable-cell-template let-row="row">
-              <div ngbDropdown container="body">
-                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
-                </button>
-                <div ngbDropdownMenu>
-                  <a (click)="ModalEdit(ModalEditFunction,row)" ngbDropdownItem><span [data-feather]="'edit'"
-                      [size]="16" [class]="'mr-50'"></span> Editar</a>
-                  <a (click)="ModalConfig(ModalConfigFunction,row)" ngbDropdownItem *ngIf="row.tiempo!=''"><span
-                      [data-feather]="'settings'" [size]="16" [class]="'mr-50'"></span> Configurar</a>
-                </div>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
+      <ngx-datatable-column [flexGrow]="1" [sortable]="false">
+        <ng-template ngx-datatable-header-template>
+          <span [data-feather]="'more-horizontal'" [size]="14"></span>
+        </ng-template>
+        <ng-template ngx-datatable-cell-template let-row="row">
+          <div ngbDropdown container="body">
+            <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+              <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+            </button>
+            <div ngbDropdownMenu>
+              <a (click)="ModalEdit(ModalEditFunction,row)" ngbDropdownItem><span [data-feather]="'edit'"
+              [size]="16" [class]="'mr-50'"></span> Editar</a>
+              @if (row.tiempo!='') {
+                <a (click)="ModalConfig(ModalConfigFunction,row)" ngbDropdownItem><span
+                [data-feather]="'settings'" [size]="16" [class]="'mr-50'"></span> Configurar</a>
+              }
+            </div>
+          </div>
+        </ng-template>
+      </ngx-datatable-column>
 
-        </ngx-datatable>
-
-      </div>
-    </section>
+    </ngx-datatable>
 
   </div>
+</section>
+
+</div>
 </div>
 
 
@@ -215,9 +218,13 @@
             <input type="text" formControlName="nombre" class="form-control" placeholder="Ingrese Nombre"
               aria-describedby="login-nombre" tabindex="1" autofocus
               [ngClass]="{ 'is-invalid': submitted && f.nombre.errors }" />
-            <div *ngIf="submitted && f.nombre.errors" class="invalid-feedback">
-              <div *ngIf="f.nombre.errors.required">Nombre Funcion es requerido</div>
-            </div>
+            @if (submitted && f.nombre.errors) {
+              <div class="invalid-feedback">
+                @if (f.nombre.errors.required) {
+                  <div>Nombre Funcion es requerido</div>
+                }
+              </div>
+            }
           </div>
 
           <div class="col-md-2 col-12 mb-1">
@@ -242,8 +249,7 @@
 
           <div class="col-md-3 col-12 mb-1">
             <label for="login-categoria" class="form-label">Categoria</label>
-            <ng-select [items]="categoria" formControlName="categoria" [(ngModel)]="btnCategoria"
-              [ngModelOptions]="{standalone: true}" [ngModelChange]="SeleccionarPrograma()" formControlName="categoria"
+            <ng-select [items]="categoria" formControlName="categoria"
               bindLabel="descripcion" placeholder="Seleccione Categoria" bindValue="name">
             </ng-select>
           </div>
@@ -257,17 +263,19 @@
 
           <div class="col-md-3 col-12 mb-1">
             <label class="form-label" for="http">Aplicación</label>
-            <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPI.prefijo" [ngModelOptions]="{standalone: true}"
-              bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-              placeholder="Seleccione Aplicación"></ng-select>
+            <ng-select [items]="ListaAplicaciones" [formControl]="prefijoCtrl"
+              bindLabel="name" bindValue="id"
+            placeholder="Seleccione Aplicación"></ng-select>
           </div>
 
-          <div class="col-md-3 col-12 mb-1" *ngIf="divTiempo">
-            <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
-            <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
-            <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
-              aria-describedby="login-tiempo" tabindex="1" autofocus />
-          </div>
+          @if (divTiempo) {
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
+              <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
+              <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
+                aria-describedby="login-tiempo" tabindex="1" autofocus />
+            </div>
+          }
 
 
 
@@ -276,10 +284,14 @@
             <label for="login-descripcion" class="form-label">Descripción</label>
             <textarea type="text" formControlName="descripcion" rows="3" class="form-control"
               placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus
-              [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }"></textarea>
-            <div *ngIf="submitted && f.descripcion.errors" class="invalid-feedback">
-              <div *ngIf="f.descripcion.errors.required">Descripción es requerido</div>
-            </div>
+            [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }"></textarea>
+            @if (submitted && f.descripcion.errors) {
+              <div class="invalid-feedback">
+                @if (f.descripcion.errors.required) {
+                  <div>Descripción es requerido</div>
+                }
+              </div>
+            }
           </div>
 
           <div class="col-md-12 col-12 mb-1">
@@ -287,9 +299,13 @@
             <ngx-codemirror #codemirror aria-describedby="login-codigo" tabindex="1" autofocus formControlName="codigo"
               [options]="codeMirrorOptions">
             </ngx-codemirror>
-            <div *ngIf="submitted && f.codigo.errors" class="invalid-feedback">
-              <div *ngIf="f.codigo.errors.required">Codigo es requerido</div>
-            </div>
+            @if (submitted && f.codigo.errors) {
+              <div class="invalid-feedback">
+                @if (f.codigo.errors.required) {
+                  <div>Codigo es requerido</div>
+                }
+              </div>
+            }
           </div>
 
 
@@ -330,14 +346,14 @@
       | | | | |<br>
       * * * * * comando a ejecutar<br>
       */5 * * * * se ejecuta cada 5 minutos.<br>
-      <!-- </code> -->
-
-    </div>
+    <!-- </code> -->
 
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-  </div>
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+</div>
 </ng-template>
 
 <ng-template #ModalConfigFunction let-modal>
@@ -382,15 +398,14 @@
 
           <div class="col-md-4 col-12 mb-1">
             <label for="login-lenguaje" class="form-label">Lenguaje</label>
-            <ng-select [items]="lenguaje" [readonly]="true" (ngModelChange)="cambiarModo()" formControlName="lenguaje"
+            <ng-select [items]="lenguaje" [readonly]="true" formControlName="lenguaje"
               bindLabel="descripcion" placeholder="Seleccione Lenguaje" bindValue="name">
             </ng-select>
           </div>
 
           <div class="col-md-4 col-12 mb-1">
             <label for="login-categoria" class="form-label">Categoria</label>
-            <ng-select [items]="categoria" [readonly]="true" formControlName="categoria" [(ngModel)]="btnCategoria"
-              [ngModelOptions]="{standalone: true}" formControlName="categoria" bindLabel="descripcion"
+            <ng-select [items]="categoria" [readonly]="true" formControlName="categoria" bindLabel="descripcion"
               placeholder="Seleccione Categoria" bindValue="name">
             </ng-select>
           </div>
@@ -406,7 +421,7 @@
           <div class="col-md-12 col-12 mb-1">
             <label for="login-descripcion" class="form-label">Descripción</label>
             <textarea type="text" formControlName="descripcion" [readonly]="true" rows="3" class="form-control"
-              placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus></textarea>
+            placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus></textarea>
           </div>
 
 
@@ -488,15 +503,14 @@
 
           <div class="col-md-3 col-12 mb-1">
             <label for="login-lenguaje" class="form-label">Lenguaje</label>
-            <ng-select [items]="lenguaje" (ngModelChange)="cambiarModo()" formControlName="lenguaje"
+            <ng-select [items]="lenguaje" formControlName="lenguaje"
               bindLabel="descripcion" placeholder="Seleccione Lenguaje" bindValue="name">
             </ng-select>
           </div>
 
           <div class="col-md-3 col-12 mb-1">
             <label for="login-categoria" class="form-label">Categoria</label>
-            <ng-select [items]="categoria" formControlName="categoria" [(ngModel)]="btnCategoria"
-              [ngModelOptions]="{standalone: true}" [ngModelChange]="SeleccionarPrograma()" formControlName="categoria"
+            <ng-select [items]="categoria" formControlName="categoria"
               bindLabel="descripcion" placeholder="Seleccione Categoria" bindValue="name">
             </ng-select>
           </div>
@@ -508,18 +522,20 @@
             </ng-select>
           </div>
 
-          <div class="col-md-3 col-12 mb-1" *ngIf="divTiempo">
-            <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
-            <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
-            <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
-              aria-describedby="login-tiempo" tabindex="1" autofocus />
-          </div>
+          @if (divTiempo) {
+            <div class="col-md-3 col-12 mb-1">
+              <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
+              <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
+              <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
+                aria-describedby="login-tiempo" tabindex="1" autofocus />
+            </div>
+          }
 
 
           <div class="col-md-12 col-12 mb-1">
             <label for="login-descripcion" class="form-label">Descripción</label>
             <textarea type="text" formControlName="descripcion" rows="3" class="form-control"
-              placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus></textarea>
+            placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus></textarea>
           </div>
 
           <div class="col-md-12 col-12 mb-1">
@@ -560,7 +576,7 @@
             <label>Resultado</label>
             <div style="width:100%; height:400px; overflow: scroll;">
               <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
-                [ngModelOptions]="{standalone: true}" [(ngModel)]="xrs" value="{{xrs}}"></textarea>
+              [formControl]="xrsCtrl"></textarea>
             </div>
           </div>
         </div>
@@ -600,13 +616,13 @@
 
               <div class="col-md-12">
                 <label>Nombre de Usuario</label>
-                <input type="text" [(ngModel)]="IExport.usuario" [ngModelOptions]="{standalone: true}"
+                <input type="text" [formControl]="exportUsuarioCtrl"
                   class="form-control" />
               </div>
 
               <div class="col-md-12">
                 <label>Constraseña</label>
-                <input type="password" [(ngModel)]="IExport.clave" [ngModelOptions]="{standalone: true}"
+                <input type="password" [formControl]="exportClaveCtrl"
                   class="form-control" />
               </div>
 
@@ -624,58 +640,58 @@
 
       <hr>
 
-    </div>
-
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="SubirArchivo()" rippleEffect>Subir Archivo</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-  </div>
-
-</ng-template>
-
-
-<ng-template #ModalExportar let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Credenciales: Exportar Funciones</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <div class="col-xl-12 col-md-12 col-12">
-      <div class="form-row">
-        <div class="form-group col-md-12">
-        </div>
-        <div class="form-group col-md-12">
-          <form method="post" id="frmExport" name="frmExport">
-
-            <div class="row">
-
-              <div class="col-md-12">
-                <label>Nombre de Usuario</label>
-                <input type="text" [(ngModel)]="IExport.usuario" [ngModelOptions]="{standalone: true}"
-                  class="form-control" />
-              </div>
-
-              <div class="col-md-12">
-                <label>Constraseña</label>
-                <input type="password" [(ngModel)]="IExport.clave" [ngModelOptions]="{standalone: true}"
-                  class="form-control" />
-              </div>
-            </div>
-          </form>
-        </div>
       </div>
 
-      <hr>
-
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" tabindex="4" (click)="SubirArchivo()" rippleEffect>Subir Archivo</button>
+      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
     </div>
 
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="ExportFunciones()" rippleEffect>Exportar Funciones</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-  </div>
+  </ng-template>
 
-</ng-template>
+
+  <ng-template #ModalExportar let-modal>
+    <div class="modal-header">
+      <h5 class="modal-title" id="myModalLabel160">Credenciales: Exportar Funciones</h5>
+      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+      <div class="col-xl-12 col-md-12 col-12">
+        <div class="form-row">
+          <div class="form-group col-md-12">
+          </div>
+          <div class="form-group col-md-12">
+            <form method="post" id="frmExport" name="frmExport">
+
+              <div class="row">
+
+                <div class="col-md-12">
+                  <label>Nombre de Usuario</label>
+                  <input type="text" [formControl]="exportUsuarioCtrl"
+                    class="form-control" />
+                </div>
+
+                <div class="col-md-12">
+                  <label>Constraseña</label>
+                  <input type="password" [formControl]="exportClaveCtrl"
+                    class="form-control" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <hr>
+
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success" tabindex="4" (click)="ExportFunciones()" rippleEffect>Exportar Funciones</button>
+        <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+      </div>
+
+    </ng-template>

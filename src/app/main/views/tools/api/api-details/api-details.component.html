@@ -15,7 +15,9 @@
                   <div class="d-flex align-items-center flex-wrap mb-1">
                     <h2 class="api-title mb-0 mr-2">{{ xAPI.funcion }}</h2>
                     <div class="badge badge-pastel-primary mr-1">{{ xAPI.categoria }}</div>
-                    <div class="badge badge-pastel-info" *ngIf="xAPI.metodo">{{ xAPI.metodo }}</div>
+                    @if (xAPI.metodo) {
+                      <div class="badge badge-pastel-info">{{ xAPI.metodo }}</div>
+                    }
                   </div>
                   <p class="api-subtitle mb-1">{{ xAPI.descripcion || xAPI.driver }}</p>
                   <div class="api-meta d-flex align-items-center text-muted flex-wrap">
@@ -154,8 +156,12 @@
                             <span>Cache</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.cache === 1 ? 'active' : 'inactive'">
-                            <span *ngIf="xAPI.cache === 1" [data-feather]="'check'" [size]="16"></span>
-                            <span *ngIf="xAPI.cache !== 1" [data-feather]="'x'" [size]="16"></span>
+                            @if (xAPI.cache === 1) {
+                              <span [data-feather]="'check'" [size]="16"></span>
+                            }
+                            @if (xAPI.cache !== 1) {
+                              <span [data-feather]="'x'" [size]="16"></span>
+                            }
                           </span>
                         </li>
                       </ul>
@@ -178,12 +184,16 @@
                             <span>Logs</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.logs ? 'active' : 'inactive'">
-                            <div *ngIf="xAPI.logs">
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            </div>
-                            <div *ngIf="!xAPI.logs">
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            </div>
+                            @if (xAPI.logs) {
+                              <div>
+                                <span [data-feather]="'check'" [size]="16"></span>
+                              </div>
+                            }
+                            @if (!xAPI.logs) {
+                              <div>
+                                <span [data-feather]="'x'" [size]="16"></span>
+                              </div>
+                            }
                           </span>
                         </li>
                         <li class="config-item-pastel">
@@ -192,12 +202,16 @@
                             <span>Traza</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.traza ? 'active' : 'inactive'">
-                            <div *ngIf="xAPI.traza">
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            </div>
-                            <div *ngIf="!xAPI.traza">
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            </div>
+                            @if (xAPI.traza) {
+                              <div>
+                                <span [data-feather]="'check'" [size]="16"></span>
+                              </div>
+                            }
+                            @if (!xAPI.traza) {
+                              <div>
+                                <span [data-feather]="'x'" [size]="16"></span>
+                              </div>
+                            }
                           </span>
                         </li>
                         <li class="config-item-pastel">
@@ -206,14 +220,18 @@
                             <span>Concurrencia</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.concurrencia ? 'active' : 'inactive'">
-                            <div *ngIf="xAPI.concurrencia">
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            </div>
-                            <div *ngIf="!xAPI.concurrencia">
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            </div>
+                            @if (xAPI.concurrencia) {
+                              <div>
+                                <span [data-feather]="'check'" [size]="16"></span>
+                              </div>
+                            }
+                            @if (!xAPI.concurrencia) {
+                              <div>
+                                <span [data-feather]="'x'" [size]="16"></span>
+                              </div>
+                            }
                             <!-- <span *ngIf="xAPI.concurrencia" [data-feather]="'check'" [size]="16"></span>
-                              <span *ngIf="!xAPI.concurrencia" [data-feather]="'x'" [size]="16"></span> -->
+                            <span *ngIf="!xAPI.concurrencia" [data-feather]="'x'" [size]="16"></span> -->
                           </span>
                         </li>
                         <li class="config-item-pastel">
@@ -222,14 +240,18 @@
                             <span>Migrar</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.migrar ? 'active' : 'inactive'">
-                            <div *ngIf="xAPI.migrar">
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            </div>
-                            <div *ngIf="!xAPI.migrar">
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            </div>
+                            @if (xAPI.migrar) {
+                              <div>
+                                <span [data-feather]="'check'" [size]="16"></span>
+                              </div>
+                            }
+                            @if (!xAPI.migrar) {
+                              <div>
+                                <span [data-feather]="'x'" [size]="16"></span>
+                              </div>
+                            }
                             <!-- <span *ngIf="xAPI.migrar" [data-feather]="'check'" [size]="16"></span>
-                              <span *ngIf="!xAPI.migrar" [data-feather]="'x'" [size]="16"></span> -->
+                            <span *ngIf="!xAPI.migrar" [data-feather]="'x'" [size]="16"></span> -->
                           </span>
                         </li>
                         <li class="config-item-pastel">
@@ -238,14 +260,18 @@
                             <span>Relacional</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.relacional ? 'active' : 'inactive'">
-                            <div *ngIf="xAPI.relacional">
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            </div>
-                            <div *ngIf="!xAPI.relacional">
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            </div>
+                            @if (xAPI.relacional) {
+                              <div>
+                                <span [data-feather]="'check'" [size]="16"></span>
+                              </div>
+                            }
+                            @if (!xAPI.relacional) {
+                              <div>
+                                <span [data-feather]="'x'" [size]="16"></span>
+                              </div>
+                            }
                             <!-- <span *ngIf="xAPI.relacional" [data-feather]="'check'" [size]="16"></span>
-                              <span *ngIf="!xAPI.relacional" [data-feather]="'x'" [size]="16"></span> -->
+                            <span *ngIf="!xAPI.relacional" [data-feather]="'x'" [size]="16"></span> -->
                           </span>
                         </li>
                         <li class="config-item-pastel">
@@ -254,12 +280,16 @@
                             <span>Retorna</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.retorna ? 'active' : 'inactive'">
-                            <div *ngIf="xAPI.retorna">
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            </div>
-                            <div *ngIf="!xAPI.retorna">
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            </div>
+                            @if (xAPI.retorna) {
+                              <div>
+                                <span [data-feather]="'check'" [size]="16"></span>
+                              </div>
+                            }
+                            @if (!xAPI.retorna) {
+                              <div>
+                                <span [data-feather]="'x'" [size]="16"></span>
+                              </div>
+                            }
                           </span>
                         </li>
                         <li class="config-item-pastel">
@@ -268,12 +298,16 @@
                             <span>Totalizar</span>
                           </span>
                           <span class="item-status-pastel" [ngClass]="xAPI.totalizar === 'S' ? 'active' : 'inactive'">
-                            <div *ngIf="xAPI.totalizar === 'S'">
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            </div>
-                            <div *ngIf="xAPI.totalizar !== 'S'">
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            </div>
+                            @if (xAPI.totalizar === 'S') {
+                              <div>
+                                <span [data-feather]="'check'" [size]="16"></span>
+                              </div>
+                            }
+                            @if (xAPI.totalizar !== 'S') {
+                              <div>
+                                <span [data-feather]="'x'" [size]="16"></span>
+                              </div>
+                            }
                           </span>
                         </li>
                       </ul>
@@ -299,28 +333,34 @@
                         <span>Ciclo de Vida</span>
                       </div>
                       <div class="action-buttons-pastel">
-                        <button type="button" class="btn-pastel btn-pastel-primary"
-                          (click)="promover('calidad', xAPI.funcion, 'promover')" *ngIf="xAPI.entorno == 'desarrollo'"
-                          rippleEffect>
-                          <span class="btn-icon-pastel">
-                            <span [data-feather]="'chevrons-up'" [size]="18"></span>
-                          </span>
-                          <span>Promover a Calidad</span>
-                        </button>
-                        <button type="button" class="btn-pastel btn-pastel-success" *ngIf="xAPI.entorno == 'calidad'"
-                          (click)="promover('produccion', xAPI.funcion, 'instalar')" rippleEffect>
-                          <span class="btn-icon-pastel">
-                            <span [data-feather]="'upload-cloud'" [size]="18"></span>
-                          </span>
-                          <span>Instalar en Producción</span>
-                        </button>
-                        <button type="button" class="btn-pastel btn-pastel-danger" *ngIf="xAPI.entorno != 'desarrollo'"
-                          (click)="promover('desarrollo', xAPI.funcion, 'reversar')" rippleEffect>
-                          <span class="btn-icon-pastel">
-                            <span [data-feather]="'rotate-ccw'" [size]="18"></span>
-                          </span>
-                          <span>Reversar a Desarrollo</span>
-                        </button>
+                        @if (xAPI.entorno == 'desarrollo') {
+                          <button type="button" class="btn-pastel btn-pastel-primary"
+                            (click)="promover('calidad', xAPI.funcion, 'promover')"
+                            rippleEffect>
+                            <span class="btn-icon-pastel">
+                              <span [data-feather]="'chevrons-up'" [size]="18"></span>
+                            </span>
+                            <span>Promover a Calidad</span>
+                          </button>
+                        }
+                        @if (xAPI.entorno == 'calidad') {
+                          <button type="button" class="btn-pastel btn-pastel-success"
+                            (click)="promover('produccion', xAPI.funcion, 'instalar')" rippleEffect>
+                            <span class="btn-icon-pastel">
+                              <span [data-feather]="'upload-cloud'" [size]="18"></span>
+                            </span>
+                            <span>Instalar en Producción</span>
+                          </button>
+                        }
+                        @if (xAPI.entorno != 'desarrollo') {
+                          <button type="button" class="btn-pastel btn-pastel-danger"
+                            (click)="promover('desarrollo', xAPI.funcion, 'reversar')" rippleEffect>
+                            <span class="btn-icon-pastel">
+                              <span [data-feather]="'rotate-ccw'" [size]="18"></span>
+                            </span>
+                            <span>Reversar a Desarrollo</span>
+                          </button>
+                        }
                       </div>
                     </div>
 
@@ -331,20 +371,24 @@
                         <span>Operaciones</span>
                       </div>
                       <div class="action-buttons-pastel">
-                        <button type="button" class="btn-pastel btn-pastel-warning" *ngIf="xAPI.entorno != 'produccion'"
-                          [routerLink]="'/tools/applications/update-api/'+xAPI.funcion+ '/' + urlControl" rippleEffect>
-                          <span class="btn-icon-pastel">
-                            <span [data-feather]="'edit'" [size]="18"></span>
-                          </span>
-                          <span>Modificar API</span>
-                        </button>
-                        <button type="button" class="btn-pastel btn-pastel-info"
-                          (click)="ModalProbar(ModalProbarApi,xAPI)" *ngIf="xAPI.entorno != 'produccion'" rippleEffect>
-                          <span class="btn-icon-pastel">
-                            <span [data-feather]="'play-circle'" [size]="18"></span>
-                          </span>
-                          <span>{{xAPI.entorno == 'calidad' ? 'Probar Versión' : 'Probar API'}}</span>
-                        </button>
+                        @if (xAPI.entorno != 'produccion') {
+                          <button type="button" class="btn-pastel btn-pastel-warning"
+                            [routerLink]="'/tools/applications/update-api/'+xAPI.funcion+ '/' + urlControl" rippleEffect>
+                            <span class="btn-icon-pastel">
+                              <span [data-feather]="'edit'" [size]="18"></span>
+                            </span>
+                            <span>Modificar API</span>
+                          </button>
+                        }
+                        @if (xAPI.entorno != 'produccion') {
+                          <button type="button" class="btn-pastel btn-pastel-info"
+                            (click)="ModalProbar(ModalProbarApi,xAPI)" rippleEffect>
+                            <span class="btn-icon-pastel">
+                              <span [data-feather]="'play-circle'" [size]="18"></span>
+                            </span>
+                            <span>{{xAPI.entorno == 'calidad' ? 'Probar Versión' : 'Probar API'}}</span>
+                          </button>
+                        }
                       </div>
                     </div>
 
@@ -409,12 +453,12 @@
               <div class="col-md-5 border-right">
                 <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Servicio API</small>
                 <span class="text-dark font-weight-bolder text-truncate d-block" [title]="xAPI?.funcion">{{
-                  xAPI?.funcion }}</span>
+                xAPI?.funcion }}</span>
               </div>
               <div class="col-md-5 border-right px-1">
                 <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">URL / Entorno</small>
                 <span class="text-primary font-weight-bolder text-truncate d-block" [title]="xentorno">{{ xentorno
-                  }}</span>
+                }}</span>
               </div>
               <div class="col-md-2 px-1 text-center">
                 <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Protocolo</small>
@@ -447,13 +491,13 @@
                         <label class="small text-muted font-weight-bold text-uppercase">Parámetros (Query Path)</label>
                         <div class="input-group input-group-merge border-light-2">
                           <input type="text" class="form-control form-control-sm bg-light-analysis border-0"
-                            [(ngModel)]="xparametro" placeholder="Ej: ?id=001 o /parametro" autocomplete="off" />
+                            [formControl]="xparametroCtrl" placeholder="Ej: ?id=001 o /parametro" autocomplete="off" />
                         </div>
                       </div>
                       <div class="form-group mb-0">
                         <label class="small text-muted font-weight-bold text-uppercase">Valores JSON (Payload)</label>
                         <div class="code-editor-premium shadow-sm mt-50">
-                          <ngx-codemirror [(ngModel)]="valores" [options]="codeMirrorOptions"></ngx-codemirror>
+                          <ngx-codemirror [formControl]="valoresCtrl" [options]="codeMirrorOptions"></ngx-codemirror>
                         </div>
                       </div>
                     </div>
@@ -506,10 +550,10 @@
                   </button>
                 </div>
                 <div class="card-body p-0">
-                  <textarea [(ngModel)]="codeTypeJs" class="form-control border-0 font-small-2 bg-light-analysis"
+                  <textarea [formControl]="codeTypeJsCtrl" class="form-control border-0 font-small-2 bg-light-analysis"
                     rows="15"
                     style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem !important; color: #5e5873;"
-                    readonly></textarea>
+                  readonly></textarea>
                 </div>
               </div>
             </ng-template>

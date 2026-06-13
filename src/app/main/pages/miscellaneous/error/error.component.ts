@@ -1,16 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core'; // Import OnDestroy
-import { Location } from '@angular/common'; // Import Location service
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 
-import { takeUntil } from 'rxjs/operators'; // Keep takeUntil
-import { Subject, timer } from 'rxjs'; // Import timer
+import { takeUntil } from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
+import { CoreCommonModule } from '@core/common.module';
 
 @Component({
     selector: 'app-error',
     templateUrl: './error.component.html',
     styleUrls: ['./error.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, RouterModule, CoreCommonModule]
 })
 export class ErrorComponent implements OnInit, OnDestroy { // Implement OnDestroy
   public coreConfig: any;

@@ -1,8 +1,12 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewEncapsulation, ViewChild, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgbModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { ColumnMode, DatatableComponent, NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { environment } from 'environments/environment';
+import { CoreCommonModule } from '@core/common.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 import * as feather from 'feather-icons';
 import Swal from 'sweetalert2';
 
@@ -36,22 +40,34 @@ export interface Authorization {
     styleUrls: ['./authorization.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CoreCommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        NgbModule,
+        ContentHeaderComponent,
+        NgxDatatableModule
+    ]
 })
 export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
 
   public contentHeader: any;
   public ColumnMode = ColumnMode;
-  public isLoading: boolean = false;
-  public rowData: Authorization[] = [];
-  public tempData: Authorization[] = [];
   public basicSelectedOption: number = 10;
   public searchValue: string = '';
-  public selectedApplication: string = '';
+  public selectedApplicationCtrl = new FormControl('');
   public applicationsList: string[] = [];
 
-  public selectedAuth: Authorization | null = null;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
+  private _rowData = signal<Authorization[]>([]);
+  get rowData() { return this._rowData(); }
+  private _tempData = signal<Authorization[]>([]);
+  get tempData() { return this._tempData(); }
+  private _selectedAuth = signal<Authorization | null>(null);
+  get selectedAuth() { return this._selectedAuth(); }
 
   private timer: any;
 
@@ -62,7 +78,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
   };
 
 
-  constructor(private modalService: NgbModal, private apiService: ApiService, private cdr: ChangeDetectorRef) { }
+  constructor(private modalService: NgbModal, private apiService: ApiService) { }
 
   ngOnInit(): void {
     this.contentHeader = {
@@ -96,8 +112,8 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
 
   loadMockData(data: Authorization[]) {
     // Datos de ejemplo basados en el modelo proporcionado
-    this.rowData = data;
-    this.tempData = [...this.rowData];
+    this._rowData.set(data);
+    this._tempData.set([...this._rowData()]);
     this.extractApplications();
     this.applyFilters();
     setTimeout(() => {
@@ -111,26 +127,23 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_AUTHORIZATIONS // O la función que corresponda
     this.xAPI.parametros = '0';
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._isLoading.set(true);
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
 
         this.loadMockData(data);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       (error) => {
         console.error('Error al cargar perfiles', error);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     );
   }
 
 
   extractApplications() {
-    this.applicationsList = Array.from(new Set(this.tempData.map(item => item.aplication))).sort();
+    this.applicationsList = Array.from(new Set(this._tempData().map(item => item.aplication))).sort();
   }
 
   startTimer() {
@@ -142,7 +155,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
 
   updateCounters() {
     const now = new Date().getTime();
-    this.tempData.forEach(auth => {
+    this._tempData().forEach(auth => {
       const startTime = new Date(auth.tiempo.replace(' ', 'T')).getTime();
       const diff = now - startTime;
       const minutes = Math.floor(diff / 60000);
@@ -167,9 +180,9 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
 
   applyFilters() {
     const val = this.searchValue;
-    const app = this.selectedApplication;
+    const app = this.selectedApplicationCtrl.value;
 
-    const filtered = this.tempData.filter(d => {
+    const filtered = this._tempData().filter(d => {
       const matchSearch = !val ||
         (d.name.toLowerCase().includes(val) ||
           d.user.toLowerCase().includes(val) ||
@@ -181,7 +194,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
       return matchSearch && matchApp;
     });
 
-    this.rowData = [...filtered];
+    this._rowData.set([...filtered]);
   }
 
   getRowClass = (row: Authorization) => {
@@ -246,7 +259,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
             }
 
             // Remove from local list and show success
-            this.rowData = this.rowData.filter(item => item.authid !== row.authid);
+            this._rowData.set(this._rowData().filter(item => item.authid !== row.authid));
             Swal.fire({
               title: '¡Aprobado!',
               text: notificationMsg,
@@ -284,7 +297,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
       buttonsStyling: false
     }).then((result) => {
       if (result.isConfirmed) {
-        this.rowData = this.rowData.filter(item => item.authid !== row.authid);
+        this._rowData.set(this._rowData().filter(item => item.authid !== row.authid));
         Swal.fire({
           title: 'Rechazado',
           text: 'La solicitud ha sido descartada.',
@@ -296,7 +309,7 @@ export class AuthorizationComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   viewDetails(auth: Authorization, content: any) {
-    this.selectedAuth = auth;
+    this._selectedAuth.set(auth);
     this.modalService.open(content, {
       centered: true, size: 'lg',
       windowClass: 'fondo-modal',

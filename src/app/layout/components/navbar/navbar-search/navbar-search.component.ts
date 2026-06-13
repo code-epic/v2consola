@@ -1,16 +1,22 @@
 
 import { Router } from '@angular/router';
 import { Component, ElementRef, HostListener, Inject, OnInit, ViewChild, DOCUMENT } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
+import { CoreCommonModule } from '@core/common.module';
 import { SearchService } from 'app/layout/components/navbar/navbar-search/search.service';
 
 @Component({
     selector: 'app-navbar-search',
     templateUrl: './navbar-search.component.html',
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, CoreCommonModule]
 })
 export class NavbarSearchComponent implements OnInit {
   // Public
+  searchTextCtrl = new FormControl('');
   public searchText = '';
   public openSearchRef = false;
   public activeIndex = 0;
@@ -27,13 +33,13 @@ export class NavbarSearchComponent implements OnInit {
   @HostListener('keydown.escape') fn() {
     this.removeOverlay();
     this.openSearchRef = false;
-    this.searchText = '';
+    this.searchTextCtrl.setValue('');
   }
   @HostListener('document:click', ['$event']) clickout(event) {
     if (event.target.className === 'content-overlay') {
       this.removeOverlay();
       this.openSearchRef = false;
-      this.searchText = '';
+      this.searchTextCtrl.setValue('');
     }
   }
 
@@ -108,7 +114,7 @@ export class NavbarSearchComponent implements OnInit {
 
     if (this.openSearchRef === false) {
       this.document.querySelector('.app-content').classList.remove('show-overlay');
-      this.searchText = '';
+      this.searchTextCtrl.setValue('');
     }
   }
 

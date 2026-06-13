@@ -1,11 +1,19 @@
 import { Component, ElementRef, Input, Renderer2, ViewEncapsulation } from '@angular/core';
 
+
+import { VerticalMenuComponent } from 'app/layout/components/menu/vertical-menu/vertical-menu.component';
+import { HorizontalMenuComponent } from 'app/layout/components/menu/horizontal-menu/horizontal-menu.component';
+
 @Component({
     selector: 'app-menu',
     templateUrl: './menu.component.html',
     styleUrls: ['./menu.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [
+    VerticalMenuComponent,
+    HorizontalMenuComponent
+]
 })
 export class MenuComponent {
   private _menuType: string;

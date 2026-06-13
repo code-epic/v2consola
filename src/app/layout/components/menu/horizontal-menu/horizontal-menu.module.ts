@@ -6,8 +6,7 @@ import { CoreCommonModule } from '@core/common.module';
 import { HorizontalMenuComponent } from 'app/layout/components/menu/horizontal-menu/horizontal-menu.component';
 
 @NgModule({
-  declarations: [HorizontalMenuComponent],
-  imports: [CoreMenuModule, CoreCommonModule],
+  imports: [CoreMenuModule, CoreCommonModule, HorizontalMenuComponent],
   exports: [HorizontalMenuComponent]
 })
 export class HorizontalMenuModule {}

@@ -6,7 +6,7 @@ import { FitAddon } from '@xterm/addon-fit';
     selector: 'app-terminal',
     templateUrl: './terminal.component.html',
     styleUrls: ['./terminal.component.scss'],
-    standalone: false
+    standalone: true
 })
 export class TerminalComponent implements AfterViewInit, OnDestroy {
   @ViewChild('terminalContainer') terminalContainer!: ElementRef;

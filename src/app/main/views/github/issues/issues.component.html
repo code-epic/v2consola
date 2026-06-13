@@ -7,391 +7,397 @@
     <!-- PROFESSIONAL TOAST NOTIFICATIONS -->
     <!-- ========================================= -->
     <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1055;">
-      <div *ngFor="let toast of toastNotifications$ | async; trackBy: trackByToastId" 
-           class="toast show" 
+      @for (toast of toastNotifications$ | async; track trackByToastId($index, toast)) {
+        <div
+          class="toast show"
            [ngClass]="{
              'bg-success': toast.type === 'success',
              'bg-danger': toast.type === 'error', 
              'bg-warning': toast.type === 'warning',
              'bg-info': toast.type === 'info'
            }"
-           role="alert" 
-           aria-live="assertive" 
-           aria-atomic="true">
-        <div class="toast-header">
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true">
+          <div class="toast-header">
           <i class="me-2" [ngClass]="{
             'feather icon-check-circle text-success': toast.type === 'success',
             'feather icon-alert-circle text-danger': toast.type === 'error',
             'feather icon-alert-triangle text-warning': toast.type === 'warning', 
             'feather icon-info text-info': toast.type === 'info'
           }"></i>
-          <strong class="me-auto text-white">{{ toast.title }}</strong>
-          <button *ngIf="toast.dismissible" 
-                  type="button" 
-                  class="btn-close btn-close-white" 
-                  (click)="dismissToast(toast.id)"
-                  aria-label="Close"></button>
-        </div>
-        <div class="toast-body text-white">
-          {{ toast.message }}
-          <div *ngIf="toast.actions && toast.actions.length > 0" class="mt-2">
-            <button *ngFor="let action of toast.actions" 
-                    type="button" 
+            <strong class="me-auto text-white">{{ toast.title }}</strong>
+            @if (toast.dismissible) {
+              <button
+                type="button"
+                class="btn-close btn-close-white"
+                (click)="dismissToast(toast.id)"
+              aria-label="Close"></button>
+            }
+          </div>
+          <div class="toast-body text-white">
+            {{ toast.message }}
+            @if (toast.actions && toast.actions.length > 0) {
+              <div class="mt-2">
+                @for (action of toast.actions; track action) {
+                  <button
+                    type="button"
                     class="btn btn-sm me-2"
                     [ngClass]="{
                       'btn-outline-light': action.style === 'primary',
                       'btn-outline-secondary': action.style !== 'primary'
                     }"
                     (click)="executeToastAction(action)">
-              {{ action.label }}
-            </button>
+                    {{ action.label }}
+                  </button>
+                }
+              </div>
+            }
           </div>
         </div>
-      </div>
+      }
     </div>
 
     <!-- ========================================= -->
     <!-- BLOCKING LOADING SCREEN - APPLICATIONS -->
     <!-- ========================================= -->
-    <div *ngIf="showApplicationsLoadingScreen" class="d-flex justify-content-center align-items-center" 
-         style="min-height: 60vh; flex-direction: column;">
-      <div class="text-center">
-        <!-- Loading Spinner -->
-        <div class="spinner-border text-primary mb-4" role="status" style="width: 4rem; height: 4rem;">
-          <span class="sr-only">Cargando...</span>
+    @if (showApplicationsLoadingScreen) {
+      <div class="d-flex justify-content-center align-items-center"
+        style="min-height: 60vh; flex-direction: column;">
+        <div class="text-center">
+          <!-- Loading Spinner -->
+          <div class="spinner-border text-primary mb-4" role="status" style="width: 4rem; height: 4rem;">
+            <span class="sr-only">Cargando...</span>
+          </div>
+          <!-- Loading Messages -->
+          <h4 class="text-primary mb-2">{{ loadingMessage }}</h4>
+          <p class="text-muted mb-4">{{ loadingSubMessage }}</p>
+          <!-- Progress Indicator -->
+          <div class="progress" style="width: 300px; height: 8px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar" style="width: 100%"></div>
+          </div>
+          <p class="text-muted mt-3 small">Por favor espere...</p>
         </div>
-        
-        <!-- Loading Messages -->
-        <h4 class="text-primary mb-2">{{ loadingMessage }}</h4>
-        <p class="text-muted mb-4">{{ loadingSubMessage }}</p>
-        
-        <!-- Progress Indicator -->
-        <div class="progress" style="width: 300px; height: 8px;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" 
-               role="progressbar" style="width: 100%"></div>
-        </div>
-        
-        <p class="text-muted mt-3 small">Por favor espere...</p>
       </div>
-    </div>
+    }
 
     <!-- ========================================= -->
     <!-- BLOCKING LOADING SCREEN - ISSUES -->
     <!-- ========================================= -->
-    <div *ngIf="showIssuesLoadingScreen" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" 
-         style="background-color: rgba(255, 255, 255, 0.95); z-index: 9999;">
-      <div class="text-center">
-        <!-- Loading Spinner -->
-        <div class="spinner-border text-primary mb-4" role="status" style="width: 3rem; height: 3rem;">
-          <span class="sr-only">Cargando...</span>
-        </div>
-        
-        <!-- Loading Messages -->
-        <h5 class="text-primary mb-2">{{ loadingMessage }}</h5>
-        <p class="text-muted mb-4">{{ loadingSubMessage }}</p>
-        
-        <!-- Progress Indicator -->
-        <div class="progress" style="width: 250px; height: 6px;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" 
-               role="progressbar" style="width: 100%"></div>
+    @if (showIssuesLoadingScreen) {
+      <div class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
+        style="background-color: rgba(255, 255, 255, 0.95); z-index: 9999;">
+        <div class="text-center">
+          <!-- Loading Spinner -->
+          <div class="spinner-border text-primary mb-4" role="status" style="width: 3rem; height: 3rem;">
+            <span class="sr-only">Cargando...</span>
+          </div>
+          <!-- Loading Messages -->
+          <h5 class="text-primary mb-2">{{ loadingMessage }}</h5>
+          <p class="text-muted mb-4">{{ loadingSubMessage }}</p>
+          <!-- Progress Indicator -->
+          <div class="progress" style="width: 250px; height: 6px;">
+            <div class="progress-bar progress-bar-striped progress-bar-animated"
+            role="progressbar" style="width: 100%"></div>
+          </div>
         </div>
       </div>
-    </div>
+    }
 
     <!-- ========================================= -->
     <!-- MAIN CONTENT (Only show when loading complete) -->
     <!-- ========================================= -->
-    <div *ngIf="showMainContent">
-      <!-- GitHub Issues Section -->
-      <section class="invoice-list-wrapper">
-      <div class="card">
-        
-        <!-- Application Selection Panel -->
-        <div class="col-md-12" style="margin-top: 25px;" *ngIf="!showIssuesTable">
-
-          <!-- Intro Hero (solo antes de seleccionar usuario) -->
-          <div class="issues-intro" *ngIf="!selectedUsuario">
-            <div class="intro-card">
-              <div class="intro-icon">
-                <span [data-feather]="'users'" [size]="26"></span>
-              </div>
-              <h3 class="intro-title">Selecciona un usuario</h3>
-              <p class="intro-subtitle">Elige un usuario para cargar las aplicaciones y explorar sus issues en GitHub.</p>
-              <div class="intro-control">
-                <label class="form-label" for="usuarioSelectIntro">Usuario</label>
-                <select id="usuarioSelectIntro"
-                        class="form-control intro-select"
-                        [ngModel]="selectedUsuario"
-                        (ngModelChange)="onUsuarioChange($event)">
-                  <option [ngValue]="''">Todos</option>
-                  <option *ngFor="let u of usuariosDisponibles" [ngValue]="u.usua">{{ u.usua }}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <ng-container *ngIf="selectedUsuario">
-          <!-- Header con volver y usuario actual -->
-          <div class="user-apps-header mb-3">
-            <div class="d-flex justify-content-between align-items-center">
-              <button type="button" class="btn btn-outline-secondary btn-modern" (click)="resetUserSelection()">
-                <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
-                Cambiar usuario
-              </button>
-              <div class="user-pill" aria-label="Usuario seleccionado">
-                <span [data-feather]="'user'" [size]="14" class="me-1"></span>
-                {{ selectedUsuario }}
-              </div>
-            </div>
-          </div>
-          <!-- Error State (solo tras seleccionar usuario) -->
-          <div class="row" *ngIf="selectedUsuario && applicationsError && !applicationsLoading">
-            <div class="col-12 text-center py-5">
-              <i data-feather="alert-circle" class="text-danger mb-3" style="width: 48px; height: 48px;"></i>
-              <p class="text-danger">{{ applicationsError }}</p>
-              <button class="btn btn-outline-primary" (click)="getListAplicaciones()">Reintentar</button>
-            </div>
-          </div>
-
-          <!-- Applications Grid (solo tras seleccionar usuario) -->
-          <div class="row g-4" *ngIf="selectedUsuario && !applicationsLoading && !applicationsError">
-            <div class="col-md-6 col-lg-4" *ngFor="let app of displayedAplicaciones; trackBy: trackByApplicationId">
-              <div class="application-card h-100" 
-                   [class.selected]="aplicacionSeleccionada?.id === app.id"
-                   (click)="seleccionarAplicacion(app)"
-                   tabindex="0"
-                   role="button"
-                   [attr.aria-label]="'Seleccionar aplicación ' + app.name"
-                   (keydown.enter)="seleccionarAplicacion(app)"
-                   (keydown.space)="seleccionarAplicacion(app); $event.preventDefault()">
-                
-                <!-- Card Header with Gradient -->
-                <div class="card-header-gradient">
-                  <div class="app-icon-container">
-                    <div class="app-icon" 
-                         [class.selected]="aplicacionSeleccionada?.id === app.id">
-                      <i data-feather="git-branch" class="feather-icon"></i>
+    @if (showMainContent) {
+      <div>
+        <!-- GitHub Issues Section -->
+        <section class="invoice-list-wrapper">
+          <div class="card">
+            <!-- Application Selection Panel -->
+            @if (!showIssuesTable) {
+              <div class="col-md-12" style="margin-top: 25px;">
+                <!-- Intro Hero (solo antes de seleccionar usuario) -->
+                @if (!selectedUsuario) {
+                  <div class="issues-intro">
+                    <div class="intro-card">
+                      <div class="intro-icon">
+                        <span [data-feather]="'users'" [size]="26"></span>
+                      </div>
+                      <h3 class="intro-title">Selecciona un usuario</h3>
+                      <p class="intro-subtitle">Elige un usuario para cargar las aplicaciones y explorar sus issues en GitHub.</p>
+                      <div class="intro-control">
+                        <label class="form-label" for="usuarioSelectIntro">Usuario</label>
+                        <select id="usuarioSelectIntro"
+                          class="form-control intro-select"
+                          [formControl]="selectedUsuarioCtrl"
+                          (change)="onUsuarioChange($event.target.value)">
+                          <option value="">Todos</option>
+                          @for (u of usuariosDisponibles; track u) {
+                            <option [value]="u.usua">{{ u.usua }}</option>
+                          }
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <!-- Card Body -->
-                <div class="card-body-modern">
-                  <!-- App Info -->
-                  <h5 class="app-title">{{ app.name }}</h5>
-                  <div class="app-details">
-                    <span class="owner-repo">
-                      <i data-feather="user" class="owner-icon"></i>
-                      {{ app.owner }}
-                    </span>
-                    <span class="repo-name">
-                      <i data-feather="folder" class="repo-icon"></i>
-                      {{ app.repository }}
-                    </span>
-                  </div>
-                  
-                  <!-- Stats or Additional Info -->
-                  <div class="app-stats">
-                    <div class="stat-item">
-                      <i data-feather="git-commit" class="stat-icon"></i>
-                      <span class="stat-text">Repository</span>
+                }
+                @if (selectedUsuario) {
+                  <!-- Header con volver y usuario actual -->
+                  <div class="user-apps-header mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <button type="button" class="btn btn-outline-secondary btn-modern" (click)="resetUserSelection()">
+                        <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
+                        Cambiar usuario
+                      </button>
+                      <div class="user-pill" aria-label="Usuario seleccionado">
+                        <span [data-feather]="'user'" [size]="14" class="me-1"></span>
+                        {{ selectedUsuario }}
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <!-- Selection Indicator -->
-                <div class="selection-indicator" 
-                     [class.visible]="aplicacionSeleccionada?.id === app.id">
-                  <div class="selection-badge">
-                    <i data-feather="check-circle" class="check-icon"></i>
-                    <span>Seleccionado</span>
-                  </div>
-                </div>
-                
-                <!-- Hover Overlay -->
-                <div class="hover-overlay">
-                  <div class="hover-content">
-                    <i data-feather="mouse-pointer" class="hover-icon"></i>
-                    <span class="hover-text">Click para seleccionar</span>
-                  </div>
-                </div>
-                
-                <!-- Focus Ring -->
-                <div class="focus-ring"></div>
-              </div>
-            </div>
-          </div>
-          
-          <!-- Selected Application Info -->
-          <div class="row mt-3" *ngIf="aplicacionSeleccionada && !showIssuesTable">
-            <div class="col-md-12">
-              <div class="alert alert-success" role="alert">
-                <div class="alert-body d-flex align-items-center justify-content-between">
-                  <div class="d-flex align-items-center">
-                    <span [data-feather]="'check-circle'" [size]="18" class="mr-50"></span>
-                    <span>
-                      <strong>{{ aplicacionSeleccionada.name }}</strong> seleccionada<br>
-                      <small class="text-muted">Cargando issues del repositorio {{ aplicacionSeleccionada.owner }}/{{ aplicacionSeleccionada.repository }}...</small>
-                    </span>
-                  </div>
-                  <div class="spinner-border spinner-border-sm text-success" role="status">
-                    <span class="sr-only">Cargando...</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          </ng-container>
-        </div>
-
-        <!-- Issues Table Panel -->
-        <div *ngIf="showIssuesTable && !showDetailView">
-          
-          <!-- Modern Application Header -->
-          <div class="app-header-modern mb-4">
-            <div class="row align-items-center">
-              <!-- Back Button -->
-              <div class="col-auto">
-                <button type="button" class="btn btn-outline-secondary btn-modern" (click)="limpiar()">
-                  <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
-                  Volver
-                </button>
-              </div>
-              
-              <!-- App Info Section -->
-              <div class="col">
-                <div class="app-info-card">
-                  <div class="d-flex align-items-center">
-                    <div class="app-icon-header">
-                      <span [data-feather]="'git-branch'" [size]="24" class="text-primary"></span>
+                  <!-- Error State (solo tras seleccionar usuario) -->
+                  @if (selectedUsuario && applicationsError && !applicationsLoading) {
+                    <div class="row">
+                      <div class="col-12 text-center py-5">
+                        <i data-feather="alert-circle" class="text-danger mb-3" style="width: 48px; height: 48px;"></i>
+                        <p class="text-danger">{{ applicationsError }}</p>
+                        <button class="btn btn-outline-primary" (click)="getListAplicaciones()">Reintentar</button>
+                      </div>
                     </div>
-                    <div class="app-details-header">
-                      <h3 class="app-name-header mb-0">{{ aplicacionSeleccionada?.name || 'Cargando aplicación...' }}</h3>
-                      <div class="app-meta-header">
-                        <span class="owner-info">
-                          <span [data-feather]="'user'" [size]="14" class="mr-1"></span>
-                          {{ aplicacionSeleccionada?.owner || 'code-epic' }}
-                        </span>
-                        <span class="repo-divider">•</span>
-                        <span class="repo-info">
-                          <span [data-feather]="'folder'" [size]="14" class="mr-1"></span>
-                          {{ aplicacionSeleccionada?.repository || 'app.te-escucha' }}
-                        </span>
-                        <span class="issues-count-badge">
-                          <span [data-feather]="'list'" [size]="14" class="mr-1"></span>
-                          {{ (issues$ | async)?.length || 0 }} issues
-                        </span>
+                  }
+                  <!-- Applications Grid (solo tras seleccionar usuario) -->
+                  @if (selectedUsuario && !applicationsLoading && !applicationsError) {
+                    <div class="row g-4">
+                      @for (app of displayedAplicaciones; track trackByApplicationId($index, app)) {
+                        <div class="col-md-6 col-lg-4">
+                          <div class="application-card h-100"
+                            [class.selected]="aplicacionSeleccionada?.id === app.id"
+                            (click)="seleccionarAplicacion(app)"
+                            tabindex="0"
+                            role="button"
+                            [attr.aria-label]="'Seleccionar aplicación ' + app.name"
+                            (keydown.enter)="seleccionarAplicacion(app)"
+                            (keydown.space)="seleccionarAplicacion(app); $event.preventDefault()">
+                            <!-- Card Header with Gradient -->
+                            <div class="card-header-gradient">
+                              <div class="app-icon-container">
+                                <div class="app-icon"
+                                  [class.selected]="aplicacionSeleccionada?.id === app.id">
+                                  <i data-feather="git-branch" class="feather-icon"></i>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Card Body -->
+                            <div class="card-body-modern">
+                              <!-- App Info -->
+                              <h5 class="app-title">{{ app.name }}</h5>
+                              <div class="app-details">
+                                <span class="owner-repo">
+                                  <i data-feather="user" class="owner-icon"></i>
+                                  {{ app.owner }}
+                                </span>
+                                <span class="repo-name">
+                                  <i data-feather="folder" class="repo-icon"></i>
+                                  {{ app.repository }}
+                                </span>
+                              </div>
+                              <!-- Stats or Additional Info -->
+                              <div class="app-stats">
+                                <div class="stat-item">
+                                  <i data-feather="git-commit" class="stat-icon"></i>
+                                  <span class="stat-text">Repository</span>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- Selection Indicator -->
+                            <div class="selection-indicator"
+                              [class.visible]="aplicacionSeleccionada?.id === app.id">
+                              <div class="selection-badge">
+                                <i data-feather="check-circle" class="check-icon"></i>
+                                <span>Seleccionado</span>
+                              </div>
+                            </div>
+                            <!-- Hover Overlay -->
+                            <div class="hover-overlay">
+                              <div class="hover-content">
+                                <i data-feather="mouse-pointer" class="hover-icon"></i>
+                                <span class="hover-text">Click para seleccionar</span>
+                              </div>
+                            </div>
+                            <!-- Focus Ring -->
+                            <div class="focus-ring"></div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                  <!-- Selected Application Info -->
+                  @if (aplicacionSeleccionada && !showIssuesTable) {
+                    <div class="row mt-3">
+                      <div class="col-md-12">
+                        <div class="alert alert-success" role="alert">
+                          <div class="alert-body d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center">
+                              <span [data-feather]="'check-circle'" [size]="18" class="mr-50"></span>
+                              <span>
+                                <strong>{{ aplicacionSeleccionada.name }}</strong> seleccionada<br>
+                                <small class="text-muted">Cargando issues del repositorio {{ aplicacionSeleccionada.owner }}/{{ aplicacionSeleccionada.repository }}...</small>
+                              </span>
+                            </div>
+                            <div class="spinner-border spinner-border-sm text-success" role="status">
+                              <span class="sr-only">Cargando...</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            }
+            <!-- Issues Table Panel -->
+            @if (showIssuesTable && !showDetailView) {
+              <div>
+                <!-- Modern Application Header -->
+                <div class="app-header-modern mb-4">
+                  <div class="row align-items-center">
+                    <!-- Back Button -->
+                    <div class="col-auto">
+                      <button type="button" class="btn btn-outline-secondary btn-modern" (click)="limpiar()">
+                        <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
+                        Volver
+                      </button>
+                    </div>
+                    <!-- App Info Section -->
+                    <div class="col">
+                      <div class="app-info-card">
+                        <div class="d-flex align-items-center">
+                          <div class="app-icon-header">
+                            <span [data-feather]="'git-branch'" [size]="24" class="text-primary"></span>
+                          </div>
+                          <div class="app-details-header">
+                            <h3 class="app-name-header mb-0">{{ aplicacionSeleccionada?.name || 'Cargando aplicación...' }}</h3>
+                            <div class="app-meta-header">
+                              <span class="owner-info">
+                                <span [data-feather]="'user'" [size]="14" class="mr-1"></span>
+                                {{ aplicacionSeleccionada?.owner || 'code-epic' }}
+                              </span>
+                              <span class="repo-divider">•</span>
+                              <span class="repo-info">
+                                <span [data-feather]="'folder'" [size]="14" class="mr-1"></span>
+                                {{ aplicacionSeleccionada?.repository || 'app.te-escucha' }}
+                              </span>
+                              <span class="issues-count-badge">
+                                <span [data-feather]="'list'" [size]="14" class="mr-1"></span>
+                                {{ (issues$ | async)?.length || 0 }} issues
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Search and Pagination Controls -->
+                  <div class="row mt-3 align-items-center">
+                    <!-- Search Input -->
+                    <div class="col-md-8 col-lg-6">
+                      <div class="search-container">
+                        <div class="position-relative">
+                          <input [formControl]="searchValueCtrl"
+                            type="search"
+                            class="form-control search-input"
+                            placeholder="Buscar issues por título, descripción o autor..."
+                            (keyup)="filterUpdate($event)"
+                            (search)="filterUpdate($event)" />
+                          <div class="search-icon-container">
+                            <span [data-feather]="'search'" [size]="18" class="search-icon"></span>
+                          </div>
+                          @if (searchValue) {
+                            <div class="search-clear" (click)="clearSearch()">
+                              <span [data-feather]="'x'" [size]="16" class="clear-icon"></span>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Pagination Selector -->
+                    <div class="col-md-4 col-lg-6 d-flex justify-content-end">
+                      <div class="pagination-controls">
+                        <label class="pagination-label">
+                          <span class="label-text">Mostrar</span>
+                          <select class="form-control pagination-select" [formControl]="basicSelectedOptionCtrl">
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                          </select>
+                          <span class="label-text">por página</span>
+                        </label>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <!-- Search and Pagination Controls -->
-            <div class="row mt-3 align-items-center">
-              <!-- Search Input -->
-              <div class="col-md-8 col-lg-6">
-                <div class="search-container">
-                  <div class="position-relative">
-                    <input [(ngModel)]="searchValue"
-                           name="searchValue" 
-                           type="search" 
-                           class="form-control search-input"
-                           placeholder="Buscar issues por título, descripción o autor..."
-                           (keyup)="filterUpdate($event)" 
-                           (search)="filterUpdate($event)" />
-                    <div class="search-icon-container">
-                      <span [data-feather]="'search'" [size]="18" class="search-icon"></span>
-                    </div>
-                    <div class="search-clear" *ngIf="searchValue" (click)="clearSearch()">
-                      <span [data-feather]="'x'" [size]="16" class="clear-icon"></span>
+                <!-- Loading State for Issues -->
+                @if (loadingIssues) {
+                  <div class="row">
+                    <div class="col-12 text-center py-5">
+                      <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Cargando...</span>
+                      </div>
+                      <p class="mt-3 text-muted">Cargando issues de {{ aplicacionSeleccionada?.name }}...</p>
                     </div>
                   </div>
-                </div>
-              </div>
-              
-              <!-- Pagination Selector -->
-              <div class="col-md-4 col-lg-6 d-flex justify-content-end">
-                <div class="pagination-controls">
-                  <label class="pagination-label">
-                    <span class="label-text">Mostrar</span>
-                    <select class="form-control pagination-select" [(ngModel)]="basicSelectedOption">
-                      <option value="10">10</option>
-                      <option value="25">25</option>
-                      <option value="50">50</option>
-                      <option value="100">100</option>
-                    </select>
-                    <span class="label-text">por página</span>
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-
-          <!-- Loading State for Issues -->
-          <div class="row" *ngIf="loadingIssues">
-            <div class="col-12 text-center py-5">
-              <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Cargando...</span>
-              </div>
-              <p class="mt-3 text-muted">Cargando issues de {{ aplicacionSeleccionada?.name }}...</p>
-            </div>
-          </div>
-
-          <!-- Error State for Issues -->
-          <div class="row" *ngIf="errorLoadingIssues && !loadingIssues">
-            <div class="col-12 text-center py-5">
-              <i data-feather="alert-circle" class="text-danger mb-3" style="width: 48px; height: 48px;"></i>
-              <p class="text-danger">Error al cargar las issues de {{ aplicacionSeleccionada?.name }}</p>
-              <button class="btn btn-outline-primary" (click)="getListIssues()">Reintentar</button>
-            </div>
-          </div>
-
-          <!-- Issues DataTable -->
-          <div *ngIf="!loadingIssues && !errorLoadingIssues">
-          <ngx-datatable [rows]="issues$ | async" 
-                         [rowHeight]="65" 
-                         class="bootstrap core-bootstrap" 
-                         [columnMode]="ColumnMode.force" 
-                         [headerHeight]="40" 
-                         [footerHeight]="50" 
-                         [scrollbarH]="true"
-                         [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
-
-            <!-- Issue Title & Info Column -->
-            <ngx-datatable-column name="ISSUE" [width]="450">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="d-flex align-items-center">
-                  <div class="avatar mr-1 flex-shrink-0" 
+                }
+                <!-- Error State for Issues -->
+                @if (errorLoadingIssues && !loadingIssues) {
+                  <div class="row">
+                    <div class="col-12 text-center py-5">
+                      <i data-feather="alert-circle" class="text-danger mb-3" style="width: 48px; height: 48px;"></i>
+                      <p class="text-danger">Error al cargar las issues de {{ aplicacionSeleccionada?.name }}</p>
+                      <button class="btn btn-outline-primary" (click)="getListIssues()">Reintentar</button>
+                    </div>
+                  </div>
+                }
+                <!-- Issues DataTable -->
+                @if (!loadingIssues && !errorLoadingIssues) {
+                  <div>
+                    <ngx-datatable [rows]="issues$ | async"
+                      [rowHeight]="65"
+                      class="bootstrap core-bootstrap"
+                      [columnMode]="ColumnMode.force"
+                      [headerHeight]="40"
+                      [footerHeight]="50"
+                      [scrollbarH]="true"
+                      [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+                      <!-- Issue Title & Info Column -->
+                      <ngx-datatable-column name="ISSUE" [width]="450">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                          <div class="d-flex align-items-center">
+                            <div class="avatar mr-1 flex-shrink-0"
                        [ngClass]="{
                          'bg-light-success': row.state === 'open',
                          'bg-light-secondary': row.state === 'closed'
                        }">
-                    <div class="avatar-content">
-                      <span [data-feather]="row.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="16"></span>
-                    </div>
-                  </div>
-                  <div class="cell-line-height flex-grow-1" style="min-width: 0;">
-                    <span class="font-weight-bold d-block font-medium-1" 
-                          style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px;"
-                          [title]="row.title">{{ row.title }}</span>
-                    <small class="text-muted d-block" 
-                           style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                      #{{ row.id }} • {{ row.created_at | date:'dd/MM/yyyy' }} • por {{ row.author }}
-                    </small>
-                  </div>
-                </div>
-              </ng-template>
-            </ngx-datatable-column>
-
-            <!-- Type & Priority Column -->
-            <ngx-datatable-column name="TIPO / PRIORIDAD" [width]="180">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="d-flex flex-column">
-                  <span class="badge mb-25" 
+                              <div class="avatar-content">
+                                <span [data-feather]="row.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="16"></span>
+                              </div>
+                            </div>
+                            <div class="cell-line-height flex-grow-1" style="min-width: 0;">
+                              <span class="font-weight-bold d-block font-medium-1"
+                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 380px;"
+                              [title]="row.title">{{ row.title }}</span>
+                              <small class="text-muted d-block"
+                                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                #{{ row.id }} • {{ row.created_at | date:'dd/MM/yyyy' }} • por {{ row.author }}
+                              </small>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+                      <!-- Type & Priority Column -->
+                      <ngx-datatable-column name="TIPO / PRIORIDAD" [width]="180">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                          <div class="d-flex flex-column">
+                            <span class="badge mb-25"
                         [ngClass]="{
                           'badge-light-danger': row.tipo === 'Bug',
                           'badge-light-success': row.tipo === 'Feature',
@@ -400,126 +406,127 @@
                           'badge-light-primary': row.tipo === 'Security',
                           'badge-light-secondary': row.tipo === 'Task' || row.tipo === 'Improvement'
                         }">
-                    {{ row.tipo }}
-                  </span>
-                  <span class="badge" [ngClass]="getPriorityClass(row.priority)">
-                    {{ row.priority === 'high' ? 'Alta' : row.priority === 'medium' ? 'Media' : 'Baja' }}
-                  </span>
-                </div>
-              </ng-template>
-            </ngx-datatable-column>
-
-            <!-- State Column -->
-            <ngx-datatable-column name="ESTADO" [width]="120">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <span class="badge" [ngClass]="getStateClass(row.state)">
-                  {{ row.state === 'open' ? 'Abierto' : 'Cerrado' }}
-                </span>
-              </ng-template>
-            </ngx-datatable-column>
-
-            <!-- Assignee Column -->
-            <ngx-datatable-column name="ASIGNADO" [width]="180">
-              <ng-template let-row="row" ngx-datatable-cell-template>
-                <div class="d-flex align-items-center" *ngIf="row.assignee; else noAssignee">
-                  <div class="avatar mr-1 bg-light-primary">
-                    <div class="avatar-content">{{ row.assignee | initials }}</div>
+                              {{ row.tipo }}
+                            </span>
+                            <span class="badge" [ngClass]="getPriorityClass(row.priority)">
+                              {{ row.priority === 'high' ? 'Alta' : row.priority === 'medium' ? 'Media' : 'Baja' }}
+                            </span>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+                      <!-- State Column -->
+                      <ngx-datatable-column name="ESTADO" [width]="120">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                          <span class="badge" [ngClass]="getStateClass(row.state)">
+                            {{ row.state === 'open' ? 'Abierto' : 'Cerrado' }}
+                          </span>
+                        </ng-template>
+                      </ngx-datatable-column>
+                      <!-- Assignee Column -->
+                      <ngx-datatable-column name="ASIGNADO" [width]="180">
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                          @if (row.assignee) {
+                            <div class="d-flex align-items-center">
+                              <div class="avatar mr-1 bg-light-primary">
+                                <div class="avatar-content">{{ row.assignee | initials }}</div>
+                              </div>
+                              <span class="font-weight-bold">{{ row.assignee }}</span>
+                            </div>
+                          } @else {
+                            <span class="text-muted">Sin asignar</span>
+                          }
+                        </ng-template>
+                      </ngx-datatable-column>
+                      <!-- Actions Column -->
+                      <ngx-datatable-column name="ACCIÓN" [width]="80" [sortable]="false">
+                        <ng-template ngx-datatable-cell-template let-row="row">
+                          <div ngbDropdown container="body">
+                            <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                              <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                            </button>
+                            <div ngbDropdownMenu>
+                              <a (click)="verDetalle(row)" ngbDropdownItem>
+                                <span [data-feather]="'eye'" [size]="16" [class]="'mr-50'"></span> Ver Detalle
+                              </a>
+                              @if (row.state === 'open') {
+                                <a (click)="editarIssue(row)" ngbDropdownItem>
+                                  <span [data-feather]="'edit'" [size]="16" [class]="'mr-50'"></span> Editar Issue
+                                </a>
+                              }
+                              @if (row.state === 'open') {
+                                <a href="#" ngbDropdownItem>
+                                  <span [data-feather]="'x-circle'" [size]="16" [class]="'mr-50'"></span> Cerrar Issue
+                                </a>
+                              }
+                              <div class="dropdown-divider"></div>
+                              <a href="#" ngbDropdownItem>
+                                <span [data-feather]="'external-link'" [size]="16" [class]="'mr-50'"></span> Ver en GitHub
+                              </a>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+                    </ngx-datatable>
                   </div>
-                  <span class="font-weight-bold">{{ row.assignee }}</span>
+                  } <!-- Cierre del div *ngIf="!loadingIssues && !errorLoadingIssues" -->
                 </div>
-                <ng-template #noAssignee>
-                  <span class="text-muted">Sin asignar</span>
-                </ng-template>
-              </ng-template>
-            </ngx-datatable-column>
-
-
-
-            <!-- Actions Column -->
-            <ngx-datatable-column name="ACCIÓN" [width]="80" [sortable]="false">
-              <ng-template ngx-datatable-cell-template let-row="row">
-                <div ngbDropdown container="body">
-                  <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                    <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
-                  </button>
-                  <div ngbDropdownMenu>
-                    <a (click)="verDetalle(row)" ngbDropdownItem>
-                      <span [data-feather]="'eye'" [size]="16" [class]="'mr-50'"></span> Ver Detalle
-                    </a>
-                    <a (click)="editarIssue(row)" ngbDropdownItem *ngIf="row.state === 'open'">
-                      <span [data-feather]="'edit'" [size]="16" [class]="'mr-50'"></span> Editar Issue
-                    </a>
-                    <a href="#" ngbDropdownItem *ngIf="row.state === 'open'">
-                      <span [data-feather]="'x-circle'" [size]="16" [class]="'mr-50'"></span> Cerrar Issue
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a href="#" ngbDropdownItem>
-                      <span [data-feather]="'external-link'" [size]="16" [class]="'mr-50'"></span> Ver en GitHub
-                    </a>
-                  </div>
-                </div>
-              </ng-template>
-            </ngx-datatable-column>
-
-          </ngx-datatable>
-          </div> <!-- Cierre del div *ngIf="!loadingIssues && !errorLoadingIssues" -->
+              }
+            </div>
+          </section>
         </div>
+      }
+    </div>
 
-      </div>
-    </section>
-  </div>
-</div>
-
-<!-- Optimized Issue Detail View -->
-<div class="issue-detail-modern" *ngIf="showDetailView && selectedIssue">
-  
-  <!-- Compact Header -->
-  <div class="detail-header">
-    <div class="row align-items-center">
-      <div class="col-auto">
-        <button type="button" class="btn btn-outline-secondary btn-modern" (click)="cerrarDetalle()">
-          <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
-          Volver
-        </button>
-      </div>
-      <div class="col">
-        <div class="issue-title-section">
-          <div class="d-flex align-items-center mb-2">
-            <div class="issue-status-icon mr-3" 
+    <!-- Optimized Issue Detail View -->
+    @if (showDetailView && selectedIssue) {
+      <div class="issue-detail-modern">
+        <!-- Compact Header -->
+        <div class="detail-header">
+          <div class="row align-items-center">
+            <div class="col-auto">
+              <button type="button" class="btn btn-outline-secondary btn-modern" (click)="cerrarDetalle()">
+                <span [data-feather]="'arrow-left'" [size]="16" class="mr-2"></span>
+                Volver
+              </button>
+            </div>
+            <div class="col">
+              <div class="issue-title-section">
+                <div class="d-flex align-items-center mb-2">
+                  <div class="issue-status-icon mr-3"
                  [ngClass]="{
                    'status-open': selectedIssue?.state === 'open',
                    'status-closed': selectedIssue?.state === 'closed'
                  }">
-              <span [data-feather]="selectedIssue?.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="20"></span>
-            </div>
-            <div class="flex-grow-1">
-              <h3 class="issue-title mb-1">{{ selectedIssue?.title }}</h3>
-              <div class="issue-meta">
-                <span class="meta-item">
-                  <span [data-feather]="'hash'" [size]="14" class="mr-1"></span>
-                  {{ selectedIssue?.id }}
-                </span>
-                <span class="meta-divider">•</span>
-                <span class="meta-item">
-                  <span [data-feather]="'calendar'" [size]="14" class="mr-1"></span>
-                  {{ selectedIssue?.created_at | date:'dd/MM/yyyy' }}
-                </span>
-                <span class="meta-divider">•</span>
-                <span class="meta-item">
-                  <span [data-feather]="'user'" [size]="14" class="mr-1"></span>
-                  {{ selectedIssue?.author }}
-                </span>
+                    <span [data-feather]="selectedIssue?.state === 'open' ? 'alert-circle' : 'check-circle'" [size]="20"></span>
+                  </div>
+                  <div class="flex-grow-1">
+                    <h3 class="issue-title mb-1">{{ selectedIssue?.title }}</h3>
+                    <div class="issue-meta">
+                      <span class="meta-item">
+                        <span [data-feather]="'hash'" [size]="14" class="mr-1"></span>
+                        {{ selectedIssue?.id }}
+                      </span>
+                      <span class="meta-divider">•</span>
+                      <span class="meta-item">
+                        <span [data-feather]="'calendar'" [size]="14" class="mr-1"></span>
+                        {{ selectedIssue?.created_at | date:'dd/MM/yyyy' }}
+                      </span>
+                      <span class="meta-divider">•</span>
+                      <span class="meta-item">
+                        <span [data-feather]="'user'" [size]="14" class="mr-1"></span>
+                        {{ selectedIssue?.author }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-auto">
-        <div class="issue-badges">
-          <span class="badge badge-state" [ngClass]="getStateClass(selectedIssue?.state)">
-            {{ selectedIssue?.state === 'open' ? 'Abierto' : 'Cerrado' }}
-          </span>
-          <span class="badge badge-type" 
+            <div class="col-auto">
+              <div class="issue-badges">
+                <span class="badge badge-state" [ngClass]="getStateClass(selectedIssue?.state)">
+                  {{ selectedIssue?.state === 'open' ? 'Abierto' : 'Cerrado' }}
+                </span>
+                <span class="badge badge-type"
                 [ngClass]="{
                   'badge-danger': selectedIssue?.tipo === 'Bug',
                   'badge-success': selectedIssue?.tipo === 'Feature',
@@ -528,188 +535,191 @@
                   'badge-primary': selectedIssue?.tipo === 'Security',
                   'badge-secondary': selectedIssue?.tipo === 'Task' || selectedIssue?.tipo === 'Improvement'
                 }">
-            {{ selectedIssue?.tipo }}
-          </span>
-          <span class="badge badge-priority" [ngClass]="getPriorityClass(selectedIssue?.priority)">
-            {{ selectedIssue?.priority === 'high' ? 'Alta' : selectedIssue?.priority === 'medium' ? 'Media' : 'Baja' }}
-          </span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Integrated Content Layout -->
-  <div class="detail-content">
-    <div class="row g-3">
-      
-      <!-- Main Content Column -->
-      <div class="col-lg-8">
-        
-        <!-- Description Card -->
-        <div class="content-card description-card">
-          <div class="card-header-minimal">
-            <span [data-feather]="'file-text'" [size]="16" class="mr-2"></span>
-            <strong>Descripción</strong>
-          </div>
-          <div class="card-content">
-            <p class="description-text">{{ selectedIssue?.description }}</p>
-          </div>
-        </div>
-
-        <!-- Labels Section -->
-        <div class="content-card labels-card" *ngIf="selectedIssue?.labels?.length > 0">
-          <div class="card-header-minimal">
-            <span [data-feather]="'tag'" [size]="16" class="mr-2"></span>
-            <strong>Etiquetas</strong>
-          </div>
-          <div class="card-content">
-            <div class="labels-container">
-              <span *ngFor="let label of selectedIssue?.labels" 
-                    class="label-tag">{{ label }}</span>
+                  {{ selectedIssue?.tipo }}
+                </span>
+                <span class="badge badge-priority" [ngClass]="getPriorityClass(selectedIssue?.priority)">
+                  {{ selectedIssue?.priority === 'high' ? 'Alta' : selectedIssue?.priority === 'medium' ? 'Media' : 'Baja' }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
-
-        <!-- Activity Stats -->
-        <div class="content-card stats-card">
-          <div class="card-header-minimal">
-            <span [data-feather]="'activity'" [size]="16" class="mr-2"></span>
-            <strong>Actividad</strong>
-          </div>
-          <div class="card-content">
-            <div class="row g-2">
-              <div class="col-6">
-                <div class="stat-item">
-                  <div class="stat-icon comments">
-                    <span [data-feather]="'message-circle'" [size]="20"></span>
+        <!-- Integrated Content Layout -->
+        <div class="detail-content">
+          <div class="row g-3">
+            <!-- Main Content Column -->
+            <div class="col-lg-8">
+              <!-- Description Card -->
+              <div class="content-card description-card">
+                <div class="card-header-minimal">
+                  <span [data-feather]="'file-text'" [size]="16" class="mr-2"></span>
+                  <strong>Descripción</strong>
+                </div>
+                <div class="card-content">
+                  <p class="description-text">{{ selectedIssue?.description }}</p>
+                </div>
+              </div>
+              <!-- Labels Section -->
+              @if (selectedIssue?.labels?.length > 0) {
+                <div class="content-card labels-card">
+                  <div class="card-header-minimal">
+                    <span [data-feather]="'tag'" [size]="16" class="mr-2"></span>
+                    <strong>Etiquetas</strong>
                   </div>
-                  <div class="stat-info">
-                    <div class="stat-value">{{ selectedIssue?.comments }}</div>
-                    <div class="stat-label">Comentarios</div>
+                  <div class="card-content">
+                    <div class="labels-container">
+                      @for (label of selectedIssue?.labels; track label) {
+                        <span
+                        class="label-tag">{{ label }}</span>
+                      }
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="col-6">
-                <div class="stat-item">
-                  <div class="stat-icon updated">
-                    <span [data-feather]="'clock'" [size]="20"></span>
+              }
+              <!-- Activity Stats -->
+              <div class="content-card stats-card">
+                <div class="card-header-minimal">
+                  <span [data-feather]="'activity'" [size]="16" class="mr-2"></span>
+                  <strong>Actividad</strong>
+                </div>
+                <div class="card-content">
+                  <div class="row g-2">
+                    <div class="col-6">
+                      <div class="stat-item">
+                        <div class="stat-icon comments">
+                          <span [data-feather]="'message-circle'" [size]="20"></span>
+                        </div>
+                        <div class="stat-info">
+                          <div class="stat-value">{{ selectedIssue?.comments }}</div>
+                          <div class="stat-label">Comentarios</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="stat-item">
+                        <div class="stat-icon updated">
+                          <span [data-feather]="'clock'" [size]="20"></span>
+                        </div>
+                        <div class="stat-info">
+                          <div class="stat-value">{{ selectedIssue?.updated_at | date:'dd/MM' }}</div>
+                          <div class="stat-label">Última actualización</div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="stat-info">
-                    <div class="stat-value">{{ selectedIssue?.updated_at | date:'dd/MM' }}</div>
-                    <div class="stat-label">Última actualización</div>
+                </div>
+              </div>
+            </div>
+            <!-- Compact Sidebar -->
+            <div class="col-lg-4">
+              <!-- Details Card -->
+              <div class="content-card details-card">
+                <div class="card-header-minimal">
+                  <span [data-feather]="'info'" [size]="16" class="mr-2"></span>
+                  <strong>Detalles</strong>
+                </div>
+                <div class="card-content">
+                  <!-- Assignee -->
+                  <div class="detail-item">
+                    <div class="detail-label">
+                      <span [data-feather]="'user-check'" [size]="14" class="mr-2"></span>
+                      Asignado
+                    </div>
+                    @if (selectedIssue?.assignee) {
+                      <div class="detail-value">
+                        <div class="assignee-info">
+                          <div class="assignee-avatar">{{ selectedIssue?.assignee | initials }}</div>
+                          <span class="assignee-name">{{ selectedIssue?.assignee }}</span>
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="detail-value text-muted">Sin asignar</div>
+                    }
+                  </div>
+                  <!-- Milestone -->
+                  @if (selectedIssue?.milestone) {
+                    <div class="detail-item">
+                      <div class="detail-label">
+                        <span [data-feather]="'flag'" [size]="14" class="mr-2"></span>
+                        Milestone
+                      </div>
+                      <div class="detail-value">{{ selectedIssue?.milestone }}</div>
+                    </div>
+                  }
+                  <!-- Repository -->
+                  <div class="detail-item">
+                    <div class="detail-label">
+                      <span [data-feather]="'git-branch'" [size]="14" class="mr-2"></span>
+                      Repositorio
+                    </div>
+                    <div class="detail-value repo-link">
+                      {{ aplicacionSeleccionada?.owner }}/{{ aplicacionSeleccionada?.repository }}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Compact Sidebar -->
-      <div class="col-lg-4">
-        
-        <!-- Details Card -->
-        <div class="content-card details-card">
-          <div class="card-header-minimal">
-            <span [data-feather]="'info'" [size]="16" class="mr-2"></span>
-            <strong>Detalles</strong>
-          </div>
-          <div class="card-content">
-            
-            <!-- Assignee -->
-            <div class="detail-item">
-              <div class="detail-label">
-                <span [data-feather]="'user-check'" [size]="14" class="mr-2"></span>
-                Asignado
-              </div>
-              <div class="detail-value" *ngIf="selectedIssue?.assignee; else noAssigneeCompact">
-                <div class="assignee-info">
-                  <div class="assignee-avatar">{{ selectedIssue?.assignee | initials }}</div>
-                  <span class="assignee-name">{{ selectedIssue?.assignee }}</span>
+              <!-- Actions Card -->
+              <div class="content-card actions-card">
+                <div class="card-header-minimal">
+                  <span [data-feather]="'settings'" [size]="16" class="mr-2"></span>
+                  <strong>Acciones</strong>
                 </div>
-              </div>
-              <ng-template #noAssigneeCompact>
-                <div class="detail-value text-muted">Sin asignar</div>
-              </ng-template>
-            </div>
-
-            <!-- Milestone -->
-            <div class="detail-item" *ngIf="selectedIssue?.milestone">
-              <div class="detail-label">
-                <span [data-feather]="'flag'" [size]="14" class="mr-2"></span>
-                Milestone
-              </div>
-              <div class="detail-value">{{ selectedIssue?.milestone }}</div>
-            </div>
-
-            <!-- Repository -->
-            <div class="detail-item">
-              <div class="detail-label">
-                <span [data-feather]="'git-branch'" [size]="14" class="mr-2"></span>
-                Repositorio
-              </div>
-              <div class="detail-value repo-link">
-                {{ aplicacionSeleccionada?.owner }}/{{ aplicacionSeleccionada?.repository }}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Actions Card -->
-        <div class="content-card actions-card">
-          <div class="card-header-minimal">
-            <span [data-feather]="'settings'" [size]="16" class="mr-2"></span>
-            <strong>Acciones</strong>
-          </div>
-          <div class="card-content">
-            <div class="actions-grid">
-              <!-- Botón para cerrar issue -->
-              <button type="button" 
-                      class="btn btn-danger btn-action" 
-                      (click)="closeIssue(selectedIssue)"
-                      [disabled]="(issueStatusService.loading$ | async)"
-                      *ngIf="selectedIssue?.state === 'open'"
-                      title="Cerrar esta issue">
-                <span [data-feather]="'x-circle'" [size]="16" class="mb-1"></span>
-                <span class="btn-label">Cerrar</span>
-                <div *ngIf="(issueStatusService.loading$ | async)" class="spinner-border spinner-border-sm ms-1" role="status">
-                  <span class="visually-hidden">Cargando...</span>
-                </div>
-              </button>
-              
-              <!-- Botón para reabrir issue -->
-              <button type="button" 
-                      class="btn btn-success btn-action" 
-                      (click)="reopenIssue(selectedIssue)"
-                      [disabled]="(issueStatusService.loading$ | async)"
-                      *ngIf="selectedIssue?.state === 'closed'"
-                      title="Reabrir esta issue">
-                <span [data-feather]="'check-circle'" [size]="16" class="mb-1"></span>
-                <span class="btn-label">Reabrir</span>
-                <div *ngIf="(issueStatusService.loading$ | async)" class="spinner-border spinner-border-sm ms-1" role="status">
-                  <span class="visually-hidden">Cargando...</span>
-                </div>
-              </button>
-              
-              <button type="button" 
-                      class="btn btn-primary btn-action" 
-                      (click)="editarIssue(selectedIssue)" 
-                      *ngIf="selectedIssue?.state === 'open'">
-                <span [data-feather]="'edit'" [size]="16" class="mb-1"></span>
-                <span class="btn-label">Editar</span>
-              </button>
-              <button type="button" 
-                      class="btn btn-outline-primary btn-action" 
+                <div class="card-content">
+                  <div class="actions-grid">
+                    <!-- Botón para cerrar issue -->
+                    @if (selectedIssue?.state === 'open') {
+                      <button type="button"
+                        class="btn btn-danger btn-action"
+                        (click)="closeIssue(selectedIssue)"
+                        [disabled]="(issueStatusService.loading$ | async)"
+                        title="Cerrar esta issue">
+                        <span [data-feather]="'x-circle'" [size]="16" class="mb-1"></span>
+                        <span class="btn-label">Cerrar</span>
+                        @if ((issueStatusService.loading$ | async)) {
+                          <div class="spinner-border spinner-border-sm ms-1" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                          </div>
+                        }
+                      </button>
+                    }
+                    <!-- Botón para reabrir issue -->
+                    @if (selectedIssue?.state === 'closed') {
+                      <button type="button"
+                        class="btn btn-success btn-action"
+                        (click)="reopenIssue(selectedIssue)"
+                        [disabled]="(issueStatusService.loading$ | async)"
+                        title="Reabrir esta issue">
+                        <span [data-feather]="'check-circle'" [size]="16" class="mb-1"></span>
+                        <span class="btn-label">Reabrir</span>
+                        @if ((issueStatusService.loading$ | async)) {
+                          <div class="spinner-border spinner-border-sm ms-1" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                          </div>
+                        }
+                      </button>
+                    }
+                    @if (selectedIssue?.state === 'open') {
+                      <button type="button"
+                        class="btn btn-primary btn-action"
+                        (click)="editarIssue(selectedIssue)"
+                        >
+                        <span [data-feather]="'edit'" [size]="16" class="mb-1"></span>
+                        <span class="btn-label">Editar</span>
+                      </button>
+                    }
+                    <button type="button"
+                      class="btn btn-outline-primary btn-action"
                       (click)="verEnGitHub(selectedIssue)">
-                <span [data-feather]="'external-link'" [size]="16" class="mb-1"></span>
-                <span class="btn-label">GitHub</span>
-              </button>
+                      <span [data-feather]="'external-link'" [size]="16" class="mb-1"></span>
+                      <span class="btn-label">GitHub</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
+    }
 
-  
+

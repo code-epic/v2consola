@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, ChangeDetectorRef } from '@angular/core'
+import { Component, OnInit, ViewChild, Output, EventEmitter, signal } from '@angular/core'
 import { ApiService, IAPICore, WkfDescripcionRed, WkfEstado, WkfEstatus, WkfFrom, WkfZRed, wkfRed, wkfTransicion } from '@services/apicore/api.service'
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service'
 import { UtilService } from '@services/util/util.service'
@@ -8,12 +8,31 @@ import Swal from 'sweetalert2'
 import Stepper from 'bs-stepper'
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 @Component({
     selector: 'app-workflow',
     templateUrl: './workflow.component.html',
     styleUrls: ['./workflow.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        NgbModule,
+        NgxDatatableModule,
+        NgSelectModule,
+        ContentHeaderComponent,
+    ]
 })
 export class WorkflowComponent implements OnInit {
 
@@ -156,7 +175,8 @@ export class WorkflowComponent implements OnInit {
   public tempData = []
   public rowForm = []
   public rowData = []
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
   public ListaTransiciones = []
   public rowDataTransiciones = []
   public tempDataTransiciones = []
@@ -190,13 +210,46 @@ export class WorkflowComponent implements OnInit {
   public isButtonVisibleSalvar: boolean = false
   public isButtonVisibleUpdate: boolean = false
 
+  aplicacionCtrl = new FormControl(undefined)
+  xmoduloCtrl = new FormControl(undefined)
+  xdriversCtrl = new FormControl(undefined)
+  nombreCtrl = new FormControl('')
+  descripcionCtrl = new FormControl('')
+  xtipoCtrl = new FormControl('')
+  xdatosCtrl = new FormControl('')
+  xorigenCtrl = new FormControl('')
+  estatusCtrl = new FormControl(undefined)
+  estadoCtrl = new FormControl(undefined)
+  ordenCtrl = new FormControl(undefined)
+
+  // FormControls migrados desde ngModel
+  wkfFormNombreCtrl = new FormControl('')
+  wkfFormDescripcionCtrl = new FormControl('')
+  wkfEstadoNombreCtrl = new FormControl('')
+  wkfEstadoDescripcionCtrl = new FormControl('')
+  wkfEstatusNombreCtrl = new FormControl('')
+  wkfEstatusDescripcionCtrl = new FormControl('')
+  wkfTransicionFuncionCtrl = new FormControl(undefined)
+  wkfTransicionParametroCtrl = new FormControl('')
+  descripcionRedNombreCtrl = new FormControl('')
+  descripcionRedTipoCtrl = new FormControl(0)
+  descripcionRedEstatusCtrl = new FormControl(0)
+  descripcionRedDescripcionCtrl = new FormControl('')
+  wkfRedEstadoOrigenCtrl = new FormControl(undefined)
+  wkfRedEstatusOrigenCtrl = new FormControl(undefined)
+  wkfRedTransicionVCtrl = new FormControl(undefined)
+  wkfRedEstadoDestVCtrl = new FormControl(undefined)
+  wkfRedEstatusDestVCtrl = new FormControl(undefined)
+  wkfRedEstadoDestFCtrl = new FormControl(undefined)
+  wkfRedEstatusDestFCtrl = new FormControl(undefined)
+  wkfRedTransicionFCtrl = new FormControl(undefined)
+
   constructor(
     private utilservice: UtilService,
     private apiService: ApiService,
     private comunicacionesService: ComunicacionesService,
     private wkf: WorkflowService,
     private modalService: NgbModal,
-    private cdr: ChangeDetectorRef
   ) { }
 
 
@@ -263,25 +316,30 @@ export class WorkflowComponent implements OnInit {
     this.xAPI.funcion = "SEC_CAplicaciones"
     this.xAPI.parametros = ''
     this.xAPI.valores = null
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._isLoading.set(true);
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstApps = data.Cuerpo
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       (error) => {
         console.error(error)
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     )
   }
 
+  private syncDisabledState() {
+    const action = this.isDisabledInput ? 'disable' : 'enable'
+    this.aplicacionCtrl[action]()
+    this.xdriversCtrl[action]()
+    this.nombreCtrl[action]()
+    this.descripcionCtrl[action]()
+  }
+
   // Lista los Modulos 
   selModulo(): void {
-    let app = this.aplicacion.split('|')
+    let app = this.aplicacionCtrl.value.split('|')
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "LstModulos"
     this.xAPI.parametros = app[0]
@@ -302,9 +360,10 @@ export class WorkflowComponent implements OnInit {
 
   selTipo(): void {
     this.visibleFalse()
-    if (this.xtipo == "1") {
+    if (this.xtipoCtrl.value == "1") {
       this.xdatos_val = true
     }
+    if (this.xdatos_val) this.xdatosCtrl.enable(); else this.xdatosCtrl.disable()
   }
 
   visibleFalse() {
@@ -312,13 +371,15 @@ export class WorkflowComponent implements OnInit {
     this.xdatos_api = false
     this.xdatos_archivo = false
     this.xdatos_defecto = false
+    this.xdatosCtrl.disable()
+    this.xorigenCtrl.disable()
   }
 
   selOrigen(): void {
     this.xdatos_api = false
     this.xdatos_archivo = false
     this.xdatos_defecto = false
-    switch (this.xdatos) {
+    switch (this.xdatosCtrl.value) {
       case "1":
         this.xdatos_api = true
         break;
@@ -326,12 +387,13 @@ export class WorkflowComponent implements OnInit {
       default:
         break;
     }
+    if (this.xdatos_api) this.xorigenCtrl.enable(); else this.xorigenCtrl.disable()
   }
   //  Consula la Red y la Carga
   consultarRed() {
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = 'WKF_CDefinicion'
-    let app = this.aplicacion.split('|')
+    let app = this.aplicacionCtrl.value.split('|')
     this.xAPI.parametros = app[0]
     this.apiService.hash =  app[1]
     console.log(this.apiService.hash)
@@ -345,11 +407,12 @@ export class WorkflowComponent implements OnInit {
           let obj = data.Cuerpo[0]
           this.isBtnSalvar = false
           this.isDisabledInput = true
+          this.syncDisabledState()
           this.isButtonVisibleSalvar = true
           this.isButtonVisibleUpdate = true
-          this.nombre = obj.nomb
-          this.xdrivers = obj.driver
-          this.descripcion = obj.obse
+          this.nombreCtrl.setValue(obj.nomb)
+          this.xdriversCtrl.setValue(obj.driver)
+          this.descripcionCtrl.setValue(obj.obse)
         }
       },
       (err) => {
@@ -376,24 +439,25 @@ export class WorkflowComponent implements OnInit {
   limpiarRegistroWKF() {
     this.isBtnSalvar = true
     this.isDisabledInput = false
+    this.syncDisabledState()
     this.isButtonVisibleSalvar = false
     this.isButtonVisibleUpdate = false
-    this.nombre = ''
-    this.descripcion = ''
-    this.aplicacion = undefined
-    this.xmodulo = undefined
-    this.xdrivers = undefined
+    this.nombreCtrl.setValue('')
+    this.descripcionCtrl.setValue('')
+    this.aplicacionCtrl.setValue(undefined)
+    this.xmoduloCtrl.setValue(undefined)
+    this.xdriversCtrl.setValue(undefined)
     this.showWKF = false
   }
 
   //  Salva el registro del WorkFlow
   salvar() {
     var ObjSalvar = {
-      'aplicacion': parseInt(this.aplicacion.split('|')[0]),
-      'modulo': parseInt(this.xmodulo),
-      'nombre': this.nombre,
-      'descripcion': this.descripcion,
-      'driver': this.xdrivers
+      'aplicacion': parseInt(this.aplicacionCtrl.value.split('|')[0]),
+      'modulo': parseInt(this.xmoduloCtrl.value),
+      'nombre': this.nombreCtrl.value,
+      'descripcion': this.descripcionCtrl.value,
+      'driver': this.xdriversCtrl.value
     }
     this.Definicion.push(ObjSalvar)
     this.xAPI = {} as IAPICore;
@@ -403,11 +467,11 @@ export class WorkflowComponent implements OnInit {
       (data) => {
         if (data.tipo == 1) {
           this.utilservice.AlertMini('top-end', 'success', 'WorkFlow Creado Exitosamente', 3000)
-          this.aplicacion = undefined
-          this.xmodulo = undefined
-          this.nombre = ''
-          this.descripcion = ''
-          this.xdrivers = undefined
+          this.aplicacionCtrl.setValue(undefined)
+          this.xmoduloCtrl.setValue(undefined)
+          this.nombreCtrl.setValue('')
+          this.descripcionCtrl.setValue('')
+          this.xdriversCtrl.setValue(undefined)
           this.lstAplicaciones()
         } else {
           this.utilservice.AlertMini('top-end', 'error', 'Oops, Algo salio mal!', 3000)
@@ -423,11 +487,13 @@ export class WorkflowComponent implements OnInit {
   Guardar(): any {
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = 'WKF_IEstados'
-    this.wkfEstado.wkf = this.xidW
-    this.wkfEstado.estatus = parseInt(this.estatus)
-    this.xAPI.valores = JSON.stringify(this.wkfEstado)
-    console.log(this.xAPI)
-    console.log(this.wkfEstado)
+    const estado = {
+      wkf: this.xidW,
+      nombre: this.wkfEstadoNombreCtrl.value,
+      descripcion: this.wkfEstadoDescripcionCtrl.value,
+      estatus: parseInt(this.estatusCtrl.value)
+    }
+    this.xAPI.valores = JSON.stringify(estado)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.Ok(data.msj, 'Estado')
@@ -443,10 +509,14 @@ export class WorkflowComponent implements OnInit {
   GuardarEstatus(): any {
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_IEstatus"
-    this.wkfEstatus.estado = parseInt(this.estado)
-    this.wkfEstatus.estatus = this.estatus
-    this.wkfEstatus.orden = parseInt(this.orden)
-    this.xAPI.valores = JSON.stringify(this.wkfEstatus)
+    const estatus = {
+      nombre: this.wkfEstatusNombreCtrl.value,
+      descripcion: this.wkfEstatusDescripcionCtrl.value,
+      estado: parseInt(this.estadoCtrl.value),
+      estatus: this.estatusCtrl.value,
+      orden: parseInt(this.ordenCtrl.value)
+    }
+    this.xAPI.valores = JSON.stringify(estatus)
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.Ok(data.msj, 'Estatus')
@@ -492,13 +562,9 @@ export class WorkflowComponent implements OnInit {
   }
 
   limpiarEstados() {
-    this.wkfEstado = {
-      wkf: 0,
-      nombre: '',
-      descripcion: '',
-      estatus: 0
-    }
-    this.estatus = undefined
+    this.wkfEstadoNombreCtrl.setValue('')
+    this.wkfEstadoDescripcionCtrl.setValue('')
+    this.estatusCtrl.setValue(undefined)
     this.rowEstado = []
     this.wkf.msjText$.emit(this.xidW.toString())
     this.lstEstados(this.xidW.toString())
@@ -508,7 +574,7 @@ export class WorkflowComponent implements OnInit {
     this.rowEstatus = []
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_CEstatus"
-    this.xAPI.parametros = this.estado
+    this.xAPI.parametros = this.estadoCtrl.value
     this.xAPI.valores = {}
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -593,17 +659,10 @@ export class WorkflowComponent implements OnInit {
   }
 
   limpiarEstatus() {
-    this.wkfEstatus = {
-      nombre: "",
-      descripcion: "",
-      estatus: 0,
-      estado: 0,
-      orden: 0,
-    }
-    this.orden = undefined
+    this.wkfEstatusNombreCtrl.setValue('')
+    this.wkfEstatusDescripcionCtrl.setValue('')
+    this.ordenCtrl.setValue(undefined)
     this.rowEstatus = []
-    //this.wkf.msjText$.emit(this.xidW.toString())
-    // this.lstEstados(this.xidW.toString())
   }
 
   abrirModal(modalPrimary) {
@@ -635,9 +694,13 @@ export class WorkflowComponent implements OnInit {
   }
 
   GuardarTransaccion() {
-    this.wkfTransicion.idw = this.xidW
+    const transicion = {
+      idw: this.xidW,
+      funcion: this.wkfTransicionFuncionCtrl.value,
+      parametro: this.wkfTransicionParametroCtrl.value
+    }
     this.xAPI.funcion = "WKF_ITransicion"
-    this.xAPI.valores = JSON.stringify(this.wkfTransicion)
+    this.xAPI.valores = JSON.stringify(transicion)
     this.rowDataTransiciones = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -652,11 +715,8 @@ export class WorkflowComponent implements OnInit {
   }
 
   limpiarTransicion() {
-    this.wkfTransicion = {
-      idw: 0,
-      funcion: '',
-      parametro: ''
-    }
+    this.wkfTransicionFuncionCtrl.setValue(undefined)
+    this.wkfTransicionParametroCtrl.setValue('')
   }
 
   lstRed(e: any): any {
@@ -681,10 +741,20 @@ export class WorkflowComponent implements OnInit {
   }
 
   GuardarRed() {
-    this.wkfRed.idred = this.xidW
+    const red = {
+      idred: this.xidW,
+      estadoOrigen: this.wkfRedEstadoOrigenCtrl.value,
+      estatusOrigen: this.wkfRedEstatusOrigenCtrl.value,
+      transicionVerdadero: this.wkfRedTransicionVCtrl.value,
+      estadoDestinoVerdadero: this.wkfRedEstadoDestVCtrl.value,
+      estatusDestinoVerdadero: this.wkfRedEstatusDestVCtrl.value,
+      estadoDestinoFalso: this.wkfRedEstadoDestFCtrl.value,
+      estatusDestinoFalso: this.wkfRedEstatusDestFCtrl.value,
+      transicionFalsa: this.wkfRedTransicionFCtrl.value
+    }
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "WKF_IRed"
-    this.xAPI.valores = JSON.stringify(this.wkfRed)
+    this.xAPI.valores = JSON.stringify(red)
     this.rowDataRed = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
@@ -699,22 +769,14 @@ export class WorkflowComponent implements OnInit {
   }
 
   limpiarRed() {
-    this.wkfRed = {
-      idred: 0,
-      estadoOrigen: undefined,
-      estatusOrigen: undefined,
-      transicionVerdadero: undefined,
-      estadoDestinoVerdadero: undefined,
-      estatusDestinoVerdadero: undefined,
-      estadoDestinoFalso: undefined,
-      estatusDestinoFalso: undefined,
-      transicionFalsa: undefined,
-      descripcion: '',
-      usuario: '',
-      nombre: '',
-      estatus: undefined
-
-    }
+    this.wkfRedEstadoOrigenCtrl.setValue(undefined)
+    this.wkfRedEstatusOrigenCtrl.setValue(undefined)
+    this.wkfRedTransicionVCtrl.setValue(undefined)
+    this.wkfRedEstadoDestVCtrl.setValue(undefined)
+    this.wkfRedEstatusDestVCtrl.setValue(undefined)
+    this.wkfRedEstadoDestFCtrl.setValue(undefined)
+    this.wkfRedEstatusDestFCtrl.setValue(undefined)
+    this.wkfRedTransicionFCtrl.setValue(undefined)
   }
 
 
@@ -723,7 +785,23 @@ export class WorkflowComponent implements OnInit {
   }
 
   addItemForm() {
-    this.rowForm.push(this.wkfForm)
+    const item: WkfFrom = {
+      wkf: this.xidW,
+      nombre: this.wkfFormNombreCtrl.value,
+      descripcion: this.wkfFormDescripcionCtrl.value,
+      tipo: this.xtipoCtrl.value,
+      data: parseInt(this.xdatosCtrl.value),
+      origen: this.xorigenCtrl.value,
+      file: '',
+      listado: '',
+      estatus: 1
+    }
+    this.rowForm.push(item)
+    this.wkfFormNombreCtrl.setValue('')
+    this.wkfFormDescripcionCtrl.setValue('')
+    this.xtipoCtrl.setValue('')
+    this.xdatosCtrl.setValue('')
+    this.xorigenCtrl.setValue('')
   }
 
 

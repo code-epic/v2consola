@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { CoreConfigService } from '@core/services/config.service';
 import { fadeInLeft, zoomIn, fadeIn } from '@core/animations/core.animation';
 import { Subject } from 'rxjs';
@@ -9,7 +10,8 @@ import { takeUntil } from 'rxjs/operators';
     templateUrl: './content.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: [fadeInLeft, zoomIn, fadeIn],
-    standalone: false
+    standalone: true,
+    imports: [RouterModule]
 })
 export class ContentComponent {
   public coreConfig: any;

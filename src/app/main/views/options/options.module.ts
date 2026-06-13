@@ -25,10 +25,6 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [
-    UpdateComponent,
-    UpgradeComponent
-  ],
-  imports: [RouterModule.forChild(routes), CommonModule, ContentHeaderModule, TranslateModule, CoreCommonModule],
+  imports: [RouterModule.forChild(routes), CommonModule, ContentHeaderModule, TranslateModule, CoreCommonModule, UpgradeComponent, UpdateComponent],
 })
 export class OptionsModule { }

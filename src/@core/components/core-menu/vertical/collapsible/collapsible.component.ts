@@ -1,25 +1,40 @@
-import { ChangeDetectorRef, Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Component, forwardRef, HostBinding, Input, OnDestroy, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, NavigationEnd, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 import { CoreMenuItem } from '@core/types';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CoreMenuVerticalItemComponent } from '@core/components/core-menu/vertical/item/item.component';
 
 
 @Component({
     selector: '[core-menu-vertical-collapsible]',
     templateUrl: './collapsible.component.html',
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        TranslateModule,
+        CoreDirectivesModule,
+        CoreMenuVerticalItemComponent,
+        forwardRef(() => CoreMenuVerticalCollapsibleComponent)
+    ]
 })
 export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
 
   @Input()
   item: CoreMenuItem;
 
+  private _isOpen = signal<boolean>(false);
+
   @HostBinding('class.open')
-  public isOpen = false;
+  get isOpen() { return this._isOpen(); }
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -29,12 +44,10 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
    *
    * @param {Router} _router
    * @param {CoreMenuService} _coreMenuService
-   * @param {ChangeDetectorRef} _changeDetectorRef
    */
   constructor(
     private _router: Router,
-    private _coreMenuService: CoreMenuService,
-    private _changeDetectorRef: ChangeDetectorRef
+    private _coreMenuService: CoreMenuService
   ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -113,7 +126,7 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
   toggleOpen(e): void {
     e.preventDefault();
 
-    this.isOpen = !this.isOpen;
+    this._isOpen.set(!this.isOpen);
 
     // Menu collapse toggled...
     this._coreMenuService.onItemCollapsed.next(this.item);
@@ -128,10 +141,7 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isOpen = true;
-
-    // Mark for check
-    this._changeDetectorRef.markForCheck();
+    this._isOpen.set(true);
 
     this._coreMenuService.onItemCollapseToggled.next(undefined);
   }
@@ -144,10 +154,7 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.isOpen = false;
-
-    // Mark for check
-    this._changeDetectorRef.markForCheck();
+    this._isOpen.set(false);
 
     this._coreMenuService.onItemCollapseToggled.next(undefined);
   }

@@ -24,27 +24,37 @@
       <!-- Progress Steps -->
       <div class="logout-steps-container">
         <ul class="logout-steps">
-          <li *ngFor="let step of steps; let i = index" class="step-item" [ngClass]="'status-' + step.status" [style.animation-delay.ms]="i * 150">
-            <div class="step-icon">
-              <!-- Pending -->
-              <div *ngIf="step.status === 'pending'" class="pending-icon-wrapper">
-                <i-feather name="clock" class="pending-icon"></i-feather>
+          @for (step of steps; track step; let i = $index) {
+            <li class="step-item" [ngClass]="'status-' + step.status" [style.animation-delay.ms]="i * 150">
+              <div class="step-icon">
+                <!-- Pending -->
+                @if (step.status === 'pending') {
+                  <div class="pending-icon-wrapper">
+                    <i-feather name="clock" class="pending-icon"></i-feather>
+                  </div>
+                }
+                <!-- In Progress -->
+                @if (step.status === 'in-progress') {
+                  <div class="spinner-border spinner-border-sm" role="status">
+                    <span class="sr-only">Loading...</span>
+                  </div>
+                }
+                <!-- Done -->
+                @if (step.status === 'done') {
+                  <div class="done-icon-wrapper">
+                    <i-feather name="check" class="done-icon"></i-feather>
+                  </div>
+                }
+                <!-- Error -->
+                @if (step.status === 'error') {
+                  <div class="error-icon-wrapper">
+                    <i-feather name="x-circle" class="error-icon"></i-feather>
+                  </div>
+                }
               </div>
-              <!-- In Progress -->
-              <div *ngIf="step.status === 'in-progress'" class="spinner-border spinner-border-sm" role="status">
-                <span class="sr-only">Loading...</span>
-              </div>
-              <!-- Done -->
-              <div *ngIf="step.status === 'done'" class="done-icon-wrapper">
-                <i-feather name="check" class="done-icon"></i-feather>
-              </div>
-              <!-- Error -->
-              <div *ngIf="step.status === 'error'" class="error-icon-wrapper">
-                <i-feather name="x-circle" class="error-icon"></i-feather>
-              </div>
-            </div>
-            <div class="step-label">{{ step.label }}</div>
-          </li>
+              <div class="step-label">{{ step.label }}</div>
+            </li>
+          }
         </ul>
       </div>
 

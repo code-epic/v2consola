@@ -1,4 +1,7 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import {
   ColumnMode,
   DatatableComponent,
@@ -15,9 +18,16 @@ import {
   NgbModal,
   NgbActiveModal,
   NgbModalConfig,
+  NgbModule,
 } from "@ng-bootstrap/ng-bootstrap";
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
+import { CoreCommonModule } from "@core/common.module";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 
 @Component({
     selector: 'app-conciliation',
@@ -25,7 +35,19 @@ import { TaskService } from "@services/apicore/task.service";
     styleUrls: ['./conciliation.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        NgbModule,
+        NgSelectModule,
+        NgxDatatableModule,
+        CoreCommonModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        ContentHeaderComponent
+    ]
 })
 export class ConciliationComponent implements OnInit {
 
@@ -75,14 +97,16 @@ export class ConciliationComponent implements OnInit {
   public isLoading: boolean = false;;
   
   
-    public searchValue: string = '';
+    searchValueCtrl = new FormControl('');
+    get searchValue() { return this.searchValueCtrl.value; }
     public lenguaje: any[] = [];
     public fnx;
     public status = false;
-  
+
     // public
     public contentHeader: object;
-    public basicSelectedOption: number = 10;
+    basicSelectedOptionCtrl = new FormControl(10);
+    get basicSelectedOption() { return this.basicSelectedOptionCtrl.value; }
     public ColumnMode = ColumnMode;
     public SelectionType = SelectionType;
   
@@ -90,7 +114,6 @@ export class ConciliationComponent implements OnInit {
       private taskService: TaskService,
       private apiService: ApiService,
       private msjService: WsocketsService,
-      private cdr: ChangeDetectorRef,
     ) {}
   
     async ngOnInit() {

@@ -1,15 +1,18 @@
-import { Component, Input, OnInit, OnDestroy, TemplateRef, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '@services/apicore/api.service';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { ChartDataSets, ChartOptions } from 'chart.js';
-import { Color, Label, BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration, ChartData } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 import moment from 'moment';
 import Swal from 'sweetalert2';
 import { UtilService } from '@services/util/util.service';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CoreCommonModule } from '@core/common.module';
 
 interface QueryLog {
   date: string;
@@ -30,8 +33,14 @@ interface QueryLog {
     templateUrl: './query-log.component.html',
     styleUrls: ['./query-log.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        CoreCommonModule,
+        CoreDirectivesModule,
+        BaseChartDirective
+    ]
 })
 export class QueryLogComponent implements OnInit, OnDestroy {
 
@@ -41,150 +50,129 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   parsedLogs: QueryLog[] = [];
   filteredLogs: QueryLog[] = [];
   logTypes: string[] = [];
-  selectedType: string = '';
-  searchText: string = '';
-  isLoading: boolean = false;
+  selectedTypeCtrl = new FormControl('');
+  get selectedType() { return this.selectedTypeCtrl.value; }
+  searchTextCtrl = new FormControl('');
+  get searchText() { return this.searchTextCtrl.value; }
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
   nameFnx = '';
   sinRegistros: boolean = false;
   activeId = 1;
 
-  public lineChartData: ChartDataSets[] = [];
+  public chartData: ChartData<'line'> = {
+    datasets: [],
+    labels: []
+  };
 
-  public lineChartLabels: Label[] = [];
-
-  public lineChartOptions: (ChartOptions & { annotation: any }) = {
+  public lineChartOptions: ChartConfiguration<'line'>['options'] = {
     responsive: true,
     maintainAspectRatio: false,
     elements: {
       line: {
-        tension: 0.5 // Curvas más orgánicas
+        tension: 0.5
       },
       point: {
-        radius: 0, // Oculta los puntos por defecto (suaviza visualmente)
-        hitRadius: 10, // Mantiene el área de interacción
-        hoverRadius: 6, // Muestra el punto al pasar el mouse
+        radius: 0,
+        hitRadius: 10,
+        hoverRadius: 6,
         borderWidth: 2
       }
     },
     scales: {
-      xAxes: [{
+      x: {
         ticks: {
-          fontColor: '#633d2bff',
-          fontSize: 11,
-          fontFamily: 'Inter, sans-serif',
+          color: '#633d2bff',
+          font: {
+            size: 11,
+            family: 'Inter, sans-serif'
+          },
           callback: function (value) {
-            return moment(value).format('DD MMM');
+            return moment(value as string).format('DD MMM');
           }
         },
-        gridLines: {
+        grid: {
           display: false
         }
-      }],
-      yAxes: [
-        {
-          id: 'y-axis-0',
-          position: 'left',
-          ticks: {
-            fontColor: '#3016a1ff',
-            fontSize: 10,
-            fontFamily: 'Inter, sans-serif',
-            beginAtZero: true,
-            stepSize: 10,
-            padding: 10
+      },
+      y: {
+        type: 'linear',
+        position: 'left',
+        beginAtZero: true,
+        ticks: {
+          color: '#3016a1ff',
+          font: {
+            size: 10,
+            family: 'Inter, sans-serif'
           },
-          gridLines: {
-            color: 'rgba(200, 200, 200, 0.1)', // Líneas de cuadrícula muy sutiles
-            zeroLineColor: 'rgba(200, 200, 200, 0.1)',
-            drawBorder: false,
-            borderDash: [5, 5] // Líneas punteadas para suavizar
-          }
+          stepSize: 10,
+          padding: 10
+        },
+        grid: {
+          color: 'rgba(200, 200, 200, 0.1)',
+          tickColor: 'rgba(200, 200, 200, 0.1)',
+          drawOnChartArea: true,
+          display: true
         }
-      ]
-    },
-    legend: {
-      position: 'top',
-      align: 'end',
-      labels: {
-        usePointStyle: true,
-        boxWidth: 8,
-        padding: 20,
-        fontColor: '#5e5873',
-        fontSize: 12,
-        fontFamily: 'Inter, sans-serif'
       }
     },
-    tooltips: {
-      mode: 'index',
-      intersect: false,
-      backgroundColor: 'rgba(255, 255, 255, 0.98)', // Más opaco para efecto tarjeta
-      titleFontColor: '#1f2937',
-      titleFontSize: 14, // Título más grande
-      bodyFontColor: '#6b7280',
-      bodyFontSize: 13, // Cuerpo más legible
-      bodySpacing: 8, // Espacio entre líneas
-      borderColor: 'rgba(115, 103, 240, 0.1)', // Borde sutil
-      borderWidth: 1,
-      cornerRadius: 16, // Bordes muy redondeados (efecto globo)
-      xPadding: 20, // Más ancho
-      yPadding: 15, // Más alto
-      caretSize: 8,
-      displayColors: false, // Eliminar los cuadritos
-      callbacks: {
-        title: function (tooltipItem, data) {
-          // Capitalizar la primera letra del día
-          const dateStr = moment(tooltipItem[0].label).format('dddd, D [de] MMMM');
-          return dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+    plugins: {
+      legend: {
+        position: 'top',
+        align: 'end',
+        labels: {
+          usePointStyle: true,
+          boxWidth: 8,
+          padding: 20,
+          color: '#5e5873',
+          font: {
+            size: 12,
+            family: 'Inter, sans-serif'
+          }
+        }
+      },
+      tooltip: {
+        mode: 'index',
+        intersect: false,
+        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+        titleColor: '#1f2937',
+        titleFont: {
+          size: 14
         },
-        label: function (tooltipItem, data) {
-          const label = data.datasets[tooltipItem.datasetIndex].label || '';
-          const value = tooltipItem.yLabel;
-          // Usar un círculo unicode grande como viñeta
-          return `●  ${value} ${label}`;
+        bodyColor: '#6b7280',
+        bodyFont: {
+          size: 13
         },
-        labelTextColor: function (tooltipItem, chart) {
-          return chart.config.data.datasets[tooltipItem.datasetIndex].borderColor as string;
+        bodySpacing: 8,
+        borderColor: 'rgba(115, 103, 240, 0.1)',
+        borderWidth: 1,
+        cornerRadius: 16,
+        padding: 20,
+        caretSize: 8,
+        displayColors: false,
+        callbacks: {
+          title: function (tooltipItem) {
+            const dateStr = moment(tooltipItem[0].label).format('dddd, D [de] MMMM');
+            return dateStr.charAt(0).toUpperCase() + dateStr.slice(1);
+          },
+          label: function (tooltipItem) {
+            const dataset = tooltipItem.dataset;
+            const label = dataset.label || '';
+            const value = tooltipItem.parsed.y;
+            return `\u25CF  ${value} ${label}`;
+          },
+          labelTextColor: function (tooltipItem) {
+            const meta = tooltipItem.chart.getDatasetMeta(tooltipItem.datasetIndex);
+            return ((meta.dataset as any)?.borderColor as string) || '#7367f0';
+          }
         }
       }
     },
     hover: {
       mode: 'nearest',
       intersect: true
-    },
-    annotation: {
-      annotations: [],
-    },
-  };
-
-  public lineChartColors: Color[] = [
-    { // red (Error)
-      backgroundColor: 'rgba(234, 84, 85, 0.1)', // Fondo muy sutil
-      borderColor: '#ea5455',
-      pointBackgroundColor: '#fff',
-      pointBorderColor: '#ea5455',
-      pointHoverBackgroundColor: '#ea5455',
-      pointHoverBorderColor: '#fff'
-    },
-    { // orange (Warning)
-      backgroundColor: 'rgba(255, 159, 67, 0.1)',
-      borderColor: '#ff9f43',
-      pointBackgroundColor: '#fff',
-      pointBorderColor: '#ff9f43',
-      pointHoverBackgroundColor: '#ff9f43',
-      pointHoverBorderColor: '#fff'
-    },
-    { // purple (Alert)
-      backgroundColor: 'rgba(115, 103, 240, 0.1)',
-      borderColor: '#7367f0',
-      pointBackgroundColor: '#fff',
-      pointBorderColor: '#7367f0',
-      pointHoverBackgroundColor: '#7367f0',
-      pointHoverBorderColor: '#fff'
     }
-  ];
-
-  public lineChartLegend = true;
-
-  public lineChartType = 'line';
+  };
 
   public isView: boolean = true;
 
@@ -195,23 +183,19 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
-    private cdr: ChangeDetectorRef
   ) {
     moment.locale('es');
   }
 
   async processChartData() {
-    // Agrupar por fecha y tipo
     const dataByDate: { [key: string]: { [key: string]: number } } = {};
     const typesToTrack = ['ERROR', 'WARNING', 'ALERT'];
 
-    // Ordenar logs cronológicamente para la gráfica
     const sortedLogs = [...this.parsedLogs].sort((a, b) => (a.timestamp?.getTime() || 0) - (b.timestamp?.getTime() || 0));
 
     sortedLogs.forEach(log => {
       if (!log.date) return;
 
-      // Extraer solo la fecha YYYY/MM/DD
       const dateKey = log.date.split(' ')[0];
 
       if (!dataByDate[dateKey]) {
@@ -229,12 +213,41 @@ export class QueryLogComponent implements OnInit, OnDestroy {
     const warningSeries = categories.map(date => dataByDate[date].WARNING);
     const alertSeries = categories.map(date => dataByDate[date].ALERT);
 
-    this.lineChartLabels = categories;
-    this.lineChartData = [
-      { data: errorSeries, label: 'Errores' },
-      { data: warningSeries, label: 'Advertencias' },
-      { data: alertSeries, label: 'Alertas' }
-    ];
+    this.chartData = {
+      labels: categories,
+      datasets: [
+        {
+          data: errorSeries,
+          label: 'Errores',
+          backgroundColor: 'rgba(234, 84, 85, 0.1)',
+          borderColor: '#ea5455',
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#ea5455',
+          pointHoverBackgroundColor: '#ea5455',
+          pointHoverBorderColor: '#fff'
+        },
+        {
+          data: warningSeries,
+          label: 'Advertencias',
+          backgroundColor: 'rgba(255, 159, 67, 0.1)',
+          borderColor: '#ff9f43',
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#ff9f43',
+          pointHoverBackgroundColor: '#ff9f43',
+          pointHoverBorderColor: '#fff'
+        },
+        {
+          data: alertSeries,
+          label: 'Alertas',
+          backgroundColor: 'rgba(115, 103, 240, 0.1)',
+          borderColor: '#7367f0',
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#7367f0',
+          pointHoverBackgroundColor: '#7367f0',
+          pointHoverBorderColor: '#fff'
+        }
+      ]
+    };
   }
 
   async ngOnChanges() {
@@ -244,11 +257,9 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
-
     this.searchSubscription = this.searchSubject.pipe(
-      debounceTime(300), // Espera 300ms después de la última pulsación
-      distinctUntilChanged() // Solo emite si el valor ha cambiado
+      debounceTime(300),
+      distinctUntilChanged()
     ).subscribe(searchValue => {
       this.filterLogs();
     });
@@ -258,7 +269,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   }
 
   async verLogs() {
-    this.isLoading = true;
+    this._isLoading.set(true);
     let fnx = { funcion: this.nameFnx };
     await this.apiService.ExecFnx(fnx).subscribe(
       async (data) => {
@@ -270,8 +281,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
             3000
           )
           this.sinRegistros = false;
-          this.isLoading = false;
-          this.cdr.detectChanges();
+          this._isLoading.set(false);
           return;
         }
         setTimeout(() => {
@@ -279,23 +289,20 @@ export class QueryLogComponent implements OnInit, OnDestroy {
             (data) => {
               this.rawLogs = data.rs;
               this.parseLogs();
-              this.filterLogs(); // Esto mantiene todos los registros filtrados
-              this.processChartData(); // Call the new chart data processing method
-              this.isLoading = false;
-              this.cdr.detectChanges();
+              this.filterLogs();
+              this.processChartData();
+              this._isLoading.set(false);
             },
             (error) => {
               console.log(error);
-              this.isLoading = false;
-              this.cdr.detectChanges();
+              this._isLoading.set(false);
             }
           );
         }, 3000);
       },
       (error) => {
         console.log(error);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     );
   }
@@ -354,20 +361,16 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   processQuery(log: Partial<QueryLog>) {
     if (!log.query) return;
 
-    // Quitar espacios en blanco al inicio de cada línea
     log.query = log.query.split('\n').map(line => line.trimStart()).join('\n');
 
-    // Eliminar hashes MD5 (32 caracteres hexadecimales)
     log.query = log.query.replace(/[a-fA-F0-9]{32}/g, '').trim();
 
-    // Extraer error si existe
     const errorMatch = log.query.match(/(Error \d+: .+)/);
     if (errorMatch) {
       log.error = errorMatch[1];
       log.query = log.query.replace(errorMatch[1], '').trim();
     }
 
-    // Resumen específico para WARNINGS
     if (log.type === 'WARNING' && log.query.includes('Core.Select:')) {
       const match = log.query.match(/Core.Select:\s*([^\n]+)/);
       log.shortQuery = match ? `ADVERTENCIA: ${match[1].substring(0, 80)}...` : 'Advertencia en consulta...';
@@ -375,7 +378,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Crear versión corta
     if (log.query.includes('Core.Select:')) {
       const coreIndex = log.query.indexOf('Core.Select:');
       const firstNewLine = log.query.indexOf('\n', coreIndex);
@@ -386,7 +388,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
         log.shortQuery = log.query.substring(0, coreIndex + 20) + '...';
       }
 
-      // Formatear el query completo con separadores
       log.query = log.query.replace('Core.Select:', 'Core.Select:\n-------------------------------------------------------------\n');
     } else {
       log.shortQuery = log.query.length > 100 ?
@@ -470,14 +471,12 @@ export class QueryLogComponent implements OnInit, OnDestroy {
     });
   }
 
-  onTypeChange(type: string) {
-    this.selectedType = type;
+  onTypeChange() {
     this.filterLogs();
   }
 
-  onSearchChange(searchText: string) {
-    this.searchText = searchText;
-    this.searchSubject.next(searchText);
+  onSearchChange() {
+    this.searchSubject.next(this.searchTextCtrl.value);
   }
 
   getIconForType(type: string): string {
@@ -538,7 +537,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   exportToPDF() {
     const doc = new jsPDF();
 
-    // Header
     doc.setFontSize(18);
     doc.text('Reporte de Estadísticas de Logs', 14, 22);
 
@@ -546,7 +544,6 @@ export class QueryLogComponent implements OnInit, OnDestroy {
     doc.setTextColor(100);
     doc.text(`Generado el: ${this.currentDate}`, 14, 30);
 
-    // Summary Stats
     doc.setDrawColor(200);
     doc.line(14, 35, 196, 35);
 
@@ -558,9 +555,8 @@ export class QueryLogComponent implements OnInit, OnDestroy {
     doc.text(`Total de Consultas: ${this.filteredLogs.length}`, 14, 55);
     doc.text(`Total de Errores: ${this.getErrorCount()}`, 14, 62);
 
-    // Table
     const tableColumn = ["Tipo", "Fecha", "Archivo", "Mensaje"];
-    const tableRows = [];
+    const tableRows: any[] = [];
 
     this.filteredLogs.forEach(log => {
       const logData = [

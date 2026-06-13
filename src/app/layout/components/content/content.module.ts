@@ -6,8 +6,7 @@ import { CoreCommonModule } from '@core/common.module';
 import { ContentComponent } from 'app/layout/components/content/content.component';
 
 @NgModule({
-  declarations: [ContentComponent],
-  imports: [RouterModule, CoreCommonModule],
+  imports: [RouterModule, CoreCommonModule, ContentComponent],
   exports: [ContentComponent]
 })
 export class ContentModule {}

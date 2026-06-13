@@ -3,82 +3,91 @@
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
     <section class="invoice-list-wrapper">
-      
+
       <!-- Loop through Methods (Groups) -->
-      <div *ngFor="let methodBlock of ListarBitacora" class="card mb-3 border shadow-sm">
-        <!-- Header with Flexbox for Alignment -->
-        <div class="card-header border-bottom p-3 d-flex justify-content-between align-items-center"
-             [ngClass]="{'bg-white': methodBlock.metodo !== 'OTRAS OPERACIONES', 'bg-light-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
-          
-          <div class="d-flex align-items-center">
-            <div class="avatar mr-2" [ngClass]="{'bg-light-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'bg-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+      @for (methodBlock of ListarBitacora; track methodBlock) {
+        <div class="card mb-3 border shadow-sm">
+          <!-- Header with Flexbox for Alignment -->
+          <div class="card-header border-bottom p-3 d-flex justify-content-between align-items-center"
+            [ngClass]="{'bg-white': methodBlock.metodo !== 'OTRAS OPERACIONES', 'bg-light-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+            <div class="d-flex align-items-center">
+              <div class="avatar mr-2" [ngClass]="{'bg-light-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'bg-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
                 <div class="avatar-content">
-                    <span [data-feather]="methodBlock.metodo !== 'OTRAS OPERACIONES' ? 'layers' : 'box'" 
-                          [ngClass]="{'text-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'text-white': methodBlock.metodo === 'OTRAS OPERACIONES'}"></span>
+                  <span [data-feather]="methodBlock.metodo !== 'OTRAS OPERACIONES' ? 'layers' : 'box'"
+                  [ngClass]="{'text-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'text-white': methodBlock.metodo === 'OTRAS OPERACIONES'}"></span>
                 </div>
-            </div>
-            <h5 class="mb-0 font-weight-bold" [ngClass]="{'text-dark': methodBlock.metodo !== 'OTRAS OPERACIONES', 'text-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+              </div>
+              <h5 class="mb-0 font-weight-bold" [ngClass]="{'text-dark': methodBlock.metodo !== 'OTRAS OPERACIONES', 'text-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
                 {{ methodBlock.metodo || 'SIN MÉTODO' }}
-            </h5>
+              </h5>
+            </div>
+            <!-- Total Invocations Badge (Aligned Right) -->
+            <div class="badge" [ngClass]="{'badge-light-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'badge-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
+              {{ methodBlock.total_invocaciones }} Invocaciones
+            </div>
           </div>
-
-          <!-- Total Invocations Badge (Aligned Right) -->
-          <div class="badge" [ngClass]="{'badge-light-primary': methodBlock.metodo !== 'OTRAS OPERACIONES', 'badge-secondary': methodBlock.metodo === 'OTRAS OPERACIONES'}">
-             {{ methodBlock.total_invocaciones }} Invocaciones
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="thead-light">
+                <tr>
+                  <th class="border-top-0 text-muted small font-weight-bold pl-3">FUNCIÓN</th>
+                  <th class="border-top-0 text-muted small font-weight-bold">ÚLTIMO ACCESO</th>
+                  <th class="border-top-0 text-muted small font-weight-bold">COSTO</th>
+                  <th class="border-top-0 text-center text-muted small font-weight-bold">EJECUCIONES</th>
+                  <th class="border-top-0 text-right text-muted small font-weight-bold pr-3">ACCIÓN</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (func of methodBlock.funciones; track func) {
+                  <tr>
+                    <td class="py-2 pl-3">
+                      <div class="d-flex flex-column">
+                        <span class="font-weight-bold text-dark">{{ func.nombre_funcion }}</span>
+                        @if (methodBlock.metodo !== 'OTRAS OPERACIONES') {
+                          <small class="text-muted">v{{ func.v }}</small>
+                        }
+                      </div>
+                    </td>
+                    <td class="py-2">
+                      @if (func.ultimaFecha) {
+                        <div class="d-flex align-items-center">
+                          <span [data-feather]="'calendar'" style="width: 14px; height: 14px;" class="text-muted mr-1"></span>
+                          <span class="text-secondary small">{{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+                        </div>
+                      }
+                      @if (!func.ultimaFecha) {
+                        <span class="text-muted small">-</span>
+                      }
+                    </td>
+                    <td class="py-2 text-secondary">{{ func.costo_kb }}</td>
+                    <td class="text-center py-2">
+                      <div class="badge badge-pill badge-light-info">{{ func.ejecuciones }}</div>
+                    </td>
+                    <td class="text-right py-2 pr-3">
+                      <button type="button" class="btn btn-sm btn-icon btn-flat-primary" (click)="ModalExePlay(ModalPlay, func)" ngbTooltip="Ver Logs">
+                        <span [data-feather]="'list'"></span>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
           </div>
         </div>
+      }
 
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="thead-light">
-              <tr>
-                <th class="border-top-0 text-muted small font-weight-bold pl-3">FUNCIÓN</th>
-                <th class="border-top-0 text-muted small font-weight-bold">ÚLTIMO ACCESO</th>
-                <th class="border-top-0 text-muted small font-weight-bold">COSTO</th>
-                <th class="border-top-0 text-center text-muted small font-weight-bold">EJECUCIONES</th>
-                <th class="border-top-0 text-right text-muted small font-weight-bold pr-3">ACCIÓN</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let func of methodBlock.funciones">
-                <td class="py-2 pl-3">
-                  <div class="d-flex flex-column">
-                    <span class="font-weight-bold text-dark">{{ func.nombre_funcion }}</span>
-                    <small class="text-muted" *ngIf="methodBlock.metodo !== 'OTRAS OPERACIONES'">v{{ func.v }}</small>
-                  </div>
-                </td>
-                <td class="py-2">
-                    <div class="d-flex align-items-center" *ngIf="func.ultimaFecha">
-                        <span [data-feather]="'calendar'" style="width: 14px; height: 14px;" class="text-muted mr-1"></span>
-                        <span class="text-secondary small">{{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
-                    </div>
-                    <span *ngIf="!func.ultimaFecha" class="text-muted small">-</span>
-                </td>
-                <td class="py-2 text-secondary">{{ func.costo_kb }}</td>
-                <td class="text-center py-2">
-                   <div class="badge badge-pill badge-light-info">{{ func.ejecuciones }}</div>
-                </td>
-                <td class="text-right py-2 pr-3">
-                  <button type="button" class="btn btn-sm btn-icon btn-flat-primary" (click)="ModalExePlay(ModalPlay, func)" ngbTooltip="Ver Logs">
-                    <span [data-feather]="'list'"></span>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-       <!-- Empty State -->
-       <div *ngIf="ListarBitacora.length === 0" class="card">
-        <div class="card-body text-center p-5">
-          <div class="mb-2">
-            <span [data-feather]="'inbox'" style="width: 48px; height: 48px;" class="text-muted"></span>
+      <!-- Empty State -->
+      @if (ListarBitacora.length === 0) {
+        <div class="card">
+          <div class="card-body text-center p-5">
+            <div class="mb-2">
+              <span [data-feather]="'inbox'" style="width: 48px; height: 48px;" class="text-muted"></span>
+            </div>
+            <h4>No hay registros disponibles</h4>
+            <p class="text-muted">No se encontraron métodos ejecutados para esta aplicación.</p>
           </div>
-          <h4>No hay registros disponibles</h4>
-          <p class="text-muted">No se encontraron métodos ejecutados para esta aplicación.</p>
         </div>
-      </div>
+      }
 
     </section>
   </div>
@@ -95,20 +104,20 @@
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  
+
   <div class="modal-body p-0" tabindex="0" ngbAutofocus>
     <!-- Filter Header -->
     <div class="bg-light p-2 border-bottom d-flex justify-content-between align-items-center">
-        <div class="ml-2">
-            <span class="text-muted small">Total: </span>
-            <span class="font-weight-bold text-dark">{{ rowDataRegistros.length }}</span>
+      <div class="ml-2">
+        <span class="text-muted small">Total: </span>
+        <span class="font-weight-bold text-dark">{{ rowDataRegistros.length }}</span>
+      </div>
+      <div class="input-group input-group-sm w-50 mr-2">
+        <input type="text" class="form-control border-right-0" placeholder="Buscar..." [formControl]="searchRegistrosCtrl">
+        <div class="input-group-append">
+          <span class="input-group-text bg-white border-left-0"><span [data-feather]="'search'" style="width: 14px;"></span></span>
         </div>
-        <div class="input-group input-group-sm w-50 mr-2"> 
-            <input type="text" class="form-control border-right-0" placeholder="Buscar..." [(ngModel)]="searchRegistros">
-            <div class="input-group-append">
-                <span class="input-group-text bg-white border-left-0"><span [data-feather]="'search'" style="width: 14px;"></span></span>
-            </div>
-        </div>
+      </div>
     </div>
 
     <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
@@ -121,34 +130,36 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let log of rowDataRegistros">
-            <td class="py-2 pl-3">
-              <span class="text-dark">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
-            </td>
-            <td class="py-2">
-              <div class="d-flex align-items-center">
-                <span class="font-family-monospace text-secondary small mr-2" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">{{ log.hash }}</span>
-                <a href="javascript:void(0)" class="text-muted" (click)="copyToClipboard(log.hash)">
+          @for (log of rowDataRegistros; track log) {
+            <tr>
+              <td class="py-2 pl-3">
+                <span class="text-dark">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+              </td>
+              <td class="py-2">
+                <div class="d-flex align-items-center">
+                  <span class="font-family-monospace text-secondary small mr-2" style="max-width: 150px; overflow: hidden; text-overflow: ellipsis;">{{ log.hash }}</span>
+                  <a href="javascript:void(0)" class="text-muted" (click)="copyToClipboard(log.hash)">
                     <span [data-feather]="'copy'" style="width: 12px; height: 12px;"></span>
-                </a>
-              </div>
-            </td>
-            <td class="text-right py-2 pr-3">
-              <div class="d-flex align-items-center justify-content-end">
-                <span class="font-weight-bold mr-3" [ngClass]="{'text-success': log.segundos < 0.5, 'text-warning': log.segundos >= 0.5 && log.segundos < 2, 'text-danger': log.segundos >= 2}">
+                  </a>
+                </div>
+              </td>
+              <td class="text-right py-2 pr-3">
+                <div class="d-flex align-items-center justify-content-end">
+                  <span class="font-weight-bold mr-3" [ngClass]="{'text-success': log.segundos < 0.5, 'text-warning': log.segundos >= 0.5 && log.segundos < 2, 'text-danger': log.segundos >= 2}">
                     {{ log.formattedDuration }}
-                </span>
-                <button type="button" class="btn btn-sm btn-icon btn-flat-primary" (click)="openDetail(log, ModalDetalle)" ngbTooltip="Ver Detalle Completo">
+                  </span>
+                  <button type="button" class="btn btn-sm btn-icon btn-flat-primary" (click)="openDetail(log, ModalDetalle)" ngbTooltip="Ver Detalle Completo">
                     <span [data-feather]="'eye'"></span>
-                </button>
-              </div>
-            </td>
-          </tr>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
         </tbody>
       </table>
     </div>
   </div>
-  
+
   <div class="modal-footer bg-light p-1">
     <button type="button" class="btn btn-sm btn-outline-secondary" (click)="modal.close('Accept click')" rippleEffect>
       Cerrar
@@ -158,86 +169,88 @@
 
 <!-- Modal: View Detailed JSON -->
 <ng-template #ModalDetalle let-modal>
-    <div class="modal-header bg-white border-bottom">
-      <h5 class="modal-title d-flex align-items-center">
-        <span [data-feather]="'file-text'" class="mr-2 text-primary"></span>
-        Detalle de Transacción
-      </h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')">
-        <span>&times;</span>
-      </button>
-    </div>
-    <div class="modal-body bg-light p-3" tabindex="0" ngbAutofocus>
-        
-        <!-- Info Header -->
-        <div class="card mb-3 shadow-none border bg-white">
-            <div class="card-body p-3">
-                 <div class="row">
-                     <div class="col-md-4 border-right">
-                         <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Función</small>
-                         <span class="text-dark font-weight-bold text-truncate d-block" [title]="currentFunctionData?.nombre_funcion">{{ currentFunctionData?.nombre_funcion }}</span>
-                     </div>
-                     <div class="col-md-4 border-right pl-3">
-                         <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Fecha y Hora</small>
-                         <span class="text-dark font-weight-bold">{{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
-                     </div>
-                     <div class="col-md-4 pl-3">
-                         <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Duración</small>
-                         <span class="font-weight-bold" [ngClass]="{'text-success': selectedLog?.segundos < 0.5, 'text-warning': selectedLog?.segundos >= 0.5 && selectedLog?.segundos < 2, 'text-danger': selectedLog?.segundos >= 2}">
-                            {{ selectedLog?.formattedDuration }}
-                         </span>
-                     </div>
-                 </div>
-                 
-                 <div class="mt-2 pt-2 border-top d-flex justify-content-between align-items-center">
-                    <div class="d-flex align-items-center">
-                        <small class="text-muted mr-2 font-weight-bold">ID:</small>
-                        <span class="font-family-monospace small text-dark">{{ ObjDetalle._id || 'N/A' }}</span>
-                        <a href="javascript:void(0)" class="ml-2 text-muted" (click)="copyToClipboard(ObjDetalle._id)" *ngIf="ObjDetalle._id">
-                            <span [data-feather]="'copy'" style="width: 12px;"></span>
-                        </a>
-                    </div>
-                    <div class="badge badge-light-secondary d-flex align-items-center">
-                        <span [data-feather]="'hard-drive'" style="width: 10px;" class="mr-1"></span>
-                        {{ ObjDetalle.costo || 'N/A' }}
-                     </div>
-                 </div>
-            </div>
-        </div>
-  
+  <div class="modal-header bg-white border-bottom">
+    <h5 class="modal-title d-flex align-items-center">
+      <span [data-feather]="'file-text'" class="mr-2 text-primary"></span>
+      Detalle de Transacción
+    </h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')">
+      <span>&times;</span>
+    </button>
+  </div>
+  <div class="modal-body bg-light p-3" tabindex="0" ngbAutofocus>
+
+    <!-- Info Header -->
+    <div class="card mb-3 shadow-none border bg-white">
+      <div class="card-body p-3">
         <div class="row">
-            <div class="col-md-6">
-                <!-- Consulta / Input -->
-                <div class="card h-100 shadow-none border">
-                    <div class="card-header bg-white p-2 border-bottom">
-                        <h6 class="mb-0 font-weight-bold text-secondary d-flex align-items-center">
-                            <span [data-feather]="'arrow-right-circle'" class="mr-2 text-muted" style="width: 14px;"></span>
-                            Entrada (Consulta)
-                        </h6>
-                    </div>
-                    <div class="card-body p-0 position-relative">
-                        <pre class="m-0 p-2 text-muted small" style="height: 400px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <!-- Contenido / Output -->
-                <div class="card h-100 shadow-none border">
-                    <div class="card-header bg-white p-2 border-bottom">
-                        <h6 class="mb-0 font-weight-bold text-info d-flex align-items-center">
-                            <span [data-feather]="'arrow-left-circle'" class="mr-2 text-info" style="width: 14px;"></span>
-                            Salida (Contenido)
-                        </h6>
-                    </div>
-                    <div class="card-body p-0 position-relative">
-                        <pre class="m-0 p-2 text-muted small" style="height: 400px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
-                    </div>
-                </div>
-            </div>
+          <div class="col-md-4 border-right">
+            <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Función</small>
+            <span class="text-dark font-weight-bold text-truncate d-block" [title]="currentFunctionData?.nombre_funcion">{{ currentFunctionData?.nombre_funcion }}</span>
+          </div>
+          <div class="col-md-4 border-right pl-3">
+            <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Fecha y Hora</small>
+            <span class="text-dark font-weight-bold">{{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+          </div>
+          <div class="col-md-4 pl-3">
+            <small class="text-muted d-block font-weight-bold text-uppercase" style="font-size: 10px;">Duración</small>
+            <span class="font-weight-bold" [ngClass]="{'text-success': selectedLog?.segundos < 0.5, 'text-warning': selectedLog?.segundos >= 0.5 && selectedLog?.segundos < 2, 'text-danger': selectedLog?.segundos >= 2}">
+              {{ selectedLog?.formattedDuration }}
+            </span>
+          </div>
         </div>
-  
+
+        <div class="mt-2 pt-2 border-top d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <small class="text-muted mr-2 font-weight-bold">ID:</small>
+            <span class="font-family-monospace small text-dark">{{ ObjDetalle._id || 'N/A' }}</span>
+            @if (ObjDetalle._id) {
+              <a href="javascript:void(0)" class="ml-2 text-muted" (click)="copyToClipboard(ObjDetalle._id)">
+                <span [data-feather]="'copy'" style="width: 12px;"></span>
+              </a>
+            }
+          </div>
+          <div class="badge badge-light-secondary d-flex align-items-center">
+            <span [data-feather]="'hard-drive'" style="width: 10px;" class="mr-1"></span>
+            {{ ObjDetalle.costo || 'N/A' }}
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="modal-footer bg-white border-top p-2">
-        <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+
+    <div class="row">
+      <div class="col-md-6">
+        <!-- Consulta / Input -->
+        <div class="card h-100 shadow-none border">
+          <div class="card-header bg-white p-2 border-bottom">
+            <h6 class="mb-0 font-weight-bold text-secondary d-flex align-items-center">
+              <span [data-feather]="'arrow-right-circle'" class="mr-2 text-muted" style="width: 14px;"></span>
+              Entrada (Consulta)
+            </h6>
+          </div>
+          <div class="card-body p-0 position-relative">
+            <pre class="m-0 p-2 text-muted small" style="height: 400px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <!-- Contenido / Output -->
+        <div class="card h-100 shadow-none border">
+          <div class="card-header bg-white p-2 border-bottom">
+            <h6 class="mb-0 font-weight-bold text-info d-flex align-items-center">
+              <span [data-feather]="'arrow-left-circle'" class="mr-2 text-info" style="width: 14px;"></span>
+              Salida (Contenido)
+            </h6>
+          </div>
+          <div class="card-body p-0 position-relative">
+            <pre class="m-0 p-2 text-muted small" style="height: 400px; overflow-y: auto; background-color: #f8f9fa; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
+          </div>
+        </div>
+      </div>
     </div>
-  </ng-template>
+
+  </div>
+  <div class="modal-footer bg-white border-top p-2">
+    <button type="button" class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+  </div>
+</ng-template>

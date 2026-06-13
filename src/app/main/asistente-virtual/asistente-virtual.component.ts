@@ -1,4 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild, } from '@angular/core';
+
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { CoreCommonModule } from '@core/common.module';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 
 interface Mensaje {
@@ -11,7 +14,8 @@ interface Mensaje {
     selector: 'app-asistente-virtual',
     templateUrl: './asistente-virtual.component.html',
     styleUrls: ['./asistente-virtual.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [ReactiveFormsModule, CoreCommonModule]
 })
 export class AsistenteVirtualComponent implements OnInit {
 
@@ -27,8 +31,8 @@ export class AsistenteVirtualComponent implements OnInit {
   userInput: string = '';
 
   public status = false
-  public msj: any
   public preg: any
+  msjCtrl = new FormControl('')
   public hidden = false
   public msjAux: any
   public client: Array<Mensaje> = []
@@ -50,8 +54,8 @@ export class AsistenteVirtualComponent implements OnInit {
 
 
    ChatBot() {
-    this.msjAux = this.msj
-    this.msj = ''
+    this.msjAux = this.msjCtrl.value
+    this.msjCtrl.setValue('')
     this.hidden = true
     this.xAPI.funcion = 'CHATBOOT'
     this.xAPI.parametros = this.msjAux
@@ -79,7 +83,7 @@ export class AsistenteVirtualComponent implements OnInit {
 
   chat_box(){
     this.client = []
-    this.msj = ''
+    this.msjCtrl.setValue('')
     this.status = false
      this.MostrarChat = true
      this.ChatWelcome = true
@@ -92,7 +96,7 @@ export class AsistenteVirtualComponent implements OnInit {
 
   hideChat(){
     this.client = []
-    this.msj = ''
+    this.msjCtrl.setValue('')
     this.MostrarChat = false
     this.ChatMessage = false
     this.status = true

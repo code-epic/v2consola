@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 
+
 @Component({
     selector: 'app-license-bunker',
     templateUrl: './license-bunker.component.html',
     styleUrls: ['./license-bunker.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: []
 })
 export class LicenseBunkerComponent implements OnInit {
   public license: boolean = false;

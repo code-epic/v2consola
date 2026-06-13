@@ -1,4 +1,12 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule, ActivatedRoute } from "@angular/router";
+import { NgbModule, NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
+import { CoreCommonModule } from "@core/common.module";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
 import {
   ColumnMode,
   DatatableComponent,
@@ -7,13 +15,8 @@ import {
 
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { WsocketsService } from "@services/websockets/wsockets.service";
-import {
-  NgbModal,
-  NgbModalConfig,
-} from "@ng-bootstrap/ng-bootstrap";
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
-import { ActivatedRoute } from "@angular/router";
 import { CompresionService } from "@services/util/compresion.service";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -67,7 +70,17 @@ export interface IMetodoBitacora {
     styleUrls: ['./binnacle-applications.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        NgbModule,
+        CoreCommonModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        ContentHeaderComponent
+    ]
 })
 export class BinnacleApplicationsComponent implements OnInit {
 
@@ -106,7 +119,7 @@ export class BinnacleApplicationsComponent implements OnInit {
   public selectedActivityLogs: any[] = [];
 
   public searchValue = '';
-  public searchRegistros = '';
+  public searchRegistrosCtrl = new FormControl('');
 
   public urlID: Partial<IAplicacionBitacora> = {}
 
@@ -370,7 +383,7 @@ export class BinnacleApplicationsComponent implements OnInit {
    * Limpia el filtro de búsqueda de registros
    */
   clearSearch(): void {
-    this.searchRegistros = '';
+    this.searchRegistrosCtrl.setValue('');
     this.rowDataRegistros = this.tempDataRegistros;
     this.page = 1;
   }

@@ -1,15 +1,18 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { ColumnMode, DatatableComponent, SelectionType, NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectConfig } from '@ng-select/ng-select';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { NgbModal, NgbActiveModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectConfig, NgSelectModule } from '@ng-select/ng-select';
+import { FormControl, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
 import { ConexionesService } from '@services/networks/connections.service';
+import { CoreCommonModule } from '@core/common.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 import { environment } from 'environments/environment';
 
 
@@ -19,7 +22,15 @@ import { environment } from 'environments/environment';
     styleUrls: ['./connections.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CoreCommonModule,
+        RouterModule,
+        NgbModule,
+        ContentHeaderComponent,
+        NgxDatatableModule,
+        NgSelectModule
+    ]
 })
 export class ConnectionsComponent implements OnInit {
 
@@ -55,18 +66,27 @@ export class ConnectionsComponent implements OnInit {
 
   // Private
   public lbd = 'Base de Datos'
-  public count
+  private _count = signal<any>(undefined);
+  get count() { return this._count(); }
   public isReload = false;
 
   public showBaseDatos = false
   public showPuente = false
   private _unsubscribeAll: Subject<any>;
 
+  searchValueCtrl = new FormControl('')
+  basicSelectedOptionCtrl = new FormControl(10)
+  xrsCtrl = new FormControl({value: '', disabled: true})
+
   public searchValue: string = ''
-  public ListaConexiones = []
-  public tempData = [];
-  public rowData = []
-  public isLoading: boolean = false;;
+  private _ListaConexiones = signal<any[]>([]);
+  get ListaConexiones() { return this._ListaConexiones(); }
+  private _tempData = signal<any[]>([]);
+  get tempData() { return this._tempData(); }
+  private _rowData = signal<any[]>([]);
+  get rowData() { return this._rowData(); }
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
 
   public driver = undefined
   public drivers = []
@@ -96,7 +116,8 @@ export class ConnectionsComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
-  public ListaAplicaciones
+  private _ListaAplicaciones = signal<any>(undefined);
+  get ListaAplicaciones() { return this._ListaAplicaciones(); }
 
   public passwordTextType: boolean = false;
 
@@ -114,7 +135,6 @@ export class ConnectionsComponent implements OnInit {
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
-    private cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -146,6 +166,10 @@ export class ConnectionsComponent implements OnInit {
       descripcion: ['', [Validators.required]],
     });
 
+    this.loginForm.get('driver')!.valueChanges.subscribe(val =>
+      this.CambiarVisibilidadDriver(val)
+    );
+
     // content header
     this.contentHeader = {
       headerTitle: 'Conexiones',
@@ -176,12 +200,12 @@ export class ConnectionsComponent implements OnInit {
   filterUpdate(event: any) {
     const val = event.target.value.toLowerCase();
     // filter our data
-    const temp = this.tempData.filter(function (d) {
+    const temp = this._tempData().filter(function (d) {
       return d.descripcion.toLowerCase().indexOf(val) !== -1 || !val;
     });
     // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
+    this._rowData.set(temp);
+    this._count.set(this._rowData().length)
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
@@ -189,12 +213,12 @@ export class ConnectionsComponent implements OnInit {
   filterDriver(event: any) {
     const val = event ? event.id.toLowerCase() : '';
     // filter our data
-    const temp = this.tempData.filter(function (d) {
+    const temp = this._tempData().filter(function (d) {
       return d.driver.toLowerCase().indexOf(val) !== -1 || !val;
     });
     // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
+    this._rowData.set(temp);
+    this._count.set(this._rowData().length)
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
@@ -229,22 +253,19 @@ export class ConnectionsComponent implements OnInit {
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = environment.functions.LISTAR_DRIVERS;
     this.xAPI.parametros = ''
-    this.ListaConexiones = []
-    this.count = 0
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._ListaConexiones.set([])
+    this._count.set(0)
+    this._isLoading.set(true);
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.rowData = data;
-        this.tempData = this.rowData;
-        this.count = this.rowData.length
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._rowData.set(data);
+        this._tempData.set(this._rowData());
+        this._count.set(this._rowData().length)
+        this._isLoading.set(false);
       },
       (error) => {
         console.log(error)
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     )
   }
@@ -260,25 +281,24 @@ export class ConnectionsComponent implements OnInit {
     )
   }
 
-  CambiarVisibilidadDriver(e : any) {
-    if (this.driver == "puenteurl") {
+  CambiarVisibilidadDriver(e: any) {
+    if (e == "puenteurl") {
       this.showBaseDatos = false
       this.showPuente = true
     } else {
       this.showBaseDatos = true
       this.showPuente = false
-    } if (this.driver === 'oracle19c') {
+    } if (e === 'oracle19c') {
       this.lbd = "Oracle_SID"
     } else {
       this.lbd = "Base de Datos"
-    } if (this.driver == null) {
+    } if (e == null) {
       this.showBaseDatos = false
       this.showPuente = false
     }
   }
 
   ModalEdit(modal, data) {
-    this.driver = data.driver
     this.loginForm = this._formBuilder.group({
       id: [data.id, [Validators.required]],
       usuario: [data.usuario, [Validators.required]],
@@ -350,10 +370,10 @@ export class ConnectionsComponent implements OnInit {
         "driver": environment.driver.PRINCIPAL,
         "upsert": true
       }
-      this.rowData.push(this.ListaConexiones)
+      this._rowData.set([...this._rowData(), this._ListaConexiones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
-          this.ListaConexiones = []
+          this._ListaConexiones.set([])
           this.CargarListaConexiones()
           this.modalService.dismissAll('Close')
           this.utilservice.AlertMini('top-end', 'success', `Tu (Conexión) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
@@ -377,10 +397,10 @@ export class ConnectionsComponent implements OnInit {
         "driver": environment.driver.PRINCIPAL,
         "upsert": true
       }
-      this.rowData.push(this.ListaConexiones)
+      this._rowData.set([...this._rowData(), this._ListaConexiones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
-          this.ListaConexiones = []
+          this._ListaConexiones.set([])
           this.CargarListaConexiones()
           this.modalService.dismissAll('Close')
           this.utilservice.AlertMini('top-end', 'success', `Tu (Conexión) ha sido actualizada`, 3000)
@@ -400,10 +420,10 @@ export class ConnectionsComponent implements OnInit {
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.ListaAplicaciones = data.Cuerpo.map(e => {
+        this._ListaAplicaciones.set(data.Cuerpo.map(e => {
           e.name = e.nombre + ' : ' + e.VERSION
           return e
-        });
+        }));
       },
       (error) => {
         console.log(error)

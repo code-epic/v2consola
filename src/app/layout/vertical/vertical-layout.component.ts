@@ -1,16 +1,30 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation, ElementRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CoreConfigService } from '@core/services/config.service';
+import { CoreSidebarComponent } from '@core/components/core-sidebar/core-sidebar.component';
+import { NavbarComponent } from 'app/layout/components/navbar/navbar.component';
+import { MenuComponent } from 'app/layout/components/menu/menu.component';
+import { ContentComponent } from 'app/layout/components/content/content.component';
+import { FooterComponent } from 'app/layout/components/footer/footer.component';
 
 @Component({
     selector: 'vertical-layout',
     templateUrl: './vertical-layout.component.html',
     styleUrls: ['./vertical-layout.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        NavbarComponent,
+        MenuComponent,
+        ContentComponent,
+        FooterComponent,
+        CoreSidebarComponent
+    ]
 })
 export class VerticalLayoutComponent implements OnInit, OnDestroy {
   coreConfig: any;

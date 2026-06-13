@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { CoreCommonModule } from '@core/common.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 @Component({
     selector: 'app-reportes',
     templateUrl: './reportes.component.html',
     styleUrls: ['./reportes.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [
+        CoreCommonModule,
+        ContentHeaderComponent
+    ]
 })
 export class ReportesComponent implements OnInit {
   public contentHeader: any;

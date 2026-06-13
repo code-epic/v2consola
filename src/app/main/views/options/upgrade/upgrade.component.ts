@@ -1,6 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, signal } from '@angular/core';
+
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { CoreCommonModule } from '@core/common.module';
 import { marked } from 'marked'; // Popular librería para parsear Markdown
 
 interface VersionIndex {
@@ -15,14 +17,22 @@ interface VersionIndex {
     selector: 'app-upgrade',
     templateUrl: './upgrade.component.html',
     styleUrls: ['./upgrade.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [HttpClientModule, CoreCommonModule]
 })
 export class UpgradeComponent implements OnInit {
 
-  public versions: VersionIndex[] = [];
-  public selectedVersion: VersionIndex | null = null;
-  public currentContent: SafeHtml = '';
-  public isLoading: boolean = true;
+  private _versions = signal<VersionIndex[]>([]);
+  get versions() { return this._versions(); }
+
+  private _selectedVersion = signal<VersionIndex | null>(null);
+  get selectedVersion() { return this._selectedVersion(); }
+
+  private _currentContent = signal<SafeHtml>('');
+  get currentContent() { return this._currentContent(); }
+
+  private _isLoading = signal(true);
+  get isLoading() { return this._isLoading(); }
 
   public contentHeader = {
     headerTitle: 'Opciones',
@@ -40,7 +50,6 @@ export class UpgradeComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -51,18 +60,18 @@ export class UpgradeComponent implements OnInit {
     this.http.get('assets/changes/index-change.md', { responseType: 'text' })
       .subscribe({
         next: (data) => {
-          this.versions = this.parseIndex(data);
-          if (this.versions.length > 0) {
+          this._versions.set(this.parseIndex(data));
+          if (this._versions().length > 0) {
             // Cargar la última versión por defecto
-            this.loadVersion(this.versions[0]);
+            this.loadVersion(this._versions()[0]);
           }
         },
         error: (err) => {
           console.error('Error al cargar el índice de versiones:', err);
-          this.currentContent = this.sanitizer.bypassSecurityTrustHtml(
+          this._currentContent.set(this.sanitizer.bypassSecurityTrustHtml(
             `<h2>Error al cargar novedades</h2><p>No se pudo encontrar el archivo de índice de versiones.</p>`
-          );
-          this.isLoading = false;
+          ));
+          this._isLoading.set(false);
         }
       });
   }
@@ -112,17 +121,16 @@ export class UpgradeComponent implements OnInit {
   async loadVersion(version: VersionIndex) {
     if (!version || !version.path) return;
 
-    this.isLoading = true;
-    this.selectedVersion = version;
+    this._isLoading.set(true);
+    this._selectedVersion.set(version);
 
     this.http.get(`assets/changes/${version.path}`, { responseType: 'text' })
       .subscribe({
         next: async (markdownContent) => { // Hacemos el callback asíncrono
           // Usamos 'await' para esperar el resultado de la promesa si es que la devuelve.
           const htmlContent = await marked.parse(markdownContent);
-          this.currentContent = this.sanitizer.bypassSecurityTrustHtml(htmlContent);
-          this.isLoading = false;
-          this.cd.detectChanges();
+          this._currentContent.set(this.sanitizer.bypassSecurityTrustHtml(htmlContent));
+          this._isLoading.set(false);
         },
         error: (err) => {
           console.error(`Error al cargar el archivo de la versión ${version.version}:`, err);
@@ -135,8 +143,8 @@ export class UpgradeComponent implements OnInit {
                 <strong>${version.version}</strong>.
               </p>
             </div>`;
-          this.currentContent = this.sanitizer.bypassSecurityTrustHtml(errorHtml);
-          this.isLoading = false;
+          this._currentContent.set(this.sanitizer.bypassSecurityTrustHtml(errorHtml));
+          this._isLoading.set(false);
         }
       });
   }

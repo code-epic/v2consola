@@ -1,75 +1,75 @@
-<div class="login__heading auth-wrapper auth-v1 px-2" *ngIf="!bdv">
-  <div class="auth-inner py-2">
-    <!-- Login v1 -->
-    <div class="card mb-0">
-      <div class="card-body">
-        <a href="javascript:void(0);" class="brand-logo">
-          <img src="/assets/images/logo/sandra.png" alt="brand-logo" height="80" />
-
-        </a>
-        <h2 class="mb-1 text-center" style="margin-top: -20px;"><strong>Sandra Server</strong></h2>
-
-        <!-- Login Form -->
-        <ng-container *ngIf="!showTotpSection">
-          <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="login()">
-            <div class="form-group">
-              <label for="login-email" class="form-label">Usuario</label>
-              <input type="text" formControlName="email" class="form-control" placeholder="Usuario"
-                aria-describedby="login-email" tabindex="1"
-                [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
-              <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
-                <div *ngIf="f.email.errors.required">Usuario es requerido</div>
+@if (!bdv) {
+  <div class="login__heading auth-wrapper auth-v1 px-2">
+    <div class="auth-inner py-2">
+      <!-- Login v1 -->
+      <div class="card mb-0">
+        <div class="card-body">
+          <a href="javascript:void(0);" class="brand-logo">
+            <img src="/assets/images/logo/sandra.png" alt="brand-logo" height="80" />
+          </a>
+          <h2 class="mb-1 text-center" style="margin-top: -20px;"><strong>Sandra Server</strong></h2>
+          <!-- Login Form -->
+          @if (!showTotpSection) {
+            <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="login()">
+              <div class="form-group">
+                <label for="login-email" class="form-label">Usuario</label>
+                <input type="text" formControlName="email" class="form-control" placeholder="Usuario"
+                  aria-describedby="login-email" tabindex="1"
+                  [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+                @if (submitted && f.email.errors) {
+                  <div class="invalid-feedback">
+                    @if (f.email.errors.required) {
+                      <div>Usuario es requerido</div>
+                    }
+                  </div>
+                }
               </div>
-            </div>
-
-            <div class="form-group">
-              <div class="d-flex justify-content-between">
-                <label for="login-password">Clave</label>
-                <a routerLink="/authentication/forgot-password-v1">
-                  <small>Has olvidado tu contraseña?</small>
-                </a>
-              </div>
-              <div class="input-group input-group-merge form-password-toggle">
-                <input [type]="passwordTextType ? 'text' : 'password'" formControlName="password"
-                  class="form-control form-control-merge" tabindex="2" placeholder="·········"
-                  aria-describedby="login-password"
-                  [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" />
-
-                <div class="input-group-append">
+              <div class="form-group">
+                <div class="d-flex justify-content-between">
+                  <label for="login-password">Clave</label>
+                  <a routerLink="/authentication/forgot-password-v1">
+                    <small>Has olvidado tu contraseña?</small>
+                  </a>
+                </div>
+                <div class="input-group input-group-merge form-password-toggle">
+                  <input [type]="passwordTextType ? 'text' : 'password'" formControlName="password"
+                    class="form-control form-control-merge" tabindex="2" placeholder="·········"
+                    aria-describedby="login-password"
+                    [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" />
+                  <div class="input-group-append">
                   <span class="input-group-text cursor-pointer"><i class="feather font-small-4" [ngClass]="{
                         'icon-eye-off': passwordTextType,
                         'icon-eye': !passwordTextType
                       }" (click)="togglePasswordTextType()"></i></span>
+                  </div>
+                </div>
+                @if (submitted && f.password.errors) {
+                  <div class="invalid-feedback"
+                    [ngClass]="{ 'd-block': submitted && f.password.errors }">
+                    @if (f.password.errors.required) {
+                      <div>contraseña es requerida</div>
+                    }
+                  </div>
+                }
+              </div>
+              <div class="form-group">
+                <div class="custom-control custom-checkbox">
+                  <input class="custom-control-input" type="checkbox" id="remember-me" tabindex="3" />
+                  <label class="custom-control-label" for="remember-me"> Recuérdame </label>
                 </div>
               </div>
-              <div *ngIf="submitted && f.password.errors" class="invalid-feedback"
-                [ngClass]="{ 'd-block': submitted && f.password.errors }">
-                <div *ngIf="f.password.errors.required">contraseña es requerida</div>
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="custom-control custom-checkbox">
-                <input class="custom-control-input" type="checkbox" id="remember-me" tabindex="3" />
-                <label class="custom-control-label" for="remember-me"> Recuérdame </label>
-              </div>
-            </div>
-
-
-            <button class="btn btn-primary btn-block" tabindex="4" rippleEffect>Iniciar Sesión</button>
-          </form>
-        </ng-container>
-
-        <!-- TOTP Section -->
-        <ng-container *ngIf="showTotpSection">
-          <ng-container *ngTemplateOutlet="totpSection"></ng-container>
-        </ng-container>
-
-        <div class="login">
-          <h1 class="login__heading"></h1>
-          <span class="login__circuit-mask"></span>
-        </div>
-
-        <!-- <p class="text-center mt-2">
+              <button class="btn btn-primary btn-block" tabindex="4" rippleEffect>Iniciar Sesión</button>
+            </form>
+          }
+          <!-- TOTP Section -->
+          @if (showTotpSection) {
+            <ng-container *ngTemplateOutlet="totpSection"></ng-container>
+          }
+          <div class="login">
+            <h1 class="login__heading"></h1>
+            <span class="login__circuit-mask"></span>
+          </div>
+          <!-- <p class="text-center mt-2">
           <ng-container *ngIf="!showTotpSection">
             <span>Nuevo en nuestra plataforma?</span>
             <a routerLink="/authentication/register-v1">
@@ -77,139 +77,125 @@
             </a>
           </ng-container>
         </p> -->
-
-        <div class="divider my-2" *ngIf="!showTotpSection">
-
-        </div>
-
-
+        @if (!showTotpSection) {
+          <div class="divider my-2">
+          </div>
+        }
         <div class="divider my-2" [class.mt-3]="showTotpSection">
           <p class="card-text text-center"><small>
-              {{ '©' }} {{ coreConfig.app.appName }} {{ getCurrentDate() | date:'yyyy' }} - Todos los derechos
-              reservados
-              <br>
+            {{ '©' }} {{ coreConfig.app.appName }} {{ getCurrentDate() | date:'yyyy' }} - Todos los derechos
+            reservados
+            <br>
               {{version}}
               <br>
-              Versión: {{ fechaX }}
-            </small></p>
-        </div>
-      </div>
-    </div>
-    <!-- /Login v1 -->
-
-    <!-- <app-asistente-virtual></app-asistente-virtual> -->
-
-  </div>
-</div>
-
-
-
-<!-- Page content -->
-<div class="page" *ngIf="bdv">
-  <div class="border-0 contenedor" [ngStyle]="{'width': xWidth}">
-    <div class="left">
-      <div class="loginx">
-        <img src="assets/images/bdv/bdv.png" alt="LogoBDV" />
-      </div>
-      <div class="titulo">Sandra Server</div>
-    </div>
-    <div class="right">
-
-      <!-- Login Form -->
-      <ng-container *ngIf="!showTotpSection">
-        <form role="form" #form="ngForm" class="xform">
-          <br><br>
-          <h2 class="titulo" style="text-transform: uppercase; margin-bottom: 0; ">Consola</h2>
-
-          <input class="xinput" type="text" id="usuario" name="usuario" maxlength="12" placeholder="Usuario (*)"
-            (blur)="onLoginBlur($event)" autocomplete="off" [(ngModel)]="usuario"
-            [ngModelOptions]="{ standalone: true }" />
-
-
-          <input class="xinput" type="password" name="clave" id="clave" placeholder="Contraseña (*)" [(ngModel)]="clave"
-            [ngModelOptions]="{ standalone: true }" required />
-
-          <div class="row" style="margin-top: .5rem;">
-            <button type="submit" id="submit" class="xbutton primary" (click)="loginOpt()"
-              style="margin-right: .5rem;height: 30px;font-size: 13px;">
-              Ingresar
-            </button>
-
-
-          </div>
-
-          <div class="row">
-
-            <div class="separador" style="margin-top: 20px;"></div>
-            <br>
-            <div>
-              <p style="color: #494949; font-size: 11px; text-align: center;">
-                {{version}}
-                <br>
                 Versión: {{ fechaX }}
-              </p>
+              </small></p>
             </div>
           </div>
-        </form>
-
-      </ng-container>
-
-      <!-- TOTP Section -->
-      <ng-container *ngIf="showTotpSection">
-        <ng-container *ngTemplateOutlet="totpSection"></ng-container>
-
-      </ng-container>
-
-
-    </div>
-  </div>
-
-  <div class="row mt-5" style="width: 50%;">
-    <div class="col-6">
-    </div>
-
-    <div class="col-6 text-right">
-    </div>
-  </div>
-</div>
-
-<!-- Reusable TOTP Section Template -->
-<ng-template #totpSection>
-  <div class="totp-container text-center" (keydown.escape)="goBackToLogin()">
-    <span data-feather="shield" class="mb-2 text-primary" [size]="48"></span>
-    <h4 class="mb-1 font-weight-bolder">Verificación de Dos Pasos</h4>
-    <p class="card-text mb-2" style="color: #5d5d5d; padding: 5px;">
-      Abre tu aplicación de autenticación (ej. Google Authenticator) e ingresa el código de 6 dígitos.
-    </p>
-    <div class="otp-container" [class.shake]="isOtpInvalid">
-      <div class="otp-wrapper">
-        <input #otp0 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp1)"
-          (keydown)="onKeydown($event, null)" (paste)="onPaste($event)">
-        <input #otp1 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp2)"
-          (keydown)="onKeydown($event, otp0)">
-        <input #otp2 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp3)"
-          (keydown)="onKeydown($event, otp1)">
-
-        <span class="otp-divider"></span>
-
-        <input #otp3 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp4)"
-          (keydown)="onKeydown($event, otp2)">
-        <input #otp4 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp5)"
-          (keydown)="onKeydown($event, otp3)">
-        <input #otp5 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, null)"
-          (keydown)="onKeydown($event, otp4)">
+        </div>
+        <!-- /Login v1 -->
+        <!-- <app-asistente-virtual></app-asistente-virtual> -->
       </div>
-
-      <p *ngIf="isOtpInvalid" class="error-text">Código incorrecto. Inténtalo de nuevo.</p>
     </div>
-    <small *ngIf="isOtpInvalid" class="text-danger mt-1 d-block">El código ingresado es incorrecto. Inténtalo de
-      nuevo.</small>
+  }
 
-    <div class="mt-3">
-      <a href="javascript:void(0);" (click)="goBackToLogin()">
-        <i class="feather icon-chevron-left mr-25"></i>
-        <span>Volver al inicio de sesión</span>
-      </a>
-    </div>
-  </div>
-</ng-template>
+
+
+  <!-- Page content -->
+  @if (bdv) {
+    <div class="page">
+      <div class="border-0 contenedor" [ngStyle]="{'width': xWidth}">
+        <div class="left">
+          <div class="loginx">
+            <img src="assets/images/bdv/bdv.png" alt="LogoBDV" />
+          </div>
+          <div class="titulo">Sandra Server</div>
+        </div>
+        <div class="right">
+          <!-- Login Form -->
+          @if (!showTotpSection) {
+            <form role="form" #form="ngForm" class="xform">
+              <br><br>
+              <h2 class="titulo" style="text-transform: uppercase; margin-bottom: 0; ">Consola</h2>
+              <input class="xinput" type="text" id="usuario" maxlength="12" placeholder="Usuario (*)"
+                (blur)="onLoginBlur($event)" autocomplete="off" [formControl]="usuarioCtrl" />
+              <input class="xinput" type="password" id="clave" placeholder="Contraseña (*)" [formControl]="claveCtrl"
+                required />
+              <div class="row" style="margin-top: .5rem;">
+                <button type="submit" id="submit" class="xbutton primary" (click)="loginOpt()"
+                  style="margin-right: .5rem;height: 30px;font-size: 13px;">
+                  Ingresar
+                </button>
+              </div>
+              <div class="row">
+                <div class="separador" style="margin-top: 20px;"></div>
+                <br>
+                  <div>
+                    <p style="color: #494949; font-size: 11px; text-align: center;">
+                      {{version}}
+                      <br>
+                        Versión: {{ fechaX }}
+                      </p>
+                    </div>
+                  </div>
+                </form>
+              }
+              <!-- TOTP Section -->
+              @if (showTotpSection) {
+                <ng-container *ngTemplateOutlet="totpSection"></ng-container>
+              }
+            </div>
+          </div>
+          <div class="row mt-5" style="width: 50%;">
+            <div class="col-6">
+            </div>
+            <div class="col-6 text-right">
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Reusable TOTP Section Template -->
+      <ng-template #totpSection>
+        <div class="totp-container text-center" (keydown.escape)="goBackToLogin()">
+          <span data-feather="shield" class="mb-2 text-primary" [size]="48"></span>
+          <h4 class="mb-1 font-weight-bolder">Verificación de Dos Pasos</h4>
+          <p class="card-text mb-2" style="color: #5d5d5d; padding: 5px;">
+            Abre tu aplicación de autenticación (ej. Google Authenticator) e ingresa el código de 6 dígitos.
+          </p>
+          <div class="otp-container" [class.shake]="isOtpInvalid">
+            <div class="otp-wrapper">
+              <input #otp0 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp1)"
+                (keydown)="onKeydown($event, null)" (paste)="onPaste($event)">
+              <input #otp1 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp2)"
+                (keydown)="onKeydown($event, otp0)">
+              <input #otp2 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp3)"
+                (keydown)="onKeydown($event, otp1)">
+
+              <span class="otp-divider"></span>
+
+              <input #otp3 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp4)"
+                (keydown)="onKeydown($event, otp2)">
+              <input #otp4 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, otp5)"
+                (keydown)="onKeydown($event, otp3)">
+              <input #otp5 type="tel" class="otp-box" maxlength="1" (input)="onInput($event, null)"
+                (keydown)="onKeydown($event, otp4)">
+            </div>
+
+            @if (isOtpInvalid) {
+              <p class="error-text">Código incorrecto. Inténtalo de nuevo.</p>
+            }
+          </div>
+          @if (isOtpInvalid) {
+            <small class="text-danger mt-1 d-block">El código ingresado es incorrecto. Inténtalo de
+            nuevo.</small>
+          }
+
+          <div class="mt-3">
+            <a href="javascript:void(0);" (click)="goBackToLogin()">
+              <i class="feather icon-chevron-left mr-25"></i>
+              <span>Volver al inicio de sesión</span>
+            </a>
+          </div>
+        </div>
+      </ng-template>

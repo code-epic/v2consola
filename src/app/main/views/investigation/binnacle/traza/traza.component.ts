@@ -1,5 +1,12 @@
-import { Component, OnInit, ViewEncapsulation, NgZone, ChangeDetectorRef } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, OnInit, ViewEncapsulation, NgZone, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule, ActivatedRoute } from "@angular/router";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { CoreCommonModule } from "@core/common.module";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { environment } from "environments/environment";
 import * as jspdf from 'jspdf';
@@ -10,16 +17,31 @@ import 'jspdf-autotable';
     templateUrl: './traza.component.html',
     styleUrls: ['./traza.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        NgbModule,
+        CoreCommonModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        ContentHeaderComponent
+    ]
 })
 export class TrazaComponent implements OnInit {
 
   public contentHeader: any;
-  public usuarios: any[] = [];
-  public selectedUser: any = null;
-  public logs: any[] = [];
-  public loadingLogs = false; // Estado para el progress bar sutil
-  public currentStep: number = 1;
+  private _usuarios = signal<any[]>([]);
+  get usuarios() { return this._usuarios(); }
+  private _selectedUser = signal<any>(null);
+  get selectedUser() { return this._selectedUser(); }
+  private _logs = signal<any[]>([]);
+  get logs() { return this._logs(); }
+  private _loadingLogs = signal<boolean>(false);
+  get loadingLogs() { return this._loadingLogs(); }
+  private _currentStep = signal<number>(1);
+  get currentStep() { return this._currentStep(); }
 
   // Pagination for Logs
   public page: number = 1;
@@ -29,15 +51,8 @@ export class TrazaComponent implements OnInit {
   public userPage: number = 1;
   public userPageSize: number = 25; // 25 cards per page
 
-  private _searchText: string = '';
-  public get searchText(): string {
-    return this._searchText;
-  }
-  public set searchText(value: string) {
-    this._searchText = value;
-    this.userPage = 1; // Reset to first page on search
-    this.page = 1;     // Reset log page as well
-  }
+  searchTextCtrl = new FormControl('');
+  get searchText() { return this.searchTextCtrl.value; }
 
   public xAPI: IAPICore = {
     funcion: '',
@@ -48,25 +63,29 @@ export class TrazaComponent implements OnInit {
     version: '',
   }
 
-  public appData: any = null;
+  private _appData = signal<any>(null);
+  get appData() { return this._appData(); }
 
   constructor(
     private route: ActivatedRoute,
     private apiService: ApiService,
     private zone: NgZone, // Importante para streaming
-    private cdr: ChangeDetectorRef // Para detectar cambios en streaming
   ) { }
 
   ngOnInit(): void {
+    this.searchTextCtrl.valueChanges.subscribe(() => {
+      this.userPage = 1;
+      this.page = 1;
+    });
     this.route.params.subscribe(params => {
       const appIdEncoded = params['id'];
       if (appIdEncoded) {
         try {
-          this.appData = JSON.parse(atob(appIdEncoded));
-          console.log('[TrazaComponent] AppData Decodificada:', this.appData);
+          this._appData.set(JSON.parse(atob(appIdEncoded)));
+          console.log('[TrazaComponent] AppData Decodificada:', this._appData());
         } catch (e) {
           console.error('[TrazaComponent] Error decodificando appId:', e);
-          this.appData = { id: appIdEncoded, nombre: appIdEncoded }; // Fallback
+          this._appData.set({ id: appIdEncoded, nombre: appIdEncoded }); // Fallback
         }
         this.cargarUsuarios();
       }
@@ -100,8 +119,7 @@ export class TrazaComponent implements OnInit {
       (data: any[]) => {
         if (!data) return;
         console.log(data);
-        this.usuarios = data;
-        this.cdr.detectChanges(); // Asegura que la vista se actualice con los usuarios cargados
+        this._usuarios.set(data);
       },
       (error) => {
         console.error(error);
@@ -110,9 +128,9 @@ export class TrazaComponent implements OnInit {
   }
 
   selectUser(user: any) {
-    this.selectedUser = user;
+    this._selectedUser.set(user);
     this.cargarLogs(user.login || user.usuario || user.cedula);
-    this.currentStep = 2;
+    this._currentStep.set(2);
   }
   
   get filteredUsers() {
@@ -165,8 +183,8 @@ export class TrazaComponent implements OnInit {
   }
 
   async cargarLogs(login: string) {
-    this.logs = []; // Limpiar para carga progresiva
-    this.loadingLogs = true; // El set inicial suele detectarse bien
+    this._logs.set([]); // Limpiar para carga progresiva
+    this._loadingLogs.set(true); // El set inicial suele detectarse bien
 
     try {
       this.xAPI.funcion = environment.functions.CONSULTAR_APPS_USUARIO_LOGS;
@@ -177,7 +195,7 @@ export class TrazaComponent implements OnInit {
       await this.apiService.postStream<any>('crudstream', this.xAPI, (row) => {
         // Ejecutamos dentro de la zona para que Angular detecte los cambios de streaming
         this.zone.run(() => {
-          this.logs.push(row);
+          this._logs.update(current => [...current, row]);
         });
       });
 
@@ -186,14 +204,13 @@ export class TrazaComponent implements OnInit {
     } finally {
       // Forzamos el fin también en la zona
       this.zone.run(() => {
-        this.loadingLogs = false;
+        this._loadingLogs.set(false);
       });
-      this.cdr.detectChanges();
     }
   }
 
   goToStep(step: number) {
-    this.currentStep = step;
+    this._currentStep.set(step);
   }
 
   exportCSV() {

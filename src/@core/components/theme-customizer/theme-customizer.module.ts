@@ -11,14 +11,16 @@ import { SystemInfoComponent } from '@core/components/system-info/system-info.co
 import { TaskMonitorComponent } from '../task-monitor/task-monitor.component';
 
 @NgModule({
-  declarations: [CoreThemeCustomizerComponent, SystemInfoComponent, TaskMonitorComponent],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
     CoreDirectivesModule,
     CoreSidebarModule,
-    NgbNavModule
+    NgbNavModule,
+    TaskMonitorComponent,
+    SystemInfoComponent,
+    CoreThemeCustomizerComponent
   ],
   exports: [CoreThemeCustomizerComponent]
 })

@@ -1,12 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { NgbActiveModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CoreCommonModule } from '@core/common.module';
 import { UtilService } from '@services/util/util.service';
 
 @Component({
     selector: 'app-error-modal',
     templateUrl: './error-modal.component.html',
     styleUrls: ['./error-modal.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [NgbModule, CoreCommonModule]
 })
 export class ErrorModalComponent implements OnInit {
   @Input() errorText: string;

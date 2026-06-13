@@ -3,7 +3,7 @@ import * as SqlFormatter from 'sql-formatter';
 
 @Pipe({
     name: 'sqlFormat',
-    standalone: false
+    standalone: true
 })
 export class SqlFormatPipe implements PipeTransform {
   transform(value: string): string {

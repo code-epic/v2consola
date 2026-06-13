@@ -1,6 +1,8 @@
-import { Component, OnInit, OnDestroy, TemplateRef, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { ColumnMode } from '@swimlane/ngx-datatable';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, OnDestroy, TemplateRef, ViewChild, ChangeDetectionStrategy, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { ColumnMode, NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 import { Router, NavigationEnd } from '@angular/router';
@@ -12,6 +14,8 @@ import { ErrorHandlerService } from '@services/github/error-handler.service';
 import { IssueStatusService, IssueStatusChangeResponse } from '@services/github/issue-status.service';
 import { Issue } from '@services/github/interfaces/issue.interface';
 import { Application } from '@services/github/interfaces/application.interface';
+import { CoreCommonModule } from '@core/common.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 import jwt_decode from "jwt-decode";
 
 
@@ -20,7 +24,15 @@ import jwt_decode from "jwt-decode";
     templateUrl: './issues.component.html',
     styleUrls: ['./issues.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    standalone: true,
+    imports: [
+        CoreCommonModule,
+        RouterModule,
+        NgbModule,
+        ContentHeaderComponent,
+        NgxDatatableModule,
+        ReactiveFormsModule
+    ]
 })
 export class IssuesComponent implements OnInit, OnDestroy {
 
@@ -32,13 +44,28 @@ export class IssuesComponent implements OnInit, OnDestroy {
   private sessionMessagesSub: Subscription | undefined;
   private sessionStatusSub: Subscription | undefined;
 
-  // Component state
-  public aplicacionSeleccionada: Application | null = null;
-  public searchValue: string = '';
-  public basicSelectedOption: number = 10;
-  public showIssuesTable: boolean = false;
-  public selectedIssue: Issue | null = null;
-  public showDetailView: boolean = false;
+  // ========================================
+  // SIGNAL-BASED STATE
+  // ========================================
+  private _aplicacionSeleccionada = signal<Application | null>(null);
+  get aplicacionSeleccionada() { return this._aplicacionSeleccionada(); }
+
+  private _searchValue = signal<string>('');
+  get searchValue() { return this._searchValue(); }
+
+  searchValueCtrl = new FormControl('');
+  basicSelectedOptionCtrl = new FormControl(10);
+  selectedUsuarioCtrl = new FormControl('');
+
+  private _showIssuesTable = signal<boolean>(false);
+  get showIssuesTable() { return this._showIssuesTable(); }
+
+  private _selectedIssue = signal<Issue | null>(null);
+  get selectedIssue() { return this._selectedIssue(); }
+
+  private _showDetailView = signal<boolean>(false);
+  get showDetailView() { return this._showDetailView(); }
+
   private userId: string = '';
 
   // Reactive observables from services
@@ -63,45 +90,69 @@ export class IssuesComponent implements OnInit, OnDestroy {
   public ColumnMode = ColumnMode;
 
   // Local state for template compatibility (updated by observables)
-  public aplicaciones: Application[] = [];
+  private _aplicaciones = signal<Application[]>([]);
+  get aplicaciones() { return this._aplicaciones(); }
+
   // Lista que se muestra (posiblemente filtrada por usuario)
-  public displayedAplicaciones: Application[] = [];
-  public loadingIssues = false;
+  private _displayedAplicaciones = signal<Application[]>([]);
+  get displayedAplicaciones() { return this._displayedAplicaciones(); }
+
+  private _loadingIssues = signal<boolean>(false);
+  get loadingIssues() { return this._loadingIssues(); }
 
   // ========================================
   // ENHANCED UX LOADING STATES
   // ========================================
 
   // Granular loading states for better UX
-  public isInitialLoading = true;
-  public isApplicationsLoading = false;
-  public isIssuesLoading = false;
-  public isSearching = false;
+  private _isInitialLoading = signal<boolean>(true);
+  get isInitialLoading() { return this._isInitialLoading(); }
+
+  private _isApplicationsLoading = signal<boolean>(false);
+  get isApplicationsLoading() { return this._isApplicationsLoading(); }
+
+  private _isIssuesLoading = signal<boolean>(false);
+  get isIssuesLoading() { return this._isIssuesLoading(); }
+
+  private _isSearching = signal<boolean>(false);
+  get isSearching() { return this._isSearching(); }
 
   // Error states with user-friendly messages
-  public applicationsError: string | null = null;
-  public issuesError: string | null = null;
+  private _applicationsError = signal<string | null>(null);
+  get applicationsError() { return this._applicationsError(); }
+
+  private _issuesError = signal<string | null>(null);
+  get issuesError() { return this._issuesError(); }
 
   // Success states for positive feedback
-  public showSuccessMessage = false;
-  public successMessage = '';
+  private _showSuccessMessage = signal<boolean>(false);
+  get showSuccessMessage() { return this._showSuccessMessage(); }
+
+  private _successMessage = signal<string>('');
+  get successMessage() { return this._successMessage(); }
 
   // ========================================
   // BLOCKING LOADING STATES (Full Screen)
   // ========================================
 
   // Bloquear toda la interfaz hasta que las aplicaciones estén listas
-  public showApplicationsLoadingScreen = true;
+  private _showApplicationsLoadingScreen = signal<boolean>(true);
+  get showApplicationsLoadingScreen() { return this._showApplicationsLoadingScreen(); }
 
   // Bloquear la tabla de issues hasta que estén listas
-  public showIssuesLoadingScreen = false;
+  private _showIssuesLoadingScreen = signal<boolean>(false);
+  get showIssuesLoadingScreen() { return this._showIssuesLoadingScreen(); }
 
   // Mensajes de carga personalizados
-  public loadingMessage = 'Cargando aplicaciones...';
-  public loadingSubMessage = 'Conectando con el servidor';
+  private _loadingMessage = signal<string>('Cargando aplicaciones...');
+  get loadingMessage() { return this._loadingMessage(); }
+
+  private _loadingSubMessage = signal<string>('Conectando con el servidor');
+  get loadingSubMessage() { return this._loadingSubMessage(); }
 
   // Control de visibilidad de contenido
-  public showMainContent = false;
+  private _showMainContent = signal<boolean>(false);
+  get showMainContent() { return this._showMainContent(); }
 
   // ========================================
   // PRE-SELECCIÓN DE USUARIO PARA APPS/ISSUES
@@ -109,10 +160,14 @@ export class IssuesComponent implements OnInit, OnDestroy {
   // Datos crudos desde SEC (_SYS_LstAplicaciones) para extraer usuarios y mapear repos
   private secAplicaciones: any[] = [];
   // Usuarios disponibles extraídos de SEC (únicos)
-  public usuariosDisponibles: { usua: string; pass: string }[] = [];
-  public selectedUsuario: string = '';
+  private _usuariosDisponibles = signal<{ usua: string; pass: string }[]>([]);
+  get usuariosDisponibles() { return this._usuariosDisponibles(); }
+
+  private _selectedUsuario = signal<string>('');
+  get selectedUsuario() { return this._selectedUsuario(); }
+
   private selectedPass: string = '';
-  private userName = ''
+  private userName = '';
 
   constructor(
     private modalService: NgbModal,
@@ -122,7 +177,6 @@ export class IssuesComponent implements OnInit, OnDestroy {
     private applicationsService: ApplicationsService,
     private errorHandler: ErrorHandlerService,
     private issueStatusService: IssueStatusService,
-    private cdr: ChangeDetectorRef,
     private router: Router
   ) {
     // Initialize reactive observables from services
@@ -142,13 +196,9 @@ export class IssuesComponent implements OnInit, OnDestroy {
     // Subscribe to applications changes for automatic UI updates
     this.applications$.pipe(takeUntil(this.destroy$)).subscribe(applications => {
       console.log(`🔄 Aplicaciones actualizadas automáticamente: ${applications.length}`);
-      // Update local arrays for template compatibility
-      this.aplicaciones = applications;
+      this._aplicaciones.set(applications);
       console.log('🎯 UI actualizada con aplicaciones:', applications.slice(0, 3).map(app => app.name));
-      // Actualizar lista visible según filtro de usuario (si existe)
       this.applyUserFilter();
-      // Trigger change detection for OnPush
-      this.cdr.markForCheck();
     });
   }
 
@@ -162,15 +212,15 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log('🚀 Iniciando componente Issues - SIEMPRE recargando aplicaciones');
     console.log('📍 UserId:', this.userId);
     // Paso 1: solo mostrar el selector de usuario (no cargar aplicaciones todavía)
-    this.showMainContent = true;
-    this.showApplicationsLoadingScreen = false;
+    this._showMainContent.set(true);
+    this._showApplicationsLoadingScreen.set(false);
     // Por ahora usuarios "quemados" (hasta tener servicio SEC)
-    this.usuariosDisponibles = [
+    this._usuariosDisponibles.set([
       { usua: 'admin', pass: '' },
       { usua: 'dev', pass: '' },
       { usua: 'ops', pass: '' }
-    ];
-    this.selectedUsuario = '';
+    ]);
+    this._selectedUsuario.set('');
 
     // No cargar issues automáticamente - solo mostrar cards
     // Subscribe to WebSocket messages with professional error handling
@@ -296,7 +346,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     };
 
     // Inicializar en modo cards (no cargar tabla automáticamente)
-    this.showIssuesTable = false;
+    this._showIssuesTable.set(false);
     console.log('🏠 Módulo iniciado - Mostrando cards de aplicaciones');
   }
 
@@ -312,7 +362,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log('  - aplicacionSeleccionada:', this.aplicacionSeleccionada?.name || 'ninguna');
 
     // Establecer la aplicación seleccionada
-    this.aplicacionSeleccionada = aplicacion;
+    this._aplicacionSeleccionada.set(aplicacion);
 
     // Limpiar issues anteriores usando el servicio
     this.githubIssuesService.clearIssues();
@@ -320,7 +370,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     // Mostrar pantalla de carga bloqueante para issues
     this.showIssuesLoading();
     this.setIssuesLoading(true);
-    this.showIssuesTable = true; // Mostrar la tabla inmediatamente con loading
+    this._showIssuesTable.set(true); // Mostrar la tabla inmediatamente con loading
 
     console.log('🔍 DEBUG - Estado después de selección:');
     console.log('  - showIssuesTable:', this.showIssuesTable);
@@ -331,7 +381,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log('⏳ Estado de carga activado');
 
     // Trigger change detection for OnPush
-    this.cdr.markForCheck();
+    
 
     // Cargar issues inmediatamente (sin delay artificial)
     console.log('🚀 Iniciando carga de issues inmediatamente');
@@ -343,7 +393,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
    */
   filterUpdate(event: any): void {
     const searchTerm = event.target.value;
-    this.searchValue = searchTerm;
+    this.searchValueCtrl.setValue(searchTerm, {emitEvent: false});
+    this._searchValue.set(searchTerm);
 
     // Show search loading state for better UX
     this.setSearchLoading(true);
@@ -364,7 +415,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * Clear search input and reset filter
    */
   clearSearch(): void {
-    this.searchValue = '';
+    this._searchValue.set('');
+    this.searchValueCtrl.setValue('');
     this.filterUpdate({ target: { value: '' } });
     console.log('🧹 Búsqueda limpiada');
   }
@@ -555,17 +607,17 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log('🧹 Reseteando COMPLETAMENTE el estado del componente...');
 
     // Limpiar selección actual
-    this.aplicacionSeleccionada = null;
-    this.selectedIssue = null;
-    this.showDetailView = false;
-    this.showIssuesTable = false;
+    this._aplicacionSeleccionada.set(null);
+    this._selectedIssue.set(null);
+    this._showDetailView.set(false);
+    this._showIssuesTable.set(false);
 
     // Limpiar servicios COMPLETAMENTE
     this.applicationsService.clearApplications();
     this.githubIssuesService.clearIssues();
 
     // Resetear TODOS los estados de carga
-    this.loadingIssues = false;
+    this._loadingIssues.set(false);
 
     // Limpiar suscripciones anteriores si existen
     if (this.sessionMessagesSub) {
@@ -673,12 +725,12 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * Clear selection
    */
   limpiar(): void {
-    this.aplicacionSeleccionada = null;
-    this.showIssuesTable = false;
+    this._aplicacionSeleccionada.set(null);
+    this._showIssuesTable.set(false);
     this.githubIssuesService.clearIssues(); // Usar servicio en lugar de array local
-    this.searchValue = '';
+    this._searchValue.set('');
     // Trigger change detection for OnPush
-    this.cdr.markForCheck();
+    
   }
 
   /**
@@ -710,20 +762,20 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * View issue details
    */
   verDetalle(issue: Issue): void {
-    this.selectedIssue = issue;
-    this.showDetailView = true;
+    this._selectedIssue.set(issue);
+    this._showDetailView.set(true);
     // Trigger change detection for OnPush
-    this.cdr.markForCheck();
+    
   }
 
   /**
    * Close detail view
    */
   cerrarDetalle(): void {
-    this.showDetailView = false;
-    this.selectedIssue = null;
+    this._showDetailView.set(false);
+    this._selectedIssue.set(null);
     // Trigger change detection for OnPush
-    this.cdr.markForCheck();
+    
   }
 
   /**
@@ -816,8 +868,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * Set applications loading state with UX feedback
    */
   private setApplicationsLoading(loading: boolean, error: string | null = null): void {
-    this.isApplicationsLoading = loading;
-    this.applicationsError = error;
+    this._isApplicationsLoading.set(loading);
+    this._applicationsError.set(error);
 
     if (loading) {
       console.log('🔄 Applications loading started...');
@@ -828,16 +880,16 @@ export class IssuesComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.cdr.markForCheck();
+    
   }
 
   /**
    * Set issues loading state with UX feedback
    */
   private setIssuesLoading(loading: boolean, error: string | null = null): void {
-    this.isIssuesLoading = loading;
-    this.loadingIssues = loading; // Keep compatibility
-    this.issuesError = error;
+    this._isIssuesLoading.set(loading);
+    this._loadingIssues.set(loading); // Keep compatibility
+    this._issuesError.set(error);
 
     if (loading) {
       console.log('🔄 Issues loading started...');
@@ -845,15 +897,15 @@ export class IssuesComponent implements OnInit, OnDestroy {
       console.log('✅ Issues loading completed');
     }
 
-    this.cdr.markForCheck();
+    
   }
 
   /**
    * Set search loading state
    */
   private setSearchLoading(loading: boolean): void {
-    this.isSearching = loading;
-    this.cdr.markForCheck();
+    this._isSearching.set(loading);
+    
   }
 
   /**
@@ -861,9 +913,9 @@ export class IssuesComponent implements OnInit, OnDestroy {
    */
   private hideSuccessMessage(): void {
     setTimeout(() => {
-      this.showSuccessMessage = false;
-      this.successMessage = '';
-      this.cdr.markForCheck();
+      this._showSuccessMessage.set(false);
+      this._successMessage.set('');
+
     }, 3000);
   }
 
@@ -871,8 +923,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * Set initial loading complete
    */
   private setInitialLoadingComplete(): void {
-    this.isInitialLoading = false;
-    this.cdr.markForCheck();
+    this._isInitialLoading.set(false);
+    
   }
 
   // ========================================
@@ -883,22 +935,22 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * Show applications loading screen (blocks entire UI)
    */
   private showApplicationsLoading(): void {
-    this.showApplicationsLoadingScreen = true;
-    this.showMainContent = false;
-    this.loadingMessage = 'Cargando aplicaciones...';
-    this.loadingSubMessage = 'Conectando con el servidor y obteniendo datos';
+    this._showApplicationsLoadingScreen.set(true);
+    this._showMainContent.set(false);
+    this._loadingMessage.set('Cargando aplicaciones...');
+    this._loadingSubMessage.set('Conectando con el servidor y obteniendo datos');
     console.log('🔄 Mostrando pantalla de carga de aplicaciones');
-    this.cdr.markForCheck();
+    
   }
 
   /**
    * Hide applications loading screen and show main content
    */
   private hideApplicationsLoading(): void {
-    this.showApplicationsLoadingScreen = false;
-    this.showMainContent = true;
+    this._showApplicationsLoadingScreen.set(false);
+    this._showMainContent.set(true);
     console.log('✅ Ocultando pantalla de carga - aplicaciones listas');
-    this.cdr.markForCheck();
+    
   }
 
   // ========================================
@@ -941,9 +993,9 @@ export class IssuesComponent implements OnInit, OnDestroy {
                 mapUsers.set(u, p || '');
               }
             }
-            this.usuariosDisponibles = Array.from(mapUsers.entries()).map(([usua, pass]) => ({ usua, pass }));
+            this._usuariosDisponibles.set(Array.from(mapUsers.entries()).map(([usua, pass]) => ({ usua, pass })));
             console.log('👥 Usuarios disponibles (SEC):', this.usuariosDisponibles.map(u => u.usua));
-            this.cdr.markForCheck();
+      
           },
           error: (error: any) => {
             console.error('❌ Error cargando usuarios desde SEC:', error);
@@ -959,7 +1011,8 @@ export class IssuesComponent implements OnInit, OnDestroy {
    * Handler al cambiar el usuario en el selector
    */
   public onUsuarioChange(usua: string): void {
-    this.selectedUsuario = usua || '';
+    this._selectedUsuario.set(usua || '');
+    this.selectedUsuarioCtrl.setValue(usua || '', {emitEvent: false});
     const found = this.usuariosDisponibles.find(u => u.usua === this.selectedUsuario);
     this.selectedPass = found?.pass || '';
     console.log('👤 Usuario seleccionado:', this.selectedUsuario);
@@ -970,10 +1023,10 @@ export class IssuesComponent implements OnInit, OnDestroy {
       this.forceApplicationsReload();
     } else {
       // Si limpia la selección, limpiar UI
-      this.displayedAplicaciones = [];
-      this.aplicacionSeleccionada = null;
-      this.showIssuesTable = false;
-      this.cdr.markForCheck();
+      this._displayedAplicaciones.set([]);
+      this._aplicacionSeleccionada.set(null);
+      this._showIssuesTable.set(false);
+
     }
   }
 
@@ -982,16 +1035,17 @@ export class IssuesComponent implements OnInit, OnDestroy {
    */
   public resetUserSelection(): void {
     console.log('↩️ Volver a selección de usuario');
-    this.selectedUsuario = '';
+    this._selectedUsuario.set('');
+    this.selectedUsuarioCtrl.setValue('');
     this.selectedPass = '';
-    this.displayedAplicaciones = [];
-    this.aplicacionSeleccionada = null;
-    this.showIssuesTable = false;
-    this.applicationsError = null as any; // mantener tipados previos
-    this.loadingMessage = '';
-    this.loadingSubMessage = '';
-    this.showApplicationsLoadingScreen = false;
-    this.cdr.markForCheck();
+    this._displayedAplicaciones.set([]);
+    this._aplicacionSeleccionada.set(null);
+    this._showIssuesTable.set(false);
+    this._applicationsError.set(null as any); // mantener tipados previos
+    this._loadingMessage.set('');
+    this._loadingSubMessage.set('');
+    this._showApplicationsLoadingScreen.set(false);
+    
   }
 
   /**
@@ -1000,7 +1054,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
    */
   private applyUserFilter(): void {
     if (!this.selectedUsuario) {
-      this.displayedAplicaciones = this.aplicaciones.slice();
+      this._displayedAplicaciones.set(this.aplicaciones.slice());
       return;
     }
 
@@ -1015,13 +1069,13 @@ export class IssuesComponent implements OnInit, OnDestroy {
     }
 
     // Filtrar aplicaciones cargadas
-    this.displayedAplicaciones = this.aplicaciones.filter(a => {
+    this._displayedAplicaciones.set(this.aplicaciones.filter(a => {
       const repo = (a.repository || a.name || '').toString().toLowerCase();
       return reposUsuario.size === 0 ? true : reposUsuario.has(repo);
-    });
+    }));
 
     console.log(`🎯 Aplicaciones filtradas para ${this.selectedUsuario}: ${this.displayedAplicaciones.length}`);
-    this.cdr.markForCheck();
+    
   }
 
   /**
@@ -1031,16 +1085,16 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log('🔄 INICIANDO showIssuesLoading()');
     console.log('  - showIssuesLoadingScreen ANTES:', this.showIssuesLoadingScreen);
 
-    this.showIssuesLoadingScreen = true;
-    this.loadingMessage = 'Cargando issues...';
-    this.loadingSubMessage = `Obteniendo issues de ${this.aplicacionSeleccionada?.name || 'la aplicación'}`;
+    this._showIssuesLoadingScreen.set(true);
+    this._loadingMessage.set('Cargando issues...');
+    this._loadingSubMessage.set(`Obteniendo issues de ${this.aplicacionSeleccionada?.name || 'la aplicación'}`);
 
     console.log('  - showIssuesLoadingScreen DESPUÉS:', this.showIssuesLoadingScreen);
     console.log('  - loadingMessage:', this.loadingMessage);
     console.log('  - loadingSubMessage:', this.loadingSubMessage);
     console.log('🔄 Pantalla de carga de issues ACTIVADA');
 
-    this.cdr.markForCheck();
+    
   }
 
   /**
@@ -1050,23 +1104,23 @@ export class IssuesComponent implements OnInit, OnDestroy {
     console.log('✅ INICIANDO hideIssuesLoading()');
     console.log('  - showIssuesLoadingScreen ANTES:', this.showIssuesLoadingScreen);
 
-    this.showIssuesLoadingScreen = false;
+    this._showIssuesLoadingScreen.set(false);
 
     console.log('  - showIssuesLoadingScreen DESPUÉS:', this.showIssuesLoadingScreen);
     console.log('✅ Pantalla de carga de issues DESACTIVADA');
 
-    this.cdr.markForCheck();
+    
   }
 
   /**
    * Update loading message dynamically
    */
   private updateLoadingMessage(message: string, subMessage?: string): void {
-    this.loadingMessage = message;
+    this._loadingMessage.set(message);
     if (subMessage) {
-      this.loadingSubMessage = subMessage;
+      this._loadingSubMessage.set(subMessage!);
     }
-    this.cdr.markForCheck();
+    
   }
 
 
@@ -1094,7 +1148,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
 
           // Mostrar tabla si hay aplicación seleccionada (con loading overlay)
           if (this.aplicacionSeleccionada) {
-            this.showIssuesTable = true;
+            this._showIssuesTable.set(true);
             console.log('👁️ Aplicación seleccionada, mostrando tabla con overlay de carga');
           }
         },
@@ -1144,13 +1198,13 @@ export class IssuesComponent implements OnInit, OnDestroy {
           // Info toast deshabilitado por solicitud del usuario
 
           // Actualizar lista para compatibilidad con el template
-          this.aplicaciones = applications;
+          this._aplicaciones.set(applications);
 
           console.log('🎯 Cards de aplicaciones listas para mostrar:', this.aplicaciones.length);
 
           // Asegurar que NO se muestre la tabla de issues automáticamente
-          this.showIssuesTable = false;
-          this.aplicacionSeleccionada = null;
+          this._showIssuesTable.set(false);
+          this._aplicacionSeleccionada.set(null);
 
           console.log('🏠 Mostrando cards de aplicaciones - tabla oculta');
 
@@ -1264,7 +1318,7 @@ export class IssuesComponent implements OnInit, OnDestroy {
 
       // SOLO mostrar la tabla si ya hay una aplicación seleccionada
       if (this.aplicacionSeleccionada) {
-        this.showIssuesTable = true;
+        this._showIssuesTable.set(true);
         // Finalizar estado de carga con UX mejorado
         this.setIssuesLoading(false);
 

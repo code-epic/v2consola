@@ -34,7 +34,6 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [HomeComponent],
   imports: [
     RouterModule.forChild(routes),
     ContentHeaderModule,
@@ -42,10 +41,10 @@ const routes = [
     CoreCommonModule,
     CommonModule,
     NgxDatatableModule,
-    CoreCommonModule,
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
+    HomeComponent
   ],
   exports: [HomeComponent]
 })

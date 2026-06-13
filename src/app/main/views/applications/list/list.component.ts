@@ -1,4 +1,7 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import {
   ColumnMode,
   DatatableComponent,
@@ -15,9 +18,16 @@ import {
   NgbModal,
   NgbActiveModal,
   NgbModalConfig,
+  NgbModule,
 } from "@ng-bootstrap/ng-bootstrap";
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "@services/apicore/task.service";
+import { CoreCommonModule } from "@core/common.module";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 
 @Component({
     selector: "app-list",
@@ -25,7 +35,19 @@ import { TaskService } from "@services/apicore/task.service";
     styleUrls: ["./list.component.scss"],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        NgbModule,
+        CoreCommonModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        ContentHeaderComponent,
+        NgSelectModule,
+        NgxDatatableModule
+    ]
 })
 export class ListComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
@@ -80,7 +102,8 @@ export class ListComponent implements OnInit {
 
   public rowData = [];
 
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
   public lenguaje = [
     { id: 1, name: "PHP" },
     { id: 0, name: "TSC" },
@@ -95,6 +118,10 @@ export class ListComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public SelectionType = SelectionType;
 
+  searchValueCtrl = new FormControl('')
+  origenCtrl = new FormControl('')
+  destinoCtrl = new FormControl('')
+  mensajeCtrl = new FormControl('')
   public searchValue: string = ''
   public origen: string = ''
   public destino: string = ''
@@ -107,7 +134,6 @@ export class ListComponent implements OnInit {
     private msjService: WsocketsService,
     private modalService: NgbModal,
     private utilservice: UtilService,
-    private cdr: ChangeDetectorRef
   ) { }
 
   async ngOnInit() {
@@ -315,7 +341,7 @@ export class ListComponent implements OnInit {
 
   async Merge() {
 
-    if (this.mensaje == '' || this.destino == '' || this.origen == '') {
+    if (this.mensajeCtrl.value == '' || this.destinoCtrl.value == '' || this.origenCtrl.value == '') {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar todos los campos', 3000)
       return false;
     }
@@ -324,9 +350,9 @@ export class ListComponent implements OnInit {
     this.fnx = {
       funcion: nameFnx,
       proyecto: this.proyecto,
-      mensaje: this.mensaje,
-      origen: this.origen,
-      destino: this.destino
+      mensaje: this.mensajeCtrl.value,
+      origen: this.origenCtrl.value,
+      destino: this.destinoCtrl.value
     };
 
     // console.log(this.fnx)
@@ -424,7 +450,7 @@ export class ListComponent implements OnInit {
   }
 
   CargarListaAplicaciones() {
-    this.isLoading = true;
+    this._isLoading.set(true);
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.parametros = "";
     this.ListaAplicaciones = [];
@@ -435,13 +461,11 @@ export class ListComponent implements OnInit {
         });
         this.rowData = this.ListaAplicaciones;
         this.tempData = this.rowData;
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       error: (error) => {
         console.log(error);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     });
   }

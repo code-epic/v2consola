@@ -1,10 +1,14 @@
-import { Component, OnInit, NgZone, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, NgZone, signal, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { LoginService } from '@services/seguridad/login.service';
 
-import { Subject } from 'rxjs'; // Import timer
+import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CoreCommonModule } from '@core/common.module';
 
 
 interface LogoutStep {
@@ -17,15 +21,19 @@ interface LogoutStep {
     selector: 'app-logout',
     templateUrl: './logout.component.html',
     styleUrls: ['./logout.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, RouterModule, NgbModule, CoreCommonModule]
 })
 export class LogoutComponent implements OnInit, OnDestroy {
-  public steps: LogoutStep[] = [
+  private _steps = signal<LogoutStep[]>([
     { key: 'SERVER_LOGOUT', label: 'Finalizando sesión en el servidor', status: 'pending' },
     { key: 'CLEAR_SESSION', label: 'Limpiando datos de la sesión local', status: 'pending' },
     { key: 'REDIRECT', label: 'Redirigiendo', status: 'pending' }
-  ];
-  public finalMessage: string = '';
+  ]);
+  get steps() { return this._steps(); }
+
+  private _finalMessage = signal('');
+  get finalMessage() { return this._finalMessage(); }
   // Mapea los mensajes del servicio a las claves de los pasos
   private messageToStepKey: { [message: string]: string } = {
     'Finalizando sesión en el servidor...': 'SERVER_LOGOUT',
@@ -45,7 +53,6 @@ export class LogoutComponent implements OnInit, OnDestroy {
     private _coreConfigService: CoreConfigService, 
     private loginService: LoginService,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef,
     private modalService: NgbModal
   ) { 
      this._unsubscribeAll = new Subject();
@@ -85,25 +92,27 @@ export class LogoutComponent implements OnInit, OnDestroy {
   private updateStepStatus(message: string): void {
     const stepKey = this.messageToStepKey[message];
     if (!stepKey) return;
-    const currentStepIndex = this.steps.findIndex(s => s.key === stepKey);
-    if (currentStepIndex === -1) return;
-    // Marcar todos los pasos anteriores como 'completados'
-    for (let i = 0; i < currentStepIndex; i++) {
-      if (this.steps[i].status !== 'error') {
-        this.steps[i].status = 'done';
-      }
-    }
-    // Marcar el paso actual
-    const currentStep = this.steps[currentStepIndex];
-    if (message.includes('No se pudo')) {
-      currentStep.status = 'error';
-    } else if (message === '¡Hasta pronto!') {
-      currentStep.status = 'done';
-      this.finalMessage = '¡Sesión cerrada con éxito!';
-    } else {
-      currentStep.status = 'in-progress';
-    }
-    this.cdr.detectChanges();
+    this._steps.update(currentSteps => {
+      const currentStepIndex = currentSteps.findIndex(s => s.key === stepKey);
+      if (currentStepIndex === -1) return currentSteps;
+      const newSteps = currentSteps.map((step, i) => {
+        if (i < currentStepIndex && step.status !== 'error') {
+          return { ...step, status: 'done' as const };
+        }
+        if (i === currentStepIndex) {
+          if (message.includes('No se pudo')) {
+            return { ...step, status: 'error' as const };
+          } else if (message === '¡Hasta pronto!') {
+            this._finalMessage.set('¡Sesión cerrada con éxito!');
+            return { ...step, status: 'done' as const };
+          } else {
+            return { ...step, status: 'in-progress' as const };
+          }
+        }
+        return step;
+      });
+      return newSteps;
+    });
   }
     /**
    * On destroy

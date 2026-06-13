@@ -1,252 +1,258 @@
 <div class="content-wrapper container-xxl p-0">
-    <div class="content-body">
-        <!-- Fondo Animado -->
-        <div class="background-shapes">
-            <div class="shape shape1"></div>
-            <div class="shape shape2"></div>
-            <div class="shape shape3"></div>
+  <div class="content-body">
+    <!-- Fondo Animado -->
+    <div class="background-shapes">
+      <div class="shape shape1"></div>
+      <div class="shape shape2"></div>
+      <div class="shape shape3"></div>
+    </div>
+
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <section class="invoice-list-wrapper position-relative">
+      <div class="card">
+        <div class="card-header border-bottom py-2">
+          <h4 class="card-title text-primary font-weight-bolder">Búsqueda y Filtro de Autorizaciones</h4>
+        </div>
+        <div class="card-body" style="padding-top: 10px;">
+          <div class="row align-items-end">
+            <!-- Filtro por Aplicación -->
+            <div class="col-md-4 col-12">
+              <label class="font-small-4">Filtrar por Aplicación</label>
+              <fieldset class="form-group mb-0">
+                <select class="form-control" [formControl]="selectedApplicationCtrl"
+                  (change)="filterByApplication()">
+                  <option value="">Todas las Aplicaciones</option>
+                  @for (app of applicationsList; track app) {
+                    <option [value]="app">{{ app | uppercase }}
+                    </option>
+                  }
+                </select>
+              </fieldset>
+            </div>
+
+            <!-- Buscador -->
+            <div class="col-md-5 col-12">
+              <label class="font-small-4">Buscar Solicitud</label>
+              <fieldset class="form-group mb-0">
+                <div class="input-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text bg-transparent" id="basic-addon1">
+                      <span [data-feather]="'search'" [size]="16" class="text-muted"></span>
+                    </span>
+                  </div>
+                  <input type="text" class="form-control pl-0" style="padding-left: 10px !important;"
+                    placeholder="Buscar por nombre, usuario, cédula o función..."
+                    (keyup)="filterUpdate($event)" />
+                </div>
+              </fieldset>
+            </div>
+
+            <!-- Botón Actualizar -->
+            <div class="col-md-3 col-12">
+              <button (click)="LoadAuthorization()"
+                class="btn btn-soft-primary btn-block d-flex align-items-center justify-content-center py-75 shadow-sm">
+                <span [data-feather]="'refresh-cw'" [size]="16" class="mr-50"></span>
+                <span>Actualizar</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <!-- content-header component -->
-        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+        <ngx-datatable [rows]="rowData" [rowHeight]="75" class="bootstrap core-bootstrap striped"
+          [rowClass]="getRowClass" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
+          [scrollbarH]="true" [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
 
-        <section class="invoice-list-wrapper position-relative">
-            <div class="card">
-                <div class="card-header border-bottom py-2">
-                    <h4 class="card-title text-primary font-weight-bolder">Búsqueda y Filtro de Autorizaciones</h4>
+          <!-- Columna: Usuario -->
+          <ngx-datatable-column name="Solicitante" prop="name" [width]="220">
+            <ng-template ngx-datatable-header-template>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'user'" class="mr-1"></span>
+                <span>Usuario</span>
+              </div>
+            </ng-template>
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="d-flex align-items-center py-50">
+                <div class="avatar shadow-sm mr-1 ml-0"
+                  [ngClass]="row.isWarning ? 'bg-light-warning' : 'bg-light-primary'">
+                  <div class="avatar-content font-weight-bolder text-uppercase">{{ (row.name |
+                  initials) | slice:0:1 }}</div>
                 </div>
-                <div class="card-body" style="padding-top: 10px;">
-                    <div class="row align-items-end">
-                        <!-- Filtro por Aplicación -->
-                        <div class="col-md-4 col-12">
-                            <label class="font-small-4">Filtrar por Aplicación</label>
-                            <fieldset class="form-group mb-0">
-                                <select class="form-control" [(ngModel)]="selectedApplication"
-                                    (change)="filterByApplication()">
-                                    <option value="">Todas las Aplicaciones</option>
-                                    <option *ngFor="let app of applicationsList" [value]="app">{{ app | uppercase }}
-                                    </option>
-                                </select>
-                            </fieldset>
-                        </div>
-
-                        <!-- Buscador -->
-                        <div class="col-md-5 col-12">
-                            <label class="font-small-4">Buscar Solicitud</label>
-                            <fieldset class="form-group mb-0">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text bg-transparent" id="basic-addon1">
-                                            <span [data-feather]="'search'" [size]="16" class="text-muted"></span>
-                                        </span>
-                                    </div>
-                                    <input type="text" class="form-control pl-0" style="padding-left: 10px !important;"
-                                        placeholder="Buscar por nombre, usuario, cédula o función..."
-                                        (keyup)="filterUpdate($event)" />
-                                </div>
-                            </fieldset>
-                        </div>
-
-                        <!-- Botón Actualizar -->
-                        <div class="col-md-3 col-12">
-                            <button (click)="LoadAuthorization()"
-                                class="btn btn-soft-primary btn-block d-flex align-items-center justify-content-center py-75 shadow-sm">
-                                <span [data-feather]="'refresh-cw'" [size]="16" class="mr-50"></span>
-                                <span>Actualizar</span>
-                            </button>
-                        </div>
-                    </div>
+                <div>
+                  <div class="font-weight-bolder mb-25 text-dark d-flex align-items-center">
+                    {{ row.name }}
+                    @if (row.ws_user_id) {
+                      <span [data-feather]="'monitor'" [size]="14"
+                        class="text-success ml-50" ngbTooltip="PC Conectada ({{row.ws_node_name}})"
+                      container="body"></span>
+                    }
+                    @if (row.ws_user_id) {
+                      <div class="status-dot bg-success ml-25"
+                        style="width: 8px; height: 8px;"
+                      [ngClass]="{'blink': row.ws_status === 'online'}"></div>
+                    }
+                  </div>
+                  <div class="font-small-2 text-muted">CI: {{ row.id }} • &#64;{{ row.user }}</div>
                 </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
 
-                <ngx-datatable [rows]="rowData" [rowHeight]="75" class="bootstrap core-bootstrap striped"
-                    [rowClass]="getRowClass" [columnMode]="ColumnMode.force" [headerHeight]="50" [footerHeight]="50"
-                    [scrollbarH]="true" [limit]="basicSelectedOption" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+          <!-- Columna: Acción/Función -->
+          <ngx-datatable-column name="Operación" prop="funcion" [width]="250">
+            <ng-template ngx-datatable-header-template>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'code'" class="mr-1"></span>
+                <span>Tarea Solicitada</span>
+              </div>
+            </ng-template>
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="py-50">
+                <div class="font-weight-bolder mb-25 text-pastel-green">{{ row.funcion || 'N/A' }}</div>
+                <div class="font-small-3 text-muted d-flex align-items-center">
+                  <span [data-feather]="'calendar'" [size]="12" class="mr-25"></span>
+                  {{ row.tiempo }}
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
 
-                    <!-- Columna: Usuario -->
-                    <ngx-datatable-column name="Solicitante" prop="name" [width]="220">
-                        <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                                <span [data-feather]="'user'" class="mr-1"></span>
-                                <span>Usuario</span>
-                            </div>
-                        </ng-template>
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div class="d-flex align-items-center py-50">
-                                <div class="avatar shadow-sm mr-1 ml-0"
-                                    [ngClass]="row.isWarning ? 'bg-light-warning' : 'bg-light-primary'">
-                                    <div class="avatar-content font-weight-bolder text-uppercase">{{ (row.name |
-                                        initials) | slice:0:1 }}</div>
-                                </div>
-                                <div>
-                                    <div class="font-weight-bolder mb-25 text-dark d-flex align-items-center">
-                                        {{ row.name }}
-                                        <span *ngIf="row.ws_user_id" [data-feather]="'monitor'" [size]="14"
-                                            class="text-success ml-50" ngbTooltip="PC Conectada ({{row.ws_node_name}})"
-                                            container="body"></span>
-                                        <div *ngIf="row.ws_user_id" class="status-dot bg-success ml-25"
-                                            style="width: 8px; height: 8px;"
-                                            [ngClass]="{'blink': row.ws_status === 'online'}"></div>
-                                    </div>
-                                    <div class="font-small-2 text-muted">CI: {{ row.id }} • &#64;{{ row.user }}</div>
-                                </div>
-                            </div>
-                        </ng-template>
-                    </ngx-datatable-column>
+          <!-- Columna: Origen -->
+          <ngx-datatable-column name="Aplicación" prop="aplication" [width]="180">
+            <ng-template ngx-datatable-header-template>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'layers'" class="mr-1"></span>
+                <span>Origen</span>
+              </div>
+            </ng-template>
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="py-50">
+                <div class="badge badge-pill mb-25"
+                  [ngClass]="row.isWarning ? 'badge-light-warning' : 'badge-light-primary'">
+                  {{ row.aplication | uppercase }}
+                </div>
+                <div class="font-small-2 text-muted truncate">{{ row.cargo }}</div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
 
-                    <!-- Columna: Acción/Función -->
-                    <ngx-datatable-column name="Operación" prop="funcion" [width]="250">
-                        <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                                <span [data-feather]="'code'" class="mr-1"></span>
-                                <span>Tarea Solicitada</span>
-                            </div>
-                        </ng-template>
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div class="py-50">
-                                <div class="font-weight-bolder mb-25 text-pastel-green">{{ row.funcion || 'N/A' }}</div>
-                                <div class="font-small-3 text-muted d-flex align-items-center">
-                                    <span [data-feather]="'calendar'" [size]="12" class="mr-25"></span>
-                                    {{ row.tiempo }}
-                                </div>
-                            </div>
-                        </ng-template>
-                    </ngx-datatable-column>
+          <!-- Columna: Tiempo Transcurrido -->
+          <ngx-datatable-column name="Espera" prop="elapsedTime" [width]="180">
+            <ng-template ngx-datatable-header-template>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'clock'" class="mr-1"></span>
+                <span>Latencia</span>
+              </div>
+            </ng-template>
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="d-flex align-items-center py-50">
+                <div [ngClass]="row.isWarning ? 'text-pastel-warning' : 'text-pastel-success'"
+                  class="font-weight-bolder d-flex align-items-center">
+                  <div class="status-dot mr-50"
+                    [ngClass]="row.isWarning ? 'bg-pastel-warning blink' : 'bg-pastel-success'">
+                  </div>
+                  {{ row.elapsedTime }}
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
 
-                    <!-- Columna: Origen -->
-                    <ngx-datatable-column name="Aplicación" prop="aplication" [width]="180">
-                        <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                                <span [data-feather]="'layers'" class="mr-1"></span>
-                                <span>Origen</span>
-                            </div>
-                        </ng-template>
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div class="py-50">
-                                <div class="badge badge-pill mb-25"
-                                    [ngClass]="row.isWarning ? 'badge-light-warning' : 'badge-light-primary'">
-                                    {{ row.aplication | uppercase }}
-                                </div>
-                                <div class="font-small-2 text-muted truncate">{{ row.cargo }}</div>
-                            </div>
-                        </ng-template>
-                    </ngx-datatable-column>
+          <!-- Columna: Acciones (Dropdown Contextual) -->
+          <ngx-datatable-column name="Acciones" [width]="80" [sortable]="false"
+            [cellClass]="'text-center overflow-visible'">
+            <ng-template ngx-datatable-cell-template let-row="row">
+              <div class="d-inline-flex dropdown" ngbDropdown container="body">
+                <button ngbDropdownToggle type="button"
+                  class="btn btn-sm btn-icon border-0 bg-transparent shadow-none no-caret">
+                  <span [data-feather]="'settings'" [size]="18" class="text-secondary-custom"></span>
+                </button>
+                <div ngbDropdownMenu class="dropdown-menu-right shadow-lg border-0 py-1">
+                  <a ngbDropdownItem class="d-flex align-items-center py-1"
+                    (click)="viewDetails(row, modalDetails)">
+                    <span [data-feather]="'eye'" [size]="16" class="mr-1 "></span>
+                    <span class="font-weight-500 ">Detalles</span>
+                  </a>
+                  <div class="dropdown-divider mx-1"></div>
+                  <a ngbDropdownItem class="d-flex align-items-center py-1" (click)="approve(row)">
+                    <span [data-feather]="'check'" [size]="16" class="mr-1 "></span>
+                    <span class="font-weight-500 ">Aprobar</span>
+                  </a>
+                  <a ngbDropdownItem class="d-flex align-items-center py-1" (click)="reject(row)">
+                    <span [data-feather]="'trash'" [size]="16" class="mr-1 "></span>
+                    <span class="font-weight-500 ">Rechazar</span>
+                  </a>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
 
-                    <!-- Columna: Tiempo Transcurrido -->
-                    <ngx-datatable-column name="Espera" prop="elapsedTime" [width]="180">
-                        <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                                <span [data-feather]="'clock'" class="mr-1"></span>
-                                <span>Latencia</span>
-                            </div>
-                        </ng-template>
-                        <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div class="d-flex align-items-center py-50">
-                                <div [ngClass]="row.isWarning ? 'text-pastel-warning' : 'text-pastel-success'"
-                                    class="font-weight-bolder d-flex align-items-center">
-                                    <div class="status-dot mr-50"
-                                        [ngClass]="row.isWarning ? 'bg-pastel-warning blink' : 'bg-pastel-success'">
-                                    </div>
-                                    {{ row.elapsedTime }}
-                                </div>
-                            </div>
-                        </ng-template>
-                    </ngx-datatable-column>
+          <!-- Footer Personalizado con Paginador de Iconos -->
+          <ngx-datatable-footer>
+            <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
+              let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset">
+              <div
+                class="d-flex justify-content-between align-items-center w-100 px-2 py-1 footer-custom">
+                <div class="text-muted font-small-3">
+                  Mostrando {{ curPage * pageSize - pageSize + 1 }} a {{ curPage * pageSize > rowCount
+                  ? rowCount : curPage * pageSize }} de {{ rowCount }} registros
+                </div>
+                <datatable-pager [pagerLeftArrowIcon]="'datatable-icon-left'"
+                  [pagerRightArrowIcon]="'datatable-icon-right'"
+                  [pagerPreviousIcon]="'datatable-icon-prev'" [pagerNextIcon]="'datatable-icon-skip'"
+                  [page]="curPage" [size]="pageSize" [count]="rowCount"
+                  [hidden]="!((rowCount / pageSize) > 1)" (change)="table.onFooterPage($event)">
+                </datatable-pager>
+              </div>
+            </ng-template>
+          </ngx-datatable-footer>
 
-                    <!-- Columna: Acciones (Dropdown Contextual) -->
-                    <ngx-datatable-column name="Acciones" [width]="80" [sortable]="false"
-                        [cellClass]="'text-center overflow-visible'">
-                        <ng-template ngx-datatable-cell-template let-row="row">
-                            <div class="d-inline-flex dropdown" ngbDropdown container="body">
-                                <button ngbDropdownToggle type="button"
-                                    class="btn btn-sm btn-icon border-0 bg-transparent shadow-none no-caret">
-                                    <span [data-feather]="'settings'" [size]="18" class="text-secondary-custom"></span>
-                                </button>
-                                <div ngbDropdownMenu class="dropdown-menu-right shadow-lg border-0 py-1">
-                                    <a ngbDropdownItem class="d-flex align-items-center py-1"
-                                        (click)="viewDetails(row, modalDetails)">
-                                        <span [data-feather]="'eye'" [size]="16" class="mr-1 "></span>
-                                        <span class="font-weight-500 ">Detalles</span>
-                                    </a>
-                                    <div class="dropdown-divider mx-1"></div>
-                                    <a ngbDropdownItem class="d-flex align-items-center py-1" (click)="approve(row)">
-                                        <span [data-feather]="'check'" [size]="16" class="mr-1 "></span>
-                                        <span class="font-weight-500 ">Aprobar</span>
-                                    </a>
-                                    <a ngbDropdownItem class="d-flex align-items-center py-1" (click)="reject(row)">
-                                        <span [data-feather]="'trash'" [size]="16" class="mr-1 "></span>
-                                        <span class="font-weight-500 ">Rechazar</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </ng-template>
-                    </ngx-datatable-column>
-
-                    <!-- Footer Personalizado con Paginador de Iconos -->
-                    <ngx-datatable-footer>
-                        <ng-template ngx-datatable-footer-template let-rowCount="rowCount" let-pageSize="pageSize"
-                            let-selectedCount="selectedCount" let-curPage="curPage" let-offset="offset">
-                            <div
-                                class="d-flex justify-content-between align-items-center w-100 px-2 py-1 footer-custom">
-                                <div class="text-muted font-small-3">
-                                    Mostrando {{ curPage * pageSize - pageSize + 1 }} a {{ curPage * pageSize > rowCount
-                                    ? rowCount : curPage * pageSize }} de {{ rowCount }} registros
-                                </div>
-                                <datatable-pager [pagerLeftArrowIcon]="'datatable-icon-left'"
-                                    [pagerRightArrowIcon]="'datatable-icon-right'"
-                                    [pagerPreviousIcon]="'datatable-icon-prev'" [pagerNextIcon]="'datatable-icon-skip'"
-                                    [page]="curPage" [size]="pageSize" [count]="rowCount"
-                                    [hidden]="!((rowCount / pageSize) > 1)" (change)="table.onFooterPage($event)">
-                                </datatable-pager>
-                            </div>
-                        </ng-template>
-                    </ngx-datatable-footer>
-
-                </ngx-datatable>
-            </div>
-        </section>
-    </div>
+        </ngx-datatable>
+      </div>
+    </section>
+  </div>
 </div>
 
 <!-- Modal de Detalles -->
 <ng-template #modalDetails let-modal>
-    <div class="modal-header bg-transparent">
-        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+  <div class="modal-header bg-transparent">
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body pb-3 px-3">
+    <div class="text-center mb-2">
+      <h1 class="mb-1">Detalles de Autorización</h1>
+      <p>Información detallada de la solicitud de ejecución.</p>
     </div>
-    <div class="modal-body pb-3 px-3">
-        <div class="text-center mb-2">
-            <h1 class="mb-1">Detalles de Autorización</h1>
-            <p>Información detallada de la solicitud de ejecución.</p>
-        </div>
 
-        <div class="row">
-            <div class="col-12 mb-2">
-                <div class="d-flex align-items-center mb-1">
-                    <div class="avatar bg-light-primary rounded mr-1">
-                        <div class="avatar-content">
-                            <span [data-feather]="'command'" [size]="20"></span>
-                        </div>
-                    </div>
-                    <div>
-                        <h5 class="mb-0">Función Solicitada</h5>
-                        <span class="text-primary font-weight-bolder">{{ selectedAuth?.funcion }}</span>
-                    </div>
-                </div>
+    <div class="row">
+      <div class="col-12 mb-2">
+        <div class="d-flex align-items-center mb-1">
+          <div class="avatar bg-light-primary rounded mr-1">
+            <div class="avatar-content">
+              <span [data-feather]="'command'" [size]="20"></span>
             </div>
-
-            <div class="col-12">
-                <h5 class="mb-1"><span [data-feather]="'list'" [size]="16" class="mr-50"></span>Parámetros</h5>
-                <div class="params-container p-1 rounded" [class.json-bg]="isJson(selectedAuth?.parametros)">
-                    <pre class="mb-0 overflow-auto"
-                        style="max-height: 300px;"><code>{{ formatJson(selectedAuth?.parametros) }}</code></pre>
-                </div>
-            </div>
+          </div>
+          <div>
+            <h5 class="mb-0">Función Solicitada</h5>
+            <span class="text-primary font-weight-bolder">{{ selectedAuth?.funcion }}</span>
+          </div>
         </div>
+      </div>
+
+      <div class="col-12">
+        <h5 class="mb-1"><span [data-feather]="'list'" [size]="16" class="mr-50"></span>Parámetros</h5>
+        <div class="params-container p-1 rounded" [class.json-bg]="isJson(selectedAuth?.parametros)">
+          <pre class="mb-0 overflow-auto"
+            style="max-height: 300px;"><code>{{ formatJson(selectedAuth?.parametros) }}</code></pre>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="modal-footer justify-content-center">
-        <button type="button" class="btn btn-soft-dark btn-action" (click)="modal.close()">
-            Cerrar
-        </button>
+      <button type="button" class="btn btn-soft-dark btn-action" (click)="modal.close()">
+        Cerrar
+      </button>
     </div>
-</ng-template>
+  </ng-template>

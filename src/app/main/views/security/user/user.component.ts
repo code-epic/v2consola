@@ -1,5 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap'
+import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { FormArray, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
+import { NgbModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap'
 import { ApiService, IAPICore, IConfiguracion } from '@services/apicore/api.service'
 
 import { IUser } from '@services/seguridad/rol.service'
@@ -24,6 +26,10 @@ import {
 import { environment } from 'environments/environment'
 
 import Swal from 'sweetalert2'
+import { NgSelectModule } from '@ng-select/ng-select'
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component'
+import { CoreDirectivesModule } from '@core/directives/directives'
+import { CorePipesModule } from '@core/pipes/pipes.module'
 
 
 
@@ -34,9 +40,19 @@ import Swal from 'sweetalert2'
     styleUrls: ['./user.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        ReactiveFormsModule,
+        NgbModule,
+        NgSelectModule,
+        ContentHeaderComponent,
+        CoreDirectivesModule,
+        CorePipesModule,
+    ]
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
   @ViewChild(DatatableComponent) table: DatatableComponent
 
   public contentHeader: object
@@ -212,6 +228,10 @@ export class UserComponent implements OnInit {
   public lstUsersApp = []
   public temprowData = []
 
+  /** FormArray sincronizado con dataUsers para el toggle estatus */
+  public userStatusArray = new FormArray<FormControl<boolean>>([])
+  private userStatusSub?: any
+
   public xaplicacion = ''
   public xperfil = ''
   public xtraza = 'BAJA'
@@ -249,6 +269,28 @@ export class UserComponent implements OnInit {
 
   public xsesion: string = ''
 
+  // Reactive Form Controls
+  public iUserTipoaccesoCtrl = new FormControl(3)
+  public iUserRespaldoCtrl = new FormControl(0)
+  public iUserEndpointCtrl = new FormControl('')
+  public iUserLoginCtrl = new FormControl('')
+  public iUserClaveCtrl = new FormControl('')
+  public iUserEncriptamientoCtrl = new FormControl('')
+  public iUserCedulaCtrl = new FormControl('')
+  public iUserNombreCtrl = new FormControl('')
+  public iUserDescripcionCtrl = new FormControl('')
+  public iUserEstatusCtrl = new FormControl(1)
+  public iUserVigenciaCtrl = new FormControl(180)
+  public iUserCorreoCtrl = new FormControl('')
+  public descripcionCtrl = new FormControl('')
+  public iUserDuraciontextoCtrl = new FormControl(60)
+  public iUserDuraciontiempoCtrl = new FormControl(5)
+  public xregionalCtrl = new FormControl('TODAS')
+  public xoficinaCtrl = new FormControl('TODAS')
+  public multiplesesionCtrl = new FormControl(false)
+  public xaplicacionCtrl = new FormControl('')
+  public xperfilCtrl = new FormControl('')
+  public xtrazaCtrl = new FormControl('BAJA')
 
   constructor(
     private apiService: ApiService,
@@ -256,7 +298,6 @@ export class UserComponent implements OnInit {
     private userService: UserService,
     private sha256: Sha256Service,
     private modalService: NgbModal,
-    private cd: ChangeDetectorRef
 
   ) {
     this.userService.iniciarObjeto()
@@ -293,6 +334,7 @@ export class UserComponent implements OnInit {
     let acceso = this.isBDV ? 3 : 1
     this.selTipoAcceso(acceso)
     this.iUser.encriptamiento = '1'
+    this.syncFormControlsFromUser()
 
 
 
@@ -389,6 +431,7 @@ export class UserComponent implements OnInit {
     this.iUser.clave = '';
     // this.dataUsers = usuario.Aplicacion;
     this.tk_loadProfile(usuario)
+    this.syncFormControlsFromUser()
 
     return this.iUser
   }
@@ -426,9 +469,8 @@ export class UserComponent implements OnInit {
      
     });
     this.dataUsers = this.lstUsersApp
-
+    this.rebuildStatusArray()
   }
-
   selDuracion(e) {
     if (e == 3) {
       this.tiempoduracion = '0'
@@ -584,6 +626,7 @@ export class UserComponent implements OnInit {
   }
 
   async getUserApp() {
+    this.syncUserFromFormControls()
     let apps: any = {}
     let lstApp: SAplicacion[] = []
 
@@ -717,6 +760,7 @@ export class UserComponent implements OnInit {
 
     this.lstUsersApp.push(app)
     this.dataUsers = this.lstUsersApp
+    this.rebuildStatusArray()
     this.xperfil = null;
   }
 
@@ -735,18 +779,40 @@ export class UserComponent implements OnInit {
   }
 
   /**
+   * Construye (o reconstruye) el FormArray a partir de dataUsers
+   * y suscribe valueChanges para sincronizar dataUsers/lstUsersApp.
+   */
+  private rebuildStatusArray(): void {
+    this.userStatusSub?.unsubscribe()
+    this.userStatusArray.clear()
+    this.dataUsers.forEach((u: any) => {
+      this.userStatusArray.push(new FormControl(u.estatus === 1))
+    })
+    this.userStatusSub = this.userStatusArray.valueChanges.subscribe(values => {
+      values.forEach((val, i) => {
+        const numVal = val ? 1 : 0
+        const now = new Date().toISOString()
+        if (this.dataUsers[i]) {
+          this.dataUsers[i].estatus = numVal
+          this.dataUsers[i].tiempo = now
+        }
+        if (this.lstUsersApp[i]) {
+          this.lstUsersApp[i].estatus = numVal
+          this.lstUsersApp[i].tiempo = now
+        }
+      })
+    })
+  }
+
+  /**
    * Handles the status change of a user's application access.
    * @param item The user application item that was changed.
    * @param index The index of the item in the dataUsers array.
+   *
+   * @deprecated La sincronización se maneja automáticamente vía FormArray.valueChanges.
    */
   onStatusChange(item: any, index: number) {
-    const nuevoEstatus = item.estatus;
-    this.dataUsers[index].estatus = nuevoEstatus ? 1 : 0
-    this.dataUsers[index].tiempo = new Date().toISOString()
-
-    this.lstUsersApp[index].estatus = nuevoEstatus ? 1 : 0
-    this.lstUsersApp[index].tiempo = new Date().toISOString()
-
+    // Mantenido solo por compatibilidad; el FormArray ya sincroniza.
   }
 
   quitarElemento(i: number) {
@@ -763,6 +829,7 @@ export class UserComponent implements OnInit {
       if (result.isConfirmed) {
 
         this.dataUsers.splice(i, 1);
+        this.userStatusArray.removeAt(i);
         if (this.dataUsers.length == 0) {
           this.blockEditApp = 'false'
           this.bEliminarAllProfile = true
@@ -931,6 +998,7 @@ export class UserComponent implements OnInit {
     await this.CargarListaEndPoint()
 
 
+    this.syncFormControlsFromUser()
     this.ngOnInit()
   }
 
@@ -940,7 +1008,7 @@ export class UserComponent implements OnInit {
       return;
     }
 
-    let login = this.iUser.login || '';
+    let login = this.iUserLoginCtrl.value || '';
     login = login.toUpperCase();
 
     let validatedLogin = '';
@@ -978,6 +1046,7 @@ export class UserComponent implements OnInit {
     // Asignar el valor validado de vuelta al modelo
     // Usar setTimeout para evitar problemas con la actualización del ngModel
     setTimeout(() => {
+      this.iUserLoginCtrl.setValue(validatedLogin);
       this.iUser.login = validatedLogin;
     }, 0);
   }
@@ -1002,6 +1071,7 @@ export class UserComponent implements OnInit {
             this.iUser.descripcion = usr.descCargo
             this.descripcion = usr.descUnidad
             this.iUser.correo = usr.correo
+            this.syncFormControlsFromUser()
           } else {
             this.utilservice.AlertMini(
               'top-end',
@@ -1117,12 +1187,12 @@ export class UserComponent implements OnInit {
   }
 
   validateUserForm(): boolean {
-    if (this.iUser.login == '' || this.iUser.login == undefined) return false;
-    if (this.iUser.cedula == '' || this.iUser.cedula == undefined) return false;
-    if (this.iUser.nombre == '' || this.iUser.nombre == undefined) return false;
-    if (this.iUser.descripcion == '' || this.iUser.descripcion == undefined) return false; // Cargo
-    if (this.iUser.correo == '' || this.iUser.correo == undefined) return false;
-    if (this.descripcion == '' || this.descripcion == undefined) return false; // Descripcion General
+    if (this.iUserLoginCtrl.value == '' || this.iUserLoginCtrl.value == undefined) return false;
+    if (this.iUserCedulaCtrl.value == '' || this.iUserCedulaCtrl.value == undefined) return false;
+    if (this.iUserNombreCtrl.value == '' || this.iUserNombreCtrl.value == undefined) return false;
+    if (this.iUserDescripcionCtrl.value == '' || this.iUserDescripcionCtrl.value == undefined) return false;
+    if (this.iUserCorreoCtrl.value == '' || this.iUserCorreoCtrl.value == undefined) return false;
+    if (this.descripcionCtrl.value == '' || this.descripcionCtrl.value == undefined) return false;
     return true;
   }
 
@@ -1130,8 +1200,8 @@ export class UserComponent implements OnInit {
 
   validateEmail() {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (this.iUser.correo && this.iUser.correo.trim() !== '') {
-      this.isEmailInvalid = !emailRegex.test(this.iUser.correo);
+    if (this.iUserCorreoCtrl.value && this.iUserCorreoCtrl.value.trim() !== '') {
+      this.isEmailInvalid = !emailRegex.test(this.iUserCorreoCtrl.value);
     } else {
       this.isEmailInvalid = false;
     }
@@ -1171,7 +1241,7 @@ export class UserComponent implements OnInit {
   validatePassword() {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
 
-    if (this.iUser.clave && !passwordRegex.test(this.iUser.clave)) {
+    if (this.iUserClaveCtrl.value && !passwordRegex.test(this.iUserClaveCtrl.value)) {
       this.isPasswordInvalid = true;
       this.utilservice.AlertMini(
         "top-end",
@@ -1188,7 +1258,7 @@ export class UserComponent implements OnInit {
   consultarCedula() {
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_CEDULA
-    this.xAPI.parametros = this.iUser.cedula
+    this.xAPI.parametros = this.iUserCedulaCtrl.value
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data != null) {
@@ -1199,6 +1269,7 @@ export class UserComponent implements OnInit {
               'Cédula ya se encuentra registrado',
               3000
             )
+            this.iUserCedulaCtrl.setValue('')
             this.iUser.cedula = ''
           }
         }
@@ -1213,7 +1284,7 @@ export class UserComponent implements OnInit {
   consultarLogin() {
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_LOGIN
-    this.xAPI.parametros = this.iUser.login
+    this.xAPI.parametros = this.iUserLoginCtrl.value
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data != null) {
@@ -1224,6 +1295,7 @@ export class UserComponent implements OnInit {
               'Login ya se encuentra registrado',
               3000
             )
+            this.iUserLoginCtrl.setValue('')
             this.iUser.login = ''
           }
         }
@@ -1245,9 +1317,57 @@ export class UserComponent implements OnInit {
     } 
   }
 
-  ngOnDestroy(): void {
-    window.sessionStorage.removeItem('validator')
+  syncFormControlsFromUser(): void {
+    this.iUserTipoaccesoCtrl.setValue(this.iUser.tipoacceso)
+    this.iUserRespaldoCtrl.setValue(this.iUser.respaldo)
+    this.iUserEndpointCtrl.setValue(this.iUser.endpoint ?? '')
+    this.iUserLoginCtrl.setValue(this.iUser.login ?? '')
+    this.iUserClaveCtrl.setValue(this.iUser.clave ?? '')
+    this.iUserEncriptamientoCtrl.setValue(this.iUser.encriptamiento ?? '')
+    this.iUserCedulaCtrl.setValue(this.iUser.cedula ?? '')
+    this.iUserNombreCtrl.setValue(this.iUser.nombre ?? '')
+    this.iUserDescripcionCtrl.setValue(this.iUser.descripcion ?? '')
+    this.iUserEstatusCtrl.setValue(this.iUser.estatus)
+    this.iUserVigenciaCtrl.setValue(this.iUser.vigencia)
+    this.iUserCorreoCtrl.setValue(this.iUser.correo ?? '')
+    this.descripcionCtrl.setValue(this.descripcion ?? '')
+    this.iUserDuraciontextoCtrl.setValue(this.iUser.duraciontexto)
+    this.iUserDuraciontiempoCtrl.setValue(this.iUser.duraciontiempo)
+    this.xregionalCtrl.setValue(this.xregional)
+    this.xoficinaCtrl.setValue(this.xoficina)
+    this.multiplesesionCtrl.setValue(this.multiplesesion)
+    this.xaplicacionCtrl.setValue(this.xaplicacion)
+    this.xperfilCtrl.setValue(this.xperfil)
+    this.xtrazaCtrl.setValue(this.xtraza)
   }
 
+  syncUserFromFormControls(): void {
+    this.iUser.tipoacceso = this.iUserTipoaccesoCtrl.value
+    this.iUser.respaldo = this.iUserRespaldoCtrl.value
+    this.iUser.endpoint = this.iUserEndpointCtrl.value
+    this.iUser.login = this.iUserLoginCtrl.value
+    this.iUser.clave = this.iUserClaveCtrl.value
+    this.iUser.encriptamiento = this.iUserEncriptamientoCtrl.value
+    this.iUser.cedula = this.iUserCedulaCtrl.value
+    this.iUser.nombre = this.iUserNombreCtrl.value
+    this.iUser.descripcion = this.iUserDescripcionCtrl.value
+    this.iUser.estatus = this.iUserEstatusCtrl.value
+    this.iUser.vigencia = this.iUserVigenciaCtrl.value
+    this.iUser.correo = this.iUserCorreoCtrl.value
+    this.descripcion = this.descripcionCtrl.value
+    this.iUser.duraciontexto = this.iUserDuraciontextoCtrl.value
+    this.iUser.duraciontiempo = this.iUserDuraciontiempoCtrl.value
+    this.xregional = this.xregionalCtrl.value
+    this.xoficina = this.xoficinaCtrl.value
+    this.multiplesesion = this.multiplesesionCtrl.value
+    this.xaplicacion = this.xaplicacionCtrl.value
+    this.xperfil = this.xperfilCtrl.value
+    this.xtraza = this.xtrazaCtrl.value
+  }
+
+  ngOnDestroy(): void {
+    this.userStatusSub?.unsubscribe()
+    window.sessionStorage.removeItem('validator')
+  }
 
 }

@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 
+import { RouterModule } from '@angular/router';
+
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
+import { CoreCommonModule } from '@core/common.module';
 
 @Component({
     selector: 'app-not-authorized',
     templateUrl: './not-authorized.component.html',
     styleUrls: ['./not-authorized.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [RouterModule, CoreCommonModule]
 })
 export class NotAuthorizedComponent implements OnInit {
   public coreConfig: any;

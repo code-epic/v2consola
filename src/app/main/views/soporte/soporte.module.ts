@@ -33,11 +33,6 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    ChatroomComponent,
-    MonitoreoComponent,
-    IncidenciasComponent
-  ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
@@ -47,7 +42,10 @@ const routes: Routes = [
     CoreCardModule,
     FormsModule,
     ReactiveFormsModule,
-    NgbModule
+    NgbModule,
+    ChatroomComponent,
+    MonitoreoComponent,
+    IncidenciasComponent
   ]
 })
 export class SoporteModule { }

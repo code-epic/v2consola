@@ -414,6 +414,30 @@ export const aplicacion = [
           ]
         },
         {
+          "url": "comunicacion",
+          "js": "",
+          "icono": "message-circle",
+          "descripcion": "Comunicación",
+          "nombre": "Comunicación",
+          "accion": "",
+          "clase": "collapsible",
+          "color": "",
+          "Privilegio": [],
+          "SubMenu": [
+            {
+              "url": "communication/forums",
+              "js": "",
+              "descripcion": "Foros",
+              "icono": "message-square",
+              "nombre": "Foros",
+              "accion": "",
+              "clase": "item",
+              "color": "bg-c-blue",
+              "Privilegios": []
+            }
+          ]
+        },
+        {
           "url": "github",
           "js": "",
           "icono": "settings",

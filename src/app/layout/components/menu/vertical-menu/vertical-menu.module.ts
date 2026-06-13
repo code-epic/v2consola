@@ -7,8 +7,7 @@ import { CoreCommonModule } from '@core/common.module';
 import { VerticalMenuComponent } from 'app/layout/components/menu/vertical-menu/vertical-menu.component';
 
 @NgModule({
-  declarations: [VerticalMenuComponent],
-  imports: [CoreMenuModule, CoreCommonModule, RouterModule],
+  imports: [CoreMenuModule, CoreCommonModule, RouterModule, VerticalMenuComponent],
   exports: [VerticalMenuComponent]
 })
 export class VerticalMenuModule {}

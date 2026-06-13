@@ -7,30 +7,30 @@
         <!-- Search Bar -->
         <div class="col-md-4 col-sm-6 mb-12">
           <div class="input-group">
-            <input type="text" 
-                   class="form-control search-product w-100" 
-                   id="shop-search" 
-                   placeholder="Buscar"
-                   [(ngModel)]="searchText" 
-                   aria-label="Buscar..." 
-                   aria-describedby="shop-search"
-                   style="height: 40px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;" />
+            <input type="text"
+              class="form-control search-product w-100"
+              id="shop-search"
+              placeholder="Buscar"
+              [formControl]="searchTextCtrl"
+              aria-label="Buscar..."
+              aria-describedby="shop-search"
+              style="height: 40px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;" />
           </div>
         </div>
-    
+
         <!-- Select Dropdown -->
         <div class="col-md-8 col-sm-6 mb-12">
           <div class="input-group">
-            <ng-select class="w-100" 
-                       [items]="rowData" 
-                       [(ngModel)]="selectCustomSelected" 
-                       bindLabel="funcion" 
-                       bindValue="id"
-                       [searchable]="true" 
-                       placeholder="Seleccione API"
-                       [hideSelected]="false"
-                       (change)="onSelectChange($event)"
-                       style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
+            <ng-select class="w-100"
+              [items]="rowData"
+              [formControl]="selectCustomSelectedCtrl"
+              bindLabel="funcion"
+              bindValue="id"
+              [searchable]="true"
+              placeholder="Seleccione API"
+              [hideSelected]="false"
+              (change)="onSelectChange($event)"
+              style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
               <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
                 <div class="search-result-card-pastel">
                   <!-- Header: Function Name and Type Badge -->
@@ -70,110 +70,100 @@
 
     <br>
 
-    <section id="wishlist" class="grid-view wishlist-items">
-      <ng-container
-        *ngFor="let product of drivers  | filter: searchText:'descripcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize">
-
-        <!-- Vivid API Card -->
-        <div class="card ecommerce-card app-card-minimal">
-          <a [routerLink]="'/tools/applications/api-list/'+getUrl(product.id)" class="card-link-minimal">
-            
-            <!-- Minimal Header with Database Icon -->
-            <div class="minimal-header" [ngClass]="{'header-active': product.estatus === true, 'header-inactive': product.estatus === false}">
-              <div class="icon-container-minimal">
-                <span [data-feather]="'database'" [size]="32" class="app-icon-minimal"></span>
-              </div>
-            </div>
-
-            <!-- Card Content -->
-            <div class="card-body-minimal">
-              
-              <!-- Status Badge Minimal -->
-              <div class="status-row">
-                <span class="status-dot" [ngClass]="{'dot-active': product.estatus === true, 'dot-inactive': product.estatus === false}"></span>
-                <span class="status-text">{{ product.estatus === true ? 'Active' : 'Inactive' }}</span>
-              </div>
-
-              <!-- Driver Name -->
-              <h3 class="app-title-minimal">{{ product.descripcion }}</h3>
-              
-              <!-- Details List -->
-              <div class="details-list">
-                <div class="detail-item">
-                  <span [data-feather]="'file-text'" [size]="14" class="detail-icon"></span>
-                  <span class="detail-label">Descripción:</span>
-                  <span class="detail-value">{{ product.basedatos }}</span>
-                </div>
-                
-                <div class="detail-item">
-                  <span [data-feather]="'server'" [size]="14" class="detail-icon"></span>
-                  <span class="detail-label">Tipo:</span>
-                  <span class="detail-value">{{ product.driver }}</span>
-                </div>
-                
-                <div class="detail-item">
-                  <span [data-feather]="'activity'" [size]="14" class="detail-icon"></span>
-                  <span class="detail-label">Estatus:</span>
-                  <span class="detail-value">{{ product.estatus ? 'Running' : 'Stopped' }}</span>
+      <section id="wishlist" class="grid-view wishlist-items">
+        @for (product of drivers  | filter: searchText:'descripcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize; track product) {
+          <!-- Vivid API Card -->
+          <div class="card ecommerce-card app-card-minimal">
+            <a [routerLink]="'/tools/applications/api-list/'+getUrl(product.id)" class="card-link-minimal">
+              <!-- Minimal Header with Database Icon -->
+              <div class="minimal-header" [ngClass]="{'header-active': product.estatus === true, 'header-inactive': product.estatus === false}">
+                <div class="icon-container-minimal">
+                  <span [data-feather]="'database'" [size]="32" class="app-icon-minimal"></span>
                 </div>
               </div>
-
-              <!-- Action Footer -->
-              <div class="card-footer-minimal">
-                <span class="view-link">Ver Detalles</span>
-                <span [data-feather]="'arrow-right'" [size]="16" class="arrow-icon"></span>
+              <!-- Card Content -->
+              <div class="card-body-minimal">
+                <!-- Status Badge Minimal -->
+                <div class="status-row">
+                  <span class="status-dot" [ngClass]="{'dot-active': product.estatus === true, 'dot-inactive': product.estatus === false}"></span>
+                  <span class="status-text">{{ product.estatus === true ? 'Active' : 'Inactive' }}</span>
+                </div>
+                <!-- Driver Name -->
+                <h3 class="app-title-minimal">{{ product.descripcion }}</h3>
+                <!-- Details List -->
+                <div class="details-list">
+                  <div class="detail-item">
+                    <span [data-feather]="'file-text'" [size]="14" class="detail-icon"></span>
+                    <span class="detail-label">Descripción:</span>
+                    <span class="detail-value">{{ product.basedatos }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span [data-feather]="'server'" [size]="14" class="detail-icon"></span>
+                    <span class="detail-label">Tipo:</span>
+                    <span class="detail-value">{{ product.driver }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span [data-feather]="'activity'" [size]="14" class="detail-icon"></span>
+                    <span class="detail-label">Estatus:</span>
+                    <span class="detail-value">{{ product.estatus ? 'Running' : 'Stopped' }}</span>
+                  </div>
+                </div>
+                <!-- Action Footer -->
+                <div class="card-footer-minimal">
+                  <span class="view-link">Ver Detalles</span>
+                  <span [data-feather]="'arrow-right'" [size]="16" class="arrow-icon"></span>
+                </div>
               </div>
-            </div>
-          </a>
-        </div>
-        <!--/ Vivid API Card -->
-      </ng-container>
-    </section>
-
-
-    <section id="ecommerce-pagination">
-      <div class="row">
-          <div class="col-sm-12">
-              <div class="d-flex justify-content-center">
-                  <ngb-pagination 
-                      [collectionSize]="(drivers | filter: searchText:'descripcion').length"
-                      [(page)]="page" 
-                      [pageSize]="pageSize"
-                      [maxSize]="5" 
-                      [rotate]="true" 
-                      
-                     
-                      aria-label="Pagination">
-                      
-                      <!-- Primer página -->
-                      <ng-template ngbPaginationFirst>
-                          <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                      </ng-template>
-                      
-                      <!-- Página anterior -->
-                      <ng-template ngbPaginationPrevious>
-                          <span data-feather="chevron-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                      </ng-template>
-                      
-                      <!-- Números de página (personalizado para quitar "current") -->
-                      <ng-template ngbPaginationNumber let-page>
-                          {{ page }}
-                      </ng-template>
-                      
-                      <!-- Página siguiente -->
-                      <ng-template ngbPaginationNext>
-                          <span data-feather="chevron-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                      </ng-template>
-                      
-                      <!-- Última página -->
-                      <ng-template ngbPaginationLast>
-                          <span data-feather="chevrons-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                      </ng-template>
-                  </ngb-pagination>
-              </div>
+            </a>
           </div>
-      </div>
-    </section>
+          <!--/ Vivid API Card -->
+        }
+      </section>
 
+
+      <section id="ecommerce-pagination">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="d-flex justify-content-center">
+              <ngb-pagination
+                [collectionSize]="(drivers | filter: searchText:'descripcion').length"
+                [(page)]="page"
+                [pageSize]="pageSize"
+                [maxSize]="5"
+                [rotate]="true"
+
+
+                aria-label="Pagination">
+
+                <!-- Primer página -->
+                <ng-template ngbPaginationFirst>
+                  <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
+                </ng-template>
+
+                <!-- Página anterior -->
+                <ng-template ngbPaginationPrevious>
+                  <span data-feather="chevron-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
+                </ng-template>
+
+                <!-- Números de página (personalizado para quitar "current") -->
+                <ng-template ngbPaginationNumber let-page>
+                  {{ page }}
+                </ng-template>
+
+                <!-- Página siguiente -->
+                <ng-template ngbPaginationNext>
+                  <span data-feather="chevron-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
+                </ng-template>
+
+                <!-- Última página -->
+                <ng-template ngbPaginationLast>
+                  <span data-feather="chevrons-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
+                </ng-template>
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
   </div>
-</div>

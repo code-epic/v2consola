@@ -48,11 +48,16 @@ import { BovedaModule } from './main/views/boveda/boveda.module';
 import { SoporteModule } from './main/views/soporte/soporte.module';
 import { PushService } from '@services/seguridad/push.service';
 import { ErrorModalModule } from './layout/components/error-modal/error-modal.module';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 const appRoutes: Routes = [
   {
     path: '',
     loadChildren: () => import('./main/pages/pages.module').then(m => m.PagesModule),
+  },
+  {
+    path: 'communication/forums',
+    loadChildren: () => import('./main/views/communication/communication.module').then(m => m.CommunicationModule),
   },
   {
     path: '**',
@@ -61,12 +66,13 @@ const appRoutes: Routes = [
 ];
 
 
-@NgModule({ declarations: [AppComponent],
-    schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+@NgModule({
+    imports: [
+        AppComponent,
+        BrowserModule,
         BrowserAnimationsModule,
         RouterModule.forRoot(appRoutes, {
-            scrollPositionRestoration: 'enabled', // Add options right here
+            scrollPositionRestoration: 'enabled',
             useHash: true
         }),
         TranslateModule.forRoot(),
@@ -93,7 +99,11 @@ const appRoutes: Routes = [
         SharedModule,
         GithubModule,
         BovedaModule,
-        SoporteModule], providers: [
+        SoporteModule
+    ],
+    schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
+    bootstrap: [AppComponent],
+    providers: [
         {
             provide: RECAPTCHA_V3_SITE_KEY,
             useValue: environment.recaptcha.siteKey,
@@ -104,6 +114,7 @@ const appRoutes: Routes = [
             multi: true
         },
         PushService,
+        provideCharts(withDefaultRegisterables()),
         provideHttpClient(withInterceptorsFromDi(), withInterceptors([zoneInterceptor])),
     ] })
 export class AppModule { }

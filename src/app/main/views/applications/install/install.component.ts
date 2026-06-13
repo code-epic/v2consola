@@ -1,22 +1,40 @@
 import { Component, OnInit, ViewEncapsulation, ViewChild } from '@angular/core';
+
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
-import { NgbModal, NgbModalConfig, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig, ModalDismissReasons, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SSB_IAplicacion } from '@services/applications/install.service';
 import Stepper from 'bs-stepper';
-import { NgSelectConfig } from '@ng-select/ng-select';
+import { NgSelectConfig, NgSelectModule } from '@ng-select/ng-select';
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service';
 import { UtilService } from '@services/util/util.service';
 import { environment } from 'environments/environment';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { FileService } from '@services/apicore/file.service';
 import { MensajeService } from '@services/util/mensaje.service';
+import { CoreCommonModule } from '@core/common.module';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 @Component({
     selector: 'app-install',
     templateUrl: './install.component.html',
     styleUrls: ['./install.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    NgbModule,
+    NgSelectModule,
+    CoreCommonModule,
+    CoreDirectivesModule,
+    CorePipesModule,
+    ContentHeaderComponent
+]
 })
 
 
@@ -100,6 +118,24 @@ export class InstallComponent implements OnInit {
     proyecto: '',
     rama: ''
   }
+
+  // Reactive Form Controls
+  public nameAppCtrl = new FormControl('')
+  public iAppNombreCtrl = new FormControl('', Validators.required)
+  public iAppProyectoCtrl = new FormControl('', Validators.required)
+  public iAppRamaCtrl = new FormControl('', Validators.required)
+  public iAppTipoCtrl = new FormControl<number | null>(null, [Validators.required])
+  public iAppOrigenCtrl = new FormControl('', Validators.required)
+  public iAppSistemaCtrl = new FormControl('', Validators.required)
+  public iAppRepositorioCtrl = new FormControl('', Validators.required)
+  public iAppUsuarioCtrl = new FormControl('', Validators.required)
+  public iAppClaveCtrl = new FormControl('')
+  public iAppPuntoMontajeCtrl = new FormControl('')
+  public iAppBasedatosCtrl = new FormControl('', Validators.required)
+  public iAppVersionCtrl = new FormControl('', Validators.required)
+  public iAppLenguajeCtrl = new FormControl('', Validators.required)
+  public iAppObservacionCtrl = new FormControl('', Validators.required)
+  public driverCtrl = new FormControl('', Validators.required)
 
   public xAPI: IAPICore = {
     id: '',
@@ -386,6 +422,7 @@ export class InstallComponent implements OnInit {
   }
 
   async guardarAplicacion() {
+    this.syncAppFromFormControls()
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.INSERTAR_APLICACION;
     this.iApp.llave = this.iApp.nombre + '.sse'
@@ -474,6 +511,7 @@ export class InstallComponent implements OnInit {
         var xapp: SSB_IAplicacion
         xapp = data.Cuerpo[0]
         this.iApp = xapp;
+        this.syncFormControlsFromApp()
       },
       (error) => {
         console.log(error)
@@ -734,6 +772,44 @@ export class InstallComponent implements OnInit {
     )
 
 
+  }
+
+  syncFormControlsFromApp(): void {
+    this.nameAppCtrl.setValue(this.nameApp ?? '')
+    this.iAppNombreCtrl.setValue(this.iApp.nombre ?? '')
+    this.iAppProyectoCtrl.setValue(this.iApp.proyecto ?? '')
+    this.iAppRamaCtrl.setValue(this.iApp.rama ?? '')
+    this.iAppTipoCtrl.setValue(this.iApp.tipo ?? null)
+    this.iAppOrigenCtrl.setValue(this.iApp.origen ?? '')
+    this.iAppSistemaCtrl.setValue(this.iApp.sistema ?? '')
+    this.iAppRepositorioCtrl.setValue(this.iApp.repositorio ?? '')
+    this.iAppUsuarioCtrl.setValue(this.iApp.usuario ?? '')
+    this.iAppClaveCtrl.setValue(this.iApp.clave ?? '')
+    this.iAppPuntoMontajeCtrl.setValue(this.iApp.puntoMontaje ?? '')
+    this.iAppBasedatosCtrl.setValue(this.iApp.basedatos ?? '')
+    this.iAppVersionCtrl.setValue(this.iApp.version ?? '')
+    this.iAppLenguajeCtrl.setValue(this.iApp.lenguaje ?? '')
+    this.iAppObservacionCtrl.setValue(this.iApp.observacion ?? '')
+    this.driverCtrl.setValue(this.driver ?? '')
+  }
+
+  syncAppFromFormControls(): void {
+    this.nameApp = this.nameAppCtrl.value
+    this.iApp.nombre = this.iAppNombreCtrl.value
+    this.iApp.proyecto = this.iAppProyectoCtrl.value
+    this.iApp.rama = this.iAppRamaCtrl.value
+    this.iApp.tipo = this.iAppTipoCtrl.value ?? undefined
+    this.iApp.origen = this.iAppOrigenCtrl.value
+    this.iApp.sistema = this.iAppSistemaCtrl.value
+    this.iApp.repositorio = this.iAppRepositorioCtrl.value
+    this.iApp.usuario = this.iAppUsuarioCtrl.value
+    this.iApp.clave = this.iAppClaveCtrl.value
+    this.iApp.puntoMontaje = this.iAppPuntoMontajeCtrl.value
+    this.iApp.basedatos = this.iAppBasedatosCtrl.value
+    this.iApp.version = this.iAppVersionCtrl.value
+    this.iApp.lenguaje = this.iAppLenguajeCtrl.value
+    this.iApp.observacion = this.iAppObservacionCtrl.value
+    this.driver = this.driverCtrl.value
   }
 
   backupDatabase() {

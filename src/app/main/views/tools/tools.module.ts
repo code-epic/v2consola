@@ -1,27 +1,12 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
 import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
-import { CoreCommonModule } from '@core/common.module';
-import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
-import { CoreCardModule } from '@core/components/core-card/core-card.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { NgbModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectModule } from '@ng-select/ng-select';
-import { CoreDirectivesModule } from '@core/directives/directives';
-import { CorePipesModule } from '@core/pipes/pipes.module';
-import { CoreSidebarModule } from '@core/components';
 import { FunctionsComponent } from './functions/functions.component';
 import { ApiComponent } from './api/api-collection/api.component';
 import { WorkflowComponent } from './workflow/workflow.component';
-import { CodemirrorModule } from '@ctrl/ngx-codemirror';
 import { ApiListComponent } from './api/api-list/api-list.component';
-import { CardSnippetModule } from '@core/components/card-snippet/card-snippet.module';
 import { ApiDetailsComponent } from './api/api-details/api-details.component';
 import { RegisterApiComponent } from './api/register-api/register-api.component';
-import { SqlFormatPipe } from '@core/pipes/sql-format.pipe';
 import { ApplicationsComponent } from './applications/applications.component';
 
 const routes = [
@@ -68,34 +53,15 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [
+  imports: [
+    RouterModule.forChild(routes),
     FunctionsComponent,
     ApiComponent,
     WorkflowComponent,
     ApiListComponent,
     ApiDetailsComponent,
     RegisterApiComponent,
-    SqlFormatPipe,
     ApplicationsComponent,
-  ],
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    ContentHeaderModule,
-    TranslateModule,
-    FormsModule,
-    CoreCardModule,
-    ReactiveFormsModule,
-    NgxDatatableModule,
-    NgbModule,
-    NgSelectModule,
-    CoreDirectivesModule,
-    CorePipesModule,
-    CoreSidebarModule,
-    CoreCommonModule,
-    CardSnippetModule,
-    CodemirrorModule,
-    NgbPaginationModule
   ],
 })
 export class ToolsModule { }

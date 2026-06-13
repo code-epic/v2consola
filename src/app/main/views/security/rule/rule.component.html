@@ -1,565 +1,578 @@
 <div class="content-wrapper container-xxl p-0">
-    <div class="content-body">
-        <!-- Fondo Animado -->
-        <div class="background-shapes">
-            <div class="shape shape1"></div>
-            <div class="shape shape2"></div>
-            <div class="shape shape3"></div>
-        </div>
-
-        <!-- content-header component -->
-        <app-content-header [contentHeader]="contentHeader"></app-content-header>
-
-
-        <!-- Invoice List -->
-        <!-- La clase 'position-relative' es necesaria para que el fondo animado no se superponga -->
-        <section class="invoice-list-wrapper position-relative">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <!-- Primer -->
-                    <div class="row">
-                        <div class="form-group col-md-12">
-                            <label class="form-label" for="app-select">Seleccionar Aplicación</label>
-                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacionSeleccionada"
-                                [ngModelOptions]="{standalone: true}" bindLabel="nombre" bindValue="id"
-                                (change)="cargarConfiguracionApp($event)" [clearable]="false"
-                                placeholder="Seleccione una aplicación para configurar sus reglas">
-                            </ng-select>
-                        </div>
-                    </div>
-
-                    <!-- Placeholder de Bienvenida -->
-                    <div *ngIf="!aplicacionSeleccionada" class="text-center p-5 my-5">
-                        <!-- Animación de Candado de Seguridad Mejorada -->
-                        <div class="animated-lock-container mb-4">
-                            <svg style="width: 120px; height: auto;"
-                              class="animated-lock"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 100 125"
-                              xml:space="preserve"
-                            >
-                              <g class="lock-body">
-                                <path fill="#7367F0" d="M82.1,48.4H78V35.3C78,20.8,65.2,8,50.7,8S23.4,20.8,23.4,35.3v13.1h-4.1c-3.3,0-6,2.7-6,6v34.5c0,3.3,2.7,6,6,6h62.8c3.3,0,6-2.7,6-6V54.4C88.1,51.1,85.4,48.4,82.1,48.4z M31.4,35.3c0-10.1,8.2-18.3,18.3-18.3s18.3,8.2,18.3,18.3v13.1H31.4V35.3z"/>
-                                <!-- Keyhole -->
-                                <circle class="keyhole" fill="#FFFFFF" cx="50.5" cy="70" r="5"/>
-                                <path class="keyhole" fill="#FFFFFF" d="M50.5,75c-1.1,0-2,0.9-2,2v8c0,1.1,0.9,2,2,2s2-0.9,2-2v-8C52.5,75.9,51.6,75,50.5,75z"/>
-                              </g>
-                              <g class="shackle">
-                                <path fill="#7367F0" d="M62.1,21.3c0-6.8-5.5-12.3-12.3-12.3S37.4,14.5,37.4,21.3v14h8V21.3c0-2.4,1.9-4.3,4.3-4.3s4.3,1.9,4.3,4.3v14h8V21.3z"/>
-                              </g>
-                            </svg>
-                        </div>
-                        <h2 class="font-weight-bold text-primary mb-2">Centro de Reglas de Seguridad</h2>
-                        <p class="lead text-muted px-2" style="font-size: 1.1rem; letter-spacing: 0.2px; line-height: 1.6;">
-                            Selecciona una aplicación para definir sus políticas de sesión, encriptamiento y endpoints.
-                        </p>
-                    </div>
-
-                    <!-- Contenedor de las tarjetas de configuración -->
-                    <div *ngIf="aplicacionSeleccionada && configuracion" class="mt-4 animated-container" >
-                        
-                        <div class="row" style="margin-top: -40px;">
-                            <div class="col-md-12">
-                                <hr>
-                            </div>
-                            <!-- Card: Estatus y Sesión -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card h-100 shadow-sm">
-                                    <div class="card-header d-flex justify-content-between align-items-center">
-                                        <h4 class="card-title mb-0 d-flex align-items-center">
-                                            <span [data-feather]="'sliders'" class="mr-1 text-primary"></span>
-                                            Reglas Generales
-                                        </h4>
-                                        <div class="custom-control custom-switch custom-control-lg">
-                                            <input type="checkbox" class="custom-control-input" id="appStatus"
-                                                [(ngModel)]="configuracion.estatus" [true-value]="1" [false-value]="0">
-                                            <label class="custom-control-label" for="appStatus"></label>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="card-text text-muted">Activa o desactiva todas las reglas de seguridad
-                                            para esta aplicación.</p>
-                                        <hr>
-                                        <label class="font-weight-bold">Duración de Sesión de Usuario</label>
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <div class="input-group input-group-lg">
-                                                    <input type="number" id="session-time"
-                                                        class="form-control form-control-lg" placeholder="Ej: 30"
-                                                        style="height: 38px;" [(ngModel)]="configuracion.sesion.tiempo">
-                                                    <div class="input-group-append">
-                                                        <ng-select class="custom-ng-select-units ng-select-lg"
-                                                            [items]="unidadesTiempo"
-                                                            [(ngModel)]="configuracion.sesion.unidad" bindLabel="name"
-                                                            bindValue="id" [clearable]="false">
-                                                            <ng-template ng-label-tmp let-item="item">
-                                                                <span [data-feather]="item.icon" [size]="18"
-                                                                    class="mr-1"></span>
-                                                                <span class="font-weight-bold">{{item.name}}</span>
-                                                            </ng-template>
-                                                            <ng-template ng-option-tmp let-item="item">
-                                                                <span [data-feather]="item.icon" [size]="20"
-                                                                    class="mr-1"></span> {{item.name}}
-                                                            </ng-template>
-                                                        </ng-select>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group mt-2">
-                                            <label class="font-weight-bold">Tipo de Encriptamiento</label>
-                                            <div class="input-group input-group-lg">
-                                                <ng-select class="ng-select-lg w-100"
-                                                    [items]="tiposEncriptamiento"
-                                                    bindLabel="name"
-                                                    bindValue="id"
-                                                    [(ngModel)]="configuracion.encriptamiento"
-                                                    [addTag]="true" [searchable]="false">
-                                                </ng-select>
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="row mt-2">
-                                            <div class="col-md-6 mb-1 mb-md-0">
-                                                <div class="d-flex align-items-center">
-                                                    <span [data-feather]="'calendar'" class="mr-2 text-primary"
-                                                        [size]="22"></span>
-                                                    <div>
-                                                        <small class="text-muted d-block">Creado</small>
-                                                        <span class="font-weight-bold">{{ configuracion.creado | date:
-                                                            'dd/MM/yyyy HH:mm:ss' }}</span>
-                                                        <div class="d-flex align-items-center mt-25">
-                                                            <span [data-feather]="'user'" class="mr-50"
-                                                                [size]="14"></span>
-                                                            <small class="font-weight-bold">{{
-                                                                configuracion.usuariocreado }}</small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="d-flex align-items-center">
-                                                    <span [data-feather]="'check-circle'" class="mr-2 text-success"
-                                                        [size]="22"></span>
-                                                    <div>
-                                                        <small class="text-muted d-block">Actualizado</small>
-                                                        <span class="font-weight-bold">{{ configuracion.actualizado |
-                                                            date: 'dd/MM/yyyy HH:mm:ss' }}</span>
-                                                        <div class="d-flex align-items-center mt-25">
-                                                            <span [data-feather]="'user'" class="mr-50"
-                                                                [size]="14"></span>
-                                                            <small class="font-weight-bold">{{
-                                                                configuracion.usuarioactualizado }}</small>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Card: Endpoints -->
-                            <div class="col-lg-6 col-md-12 mb-4">
-                                <div class="card h-100 shadow-sm">
-                                    <div class="card-header">
-                                        <h4 class="card-title d-flex align-items-center">
-                                            <span [data-feather]="'server'" class="mr-1 text-primary"></span>
-                                            Endpoints de la Aplicación
-                                        </h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="form-group mb-2">
-                                            <label for="login-url">URL de Login</label>
-                                            <div class="input-group input-group-merge">
-                                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'log-in'"></span></span></div>
-                                                <input type="text" id="login-url" class="form-control"
-                                                    placeholder="https://api.dominio.com/v1/login"
-                                                    [(ngModel)]="configuracion.endpoints.login">
-                                            </div>
-                                        </div>
-                                        <div class="form-group mb-2">
-                                            <label for="offices-url">URL de Oficinas</label>
-                                            <div class="input-group input-group-merge">
-                                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'briefcase'"></span></span></div>
-                                                <input type="text" id="offices-url" class="form-control"
-                                                    placeholder="https://api.dominio.com/data/oficinas"
-                                                    [(ngModel)]="configuracion.endpoints.oficinas">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="states-url">URL de Estados</label>
-                                            <div class="input-group input-group-merge">
-                                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'map-pin'"></span></span></div>
-                                                <input type="text" id="states-url" class="form-control"
-                                                    placeholder="https://api.dominio.com/data/estados"
-                                                    [(ngModel)]="configuracion.endpoints.estados">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="ad-url">URL Directorio Activo</label>
-                                            <div class="input-group input-group-merge">
-                                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                                            [data-feather]="'users'"></span></span></div>
-                                                <input type="text" id="ad-url" class="form-control"
-                                                    placeholder="https://api.dominio.com/ad/users"
-                                                    [(ngModel)]="configuracion.endpoints.directorioActivo">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Card: Nivel de Traza -->
-                            <div class="col-12 mb-4">
-                                <div class="card shadow-sm">
-                                    <div class="card-header">
-                                        <h4 class="card-title d-flex align-items-center">
-                                            <span [data-feather]="'bar-chart-2'" class="mr-1 text-primary"></span>
-                                            Nivel de Traza
-                                        </h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <p class="card-text">Define el nivel de detalle que se registrará en los logs
-                                            para las acciones de esta aplicación.</p>
-                                        <div class="btn-group btn-group-toggle d-flex" ngbRadioGroup name="traceLevel"
-                                            [(ngModel)]="configuracion.traza.nivel">
-                                            <label ngbButtonLabel class="btn-outline-secondary flex-fill"><input
-                                                    ngbButton type="radio" value="BAJA"><span [data-feather]="'shield'"
-                                                    class="mr-1"></span>Baja</label>
-                                            <label ngbButtonLabel class="btn-outline-warning flex-fill"><input ngbButton
-                                                    type="radio" value="MEDIA"><span [data-feather]="'activity'"
-                                                    class="mr-1"></span>Media</label>
-                                            <label ngbButtonLabel class="btn-outline-danger flex-fill"><input ngbButton
-                                                    type="radio" value="ALTA"><span [data-feather]="'alert-triangle'"
-                                                    class="mr-1"></span>Alta</label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Card: Configuración de Cauciones -->
-                            <div class="col-12 mb-4">
-                                <div class="card shadow-sm">
-                                    <div class="card-header">
-                                        <h4 class="card-title d-flex align-items-center">
-                                            <span [data-feather]="'file-text'" class="mr-1 text-primary"></span>
-                                            Configuración de Cauciones
-                                        </h4>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <!-- Auditor -->
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="font-weight-bold">Datos del Auditor</label>
-                                                    <div class="d-flex align-items-start">
-                                                        <div class="flex-grow-1 mr-2">
-                                                            <div class="input-group input-group-merge">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><span [data-feather]="'user-check'"></span></span>
-                                                                </div>
-                                                                <input type="text" class="form-control" placeholder="Nombre y Grado" [(ngModel)]="configuracion.auditor_nombre">
-                                                            </div>
-                                                            <div class="input-group input-group-merge mt-1">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text p-0">
-                                                                        <select class="form-control border-0 bg-transparent h-100" [(ngModel)]="configuracion.auditor_nacionalidad">
-                                                                            <option value="V">V</option>
-                                                                            <option value="E">E</option>
-                                                                        </select>
-                                                                    </span>
-                                                                </div>
-                                                                <input type="text" class="form-control" placeholder="Cédula de Identidad" [(ngModel)]="configuracion.auditor_cedula">
-                                                            </div>
-                                                            <small class="text-muted">Ingrese el nombre, grado y cargo del auditor.</small>
-                                                        </div>
-                                                        <div class="upload-box-wrapper">
-                                                            <div class="upload-box" (click)="auditorInput.click()" [class.has-image]="configuracion.auditor_firma">
-                                                                <input type="file" #auditorInput hidden (change)="onFileChange($event, 'auditor_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
-                                                                <div *ngIf="!configuracion.auditor_firma" class="upload-placeholder">
-                                                                    <span [data-feather]="'upload'" class="text-muted"></span>
-                                                                    <div class="font-small-2 text-muted mt-1">Firma</div>
-                                                                </div>
-                                                                <img *ngIf="configuracion.auditor_firma" [src]="configuracion.auditor_firma" alt="Firma">
-                                                                <div *ngIf="configuracion.auditor_firma" class="upload-overlay">
-                                                                    <a [href]="configuracion.auditor_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
-                                                                        <span [data-feather]="'eye'"></span>
-                                                                    </a>
-                                                                    <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.auditor_firma = null; auditorInput.value = ''" title="Eliminar">
-                                                                        <span [data-feather]="'trash-2'"></span>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <!-- Director -->
-                                            <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="font-weight-bold">Datos del Director</label>
-                                                    <div class="d-flex align-items-start">
-                                                        <div class="flex-grow-1 mr-2">
-                                                            <div class="input-group input-group-merge">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><span [data-feather]="'user'"></span></span>
-                                                                </div>
-                                                                <input type="text" class="form-control" placeholder="Nombre y Grado" [(ngModel)]="configuracion.director_nombre">
-                                                            </div>
-                                                            <div class="input-group input-group-merge mt-1">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text p-0">
-                                                                        <select class="form-control border-0 bg-transparent h-100" [(ngModel)]="configuracion.director_nacionalidad">
-                                                                            <option value="V">V</option>
-                                                                            <option value="E">E</option>
-                                                                        </select>
-                                                                    </span>
-                                                                </div>
-                                                                <input type="text" class="form-control" placeholder="Cédula de Identidad" [(ngModel)]="configuracion.director_cedula">
-                                                            </div>
-                                                            <small class="text-muted">Ingrese el nombre, grado y cargo del director.</small>
-                                                        </div>
-                                                        <div class="upload-box-wrapper">
-                                                            <div class="upload-box" (click)="directorInput.click()" [class.has-image]="configuracion.director_firma">
-                                                                <input type="file" #directorInput hidden (change)="onFileChange($event, 'director_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
-                                                                <div *ngIf="!configuracion.director_firma" class="upload-placeholder">
-                                                                    <span [data-feather]="'upload'" class="text-muted"></span>
-                                                                    <div class="font-small-2 text-muted mt-1">Firma</div>
-                                                                </div>
-                                                                <img *ngIf="configuracion.director_firma" [src]="configuracion.director_firma" alt="Firma">
-                                                                <div *ngIf="configuracion.director_firma" class="upload-overlay">
-                                                                    <a [href]="configuracion.director_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
-                                                                        <span [data-feather]="'eye'"></span>
-                                                                    </a>
-                                                                    <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.director_firma = null; directorInput.value = ''" title="Eliminar">
-                                                                        <span [data-feather]="'trash-2'"></span>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-12"><hr></div>
-
-                                            <!-- Membrete -->
-                                            <div class="col-md-12">
-                                                <label class="font-weight-bold">Membrete Institucional</label>
-                                                <div class="row">
-                                                    <div class="col-md-3">
-                                                        <div class="upload-box-wrapper h-100">
-                                                            <div class="upload-box h-100" (click)="logoInput.click()" [class.has-image]="configuracion.logo_membrete" style="min-height: 120px;">
-                                                                <input type="file" #logoInput hidden (change)="onFileChange($event, 'logo_membrete')" accept=".gif,.jpg,.jpeg,.png,.webp">
-                                                                <div *ngIf="!configuracion.logo_membrete" class="upload-placeholder">
-                                                                    <span [data-feather]="'image'" class="text-muted" [size]="32"></span>
-                                                                    <div class="font-small-2 text-muted mt-1">Cargar Logo</div>
-                                                                </div>
-                                                                <img *ngIf="configuracion.logo_membrete" [src]="configuracion.logo_membrete" alt="Logo">
-                                                                <div *ngIf="configuracion.logo_membrete" class="upload-overlay">
-                                                                    <a [href]="configuracion.logo_membrete" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
-                                                                        <span [data-feather]="'eye'"></span>
-                                                                    </a>
-                                                                    <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.logo_membrete = null; logoInput.value = ''" title="Eliminar">
-                                                                        <span [data-feather]="'trash-2'"></span>
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-9">
-                                                        <div class="input-group input-group-merge mb-1">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><span [data-feather]="'type'"></span></span>
-                                                            </div>
-                                                            <input type="text" class="form-control" placeholder="Línea 1 (Ej: República Bolivariana...)" [(ngModel)]="configuracion.membrete_l1">
-                                                        </div>
-                                                        <div class="input-group input-group-merge mb-1">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
-                                                            </div>
-                                                            <input type="text" class="form-control" placeholder="Línea 2 (Ej: Ministerio...)" [(ngModel)]="configuracion.membrete_l2">
-                                                        </div>
-                                                        <div class="input-group input-group-merge mb-1">
-                                                            <div class="input-group-prepend">
-                                                                <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
-                                                            </div>
-                                                            <input type="text" class="form-control" placeholder="Línea 3 (Ej: Dirección General...)" [(ngModel)]="configuracion.membrete_l3">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-12"><hr></div>
-
-                                            <!-- Certificado Digital (Anti-Plagio) -->
-                                            <div class="col-md-12">
-                                                <div class="d-flex align-items-center mb-1">
-                                                    <span [data-feather]="'shield'" class="mr-1 text-primary"></span>
-                                                    <label class="font-weight-bold mb-0">Certificado Digital (Anti-Plagio)</label>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Archivo del Certificado (.p12 / .pfx)</label>
-                                                            <div class="custom-file">
-                                                                <input type="file" class="custom-file-input" id="certFile" (change)="onFileChange($event, 'certificado_digital')" accept=".p12,.pfx">
-                                                                <label class="custom-file-label" for="certFile">
-                                                                    {{ configuracion.certificado_digital ? 'Certificado Cargado' : 'Seleccionar Archivo' }}
-                                                                </label>
-                                                            </div>
-                                                            <small class="text-muted mt-1 d-block" *ngIf="configuracion.certificado_digital">
-                                                                <span class="text-success font-weight-bold"><span [data-feather]="'check'" [size]="10"></span> Archivo cargado correctamente</span>
-                                                                <a href="javascript:void(0)" class="text-danger ml-1" (click)="configuracion.certificado_digital = null">Eliminar</a>
-                                                            </small>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label>Contraseña del Certificado</label>
-                                                            <div class="input-group input-group-merge">
-                                                                <div class="input-group-prepend">
-                                                                    <span class="input-group-text"><span [data-feather]="'key'"></span></span>
-                                                                </div>
-                                                                <input type="password" class="form-control" placeholder="Ingrese la contraseña del certificado" [(ngModel)]="configuracion.certificado_pass">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Botón de Guardar -->
-                        <div class="row">
-                            <div class="col-12 text-right">
-                                <button type="button" class="btn btn-primary btn-lg shadow-lg" style="background: linear-gradient(to right, #7367F0, #CE9FFC); border: 0; border-radius: 50px; padding-left: 3rem; padding-right: 3rem;" (click)="guardarConfiguracion()">
-                                    <span [data-feather]="'save'" class="mr-1"></span>
-                                    Guardar Cambios
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
+  <div class="content-body">
+    <!-- Fondo Animado -->
+    <div class="background-shapes">
+      <div class="shape shape1"></div>
+      <div class="shape shape2"></div>
+      <div class="shape shape3"></div>
     </div>
-</div>
 
-<!-- Estilos para la animación y el diseño -->
-<style>
-  .background-shapes {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none; /* Asegura que no interfiera con los clics */
-  }
-  .shape {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(115, 103, 240, 0.05); /* Color principal del tema, muy suave */
-    animation: float 20s infinite linear;
-  }
-  .shape1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
-  .shape2 { width: 150px; height: 150px; top: 60%; left: 85%; animation-duration: 18s; }
-  .shape3 { width: 100px; height: 100px; top: 75%; left: 15%; animation-duration: 22s; }
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-  @keyframes float {
+
+    <!-- Invoice List -->
+    <!-- La clase 'position-relative' es necesaria para que el fondo animado no se superponga -->
+    <section class="invoice-list-wrapper position-relative">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <!-- Primer -->
+          <div class="row">
+            <div class="form-group col-md-12">
+              <label class="form-label" for="app-select">Seleccionar Aplicación</label>
+              <ng-select [items]="lstAplicaciones" [formControl]="aplicacionSeleccionadaCtrl" bindLabel="nombre" bindValue="id"
+                (change)="cargarConfiguracionApp($event)" [clearable]="false"
+                placeholder="Seleccione una aplicación para configurar sus reglas">
+              </ng-select>
+            </div>
+          </div>
+
+          <!-- Placeholder de Bienvenida -->
+          @if (!aplicacionSeleccionada) {
+            <div class="text-center p-5 my-5">
+              <!-- Animación de Candado de Seguridad Mejorada -->
+              <div class="animated-lock-container mb-4">
+                <svg style="width: 120px; height: auto;"
+                  class="animated-lock"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 100 125"
+                  xml:space="preserve"
+                  >
+                  <g class="lock-body">
+                    <path fill="#7367F0" d="M82.1,48.4H78V35.3C78,20.8,65.2,8,50.7,8S23.4,20.8,23.4,35.3v13.1h-4.1c-3.3,0-6,2.7-6,6v34.5c0,3.3,2.7,6,6,6h62.8c3.3,0,6-2.7,6-6V54.4C88.1,51.1,85.4,48.4,82.1,48.4z M31.4,35.3c0-10.1,8.2-18.3,18.3-18.3s18.3,8.2,18.3,18.3v13.1H31.4V35.3z"/>
+                    <!-- Keyhole -->
+                    <circle class="keyhole" fill="#FFFFFF" cx="50.5" cy="70" r="5"/>
+                    <path class="keyhole" fill="#FFFFFF" d="M50.5,75c-1.1,0-2,0.9-2,2v8c0,1.1,0.9,2,2,2s2-0.9,2-2v-8C52.5,75.9,51.6,75,50.5,75z"/>
+                  </g>
+                  <g class="shackle">
+                    <path fill="#7367F0" d="M62.1,21.3c0-6.8-5.5-12.3-12.3-12.3S37.4,14.5,37.4,21.3v14h8V21.3c0-2.4,1.9-4.3,4.3-4.3s4.3,1.9,4.3,4.3v14h8V21.3z"/>
+                  </g>
+                </svg>
+              </div>
+              <h2 class="font-weight-bold text-primary mb-2">Centro de Reglas de Seguridad</h2>
+              <p class="lead text-muted px-2" style="font-size: 1.1rem; letter-spacing: 0.2px; line-height: 1.6;">
+                Selecciona una aplicación para definir sus políticas de sesión, encriptamiento y endpoints.
+              </p>
+            </div>
+          }
+
+          <!-- Contenedor de las tarjetas de configuración -->
+          @if (aplicacionSeleccionada && configuracion) {
+            <div class="mt-4 animated-container" >
+              <div class="row" style="margin-top: -40px;">
+                <div class="col-md-12">
+                  <hr>
+                  </div>
+                  <!-- Card: Estatus y Sesión -->
+                  <div class="col-lg-6 col-md-12 mb-4">
+                    <div class="card h-100 shadow-sm">
+                      <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="card-title mb-0 d-flex align-items-center">
+                          <span [data-feather]="'sliders'" class="mr-1 text-primary"></span>
+                          Reglas Generales
+                        </h4>
+                        <div class="custom-control custom-switch custom-control-lg">
+                          <input type="checkbox" class="custom-control-input" id="appStatus"
+                            [formControl]="configuracionEstatusCtrl">
+                          <label class="custom-control-label" for="appStatus"></label>
+                        </div>
+                      </div>
+                      <div class="card-body">
+                        <p class="card-text text-muted">Activa o desactiva todas las reglas de seguridad
+                        para esta aplicación.</p>
+                        <hr>
+                          <label class="font-weight-bold">Duración de Sesión de Usuario</label>
+                          <div class="row">
+                            <div class="col-12">
+                              <div class="input-group input-group-lg">
+                                <input type="number" id="session-time"
+                                  class="form-control form-control-lg" placeholder="Ej: 30"
+                                  style="height: 38px;" [formControl]="configuracionSesionTiempoCtrl">
+                                <div class="input-group-append">
+                                  <ng-select class="custom-ng-select-units ng-select-lg"
+                                    [items]="unidadesTiempo"
+                                    [formControl]="configuracionSesionUnidadCtrl" bindLabel="name"
+                                    bindValue="id" [clearable]="false">
+                                    <ng-template ng-label-tmp let-item="item">
+                                      <span [data-feather]="item.icon" [size]="18"
+                                      class="mr-1"></span>
+                                      <span class="font-weight-bold">{{item.name}}</span>
+                                    </ng-template>
+                                    <ng-template ng-option-tmp let-item="item">
+                                      <span [data-feather]="item.icon" [size]="20"
+                                      class="mr-1"></span> {{item.name}}
+                                    </ng-template>
+                                  </ng-select>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group mt-2">
+                            <label class="font-weight-bold">Tipo de Encriptamiento</label>
+                            <div class="input-group input-group-lg">
+                              <ng-select class="ng-select-lg w-100"
+                                [items]="tiposEncriptamiento"
+                                bindLabel="name"
+                                bindValue="id"
+                                [formControl]="configuracionEncriptamientoCtrl"
+                                [addTag]="true" [searchable]="false">
+                              </ng-select>
+                            </div>
+                          </div>
+                          <hr>
+                            <div class="row mt-2">
+                              <div class="col-md-6 mb-1 mb-md-0">
+                                <div class="d-flex align-items-center">
+                                  <span [data-feather]="'calendar'" class="mr-2 text-primary"
+                                  [size]="22"></span>
+                                  <div>
+                                    <small class="text-muted d-block">Creado</small>
+                                    <span class="font-weight-bold">{{ configuracion.creado | date:
+                                    'dd/MM/yyyy HH:mm:ss' }}</span>
+                                    <div class="d-flex align-items-center mt-25">
+                                      <span [data-feather]="'user'" class="mr-50"
+                                      [size]="14"></span>
+                                      <small class="font-weight-bold">{{
+                                      configuracion.usuariocreado }}</small>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="d-flex align-items-center">
+                                  <span [data-feather]="'check-circle'" class="mr-2 text-success"
+                                  [size]="22"></span>
+                                  <div>
+                                    <small class="text-muted d-block">Actualizado</small>
+                                    <span class="font-weight-bold">{{ configuracion.actualizado |
+                                    date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+                                    <div class="d-flex align-items-center mt-25">
+                                      <span [data-feather]="'user'" class="mr-50"
+                                      [size]="14"></span>
+                                      <small class="font-weight-bold">{{
+                                      configuracion.usuarioactualizado }}</small>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Card: Endpoints -->
+                      <div class="col-lg-6 col-md-12 mb-4">
+                        <div class="card h-100 shadow-sm">
+                          <div class="card-header">
+                            <h4 class="card-title d-flex align-items-center">
+                              <span [data-feather]="'server'" class="mr-1 text-primary"></span>
+                              Endpoints de la Aplicación
+                            </h4>
+                          </div>
+                          <div class="card-body">
+                            <div class="form-group mb-2">
+                              <label for="login-url">URL de Login</label>
+                              <div class="input-group input-group-merge">
+                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                [data-feather]="'log-in'"></span></span></div>
+                                <input type="text" id="login-url" class="form-control"
+                                  placeholder="https://api.dominio.com/v1/login"
+                                  [formControl]="configuracionEndpointsLoginCtrl">
+                              </div>
+                            </div>
+                            <div class="form-group mb-2">
+                              <label for="offices-url">URL de Oficinas</label>
+                              <div class="input-group input-group-merge">
+                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                [data-feather]="'briefcase'"></span></span></div>
+                                <input type="text" id="offices-url" class="form-control"
+                                  placeholder="https://api.dominio.com/data/oficinas"
+                                  [formControl]="configuracionEndpointsOficinasCtrl">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="states-url">URL de Estados</label>
+                              <div class="input-group input-group-merge">
+                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                [data-feather]="'map-pin'"></span></span></div>
+                                <input type="text" id="states-url" class="form-control"
+                                  placeholder="https://api.dominio.com/data/estados"
+                                  [formControl]="configuracionEndpointsEstadosCtrl">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="ad-url">URL Directorio Activo</label>
+                              <div class="input-group input-group-merge">
+                                <div class="input-group-prepend"><span class="input-group-text"><span
+                                [data-feather]="'users'"></span></span></div>
+                                <input type="text" id="ad-url" class="form-control"
+                                  placeholder="https://api.dominio.com/ad/users"
+                                  [formControl]="configuracionEndpointsDirectorioActivoCtrl">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Card: Nivel de Traza -->
+                      <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                          <div class="card-header">
+                            <h4 class="card-title d-flex align-items-center">
+                              <span [data-feather]="'bar-chart-2'" class="mr-1 text-primary"></span>
+                              Nivel de Traza
+                            </h4>
+                          </div>
+                          <div class="card-body">
+                            <p class="card-text">Define el nivel de detalle que se registrará en los logs
+                            para las acciones de esta aplicación.</p>
+                            <div class="btn-group btn-group-toggle d-flex" ngbRadioGroup name="traceLevel"
+                              [formControl]="configuracionTrazaNivelCtrl">
+                              <label ngbButtonLabel class="btn-outline-secondary flex-fill"><input
+                                ngbButton type="radio" value="BAJA"><span [data-feather]="'shield'"
+                              class="mr-1"></span>Baja</label>
+                              <label ngbButtonLabel class="btn-outline-warning flex-fill"><input ngbButton
+                                type="radio" value="MEDIA"><span [data-feather]="'activity'"
+                              class="mr-1"></span>Media</label>
+                              <label ngbButtonLabel class="btn-outline-danger flex-fill"><input ngbButton
+                                type="radio" value="ALTA"><span [data-feather]="'alert-triangle'"
+                              class="mr-1"></span>Alta</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <!-- Card: Configuración de Cauciones -->
+                      <div class="col-12 mb-4">
+                        <div class="card shadow-sm">
+                          <div class="card-header">
+                            <h4 class="card-title d-flex align-items-center">
+                              <span [data-feather]="'file-text'" class="mr-1 text-primary"></span>
+                              Configuración de Cauciones
+                            </h4>
+                          </div>
+                          <div class="card-body">
+                            <div class="row">
+                              <!-- Auditor -->
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="font-weight-bold">Datos del Auditor</label>
+                                  <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1 mr-2">
+                                      <div class="input-group input-group-merge">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><span [data-feather]="'user-check'"></span></span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Nombre y Grado" [formControl]="configuracionAuditorNombreCtrl">
+                                      </div>
+                                      <div class="input-group input-group-merge mt-1">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text p-0">
+                                            <select class="form-control border-0 bg-transparent h-100" [formControl]="configuracionAuditorNacionalidadCtrl">
+                                              <option value="V">V</option>
+                                              <option value="E">E</option>
+                                            </select>
+                                          </span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Cédula de Identidad" [formControl]="configuracionAuditorCedulaCtrl">
+                                      </div>
+                                      <small class="text-muted">Ingrese el nombre, grado y cargo del auditor.</small>
+                                    </div>
+                                    <div class="upload-box-wrapper">
+                                      <div class="upload-box" (click)="auditorInput.click()" [class.has-image]="configuracion.auditor_firma">
+                                        <input type="file" #auditorInput hidden (change)="onFileChange($event, 'auditor_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                                        @if (!configuracion.auditor_firma) {
+                                          <div class="upload-placeholder">
+                                            <span [data-feather]="'upload'" class="text-muted"></span>
+                                            <div class="font-small-2 text-muted mt-1">Firma</div>
+                                          </div>
+                                        }
+                                        @if (configuracion.auditor_firma) {
+                                          <img [src]="configuracion.auditor_firma" alt="Firma">
+                                        }
+                                        @if (configuracion.auditor_firma) {
+                                          <div class="upload-overlay">
+                                            <a [href]="configuracion.auditor_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
+                                              <span [data-feather]="'eye'"></span>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.auditor_firma = null; auditorInput.value = ''" title="Eliminar">
+                                              <span [data-feather]="'trash-2'"></span>
+                                            </button>
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!-- Director -->
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="font-weight-bold">Datos del Director</label>
+                                  <div class="d-flex align-items-start">
+                                    <div class="flex-grow-1 mr-2">
+                                      <div class="input-group input-group-merge">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><span [data-feather]="'user'"></span></span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Nombre y Grado" [formControl]="configuracionDirectorNombreCtrl">
+                                      </div>
+                                      <div class="input-group input-group-merge mt-1">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text p-0">
+                                            <select class="form-control border-0 bg-transparent h-100" [formControl]="configuracionDirectorNacionalidadCtrl">
+                                              <option value="V">V</option>
+                                              <option value="E">E</option>
+                                            </select>
+                                          </span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Cédula de Identidad" [formControl]="configuracionDirectorCedulaCtrl">
+                                      </div>
+                                      <small class="text-muted">Ingrese el nombre, grado y cargo del director.</small>
+                                    </div>
+                                    <div class="upload-box-wrapper">
+                                      <div class="upload-box" (click)="directorInput.click()" [class.has-image]="configuracion.director_firma">
+                                        <input type="file" #directorInput hidden (change)="onFileChange($event, 'director_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                                        @if (!configuracion.director_firma) {
+                                          <div class="upload-placeholder">
+                                            <span [data-feather]="'upload'" class="text-muted"></span>
+                                            <div class="font-small-2 text-muted mt-1">Firma</div>
+                                          </div>
+                                        }
+                                        @if (configuracion.director_firma) {
+                                          <img [src]="configuracion.director_firma" alt="Firma">
+                                        }
+                                        @if (configuracion.director_firma) {
+                                          <div class="upload-overlay">
+                                            <a [href]="configuracion.director_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
+                                              <span [data-feather]="'eye'"></span>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.director_firma = null; directorInput.value = ''" title="Eliminar">
+                                              <span [data-feather]="'trash-2'"></span>
+                                            </button>
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-12"><hr></div>
+                              <!-- Membrete -->
+                              <div class="col-md-12">
+                                <label class="font-weight-bold">Membrete Institucional</label>
+                                <div class="row">
+                                  <div class="col-md-3">
+                                    <div class="upload-box-wrapper h-100">
+                                      <div class="upload-box h-100" (click)="logoInput.click()" [class.has-image]="configuracion.logo_membrete" style="min-height: 120px;">
+                                        <input type="file" #logoInput hidden (change)="onFileChange($event, 'logo_membrete')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                                        @if (!configuracion.logo_membrete) {
+                                          <div class="upload-placeholder">
+                                            <span [data-feather]="'image'" class="text-muted" [size]="32"></span>
+                                            <div class="font-small-2 text-muted mt-1">Cargar Logo</div>
+                                          </div>
+                                        }
+                                        @if (configuracion.logo_membrete) {
+                                          <img [src]="configuracion.logo_membrete" alt="Logo">
+                                        }
+                                        @if (configuracion.logo_membrete) {
+                                          <div class="upload-overlay">
+                                            <a [href]="configuracion.logo_membrete" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
+                                              <span [data-feather]="'eye'"></span>
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.logo_membrete = null; logoInput.value = ''" title="Eliminar">
+                                              <span [data-feather]="'trash-2'"></span>
+                                            </button>
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-9">
+                                    <div class="input-group input-group-merge mb-1">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'type'"></span></span>
+                                      </div>
+                                      <input type="text" class="form-control" placeholder="Línea 1 (Ej: República Bolivariana...)" [formControl]="configuracionMembreteL1Ctrl">
+                                    </div>
+                                    <div class="input-group input-group-merge mb-1">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
+                                      </div>
+                                      <input type="text" class="form-control" placeholder="Línea 2 (Ej: Ministerio...)" [formControl]="configuracionMembreteL2Ctrl">
+                                    </div>
+                                    <div class="input-group input-group-merge mb-1">
+                                      <div class="input-group-prepend">
+                                        <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
+                                      </div>
+                                      <input type="text" class="form-control" placeholder="Línea 3 (Ej: Dirección General...)" [formControl]="configuracionMembreteL3Ctrl">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-12"><hr></div>
+                              <!-- Certificado Digital (Anti-Plagio) -->
+                              <div class="col-md-12">
+                                <div class="d-flex align-items-center mb-1">
+                                  <span [data-feather]="'shield'" class="mr-1 text-primary"></span>
+                                  <label class="font-weight-bold mb-0">Certificado Digital (Anti-Plagio)</label>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-6">
+                                    <div class="form-group">
+                                      <label>Archivo del Certificado (.p12 / .pfx)</label>
+                                      <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="certFile" (change)="onFileChange($event, 'certificado_digital')" accept=".p12,.pfx">
+                                        <label class="custom-file-label" for="certFile">
+                                          {{ configuracion.certificado_digital ? 'Certificado Cargado' : 'Seleccionar Archivo' }}
+                                        </label>
+                                      </div>
+                                      @if (configuracion.certificado_digital) {
+                                        <small class="text-muted mt-1 d-block">
+                                          <span class="text-success font-weight-bold"><span [data-feather]="'check'" [size]="10"></span> Archivo cargado correctamente</span>
+                                          <a href="javascript:void(0)" class="text-danger ml-1" (click)="configuracion.certificado_digital = null">Eliminar</a>
+                                        </small>
+                                      }
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6">
+                                    <div class="form-group">
+                                      <label>Contraseña del Certificado</label>
+                                      <div class="input-group input-group-merge">
+                                        <div class="input-group-prepend">
+                                          <span class="input-group-text"><span [data-feather]="'key'"></span></span>
+                                        </div>
+                                        <input type="password" class="form-control" placeholder="Ingrese la contraseña del certificado" [formControl]="configuracionCertificadoPassCtrl">
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Botón de Guardar -->
+                    <div class="row">
+                      <div class="col-12 text-right">
+                        <button type="button" class="btn btn-primary btn-lg shadow-lg" style="background: linear-gradient(to right, #7367F0, #CE9FFC); border: 0; border-radius: 50px; padding-left: 3rem; padding-right: 3rem;" (click)="guardarConfiguracion()">
+                          <span [data-feather]="'save'" class="mr-1"></span>
+                          Guardar Cambios
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Estilos para la animación y el diseño -->
+      <style>
+        .background-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        pointer-events: none; /* Asegura que no interfiera con los clics */
+      }
+      .shape {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(115, 103, 240, 0.05); /* Color principal del tema, muy suave */
+      animation: float 20s infinite linear;
+    }
+    .shape1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
+    .shape2 { width: 150px; height: 150px; top: 60%; left: 85%; animation-duration: 18s; }
+    .shape3 { width: 100px; height: 100px; top: 75%; left: 15%; animation-duration: 22s; }
+
+    @keyframes float {
     0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
     50% { transform: translateY(-25px) translateX(15px) rotate(180deg); }
     100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
   }
 
   .animated-illustration {
-    animation: float-illustration 6s ease-in-out infinite;
-  }
-  @keyframes float-illustration {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-  }
+  animation: float-illustration 6s ease-in-out infinite;
+}
+@keyframes float-illustration {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-20px); }
+}
 
-  .animated-container {
-    animation: fadeInSlideUp 0.6s ease-out forwards;
-  }
-  @keyframes fadeInSlideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+.animated-container {
+animation: fadeInSlideUp 0.6s ease-out forwards;
+}
+@keyframes fadeInSlideUp {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
 
-  .upload-box-wrapper {
-    width: 120px;
-    height: 100px;
-  }
-  .col-md-3 .upload-box-wrapper {
-    width: 100%;
-    height: 100%;
-  }
+.upload-box-wrapper {
+width: 120px;
+height: 100px;
+}
+.col-md-3 .upload-box-wrapper {
+width: 100%;
+height: 100%;
+}
 
-  .upload-box {
-    width: 100%;
-    height: 100%;
-    border: 2px dashed #d9d9d9;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    background-color: #fafafa;
-    transition: border-color 0.3s ease;
-    overflow: hidden;
-  }
+.upload-box {
+width: 100%;
+height: 100%;
+border: 2px dashed #d9d9d9;
+border-radius: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+position: relative;
+background-color: #fafafa;
+transition: border-color 0.3s ease;
+overflow: hidden;
+}
 
-  .upload-box:hover {
-    border-color: #7367F0;
-    background-color: #f0f0f0;
-  }
+.upload-box:hover {
+border-color: #7367F0;
+background-color: #f0f0f0;
+}
 
-  .upload-box img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    padding: 4px;
-  }
+.upload-box img {
+max-width: 100%;
+max-height: 100%;
+object-fit: contain;
+padding: 4px;
+}
 
-  .upload-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
+.upload-overlay {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+opacity: 0;
+transition: opacity 0.2s;
+}
 
-  .upload-box:hover .upload-overlay {
-    opacity: 1;
-  }
+.upload-box:hover .upload-overlay {
+opacity: 1;
+}
 
-  .upload-box.has-image {
-    border-style: solid;
-    border-color: #e0e0e0;
-  }
+.upload-box.has-image {
+border-style: solid;
+border-color: #e0e0e0;
+}
 </style>

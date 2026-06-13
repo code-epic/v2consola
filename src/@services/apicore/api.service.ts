@@ -295,6 +295,16 @@ export interface IConfiguracion {
   duracion?: number;
   vigencia?: number;
   nivel?: number;
+  auditor_nombre?: string;
+  auditor_nacionalidad?: string;
+  auditor_cedula?: string;
+  director_nombre?: string;
+  director_nacionalidad?: string;
+  director_cedula?: string;
+  membrete_l1?: string;
+  membrete_l2?: string;
+  membrete_l3?: string;
+  certificado_pass?: string;
 }
 
 
@@ -718,6 +728,24 @@ export class ApiService {
 
     var url = this.URL + "sandra_send-message";
     return this.http.post<any>(url, data, this.httpOptions);
+  }
+
+  ListCertificates(includeKeys: boolean = false): Observable<any> {
+    var url = this.URL + "certificate/list";
+    return this.http.post<any>(url, { include_keys: includeKeys }, this.httpOptions);
+  }
+
+  DownloadCertificate(path: string, format?: string): Observable<Blob> {
+    var url = this.URL + "certificate/download";
+    var body: any = { path: path };
+    if (format) body.format = format;
+    const opts = {
+      headers: new HttpHeaders({
+        Authorization: "Bearer " + sessionStorage.getItem("token"),
+      }),
+      responseType: "blob" as "json",
+    };
+    return this.http.post<any>(url, body, opts);
   }
 
 

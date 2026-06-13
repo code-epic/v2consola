@@ -1,18 +1,22 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation } from '@angular/core';
 
+
 import { Subject } from 'rxjs';
 import { takeUntil, filter } from 'rxjs/operators';
 
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
+import { CoreMenuModule } from '@core/components';
+import { CoreCommonModule } from '@core/common.module';
 
 @Component({
     selector: 'horizontal-menu',
     templateUrl: './horizontal-menu.component.html',
     styleUrls: ['./horizontal-menu.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CoreMenuModule, CoreCommonModule]
 })
 export class HorizontalMenuComponent implements OnInit, OnDestroy {
   coreConfig: any;

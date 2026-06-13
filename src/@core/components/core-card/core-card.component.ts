@@ -1,9 +1,12 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, HostListener, EventEmitter, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'core-card',
     templateUrl: './core-card.component.html',
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, NgbModule]
 })
 export class CoreCardComponent implements OnInit {
   // default status before click event

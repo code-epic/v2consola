@@ -48,31 +48,15 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [
+  declarations: [],
+  imports: [
+    RouterModule.forChild(routes),
+    QueryLogComponent,
     LogsComponent,
     BinnacleComponent,
-    QueryLogComponent,
     BinnacleApplicationsComponent,
     TrazaComponent,
     EventComponent
-  ],
-  imports: [
-    RouterModule.forChild(routes),
-    CommonModule,
-    ContentHeaderModule,
-    TranslateModule,
-    FormsModule,
-    CoreCardModule,
-    ReactiveFormsModule,
-    NgbModule,
-    NgSelectModule,
-    CoreDirectivesModule,
-    CorePipesModule,
-    CoreSidebarModule,
-    CoreCommonModule,
-    CardSnippetModule,
-    NgbPaginationModule,
-    NgbNavModule
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })

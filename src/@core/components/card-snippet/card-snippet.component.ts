@@ -1,5 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HighlightModule } from 'ngx-highlightjs';
+import { CoreCommonModule } from '@core/common.module';
+
 // snippetCode interface
 export interface snippetCode {
   isCollapsed?: boolean;
@@ -14,7 +18,8 @@ export interface snippetCode {
     selector: 'core-card-snippet',
     templateUrl: './card-snippet.component.html',
     styleUrls: ['./card-snippet.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [NgbModule, HighlightModule, CoreCommonModule]
 })
 export class CoreCardSnippetComponent implements OnInit {
   // public

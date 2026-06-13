@@ -1,8 +1,14 @@
 import { Component, OnInit, ViewEncapsulation, NgZone } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule, ActivatedRoute } from "@angular/router";
+import { NgbModule, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { CoreCommonModule } from "@core/common.module";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { environment } from "environments/environment";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { CompresionService } from "@services/util/compresion.service";
 import { UtilService } from "@services/util/util.service";
 import * as jspdf from 'jspdf';
@@ -35,7 +41,17 @@ export interface IMetodoBitacora {
     templateUrl: './events.component.html',
     styleUrls: ['./events.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        NgbModule,
+        CoreCommonModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        ContentHeaderComponent
+    ]
 })
 export class EventComponent implements OnInit {
 
@@ -45,14 +61,8 @@ export class EventComponent implements OnInit {
   public userPage: number = 1;
   public userPageSize: number = 25;
 
-  private _searchText: string = '';
-  public get searchText(): string {
-    return this._searchText;
-  }
-  public set searchText(value: string) {
-    this._searchText = value;
-    this.userPage = 1; // Reset to first page on search
-  }
+  searchTextCtrl = new FormControl('');
+  get searchText() { return this.searchTextCtrl.value; }
   public usuarios: any[] = [];
   public selectedUser: any = null;
   public ListarBitacora: IMetodoBitacora[] = [];
@@ -69,7 +79,8 @@ export class EventComponent implements OnInit {
 
   // Modal State
   public rowDataRegistros: any[] = [];
-  public searchRegistros: string = '';
+  searchRegistrosCtrl = new FormControl('');
+  get searchRegistros() { return this.searchRegistrosCtrl.value; }
   public selectedLog: any = null;
   public decodedConsulta: string = '';
   public decodedContenido: string = '';
@@ -98,6 +109,9 @@ export class EventComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.searchTextCtrl.valueChanges.subscribe(() => {
+      this.userPage = 1;
+    });
     this.route.params.subscribe(params => {
       const appIdEncoded = params['id'];
       if (appIdEncoded) {

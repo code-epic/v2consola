@@ -6,21 +6,22 @@ import {
   HostListener,
   ViewEncapsulation,
 } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule, Router } from "@angular/router";
+import { NgbModule, NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { CoreDirectivesModule } from "@core/directives/directives";
 import { BreakpointObserver } from "@angular/cdk/layout";
-
 import * as _ from "lodash";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { TranslateService } from "@ngx-translate/core";
-
 import { CoreSidebarService } from "@core/components/core-sidebar/core-sidebar.service";
 import { CoreConfigService } from "@core/services/config.service";
 import { CoreMediaService } from "@core/services/media.service";
 import { resolveBreakpoint } from "app/layout/custom-breakpoints";
 import jwt_decode from "jwt-decode";
-
 import { coreConfig } from "app/app-config";
-import { Router } from "@angular/router";
 import { LoginService } from "@services/seguridad/login.service";
 import { WsocketsService } from "@services/websockets/wsockets.service";
 import { TaskService } from "@services/apicore/task.service";
@@ -28,7 +29,6 @@ import Swal from "sweetalert2";
 import { environment } from "environments/environment";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { Sha256Service } from "@services/util/sha256";
 import { IdleService } from '@services/seguridad/idle.service';
 import { WsSandraService } from "@services/seguridad/ws-sandra.service";
@@ -46,7 +46,8 @@ interface Change {
     templateUrl: "./navbar.component.html",
     styleUrls: ["./navbar.component.scss"],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, NgbModule, CoreDirectivesModule]
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   public horizontalMenu: boolean;
@@ -109,6 +110,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     nueva: "",
     repite: "",
   }
+  changeClaveCtrl = new FormControl('');
+  changeNuevaCtrl = new FormControl('');
+  changeRepiteCtrl = new FormControl('');
+  get changeNuevaLength() { return (this.changeNuevaCtrl.value as string)?.length || 0; }
+  get changeRepiteLength() { return (this.changeRepiteCtrl.value as string)?.length || 0; }
+  get passwordsMatch() { return this.changeNuevaCtrl.value !== this.changeRepiteCtrl.value && this.changeRepiteLength > 0; }
 
   public bDirectorioActivo: boolean = false;
   public logo: string = ''
@@ -237,6 +244,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
       id: this._translateService.currentLang,
     });
 
+
+    this.changeNuevaCtrl.valueChanges.subscribe(val =>
+      this.checkPasswordStrength(val as string)
+    );
 
     let isBDV = this.apiService.ConsultaSistemaBDV()
     if (isBDV) {
@@ -560,7 +571,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (this.Change.nueva !== this.Change.repite) {
+    if (this.changeNuevaCtrl.value !== this.changeRepiteCtrl.value) {
       this.utilservice.AlertMini(
         "top-end",
         "error",
@@ -570,7 +581,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const password = this.Change.nueva;
+    const password = this.changeNuevaCtrl.value as string;
     const passwordRegex =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
 
@@ -591,18 +602,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
 
 
-    await this.sha256.hash(this.Change.clave).then(hash => {
-      this.Change.clave = hash
+    await this.sha256.hash(this.changeClaveCtrl.value).then(hash => {
+      this.changeClaveCtrl.setValue(hash)
     })
 
-    await this.sha256.hash(this.Change.nueva).then(hash => {
-      this.Change.nueva = hash
+    await this.sha256.hash(this.changeNuevaCtrl.value).then(hash => {
+      this.changeNuevaCtrl.setValue(hash)
     })
 
 
     let xApi = {
       funcion: environment.functions.ACTUALIZAR_CLAVE_USUARIO,
-      parametros: `${this.Change.usuario},${this.Change.clave},${this.Change.nueva}`,
+      parametros: `${this.Change.usuario},${this.changeClaveCtrl.value},${this.changeNuevaCtrl.value}`,
     }
 
     this.apiService.Ejecutar(xApi).subscribe(

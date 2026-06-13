@@ -1,14 +1,18 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
-import { Subject } from 'rxjs';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
 
-import { ApiService, IAPICore } from '@services/apicore/api.service';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgbModule, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgxDatatableModule, ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { CoreCommonModule } from '@core/common.module';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
+
+import { Subject } from 'rxjs';
+import { ApiService } from '@services/apicore/api.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectConfig } from '@ng-select/ng-select';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { UtilService } from '@services/util/util.service';
-import { ComunicationsService } from '@services/networks/comunications.service';
 import { TaskService } from '@services/apicore/task.service';
 
 
@@ -18,29 +22,40 @@ import { TaskService } from '@services/apicore/task.service';
     styleUrls: ['./task-monitor.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    NgbModule,
+    NgxDatatableModule,
+    CoreCommonModule,
+    CoreDirectivesModule,
+    CorePipesModule,
+    ContentHeaderComponent
+]
 })
 export class TaskMonitorComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
 
 
-  public searchValue = ''
+  searchValueCtrl = new FormControl('');
+  get searchValue() { return this.searchValueCtrl.value; }
   public contentHeader: object;
   public count
   public ListaComunicaciones = []
-  public basicSelectedOption: number = 10;
+  basicSelectedOptionCtrl = new FormControl(10);
+  get basicSelectedOption() { return this.basicSelectedOptionCtrl.value; }
   public ColumnMode = ColumnMode;
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
   public tempData = [];
   public rowData = [
 
   ];
 
 
-  constructor(private taskService: TaskService, private msjService: WsocketsService,
-    private cdr: ChangeDetectorRef
-  ) { }
+  constructor(private taskService: TaskService, private msjService: WsocketsService) { }
 
   ngOnInit(): void {
     // content header
@@ -85,8 +100,7 @@ export class TaskMonitorComponent implements OnInit {
   }
 
   async initProcess() {
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._isLoading.set(true);
     let lstApp = []
     await this.taskService.keys().then(
       async lst => {
@@ -108,8 +122,7 @@ export class TaskMonitorComponent implements OnInit {
               )
               if (i == cnt - 1) {
                 this.insertCommitDB(lstApp)
-                this.isLoading = false;
-                this.cdr.detectChanges();
+                this._isLoading.set(false);
               }
             }
           )
@@ -118,8 +131,7 @@ export class TaskMonitorComponent implements OnInit {
       }
     ).catch(error => {
       console.error(error);
-      this.isLoading = false;
-      this.cdr.detectChanges();
+      this._isLoading.set(false);
     })
   }
 

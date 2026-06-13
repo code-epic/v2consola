@@ -1,505 +1,574 @@
 <div class="content-wrapper container-xxl p-0">
-    <div class="content-body">
-        <!-- content-header component -->
-        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+  <div class="content-body">
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-        <!-- Invoice List -->
-        <section class="invoice-list-wrapper">
-            <div class="card">
-                <section class="horizontal-wizard">
-                    <div id="stepper1" class="bs-stepper horizontal-wizard-example">
-                        <div class="bs-stepper-header">
-                            <div class="step" data-target="#account-details">
-                                <button class="step-trigger">
-                                    <span class="bs-stepper-box">1</span>
-                                    <span class="bs-stepper-label">
-                                        <span class="bs-stepper-title">Registrar</span>
-                                        <span class="bs-stepper-subtitle">Aplicacion</span>
-                                    </span>
-                                </button>
-                            </div>
-                            <div class="line"><i data-feather="chevron-right" class="font-medium-2"></i></div>
-                            <div class="step" data-target="#personal-info">
-                                <button class="step-trigger">
-                                    <span class="bs-stepper-box">2</span>
-                                    <span class="bs-stepper-label">
-                                        <span class="bs-stepper-title">Conexiones</span>
-                                        <span class="bs-stepper-subtitle">Información Base De Datos</span>
-                                    </span>
-                                </button>
-                            </div>
-
-                        </div>
-                        <div class="bs-stepper-content">
-                            <form (ngSubmit)="(HWForm.form.valid)" #HWForm="ngForm">
-                                <div id="account-details" class="content">
-                                    <form #accountDetailsForm="ngForm">
-                                        
-                                        <div class="row">
-
-                                            <div class="form-group col-md-6" *ngIf="showAppA">
-                                                <label class="form-label" for="apli">Aplicacion</label>
-                                                <div class="ng-select-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'grid'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <ng-select [items]="dataApp" #aplicacion="ngModel"
-                                                        [(ngModel)]="nameApp" [ngModelOptions]="{standalone: true}"
-                                                        (ngModelChange)='selectEventModuloo($event)'
-                                                        [class.error]="accountDetailsForm.submitted" bindLabel="name"
-                                                        name="aplicacion" id="aplicacion" required
-                                                        placeholder="Seleccione" bindValue="identificador">
-                                                    </ng-select>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && aplicacion.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="aplicacion.errors.required">Este campo es
-                                                        requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-6" *ngIf="showAppB">
-                                                <label class="form-label" for="aplicacion">Aplicacion</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'grid'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.nombre" #Apliref="ngModel"
-                                                        [ngModelOptions]="{standalone: true}" required type="text"
-                                                        name="aplicacion" id="aplicacion" class="form-control"
-                                                        (blur)='selectEventModulo($event)'
-                                                        [class.error]="!Apliref.valid && accountDetailsForm.submitted" />
-                                                </div>
-
-                                                <span *ngIf="accountDetailsForm.submitted && Apliref.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Apliref.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-
-
-                                            <div class="form-group col-md-3">
-                                                <label class="form-label" for="proyecto">Nombre Proyecto</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'folder'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.proyecto" #Proyecto="ngModel" required
-                                                        type="text" name="proyecto" id="proyecto" class="form-control"
-                                                        [class.error]="!Proyecto.valid && accountDetailsForm.submitted" />
-                                                </div>
-
-                                                <span *ngIf="accountDetailsForm.submitted && Proyecto.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Proyecto.errors.required">Este campo es
-                                                        requerido!</small>
-                                                </span>
-                                            </div>
-
-                                            <div class="form-group col-md-3">
-                                                <label class="form-label" for="rama">Nombre de la Rama</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span
-                                                                [data-feather]="'git-branch'" [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.rama" #Ramas="ngModel" required type="text"
-                                                        name="rama" id="rama" class="form-control"
-                                                        [class.error]="!Ramas.valid && accountDetailsForm.submitted" />
-                                                </div>
-
-                                                <span *ngIf="accountDetailsForm.submitted && Ramas.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Ramas.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-
-
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="form-group col-md-4">
-                                                <label class="form-label" for="tipo">Tipo de instalación</label>
-                                                <div class="ng-select-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'settings'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <ng-select [items]="tipos" #Tipo="ngModel" [(ngModel)]="iApp.tipo"
-                                                        [class.error]="accountDetailsForm.submitted"
-                                                        (ngModelChange)="CapturarSeleccion($event)"
-                                                        bindLabel="descripcion" name="tipo" id="tipo" required
-                                                        placeholder="Seleccione" bindValue="id">
-                                                        <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
-                                                    </ng-select>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && Tipo.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Tipo.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-4">
-                                                <label class="form-label" for="servidor">Servidor</label>
-                                                <div class="ng-select-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'server'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <ng-select #Server="ngModel" [(ngModel)]="iApp.origen"
-                                                        [class.error]="accountDetailsForm.submitted"
-                                                        bindLabel="descripcion" name="servidor" id="servidor" required
-                                                        placeholder="Seleccione Servidor" bindValue="id">
-                                                        <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}">{{
-                                                            mdl.id
-                                                            }} | {{ mdl.descripcion }}</ng-option>
-                                                    </ng-select>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && Server.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Server.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-4">
-                                                <label class="form-label" for="sistemas">Sistema Operativo</label>
-                                                <div class="ng-select-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'monitor'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <ng-select [items]="sistemasOperativos" #System="ngModel"
-                                                        [(ngModel)]="iApp.sistema"
-                                                        [class.error]="accountDetailsForm.submitted"
-                                                        bindLabel="descripcion" name="sistemas" id="sistemas" required
-                                                        placeholder="Seleccione Servidor" bindValue="id">
-                                                    </ng-select>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && System.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="System.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-4">
-                                                <label class="form-label" for="repositorio">Repositorio Url</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'github'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.repositorio" #Reporef="ngModel" required
-                                                        type="text" name="repositorio" id="repositorio"
-                                                        class="form-control"
-                                                        [class.error]="!Reporef.valid && accountDetailsForm.submitted" />
-                                                </div>
-
-                                                <span *ngIf="accountDetailsForm.submitted && Reporef.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Reporef.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-2">
-                                                <label class="form-label" for="usuario">Usuario</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'user'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.usuario" #Usuref="ngModel" required
-                                                        type="text" name="usuario" id="usuario" class="form-control"
-                                                        [class.error]="!Usuref.valid && accountDetailsForm.submitted" />
-                                                </div>
-
-                                                <span *ngIf="accountDetailsForm.submitted && Usuref.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Usuref.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-4">
-                                                <label class="form-label" for="password">Password / Token</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'key'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.clave"
-                                                        [type]="passwordTextType ? 'text' : 'password'"
-                                                        [ngModelOptions]="{standalone: true}" class="form-control" />
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text cursor-pointer"
-                                                            (click)="togglePasswordTextType()">
-                                                            <span [data-feather]="'eye-off'" [size]="16"></span>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group col-md-2">
-                                                <label class="form-label" for="montaje">Punto Montaje</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span
-                                                                [data-feather]="'hard-drive'" [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.puntoMontaje"
-                                                        [ngModelOptions]="{standalone: true}" type="text"
-                                                        class="form-control" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-5">
-                                                <label class="form-label" for="bdatos">Base de Datos</label>
-                                                <div class="ng-select-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'database'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <ng-select [items]="basesDatos" #Bdatos="ngModel"
-                                                        [(ngModel)]="iApp.basedatos"
-                                                        [class.error]="accountDetailsForm.submitted"
-                                                        bindLabel="descripcion" name="bdatos" id="bdatos" required
-                                                        placeholder="Seleccione" bindValue="id">
-                                                    </ng-select>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && Bdatos.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Bdatos.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-3">
-                                                <label class="form-label" for="version">Versión</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'tag'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <input [(ngModel)]="iApp.version" [readOnly]="true"
-                                                        #Verref="ngModel" required type="text" name="version"
-                                                        id="version" class="form-control"
-                                                        [class.error]="!Verref.valid && accountDetailsForm.submitted" />
-                                                </div>
-
-                                                <span *ngIf="accountDetailsForm.submitted && Verref.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Verref.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-3">
-                                                <label class="form-label" for="lenguaje">Lenguaje</label>
-                                                <div class="ng-select-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'code'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <ng-select [items]="lenguaje" #Lenref="ngModel"
-                                                        [(ngModel)]="iApp.lenguaje"
-                                                        [class.error]="accountDetailsForm.submitted"
-                                                        bindLabel="descripcion" name="lenguaje" id="lenguaje" required
-                                                        placeholder="Seleccione" bindValue="id">
-                                                    </ng-select>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && Lenref.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Lenref.errors.required">Este campo es
-                                                        requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-1" *ngIf="showInput">
-                                                <label class="form-label" for="lenguaje">Archivo</label>
-                                                <button class="btn btn-success" (click)="modalFile(ModalFiles)"><i
-                                                        data-feather="paperclip" class="mr-0 mr-sm-0"></i></button>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="form-group col-md-12">
-                                                <label for="descripcion">Descripción</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span
-                                                                [data-feather]="'file-text'" [size]="16"></span></span>
-                                                    </div>
-                                                    <textarea [(ngModel)]="iApp.observacion" #Desref="ngModel" required
-                                                        type="text" name="descripcion" id="descripcion"
-                                                        class="form-control"
-                                                        [class.error]="!Desref.valid && accountDetailsForm.submitted"></textarea>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && Desref.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Desref.errors.required">Este campo es
-                                                        requerido!</small>
-                                                </span>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="d-flex justify-content-between">
-                                            <button (click)="horizontalWizardStepperPrevious()"
-                                                class="btn btn-outline-secondary btn-prev" disabled rippleEffect>
-                                                <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                                                <span class="align-middle d-sm-inline-block d-none">Atrás</span>
-                                            </button>
-                                            <button (click)="horizontalWizardStepperNext(accountDetailsForm);CargarDrivers();"
-                                                type="submit" class="btn btn-primary btn-next" rippleEffect>
-                                                <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
-                                                <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-
-
-                                <div id="personal-info" class="content">
-                                    <form #personalInfoForm="ngForm">
-                                       <div class="row align-items-end">
-                                            <div class="form-group col-md-9">
-                                                <label class="form-label" for="tipo">Seleccione el driver</label>
-                                                <div class="ng-select-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'settings'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <ng-select [items]="drivers" #Tipo="ngModel" [(ngModel)]="driver"
-                                                    
-                                                        bindLabel="descripcion" name="name" id="id" required
-                                                        placeholder="Seleccione driver" bindLabel="name">
-                                                    </ng-select>
-                                                </div>
-                                                <span *ngIf="accountDetailsForm.submitted && Tipo.invalid"
-                                                    class="invalid-form">
-                                                    <small class="form-text text-danger"
-                                                        *ngIf="Tipo.errors.required">Este campo es requerido!</small>
-                                                </span>
-                                            </div>
-                                            <div class="form-group col-md-3" >
-                                              <button type="button" 
-                                                        class="btn btn-primary btn-prev" 
-                                                        rippleEffect 
-                                                        (click)="backupDatabase()" 
-                                                        [disabled]="!bDescarga"
-                                                        style="height: 40px;width: 100%;">
-                                                        <!-- [class.disabled]="bDescarga" -->
-                                                
-                                                    <div *ngIf="bDescarga">
-                                                        <span class="align-middle d-sm-inline-block d-none">Crear Respaldo&nbsp;&nbsp;</span>
-                                                        <i data-feather="archive" class="mr-1"></i>
-                                                    </div> 
-                                                    <div *ngIf="!bDescarga">
-                                                        <span class="align-middle d-sm-inline-block d-none">Procesando...&nbsp;&nbsp;</span>
-                                                        <span class="spinner-border spinner-border-sm mr-1" role="status"></span>
-                                                    </div>
-                                                </button>
-                                            </div>
-                                       </div>
-                                        
-                                        <div class="row mt-3">
-                                            <div class="form-group col-md-12">
-                                                <form method="post" enctype="multipart/form-data" id="forma" name="forma">
-                                                    <label class="form-label" for="sql-file-upload">Script de Base de Datos (.sql, .dump, .zip)</label>
-                                                    <!-- File Upload Wrapper -->
-                                                    <div class="file-upload-wrapper-pastel" 
-                                                        (click)="fileInput.click()" 
-                                                        (dragover)="onDragOver($event)" 
-                                                        (dragleave)="onDragLeave($event)" 
-                                                        (drop)="onDrop($event)" 
-                                                        [class.drag-over]="isDragOver">
-                                    
-                                                        <!-- Hidden Input -->
-                                                        <input name="archivos" 
-                                                            type="file" #fileInput hidden 
-                                                            (change)="onFileSelected($event)" accept=".sql,.dump,.zip" />
-                                    
-                                                        <!-- Prompt State -->
-                                                        <div *ngIf="!selectedFile" class="upload-prompt">
-                                                            <div class="upload-icon">
-                                                                <i [data-feather]="'upload-cloud'" [size]="48"></i>
-                                                            </div>
-                                                            <p class="upload-text">Arrastra y suelta tu archivo <strong>.sql</strong>,<strong>.zip</strong>,<strong>.dump</strong>  aquí</p>
-                                                            <p class="upload-subtext">o haz clic para buscar en tu equipo</p>
-                                                            <small class="upload-limit">Límite de 1.2 GB </small>
-                                                        </div>
-                                    
-                                                        <!-- File Selected/Uploading State -->
-                                                        <div *ngIf="selectedFile" class="file-details">
-                                                            <div class="file-info">
-                                                                <div class="file-icon bg-light-primary">
-                                                                    <i [data-feather]="'database'" [size]="24" class="text-primary"></i>
-                                                                </div>
-                                                                <div class="file-meta">
-                                                                    <span class="file-name" [title]="selectedFile.name">{{ selectedFile.name }}</span>
-                                                                    <span class="file-size">{{ fileSize }}</span>
-                                                                </div>
-                                                                <button *ngIf="!isUploading" (click)="removeFile($event)" type="button" class="btn btn-icon btn-sm btn-outline-danger btn-round remove-file-btn" title="Eliminar archivo">
-                                                                    <i [data-feather]="'x'" [size]="16"></i>
-                                                                </button>
-                                                            </div>
-                                                            <div *ngIf="isUploading" class="upload-progress-wrapper">
-                                                                <div class="progress progress-bar-primary">
-                                                                    <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress" aria-valuemin="0" aria-valuemax="100"></div>
-                                                                </div>
-                                                                <span class="progress-percentage">{{ uploadProgress }}%</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-
-                                                </form>
-                                            </div>
-                                        </div>
-                                        <!-- <div class="row">
-                                            <div class="form-group col-md-12">
-                                                <label class="form-label" for="country">SQL</label>
-                                                <div class="input-group-pastel">
-                                                    <div class="input-group-prepend">
-                                                        <span class="input-group-text"><span [data-feather]="'database'"
-                                                                [size]="16"></span></span>
-                                                    </div>
-                                                    <textarea rows="7" class="form-control"></textarea>
-                                                </div>
-                                            </div>
-
-                                        </div> -->
-
-                                        <div class="d-flex justify-content-between">
-                                            <button type="button" (click)="horizontalWizardStepperPrevious()"
-                                                [disabled]="!bDescarga"
-                                                class="btn btn-primary btn-prev" rippleEffect>
-                                                <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                                                <span class="align-middle d-sm-inline-block d-none">Atrás</span>
-                                            </button>
-                                            <button (click)="ProcesarDB()"
-                                                [disabled]="bRestaurar"
-                                                class="btn btn-primary btn-next" rippleEffect>
-                                                
-                                                <span class="align-middle d-sm-inline-block d-none">Restaurar &nbsp;</span>
-                                                <i data-feather="database" class="align-middle ml-sm-25 ml-0"></i>
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </section>
-
+    <!-- Invoice List -->
+    <section class="invoice-list-wrapper">
+      <div class="card">
+        <section class="horizontal-wizard">
+          <div id="stepper1" class="bs-stepper horizontal-wizard-example">
+            <div class="bs-stepper-header">
+              <div class="step" data-target="#account-details">
+                <button class="step-trigger">
+                  <span class="bs-stepper-box">1</span>
+                  <span class="bs-stepper-label">
+                    <span class="bs-stepper-title">Registrar</span>
+                    <span class="bs-stepper-subtitle">Aplicacion</span>
+                  </span>
+                </button>
+              </div>
+              <div class="line"><i data-feather="chevron-right" class="font-medium-2"></i></div>
+              <div class="step" data-target="#personal-info">
+                <button class="step-trigger">
+                  <span class="bs-stepper-box">2</span>
+                  <span class="bs-stepper-label">
+                    <span class="bs-stepper-title">Conexiones</span>
+                    <span class="bs-stepper-subtitle">Información Base De Datos</span>
+                  </span>
+                </button>
+              </div>
 
             </div>
-        </section>
+            <div class="bs-stepper-content">
+              <form (ngSubmit)="(HWForm.form.valid)" #HWForm="ngForm">
+                <div id="account-details" class="content">
+                  <form #accountDetailsForm="ngForm">
+
+                    <div class="row">
+
+                      @if (showAppA) {
+                        <div class="form-group col-md-6">
+                          <label class="form-label" for="apli">Aplicacion</label>
+                          <div class="ng-select-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'grid'"
+                              [size]="16"></span></span>
+                            </div>
+                            <ng-select [items]="dataApp"
+                              [formControl]="nameAppCtrl"
+                              (change)='selectEventModuloo(nameAppCtrl.value)'
+                              [class.error]="accountDetailsForm.submitted" bindLabel="name"
+                              name="aplicacion" id="aplicacion"
+                              placeholder="Seleccione" bindValue="identificador">
+                            </ng-select>
+                          </div>
+                          @if (accountDetailsForm.submitted && nameAppCtrl.invalid) {
+                            <span
+                              class="invalid-form">
+                              @if (nameAppCtrl.hasError('required')) {
+                                <small class="form-text text-danger"
+                                  >Este campo es
+                                requerido!</small>
+                              }
+                            </span>
+                          }
+                        </div>
+                      }
+                      @if (showAppB) {
+                        <div class="form-group col-md-6">
+                          <label class="form-label" for="aplicacion">Aplicacion</label>
+                          <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'grid'"
+                              [size]="16"></span></span>
+                            </div>
+                            <input [formControl]="iAppNombreCtrl" type="text"
+                              name="aplicacion" id="aplicacion" class="form-control"
+                              (blur)='selectEventModulo($event)'
+                              [class.error]="iAppNombreCtrl.invalid && accountDetailsForm.submitted" />
+                          </div>
+                          @if (accountDetailsForm.submitted && iAppNombreCtrl.invalid) {
+                            <span
+                              class="invalid-form">
+                              @if (iAppNombreCtrl.hasError('required')) {
+                                <small class="form-text text-danger"
+                                >Este campo es requerido!</small>
+                              }
+                            </span>
+                          }
+                        </div>
+                      }
+
+
+                      <div class="form-group col-md-3">
+                        <label class="form-label" for="proyecto">Nombre Proyecto</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'folder'"
+                            [size]="16"></span></span>
+                          </div>
+                          <input [formControl]="iAppProyectoCtrl"
+                            type="text" name="proyecto" id="proyecto" class="form-control"
+                            [class.error]="iAppProyectoCtrl.invalid && accountDetailsForm.submitted" />
+                        </div>
+
+                        @if (accountDetailsForm.submitted && iAppProyectoCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppProyectoCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                                >Este campo es
+                              requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+
+                      <div class="form-group col-md-3">
+                        <label class="form-label" for="rama">Nombre de la Rama</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span
+                            [data-feather]="'git-branch'" [size]="16"></span></span>
+                          </div>
+                          <input [formControl]="iAppRamaCtrl" type="text"
+                            name="rama" id="rama" class="form-control"
+                            [class.error]="iAppRamaCtrl.invalid && accountDetailsForm.submitted" />
+                        </div>
+
+                        @if (accountDetailsForm.submitted && iAppRamaCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppRamaCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+
+
+                    </div>
+
+                    <div class="row">
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="tipo">Tipo de instalación</label>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'settings'"
+                            [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="tipos" [formControl]="iAppTipoCtrl"
+                            [class.error]="accountDetailsForm.submitted"
+                            (change)="CapturarSeleccion(iAppTipoCtrl.value)"
+                            bindLabel="descripcion" name="tipo" id="tipo"
+                            placeholder="Seleccione" bindValue="id">
+                            <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
+                          </ng-select>
+                        </div>
+                        @if (accountDetailsForm.submitted && iAppTipoCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppTipoCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="servidor">Servidor</label>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'server'"
+                            [size]="16"></span></span>
+                          </div>
+                          <ng-select [formControl]="iAppOrigenCtrl"
+                            [class.error]="accountDetailsForm.submitted"
+                            bindLabel="descripcion" name="servidor" id="servidor"
+                            placeholder="Seleccione Servidor" bindValue="id">
+                            @for (mdl of hosts; track mdl) {
+                              <ng-option value="{{mdl.host}}">{{
+                                mdl.id
+                              }} | {{ mdl.descripcion }}</ng-option>
+                            }
+                          </ng-select>
+                        </div>
+                        @if (accountDetailsForm.submitted && iAppOrigenCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppOrigenCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="sistemas">Sistema Operativo</label>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'monitor'"
+                            [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="sistemasOperativos" [formControl]="iAppSistemaCtrl"
+                            [class.error]="accountDetailsForm.submitted"
+                            bindLabel="descripcion" name="sistemas" id="sistemas"
+                            placeholder="Seleccione Servidor" bindValue="id">
+                          </ng-select>
+                        </div>
+                        @if (accountDetailsForm.submitted && iAppSistemaCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppSistemaCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="repositorio">Repositorio Url</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'github'"
+                            [size]="16"></span></span>
+                          </div>
+                          <input [formControl]="iAppRepositorioCtrl"
+                            type="text" name="repositorio" id="repositorio"
+                            class="form-control"
+                            [class.error]="iAppRepositorioCtrl.invalid && accountDetailsForm.submitted" />
+                        </div>
+
+                        @if (accountDetailsForm.submitted && iAppRepositorioCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppRepositorioCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      <div class="form-group col-md-2">
+                        <label class="form-label" for="usuario">Usuario</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'user'"
+                            [size]="16"></span></span>
+                          </div>
+                          <input [formControl]="iAppUsuarioCtrl"
+                            type="text" name="usuario" id="usuario" class="form-control"
+                            [class.error]="iAppUsuarioCtrl.invalid && accountDetailsForm.submitted" />
+                        </div>
+
+                        @if (accountDetailsForm.submitted && iAppUsuarioCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppUsuarioCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="password">Password / Token</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'key'"
+                            [size]="16"></span></span>
+                          </div>
+                          <input [formControl]="iAppClaveCtrl"
+                            [type]="passwordTextType ? 'text' : 'password'"
+                            class="form-control" />
+                          <div class="input-group-append">
+                            <span class="input-group-text cursor-pointer"
+                              (click)="togglePasswordTextType()">
+                              <span [data-feather]="'eye-off'" [size]="16"></span>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group col-md-2">
+                        <label class="form-label" for="montaje">Punto Montaje</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span
+                            [data-feather]="'hard-drive'" [size]="16"></span></span>
+                          </div>
+                          <input [formControl]="iAppPuntoMontajeCtrl" type="text"
+                            class="form-control" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="form-group col-md-5">
+                        <label class="form-label" for="bdatos">Base de Datos</label>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'database'"
+                            [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="basesDatos" [formControl]="iAppBasedatosCtrl"
+                            [class.error]="accountDetailsForm.submitted"
+                            bindLabel="descripcion" name="bdatos" id="bdatos"
+                            placeholder="Seleccione" bindValue="id">
+                          </ng-select>
+                        </div>
+                        @if (accountDetailsForm.submitted && iAppBasedatosCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppBasedatosCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      <div class="form-group col-md-3">
+                        <label class="form-label" for="version">Versión</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'tag'"
+                            [size]="16"></span></span>
+                          </div>
+                          <input [formControl]="iAppVersionCtrl" [readOnly]="true"
+                            type="text" name="version"
+                            id="version" class="form-control"
+                            [class.error]="iAppVersionCtrl.invalid && accountDetailsForm.submitted" />
+                        </div>
+
+                        @if (accountDetailsForm.submitted && iAppVersionCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppVersionCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      <div class="form-group col-md-3">
+                        <label class="form-label" for="lenguaje">Lenguaje</label>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'code'"
+                            [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="lenguaje" [formControl]="iAppLenguajeCtrl"
+                            [class.error]="accountDetailsForm.submitted"
+                            bindLabel="descripcion" name="lenguaje" id="lenguaje"
+                            placeholder="Seleccione" bindValue="id">
+                          </ng-select>
+                        </div>
+                        @if (accountDetailsForm.submitted && iAppLenguajeCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppLenguajeCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                                >Este campo es
+                              requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      @if (showInput) {
+                        <div class="form-group col-md-1">
+                          <label class="form-label" for="lenguaje">Archivo</label>
+                          <button class="btn btn-success" (click)="modalFile(ModalFiles)"><i
+                          data-feather="paperclip" class="mr-0 mr-sm-0"></i></button>
+                        </div>
+                      }
+                    </div>
+                    <div class="row">
+                      <div class="form-group col-md-12">
+                        <label for="descripcion">Descripción</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span
+                            [data-feather]="'file-text'" [size]="16"></span></span>
+                          </div>
+                          <textarea [formControl]="iAppObservacionCtrl"
+                            type="text" name="descripcion" id="descripcion"
+                            class="form-control"
+                          [class.error]="iAppObservacionCtrl.invalid && accountDetailsForm.submitted"></textarea>
+                        </div>
+                        @if (accountDetailsForm.submitted && iAppObservacionCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (iAppObservacionCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                                >Este campo es
+                              requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                      <button (click)="horizontalWizardStepperPrevious()"
+                        class="btn btn-outline-secondary btn-prev" disabled rippleEffect>
+                        <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                        <span class="align-middle d-sm-inline-block d-none">Atrás</span>
+                      </button>
+                      <button (click)="horizontalWizardStepperNext(accountDetailsForm);CargarDrivers();"
+                        type="submit" class="btn btn-primary btn-next" rippleEffect>
+                        <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
+                        <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+
+                <div id="personal-info" class="content">
+                  <form #personalInfoForm="ngForm">
+                    <div class="row align-items-end">
+                      <div class="form-group col-md-9">
+                        <label class="form-label" for="tipo">Seleccione el driver</label>
+                        <div class="ng-select-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'settings'"
+                            [size]="16"></span></span>
+                          </div>
+                          <ng-select [items]="drivers" [formControl]="driverCtrl"
+                            bindLabel="descripcion" name="name" id="id"
+                            placeholder="Seleccione driver" bindLabel="name">
+                          </ng-select>
+                        </div>
+                        @if (accountDetailsForm.submitted && driverCtrl.invalid) {
+                          <span
+                            class="invalid-form">
+                            @if (driverCtrl.hasError('required')) {
+                              <small class="form-text text-danger"
+                              >Este campo es requerido!</small>
+                            }
+                          </span>
+                        }
+                      </div>
+                      <div class="form-group col-md-3" >
+                        <button type="button"
+                          class="btn btn-primary btn-prev"
+                          rippleEffect
+                          (click)="backupDatabase()"
+                          [disabled]="!bDescarga"
+                          style="height: 40px;width: 100%;">
+                          <!-- [class.disabled]="bDescarga" -->
+
+                          @if (bDescarga) {
+                            <div>
+                              <span class="align-middle d-sm-inline-block d-none">Crear Respaldo&nbsp;&nbsp;</span>
+                              <i data-feather="archive" class="mr-1"></i>
+                            </div>
+                          }
+                          @if (!bDescarga) {
+                            <div>
+                              <span class="align-middle d-sm-inline-block d-none">Procesando...&nbsp;&nbsp;</span>
+                              <span class="spinner-border spinner-border-sm mr-1" role="status"></span>
+                            </div>
+                          }
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="row mt-3">
+                      <div class="form-group col-md-12">
+                        <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+                          <label class="form-label" for="sql-file-upload">Script de Base de Datos (.sql, .dump, .zip)</label>
+                          <!-- File Upload Wrapper -->
+                          <div class="file-upload-wrapper-pastel"
+                            (click)="fileInput.click()"
+                            (dragover)="onDragOver($event)"
+                            (dragleave)="onDragLeave($event)"
+                            (drop)="onDrop($event)"
+                            [class.drag-over]="isDragOver">
+
+                            <!-- Hidden Input -->
+                            <input name="archivos"
+                              type="file" #fileInput hidden
+                              (change)="onFileSelected($event)" accept=".sql,.dump,.zip" />
+
+                            <!-- Prompt State -->
+                            @if (!selectedFile) {
+                              <div class="upload-prompt">
+                                <div class="upload-icon">
+                                  <i [data-feather]="'upload-cloud'" [size]="48"></i>
+                                </div>
+                                <p class="upload-text">Arrastra y suelta tu archivo <strong>.sql</strong>,<strong>.zip</strong>,<strong>.dump</strong>  aquí</p>
+                                <p class="upload-subtext">o haz clic para buscar en tu equipo</p>
+                                <small class="upload-limit">Límite de 1.2 GB </small>
+                              </div>
+                            }
+
+                            <!-- File Selected/Uploading State -->
+                            @if (selectedFile) {
+                              <div class="file-details">
+                                <div class="file-info">
+                                  <div class="file-icon bg-light-primary">
+                                    <i [data-feather]="'database'" [size]="24" class="text-primary"></i>
+                                  </div>
+                                  <div class="file-meta">
+                                    <span class="file-name" [title]="selectedFile.name">{{ selectedFile.name }}</span>
+                                    <span class="file-size">{{ fileSize }}</span>
+                                  </div>
+                                  @if (!isUploading) {
+                                    <button (click)="removeFile($event)" type="button" class="btn btn-icon btn-sm btn-outline-danger btn-round remove-file-btn" title="Eliminar archivo">
+                                      <i [data-feather]="'x'" [size]="16"></i>
+                                    </button>
+                                  }
+                                </div>
+                                @if (isUploading) {
+                                  <div class="upload-progress-wrapper">
+                                    <div class="progress progress-bar-primary">
+                                      <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <span class="progress-percentage">{{ uploadProgress }}%</span>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+
+
+                        </form>
+                      </div>
+                    </div>
+                    <!-- <div class="row">
+                    <div class="form-group col-md-12">
+                      <label class="form-label" for="country">SQL</label>
+                      <div class="input-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'database'"
+                          [size]="16"></span></span>
+                        </div>
+                        <textarea rows="7" class="form-control"></textarea>
+                      </div>
+                    </div>
+
+                  </div> -->
+
+                  <div class="d-flex justify-content-between">
+                    <button type="button" (click)="horizontalWizardStepperPrevious()"
+                      [disabled]="!bDescarga"
+                      class="btn btn-primary btn-prev" rippleEffect>
+                      <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                      <span class="align-middle d-sm-inline-block d-none">Atrás</span>
+                    </button>
+                    <button (click)="ProcesarDB()"
+                      [disabled]="bRestaurar"
+                      class="btn btn-primary btn-next" rippleEffect>
+
+                      <span class="align-middle d-sm-inline-block d-none">Restaurar &nbsp;</span>
+                      <i data-feather="database" class="align-middle ml-sm-25 ml-0"></i>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+
     </div>
+  </section>
+</div>
 </div>
 
 
@@ -507,59 +576,59 @@
 
 
 <ng-template #ModalFiles let-modal>
-    <div class="modal-header">
-        <h5 class="modal-title" id="myModalLabel160">Subir Paquete</h5>
-        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
-        <div class="modal-body" tabindex="0" ngbAutofocus>
-            <!-- Invoice -->
-            <div class="col-xl-12 col-md-12 col-12">
-                <!-- Header Starts -->
-                <div class="row">
+  <div class="modal-header">
+    <h5 class="modal-title" id="myModalLabel160">Subir Paquete</h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
+    <div class="modal-body" tabindex="0" ngbAutofocus>
+      <!-- Invoice -->
+      <div class="col-xl-12 col-md-12 col-12">
+        <!-- Header Starts -->
+        <div class="row">
 
-                    <h5>Los paquetes o programas que incluiran podran ser escritas en Golang, PHP, Python, Java,
-                        JavaScript, HTML.</h5>
-                    <br>
-                    <form>
-                        <input type="file" class="form-control" />
-                    </form>
-                    <br>
-                    <h5>(.zip, .tar, .war) Limite del Archivo : 100.00 MB
-                    </h5>
-
-                </div>
+          <h5>Los paquetes o programas que incluiran podran ser escritas en Golang, PHP, Python, Java,
+          JavaScript, HTML.</h5>
+          <br>
+            <form>
+              <input type="file" class="form-control" />
+            </form>
+            <br>
+              <h5>(.zip, .tar, .war) Limite del Archivo : 100.00 MB
+              </h5>
 
             </div>
 
+          </div>
+
         </div>
         <div class="modal-footer">
-            <button class="btn btn-success" tabindex="4" rippleEffect>Subir archivo</button>
-            <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
-                rippleEffect>Cerrar</button>
+          <button class="btn btn-success" tabindex="4" rippleEffect>Subir archivo</button>
+          <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
+          rippleEffect>Cerrar</button>
         </div>
-    </form>
+      </form>
 
-</ng-template>
+    </ng-template>
 
-<!-- Se recomienda mover estos estilos al archivo .scss del componente -->
-<style>
-  .btn-pastel-op {
-    border-radius: 8px;
-    font-weight: 500;
-    padding: 0.75rem 1.25rem;
-    border-width: 2px;
-    transition: all 0.2s ease-in-out;
-  }
+    <!-- Se recomienda mover estos estilos al archivo .scss del componente -->
+    <style>
+      .btn-pastel-op {
+      border-radius: 8px;
+      font-weight: 500;
+      padding: 0.75rem 1.25rem;
+      border-width: 2px;
+      transition: all 0.2s ease-in-out;
+    }
 
-  .btn-pastel-op:hover {
+    .btn-pastel-op:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   }
 
   .btn-pastel-op i {
-    vertical-align: middle;
-  }
+  vertical-align: middle;
+}
 </style>

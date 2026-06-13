@@ -11,12 +11,19 @@ import {
   DOCUMENT
 } from "@angular/core";
 
+
 import { Title } from "@angular/platform-browser";
 
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { TranslateService } from "@ngx-translate/core";
 import * as Waves from "node-waves";
+
+import { CoreSidebarComponent } from "@core/components/core-sidebar/core-sidebar.component";
+import { CoreThemeCustomizerComponent } from "@core/components/theme-customizer/theme-customizer.component";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { VerticalLayoutComponent } from "app/layout/vertical/vertical-layout.component";
+import { HorizontalLayoutComponent } from "app/layout/horizontal/horizontal-layout.component";
 
 import { CoreMenuService } from "@core/components/core-menu/core-menu.service";
 import { CoreSidebarService } from "@core/components/core-sidebar/core-sidebar.service";
@@ -38,7 +45,14 @@ import { LoginService } from "@services/seguridad/login.service";
     templateUrl: "./app.component.html",
     styleUrls: ["./app.component.scss"],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [
+    CoreSidebarComponent,
+    CoreThemeCustomizerComponent,
+    CoreDirectivesModule,
+    VerticalLayoutComponent,
+    HorizontalLayoutComponent
+]
 })
 export class AppComponent implements OnInit, OnDestroy {
   devToolsOpened = false;

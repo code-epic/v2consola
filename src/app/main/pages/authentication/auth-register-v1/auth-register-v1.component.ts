@@ -1,23 +1,26 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
+import { CoreCommonModule } from '@core/common.module';
 import { environment } from 'environments/environment';
-//import * as CryptoJS from 'crypto-js';
 import { UtilService } from '@services/util/util.service';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { IUsuario, LoginService, Usuario } from '@services/seguridad/login.service';
-import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-auth-register-v1',
     templateUrl: './auth-register-v1.component.html',
     styleUrls: ['./auth-register-v1.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, CoreCommonModule]
 })
 export class AuthRegisterV1Component implements OnInit {
   // Public

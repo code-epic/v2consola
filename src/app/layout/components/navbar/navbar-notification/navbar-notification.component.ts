@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
+import { CoreCommonModule } from '@core/common.module';
 import { NotificationsService } from 'app/layout/components/navbar/navbar-notification/notifications.service';
 
 // Interface
@@ -12,7 +14,8 @@ interface notification {
 @Component({
     selector: 'app-navbar-notification',
     templateUrl: './navbar-notification.component.html',
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, CoreCommonModule]
 })
 export class NavbarNotificationComponent implements OnInit {
   // Public

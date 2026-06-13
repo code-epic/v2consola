@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core'
+
 import { ApiService } from '@services/apicore/api.service'
 
 
@@ -8,7 +9,8 @@ import { ApiService } from '@services/apicore/api.service'
     styleUrls: ['./home.component.scss'],
     encapsulation: ViewEncapsulation.None,
     host: { class: 'ecommerce-application' },
-    standalone: false
+    standalone: true,
+    imports: []
 })
 export class HomeComponent implements OnInit {
 

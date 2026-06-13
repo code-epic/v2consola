@@ -20,12 +20,14 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'package'" [size]="16"></span></span>
                       </div>
-                      <ng-select #Aplication="ngModel" [disabled]="isDisabledInput" [(ngModel)]="aplicacion"
+                      <ng-select [formControl]="aplicacionCtrl"
                         bindLabel="descripcion" name="aplicacion" id="aplicacion" required placeholder="Seleccione"
                         bindValue="id" (change)="selModulo()">
-                        <ng-option *ngFor="let xapp of lstApps"
-                          value="{{ xapp.identificador + '|' + xapp.llave}}">{{xapp.nombre}} :
+                        @for (xapp of lstApps; track xapp) {
+                          <ng-option
+                            value="{{ xapp.identificador + '|' + xapp.llave}}">{{xapp.nombre}} :
                           {{xapp.version}}</ng-option>
+                        }
                       </ng-select>
                     </div>
                   </div>
@@ -36,7 +38,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="tipos" [(ngModel)]="xmodulo" (change)="consultarRed()" bindLabel="descripcion"
+                      <ng-select [items]="tipos" [formControl]="xmoduloCtrl" (change)="consultarRed()" bindLabel="descripcion"
                         name="arquitectura" id="arquitectura" required placeholder="Seleccione" bindValue="id">
                       </ng-select>
                     </div>
@@ -47,11 +49,13 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
                       </div>
-                      <ng-select #Module="ngModel" [disabled]="isDisabledInput" [(ngModel)]="xdrivers"
+                      <ng-select [formControl]="xdriversCtrl"
                         bindLabel="descripcion" name="driver" id="driver" required placeholder="Seleccione"
                         bindValue="id">
-                        <ng-option *ngFor="let item of drivers" value="{{item.id}}">{{ item.descripcion }} (
+                        @for (item of drivers; track item) {
+                          <ng-option value="{{item.id}}">{{ item.descripcion }} (
                           {{item.basedatos}} ) </ng-option>
+                        }
                       </ng-select>
                     </div>
                   </div>
@@ -63,7 +67,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
                       </div>
-                      <input [(ngModel)]="nombre" [disabled]="isDisabledInput" value="{{nombre}}" #NombreRef="ngModel"
+                      <input [formControl]="nombreCtrl"
                         required type="text" name="nombre" id="nombre" class="form-control"
                         placeholder="Nombre del workflow" />
                     </div>
@@ -76,28 +80,32 @@
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
                         </div>
-                        <input [(ngModel)]="descripcion" [disabled]="isDisabledInput" value="{{descripcion}}"
-                          #DescripcionRef="ngModel" required type="text" name="descripcion" id="`descripcion"
+                        <input [formControl]="descripcionCtrl"
+                          required type="text" name="descripcion" id="`descripcion"
                           class="form-control" placeholder="Descripción del workflow" />
                       </div>
 
                       <div class="input-group-prepend">
-                        <div class="form-group col-md-1" *ngIf="!isButtonVisibleSalvar">
-                          <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
-                            (click)="salvar()">Salvar
-                          </button>
-                        </div>
+                        @if (!isButtonVisibleSalvar) {
+                          <div class="form-group col-md-1">
+                            <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
+                              (click)="salvar()">Salvar
+                            </button>
+                          </div>
+                        }
 
-                        <div *ngIf="isButtonVisibleUpdate">
-                          &nbsp;
-                          <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
-                            (click)="modificar()"><i class="fa fa-edit" aria-hidden="true"></i> Modificar
-                          </button>
-                          &nbsp;
-                          <button type="button" class="btn btn-danger" [disabled]="isBtnSalvar"
-                            (click)="limpiarRegistroWKF()"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar
-                          </button>
-                        </div>
+                        @if (isButtonVisibleUpdate) {
+                          <div>
+                            &nbsp;
+                            <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
+                              (click)="modificar()"><i class="fa fa-edit" aria-hidden="true"></i> Modificar
+                            </button>
+                            &nbsp;
+                            <button type="button" class="btn btn-danger" [disabled]="isBtnSalvar"
+                              (click)="limpiarRegistroWKF()"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar
+                            </button>
+                          </div>
+                        }
                       </div>
                     </div>
                   </div>
@@ -112,213 +120,317 @@
           <!-- FIN REGISTRO DE WORKFLOW -->
 
           <!-- TABLA DE WORKFLOW -->
-          <div class="row" *ngIf="showWKF">
-            <div class="col-md-12 ">
-              <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
-                <li ngbNavItem>
-                  <a ngbNavLink><span [data-feather]="'layout'"></span>FORMULARIO BASE</a>
-                  <ng-template ngbNavContent>
-                    <div class="row">
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="nombre">Nombre del campo</label>
-                        <div class="input-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+          @if (showWKF) {
+            <div class="row">
+              <div class="col-md-12 ">
+                <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+                  <li ngbNavItem>
+                    <a ngbNavLink><span [data-feather]="'layout'"></span>FORMULARIO BASE</a>
+                    <ng-template ngbNavContent>
+                      <div class="row">
+                        <div class="form-group col-md-4">
+                          <label class="form-label" for="nombre">Nombre del campo</label>
+                          <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                            </div>
+                            <input [formControl]="wkfFormNombreCtrl"
+                              autocomplete="off" required type="text" name="nombre"
+                              id="nombre" placeholder="Nombre del campo ..." class="form-control" />
                           </div>
-                          <input [(ngModel)]="wkfForm.nombre" value="{{wkfForm.nombre}}"
-                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
-                            id="nombre" placeholder="Nombre del campo ..." class="form-control" />
+                        </div>
+                        <div class="form-group col-md-4">
+                          <label class="form-label" for="nombre">Descripción del campo</label>
+                          <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                            </div>
+                            <input [formControl]="wkfFormDescripcionCtrl"
+                              autocomplete="off" required type="text"
+                              name="descripcion" id="descripcion" placeholder="Descripción del campo ..."
+                              class="form-control" />
+                          </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                          <label class="form-label" for="tipo">Tipo de campo</label>
+                          <div class="ng-select-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
+                            </div>
+                            <ng-select [formControl]="xtipoCtrl" bindLabel="descripcion" name="descripcion"
+                              id="id" required placeholder="Seleccione" bindValue="id" (change)="selTipo()">
+                              @for (item of lstTipo; track item) {
+                                <ng-option value="{{item.id}}">{{ item.descripcion }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                          </div>
                         </div>
                       </div>
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="nombre">Descripción del campo</label>
-                        <div class="input-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                      <div class="row">
+                        <div class="form-group col-md-4">
+                          <label class="form-label" for="datos">Origen de datos</label>
+                          <div class="ng-select-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'folder'" [size]="16"></span></span>
+                            </div>
+                            <ng-select [formControl]="xdatosCtrl" bindLabel="descripcion" name="descripcion"
+                              id="id" required placeholder="Origen de datos" bindValue="id" (change)="selOrigen()">
+                              @for (item of lstDatos; track item) {
+                                <ng-option value="{{item.id}}">{{ item.descripcion }}
+                                </ng-option>
+                              }
+                            </ng-select>
                           </div>
-                          <input [(ngModel)]="wkfForm.descripcion" value="{{wkfForm.descripcion}}"
-                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text"
-                            name="descripcion" id="descripcion" placeholder="Descripción del campo ..."
-                            class="form-control" />
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label class="form-label" for="api">Origen de API</label>
+                          <div class="ng-select-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'cloud'" [size]="16"></span></span>
+                            </div>
+                            <ng-select [formControl]="xorigenCtrl" bindLabel="descripcion" name="descripcion"
+                              id="id" required placeholder="Origen de API" bindValue="id">
+                              @for (item of lstAPI; track item) {
+                                <ng-option value="{{item.id}}">{{ item.descripcion }}
+                                </ng-option>
+                              }
+                            </ng-select>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-2 d-flex align-items-end">
+                          <label class="form-label"></label>
+                          <button type="button" class="btn btn-primary" (click)="addItemForm()" style="width: 100%;">
+                            <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+                          </button>
                         </div>
                       </div>
-
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="tipo">Tipo de campo</label>
-                        <div class="ng-select-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
-                          </div>
-                          <ng-select #Module="ngModel" [(ngModel)]="xtipo" bindLabel="descripcion" name="descripcion"
-                            id="id" required placeholder="Seleccione" bindValue="id" (change)="selTipo()">
-                            <ng-option *ngFor="let item of lstTipo" value="{{item.id}}">{{ item.descripcion }}
-                            </ng-option>
-                          </ng-select>
+                      <div class="row">
+                        <div class="col-md">
                         </div>
                       </div>
-
-                    </div>
-
-                    <div class="row">
-
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="datos">Origen de datos</label>
-                        <div class="ng-select-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'folder'" [size]="16"></span></span>
-                          </div>
-                          <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion" name="descripcion"
-                            id="id" required placeholder="Origen de datos" bindValue="id" (change)="selOrigen()"
-                            [disabled]="!xdatos_val">
-                            <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{ item.descripcion }}
-                            </ng-option>
-                          </ng-select>
-                        </div>
-                      </div>
-
-                      <div class="form-group col-md-6">
-                        <label class="form-label" for="api">Origen de API</label>
-                        <div class="ng-select-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'cloud'" [size]="16"></span></span>
-                          </div>
-                          <ng-select #Module="ngModel" [(ngModel)]="xorigen" bindLabel="descripcion" name="descripcion"
-                            id="id" required placeholder="Origen de API" bindValue="id" [disabled]="!xdatos_api">
-                            <ng-option *ngFor="let item of lstAPI" value="{{item.id}}">{{ item.descripcion }}
-                            </ng-option>
-                          </ng-select>
-                        </div>
-                      </div>
-
-                      <div class="form-group col-md-2 d-flex align-items-end">
-
-                        <label class="form-label"></label>
-                        <button type="button" class="btn btn-primary" (click)="addItemForm()" style="width: 100%;">
-                          <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
-                        </button>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md">
-
-                      </div>
-
-                    </div>
-                    <div class="row" style="overflow: auto;">
-                      <div class="col-md-12">
-
-                        <hr>
-                        <table class="table">
-                          <thead>
-                            <tr>
-                              <th>NOMBRE</th>
-                              <th>DESCRIPCION</th>
-                              <th>TIPO</th>
-                              <th>ORIGEN</th>
-                              <th>DATOS</th>
-                            <tr>
-                          </thead>
-                          <tbody>
-                            <tr *ngFor="let e of rowForm">
-                              <td>{{e.nombre}}</td>
-                              <td>{{e.descripcion}}</td>
-                              <td>{{e.tipo}}</td>
-                              <td>{{e.origen}}</td>
-                              <td>{{e.data}}</td>
-                            </tr>
-                          </tbody>
-                          <tfoot>
-                          </tfoot>
-                        </table>
-                        <br>
-
-                      </div>
-                    </div>
-                  </ng-template>
-                </li>
-                <li ngbNavItem>
-                  <a ngbNavLink><span [data-feather]="'cast'"></span>ESTADOS</a>
-                  <ng-template ngbNavContent>
-                    <!-- INICIO REGISTRO ESTADOS WORKFLOW -->
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                        <label class="form-label" for="nombre">Nombre</label>
-                        <div class="input-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
-                          </div>
-                          <input [(ngModel)]="wkfEstado.nombre" autocomplete="off" value="{{wkfEstado.nombre}}"
-                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required type="text" name="nombre"
-                            id="nombre" placeholder="Enter ..." class="form-control" />
-                        </div>
-                      </div>
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="descripcion">Descripcion</label>
-                        <div class="input-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
-                          </div>
-                          <input [ngModelOptions]="{standalone: true}" autocomplete="off"
-                            [(ngModel)]="wkfEstado.descripcion" value="{{wkfEstado.descripcion}}" #NombreRef="ngModel"
-                            required type="text" name="descripcion" id="descripcion" placeholder="Enter ..."
-                            class="form-control" />
-                        </div>
-                      </div>
-
-                      <div class="form-group col-md-3">
-                        <label class="form-label" for="nivel">Nivel</label>
-                        <div class="ng-select-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
-                          </div>
-                          <ng-select [items]="niveles" [(ngModel)]="estatus" bindLabel="descripcion" name="nivel"
-                            id="nivel" required placeholder="Seleccione" bindValue="id">
-                          </ng-select>
-                        </div>
-                      </div>
-                      <div class="form-group col-md-2" style="margin-top: 22px;">
-                        <button type="button" class="btn btn-primary" (click)="Guardar()" style="width: 100%;"><i class="fa fa-arrow-down"
-                            aria-hidden="true"></i> Agregar
-                        </button>
-                      </div>
-                    </div>
-                    <!-- FIN  REGISTRO ESTADOS WORKFLOW -->
-
-                    <!-- INICIO TABLA ESTADOS WORKFLOW -->
-                    <div class="row">
-                      <div class="col-md-12">
-                        <ngx-datatable [rows]="rowEstado" [rowHeight]="58"
-                          class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
-
-
-                          <ngx-datatable-column name="#" prop="id" [width]="10">
-                            <ng-template let-basedatos="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ basedatos.toUpperCase() }} </span>
+                      <div class="row" style="overflow: auto;">
+                        <div class="col-md-12">
+                          <hr>
+                            <table class="table">
+                              <thead>
+                                <tr>
+                                  <th>NOMBRE</th>
+                                  <th>DESCRIPCION</th>
+                                  <th>TIPO</th>
+                                  <th>ORIGEN</th>
+                                  <th>DATOS</th>
+                                  <tr>
+                                  </thead>
+                                  <tbody>
+                                    @for (e of rowForm; track e) {
+                                      <tr>
+                                        <td>{{e.nombre}}</td>
+                                        <td>{{e.descripcion}}</td>
+                                        <td>{{e.tipo}}</td>
+                                        <td>{{e.origen}}</td>
+                                        <td>{{e.data}}</td>
+                                      </tr>
+                                    }
+                                  </tbody>
+                                  <tfoot>
+                                  </tfoot>
+                                </table>
+                                <br>
+                                </div>
                               </div>
                             </ng-template>
-                          </ngx-datatable-column>
-
-
-                          <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="400">
-                            <ng-template let-nomb="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ nomb.toUpperCase() }} </span>
+                          </li>
+                          <li ngbNavItem>
+                            <a ngbNavLink><span [data-feather]="'cast'"></span>ESTADOS</a>
+                            <ng-template ngbNavContent>
+                              <!-- INICIO REGISTRO ESTADOS WORKFLOW -->
+                              <div class="row">
+                                <div class="form-group col-md-3">
+                                  <label class="form-label" for="nombre">Nombre</label>
+                                  <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                                    </div>
+                                    <input [formControl]="wkfEstadoNombreCtrl" autocomplete="off"
+                                      required type="text" name="nombre"
+                                      id="nombre" placeholder="Enter ..." class="form-control" />
+                                  </div>
+                                </div>
+                                <div class="form-group col-md-4">
+                                  <label class="form-label" for="descripcion">Descripcion</label>
+                                  <div class="input-group-pastel">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                                    </div>
+                                    <input [formControl]="wkfEstadoDescripcionCtrl" autocomplete="off"
+                                      required type="text" name="descripcion" id="descripcion" placeholder="Enter ..."
+                                      class="form-control" />
+                                  </div>
+                                </div>
+                                <div class="form-group col-md-3">
+                                  <label class="form-label" for="nivel">Nivel</label>
+                                  <div class="ng-select-group-pastel">
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
+                                    </div>
+                                    <ng-select [items]="niveles" [formControl]="estatusCtrl" bindLabel="descripcion" name="nivel"
+                                      id="nivel" required placeholder="Seleccione" bindValue="id">
+                                    </ng-select>
+                                  </div>
+                                </div>
+                                <div class="form-group col-md-2" style="margin-top: 22px;">
+                                  <button type="button" class="btn btn-primary" (click)="Guardar()" style="width: 100%;"><i class="fa fa-arrow-down"
+                                  aria-hidden="true"></i> Agregar
+                                </button>
                               </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-
-                          <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="650">
-                            <ng-template let-obse="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ obse.toUpperCase() }} </span>
+                            </div>
+                            <!-- FIN  REGISTRO ESTADOS WORKFLOW -->
+                            <!-- INICIO TABLA ESTADOS WORKFLOW -->
+                            <div class="row">
+                              <div class="col-md-12">
+                                <ngx-datatable [rows]="rowEstado" [rowHeight]="58"
+                                  class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
+                                  [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+                                  <ngx-datatable-column name="#" prop="id" [width]="10">
+                                    <ng-template let-basedatos="value" ngx-datatable-cell-template>
+                                      <div>
+                                        <span class="font-weight-bold">{{ basedatos.toUpperCase() }} </span>
+                                      </div>
+                                    </ng-template>
+                                  </ngx-datatable-column>
+                                  <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="400">
+                                    <ng-template let-nomb="value" ngx-datatable-cell-template>
+                                      <div>
+                                        <span class="font-weight-bold">{{ nomb.toUpperCase() }} </span>
+                                      </div>
+                                    </ng-template>
+                                  </ngx-datatable-column>
+                                  <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="650">
+                                    <ng-template let-obse="value" ngx-datatable-cell-template>
+                                      <div>
+                                        <span class="font-weight-bold">{{ obse.toUpperCase() }} </span>
+                                      </div>
+                                    </ng-template>
+                                  </ngx-datatable-column>
+                                  <!-- <ngx-datatable-column name="ACCIÓN" [width]="30" [sortable]="false">
+                                  <ng-template ngx-datatable-cell-template let-row="row">
+                                    <div ngbDropdown container="body">
+                                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow"
+                                        rippleEffect>
+                                        <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                                      </button>
+                                      <div ngbDropdownMenu>
+                                        <a (click)="ModalEdit(ModalEditDevice,row)" ngbDropdownItem><span
+                                        [data-feather]="'edit'" [size]="16" [class]="'mr-50'"></span> Editar</a>
+                                      </div>
+                                    </div>
+                                  </ng-template>
+                                </ngx-datatable-column> -->
+                              </ngx-datatable>
+                            </div>
+                          </div>
+                          <!-- FIN TABLA ESTADOS WORKFLOW -->
+                        </ng-template>
+                      </li>
+                      <li ngbNavItem>
+                        <a ngbNavLink><span [data-feather]="'settings'"></span>ESTATUS</a>
+                        <ng-template ngbNavContent>
+                          <!-- INICIO REGISTRO ESTATUS WORKFLOW -->
+                          <div class="row">
+                            <div class="form-group col-md-3">
+                              <label class="form-label" for="origen">Estado Origen</label>
+                              <div class="ng-select-group-pastel">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><span [data-feather]="'cast'" [size]="16"></span></span>
+                                </div>
+                                <ng-select [formControl]="estadoCtrl" bindLabel="descripcion" name="origen"
+                                  id="origen" required placeholder="Seleccione" bindValue="id" (change)="lstEstatus()">
+                                  @for (e of rowEstado; track e; let i = $index) {
+                                    <ng-option value="{{ e.id }}">{{e.nomb |
+                                    uppercase}}</ng-option>
+                                  }
+                                </ng-select>
                               </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                          <!-- <ngx-datatable-column name="ACCIÓN" [width]="30" [sortable]="false">
+                            </div>
+                            <div class="form-group col-md-2">
+                              <label class="form-label" for="nombre">Nombre</label>
+                              <div class="input-group-pastel">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                                </div>
+                                <input [formControl]="wkfEstatusNombreCtrl" autocomplete="off"
+                                  required type="text" name="nombre" id="nombre"
+                                  placeholder="Enter ..." class="form-control" />
+                              </div>
+                            </div>
+                            <div class="form-group col-md-3">
+                              <label class="form-label" for="descripcion">Descripción</label>
+                              <div class="input-group-pastel">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                                </div>
+                                <input [formControl]="wkfEstatusDescripcionCtrl" autocomplete="off"
+                                  value="" required type="text"
+                                  name="descripcion" id="descripcion" placeholder="Enter ..." class="form-control" />
+                              </div>
+                            </div>
+                            <div class="col-md-2">
+                              <label class="form-label" for="orden">Orden</label>
+                              <div class="ng-select-group-pastel">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
+                                </div>
+                                <ng-select [formControl]="ordenCtrl" bindLabel="descripcion" name="orden" id="orden" required
+                                  placeholder="Seleccione" bindValue="id">
+                                  @for (e of lstOrden; track e) {
+                                    <ng-option value="{{ e }}">{{e}}</ng-option>
+                                  }
+                                </ng-select>
+                              </div>
+                            </div>
+                            <div class="col-md-2 mb-md-0 mb-1" style="margin-top: 23px;">
+                              <button type="button" class="btn btn-primary" (click)="GuardarEstatus()" style="width: 100%;"><i
+                              class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+                            </button>
+                          </div>
+                        </div>
+                        <!-- FIN  REGISTRO ESTATUS WORKFLOW -->
+                        <!-- INICIO TABLA ESTATUS WORKFLOW -->
+                        <div class="row">
+                          <div class="col-md-12">
+                            <ngx-datatable [rows]="rowEstatus" [rowHeight]="58"
+                              class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
+                              [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
+                              <ngx-datatable-column name="#" prop="id" [width]="10">
+                                <ng-template let-basedatos="value" ngx-datatable-cell-template>
+                                  <div>
+                                    <span class="font-weight-bold">{{ basedatos.toUpperCase() }} </span>
+                                  </div>
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="200">
+                                <ng-template let-nomb="value" ngx-datatable-cell-template>
+                                  <div>
+                                    <span class="font-weight-bold">{{ nomb.toUpperCase() }} </span>
+                                  </div>
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="500">
+                                <ng-template let-obse="value" ngx-datatable-cell-template>
+                                  <div>
+                                    <span class="font-weight-bold">{{ obse.toUpperCase() }} </span>
+                                  </div>
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column name="ESTADO" prop="ide" [width]="200">
+                                <ng-template let-ide="value" ngx-datatable-cell-template>
+                                  <div>
+                                    <span class="font-weight-bold">{{ ide.toUpperCase() }} </span>
+                                  </div>
+                                </ng-template>
+                              </ngx-datatable-column>
+                              <ngx-datatable-column name="ACCIÓN" [width]="100" [sortable]="false">
                                 <ng-template ngx-datatable-cell-template let-row="row">
                                   <div ngbDropdown container="body">
                                     <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow"
@@ -326,359 +438,207 @@
                                       <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
                                     </button>
                                     <div ngbDropdownMenu>
-                                      <a (click)="ModalEdit(ModalEditDevice,row)" ngbDropdownItem><span
-                                          [data-feather]="'edit'" [size]="16" [class]="'mr-50'"></span> Editar</a>
+                                      <a (click)="abrirModal(modalPrimary)" ngbDropdownItem>
+                                        <span [data-feather]="'grid'" [size]="16" [class]="'mr-50'">
+                                        </span> Frame
+                                      </a>
+                                      <!-- INICIO DEL MODAL -->
+                                      <ng-template #modalPrimary style="width: 100vw; z-index: 2000;">
+                                        <div class="modal-header">
+                                          <h5 class="modal-title" id="myModalLabel160">Frame</h5>
+                                          <button type="button" class="close" (click)="onCloseClick($event)"
+                                            aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                          </button>
+                                        </div>
+                                        <div class="modal-body" tabindex="0" ngbAutofocus>
+                                          <div class="row">
+                                            <div class="form-group col-md-4">
+                                              <label class="form-label" for="nombre">Nombre del campo</label>
+                                              <input [formControl]="wkfFormNombreCtrl"
+                                                autocomplete="off" required type="text" name="nombre" id="nombre"
+                                                placeholder="Nombre del campo ..." class="form-control" />
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                              <label class="form-label" for="nombre">Descripción del campo</label>
+                                              <input [formControl]="wkfFormDescripcionCtrl"
+                                                autocomplete="off" required
+                                                type="text" name="descripcion" id="descripcion"
+                                                placeholder="Descripción del campo ..." class="form-control" />
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                              <label class="form-label" for="tipo">Tipo de campo</label>
+                                              <ng-select [formControl]="xtipoCtrl" bindLabel="descripcion"
+                                                name="descripcion" id="id" required placeholder="Seleccione" bindValue="id"
+                                                (change)="selTipo()">
+                                                @for (item of lstTipo; track item) {
+                                                  <ng-option value="{{item.id}}">{{
+                                                    item.descripcion }}
+                                                  </ng-option>
+                                                }
+                                              </ng-select>
+                                            </div>
+                                          </div>
+                                          <div class="row">
+                                            @if (xdatos_val) {
+                                              <div class="form-group col-md-4">
+                                                <label class="form-label" for="datos">Origen de datos</label>
+                                                <ng-select [formControl]="xdatosCtrl" bindLabel="descripcion"
+                                                  name="descripcion" id="id" required placeholder="Origen de datos"
+                                                  bindValue="id" (change)="selOrigen()">
+                                                  @for (item of lstDatos; track item) {
+                                                    <ng-option value="{{item.id}}">{{
+                                                      item.descripcion }}
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                              </div>
+                                            }
+                                            @if (xdatos_api) {
+                                              <div class="form-group col-md-8">
+                                                <label class="form-label" for="api">Origen de API</label>
+                                                <ng-select [formControl]="xorigenCtrl" bindLabel="descripcion"
+                                                  name="descripcion" id="id" required placeholder="Origen de API"
+                                                  bindValue="id">
+                                                  @for (item of lstAPI; track item) {
+                                                    <ng-option value="{{item.id}}">{{
+                                                      item.descripcion }}
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                              </div>
+                                            }
+                                          </div>
+                                          <div class="modal-footer">
+                                            <div class="col-md-12">
+                                              <div class="d-flex justify-content-end">
+                                                <button type="button" class="btn btn-success mr-2"
+                                                  (click)="addItemForm()">Agregar
+                                                </button>
+                                                <button type="button" class="btn btn-danger"
+                                                  (click)="onCloseClick(e)">Cerrar
+                                                </button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </ng-template>
+                                      <!-- FIN DEL MODAL -->
+                                      <a (click)="EliminarEstatus(row)" ngbDropdownItem>
+                                        <span [data-feather]="'trash'" [size]="16" [class]="'mr-50'">
+                                        </span> Eliminar
+                                      </a>
                                     </div>
                                   </div>
                                 </ng-template>
-                              </ngx-datatable-column> -->
-
-                        </ngx-datatable>
-                      </div>
-
-                    </div>
-                    <!-- FIN TABLA ESTADOS WORKFLOW -->
-                  </ng-template>
-                </li>
-                <li ngbNavItem>
-                  <a ngbNavLink><span [data-feather]="'settings'"></span>ESTATUS</a>
-                  <ng-template ngbNavContent>
-                    <!-- INICIO REGISTRO ESTATUS WORKFLOW -->
-                    <div class="row">
-                      <div class="form-group col-md-3">
-                        <label class="form-label" for="origen">Estado Origen</label>
-                        <div class="ng-select-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'cast'" [size]="16"></span></span>
+                              </ngx-datatable-column>
+                            </ngx-datatable>
                           </div>
-                          <ng-select #Module="ngModel" [(ngModel)]="estado" bindLabel="descripcion" name="origen"
-                            id="origen" required placeholder="Seleccione" bindValue="id" (change)="lstEstatus()">
-                            <ng-option *ngFor="let e of rowEstado; let i = index" value="{{ e.id }}">{{e.nomb |
-                              uppercase}}</ng-option>
-                          </ng-select>
                         </div>
-                      </div>
-
-                      <div class="form-group col-md-2">
-                        <label class="form-label" for="nombre">Nombre</label>
-                        <div class="input-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
+                        <!-- FIN TABLA ESTATUS WORKFLOW -->
+                      </ng-template>
+                    </li>
+                    <li ngbNavItem>
+                      <a ngbNavLink><span [data-feather]="'lock'"></span>TRANSACIONES</a>
+                      <ng-template ngbNavContent>
+                        <!-- INICIO REGISTRO DE TRANSACCIONES WORKFLOW -->
+                        <div class="row">
+                          <div class="form-group col-md-4">
+                            <label class="form-label" for="funciones">Funciones</label>
+                            <ng-select [items]="ListaFunciones" [formControl]="wkfTransicionFuncionCtrl" bindValue="nombre"
+                            bindLabel="nombre" placeholder="Seleccione Aplicación"></ng-select>
                           </div>
-                          <input [(ngModel)]="wkfEstatus.nombre" autocomplete="off" value="{{wkfEstatus.nombre}}"
-                            [ngModelOptions]="{standalone: true}" required type="text" name="nombre" id="nombre"
-                            placeholder="Enter ..." class="form-control" />
-                        </div>
-                      </div>
-                      <div class="form-group col-md-3">
-                        <label class="form-label" for="descripcion">Descripción</label>
-                        <div class="input-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
-                          </div>
-                          <input [(ngModel)]="wkfEstatus.descripcion" autocomplete="off"
-                            value="{{wkfEstatus.descripcion}}" [ngModelOptions]="{standalone: true}" required type="text"
-                            name="descripcion" id="descripcion" placeholder="Enter ..." class="form-control" />
-                        </div>
-                      </div>
-                      <div class="col-md-2">
-                        <label class="form-label" for="orden">Orden</label>
-                        <div class="ng-select-group-pastel">
-                          <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
-                          </div>
-                          <ng-select [(ngModel)]="orden" bindLabel="descripcion" name="orden" id="orden" required
-                            placeholder="Seleccione" bindValue="id">
-                            <ng-option *ngFor="let e of lstOrden" value="{{ e }}">{{e}}</ng-option>
-                          </ng-select>
-                        </div>
-                      </div>
-                      <div class="col-md-2 mb-md-0 mb-1" style="margin-top: 23px;">
-                        <button type="button" class="btn btn-primary" (click)="GuardarEstatus()" style="width: 100%;"><i
-                            class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
-                        </button>
-                      </div>
-                    </div>
-                    <!-- FIN  REGISTRO ESTATUS WORKFLOW -->
-
-                    <!-- INICIO TABLA ESTATUS WORKFLOW -->
-                    <div class="row">
-                      <div class="col-md-12">
-                        <ngx-datatable [rows]="rowEstatus" [rowHeight]="58"
-                          class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
-
-
-                          <ngx-datatable-column name="#" prop="id" [width]="10">
-                            <ng-template let-basedatos="value" ngx-datatable-cell-template>
+                          <div class="col-md-8">
+                            <label class="form-label" for="descripcion">Parametros</label>
+                            <div class="input-group mb-3">
+                              <input style="font-size:14px;" type="text" [formControl]="wkfTransicionParametroCtrl"
+                                autocomplete="off" class="form-control">
                               <div>
-                                <span class="font-weight-bold">{{ basedatos.toUpperCase() }} </span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-
-                          <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="200">
-                            <ng-template let-nomb="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ nomb.toUpperCase() }} </span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-
-                          <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="500">
-                            <ng-template let-obse="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ obse.toUpperCase() }} </span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                          <ngx-datatable-column name="ESTADO" prop="ide" [width]="200">
-                            <ng-template let-ide="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ ide.toUpperCase() }} </span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                          <ngx-datatable-column name="ACCIÓN" [width]="100" [sortable]="false">
-                            <ng-template ngx-datatable-cell-template let-row="row">
-                              <div ngbDropdown container="body">
-                                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow"
-                                  rippleEffect>
-                                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
-                                </button>
-                                <div ngbDropdownMenu>
-                                  <a (click)="abrirModal(modalPrimary)" ngbDropdownItem>
-                                    <span [data-feather]="'grid'" [size]="16" [class]="'mr-50'">
-                                    </span> Frame
-                                  </a>
-                                  <!-- INICIO DEL MODAL -->
-                                  <ng-template #modalPrimary style="width: 100vw; z-index: 2000;">
-                                    <div class="modal-header">
-                                      <h5 class="modal-title" id="myModalLabel160">Frame</h5>
-                                      <button type="button" class="close" (click)="onCloseClick($event)"
-                                        aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                      </button>
-                                    </div>
-                                    <div class="modal-body" tabindex="0" ngbAutofocus>
-                                      <div class="row">
-                                        <div class="form-group col-md-4">
-                                          <label class="form-label" for="nombre">Nombre del campo</label>
-                                          <input [(ngModel)]="wkfForm.nombre" value="{{wkfForm.nombre}}"
-                                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required
-                                            type="text" name="nombre" id="nombre" placeholder="Nombre del campo ..."
-                                            class="form-control" />
-
-                                        </div>
-                                        <div class="form-group col-md-4">
-                                          <label class="form-label" for="nombre">Descripción del campo</label>
-                                          <input [(ngModel)]="wkfForm.descripcion" value="{{wkfForm.descripcion}}"
-                                            [ngModelOptions]="{standalone: true}" #NombreRef="ngModel" required
-                                            type="text" name="descripcion" id="descripcion"
-                                            placeholder="Descripción del campo ..." class="form-control" />
-
-                                        </div>
-
-                                        <div class="form-group col-md-4">
-                                          <label class="form-label" for="tipo">Tipo de campo</label>
-                                          <ng-select #Module="ngModel" [(ngModel)]="xtipo" bindLabel="descripcion"
-                                            name="descripcion" id="id" required placeholder="Seleccione" bindValue="id"
-                                            (change)="selTipo()">
-                                            <ng-option *ngFor="let item of lstTipo" value="{{item.id}}">{{
-                                              item.descripcion }}
-                                            </ng-option>
-                                          </ng-select>
-                                        </div>
-
-                                      </div>
-
-                                      <div class="row">
-
-                                        <div class="form-group col-md-4" *ngIf="xdatos_val">
-                                          <label class="form-label" for="datos">Origen de datos</label>
-                                          <ng-select #Module="ngModel" [(ngModel)]="xdatos" bindLabel="descripcion"
-                                            name="descripcion" id="id" required placeholder="Origen de datos"
-                                            bindValue="id" (change)="selOrigen()">
-                                            <ng-option *ngFor="let item of lstDatos" value="{{item.id}}">{{
-                                              item.descripcion }}
-                                            </ng-option>
-                                          </ng-select>
-                                        </div>
-
-                                        <div class="form-group col-md-8" *ngIf="xdatos_api">
-                                          <label class="form-label" for="api">Origen de API</label>
-                                          <ng-select #Module="ngModel" [(ngModel)]="xorigen" bindLabel="descripcion"
-                                            name="descripcion" id="id" required placeholder="Origen de API"
-                                            bindValue="id">
-                                            <ng-option *ngFor="let item of lstAPI" value="{{item.id}}">{{
-                                              item.descripcion }}
-                                            </ng-option>
-                                          </ng-select>
-                                        </div>
-
-
-                                      </div>
-                                      <div class="modal-footer">
-                                        <div class="col-md-12">
-                                          <div class="d-flex justify-content-end">
-                                            <button type="button" class="btn btn-success mr-2"
-                                              (click)="addItemForm()">Agregar
-                                            </button>
-                                            <button type="button" class="btn btn-danger"
-                                              (click)="onCloseClick(e)">Cerrar
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </ng-template>
-                                  <!-- FIN DEL MODAL -->
-                                  <a (click)="EliminarEstatus(row)" ngbDropdownItem>
-                                    <span [data-feather]="'trash'" [size]="16" [class]="'mr-50'">
-                                    </span> Eliminar
-                                  </a>
-                                </div>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                        </ngx-datatable>
-                      </div>
-
-                    </div>
-                    <!-- FIN TABLA ESTATUS WORKFLOW -->
-                  </ng-template>
-                </li>
-                <li ngbNavItem>
-                  <a ngbNavLink><span [data-feather]="'lock'"></span>TRANSACIONES</a>
-                  <ng-template ngbNavContent>
-                    <!-- INICIO REGISTRO DE TRANSACCIONES WORKFLOW -->
-                    <div class="row">
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="funciones">Funciones</label>
-                        <ng-select [items]="ListaFunciones" [(ngModel)]="wkfTransicion.funcion" bindValue="nombre"
-                          bindLabel="nombre" placeholder="Seleccione Aplicación"></ng-select>
-                      </div>
-                      <div class="col-md-8">
-                        <label class="form-label" for="descripcion">Parametros</label>
-                        <div class="input-group mb-3">
-                          <input style="font-size:14px;" type="text" [(ngModel)]="wkfTransicion.parametro"
-                            autocomplete="off" [ngModelOptions]="{standalone: true}" class="form-control">
-                          <div>
-                            &nbsp;
-                            <button type="button" class="btn btn-primary" (click)="GuardarTransaccion()"><i
+                                &nbsp;
+                                <button type="button" class="btn btn-primary" (click)="GuardarTransaccion()"><i
                                 class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
-                            </button>
-                          </div>
-                        </div>
-
-                      </div>
-                    </div>
-                    <!-- FIN REGISTRO DE TRANSACCIONES WORKFLOW -->
-
-                    <!-- INICIO TABLA DE TRANSACCIONES WORKFLOW -->
-                    <div class="row">
-                      <div class="col-md-12">
-
-                        <ngx-datatable [rows]="rowDataTransiciones" [rowHeight]="58"
-                          class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
-
-
-
-                          <ngx-datatable-column name="NOMBRE" prop="func" [width]="400">
-                            <ng-template let-func="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{func}}</span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-
-                          <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="500">
-                            <ng-template let-obse="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ obse.slice(0.40) }}... </span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                        </ngx-datatable>
-                      </div>
-
-                    </div>
-                    <!-- FIN TABLA DE TRANSACCIONES WORKFLOW -->
-                  </ng-template>
-                </li>
-                <li ngbNavItem>
-                  <a ngbNavLink><span [data-feather]="'award'"></span>RED</a>
-                  <ng-template ngbNavContent>
-                    <!-- INICIO REGISTRO DE RED WORKFLOW -->
-                    <div class="row">
-
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="descripcion">Nombre</label>
-                        <input style="font-size:14px;" [(ngModel)]="DescripcionRed.nombre"
-                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
-                      </div>
-
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="origen">Tipologia</label>
-                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                          bindValue="id" [(ngModel)]="DescripcionRed.tipo" [ngModelOptions]="{standalone: true}">
-                          <ng-option *ngFor="let e of rowTipologia; let i = index"
-                            value="{{ e.id }}">{{e.name}}</ng-option>
-                        </ng-select>
-                      </div>
-
-                      <div class="form-group col-md-4">
-                        <label class="form-label" for="origen">Estatus</label>
-                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                          bindValue="id" [(ngModel)]="DescripcionRed.estatus" [ngModelOptions]="{standalone: true}">
-                          <ng-option *ngFor="let e of rowStatus; let i = index"
-                            value="{{ e.id }}">{{e.name}}</ng-option>
-                        </ng-select>
-                      </div>
-
-
-
-
-                      <div class="form-group col-md-12">
-                        <label class="form-label" for="descripcion">Descripción</label>
-                        <div class="input-group md-4">
-                          <input [(ngModel)]="DescripcionRed.descripcion" value="{{DescripcionRed.descripcion}}"
-                            type="text" class="form-control" />
-
-                          <div class="input-group-prepend">
-                            <div class="form-group col-md-2">
-
-                              <button type="button" class="btn btn-success" (click)="salvarRed()">Salvar
                               </button>
-
                             </div>
-
                           </div>
-
-
-
                         </div>
                       </div>
-
-
-                      <div class="form-group col-md-12">
-                        <hr>
+                      <!-- FIN REGISTRO DE TRANSACCIONES WORKFLOW -->
+                      <!-- INICIO TABLA DE TRANSACCIONES WORKFLOW -->
+                      <div class="row">
+                        <div class="col-md-12">
+                          <ngx-datatable [rows]="rowDataTransiciones" [rowHeight]="58"
+                            class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
+                            [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
+                            <ngx-datatable-column name="NOMBRE" prop="func" [width]="400">
+                              <ng-template let-func="value" ngx-datatable-cell-template>
+                                <div>
+                                  <span class="font-weight-bold">{{func}}</span>
+                                </div>
+                              </ng-template>
+                            </ngx-datatable-column>
+                            <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="500">
+                              <ng-template let-obse="value" ngx-datatable-cell-template>
+                                <div>
+                                  <span class="font-weight-bold">{{ obse.slice(0.40) }}... </span>
+                                </div>
+                              </ng-template>
+                            </ngx-datatable-column>
+                          </ngx-datatable>
+                        </div>
                       </div>
-
-
-                      <!-- <div class="form-group col-md-12">
-                        <label class="form-label" for="descripcion">Descripción</label>
+                      <!-- FIN TABLA DE TRANSACCIONES WORKFLOW -->
+                    </ng-template>
+                  </li>
+                  <li ngbNavItem>
+                    <a ngbNavLink><span [data-feather]="'award'"></span>RED</a>
+                    <ng-template ngbNavContent>
+                      <!-- INICIO REGISTRO DE RED WORKFLOW -->
+                      <div class="row">
+                        <div class="form-group col-md-4">
+                          <label class="form-label" for="descripcion">Nombre</label>
+                          <input style="font-size:14px;" [formControl]="descripcionRedNombreCtrl"
+                            type="text" class="form-control">
+                        </div>
+                        <div class="form-group col-md-4">
+                          <label class="form-label" for="origen">Tipologia</label>
+                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                            bindValue="id" [formControl]="descripcionRedTipoCtrl">
+                            @for (e of rowTipologia; track e; let i = $index) {
+                              <ng-option
+                              value="{{ e.id }}">{{e.name}}</ng-option>
+                            }
+                          </ng-select>
+                        </div>
+                        <div class="form-group col-md-4">
+                          <label class="form-label" for="origen">Estatus</label>
+                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                            bindValue="id" [formControl]="descripcionRedEstatusCtrl">
+                            @for (e of rowStatus; track e; let i = $index) {
+                              <ng-option
+                              value="{{ e.id }}">{{e.name}}</ng-option>
+                            }
+                          </ng-select>
+                        </div>
+                        <div class="form-group col-md-12">
+                          <label class="form-label" for="descripcion">Descripción</label>
+                          <div class="input-group md-4">
+                            <input [formControl]="descripcionRedDescripcionCtrl"
+                              type="text" class="form-control" />
+                            <div class="input-group-prepend">
+                              <div class="form-group col-md-2">
+                                <button type="button" class="btn btn-success" (click)="salvarRed()">Salvar
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                          <hr>
+                          </div>
+                          <!-- <div class="form-group col-md-12">
+                          <label class="form-label" for="descripcion">Descripción</label>
                           <input style="font-size:14px;" [(ngModel)]="DescripcionRed.descripcion"
-                          [ngModelOptions]="{standalone: true}" type="text" class="form-control">
-
+                            [ngModelOptions]="{standalone: true}" type="text" class="form-control">
                           <div class="input-group-prepend">
                             <div class="form-group col-md-1">
                               <div>
@@ -687,197 +647,183 @@
                                 </button>
                               </div>
                             </div>
-                       
                           </div>
-
-
-                      </div> -->
-
-                      <div class="form-group col-md-6">
-                        <label class="form-label" for="origen">Estado Origen</label>
-                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                          bindValue="id" (change)="lstEstatusRedV($event)" [(ngModel)]="wkfRed.estadoOrigen"
-                          [ngModelOptions]="{standalone: true}">
-                          <ng-option *ngFor="let e of rowEstado; let i = index"
-                            value="{{ e.id }}">{{e.nomb}}</ng-option>
-                        </ng-select>
-                      </div>
-
-                      <div class="form-group col-md-6">
-                        <label class="form-label" for="origen">Estatus Origen</label>
-                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                          bindValue="id" [(ngModel)]="wkfRed.estatusOrigen" [ngModelOptions]="{standalone: true}">
-                          <ng-option *ngFor="let e of rowEstatusRedV; let i = index"
-                            value="{{ e.id }}">{{e.nomb}}</ng-option>
-                        </ng-select>
-                      </div>
-
-                      <div class="form-group col-md-12">
-                        <label class="form-label" for="origen">Transición</label>
-                        <ng-select bindLabel="descripcion" [(ngModel)]="wkfRed.transicionVerdadero"
-                          [ngModelOptions]="{standalone: true}" name="origen" id="origen" required
-                          placeholder="Seleccione" bindValue="id">
-                          <ng-option *ngFor="let e of ListaTransiciones; let i = index"
-                            value="{{ e.id }}">{{e.func}}</ng-option>
-                        </ng-select>
-                      </div>
-
-                      <div class="col-2 col-md-1" style="padding-right: 0!important;">
-                        <div class="d-flex flex-column align-items-center justify-content-center rounded playBtn"
-                          style="height: 92%; width: 100%; font-size: 1.6rem; padding: 0;">
-                          <i class="fa fa-play" aria-hiddden="true"></i>
-                          <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRriEIzmXue30hGxs5MIzqsG6D9Zqdm-dscBFp3PiU6lq6Z9Ho7dk5zJSHhRsB_FQTWIYg&usqp=CAU" style="transform: scaleX(-1); rotate: 90deg;"> -->
+                        </div> -->
+                        <div class="form-group col-md-6">
+                          <label class="form-label" for="origen">Estado Origen</label>
+                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                            bindValue="id" (change)="lstEstatusRedV($event)" [formControl]="wkfRedEstadoOrigenCtrl">
+                            @for (e of rowEstado; track e; let i = $index) {
+                              <ng-option
+                              value="{{ e.id }}">{{e.nomb}}</ng-option>
+                            }
+                          </ng-select>
                         </div>
-                      </div>
-
-                      <div class="col-10 col-md-11">
-                        <div class="row">
-                          <div class="form-group col-md-6">
-                            <label class="form-label" for="destino">Estado Destino Verdadero <i
-                                class="fa fa-check-circle" aria-hidden="true"></i></label>
-                            <ng-select bindLabel="descripcion" [(ngModel)]="wkfRed.estadoDestinoVerdadero"
-                              [ngModelOptions]="{standalone: true}" (change)="lstEstatusRedF($event)" name="destino"
-                              id="destino" required placeholder="Seleccione" bindValue="id" class="wkfTrue">
-                              <ng-option *ngFor="let e of rowEstado; let i = index"
-                                value="{{ e.id }}">{{e.nomb}}</ng-option>
-                            </ng-select>
-                          </div>
-
-                          <div class="form-group col-md-6">
-                            <label class="form-label" for="destino">Estatus Destino Verdadero <i
-                                class="fa fa-check-circle" aria-hidden="true"></i></label>
-                            <ng-select bindLabel="descripcion" name="destino" id="destino" required
-                              placeholder="Seleccione" bindValue="id" [(ngModel)]="wkfRed.estatusDestinoVerdadero"
-                              [ngModelOptions]="{standalone: true}" class="wkfTrue">
-                              <ng-option *ngFor="let e of rowEstatusRedF; let i = index"
-                                value="{{ e.id }}">{{e.nomb}}</ng-option>
-                            </ng-select>
+                        <div class="form-group col-md-6">
+                          <label class="form-label" for="origen">Estatus Origen</label>
+                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                            bindValue="id" [formControl]="wkfRedEstatusOrigenCtrl">
+                            @for (e of rowEstatusRedV; track e; let i = $index) {
+                              <ng-option
+                              value="{{ e.id }}">{{e.nomb}}</ng-option>
+                            }
+                          </ng-select>
+                        </div>
+                        <div class="form-group col-md-12">
+                          <label class="form-label" for="origen">Transición</label>
+                          <ng-select bindLabel="descripcion" [formControl]="wkfRedTransicionVCtrl"
+                            name="origen" id="origen" required
+                            placeholder="Seleccione" bindValue="id">
+                            @for (e of ListaTransiciones; track e; let i = $index) {
+                              <ng-option
+                              value="{{ e.id }}">{{e.func}}</ng-option>
+                            }
+                          </ng-select>
+                        </div>
+                        <div class="col-2 col-md-1" style="padding-right: 0!important;">
+                          <div class="d-flex flex-column align-items-center justify-content-center rounded playBtn"
+                            style="height: 92%; width: 100%; font-size: 1.6rem; padding: 0;">
+                            <i class="fa fa-play" aria-hiddden="true"></i>
+                            <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRriEIzmXue30hGxs5MIzqsG6D9Zqdm-dscBFp3PiU6lq6Z9Ho7dk5zJSHhRsB_FQTWIYg&usqp=CAU" style="transform: scaleX(-1); rotate: 90deg;"> -->
                           </div>
                         </div>
-
-                        <div class="row">
-                          <div class="form-group col-md-6">
-                            <label class="form-label" for="destino">Estado Destino Falso <i class="fa fa-times-circle"
-                                aria-hidden="true"></i></label>
-                            <ng-select bindLabel="descripcion" [(ngModel)]="wkfRed.estadoDestinoFalso"
-                              [ngModelOptions]="{standalone: true}" name="destino" id="destino" required
-                              placeholder="Seleccione" bindValue="id" (change)="lstEstatusRedDF($event)"
-                              class="wkfFalse">
-                              <ng-option *ngFor="let e of rowEstado; let i = index"
-                                value="{{ e.id }}">{{e.nomb}}</ng-option>
-                            </ng-select>
+                        <div class="col-10 col-md-11">
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label class="form-label" for="destino">Estado Destino Verdadero <i
+                              class="fa fa-check-circle" aria-hidden="true"></i></label>
+                              <ng-select bindLabel="descripcion" [formControl]="wkfRedEstadoDestVCtrl"
+                                (change)="lstEstatusRedF($event)" name="destino"
+                                id="destino" required placeholder="Seleccione" bindValue="id" class="wkfTrue">
+                                @for (e of rowEstado; track e; let i = $index) {
+                                  <ng-option
+                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                }
+                              </ng-select>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label class="form-label" for="destino">Estatus Destino Verdadero <i
+                              class="fa fa-check-circle" aria-hidden="true"></i></label>
+                              <ng-select bindLabel="descripcion" name="destino" id="destino" required
+                                placeholder="Seleccione" bindValue="id" [formControl]="wkfRedEstatusDestVCtrl"
+                                class="wkfTrue">
+                                @for (e of rowEstatusRedF; track e; let i = $index) {
+                                  <ng-option
+                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                }
+                              </ng-select>
+                            </div>
                           </div>
-
-                          <div class="form-group col-md-6">
-                            <label class="form-label" for="destino">Estatus Destino Falso <i class="fa fa-times-circle"
-                                aria-hidden="true"></i></label>
-                            <ng-select bindLabel="descripcion" name="destino" id="destino" required
-                              placeholder="Seleccione" bindValue="id" [(ngModel)]="wkfRed.estatusDestinoFalso"
-                              [ngModelOptions]="{standalone: true}" class="wkfFalse">
-                              <ng-option *ngFor="let e of rowEstatusDF; let i = index"
-                                value="{{ e.id }}">{{e.nomb}}</ng-option>
-                            </ng-select>
+                          <div class="row">
+                            <div class="form-group col-md-6">
+                              <label class="form-label" for="destino">Estado Destino Falso <i class="fa fa-times-circle"
+                              aria-hidden="true"></i></label>
+                              <ng-select bindLabel="descripcion" [formControl]="wkfRedEstadoDestFCtrl"
+                                name="destino" id="destino" required
+                                placeholder="Seleccione" bindValue="id" (change)="lstEstatusRedDF($event)"
+                                class="wkfFalse">
+                                @for (e of rowEstado; track e; let i = $index) {
+                                  <ng-option
+                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                }
+                              </ng-select>
+                            </div>
+                            <div class="form-group col-md-6">
+                              <label class="form-label" for="destino">Estatus Destino Falso <i class="fa fa-times-circle"
+                              aria-hidden="true"></i></label>
+                              <ng-select bindLabel="descripcion" name="destino" id="destino" required
+                                placeholder="Seleccione" bindValue="id" [formControl]="wkfRedEstatusDestFCtrl"
+                                class="wkfFalse">
+                                @for (e of rowEstatusDF; track e; let i = $index) {
+                                  <ng-option
+                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                }
+                              </ng-select>
+                            </div>
                           </div>
                         </div>
+                        <div class="col-lg-10 col-md-9 form-group mt-1">
+                          <label class="form-label" for="origen">Transición Error</label>
+                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
+                            bindValue="id" [formControl]="wkfRedTransicionFCtrl">
+                            @for (e of ListaTransiciones; track e; let i = $index) {
+                              <ng-option
+                              value="{{ e.id }}">{{e.func}}</ng-option>
+                            }
+                          </ng-select>
+                        </div>
+                        <div class="form-group col-lg-2 col-md-3 d-flex align-items-end mt-1">
+                          <button type="button" class="btn btn-danger" (click)="GuardarRed()" style="width: 100%;">
+                            <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+                          </button>
+                        </div>
                       </div>
+                      <br>
+                        <hr>
+                          <!-- FIN REGISTRO DE RED WORKFLOW -->
+                          <!-- INICIO TABLA DE RED WORKFLOW -->
+                          <div class="row">
+                            <div class="col-md-12">
+                              <ngx-datatable [rows]="rowDataRed" [rowHeight]="58"
+                                class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
+                                [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
+                                <ngx-datatable-column name="AREA DE ORIGEN" prop="area_origen" [width]="250">
+                                  <ng-template let-area_origen="value" ngx-datatable-cell-template>
+                                    <div>
+                                      <span class="font-weight-bold">{{ area_origen }}</span>
+                                    </div>
+                                  </ng-template>
+                                </ngx-datatable-column>
+                                <ngx-datatable-column name="ESTATUS DE ORIGEN" prop="area_estatus" [width]="250">
+                                  <ng-template let-area_estatus="value" ngx-datatable-cell-template>
+                                    <div>
+                                      <span class="font-weight-bold">{{ area_estatus }}</span>
+                                    </div>
+                                  </ng-template>
+                                </ngx-datatable-column>
+                                <ngx-datatable-column name="AREA DE DESTINO" prop="area_destino" [width]="250">
+                                  <ng-template let-area_destino="value" ngx-datatable-cell-template>
+                                    <div>
+                                      <span class="font-weight-bold">{{ area_destino }}</span>
+                                    </div>
+                                  </ng-template>
+                                </ngx-datatable-column>
+                                <ngx-datatable-column name="ESTATUS DESTINO" prop="estatus_destino" [width]="250">
+                                  <ng-template let-estatus_destino="value" ngx-datatable-cell-template>
+                                    <div>
+                                      <span class="font-weight-bold">{{ estatus_destino }}</span>
+                                    </div>
+                                  </ng-template>
+                                </ngx-datatable-column>
+                                <!-- <ngx-datatable-column name="Status" prop="est" [width]="200">
+                                <ng-template let-est="value" ngx-datatable-cell-template>
+                                  <div class="badge badge-success" *ngIf="est == 1">Activo</div>
+                                  <div class="badge badge-danger" *ngIf="est == 0">Inactivo</div>
+                                </ng-template>
+                              </ngx-datatable-column> -->
+                            </ngx-datatable>
+                          </div>
+                        </div>
+                        <!-- FIN TABLA RED WORKFLOW -->
+                      </ng-template>
+                    </li>
+                    <li ngbNavItem>
+                      <a ngbNavLink><span [data-feather]="'git-merge'"></span>DIAGRAMA</a>
+                      <ng-template ngbNavContent>
+                      </ng-template>
+                    </li>
+                  </ul>
+                  <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+                </div>
+              </div>
+            }
+            <!-- TABLA DE WORKFLOW -->
 
-                      <div class="col-lg-10 col-md-9 form-group mt-1">
-                        <label class="form-label" for="origen">Transición Error</label>
-                        <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                          bindValue="id" [(ngModel)]="wkfRed.transicionFalsa" [ngModelOptions]="{standalone: true}">
-                          <ng-option *ngFor="let e of ListaTransiciones; let i = index"
-                            value="{{ e.id }}">{{e.func}}</ng-option>
-                        </ng-select>
-                      </div>
-
-                      <div class="form-group col-lg-2 col-md-3 d-flex align-items-end mt-1">
-                        <button type="button" class="btn btn-danger" (click)="GuardarRed()" style="width: 100%;">
-                          <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
-                        </button>
-                      </div>
-
-                    </div>
-                    <br>
-                    <hr>
-                    <!-- FIN REGISTRO DE RED WORKFLOW -->
-
-                    <!-- INICIO TABLA DE RED WORKFLOW -->
-                    <div class="row">
-                      <div class="col-md-12">
-
-                        <ngx-datatable [rows]="rowDataRed" [rowHeight]="58"
-                          class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
-                          [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
-
-
-                          <ngx-datatable-column name="AREA DE ORIGEN" prop="area_origen" [width]="250">
-                            <ng-template let-area_origen="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ area_origen }}</span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                          <ngx-datatable-column name="ESTATUS DE ORIGEN" prop="area_estatus" [width]="250">
-                            <ng-template let-area_estatus="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ area_estatus }}</span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-
-
-                          <ngx-datatable-column name="AREA DE DESTINO" prop="area_destino" [width]="250">
-                            <ng-template let-area_destino="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ area_destino }}</span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                          <ngx-datatable-column name="ESTATUS DESTINO" prop="estatus_destino" [width]="250">
-                            <ng-template let-estatus_destino="value" ngx-datatable-cell-template>
-                              <div>
-                                <span class="font-weight-bold">{{ estatus_destino }}</span>
-                              </div>
-                            </ng-template>
-                          </ngx-datatable-column>
-
-                          <!-- <ngx-datatable-column name="Status" prop="est" [width]="200">
-                            <ng-template let-est="value" ngx-datatable-cell-template>
-                              <div class="badge badge-success" *ngIf="est == 1">Activo</div>
-                              <div class="badge badge-danger" *ngIf="est == 0">Inactivo</div>
-                            </ng-template>
-                          </ngx-datatable-column> -->
-
-                        </ngx-datatable>
-                      </div>
-
-                    </div>
-                    <!-- FIN TABLA RED WORKFLOW -->
-
-                  </ng-template>
-                </li>
-
-                <li ngbNavItem>
-                  <a ngbNavLink><span [data-feather]="'git-merge'"></span>DIAGRAMA</a>
-                  <ng-template ngbNavContent>
-
-                  </ng-template>
-                </li>
-              </ul>
-              <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
-
-            </div>
           </div>
-          <!-- TABLA DE WORKFLOW -->
-
         </div>
-      </div>
 
-    </section>
+      </section>
 
 
+    </div>
   </div>
-</div>

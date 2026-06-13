@@ -1,4 +1,10 @@
 /* src/app/components/system-info/system-info.component.css */
+:host {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+}
+
 .system-info-container {
   padding: 10px;
 }
@@ -26,58 +32,14 @@
   gap: 15px;
 }
 
-.disks-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
-  font-size: 0.9em;
-}
-
-.disk-header, .disk-row {
-  display: contents;
-}
-
-.disk-header > div {
-  font-weight: bold;
-  padding: 8px;
-  background: #f5f5f5;
-  border-radius: 4px;
-}
-
-.disk-row > div {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-}
-
-.progress-bar {
-  position: relative;
-  height: 20px;
-  background: #e0e0e0;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress {
-  height: 100%;
-  background: #4CAF50;
-}
-
-.progress-bar span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 0.7em;
-  color: white;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
-}
-
+/* Loading spinner ocupa todo el host y centra contenido */
 .loading-spinner {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 200px;
+  min-height: 200px;
+  height: 100%;
 }
 
 .loading-spinner p {

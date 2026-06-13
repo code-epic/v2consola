@@ -8,8 +8,7 @@ import { SafePipe } from '@core/pipes/safe.pipe';
 import { StripHtmlPipe } from '@core/pipes/stripHtml.pipe';
 
 @NgModule({
-  declarations: [InitialsPipe, FilterPipe, StripHtmlPipe, SafePipe],
-  imports: [],
+  imports: [InitialsPipe, FilterPipe, StripHtmlPipe, SafePipe],
   exports: [InitialsPipe, FilterPipe, StripHtmlPipe, SafePipe]
 })
 export class CorePipesModule {}

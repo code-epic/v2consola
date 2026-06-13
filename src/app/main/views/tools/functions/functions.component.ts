@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from "@angular/core"
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core"
 import {
   ColumnMode,
   DatatableComponent,
@@ -17,6 +17,7 @@ import {
   NgbModalConfig,
 } from "@ng-bootstrap/ng-bootstrap"
 import {
+  FormControl,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
@@ -28,13 +29,36 @@ import { environment } from "environments/environment"
 import { TaskService } from "@services/apicore/task.service"
 import { env } from "process"
 
+import { CommonModule } from "@angular/common"
+import { ReactiveFormsModule } from "@angular/forms"
+import { RouterModule } from "@angular/router"
+import { CoreDirectivesModule } from "@core/directives/directives"
+import { CorePipesModule } from "@core/pipes/pipes.module"
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap"
+import { NgxDatatableModule } from "@swimlane/ngx-datatable"
+import { NgSelectModule } from "@ng-select/ng-select"
+import { CodemirrorModule } from "@ctrl/ngx-codemirror"
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component"
+
 @Component({
     selector: "app-functions",
     templateUrl: "./functions.component.html",
     styleUrls: ["./functions.component.scss"],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        NgbModule,
+        NgxDatatableModule,
+        NgSelectModule,
+        CodemirrorModule,
+        ContentHeaderComponent,
+    ]
 })
 export class FunctionsComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent
@@ -127,11 +151,19 @@ export class FunctionsComponent implements OnInit {
   public showBaseDatos = false
   public showPuente = false
 
-  public searchValue: string = ''
+  searchValueCtrl = new FormControl('')
+  basicSelectedOptionCtrl = new FormControl(10)
+  xrsCtrl = new FormControl({value: '', disabled: true})
+  btnCategoriaCtrl = new FormControl('')
+  exportUsuarioCtrl = new FormControl('')
+  exportClaveCtrl = new FormControl('')
+  prefijoCtrl = new FormControl('')
+
   public ListaFunciones = []
   public tempData = []
   public rowData = []
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
 
   public driver = undefined
   public drivers = []
@@ -176,19 +208,15 @@ export class FunctionsComponent implements OnInit {
 
   public obj
 
-  public btnCategoria
-
   // public
   public mac
   public data: any
-  public xrs = ""
   public host = ""
   public submitted = false
   public loginForm: UntypedFormGroup
   public contentHeader: object
   public selected = []
   public kitchenSinkRows: any
-  public basicSelectedOption: number = 10
   public ColumnMode = ColumnMode
   public SelectionType = SelectionType
 
@@ -201,10 +229,6 @@ export class FunctionsComponent implements OnInit {
     funcion: "",
     user: "",
     file_name: "",
-  }
-  public IExport = {
-    usuario: "",
-    clave: "",
   }
   public ListaAplicaciones
   public fnx
@@ -230,7 +254,6 @@ export class FunctionsComponent implements OnInit {
     private utilservice: UtilService,
     private msjService: WsocketsService,
     private taskService: TaskService,
-    private cdr: ChangeDetectorRef
   ) { }
 
   // convenience getter for easy access to form fields
@@ -259,6 +282,13 @@ export class FunctionsComponent implements OnInit {
       tiempo: [""],
       fecha: [this.Fnx.fecha],
     })
+
+    this.loginForm.get('categoria')!.valueChanges.subscribe(() =>
+      this.SeleccionarPrograma()
+    )
+    this.loginForm.get('lenguaje')!.valueChanges.subscribe(() =>
+      this.cambiarModo()
+    )
 
     this.contentHeader = {
       headerTitle: "Herramientas",
@@ -402,8 +432,7 @@ export class FunctionsComponent implements OnInit {
     this.xAPI.valores = ""
     this.ListaFunciones = []
     this.count = 0
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._isLoading.set(true);
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         data.map((e) => {
@@ -412,13 +441,11 @@ export class FunctionsComponent implements OnInit {
         this.rowData = this.ListaFunciones
         this.count = this.rowData.length
         this.tempData = this.rowData
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       (error) => {
         console.log(error)
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     )
   }
@@ -426,7 +453,6 @@ export class FunctionsComponent implements OnInit {
   ModalEdit(modal, data) {
     this.clickRefresh(0)
     this.existe = false
-    this.btnCategoria = data.categoria
     this.loginForm = this._formBuilder.group({
       id: [data.id, [Validators.required]],
       tipo: [data.tipo, [Validators.required]],
@@ -534,7 +560,7 @@ export class FunctionsComponent implements OnInit {
 
   SeleccionarPrograma() {
     this.divTiempo = false
-    switch (this.btnCategoria) {
+    switch (this.btnCategoriaCtrl.value) {
       case "PROGRAM":
         this.divTiempo = true
         break
@@ -565,7 +591,6 @@ export class FunctionsComponent implements OnInit {
   }
 
   ModalConfig(modal: any, data: any) {
-    this.btnCategoria = data.categoria
     this.loginForm = this._formBuilder.group({
       id: [data.id, [Validators.required]],
       tipo: [data.tipo, [Validators.required]],
@@ -661,8 +686,8 @@ export class FunctionsComponent implements OnInit {
     this.fnx = {
       funcion: nameFnx,
       basedatos: environment.BD,
-      user: this.IExport.usuario,
-      pass: this.IExport.clave,
+      user: this.exportUsuarioCtrl.value,
+      pass: this.exportClaveCtrl.value,
       driver: environment.colecciones.SYS_FNX_NAME,
       file_name: environment.colecciones.SYS_FNX_NAME,
     }
@@ -773,8 +798,8 @@ export class FunctionsComponent implements OnInit {
         if (data.Cuerpo.length > 0) {
           this.xRestore.nombre = data.Cuerpo[0].nomb
           this.xRestore.ruta = data.Cuerpo[0].ruta
-          this.xRestore.pass = this.IExport.clave
-          this.xRestore.user = this.IExport.usuario
+          this.xRestore.pass = this.exportClaveCtrl.value
+          this.xRestore.user = this.exportUsuarioCtrl.value
           this.xRestore.file_name = environment.colecciones.SYS_FNX_NAME
           this.xRestore.basedatos = environment.driver.DATA_BASE
           this.xRestore.coleccion = environment.colecciones.SYS_FNX_NAME

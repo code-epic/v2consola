@@ -1,10 +1,16 @@
 import { Component, OnInit } from '@angular/core';
+import { CoreCommonModule } from '@core/common.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 @Component({
     selector: 'app-crontab',
     templateUrl: './crontab.component.html',
     styleUrls: ['./crontab.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [
+        CoreCommonModule,
+        ContentHeaderComponent
+    ]
 })
 export class CrontabComponent implements OnInit {
   public contentHeader: any;

@@ -1,9 +1,18 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
+
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgbModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { UtilService } from '@services/util/util.service';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { environment } from 'environments/environment';
+import { CoreCommonModule } from '@core/common.module';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 
 @Component({
@@ -12,7 +21,18 @@ import { environment } from 'environments/environment';
     styleUrls: ['./menu.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+    ReactiveFormsModule,
+    RouterModule,
+    NgbModule,
+    NgSelectModule,
+    NgxDatatableModule,
+    CoreCommonModule,
+    CoreDirectivesModule,
+    CorePipesModule,
+    ContentHeaderComponent
+]
 })
 export class MenuComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
@@ -72,7 +92,8 @@ export class MenuComponent implements OnInit {
   public searchAccion = ''
   public searchSubMenu = ''
 
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
   public tempDataAcciones = []
   public rowDataAcciones = []
   public countAcciones
@@ -97,12 +118,14 @@ export class MenuComponent implements OnInit {
   public menuid: string = ''
   public accionid
 
-  public btnMenu = false
+  private _btnMenu = signal<boolean>(false);
+  get btnMenu() { return this._btnMenu(); }
 
 
   public lstAplicaciones = []
   public dataModulo = []
-  public showDiv: boolean = false
+  private _showDiv = signal<boolean>(false);
+  get showDiv() { return this._showDiv(); }
   public datamenu = []
 
   public lstEstatus = [
@@ -123,11 +146,37 @@ export class MenuComponent implements OnInit {
     { id: 'OPTIONS', name: 'OPTIONS' }
   ]
 
+  public aplicacionCtrl = new FormControl(null)
+  public xmoduloCtrl = new FormControl(null)
+  public menuCtrl = new FormControl(null)
+  public IDefinirMenuNombreCtrl = new FormControl('')
+  public IDefinirMenuUrlCtrl = new FormControl('')
+  public IDefinirMenuIconCtrl = new FormControl('')
+  public IDefinirMenuColorCtrl = new FormControl('')
+  public IDefinirMenuClaseCtrl = new FormControl('')
+  public IDefinirMenuTipoCtrl = new FormControl(null)
+  public IDefinirMenuJsCtrl = new FormControl('')
+  public basicSelectedOptionCtrl = new FormControl(10)
+  public searchAccionCtrl = new FormControl('')
+  public IAccionNombreCtrl = new FormControl('')
+  public IAccionNombCtrl = new FormControl('')
+  public IAccionFuncCtrl = new FormControl('')
+  public IAccionClaseCtrl = new FormControl('')
+  public IAccionIconoCtrl = new FormControl('')
+  public IAccionColorCtrl = new FormControl('')
+  public IAccionEndpointCtrl = new FormControl('')
+  public IAccionDirecCtrl = new FormControl('')
+  public searchSubMenuCtrl = new FormControl('')
+  public IAddSubMenuNombCtrl = new FormControl('')
+  public IAddSubMenuUrlCtrl = new FormControl('')
+  public IAddSubMenuJsCtrl = new FormControl('')
+  public IAddSubMenuClaseCtrl = new FormControl('')
+  public IAddSubMenuTipoCtrl = new FormControl(null)
+
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
     private modalService: NgbModal,
-    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -161,8 +210,7 @@ export class MenuComponent implements OnInit {
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.parametros = ''
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._isLoading.set(true);
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstAplicaciones = data.Cuerpo.map(e => {
@@ -170,13 +218,11 @@ export class MenuComponent implements OnInit {
           e.name = e.nombre + ' : ' + e.VERSION
           return e
         });
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       (error) => {
         console.log(error)
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     )
   }
@@ -228,7 +274,7 @@ export class MenuComponent implements OnInit {
 
   selectEventMenu(item) {
     // console.log(item)
-    this.showDiv = false
+    this._showDiv.set(false)
     this.menu = item
     this.menuid = item.id
     this.IDefinirMenu.nombre = item.name
@@ -271,17 +317,76 @@ export class MenuComponent implements OnInit {
     }
   }
 
+  syncFormControlsFromMenu(): void {
+    this.aplicacionCtrl.setValue(this.aplicacion ?? null)
+    this.xmoduloCtrl.setValue(this.xmodulo ?? null)
+    this.menuCtrl.setValue(this.menu ?? null)
+    this.IDefinirMenuNombreCtrl.setValue(this.IDefinirMenu.nombre ?? '')
+    this.IDefinirMenuUrlCtrl.setValue(this.IDefinirMenu.url ?? '')
+    this.IDefinirMenuIconCtrl.setValue(this.IDefinirMenu.icon ?? '')
+    this.IDefinirMenuColorCtrl.setValue(this.IDefinirMenu.color ?? '')
+    this.IDefinirMenuClaseCtrl.setValue(this.IDefinirMenu.clase ?? '')
+    this.IDefinirMenuTipoCtrl.setValue(this.IDefinirMenu.tipo ?? null)
+    this.IDefinirMenuJsCtrl.setValue(this.IDefinirMenu.js ?? '')
+    this.basicSelectedOptionCtrl.setValue(this.basicSelectedOption)
+    this.searchAccionCtrl.setValue(this.searchAccion ?? '')
+    this.IAccionNombreCtrl.setValue(this.IAccion.nomb ?? '')
+    this.IAccionNombCtrl.setValue(this.IAccion.nomb ?? '')
+    this.IAccionFuncCtrl.setValue(this.IAccion.func ?? '')
+    this.IAccionClaseCtrl.setValue(this.IAccion.clase ?? '')
+    this.IAccionIconoCtrl.setValue(this.IAccion.icono ?? '')
+    this.IAccionColorCtrl.setValue(this.IAccion.color ?? '')
+    this.IAccionEndpointCtrl.setValue(this.IAccion.endpoint ?? '')
+    this.IAccionDirecCtrl.setValue(this.IAccion.direc ?? '')
+    this.searchSubMenuCtrl.setValue(this.searchSubMenu ?? '')
+    this.IAddSubMenuNombCtrl.setValue(this.IAddSubMenu.nomb ?? '')
+    this.IAddSubMenuUrlCtrl.setValue(this.IAddSubMenu.url ?? '')
+    this.IAddSubMenuJsCtrl.setValue(this.IAddSubMenu.js ?? '')
+    this.IAddSubMenuClaseCtrl.setValue(this.IAddSubMenu.clase ?? '')
+    this.IAddSubMenuTipoCtrl.setValue(this.IAddSubMenu.tipo ?? null)
+  }
+
+  syncMenuFromFormControls(): void {
+    this.aplicacion = this.aplicacionCtrl.value
+    this.xmodulo = this.xmoduloCtrl.value
+    this.menu = this.menuCtrl.value
+    this.IDefinirMenu.nombre = this.IDefinirMenuNombreCtrl.value
+    this.IDefinirMenu.url = this.IDefinirMenuUrlCtrl.value
+    this.IDefinirMenu.icon = this.IDefinirMenuIconCtrl.value
+    this.IDefinirMenu.color = this.IDefinirMenuColorCtrl.value
+    this.IDefinirMenu.clase = this.IDefinirMenuClaseCtrl.value
+    this.IDefinirMenu.tipo = this.IDefinirMenuTipoCtrl.value
+    this.IDefinirMenu.js = this.IDefinirMenuJsCtrl.value
+    this.basicSelectedOption = this.basicSelectedOptionCtrl.value
+    this.searchAccion = this.searchAccionCtrl.value
+    this.IAccion.nomb = this.IAccionNombreCtrl.value
+    this.IAccion.nomb = this.IAccionNombCtrl.value
+    this.IAccion.func = this.IAccionFuncCtrl.value
+    this.IAccion.clase = this.IAccionClaseCtrl.value
+    this.IAccion.icono = this.IAccionIconoCtrl.value
+    this.IAccion.color = this.IAccionColorCtrl.value
+    this.IAccion.endpoint = this.IAccionEndpointCtrl.value
+    this.IAccion.direc = this.IAccionDirecCtrl.value
+    this.searchSubMenu = this.searchSubMenuCtrl.value
+    this.IAddSubMenu.nomb = this.IAddSubMenuNombCtrl.value
+    this.IAddSubMenu.url = this.IAddSubMenuUrlCtrl.value
+    this.IAddSubMenu.js = this.IAddSubMenuJsCtrl.value
+    this.IAddSubMenu.clase = this.IAddSubMenuClaseCtrl.value
+    this.IAddSubMenu.tipo = this.IAddSubMenuTipoCtrl.value
+  }
+
   Limpiar() {
     this.LimpiarMenu()
     this.aplicacion = undefined
     this.xmodulo = undefined
     this.menu = undefined
-    this.showDiv = false
+    this.syncFormControlsFromMenu()
+    this._showDiv.set(false)
     this.rowDataAcc = []
   }
 
   procesar() {
-    this.showDiv = true
+    this._showDiv.set(true)
     this.listarAcciones(this.menuid)
     this.listarSubmenu(this.menuid)
   }
@@ -301,7 +406,7 @@ export class MenuComponent implements OnInit {
 
             data.Cuerpo.map(e => {
               if (i == 0) {
-                this.btnMenu = true
+                this._btnMenu.set(true)
                 this.IDefinirMenu.id = e.id
                 this.IDefinirMenu.nombre = e.nomb
                 this.IDefinirMenu.url = e.url
@@ -310,6 +415,7 @@ export class MenuComponent implements OnInit {
                 this.IDefinirMenu.icon = e.icon
                 this.IDefinirMenu.color = e.color
                 this.IDefinirMenu.tipo = e.type
+                this.syncFormControlsFromMenu()
               }
               if (e.endpoint != undefined) {
                 this.lista.push(e)
@@ -331,6 +437,7 @@ export class MenuComponent implements OnInit {
       this.LimpiarMenu()
       this.menu = undefined
       this.IDefinirMenu.nombre = mnu
+      this.syncFormControlsFromMenu()
       this.rowDataAcc = []
     }
   }
@@ -368,6 +475,7 @@ export class MenuComponent implements OnInit {
         console.log(data)
         if (data.tipo == 1) {
           this.LimpiarMenu()
+          this.syncFormControlsFromMenu()
           this.utilservice.AlertMini('top-end', 'success', 'Menu Registrado Exitosamente!', 3000)
         } else {
           this.utilservice.AlertMini('top-end', 'error', 'Oops! algo salio mal!', 3000)
@@ -428,6 +536,7 @@ export class MenuComponent implements OnInit {
       clase: '',
       icono: ''
     }
+    this.syncFormControlsFromMenu()
   }
 
 
@@ -559,6 +668,7 @@ export class MenuComponent implements OnInit {
       color: '',
       tipo: undefined
     }
+    this.syncFormControlsFromMenu()
   }
 
 

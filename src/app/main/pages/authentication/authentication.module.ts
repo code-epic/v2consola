@@ -38,18 +38,17 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
-    AuthLoginV1Component,
-    AuthRegisterV1Component,
-    AuthResetPasswordV1Component,
-    AuthForgotPasswordV1Component
-  ],
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     RouterModule.forChild(routes),
     NgbModule,
     FormsModule,
     ReactiveFormsModule,
     CoreCommonModule,
+    AuthLoginV1Component,
+    AuthRegisterV1Component,
+    AuthResetPasswordV1Component,
+    AuthForgotPasswordV1Component
   ]
 })
 export class AuthenticationModule {

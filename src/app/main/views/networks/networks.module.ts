@@ -6,8 +6,6 @@ import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
 
 import { CoreCommonModule } from '@core/common.module';
 
-import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
-
 import { CoreCardModule } from '@core/components/core-card/core-card.module';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -42,14 +40,11 @@ const routes = [
 
 
 @NgModule({
-  declarations: [
+  imports: [
     CommunicationsComponent,
     ConnectionsComponent,
-  ],
-  imports: [
     RouterModule.forChild(routes),
     CommonModule,
-    ContentHeaderModule,
     TranslateModule,
     FormsModule,
     CoreCardModule,

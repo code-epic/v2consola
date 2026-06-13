@@ -13,8 +13,7 @@ import { NavbarSearchComponent } from 'app/layout/components/navbar/navbar-searc
 import { NavbarNotificationComponent } from 'app/layout/components/navbar/navbar-notification/navbar-notification.component';
 
 @NgModule({
-  declarations: [NavbarComponent, NavbarSearchComponent, NavbarBookmarkComponent, NavbarNotificationComponent],
-  imports: [RouterModule, NgbModule, CoreCommonModule, CoreTouchspinModule],
+  imports: [RouterModule, NgbModule, CoreCommonModule, CoreTouchspinModule, NavbarSearchComponent, NavbarBookmarkComponent, NavbarNotificationComponent, NavbarComponent],
   exports: [NavbarComponent]
 })
 export class NavbarModule {}

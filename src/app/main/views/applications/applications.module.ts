@@ -1,28 +1,7 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
+
 import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
-
-import { CoreCommonModule } from '@core/common.module';
-
-import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
-
-import { CoreCardModule } from '@core/components/core-card/core-card.module';
-
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-
-import { NgSelectModule } from '@ng-select/ng-select';
-
-
-import { CoreDirectivesModule } from '@core/directives/directives';
-import { CorePipesModule } from '@core/pipes/pipes.module';
-import { CoreSidebarModule } from '@core/components';
-
 
 import { InstallComponent } from './install/install.component';
 import { MenuComponent } from './menu/menu.component';
@@ -67,29 +46,15 @@ const routes = [
 
 
 @NgModule({
-  declarations: [
-    InstallComponent,
-    MenuComponent,
-    ListComponent,
-    TerminalComponent,
-    ConciliationComponent,
-    TextMessagingComponent
-  ],
+  declarations: [],
   imports: [
     RouterModule.forChild(routes),
-    CommonModule,
-    ContentHeaderModule,
-    TranslateModule,
-    FormsModule,
-    CoreCardModule,
-    ReactiveFormsModule,
-    NgxDatatableModule,
-    NgbModule,
-    NgSelectModule,
-    CoreDirectivesModule,
-    CorePipesModule,
-    CoreSidebarModule,
-    CoreCommonModule
+    ListComponent,
+    InstallComponent,
+    MenuComponent,
+    ConciliationComponent,
+    TerminalComponent,
+    TextMessagingComponent
   ],
 })
 export class ApplicationsModule { }

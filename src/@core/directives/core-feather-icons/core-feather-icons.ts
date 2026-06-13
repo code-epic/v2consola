@@ -1,10 +1,10 @@
-import { Directive, ElementRef, Input, Inject, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
+import { Directive, ElementRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 
 import * as Feather from 'feather-icons';
 
 @Directive({
     selector: '[data-feather]',
-    standalone: false
+    standalone: true
 })
 export class FeatherIconDirective implements OnChanges {
   // Private
@@ -20,10 +20,7 @@ export class FeatherIconDirective implements OnChanges {
    *
    * @param {ElementRef} _elementRef
    */
-  constructor(
-    @Inject(ElementRef) private _elementRef: ElementRef,
-    @Inject(ChangeDetectorRef) private _changeDetector: ChangeDetectorRef
-  ) { }
+  constructor(private _elementRef: ElementRef) { }
 
   ngOnChanges(changes: SimpleChanges) {
     // Get the native element
@@ -57,6 +54,5 @@ export class FeatherIconDirective implements OnChanges {
         this._nativeElement.innerHTML = svg;
       }
     }
-    this._changeDetector.markForCheck();
   }
 }

@@ -6,8 +6,7 @@ import { CoreCommonModule } from '@core/common.module';
 import { CoreCardComponent } from '@core/components/core-card/core-card.component';
 
 @NgModule({
-  declarations: [CoreCardComponent],
-  imports: [CommonModule, NgbModule, CoreCommonModule],
+  imports: [CommonModule, NgbModule, CoreCommonModule, CoreCardComponent],
   exports: [CoreCardComponent]
 })
 export class CoreCardModule {}

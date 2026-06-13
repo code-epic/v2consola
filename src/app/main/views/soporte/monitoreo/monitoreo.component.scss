@@ -29,7 +29,7 @@ $card-shadow: 0 10px 40px rgba(140, 161, 232, 0.15);
     position: relative;
     height: 85vh;
     background: #fbfbfc; 
-    overflow: hidden;
+    overflow: auto;
     font-family: 'Montserrat', sans-serif;
     border-radius: 12px;
     box-shadow: 0 4px 25px rgba(0,0,0,0.03);
@@ -437,8 +437,146 @@ $card-shadow: 0 10px 40px rgba(140, 161, 232, 0.15);
     }
 }
 
+// --- CERTIFICATES PANEL ---
+.certificates-panel {
+    margin: 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(140, 161, 232, 0.12);
+    border: 1px solid #fff;
+    overflow: hidden;
+
+    .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid $border-color;
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: $text-main;
+
+            i { width: 20px; height: 20px; color: $primary; }
+        }
+
+        .refresh-btn {
+            background: rgba($primary, 0.1);
+            border: none; color: $primary; cursor: pointer;
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s;
+
+            i { width: 16px; height: 16px; }
+            &:hover { background: $primary; color: #fff; transform: rotate(180deg); }
+            &.spinning { animation: spin 1s linear infinite; }
+        }
+    }
+
+    .panel-loading, .panel-empty {
+        padding: 30px; text-align: center; color: $text-muted; font-size: 0.85rem;
+    }
+
+    .cert-content {
+        max-height: 300px; overflow-y: auto;
+
+        &::-webkit-scrollbar { width: 4px; }
+        &::-webkit-scrollbar-thumb { background: $border-color; border-radius: 4px; }
+    }
+
+    .cert-list {
+        list-style: none; margin: 0; padding: 0;
+
+        .cert-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            border-bottom: 1px solid $border-color;
+            transition: background 0.2s;
+
+            &:last-child { border-bottom: none; }
+            &:hover { background: rgba($primary, 0.03); }
+        }
+
+        .cert-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cert-icon {
+            width: 36px; height: 36px; border-radius: 10px;
+            background: rgba($primary, 0.08);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+
+            i { width: 18px; height: 18px; color: $primary; }
+        }
+
+        .cert-detail {
+            display: flex; flex-direction: column; gap: 2px;
+            min-width: 0;
+
+            .cert-name {
+                font-weight: 600; font-size: 0.85rem; color: $text-main;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            }
+            .cert-subject {
+                font-size: 0.75rem; color: $primary; font-weight: 500;
+            }
+            .cert-expires {
+                font-size: 0.7rem; color: #e67e22; font-weight: 500;
+            }
+            .cert-size {
+                font-size: 0.7rem; color: $text-muted;
+            }
+        }
+
+        .cert-download {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            margin-left: 12px;
+
+            .format-label {
+                font-size: 0.7rem; color: $text-muted; font-weight: 600;
+                white-space: nowrap;
+            }
+        }
+
+        .format-list {
+            list-style: none; margin: 0; padding: 0;
+            display: flex; gap: 4px;
+
+            .fmt-btn {
+                padding: 4px 10px; border-radius: 6px;
+                border: 1px solid $border-color;
+                background: #fff;
+                font-size: 0.7rem; font-weight: 600; color: $text-main;
+                cursor: pointer; transition: all 0.2s;
+
+                &:hover {
+                    background: $primary; color: #fff; border-color: $primary;
+                    transform: translateY(-1px);
+                    box-shadow: 0 3px 8px rgba($primary, 0.3);
+                }
+            }
+        }
+    }
+}
+
 // Keyframes
 @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 0.6; } 100% { transform: scale(1.6); opacity: 0; } }
 @keyframes slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 

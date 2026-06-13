@@ -1,11 +1,15 @@
 import { Component, OnInit, Input, Output, ViewEncapsulation, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CoreDirectivesModule } from '@core/directives/directives';
 
 @Component({
     selector: 'core-touchspin',
     templateUrl: './core-touchspin.component.html',
     styleUrls: ['./core-touchspin.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, FormsModule, CoreDirectivesModule]
 })
 export class CoreTouchspinComponent implements OnInit {
   @Input('numberValue') numberValue = 0;

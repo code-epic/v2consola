@@ -1,9 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
+import { CoreMenuVerticalSectionComponent } from '@core/components/core-menu/vertical/section/section.component';
+import { CoreMenuVerticalItemComponent } from '@core/components/core-menu/vertical/item/item.component';
+import { CoreMenuVerticalCollapsibleComponent } from '@core/components/core-menu/vertical/collapsible/collapsible.component';
+import { CoreMenuHorizontalItemComponent } from '@core/components/core-menu/horizontal/item/item.component';
+import { CoreMenuHorizontalCollapsibleComponent } from '@core/components/core-menu/horizontal/collapsible/collapsible.component';
 
 @Component({
     selector: '[core-menu]',
@@ -11,7 +18,16 @@ import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
     styleUrls: ['./core-menu.component.scss'],
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        CoreMenuVerticalSectionComponent,
+        CoreMenuVerticalItemComponent,
+        CoreMenuVerticalCollapsibleComponent,
+        CoreMenuHorizontalItemComponent,
+        CoreMenuHorizontalCollapsibleComponent
+    ]
 })
 export class CoreMenuComponent implements OnInit {
   currentUser: any;
@@ -19,18 +35,23 @@ export class CoreMenuComponent implements OnInit {
   @Input()
   layout = 'vertical';
 
+  private _menu = signal<any>(undefined);
+
   @Input()
-  menu: any;
+  set menu(value: any) {
+    this._menu.set(value);
+  }
+  get menu() {
+    return this._menu();
+  }
 
   // Private
   private _unsubscribeAll: Subject<any>;
 
   /**
-   *
-   * @param {ChangeDetectorRef} _changeDetectorRef
    * @param {CoreMenuService} _coreMenuService
    */
-  constructor(private _changeDetectorRef: ChangeDetectorRef, private _coreMenuService: CoreMenuService) {
+  constructor(private _coreMenuService: CoreMenuService) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
   }
@@ -49,9 +70,7 @@ export class CoreMenuComponent implements OnInit {
     this._coreMenuService.onMenuChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
 
       // Load menu
-      this.menu = this._coreMenuService.getCurrentMenu();
-
-      this._changeDetectorRef.markForCheck();
+      this._menu.set(this._coreMenuService.getCurrentMenu());
     });
   }
 }

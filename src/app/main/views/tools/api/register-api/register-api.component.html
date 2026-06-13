@@ -43,21 +43,25 @@
               <form #accountDetailsForm="ngForm">
                 <div class="row">
 
-                  <div class="form-group col-md-4">
+                    <div class="form-group col-md-4">
                     <label class="form-label" for="http">HTTP / Puerto</label>
                     <div class="ng-select-group-pastel">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'globe'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="http" [(ngModel)]="xAPIDB.puertohttp" #httpx="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="http" name="http" required bindLabel="name"
+                      <ng-select [items]="http" [formControl]="puertohttpCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="http" name="http" bindLabel="name"
                         bindId="id" bindValue="name" placeholder="Seleccione Puerto HTTP">
                       </ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && httpx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="httpx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && puertohttpCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (puertohttpCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
 
                   <div class="form-group col-md-4">
@@ -66,15 +70,19 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="https" [(ngModel)]="xAPIDB.puertohttps" #httpsx="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="https" name="https" required bindLabel="name"
+                      <ng-select [items]="https" [formControl]="puertohttpsCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="https" name="https" bindLabel="name"
                         bindId="id" bindValue="name" placeholder="Seleccione Puerto HTTPS">
                       </ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && httpsx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="httpsx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && puertohttpsCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (puertohttpsCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
 
 
@@ -84,14 +92,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'grid'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="tipo" [(ngModel)]="xAPIDB.tipo" #tipox="ngModel"
-                        (ngModelChange)="onTipo($event)" [class.error]="accountDetailsForm.submitted" id="tipo"
-                        name="tipo" required bindLabel="name" bindValue="id" placeholder="Seleccione Tipo"></ng-select>
+                      <ng-select [items]="tipo" [formControl]="tipoCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="tipo"
+                      name="tipo" bindLabel="name" bindValue="id" placeholder="Seleccione Tipo"></ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && tipox.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="tipox.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && tipoCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (tipoCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                 </div>
 
@@ -102,14 +114,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'share-2'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="LstDistribucion" [(ngModel)]="xAPIDB.distribucion" #distribucionx="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion" required
-                        bindLabel="name" bindId="id" bindValue="id" placeholder="Seleccione Distribución"></ng-select>
+                      <ng-select [items]="LstDistribucion" [formControl]="distribucionCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="distribucion" name="distribucion"
+                      bindLabel="name" bindId="id" bindValue="id" placeholder="Seleccione Distribución"></ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && distribucionx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="distribucionx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && distribucionCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (distribucionCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                   <div class="form-group col-md-6">
                     <label class="form-label" for="aplicacion">Aplicación</label>
@@ -117,14 +133,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'box'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="ListaAplicaciones" [(ngModel)]="xAPIDB.aplicacion" #aplicacionx="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="aplicacion" name="aplicacion" required
-                        bindLabel="name" bindValue="nombre" placeholder="Seleccione Aplicación"></ng-select>
+                      <ng-select [items]="ListaAplicaciones" [formControl]="aplicacionCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="aplicacion" name="aplicacion"
+                      bindLabel="name" bindValue="nombre" placeholder="Seleccione Aplicación"></ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && aplicacionx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="aplicacionx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && aplicacionCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (aplicacionCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
 
                 </div>
@@ -136,14 +156,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
                       </div>
-                      <input required type="text" name="last-names" id="last-names" [(ngModel)]="xAPIDB.funcion"
-                        #funcionx="ngModel" [class.error]="accountDetailsForm.submitted" id="funcion" name="funcion"
-                        required class="form-control">
+                      <input type="text" [formControl]="funcionCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="funcion" name="funcion"
+                        class="form-control">
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && funcionx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="funcionx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && funcionCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (funcionCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                   <div class="form-group col-md-2">
                     <label class="form-label" for="version">Versión</label>
@@ -151,8 +175,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="16"></span></span>
                       </div>
-                      <input [(ngModel)]="xAPIDB.version" [ngModelOptions]="{standalone: true}" [disabled]="true"
-                        required type="text" name="last-namew" id="last-namew" class="form-control">
+                      <input [formControl]="versionCtrl" [disabled]="true"
+                        type="text" name="version" id="version" class="form-control">
                     </div>
                   </div>
                   <div class="form-group col-md-6">
@@ -161,14 +185,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="drivers" [(ngModel)]="xAPIDB.driver" #driverx="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="id" name="name" required bindLabel="name"
-                        (ngModelChange)="selDataBase($event)" placeholder="Seleccione Conexión"></ng-select>
+                      <ng-select [items]="drivers" [formControl]="driverCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="driver" name="driver" bindLabel="name"
+                      placeholder="Seleccione Conexión"></ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && driverx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="driverx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && driverCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (driverCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                 </div>
 
@@ -179,15 +207,19 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'tag'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="categoria" [(ngModel)]="xAPIDB.categoria" #categoriax="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="categoria" name="categoria" required
-                        bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Categoria"></ng-select>
+                      <ng-select [items]="categoria" [formControl]="categoriaCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="categoria" name="categoria"
+                        bindLabel="name" bindId="id" bindValue="id"
+                      placeholder="Seleccione Categoria"></ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && categoriax.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="categoriax.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && categoriaCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (categoriaCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                   <div class="form-group col-md-4">
                     <label class="form-label" for="funcionalidad">Funcionalidad</label>
@@ -195,15 +227,19 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'activity'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="funcionalidad" [(ngModel)]="xAPIDB.funcionalidad" #funcionalidadx="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="funcionalidad" name="funcionalidad" required
-                        bindLabel="name" bindId="id" bindValue="name" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Funcionalidad"></ng-select>
+                      <ng-select [items]="funcionalidad" [formControl]="funcionalidadCtrl"
+                        [class.error]="accountDetailsForm.submitted" id="funcionalidad" name="funcionalidad"
+                        bindLabel="name" bindId="id" bindValue="id"
+                      placeholder="Seleccione Funcionalidad"></ng-select>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && funcionalidadx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="funcionalidadx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && funcionalidadCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (funcionalidadCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                 </div>
 
@@ -214,14 +250,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
                       </div>
-                      <textarea [(ngModel)]="xAPIDB.descripcion" rows="7" #descripcionx="ngModel"
-                        [class.error]="accountDetailsForm.submitted" id="descripcion" name="descripcion" required
-                        type="text" name="last-namew" id="last-namew" class="form-control"></textarea>
+                      <textarea [formControl]="descripcionCtrl" rows="7"
+                        [class.error]="accountDetailsForm.submitted" id="descripcion" name="descripcion"
+                      class="form-control"></textarea>
                     </div>
-                    <span *ngIf="accountDetailsForm.submitted && descripcionx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="descripcionx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (accountDetailsForm.submitted && descripcionCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (descripcionCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                 </div>
 
@@ -246,141 +286,164 @@
 
                 <div class="row">
 
-                  <div class="form-group col-md-12" *ngIf="!btnInterfaz">
-                    <label class="form-label" for="metodo">Puente</label>
-                    <div class="input-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'shuffle'" [size]="16"></span></span>
+                  @if (!btnInterfaz) {
+                    <div class="form-group col-md-12">
+                      <label class="form-label" for="metodo">Puente</label>
+                      <div class="input-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'shuffle'" [size]="16"></span></span>
+                        </div>
+                        <input type="text" [formControl]="puenteCtrl"
+                          class="form-control" placeholder="Puente">
                       </div>
-                      <input type="text" [(ngModel)]="xAPIDB.puente" [ngModelOptions]="{standalone: true}"
-                        class="form-control" placeholder="Puente">
                     </div>
-                  </div>
+                  }
 
 
-                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
-                    <label class="form-label" for="metodo">Metodo</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'arrow-right-circle'"
-                            [size]="16"></span></span>
-                      </div>
-                      <ng-select [items]="metodo" (ngModelChange)="onMetodo($event)" [(ngModel)]="xAPIDB.metodo"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-4">
+                      <label class="form-label" for="metodo">Metodo</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'arrow-right-circle'"
+                          [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="metodo" [formControl]="metodoCtrl"
+                          bindLabel="name" bindValue="id"
                         placeholder="Seleccione Metodo"></ng-select>
-                    </div>
-                  </div>
-                  <div class="form-group col-md-2" *ngIf="btnInterfaz">
-                    <label class="form-label" for="relacional">Relacional</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="relacional" [(ngModel)]="xAPIDB.relacional"
-                        [ngModelOptions]="{standalone:true}" bindLabel="name" bindId="id" bindValue="id"
-                        (ngModelChange)="clickRelacional(xAPIDB.relacional)"
+                    </div>
+                  }
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-2">
+                      <label class="form-label" for="relacional">Relacional</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="relacional" [formControl]="relacionalCtrl"
+                          bindLabel="name" bindId="id" bindValue="id"
                         placeholder="Seleccione Relacional"></ng-select>
-                    </div>
-                  </div>
-                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
-                    <label class="form-label" for="coleccion">Colección en caso de ser NOSQL</label>
-                    <div class="input-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
                       </div>
-                      <input type="text" [(ngModel)]="xAPIDB.coleccion" [disabled]="DisabledNoSql == true"
-                        [ngModelOptions]="{standalone: true}" class="form-control" placeholder="Coleccion">
                     </div>
-                  </div>
+                  }
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-6">
+                      <label class="form-label" for="coleccion">Colección en caso de ser NOSQL</label>
+                      <div class="input-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
+                        </div>
+                        <input type="text" [formControl]="coleccionCtrl" [disabled]="DisabledNoSql == true"
+                          class="form-control" placeholder="Coleccion">
+                      </div>
+                    </div>
+                  }
                 </div>
 
                 <div class="row">
-                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
-                    <label class="form-label" for="nombretabla">Nombre de la tabla</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'layout'" [size]="16"></span></span>
-                      </div>
-                      <ng-select [items]="dataModulo" [(ngModel)]="tabla" [ngModelOptions]="{standalone:true}"
-                        bindLabel="name" (ngModelChange)='selectEventModulo($event)'
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-4">
+                      <label class="form-label" for="nombretabla">Nombre de la tabla</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'layout'" [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="dataModulo" [formControl]="tablaCtrl"
+                          bindLabel="name"
                         placeholder="Seleccione Relacional"></ng-select>
-                    </div>
-                  </div>
-
-                  <div class="form-group col-md-2" *ngIf="btnInterfaz">
-                    <label class="form-label" for="criterio">Tipo de Criterio</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'filter'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="lstDml" [(ngModel)]="xdml" [disabled]="DisabledTipoDato == true"
-                        [ngModelOptions]="{standalone: true}" (ngModelChange)='onDml($event)' bindLabel="nombre"
+                    </div>
+                  }
+
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-2">
+                      <label class="form-label" for="criterio">Tipo de Criterio</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'filter'" [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="lstDml" [formControl]="xdmlCtrl" [disabled]="DisabledTipoDato == true"
+                          bindLabel="nombre"
                         bindValue="id" placeholder="Seleccione Tipo de dato"></ng-select>
-                    </div>
-                  </div>
-
-                  <div class="form-group col-md-2" *ngIf="btnInterfaz">
-                    <label class="form-label" for="funcion">Valor por defecto</label>
-                    <div class="input-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'check-square'" [size]="16"></span></span>
                       </div>
-                      <input type="text" [(ngModel)]="defecto" [ngModelOptions]="{standalone: true}"
-                        class="form-control" placeholder="Valor por defecto">
                     </div>
-                  </div>
+                  }
 
-                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
-                    <label class="form-label" for="version">Condición</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'help-circle'" [size]="16"></span></span>
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-2">
+                      <label class="form-label" for="funcion">Valor por defecto</label>
+                      <div class="input-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'check-square'" [size]="16"></span></span>
+                        </div>
+                        <input type="text" [formControl]="defectoCtrl"
+                          class="form-control" placeholder="Valor por defecto">
                       </div>
-                      <ng-select [items]="lstcondicion" [disabled]="xcondicion == true" [(ngModel)]="condicion"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindId="id" bindValue="name"
+                    </div>
+                  }
+
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-4">
+                      <label class="form-label" for="version">Condición</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'help-circle'" [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="lstcondicion" [disabled]="xcondicion == true" [formControl]="condicionCtrl"
+                          bindLabel="name" bindId="id" bindValue="name"
                         placeholder="Seleccione Condición"></ng-select>
+                      </div>
                     </div>
-                  </div>
+                  }
 
                 </div>
 
                 <div class="row">
-                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
-                    <label class="form-label" for="campo">Nombre del campo</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'columns'" [size]="16"></span></span>
-                      </div>
-                      <ng-select [items]="dataCampo" [(ngModel)]="campo" [ngModelOptions]="{standalone: true}"
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-4">
+                      <label class="form-label" for="campo">Nombre del campo</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'columns'" [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="dataCampo" [formControl]="campoCtrl"
                         bindLabel="name" bindId="id" bindValue="name" placeholder="Seleccione Campo"></ng-select>
-                    </div>
-                  </div>
-
-
-                  <div class="form-group col-md-3" *ngIf="btnInterfaz">
-                    <label class="form-label" for="alias">Alias</label>
-                    <div class="input-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'at-sign'" [size]="16"></span></span>
                       </div>
-                      <input type="text" [(ngModel)]="alias" [ngModelOptions]="{standalone: true}" class="form-control"
-                        placeholder="Alias">
                     </div>
-                  </div>
+                  }
 
-                  <div class="form-group col-md-4" *ngIf="btnInterfaz">
-                    <label class="form-label" for="tipodatox">Tipo de dato</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
+
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-3">
+                      <label class="form-label" for="alias">Alias</label>
+                      <div class="input-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'at-sign'" [size]="16"></span></span>
+                        </div>
+                        <input type="text" [formControl]="aliasCtrl" class="form-control"
+                          placeholder="Alias">
                       </div>
-                      <ng-select [items]="lsttipodato" [(ngModel)]="tipodato" [ngModelOptions]="{standalone: true}"
+                    </div>
+                  }
+
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-4">
+                      <label class="form-label" for="tipodatox">Tipo de dato</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="lsttipodato" [formControl]="tipodatoCtrl"
                         bindLabel="name" bindId="id" bindValue="id" placeholder="Seleccione Tipo de dato"></ng-select>
+                      </div>
                     </div>
-                  </div>
-                  <div class="form-group col-md-1" style="margin-top: 24px;" *ngIf="btnInterfaz">
-                    <button class="btn btn-success" (click)="agregarEntrada()">+</button>
-                  </div>
+                  }
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-1" style="margin-top: 24px;">
+                      <button class="btn btn-success" (click)="agregarEntrada()">+</button>
+                    </div>
+                  }
                 </div>
 
                 <div class="row">
@@ -389,8 +452,8 @@
                       <span [data-feather]="'code'" [size]="14"></span> Esquema de entrada:
                     </label>
                     <div class="form-group text-justify">
-                      <ngx-codemirror [ngModelOptions]="{standalone: true}" [(ngModel)]="xAPIDB.entradas"
-                        (ngModelChange)="setEditorContent($event)" [options]="codeJson">
+                      <ngx-codemirror [formControl]="entradasCtrl"
+                        [options]="codeJson">
                       </ngx-codemirror>
                     </div>
                   </div>
@@ -400,8 +463,8 @@
                       <span [data-feather]="'database'" [size]="14"></span> Consulta / SQL / NOSQL
                     </label>
                     <div class="form-group text-justify">
-                      <ngx-codemirror #codemirror aria-describedby="login-codigo" [ngModelOptions]="{standalone: true}"
-                        [(ngModel)]="xAPIDB.query" (ngModelChange)="setEditorContent($event)" tabindex="1"
+                      <ngx-codemirror #codemirror aria-describedby="login-codigo"
+                        [formControl]="queryCtrl" tabindex="1"
                         [options]="codeSQL">
                       </ngx-codemirror>
                     </div>
@@ -410,56 +473,64 @@
                 </div>
 
                 <div class="row">
-                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
-                    <label class="form-label" for="parametros">Parametros</label>
-                    <div class="input-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-6">
+                      <label class="form-label" for="parametros">Parametros</label>
+                      <div class="input-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
+                        </div>
+                        <input type="text" class="form-control" placeholder="Parametros">
                       </div>
-                      <input type="text" class="form-control" placeholder="Parametros">
                     </div>
-                  </div>
+                  }
 
-                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
-                    <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'corner-down-left'"
-                            [size]="16"></span></span>
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-6">
+                      <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'corner-down-left'"
+                          [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="retorn" bindLabel="descripcion" placeholder="Seleccione Valor Retorno"
+                          bindId="id">
+                        </ng-select>
                       </div>
-                      <ng-select [items]="retorn" bindLabel="descripcion" placeholder="Seleccione Valor Retorno"
-                        bindId="id">
-                      </ng-select>
                     </div>
-                  </div>
+                  }
 
                 </div>
 
 
 
                 <div class="row">
-                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
-                    <label class="form-label" for="version">Funciones de la prueba</label>
-                    <div class="ng-select-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'play-circle'" [size]="16"></span></span>
-                      </div>
-                      <ng-select [items]="funciones" [(ngModel)]="funcionalidad" [ngModelOptions]="{standalone: true}"
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-6">
+                      <label class="form-label" for="version">Funciones de la prueba</label>
+                      <div class="ng-select-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'play-circle'" [size]="16"></span></span>
+                        </div>
+                        <ng-select [items]="funciones" [formControl]="funcionalidadSelectCtrl"
                         bindLabel="name" bindId="id" placeholder="Seleccione Funciones"></ng-select>
-                    </div>
-                  </div>
-
-
-                  <div class="form-group col-md-6" *ngIf="btnInterfaz">
-                    <label class="form-label" for="funcion">Agregar columna de la consulta</label>
-                    <div class="input-group-pastel">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text"><span [data-feather]="'plus-circle'" [size]="16"></span></span>
                       </div>
-                      <input type="text" [(ngModel)]="xAPIDB.consumidores" [ngModelOptions]="{standalone: true}"
-                        class="form-control" placeholder="Agregar columna de la consulta">
                     </div>
-                  </div>
+                  }
+
+
+                  @if (btnInterfaz) {
+                    <div class="form-group col-md-6">
+                      <label class="form-label" for="funcion">Agregar columna de la consulta</label>
+                      <div class="input-group-pastel">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text"><span [data-feather]="'plus-circle'" [size]="16"></span></span>
+                        </div>
+                        <input type="text" [formControl]="consumidoresCtrl"
+                          class="form-control" placeholder="Agregar columna de la consulta">
+                      </div>
+                    </div>
+                  }
 
 
                 </div>
@@ -490,14 +561,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'users'" [size]="16"></span></span>
                       </div>
-                      <input type="number" [(ngModel)]="xAPIDB.consumidores" #consumidoresx="ngModel"
-                        [class.error]="socialLinkForm.submitted" id="consumidores" name="consumidores" required
+                      <input type="number" [formControl]="consumidoresCtrl"
+                        [class.error]="socialLinkForm.submitted" id="consumidores" name="consumidores"
                         class="form-control" placeholder="Consumidores">
                     </div>
-                    <span *ngIf="socialLinkForm.submitted && consumidoresx.invalid" class="invalid-form">
-                      <small class="form-text text-danger" *ngIf="consumidoresx.errors.required">Este campo es
-                        requerido!</small>
-                    </span>
+                    @if (socialLinkForm.submitted && consumidoresCtrl.invalid) {
+                      <span class="invalid-form">
+                        @if (consumidoresCtrl.errors?.required) {
+                          <small class="form-text text-danger">Este campo es
+                          requerido!</small>
+                        }
+                      </span>
+                    }
                   </div>
                   <div class="form-group col-md-3">
                     <label class="form-label" for="cache">Cache</label>
@@ -505,8 +580,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'zap'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="cache" [(ngModel)]="xAPIDB.cache" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Cache"></ng-select>
+                      <ng-select [items]="cache" [formControl]="cacheCtrl"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Cache"></ng-select>
                     </div>
                   </div>
                   <div class="form-group col-md-2">
@@ -515,8 +590,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="logs" [(ngModel)]="xAPIDB.logs" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Logs"></ng-select>
+                      <ng-select [items]="logs" [formControl]="logsCtrl"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Logs"></ng-select>
                     </div>
                   </div>
                   <div class="form-group col-md-2">
@@ -525,9 +600,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'repeat'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="concurrente" [(ngModel)]="xAPIDB.concurrencia"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Concurrente"></ng-select>
+                      <ng-select [items]="concurrente" [formControl]="concurrenciaCtrl"
+                        bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Concurrente"></ng-select>
                     </div>
                   </div>
                   <div class="form-group col-md-2">
@@ -535,10 +610,10 @@
                     <div class="ng-select-group-pastel">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'corner-down-left'"
-                            [size]="16"></span></span>
+                        [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="retorno" [(ngModel)]="xAPIDB.retorna" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Retorno"></ng-select>
+                      <ng-select [items]="retorno" [formControl]="retornaCtrl"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Retorno"></ng-select>
                     </div>
                   </div>
                 </div>
@@ -550,7 +625,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'clock'" [size]="16"></span></span>
                       </div>
-                      <input type="number" [(ngModel)]="xAPIDB.tiempoduracion" [ngModelOptions]="{standalone: true}"
+                      <input type="number" [formControl]="tiempoduracionCtrl"
                         placeholder="Seleccione Tiempo" class="form-control">
                     </div>
                   </div>
@@ -560,9 +635,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'watch'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="duracion" [(ngModel)]="xAPIDB.tipoduracion"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Tipo Duración"></ng-select>
+                      <ng-select [items]="duracion" [formControl]="tipoduracionCtrl"
+                        bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Tipo Duración"></ng-select>
                     </div>
                   </div>
 
@@ -572,9 +647,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'alert-circle'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="prioridad" [(ngModel)]="xAPIDB.prioridad"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Prioridad"></ng-select>
+                      <ng-select [items]="prioridad" [formControl]="prioridadCtrl"
+                        bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Prioridad"></ng-select>
                     </div>
                   </div>
                   <div class="form-group col-md-3">
@@ -583,8 +658,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'server'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="entorno" [(ngModel)]="xAPIDB.entorno" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Entorno"></ng-select>
+                      <ng-select [items]="entorno" [formControl]="entornoCtrl"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Entorno"></ng-select>
                     </div>
                   </div>
                   <div class="form-group col-md-3">
@@ -593,8 +668,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'shield'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="waf" [(ngModel)]="xAPIDB.accion" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Aplicar Waf"></ng-select>
+                      <ng-select [items]="waf" [formControl]="accionCtrl"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Aplicar Waf"></ng-select>
                     </div>
                   </div>
 
@@ -607,9 +682,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'book'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.bitacora"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Bitacora"></ng-select>
+                      <ng-select [items]="LstDecision" [formControl]="bitacoraCtrl"
+                        bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Bitacora"></ng-select>
                     </div>
                   </div>
 
@@ -619,9 +694,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'save'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="LstDecision" [(ngModel)]="xAPIDB.respaldo"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Respaldo"></ng-select>
+                      <ng-select [items]="LstDecision" [formControl]="respaldoCtrl"
+                        bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Respaldo"></ng-select>
                     </div>
                   </div>
 
@@ -631,8 +706,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'toggle-right'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="estatus" [(ngModel)]="xAPIDB.estatus" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Seleccione Estatus"></ng-select>
+                      <ng-select [items]="estatus" [formControl]="estatusCtrl"
+                      bindLabel="name" bindValue="id" placeholder="Seleccione Estatus"></ng-select>
                     </div>
                   </div>
 
@@ -642,9 +717,9 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="inclusionjwt" [(ngModel)]="xAPIDB.inclusionjwt"
-                        [ngModelOptions]="{standalone: true}" bindLabel="name" bindValue="id"
-                        placeholder="Seleccione Inclusion JWT"></ng-select>
+                      <ng-select [items]="inclusionjwt" [formControl]="inclusionjwtCtrl"
+                        bindLabel="name" bindValue="id"
+                      placeholder="Seleccione Inclusion JWT"></ng-select>
                     </div>
                   </div>
                 </div>
@@ -655,8 +730,8 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'shield'" [size]="16"></span></span>
                       </div>
-                      <ng-select [items]="hsf" [(ngModel)]="xAPIDB.hsf" [ngModelOptions]="{standalone: true}"
-                        bindLabel="name" bindValue="id" placeholder="Alta Seguridad Encontrada"></ng-select>
+                      <ng-select [items]="hsf" [formControl]="hsfCtrl"
+                      bindLabel="name" bindValue="id" placeholder="Alta Seguridad Encontrada"></ng-select>
                     </div>
                   </div>
 
@@ -681,10 +756,14 @@
                     <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                     <span class="align-middle d-sm-inline-block d-none">Atras</span>
                   </button>
-                  <button class="btn btn-success btn-submit" *ngIf="getURL == 'update-api'"
+                  @if (getURL == 'update-api') {
+                    <button class="btn btn-success btn-submit"
                     (click)="UpdateAPI(xAPIDB.funcion,xAPIDB.entorno)" rippleEffect>Actualizar</button>
-                  <button class="btn btn-success btn-submit" *ngIf="getURL == 'register-api'" (click)="RegistrarAPI()"
+                  }
+                  @if (getURL == 'register-api') {
+                    <button class="btn btn-success btn-submit" (click)="RegistrarAPI()"
                     rippleEffect>Guardar</button>
+                  }
                 </div>
               </form>
             </div>

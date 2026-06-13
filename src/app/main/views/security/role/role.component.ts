@@ -1,12 +1,18 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
+
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NgbModal, NgbActiveModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { IRol } from '@services/seguridad/rol.service';
 import { UtilService } from '@services/util/util.service';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { ColumnMode, DatatableComponent, SelectionType, NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { environment } from 'environments/environment';
 import JSONFormatter from 'json-formatter-js';
-import { windowWhen } from 'rxjs/operators';
+
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
 
 
 
@@ -16,7 +22,16 @@ import { windowWhen } from 'rxjs/operators';
     styleUrls: ['./role.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+    ReactiveFormsModule,
+    NgbModule,
+    NgxDatatableModule,
+    NgSelectModule,
+    ContentHeaderComponent,
+    CoreDirectivesModule,
+    CorePipesModule
+]
 })
 
 
@@ -49,7 +64,8 @@ export class RoleComponent implements OnInit {
 
 
   public rowData = []
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
   public lstRoles = []
   public tempRoles = []
   public temprowData = []
@@ -60,6 +76,15 @@ export class RoleComponent implements OnInit {
   public cantidadRol = 0
 
   public estatus = undefined
+
+  basicSelectedOptionCtrl = new FormControl(10)
+  aplicacionCtrl = new FormControl('')
+  xaplicacionCtrl = new FormControl({value: '', disabled: true})
+  rolNombreCtrl = new FormControl('')
+  rolDescripcionCtrl = new FormControl('')
+  xmoduloCtrl = new FormControl('')
+  menuCtrl = new FormControl('')
+  xaccionCtrl = new FormControl('')
 
   public aplicacion: any
   public xaplicacion = ''
@@ -115,7 +140,6 @@ export class RoleComponent implements OnInit {
     private apiService: ApiService,
     private utilservice: UtilService,
     private modalService: NgbModal,
-    private cdr: ChangeDetectorRef
   ) { }
 
 
@@ -145,6 +169,17 @@ export class RoleComponent implements OnInit {
       },
     };
 
+    this.rolNombreCtrl.valueChanges.subscribe(val =>
+      this.Rol.nombre = val as string
+    )
+    this.rolDescripcionCtrl.valueChanges.subscribe(val =>
+      this.Rol.descripcion = val as string
+    )
+    this.aplicacionCtrl.valueChanges.subscribe(val => {
+      this.aplicacion = val
+      this.selModulo(val)
+    })
+
     this.CargarListaAplicaciones()
     this.listarRoles()
 
@@ -173,8 +208,8 @@ export class RoleComponent implements OnInit {
     if (this.active == 2) {
       this.blApp = true
       this.rowData = []
-      this.Rol.descripcion = ''
-      this.Rol.nombre = ''
+      this.rolDescripcionCtrl.setValue('')
+      this.rolNombreCtrl.setValue('')
     } else {
       this.registrar = "Registrar nuevo rol"
     }
@@ -308,8 +343,7 @@ export class RoleComponent implements OnInit {
     this.xAPI.parametros = ''
     this.xAPI.valores = ''
     this.lstRoles = []
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._isLoading.set(true);
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         let lst = []
@@ -329,13 +363,11 @@ export class RoleComponent implements OnInit {
 
         this.lstRoles = lst
         this.tempRoles = lst
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       (error) => {
         console.log(error)
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     )
   }
@@ -384,7 +416,7 @@ export class RoleComponent implements OnInit {
   guardarRol() {
 
 
-    if (this.Rol.nombre == "" || this.lista.length == 0 || this.aplicacion == undefined) {
+    if (this.rolNombreCtrl.value == "" || this.lista.length == 0 || this.aplicacion == undefined) {
       this.utilservice.AlertMini('top-end', 'error', 'Debe verificar los campos', 3000)
       return false
     }
@@ -426,14 +458,14 @@ export class RoleComponent implements OnInit {
           this.utilservice.AlertMini('top-end', 'success', 'Finalizo con éxito', 3000)
           this.lista = []
           this.rowData = []
-          this.aplicacion = undefined
-          this.Rol.descripcion = ''
-          this.Rol.nombre = ''
-          this.xmodulo = ''
+          this.aplicacionCtrl.setValue(undefined)
+          this.rolDescripcionCtrl.setValue('')
+          this.rolNombreCtrl.setValue('')
+          this.xmoduloCtrl.setValue('')
           this.dataModulo = []
-          this.menu = ''
+          this.menuCtrl.setValue('')
           this.datamenu = []
-          this.xaccion = ''
+          this.xaccionCtrl.setValue('')
           this.rowDataAcc = []
           this.listarRoles()
           this.active = 1
@@ -464,8 +496,8 @@ export class RoleComponent implements OnInit {
 
         this.registrar = 'Editar rol'
         this.rowData = data.Cuerpo.map(e => {
-          this.Rol.descripcion = e.observacion
-          this.Rol.nombre = e.rol
+          this.rolDescripcionCtrl.setValue(e.observacion)
+          this.rolNombreCtrl.setValue(e.rol)
           idAPP = e.idapp
           e.idmod = e.idmod
           e.modulo = e.modulo
@@ -478,9 +510,9 @@ export class RoleComponent implements OnInit {
 
         this.lista = this.rowData
         this.blApp = false
-        this.aplicacion = this.lstAplicaciones.find(item => item.id == idAPP);
-        this.xaplicacion = this.aplicacion.name
-        this.selModulo(this.aplicacion.id)
+        this.aplicacionCtrl.setValue(idAPP);
+        this.xaplicacionCtrl.setValue(this.lstAplicaciones.find(item => item.id == idAPP)?.name)
+        this.selModulo(idAPP)
         this.active = 2
       },
       (error) => {

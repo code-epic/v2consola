@@ -1,17 +1,22 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
+import { CoreCommonModule } from '@core/common.module';
 
 @Component({
     selector: 'app-auth-forgot-password-v1',
     templateUrl: './auth-forgot-password-v1.component.html',
     styleUrls: ['./auth-forgot-password-v1.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, CoreCommonModule]
 })
 export class AuthForgotPasswordV1Component implements OnInit {
   // Public

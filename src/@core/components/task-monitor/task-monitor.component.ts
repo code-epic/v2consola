@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal } from '@angular/core';
+
 import { TaskService } from '@services/apicore/task.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { ColumnMode } from '@swimlane/ngx-datatable';
@@ -9,15 +10,17 @@ import { takeUntil } from 'rxjs/operators';
     selector: 'app-task-monitor',
     templateUrl: './task-monitor.component.html',
     styleUrls: ['./task-monitor.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: []
 })
 export class TaskMonitorComponent implements OnInit, OnDestroy {
     public count;
     public ListaComunicaciones = [];
     public basicSelectedOption: number = 10;
     public ColumnMode = ColumnMode;
-    public tempData = [];
-    public rowData = [];
+    public tempData: any[] = [];
+    private _rowData = signal<any[]>([]);
+    get rowData() { return this._rowData(); }
     public lstApp = [];
 
     private destroy$ = new Subject<void>();
@@ -25,7 +28,6 @@ export class TaskMonitorComponent implements OnInit, OnDestroy {
     constructor(
         private taskService: TaskService,
         private msjService: WsocketsService,
-        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
@@ -65,21 +67,20 @@ export class TaskMonitorComponent implements OnInit, OnDestroy {
     }
 
     buscarElemento(pid: string) {
-        this.rowData = this.rowData.map(e => {
-            if (e.pid === pid.substring(0, 6)) {
-                e.tiempo = new Date().toUTCString().substring(0, 16);
-                e.estatus = false;
-            }
-            return e;
-        });
+        this._rowData.update(current =>
+            current.map(e => {
+                if (e.pid === pid.substring(0, 6)) {
+                    return { ...e, tiempo: new Date().toUTCString().substring(0, 16), estatus: false };
+                }
+                return e;
+            })
+        );
         this.tempData = [...this.rowData];
-        this.cdr.detectChanges();
     }
 
     insertCommitDB(lst: any[]) {
-        this.rowData = [...lst];
+        this._rowData.set([...lst]);
         this.tempData = [...this.rowData];
-        this.cdr.detectChanges();
     }
 
     ngOnDestroy() {

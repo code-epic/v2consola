@@ -1,4 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 // Breadcrumb component interface
 export interface Breadcrumb {
@@ -14,7 +16,8 @@ export interface Breadcrumb {
 @Component({
     selector: 'app-breadcrumb',
     templateUrl: './breadcrumb.component.html',
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, RouterModule]
 })
 export class BreadcrumbComponent implements OnInit {
   // input variable

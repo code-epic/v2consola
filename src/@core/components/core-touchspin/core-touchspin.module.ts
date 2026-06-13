@@ -6,8 +6,7 @@ import { CoreTouchspinComponent } from '@core/components/core-touchspin/core-tou
 import { CoreCommonModule } from '@core/common.module';
 
 @NgModule({
-  declarations: [CoreTouchspinComponent],
-  imports: [CommonModule, FormsModule, CoreCommonModule],
+  imports: [CommonModule, FormsModule, CoreCommonModule, CoreTouchspinComponent],
   exports: [CoreTouchspinComponent]
 })
 export class CoreTouchspinModule {}

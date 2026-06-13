@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { FormsModule, ReactiveFormsModule, FormControl, Validators } from "@angular/forms";
 import { ApiService, IAPI, IAPICore } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
 import Stepper from "bs-stepper";
@@ -10,11 +11,25 @@ const clave =
   "5412892DF0D2919B04ADD29EDEFABA30E30F6D7F5A62A9B84AD46BDE23B25491";
 import { enc } from "crypto-js";
 
+
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CodemirrorModule } from "@ctrl/ngx-codemirror";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
+
 @Component({
     selector: "app-register-api",
     templateUrl: "./register-api.component.html",
     styleUrls: ["./register-api.component.scss"],
-    standalone: false
+    standalone: true,
+    imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    CoreDirectivesModule,
+    CodemirrorModule,
+    NgSelectModule,
+    ContentHeaderComponent
+]
 })
 export class RegisterApiComponent implements OnInit {
   // public
@@ -334,6 +349,48 @@ export class RegisterApiComponent implements OnInit {
     { id: "$where", nombre: "WHERE", tipo: "ELIMINAR" },
   ];
 
+  // --- Reactive FormControls ---
+  puertohttpCtrl = new FormControl(8012, Validators.required);
+  puertohttpsCtrl = new FormControl(2286, Validators.required);
+  tipoCtrl = new FormControl('', Validators.required);
+  distribucionCtrl = new FormControl(0, Validators.required);
+  aplicacionCtrl = new FormControl('', Validators.required);
+  funcionCtrl = new FormControl('', Validators.required);
+  versionCtrl = new FormControl('0.0.1');
+  driverCtrl = new FormControl(undefined);
+  categoriaCtrl = new FormControl('', Validators.required);
+  funcionalidadCtrl = new FormControl('', Validators.required);
+  descripcionCtrl = new FormControl('', Validators.required);
+  puenteCtrl = new FormControl('');
+  metodoCtrl = new FormControl('');
+  relacionalCtrl = new FormControl(false);
+  coleccionCtrl = new FormControl('');
+  entradasCtrl = new FormControl('');
+  queryCtrl = new FormControl('');
+  consumidoresCtrl = new FormControl(100, Validators.required);
+  cacheCtrl = new FormControl(0);
+  logsCtrl = new FormControl(false);
+  concurrenciaCtrl = new FormControl(false);
+  retornaCtrl = new FormControl(false);
+  tiempoduracionCtrl = new FormControl(20);
+  tipoduracionCtrl = new FormControl(0);
+  prioridadCtrl = new FormControl('0');
+  entornoCtrl = new FormControl('desarrollo');
+  accionCtrl = new FormControl(false);
+  estatusCtrl = new FormControl(true);
+  bitacoraCtrl = new FormControl(0);
+  respaldoCtrl = new FormControl(0);
+  inclusionjwtCtrl = new FormControl(false);
+  hsfCtrl = new FormControl(false);
+  tablaCtrl = new FormControl(undefined);
+  xdmlCtrl = new FormControl(undefined);
+  defectoCtrl = new FormControl('');
+  condicionCtrl = new FormControl('');
+  campoCtrl = new FormControl(undefined);
+  aliasCtrl = new FormControl('');
+  tipodatoCtrl = new FormControl(undefined);
+  funcionalidadSelectCtrl = new FormControl('');
+
   constructor(
     private rutaActiva: ActivatedRoute,
     private apiService: ApiService,
@@ -432,7 +489,15 @@ export class RegisterApiComponent implements OnInit {
       },
     };
 
-
+    // Reactive forms: valueChanges subscriptions for ngModelChange handlers
+    this.tipoCtrl.valueChanges.subscribe(v => this.onTipo(v));
+    this.driverCtrl.valueChanges.subscribe(v => { if (v) this.selDataBase(v); });
+    this.metodoCtrl.valueChanges.subscribe(v => { if (v) this.onMetodo(v); });
+    this.relacionalCtrl.valueChanges.subscribe(v => this.clickRelacional(v));
+    this.tablaCtrl.valueChanges.subscribe(v => { if (v) this.selectEventModulo(v); });
+    this.xdmlCtrl.valueChanges.subscribe(v => { if (v) this.onDml(v); });
+    this.entradasCtrl.valueChanges.subscribe(v => this.setEditorContent(v));
+    this.queryCtrl.valueChanges.subscribe(v => this.setEditorContent(v));
   }
 
   CargarDrivers() {
@@ -458,8 +523,79 @@ export class RegisterApiComponent implements OnInit {
     );
   }
 
+  // --- Reactive forms helpers ---
+  syncToModel() {
+    this.xAPIDB.puertohttp = this.puertohttpCtrl.value;
+    this.xAPIDB.puertohttps = this.puertohttpsCtrl.value;
+    this.xAPIDB.tipo = this.tipoCtrl.value;
+    this.xAPIDB.distribucion = this.distribucionCtrl.value;
+    this.xAPIDB.aplicacion = this.aplicacionCtrl.value;
+    this.xAPIDB.funcion = this.funcionCtrl.value;
+    this.xAPIDB.version = this.versionCtrl.value;
+    this.xAPIDB.driver = this.driverCtrl.value;
+    this.xAPIDB.categoria = this.categoriaCtrl.value;
+    this.xAPIDB.funcionalidad = this.funcionalidadCtrl.value;
+    this.xAPIDB.descripcion = this.descripcionCtrl.value;
+    this.xAPIDB.puente = this.puenteCtrl.value;
+    this.xAPIDB.metodo = this.metodoCtrl.value;
+    this.xAPIDB.relacional = this.relacionalCtrl.value;
+    this.xAPIDB.coleccion = this.coleccionCtrl.value;
+    this.xAPIDB.entradas = this.entradasCtrl.value;
+    this.xAPIDB.query = this.queryCtrl.value;
+    this.xAPIDB.consumidores = this.consumidoresCtrl.value;
+    this.xAPIDB.cache = this.cacheCtrl.value;
+    this.xAPIDB.logs = this.logsCtrl.value;
+    this.xAPIDB.concurrencia = this.concurrenciaCtrl.value;
+    this.xAPIDB.retorna = this.retornaCtrl.value;
+    this.xAPIDB.tiempoduracion = this.tiempoduracionCtrl.value;
+    this.xAPIDB.tipoduracion = this.tipoduracionCtrl.value;
+    this.xAPIDB.prioridad = this.prioridadCtrl.value;
+    this.xAPIDB.entorno = this.entornoCtrl.value;
+    this.xAPIDB.accion = this.accionCtrl.value;
+    this.xAPIDB.estatus = this.estatusCtrl.value;
+    this.xAPIDB.bitacora = this.bitacoraCtrl.value;
+    this.xAPIDB.respaldo = this.respaldoCtrl.value;
+    this.xAPIDB.inclusionjwt = this.inclusionjwtCtrl.value;
+    this.xAPIDB.hsf = this.hsfCtrl.value;
+  }
+
+  syncFromModel(data: IAPI) {
+    this.puertohttpCtrl.setValue(data.puertohttp, { emitEvent: false });
+    this.puertohttpsCtrl.setValue(data.puertohttps, { emitEvent: false });
+    this.tipoCtrl.setValue(data.tipo, { emitEvent: false });
+    this.distribucionCtrl.setValue(data.distribucion, { emitEvent: false });
+    this.aplicacionCtrl.setValue(data.aplicacion, { emitEvent: false });
+    this.funcionCtrl.setValue(data.funcion, { emitEvent: false });
+    this.versionCtrl.setValue(data.version, { emitEvent: false });
+    this.driverCtrl.setValue(data.driver, { emitEvent: false });
+    this.categoriaCtrl.setValue(data.categoria, { emitEvent: false });
+    this.funcionalidadCtrl.setValue(data.funcionalidad, { emitEvent: false });
+    this.descripcionCtrl.setValue(data.descripcion, { emitEvent: false });
+    this.puenteCtrl.setValue(data.puente, { emitEvent: false });
+    this.metodoCtrl.setValue(data.metodo, { emitEvent: false });
+    this.relacionalCtrl.setValue(data.relacional, { emitEvent: false });
+    this.coleccionCtrl.setValue(data.coleccion, { emitEvent: false });
+    this.entradasCtrl.setValue(data.entradas, { emitEvent: false });
+    this.queryCtrl.setValue(data.query, { emitEvent: false });
+    this.consumidoresCtrl.setValue(data.consumidores, { emitEvent: false });
+    this.cacheCtrl.setValue(data.cache, { emitEvent: false });
+    this.logsCtrl.setValue(data.logs, { emitEvent: false });
+    this.concurrenciaCtrl.setValue(data.concurrencia, { emitEvent: false });
+    this.retornaCtrl.setValue(data.retorna, { emitEvent: false });
+    this.tiempoduracionCtrl.setValue(data.tiempoduracion, { emitEvent: false });
+    this.tipoduracionCtrl.setValue(data.tipoduracion, { emitEvent: false });
+    this.prioridadCtrl.setValue(data.prioridad, { emitEvent: false });
+    this.entornoCtrl.setValue(data.entorno, { emitEvent: false });
+    this.accionCtrl.setValue(data.accion, { emitEvent: false });
+    this.estatusCtrl.setValue(data.estatus, { emitEvent: false });
+    this.bitacoraCtrl.setValue(data.bitacora, { emitEvent: false });
+    this.respaldoCtrl.setValue(data.respaldo, { emitEvent: false });
+    this.inclusionjwtCtrl.setValue(data.inclusionjwt, { emitEvent: false });
+    if (data.hsf != null) this.hsfCtrl.setValue(data.hsf, { emitEvent: false });
+  }
+
   RegistrarAPI() {
-    // this.xAPIDB.driver = this.driversID
+    this.syncToModel();
     this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString());
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString());
     var obj = {
@@ -506,10 +642,12 @@ export class RegisterApiComponent implements OnInit {
           this.xAPIDB = data[0];
           this.xAPIAux = data[0];
         }
+        this.syncFromModel(this.xAPIDB);
         this.onTipo(this.xAPIDB.tipo);
         this.xAPIDB.version = this.existe
           ? this.validarVersion()
           : this.xAPI.version;
+        this.syncToModel();
       },
       (error) => {
         console.log(error);
@@ -518,6 +656,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   async UpdateAPI(funcion: string, entorno: string) {
+    this.syncToModel();
     this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString());
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString());
     this.apiUpdate.entorno = entorno;
@@ -594,9 +733,7 @@ export class RegisterApiComponent implements OnInit {
   }
 
   onTipo(e) {
-    // console.log(e);
-    // this._divInit()
-    switch (this.xAPIDB.tipo) {
+    switch (e) {
       case "CODIGO":
         // this.divCodigofuente = ''
         // this.divArchivosng = ''
@@ -627,7 +764,6 @@ export class RegisterApiComponent implements OnInit {
 
   selDataBase(valor: any): void {
     this.driversID = valor.id;
-    this.xAPIDB.driver = valor.id;
     this.xAPI.parametros = valor.basedatos;
     this.dataModulo = [];
     this.xAPI.funcion = "";
@@ -786,7 +922,7 @@ export class RegisterApiComponent implements OnInit {
 
   //agregarEntrada a los elementos de la interfaz de una API
   async agregarEntrada() {
-    if (this.xdml == "") {
+    if (this.xdmlCtrl.value == "") {
       this.utilservice.AlertMini(
         "top-end",
         "warning",
@@ -796,7 +932,7 @@ export class RegisterApiComponent implements OnInit {
       return;
     }
 
-    if (this.campo == "" || this.tipodato == "") {
+    if (this.campoCtrl.value == "" || this.tipodatoCtrl.value == "") {
       this.utilservice.AlertMini(
         "top-end",
         "warning",
@@ -807,18 +943,18 @@ export class RegisterApiComponent implements OnInit {
       return;
     }
     var e = {
-      campo: this.campo,
-      defecto: this.defecto,
-      alias: this.alias == "" ? this.campo : this.alias,
-      tipo: this.tipodato,
+      campo: this.campoCtrl.value,
+      defecto: this.defectoCtrl.value,
+      alias: this.aliasCtrl.value == "" ? this.campoCtrl.value : this.aliasCtrl.value,
+      tipo: this.tipodatoCtrl.value,
     };
-    console.log(this.xdml);
-    this.IEntradas[this.xdml].push(e);
+    console.log(this.xdmlCtrl.value);
+    this.IEntradas[this.xdmlCtrl.value].push(e);
 
     var blAct = await this.selEntradas().then((e) => {
       return e;
     });
-    this.Xmetodo = this.xAPIDB.metodo;
+    this.Xmetodo = this.metodoCtrl.value;
     if (this.Xmetodo.name == "ACTUALIZAR" && blAct != true) {
       this.utilservice.AlertMini(
         "top-end",
@@ -827,15 +963,15 @@ export class RegisterApiComponent implements OnInit {
         3000
       );
     }
-    this.xAPIDB.entradas = JSON.stringify(this.IEntrada, null, "\t");
+    this.entradasCtrl.setValue(JSON.stringify(this.IEntrada, null, "\t"));
 
-    this.selMetodo(this.xAPIDB.metodo);
+    this.selMetodo(this.metodoCtrl.value);
     this.clickRefresh(0);
-    this.eliminarCampoModulo(this.campo);
-    this.tipodato = "";
-    this.campo = "";
-    this.alias = "";
-    this.defecto = "";
+    this.eliminarCampoModulo(this.campoCtrl.value);
+    this.tipodatoCtrl.setValue("");
+    this.campoCtrl.setValue("");
+    this.aliasCtrl.setValue("");
+    this.defectoCtrl.setValue("");
   }
 
   async selEntradas(): Promise<boolean> {
@@ -846,7 +982,7 @@ export class RegisterApiComponent implements OnInit {
     await this.DML.forEach((e) => {
       if (this.IEntradas[e].length > 0) {
         if (e == "WHERE") {
-          cond = this.condicion;
+          cond = this.condicionCtrl.value;
           blAct = true;
         }
         this.IEntrada.push({
@@ -863,16 +999,16 @@ export class RegisterApiComponent implements OnInit {
   selMetodo(metodo) {
     switch (metodo) {
       case "INSERTAR":
-        this.xAPIDB.query = `INSERT INTO ${this.tabla.name} $exec`;
+        this.queryCtrl.setValue(`INSERT INTO ${this.tablaCtrl.value?.name} $exec`);
         break;
       case "ACTUALIZAR":
-        this.xAPIDB.query = `UPDATE ${this.tabla.name} $exec`;
+        this.queryCtrl.setValue(`UPDATE ${this.tablaCtrl.value?.name} $exec`);
         break;
       case "DELETE":
-        this.xAPIDB.query = `DELETE FROM ${this.tabla.name} $exec`;
+        this.queryCtrl.setValue(`DELETE FROM ${this.tablaCtrl.value?.name} $exec`);
         break;
       default:
-        this.xAPIDB.query = `SELECT * FROM `;
+        this.queryCtrl.setValue(`SELECT * FROM `);
         break;
     }
   }

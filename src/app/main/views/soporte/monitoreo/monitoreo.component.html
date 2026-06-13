@@ -4,165 +4,223 @@
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
     <div class="monitor-wrapper" [class.detailed-view]="isDetailedView">
-        
-        <!-- BACKGROUND ZONES -->
-        <div class="zone-indicator web-zone">
-            <span>ZONA WEB</span>
+
+      <!-- BACKGROUND ZONES -->
+      <div class="zone-indicator web-zone">
+        <span>ZONA WEB</span>
+      </div>
+      <div class="zone-indicator physical-zone">
+        <span>ZONA FÍSICA</span>
+      </div>
+
+      <!-- TOP HUD: Glassmorphism Stats -->
+      <div class="glass-hud">
+        <div class="stat-pill">
+          <span class="label">Total</span>
+          <span class="value">{{ stats.total }}</span>
         </div>
-        <div class="zone-indicator physical-zone">
-            <span>ZONA FÍSICA</span>
+        <div class="stat-pill web">
+          <span class="label">Web</span>
+          <span class="value">{{ stats.web }}</span>
+        </div>
+        <div class="stat-pill physical">
+          <span class="label">Physical</span>
+          <span class="value">{{ stats.physical }}</span>
+        </div>
+        <div class="stat-pill online">
+          <span class="label">Online</span>
+          <span class="value">{{ stats.online }}</span>
+        </div>
+        <div class="stat-pill offline">
+          <span class="label">Offline</span>
+          <span class="value text-danger">{{ stats.offline }}</span>
         </div>
 
-        <!-- TOP HUD: Glassmorphism Stats -->
-        <div class="glass-hud">
-            <div class="stat-pill">
-                <span class="label">Total</span>
-                <span class="value">{{ stats.total }}</span>
+        <!-- REFRESH BUTTON -->
+        <button class="refresh-btn" (click)="loadMockData()">
+          <i data-feather="refresh-cw"></i>
+        </button>
+      </div>
+
+      <!-- OBSIDIAN-STYLE GRAPH CONTAINER -->
+      <div class="graph-container">
+
+        <!-- SVG Layer for Connections -->
+        <svg class="graph-connections">
+          <!-- Lines from Center to Nodes -->
+          <!-- Lines Group (Base + Flow) -->
+          @for (link of graphLinks; track link; let i = $index) {
+            <g>
+              <line x1="50%" y1="50%"
+                [attr.x2]="link.x2 + '%'" [attr.y2]="link.y2 + '%'"
+                class="connection-line-base"
+                [style.animation-delay]="i * 0.05 + 's'">
+              </line>
+              <line x1="50%" y1="50%"
+                [attr.x2]="link.x2 + '%'" [attr.y2]="link.y2 + '%'"
+                class="connection-line-flow"
+                [class.active]="link.status === 'online'"
+                [style.animation-delay]="(i * 0.05 + 1) + 's'">
+              </line>
+            </g>
+          }
+        </svg>
+
+        <!-- Central Hub Node -->
+        <div class="central-node">
+          <div class="core-pulse"></div>
+          <i data-feather="grid"></i>
+          <span class="hub-label">Core</span>
+        </div>
+
+        <!-- Distributed Nodes -->
+        @for (client of clients; track client; let i = $index) {
+          <div
+            class="graph-node"
+            [style.left.%]="client.x"
+            [style.top.%]="client.y"
+            [ngClass]="[client.type || 'physical', client.status, selectedClient === client ? 'selected' : '']"
+            [style.animation-delay]="i * 0.1 + 's'"
+            (click)="selectClient(client); $event.stopPropagation()">
+            <div class="node-shape">
+              <i [attr.data-feather]="client.type === 'web' ? 'globe' : 'monitor'" class="node-icon"></i>
             </div>
-            <div class="stat-pill web">
-                <span class="label">Web</span>
-                <span class="value">{{ stats.web }}</span>
+            <div class="node-glow"></div>
+            <!-- Tooltip / Label -->
+            <div class="node-label">
+              <span class="name">{{ client.name }}</span>
+              <span class="ip">{{ client.remote_addr }}</span>
             </div>
-            <div class="stat-pill physical">
-                <span class="label">Physical</span>
-                <span class="value">{{ stats.physical }}</span>
+          </div>
+        }
+
+      </div>
+
+      <!-- FLOATING DETAIL CARD (Elegant Cloud) -->
+      @if (selectedClient) {
+        <div class="floating-detail-card" (click)="$event.stopPropagation()">
+          <div class="card-header" [ngClass]="selectedClient.type">
+            <div class="icon-bubble">
+              <i [data-feather]="selectedClient.type === 'web' ? 'globe' : 'monitor'"></i>
             </div>
-            <div class="stat-pill online">
-                <span class="label">Online</span>
-                <span class="value">{{ stats.online }}</span>
+            <div class="header-text">
+              <h3>{{ selectedClient.name }}</h3>
+              <span class="status-badge" [ngClass]="selectedClient.status">
+                {{ selectedClient.status | titlecase }}
+              </span>
             </div>
-            <div class="stat-pill offline">
-                <span class="label">Offline</span>
-                <span class="value text-danger">{{ stats.offline }}</span>
+            <button class="close-card" (click)="clearSelection()"><i data-feather="x"></i></button>
+          </div>
+          <div class="card-body">
+            <div class="info-row">
+              <span class="label">IP Address</span>
+              <span class="val">{{ selectedClient.remote_addr }}</span>
             </div>
-            
-            <!-- REFRESH BUTTON -->
-            <button class="refresh-btn" (click)="loadMockData()">
-                <i data-feather="refresh-cw"></i>
+            <div class="info-row">
+              <span class="label">MAC / ID</span>
+              <span class="val">{{ selectedClient.mac_address }}</span>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="action-btn" (click)="sendMessage()">
+              <i data-feather="message-square"></i>
+              <span>Mensaje</span>
             </button>
+            <button class="action-btn" (click)="viewDetails()">
+              <i data-feather="activity"></i>
+              <span>Detalles</span>
+            </button>
+            <button class="action-btn" (click)="sendInstruction()">
+              <i data-feather="terminal"></i>
+              <span>Terminal</span>
+            </button>
+            <button class="action-btn text-danger">
+              <i data-feather="power"></i>
+              <span>Apagar</span>
+            </button>
+          </div>
         </div>
+      }
+    </div>
 
-        <!-- OBSIDIAN-STYLE GRAPH CONTAINER -->
-        <div class="graph-container">
-            
-            <!-- SVG Layer for Connections -->
-            <svg class="graph-connections">
-                <!-- Lines from Center to Nodes -->
-                <!-- Lines Group (Base + Flow) -->
-                <g *ngFor="let link of graphLinks; let i = index">
-                    <line x1="50%" y1="50%"
-                          [attr.x2]="link.x2 + '%'" [attr.y2]="link.y2 + '%'"
-                          class="connection-line-base"
-                          [style.animation-delay]="i * 0.05 + 's'">
-                    </line>
-                    <line x1="50%" y1="50%"
-                          [attr.x2]="link.x2 + '%'" [attr.y2]="link.y2 + '%'"
-                          class="connection-line-flow"
-                          [class.active]="link.status === 'online'"
-                          [style.animation-delay]="(i * 0.05 + 1) + 's'">
-                    </line>
-                </g>
-            </svg>
-
-            <!-- Central Hub Node -->
-            <div class="central-node">
-                <div class="core-pulse"></div>
-                <i data-feather="grid"></i>
-                <span class="hub-label">Core</span>
-            </div>
-
-            <!-- Distributed Nodes -->
-            <div *ngFor="let client of clients; let i = index" 
-                class="graph-node"
-                [style.left.%]="client.x"
-                [style.top.%]="client.y"
-                [ngClass]="[client.type || 'physical', client.status, selectedClient === client ? 'selected' : '']"
-                [style.animation-delay]="i * 0.1 + 's'"
-                (click)="selectClient(client); $event.stopPropagation()">
-                
-                <div class="node-shape">
-                    <i [attr.data-feather]="client.type === 'web' ? 'globe' : 'monitor'" class="node-icon"></i>
-                </div>
-                <div class="node-glow"></div>
-                
-                <!-- Tooltip / Label -->
-                <div class="node-label">
-                    <span class="name">{{ client.name }}</span>
-                    <span class="ip">{{ client.remote_addr }}</span>
-                </div>
-            </div>
-
+    <!-- CERTIFICADOS SSL PANEL -->
+    <div class="certificates-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <i data-feather="shield"></i>
+          <span>Certificados SSL</span>
         </div>
+        <button class="refresh-btn" (click)="loadCertificates()" [class.spinning]="loadingCerts">
+          <i data-feather="refresh-cw"></i>
+        </button>
+      </div>
 
-        <!-- FLOATING DETAIL CARD (Elegant Cloud) -->
-        <div class="floating-detail-card" *ngIf="selectedClient" (click)="$event.stopPropagation()">
-            <div class="card-header" [ngClass]="selectedClient.type">
-                <div class="icon-bubble">
-                    <i [data-feather]="selectedClient.type === 'web' ? 'globe' : 'monitor'"></i>
+      @if (loadingCerts) {
+        <div class="panel-loading">Cargando certificados...</div>
+      } @else if (certificates.length === 0) {
+        <div class="panel-empty">No hay certificados disponibles</div>
+      } @else {
+        <div class="cert-content">
+          <ul class="cert-list">
+            @for (cert of certificates; track cert.path) {
+              <li class="cert-item">
+                <div class="cert-info">
+                  <span class="cert-icon">
+                    <i [data-feather]="cert.is_key ? 'key' : 'award'"></i>
+                  </span>
+                  <div class="cert-detail">
+                    <span class="cert-name">{{ cert.name }}</span>
+                    @if (cert.subject) {
+                      <span class="cert-subject">{{ cert.subject }}</span>
+                    }
+                    @if (cert.expires) {
+                      <span class="cert-expires">Vence: {{ cert.expires | date:'dd/MM/yyyy' }}</span>
+                    }
+                    <span class="cert-size">{{ formatSize(cert.size) }}</span>
+                  </div>
                 </div>
-                <div class="header-text">
-                    <h3>{{ selectedClient.name }}</h3>
-                    <span class="status-badge" [ngClass]="selectedClient.status">
-                        {{ selectedClient.status | titlecase }}
-                    </span>
-                </div>
-                <button class="close-card" (click)="clearSelection()"><i data-feather="x"></i></button>
-            </div>
-            
-            <div class="card-body">
-                <div class="info-row">
-                    <span class="label">IP Address</span>
-                    <span class="val">{{ selectedClient.remote_addr }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">MAC / ID</span>
-                    <span class="val">{{ selectedClient.mac_address }}</span>
-                </div>
-            </div>
-
-            <div class="card-actions">
-                <button class="action-btn" (click)="sendMessage()">
-                    <i data-feather="message-square"></i>
-                    <span>Mensaje</span>
-                </button>
-                <button class="action-btn" (click)="viewDetails()">
-                    <i data-feather="activity"></i>
-                    <span>Detalles</span>
-                </button>
-                <button class="action-btn" (click)="sendInstruction()">
-                    <i data-feather="terminal"></i>
-                    <span>Terminal</span>
-                </button>
-                <button class="action-btn text-danger">
-                    <i data-feather="power"></i>
-                    <span>Apagar</span>
-                </button>
-            </div>
+                @if (!cert.is_key) {
+                  <div class="cert-download">
+                    <span class="format-label">Descargar:</span>
+                    <ul class="format-list">
+                      <li><button class="fmt-btn" (click)="selectedFormat = 'pem'; downloadCertificate(cert)">PEM</button></li>
+                      <li><button class="fmt-btn" (click)="selectedFormat = 'der'; downloadCertificate(cert)">DER</button></li>
+                      <li><button class="fmt-btn" (click)="selectedFormat = 'p7b'; downloadCertificate(cert)">PKCS7</button></li>
+                      <li><button class="fmt-btn" (click)="selectedFormat = 'p12'; downloadCertificate(cert)">PKCS12</button></li>
+                    </ul>
+                  </div>
+                }
+              </li>
+            }
+          </ul>
         </div>
+      }
     </div>
 
     <!-- MESSAGE MODAL (Restored) -->
-    <div class="message-modal-overlay" *ngIf="messageModalVisible">
+    @if (messageModalVisible) {
+      <div class="message-modal-overlay">
         <div class="glass-modal">
-            <div class="modal-header">
-                <h3>Enviar Mensaje</h3>
-                <button class="close-btn" (click)="closeMessageModal()"><i data-feather="x"></i></button>
+          <div class="modal-header">
+            <h3>Enviar Mensaje</h3>
+            <button class="close-btn" (click)="closeMessageModal()"><i data-feather="x"></i></button>
+          </div>
+          <div class="modal-content">
+            <div class="target-info">
+              <span>Destino:</span>
+              <strong>{{ selectedClient?.name }}</strong>
             </div>
-            <div class="modal-content">
-                <div class="target-info">
-                    <span>Destino:</span>
-                    <strong>{{ selectedClient?.name }}</strong>
-                </div>
-                <textarea [(ngModel)]="messageText" placeholder="Escriba su mensaje aquí..."></textarea>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancel" (click)="closeMessageModal()">Cancelar</button>
-                <button class="btn-send" (click)="sendActualMessage()">
-                    <i data-feather="send"></i> Enviar
-                </button>
-            </div>
+            <textarea [formControl]="messageTextCtrl" placeholder="Escriba su mensaje aquí..."></textarea>
+          </div>
+          <div class="modal-footer">
+            <button class="btn-cancel" (click)="closeMessageModal()">Cancelar</button>
+            <button class="btn-send" (click)="sendActualMessage()">
+              <i data-feather="send"></i> Enviar
+            </button>
+          </div>
         </div>
-    </div>
+      </div>
+    }
 
   </div>
 </div>

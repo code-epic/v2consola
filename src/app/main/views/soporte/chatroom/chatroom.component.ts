@@ -1,4 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewChecked } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { CoreCommonModule } from '@core/common.module';
 import { ApiService } from '@services/apicore/api.service';
 import { LoginService } from '@services/seguridad/login.service';
 import { WsSandraService } from '@services/seguridad/ws-sandra.service';
@@ -37,16 +41,19 @@ interface User {
     selector: 'app-chatroom',
     templateUrl: './chatroom.component.html',
     styleUrls: ['./chatroom.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, CoreCommonModule]
 })
 export class ChatroomComponent implements OnInit, AfterViewChecked {
     @ViewChild('scrollMe') private myScrollContainer: ElementRef;
     @ViewChild('fileInput') private fileInput: ElementRef;
 
-    // Variables de configuración
-    saveHistory: boolean = true;
-    encryptionActive: boolean = true;
-    analyzeTraffic: boolean = false;
+    // Reactive FormControls
+    newMessageCtrl = new FormControl('');
+    saveHistoryCtrl = new FormControl(true);
+    encryptionActiveCtrl = new FormControl(true);
+    analyzeTrafficCtrl = new FormControl(false);
+
     showTools: boolean = false;
 
     // Variables de carga de archivos
@@ -183,21 +190,22 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
     }
 
     sendMessage() {
-        if (this.newMessage.trim() === '') return;
+        const msg = this.newMessageCtrl.value;
+        if (!msg || msg.trim() === '') return;
 
         // Lógica simple para comandos
-        if (this.newMessage.startsWith('/')) {
-            const command = this.newMessage.split(' ')[0];
+        if (msg.startsWith('/')) {
+            const command = msg.split(' ')[0];
             this.executeCommand(command);
-            this.newMessage = '';
+            this.newMessageCtrl.setValue('');
             return;
         }
 
         const msgHistory: Message = {
             id: Date.now().toString(),
             sender: 'Admin',
-            text: this.newMessage,
-            displayedText: this.newMessage,
+            text: msg,
+            displayedText: msg,
             timestamp: new Date(),
             type: 'sent',
             status: 'Cifrado'
@@ -212,7 +220,7 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
         const payload = {
             type: 'chat',
             clientId: this.activeUser?.id, // UUID del cliente/usuario
-            message: this.newMessage,
+            message: msg,
             from: this.Token?.Usuario?.usuario || 'sistema', // Usuario desde JWT session
             To: this.activeUser?.name
         };
@@ -221,15 +229,15 @@ export class ChatroomComponent implements OnInit, AfterViewChecked {
         this.wsSandraService.saveChatroomMessage({
             from: 'Admin',
             to: this.activeUser?.id,
-            message: this.newMessage,
+            message: msg,
             id: msgHistory.id,
             time: msgHistory.timestamp.toISOString(),
             status: msgHistory.status
         });
 
         const originalId = msgHistory.id;
-        const originalMessage = this.newMessage;
-        this.newMessage = '';
+        const originalMessage = msg;
+        this.newMessageCtrl.setValue('');
 
         this.apiService.SendMessage(payload).subscribe(
             (data: any) => {

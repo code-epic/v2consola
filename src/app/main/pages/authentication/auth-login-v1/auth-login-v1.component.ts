@@ -1,26 +1,25 @@
 import { Component, OnInit, ViewEncapsulation, Inject, DOCUMENT } from "@angular/core";
 import {
-  NgForm,
   UntypedFormBuilder,
   UntypedFormGroup,
   Validators,
 } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { RouterModule, Router } from "@angular/router";
 
 import { takeUntil } from "rxjs/operators";
 import { Subject } from "rxjs";
 
 import { CoreConfigService } from "@core/services/config.service";
+import { CoreCommonModule } from "@core/common.module";
 
 import { IToken, LoginService } from "@services/seguridad/login.service";
 
 import { environment } from "environments/environment";
 import { UtilService } from "@services/util/util.service";
 
-// import { ReCaptchaV3Service } from "ng-recaptcha";
 import { TaskService } from "@services/apicore/task.service";
-import { Router } from "@angular/router";
-
-
 import { ApiService } from "@services/apicore/api.service";
 
 @Component({
@@ -28,7 +27,8 @@ import { ApiService } from "@services/apicore/api.service";
     templateUrl: "./auth-login-v1.component.html",
     styleUrls: ["./auth-login-v1.component.scss"],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, CoreCommonModule]
 })
 export class AuthLoginV1Component implements OnInit {
   token: string | undefined;
@@ -40,8 +40,8 @@ export class AuthLoginV1Component implements OnInit {
   public loginForm: UntypedFormGroup;
   public submitted = false;
   public passwordTextType: boolean;
-  public usuario: string;
-  public clave: string;
+  usuarioCtrl = new FormControl('');
+  claveCtrl = new FormControl('');
 
   public loading = false;
   public isHidden: boolean = true;
@@ -215,8 +215,8 @@ export class AuthLoginV1Component implements OnInit {
   loginOpt() {
     this.xWidth = "660px";
     this.loading = true;
-    console.log(this.usuario, this.clave);
-    this.loginService.getLogin(this.usuario, this.clave).subscribe(
+    console.log(this.usuarioCtrl.value, this.claveCtrl.value);
+    this.loginService.getLogin(this.usuarioCtrl.value, this.claveCtrl.value).subscribe(
       (itk) => {
         this.loading = false;
         this.isHidden = false;
@@ -246,10 +246,10 @@ export class AuthLoginV1Component implements OnInit {
   }
 
   onLoginBlur() {
-    if (this.bdv && this.usuario) {
-      const prefix = this.usuario.substring(0, 2).toUpperCase();
+    if (this.bdv && this.usuarioCtrl.value) {
+      const prefix = this.usuarioCtrl.value.substring(0, 2).toUpperCase();
       if (prefix === "NM" || prefix === "CT") {
-        this.usuario = this.usuario.toUpperCase();
+        this.usuarioCtrl.setValue(this.usuarioCtrl.value.toUpperCase());
       }
     }
   }

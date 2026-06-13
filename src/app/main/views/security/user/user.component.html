@@ -11,462 +11,491 @@
         <div class="card-body">
           <h4 class="card-title">Información de Acceso</h4>
           <hr>
-          <div class="row">
-            <div class="form-group col-md-3">
-              <label class="form-label" for="descripcion">Tipo de acceso</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'shield'"></span></span></div>
-                <ng-select [items]="tipoacceso" [(ngModel)]="iUser.tipoacceso" [ngModelOptions]="{standalone: true}"
-                  (ngModelChange)="selTipoAcceso($event)" bindLabel="name" bindValue="id" disabled="{{blockEdit}}"
+            <div class="row">
+              <div class="form-group col-md-3">
+                <label class="form-label" for="descripcion">Tipo de acceso</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'shield'"></span></span></div>
+                  <ng-select [items]="tipoacceso" [formControl]="iUserTipoaccesoCtrl"
+                    (change)="selTipoAcceso(iUserTipoaccesoCtrl.value)" bindLabel="name" bindValue="id" [disabled]="blockEdit === 'disabled'"
                   placeholder="Seleccione acceso" appendTo="body" class="flex-grow-1"></ng-select>
-              </div>
-            </div>
-            <div class="form-group col-md-2" *ngIf="ldap" style="display: none;">
-              <label class="form-label" for="descripcion">Respaldo en cuenta</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'database'"></span></span></div>
-                <ng-select [items]="respaldo" [(ngModel)]="iUser.respaldo" bindLabel="name" bindValue="id"
-                  placeholder="Respaldo en cuenta" appendTo="body" class="flex-grow-1"></ng-select>
-              </div>
-            </div>
-
-            <div class="form-group col-md-6" *ngIf="ldap">
-              <label class="form-label" for="descripcion">End Point</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'server'"></span></span></div>
-                <input [(ngModel)]="iUser.endpoint" type="text" placeholder="End Point" disabled="disabled"
-                  class="form-control">
-              </div>
-            </div>
-
-            <div class="form-group col-md-3" *ngIf="property || ldap">
-              <div class="d-flex justify-content-between align-items-center">
-                <label class="form-label" for="login">Login / Usuario</label>
-                <small *ngIf="loginPrefixError" class="text-danger font-small-2" style="margin-top: -5px;">
-                  {{ loginPrefixError }}
-                </small>
-              </div>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'user'"></span></span></div>
-                <input [(ngModel)]="iUser.login" type="text" placeholder="Login" class="form-control"
-                  (input)="onLoginInput()" (blur)="SearchLoginLDAP();consultarLogin()" disabled="{{blockEdit}}">
-              </div>
-            </div>
-
-            <div class="form-group col-md-3" *ngIf="property">
-              <div class="d-flex justify-content-between align-items-center">
-                  <label class="form-label" for="Clave">Clave</label>
-                  <small *ngIf="iUser.clave && iUser.clave.length > 0" class="font-weight-bold"  style="margin-top: -5px;"
-                      [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
-                      {{ passwordStrengthLabel }} <span class="text-muted font-small-1">({{ passwordStrengthWidth }}%)</span>
-                  </small>
-              </div>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'key'"></span></span></div>
-                <input [type]="showClave ? 'text' : 'password'" [(ngModel)]="iUser.clave"
-                  (ngModelChange)="checkPasswordStrength($event)" (blur)="validatePassword()"
-                  [class.border-danger]="isPasswordInvalid"
-                  [ngModelOptions]="{standalone: true}" class="form-control" disabled="{{blockEdit}}"
-                  placeholder="Clave" />
-                <div class="input-group-append" *ngIf="isPasswordInvalid" title="Contraseña débil">
-                    <span class="input-group-text bg-transparent border-danger text-danger">
-                        <span [data-feather]="'alert-triangle'" [size]="16"></span>
-                    </span>
-                </div>
-                <div class="input-group-append">
-                  <span class="input-group-text cursor-pointer" [class.border-danger]="isPasswordInvalid" (click)="showClave = !showClave"><i class="feather"
-                      [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i></span>
                 </div>
               </div>
-
-            </div>
-            <div class="form-group col-md-3" *ngIf="property">
-              <label class="form-label" for="encriptamiento">Encriptamiento</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'lock'"></span></span></div>
-                <ng-select [items]="formato" [(ngModel)]="iUser.encriptamiento" bindLabel="name" bindValue="id"
-                  placeholder="Encriptamiento" appendTo="body" class="flex-grow-1"></ng-select>
-              </div>
-            </div>
-
-          </div>
-
-
-          <div class="row">
-            <div class="form-group col-md-2">
-              <label class="form-label" for="descripcion">Cédula</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'credit-card'"></span></span></div>
-                <input [(ngModel)]="iUser.cedula" [ngModelOptions]="{standalone: true}" type="text" placeholder="Cédula"
-                  (blur)="consultarCedula()" class="form-control">
-              </div>
-            </div>
-            <div class="form-group col-md-4">
-              <label class="form-label" for="descripcion">Nombre de usuario</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'user'"></span></span></div>
-                <input [(ngModel)]="iUser.nombre" [ngModelOptions]="{standalone: true}" type="text"
-                  placeholder="Nombre del usuario" class="form-control">
-              </div>
-            </div>
-            <div class="form-group col-md-4">
-              <label class="form-label" for="descripcion">Descripcion / Cargo</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'briefcase'"></span></span></div>
-                <input [(ngModel)]="iUser.descripcion" [ngModelOptions]="{standalone: true}" type="text"
-                  placeholder="Descripcion del usuario" class="form-control">
-              </div>
-            </div>
-            <div class="form-group col-md-2">
-              <label class="form-label" for="estatus">Estatus</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'activity'" [style.color]="iUser.estatus == 1 ? '#28c76f' : (iUser.estatus == 0 ? '#ea5455' : '#6e6b7b')"></span></span></div>
-                <ng-select [items]="estatus" [(ngModel)]="iUser.estatus" bindLabel="name" bindValue="id"
-                  placeholder="Estatus" appendTo="body" class="flex-grow-1"></ng-select>
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="form-group col-md-2">
-              <label class="form-label" for="tipoduracion">Vigencia de:</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'clock'"></span></span></div>
-                <ng-select [items]="sesion" [(ngModel)]="iUser.vigencia" bindLabel="name" bindValue="id"
-                  [disabled]="ldap" placeholder="Vigencia en" appendTo="body" class="flex-grow-1"></ng-select>
-              </div>
-            </div>
-
-            <div class="form-group col-md-4">
-              <label class="form-label">Correo del usuario</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'mail'"></span></span></div>
-                <input [(ngModel)]="iUser.correo" [ngModelOptions]="{standalone: true}" type="text"
-                  placeholder="Correo del usuario" class="form-control" (blur)="validateEmail()" [class.border-danger]="isEmailInvalid">
-                  <div class="input-group-append" *ngIf="isEmailInvalid" title="Formato de correo inválido">
-                    <span class="input-group-text bg-transparent border-0 text-danger">
-                        <span [data-feather]="'alert-circle'" [size]="16"></span>
-                    </span>
+              @if (ldap) {
+                <div class="form-group col-md-2" style="display: none;">
+                  <label class="form-label" for="descripcion">Respaldo en cuenta</label>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'database'"></span></span></div>
+                    <ng-select [items]="respaldo" [formControl]="iUserRespaldoCtrl" bindLabel="name" bindValue="id"
+                    placeholder="Respaldo en cuenta" appendTo="body" class="flex-grow-1"></ng-select>
                   </div>
-              </div>
-            </div>
-            <div class="form-group col-md-6">
-              <label class="form-label">Descripcion general</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'file-text'"></span></span></div>
-                <input [(ngModel)]="descripcion" [ngModelOptions]="{standalone: true}" type="text"
-                  placeholder="Descripcion general" class="form-control">
-              </div>
-            </div>
-          </div>
+                </div>
+              }
 
-         
-          <div class="row" *ngIf="!ldap">
+              @if (ldap) {
+                <div class="form-group col-md-6">
+                  <label class="form-label" for="descripcion">End Point</label>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'server'"></span></span></div>
+                    <input [formControl]="iUserEndpointCtrl" type="text" placeholder="End Point" disabled
+                      class="form-control">
+                  </div>
+                </div>
+              }
 
-            <div class="form-group col-md-2" style="display: none;">
-              <label class="form-label" for="tipoduracion">Duración de sesión</label>
-              <ng-select [items]="duracion" [(ngModel)]="iUser.duraciontexto" (ngModelChange)="selDuracion($event)"
-                bindLabel="name" bindValue="id" placeholder="Tipo Duración" appendTo="body"></ng-select>
-            </div>
+              @if (property || ldap) {
+                <div class="form-group col-md-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <label class="form-label" for="login">Login / Usuario</label>
+                    @if (loginPrefixError) {
+                      <small class="text-danger font-small-2" style="margin-top: -5px;">
+                        {{ loginPrefixError }}
+                      </small>
+                    }
+                  </div>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'user'"></span></span></div>
+                    <input [formControl]="iUserLoginCtrl" type="text" placeholder="Login" class="form-control"
+                      (input)="onLoginInput()" (blur)="SearchLoginLDAP();consultarLogin()" [disabled]="blockEdit === 'disabled'">
+                  </div>
+                </div>
+              }
 
-            <div class="form-group col-md-2" style="display: none;">
-              <label class="form-label" for="tiempoduracion">Tiempo sesión</label>
-              <input type="number" [(ngModel)]="iUser.duraciontiempo" [ngModelOptions]="{standalone: true}"
-                placeholder="Tiempo" class="form-control">
-            </div>
-
-            <div class="form-group col-md-4">
-              <label class="form-label" for="origen">Regional / Sucursal</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'map-pin'"></span></span></div>
-                <ng-select [items]="dataRegional" [addTag]="true" [(ngModel)]="xregional" [name]="xregional"
-                  [ngModelOptions]="{standalone: true}" (ngModelChange)="consultarOficinas($event)" 
-                  (input)='onFocusedRegional($event)' bindId="id" bindLabel="name" placeholder="Regional"
-                  appendTo="body" class="flex-grow-1"></ng-select>
-              </div>
-            </div>
-
-            <div class="form-group col-md-5">
-              <label class="form-label" for="origen">Oficina / Departamento</label>
-              <div class="input-group input-group-pastel align-items-start">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'map'"></span></span></div>
-                <ng-select [items]="dataOficina" [addTag]="true" [(ngModel)]="xoficina" [name]="xoficina"
-                  [ngModelOptions]="{standalone: true}" bindId="id" bindLabel="name" placeholder="Oficina"
-                  [multiple]="true"
-                  appendTo="body" class="flex-grow-1">
-                  <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
-                    <div class="ng-value" *ngFor="let item of items | slice: 0:2">
-                      <span class="ng-value-label">{{ item.name }}</span>
-                      <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+              @if (property) {
+                <div class="form-group col-md-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <label class="form-label" for="Clave">Clave</label>
+                    @if (iUser.clave && iUser.clave.length > 0) {
+                      <small class="font-weight-bold"  style="margin-top: -5px;"
+                        [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
+                        {{ passwordStrengthLabel }} <span class="text-muted font-small-1">({{ passwordStrengthWidth }}%)</span>
+                      </small>
+                    }
+                  </div>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'key'"></span></span></div>
+                    <input [type]="showClave ? 'text' : 'password'" [formControl]="iUserClaveCtrl"
+                      (input)="checkPasswordStrength(iUserClaveCtrl.value)" (blur)="validatePassword()"
+                      [class.border-danger]="isPasswordInvalid"
+                      class="form-control" [disabled]="blockEdit === 'disabled'"
+                      placeholder="Clave" />
+                    @if (isPasswordInvalid) {
+                      <div class="input-group-append" title="Contraseña débil">
+                        <span class="input-group-text bg-transparent border-danger text-danger">
+                          <span [data-feather]="'alert-triangle'" [size]="16"></span>
+                        </span>
+                      </div>
+                    }
+                    <div class="input-group-append">
+                      <span class="input-group-text cursor-pointer" [class.border-danger]="isPasswordInvalid" (click)="showClave = !showClave"><i class="feather"
+                      [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i></span>
                     </div>
-                    <div class="ng-value ng-value-more" *ngIf="items.length > 2">
-                      <span class="ng-value-label">+{{ items.length - 2 }} más...</span>
+                  </div>
+                </div>
+              }
+              @if (property) {
+                <div class="form-group col-md-3">
+                  <label class="form-label" for="encriptamiento">Encriptamiento</label>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'lock'"></span></span></div>
+                    <ng-select [items]="formato" [formControl]="iUserEncriptamientoCtrl" bindLabel="name" bindValue="id"
+                    placeholder="Encriptamiento" appendTo="body" class="flex-grow-1"></ng-select>
+                  </div>
+                </div>
+              }
+
+            </div>
+
+
+            <div class="row">
+              <div class="form-group col-md-2">
+                <label class="form-label" for="descripcion">Cédula</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'credit-card'"></span></span></div>
+                  <input [formControl]="iUserCedulaCtrl" type="text" placeholder="Cédula"
+                    (blur)="consultarCedula()" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="form-label" for="descripcion">Nombre de usuario</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'user'"></span></span></div>
+                  <input [formControl]="iUserNombreCtrl" type="text"
+                    placeholder="Nombre del usuario" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-md-4">
+                <label class="form-label" for="descripcion">Descripcion / Cargo</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'briefcase'"></span></span></div>
+                  <input [formControl]="iUserDescripcionCtrl" type="text"
+                    placeholder="Descripcion del usuario" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-md-2">
+                <label class="form-label" for="estatus">Estatus</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'activity'" [style.color]="iUser.estatus == 1 ? '#28c76f' : (iUser.estatus == 0 ? '#ea5455' : '#6e6b7b')"></span></span></div>
+                  <ng-select [items]="estatus" [formControl]="iUserEstatusCtrl" bindLabel="name" bindValue="id"
+                  placeholder="Estatus" appendTo="body" class="flex-grow-1"></ng-select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="form-group col-md-2">
+                <label class="form-label" for="tipoduracion">Vigencia de:</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'clock'"></span></span></div>
+                  <ng-select [items]="sesion" [formControl]="iUserVigenciaCtrl" bindLabel="name" bindValue="id"
+                  [disabled]="ldap" placeholder="Vigencia en" appendTo="body" class="flex-grow-1"></ng-select>
+                </div>
+              </div>
+
+              <div class="form-group col-md-4">
+                <label class="form-label">Correo del usuario</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'mail'"></span></span></div>
+                  <input [formControl]="iUserCorreoCtrl" type="text"
+                    placeholder="Correo del usuario" class="form-control" (blur)="validateEmail()" [class.border-danger]="isEmailInvalid">
+                  @if (isEmailInvalid) {
+                    <div class="input-group-append" title="Formato de correo inválido">
+                      <span class="input-group-text bg-transparent border-0 text-danger">
+                        <span [data-feather]="'alert-circle'" [size]="16"></span>
+                      </span>
                     </div>
-                  </ng-template>
-                </ng-select>
+                  }
+                </div>
+              </div>
+              <div class="form-group col-md-6">
+                <label class="form-label">Descripcion general</label>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend"><span class="input-group-text"><span
+                  [data-feather]="'file-text'"></span></span></div>
+                  <input [formControl]="descripcionCtrl" type="text"
+                    placeholder="Descripcion general" class="form-control">
+                </div>
               </div>
             </div>
 
-            <div class="form-group col-md-3">
-              <label class="form-label" for="origen">Multiple Sesión</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
-                      [data-feather]="'map-pin'"></span></span></div>
-                <ng-select [items]="lstmultiplesesion" [addTag]="true" [(ngModel)]="multiplesesion" name="multiplesesion"
-                  [ngModelOptions]="{standalone: true}"
-                   bindValue="id" bindLabel="name" placeholder="Multiple Sesión"
-                  appendTo="body" class="flex-grow-1"></ng-select>
+
+            @if (!ldap) {
+              <div class="row">
+                <div class="form-group col-md-2" style="display: none;">
+                  <label class="form-label" for="tipoduracion">Duración de sesión</label>
+                  <ng-select [items]="duracion" [formControl]="iUserDuraciontextoCtrl"
+                  (change)="selDuracion(iUserDuraciontextoCtrl.value)"
+                  bindLabel="name" bindValue="id" placeholder="Tipo Duración" appendTo="body"></ng-select>
+                </div>
+                <div class="form-group col-md-2" style="display: none;">
+                  <label class="form-label" for="tiempoduracion">Tiempo sesión</label>
+                  <input type="number" [formControl]="iUserDuraciontiempoCtrl"
+                    placeholder="Tiempo" class="form-control">
+                </div>
+                <div class="form-group col-md-4">
+                  <label class="form-label" for="origen">Regional / Sucursal</label>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'map-pin'"></span></span></div>
+                    <ng-select [items]="dataRegional" [addTag]="true" [formControl]="xregionalCtrl"
+                      (change)="consultarOficinas(xregionalCtrl.value)"
+                      (input)='onFocusedRegional($event)' bindId="id" bindLabel="name" placeholder="Regional"
+                    appendTo="body" class="flex-grow-1"></ng-select>
+                  </div>
+                </div>
+                <div class="form-group col-md-5">
+                  <label class="form-label" for="origen">Oficina / Departamento</label>
+                  <div class="input-group input-group-pastel align-items-start">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'map'"></span></span></div>
+                    <ng-select [items]="dataOficina" [addTag]="true" [formControl]="xoficinaCtrl"
+                      bindId="id" bindLabel="name" placeholder="Oficina"
+                      [multiple]="true"
+                      appendTo="body" class="flex-grow-1">
+                      <ng-template ng-multi-label-tmp let-items="items" let-clear="clear">
+                        @for (item of items | slice: 0:2; track item) {
+                          <div class="ng-value">
+                            <span class="ng-value-label">{{ item.name }}</span>
+                            <span class="ng-value-icon right" (click)="clear(item)" aria-hidden="true">×</span>
+                          </div>
+                        }
+                        @if (items.length > 2) {
+                          <div class="ng-value ng-value-more">
+                            <span class="ng-value-label">+{{ items.length - 2 }} más...</span>
+                          </div>
+                        }
+                      </ng-template>
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="form-label" for="origen">Multiple Sesión</label>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'map-pin'"></span></span></div>
+                    <ng-select [items]="lstmultiplesesion" [addTag]="true" [formControl]="multiplesesionCtrl"
+                      bindValue="id" bindLabel="name" placeholder="Multiple Sesión"
+                    appendTo="body" class="flex-grow-1"></ng-select>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          
-          <hr>
-          <div class="row mt-3"  *ngIf="!usuarioSave">
-            <div class="form-group col-md-12 text-right">
-              <button type="button" class="btn btn-success" [disabled]="!validateUserForm()"
-                (click)="registrarUsuario()">
-                <span [data-feather]="'edit-3'"></span>&nbsp;&nbsp;Registrar Usuario
-              </button>
-            </div>
-          </div>
+            }
+
+            <hr>
+              @if (!usuarioSave) {
+                <div class="row mt-3" >
+                  <div class="form-group col-md-12 text-right">
+                    <button type="button" class="btn btn-success" [disabled]="!validateUserForm()"
+                      (click)="registrarUsuario()">
+                      <span [data-feather]="'edit-3'"></span>&nbsp;&nbsp;Registrar Usuario
+                    </button>
+                  </div>
+                </div>
+              }
 
 
 
-          <div class="row mt-2" *ngIf="usuarioSave">
-            <div class="form-group col-md-5">
-              <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
+              @if (usuarioSave) {
+                <div class="row mt-2">
+                  <div class="form-group col-md-5">
+                    <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                    <div class="input-group input-group-pastel">
+                      <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'box'"></span></span></div>
-                <ng-select [items]="lstAplicacion" [(ngModel)]="xaplicacion" [ngModelOptions]="{standalone: true}"
-                  bindLabel="nombre" (ngModelChange)="selPerfil($event)" bindValue="id" disabled="{{blockEditApp}}"
-                  placeholder="Aplicación" appendTo="body" class="flex-grow-1"></ng-select>
-              </div>
-            </div>
-
-            <div class="form-group col-md-5">
-              <label class="form-label" for="descripcion">Seleccionar Perfil</label>
-              <div class="input-group input-group-pastel">
-                <div class="input-group-prepend"><span class="input-group-text"><span
+                      <ng-select [items]="lstAplicacion" [formControl]="xaplicacionCtrl"
+                        bindLabel="nombre" (change)="selPerfil(xaplicacionCtrl.value)" bindValue="id" [disabled]="blockEditApp === 'disabled'"
+                      placeholder="Aplicación" appendTo="body" class="flex-grow-1"></ng-select>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-5">
+                    <label class="form-label" for="descripcion">Seleccionar Perfil</label>
+                    <div class="input-group input-group-pastel">
+                      <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'award'"></span></span></div>
-                <ng-select [items]="lstPerfil" [(ngModel)]="xperfil" [ngModelOptions]="{standalone: true}"
-                  bindLabel="nombre" bindValue="nombre" placeholder="Perfil" appendTo="body"
-                  class="flex-grow-1"></ng-select>
+                      <ng-select [items]="lstPerfil" [formControl]="xperfilCtrl"
+                        bindLabel="nombre" bindValue="nombre" placeholder="Perfil" appendTo="body"
+                      class="flex-grow-1"></ng-select>
+                    </div>
+                  </div>
+                  <div class="form-group col-md-3" style="display: none;">
+                    <label class="form-label" for="descripcion">Nivel de traza</label>
+                    <ng-select [items]="traza" [formControl]="xtrazaCtrl" bindLabel="name"
+                    bindValue="id" placeholder="Nivel de traza" appendTo="body"></ng-select>
+                  </div>
+                  <div class="form-group col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-primary" (click)="agregarAplicacion()" style="width: 100%;">
+                      <span [data-feather]="'arrow-down'" class="mr-1"></span>&nbsp;Asociar
+                    </button>
+                  </div>
+                </div>
+              }
+              @if (usuarioSave) {
+                <div class="row mt-3">
+                  <div class="col-md-12">
+                    <table class="table table-hover table-striped bootstrap core-bootstrap user-table">
+                      <thead>
+                        <tr>
+                          <th>
+                            <div class="d-flex align-items-center">
+                              <span [data-feather]="'box'" class="mr-1 text-primary"></span>
+                              <span>APLICACIÓN</span>
+                            </div>
+                          </th>
+                          <th>
+                            <div class="d-flex align-items-center">
+                              <span [data-feather]="'file-text'" class="mr-1 text-info"></span>
+                              <span>DESCRIPCIÓN</span>
+                            </div>
+                          </th>
+                          <th>
+                            <div class="d-flex align-items-center">
+                              <span [data-feather]="'award'" class="mr-1 text-warning"></span>
+                              <span>PERFIL</span>
+                            </div>
+                          </th>
+                          <th style="display: none;">TRAZA</th>
+                          <th>
+                            <div class="d-flex align-items-center">
+                              <span [data-feather]="'calendar'" class="mr-1 text-success"></span>
+                              <span>CREADO</span>
+                            </div>
+                          </th>
+                          <th style="width: 100px;">
+                            <div class="d-flex align-items-center justify-content-center">
+                              <span [data-feather]="'activity'" class="mr-1 text-secondary"></span>
+                              <span>ESTATUS</span>
+                            </div>
+                          </th>
+                          <th style="width: 80px;">
+                            <div class="d-flex align-items-center justify-content-center">
+                              <span [data-feather]="'settings'" class="mr-1 text-secondary"></span>
+                              <span>ACCIÓN</span>
+                            </div>
+                          </th>
+                          <tr>
+                          </thead>
+                          <tbody>
+                            @for (e of dataUsers; track e; let i = $index) {
+                              <tr>
+                                <td>
+                                  <span class="font-weight-bold text-primary">{{e.nombre}}</span>
+                                  <div class="small text-muted">ID: {{e.id}}</div>
+                                </td>
+                                <td>{{e.idper?.descripcion || 'Sin descripción'}}</td>
+                                <td>
+                                  <div class="badge badge-light-warning">
+                                    {{e.perfil}}
+                                  </div>
+                                </td>
+                                <td style="display: none;">{{e.traza}}</td>
+                                <td>
+                                  <div class="d-flex flex-column">
+                                    <span>{{e.tiempo | date: 'dd/MM/yyyy'}}</span>
+                                    <small class="text-muted">{{e.tiempo | date: 'HH:mm:ss'}}</small>
+                                  </div>
+                                </td>
+                                <td class="text-center">
+                                  <div class="custom-control custom-switch custom-control-inline">
+                                    <input type="checkbox" class="custom-control-input" id="customSwitch{{ i }}"
+                                      [formControl]="userStatusArray.at(i)" />
+                                    <label class="custom-control-label" for="customSwitch{{ i }}"></label>
+                                  </div>
+                                </td>
+                                @if (e.id == null) {
+                                  <td class="text-center">
+                                    <button (click)="quitarElemento(i)" type="button" class="btn icon-btn btn-sm btn-flat-danger"
+                                      rippleEffect title="Eliminar">
+                                      <span [data-feather]="'trash-2'" [class]="'cursor-pointer'"></span>
+                                    </button>
+                                  </td>
+                                }
+                                @if (e.id != null) {
+                                  <td class="text-center">
+                                    <div ngbDropdown container="body">
+                                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm btn-flat-primary hide-arrow"
+                                        rippleEffect>
+                                        <span [data-feather]="'more-vertical'" [class]="'cursor-pointer'"></span>
+                                      </button>
+                                      <div ngbDropdownMenu>
+                                        <a (click)="verPerfil(e, ProfileDetail)" ngbDropdownItem><span [data-feather]="'eye'"
+                                        [class]="'mr-50'"></span> Ver detalles </a>
+                                        <a (click)="quitarElemento(i)" ngbDropdownItem><span [data-feather]="'trash'"
+                                        [class]="'mr-50'"></span> Quitar</a>
+                                      </div>
+                                    </div>
+                                  </td>
+                                }
+                              </tr>
+                            }
+                          </tbody>
+                          <tfoot>
+                          </tfoot>
+                        </table>
+                      </div>
+                    <!-- </data> -->
+                  </div>
+                }
+
+                @if (usuarioSave) {
+                  <div class="row mt-3">
+                    <div class="form-group col-md-8">
+                    </div>
+                    <div class="form-group col-md-4 text-right">
+                      <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-warning"
+                        (click)="agregarUsuario(2)">
+                        <span [data-feather]="'edit'"></span>&nbsp;&nbsp;Modificar Usuario
+                      </button>
+                    </div>
+                  </div>
+                }
+              </div>
+
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+
+
+
+      <ng-template #ProfileDetail let-modal>
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <span [data-feather]="'award'" class="mr-1 text-primary"></span>
+            Detalles del Perfil: <span class="font-weight-bolder">{{ profileData.idper.nombre }}</span>
+          </h5>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="app-info mb-4">
+            <div class="info-item">
+              <span [data-feather]="'box'" class="icon" [size]="32"></span>
+              <div>
+                <small>Aplicación</small>
+                <strong>{{ profileData.idapp.nombre }} ({{ profileData.idapp.id }})</strong>
               </div>
             </div>
-
-            <div class="form-group col-md-3" style="display: none;">
-              <label class="form-label" for="descripcion">Nivel de traza</label>
-              <ng-select [items]="traza" [(ngModel)]="xtraza" [ngModelOptions]="{standalone: true}" bindLabel="name"
-                bindValue="id" placeholder="Nivel de traza" appendTo="body"></ng-select>
-            </div>
-
-            <div class="form-group col-md-2 d-flex align-items-end">
-              <button type="button" class="btn btn-primary" (click)="agregarAplicacion()" style="width: 100%;">
-                <span [data-feather]="'arrow-down'" class="mr-1"></span>&nbsp;Asociar
-              </button>
+            <div class="info-item">
+              <span [data-feather]="'git-branch'" class="icon" [size]="32"></span>
+              <div>
+                <small>Versión</small>
+                <strong>{{ profileData.idapp.version }}</strong>
+              </div>
             </div>
           </div>
-          <div class="row mt-3" *ngIf="usuarioSave">
-            <div class="col-md-12">
-              <table class="table table-hover table-striped bootstrap core-bootstrap user-table">
-                <thead>
-                  <tr>
-                    <th>
-                      <div class="d-flex align-items-center">
-                        <span [data-feather]="'box'" class="mr-1 text-primary"></span>
-                        <span>APLICACIÓN</span>
-                      </div>
-                    </th>
-                    <th>
-                      <div class="d-flex align-items-center">
-                        <span [data-feather]="'file-text'" class="mr-1 text-info"></span>
-                        <span>DESCRIPCIÓN</span>
-                      </div>
-                    </th>
-                    <th>
-                      <div class="d-flex align-items-center">
-                        <span [data-feather]="'award'" class="mr-1 text-warning"></span>
-                        <span>PERFIL</span>
-                      </div>
-                    </th>
-                    <th style="display: none;">TRAZA</th>
-                    <th>
-                      <div class="d-flex align-items-center">
-                        <span [data-feather]="'calendar'" class="mr-1 text-success"></span>
-                        <span>CREADO</span>
-                      </div>
-                    </th>
-                    <th style="width: 100px;">
-                      <div class="d-flex align-items-center justify-content-center">
-                        <span [data-feather]="'activity'" class="mr-1 text-secondary"></span>
-                        <span>ESTATUS</span>
-                      </div>
-                    </th>
-                    <th style="width: 80px;">
-                      <div class="d-flex align-items-center justify-content-center">
-                        <span [data-feather]="'settings'" class="mr-1 text-secondary"></span>
-                        <span>ACCIÓN</span>
-                      </div>
-                    </th>
-                  <tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let e of dataUsers; let i = index">
-                    <td>
-                      <span class="font-weight-bold text-primary">{{e.nombre}}</span>
-                      <div class="small text-muted">ID: {{e.id}}</div>
-                    </td>
-                    <td>{{e.idper?.descripcion || 'Sin descripción'}}</td>
-                    <td>
-                      <div class="badge badge-light-warning">
-                        {{e.perfil}}
-                      </div>
-                    </td>
-                    <td style="display: none;">{{e.traza}}</td>
-                    <td>
-                      <div class="d-flex flex-column">
-                        <span>{{e.tiempo | date: 'dd/MM/yyyy'}}</span>
-                        <small class="text-muted">{{e.tiempo | date: 'HH:mm:ss'}}</small>
-                      </div>
-                    </td>
-                    <td class="text-center">
-                      <div class="custom-control custom-switch custom-control-inline">
-                        <input type="checkbox" class="custom-control-input" id="customSwitch{{ i }}"
-                          [(ngModel)]="e.estatus" (ngModelChange)="onStatusChange(e, i)"
-                          [ngModelOptions]="{standalone: true}" [true-value]="1" [false-value]="0" />
-                        <label class="custom-control-label" for="customSwitch{{ i }}"></label>
-                      </div>
-                    </td>
-
-                    <td *ngIf="e.id == null" class="text-center">
-                      <button (click)="quitarElemento(i)" type="button" class="btn icon-btn btn-sm btn-flat-danger"
-                        rippleEffect title="Eliminar">
-                        <span [data-feather]="'trash-2'" [class]="'cursor-pointer'"></span>
-                      </button>
-                    </td>
-                    <td *ngIf="e.id != null" class="text-center">
-                      <div ngbDropdown container="body">
-                        <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm btn-flat-primary hide-arrow"
-                          rippleEffect>
-                          <span [data-feather]="'more-vertical'" [class]="'cursor-pointer'"></span>
-                        </button>
-                        <div ngbDropdownMenu>
-                          <a (click)="verPerfil(e, ProfileDetail)" ngbDropdownItem><span [data-feather]="'eye'"
-                              [class]="'mr-50'"></span> Ver detalles </a>
-                          <a (click)="quitarElemento(i)" ngbDropdownItem><span [data-feather]="'trash'"
-                              [class]="'mr-50'"></span> Quitar</a>
+          <hr>
+            <div class="permissions-tree" style="max-height: 400px; overflow-y: auto;">
+              @for (menu of profileData.idper.Rol.Menu; track menu) {
+                <div class="menu-item">
+                  <div class="item-header" (click)="toggleExpand(menu)">
+                    <span [data-feather]="'grid'" class="item-icon"></span>
+                    <span class="item-name">{{ menu.nombre }}</span>
+                  </div>
+                  <div class="sub-items-container" [ngClass]="{ 'expanded': menu.isExpanded }">
+                    @for (subMenu of menu.SubMenu; track subMenu) {
+                      <div class="sub-menu-item">
+                        <div class="item-header" (click)="toggleExpand(subMenu)">
+                          <span [data-feather]="'check'" class="item-icon sub-icon"></span>
+                          <span class="item-name">{{ subMenu.nombre }}</span>
+                          @if (subMenu.Privilegios?.length > 0) {
+                            <!-- Reemplazo para evitar error de renderizado -->
+                          }
+                        </div>
+                        <div class="sub-items-container" [ngClass]="{ 'expanded': subMenu.isExpanded }">
+                          @for (privilegio of subMenu.Privilegios; track privilegio) {
+                            <div class="privilege-item">
+                              <span [data-feather]="'shield'" class="item-icon privilege-icon"></span>
+                              &nbsp;&nbsp;<span class="item-name">{{ privilegio.descripcion }}</span>
+                            </div>
+                          }
                         </div>
                       </div>
-                    </td>
-
-                  </tr>
-                </tbody>
-                <tfoot>
-                </tfoot>
-              </table>
-            </div>
-
-            <!-- </data> -->
-          </div>
-
-          <div class="row mt-3" *ngIf="usuarioSave">
-            <div class="form-group col-md-8">
-
-            </div>
-            <div class="form-group col-md-4 text-right">
-              <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-warning"
-                (click)="agregarUsuario(2)">
-                <span [data-feather]="'edit'"></span>&nbsp;&nbsp;Modificar Usuario
-              </button>
+                    }
+                  </div>
+                </div>
+              }
             </div>
           </div>
-        </div>
 
-      </div>
-    </section>
-
-  </div>
-</div>
-
-
-
-
-<ng-template #ProfileDetail let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title">
-      <span [data-feather]="'award'" class="mr-1 text-primary"></span>
-      Detalles del Perfil: <span class="font-weight-bolder">{{ profileData.idper.nombre }}</span>
-    </h5>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-
-  <div class="modal-body">
-    <div class="app-info mb-4">
-      <div class="info-item">
-        <span [data-feather]="'box'" class="icon" [size]="32"></span>
-        <div>
-          <small>Aplicación</small>
-          <strong>{{ profileData.idapp.nombre }} ({{ profileData.idapp.id }})</strong>
-        </div>
-      </div>
-      <div class="info-item">
-        <span [data-feather]="'git-branch'" class="icon" [size]="32"></span>
-        <div>
-          <small>Versión</small>
-          <strong>{{ profileData.idapp.version }}</strong>
-        </div>
-      </div>
-    </div>
-    <hr>
-    <div class="permissions-tree" style="max-height: 400px; overflow-y: auto;">
-      <div *ngFor="let menu of profileData.idper.Rol.Menu" class="menu-item">
-        <div class="item-header" (click)="toggleExpand(menu)">
-          <span [data-feather]="'grid'" class="item-icon"></span>
-          <span class="item-name">{{ menu.nombre }}</span>
-
-        </div>
-        <div class="sub-items-container" [ngClass]="{ 'expanded': menu.isExpanded }">
-          <div *ngFor="let subMenu of menu.SubMenu" class="sub-menu-item">
-            <div class="item-header" (click)="toggleExpand(subMenu)">
-              <span [data-feather]="'check'" class="item-icon sub-icon"></span>
-              <span class="item-name">{{ subMenu.nombre }}</span>
-              <ng-container *ngIf="subMenu.Privilegios?.length > 0">
-                <!-- Reemplazo para evitar error de renderizado -->
-              </ng-container>
-            </div>
-            <div class="sub-items-container" [ngClass]="{ 'expanded': subMenu.isExpanded }">
-              <div *ngFor="let privilegio of subMenu.Privilegios" class="privilege-item">
-                <span [data-feather]="'shield'" class="item-icon privilege-icon"></span>
-                &nbsp;&nbsp;<span class="item-name">{{ privilegio.descripcion }}</span>
-              </div>
-            </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+            <!-- <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cross click')">Cerrar</button> -->
           </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <div class="modal-footer">
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-    <!-- <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cross click')">Cerrar</button> -->
-  </div>
-
-</ng-template>
+        </ng-template>

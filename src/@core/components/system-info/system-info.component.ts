@@ -1,33 +1,36 @@
 // src/app/components/system-info/system-info.component.ts
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { SystemInfoService } from '@services/apicore/system-info.service';
 
 @Component({
     selector: 'app-system-info',
     templateUrl: './system-info.component.html',
     styleUrls: ['./system-info.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [CommonModule]
 })
 export class SystemInfoComponent implements OnInit {
-  systemInfo: any = null;
-  isLoading = true;
+  private _systemInfo = signal<any>(null);
+  get systemInfo() { return this._systemInfo(); }
 
-  constructor(private systemInfoService: SystemInfoService, private cdr: ChangeDetectorRef) { }
+  private _isLoading = signal(true);
+  get isLoading() { return this._isLoading(); }
+
+  constructor(private systemInfoService: SystemInfoService) { }
 
   ngOnInit(): void {
     this.systemInfoService.getSystemInfo().subscribe({
       next: (data) => {
         // Asegúrate de manejar el array o el objeto directamente
-        this.systemInfo = Array.isArray(data) ? data[0] : data;
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._systemInfo.set(Array.isArray(data) ? data[0] : data);
+        this._isLoading.set(false);
       },
       error: (err) => {
         console.error('Error loading system info:', err);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
         // Opcional: Inicializar con datos vacíos para evitar errores
-        this.systemInfo = this.getEmptySystemInfo();
+        this._systemInfo.set(this.getEmptySystemInfo());
       }
     });
   }

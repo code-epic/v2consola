@@ -1,15 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 
+import { RouterModule } from '@angular/router';
+
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { CoreConfigService } from '@core/services/config.service';
+import { CoreCommonModule } from '@core/common.module';
 
 @Component({
     selector: 'app-maintenance',
     templateUrl: './maintenance.component.html',
     styleUrls: ['./maintenance.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [RouterModule, CoreCommonModule]
 })
 export class MaintenanceComponent implements OnInit {
   public coreConfig: any;

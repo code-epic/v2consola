@@ -1,0 +1,623 @@
+<div class="content-wrapper container-xxl p-0">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VISTA: CATEGORÍAS                       -->
+    <!-- ════════════════════════════════════════ -->
+    @if (view === 'categories') {
+      <section class="forums-categories-section">
+        <!-- Hero Header -->
+        <div class="forums-hero mb-3">
+          <div class="forums-hero-bg"></div>
+          <div class="forums-hero-content">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+              <div>
+                <h2 class="forums-hero-title mb-1">
+                  <span [data-feather]="'message-circle'" [size]="28" class="me-50"></span>
+                  Foros de Discusión
+                </h2>
+                <p class="forums-hero-subtitle mb-0">
+                  Participa, opina y colabora con tu comunidad
+                </p>
+              </div>
+              <button class="btn btn-outline-light btn-sm" (click)="goToAdmin()" rippleEffect>
+                <span [data-feather]="'settings'" [size]="16" class="me-50"></span>
+                Administrar
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="row mb-2">
+          <div class="col-12 col-sm-4 mb-1">
+            <div class="forums-stat-card">
+              <div class="d-flex align-items-center">
+                <div class="forums-stat-icon bg-primary-soft me-1">
+                  <span [data-feather]="'message-square'" [size]="20"></span>
+                </div>
+                <div>
+                  <h4 class="mb-0 fw-bolder">{{ threads.length }}</h4>
+                  <small class="text-muted">Hilos de discusión</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-4 mb-1">
+            <div class="forums-stat-card">
+              <div class="d-flex align-items-center">
+                <div class="forums-stat-icon bg-success-soft me-1">
+                  <span [data-feather]="'message-circle'" [size]="20"></span>
+                </div>
+                <div>
+                  <h4 class="mb-0 fw-bolder">{{ comments.length }}</h4>
+                  <small class="text-muted">Comentarios</small>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-sm-4 mb-1">
+            <div class="forums-stat-card">
+              <div class="d-flex align-items-center">
+                <div class="forums-stat-icon bg-warning-soft me-1">
+                  <span [data-feather]="'users'" [size]="20"></span>
+                </div>
+                <div>
+                  <h4 class="mb-0 fw-bolder">{{ categories.length }}</h4>
+                  <small class="text-muted">Categorías</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Grid -->
+        <div class="row">
+          @for (cat of categories; track cat.id) {
+            <div class="col-xl-4 col-md-6 col-12 mb-2">
+              <div class="forums-category-card" (click)="selectCategory(cat)" role="button" tabindex="0"
+                (keydown.enter)="selectCategory(cat)">
+                <div class="forums-category-bg" [style.background]="cat.gradient"></div>
+                <div class="forums-category-content">
+                  <div class="d-flex align-items-start justify-content-between mb-1">
+                    <div class="forums-category-icon" [style.background]="cat.color">
+                      <span [data-feather]="cat.icono" [size]="24"></span>
+                    </div>
+                    <span class="forums-category-count">{{ cat.totalHilos }}</span>
+                  </div>
+                  <h5 class="forums-category-name mb-50">{{ cat.nombre }}</h5>
+                  <p class="forums-category-desc mb-1">{{ cat.descripcion }}</p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="forums-category-meta">
+                      <span [data-feather]="'message-circle'" [size]="12" class="me-25"></span>
+                      {{ cat.totalComentarios }} comentarios
+                    </span>
+                    <span class="forums-category-time">{{ cat.ultimaActividad }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VISTA: HILOS                            -->
+    <!-- ════════════════════════════════════════ -->
+    @if (view === 'threads' && selectedCategory) {
+      <section class="forums-threads-section">
+        <!-- Header -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap mb-2">
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary btn-sm" (click)="goToCategories()" rippleEffect>
+              <span [data-feather]="'arrow-left'" [size]="16"></span>
+            </button>
+            <div>
+              <h4 class="mb-0 d-flex align-items-center gap-1">
+                <span class="forums-badge-dot" [style.background]="selectedCategory.color"></span>
+                {{ selectedCategory.nombre }}
+              </h4>
+              <small class="text-muted">{{ selectedCategory.descripcion }}</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-1">
+            <div class="input-group input-group-merge" style="max-width: 260px;">
+              <span class="input-group-text">
+                <span [data-feather]="'search'" [size]="16"></span>
+              </span>
+              <input type="text" class="form-control form-control-sm" placeholder="Buscar en este foro..."
+                [formControl]="searchThreadCtrl" (keydown)="onSearchKeydown($event)" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Thread List -->
+        @if (loading) {
+          <div class="text-center py-3">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+          </div>
+        }
+
+        @if (!loading && filteredThreads().length === 0) {
+          <div class="forums-empty">
+            <span [data-feather]="'inbox'" [size]="48"></span>
+            <h5 class="mt-1 mb-0">No hay hilos en este foro</h5>
+            <p class="text-muted">Sé el primero en iniciar una discusión</p>
+          </div>
+        }
+
+        @if (!loading) {
+          <div class="forums-thread-list">
+            @for (thread of paginatedThreads(); track thread.id) {
+              <div class="forums-thread-card" [class.is-pinned]="thread.isPinned" [class.is-locked]="thread.isLocked"
+                (click)="selectThread(thread)" role="button" tabindex="0" (keydown.enter)="selectThread(thread)">
+                <div class="forums-thread-indicator">
+                  @if (thread.isPinned) {
+                    <span class="forums-pin-badge" title="Anclado">
+                      <span [data-feather]="'anchor'" [size]="14"></span>
+                    </span>
+                  }
+                  @if (thread.isLocked) {
+                    <span class="forums-lock-badge" title="Bloqueado">
+                      <span [data-feather]="'lock'" [size]="14"></span>
+                    </span>
+                  }
+                </div>
+                <div class="forums-thread-main">
+                  <div class="forums-thread-header">
+                    <div class="forums-thread-avatar" [style.background]="getUserColor(thread.autor)">
+                      {{ getUserInitials(thread.autor) }}
+                    </div>
+                    <div class="forums-thread-info">
+                      <h6 class="forums-thread-title mb-25">
+                        {{ thread.titulo }}
+                        @if (thread.isLocked) {
+                          <span class="ms-50 badge badge-light-secondary" style="font-size: 10px;">Cerrado</span>
+                        }
+                      </h6>
+                      <div class="forums-thread-meta">
+                        <span>Por {{ thread.autor }}</span>
+                        <span class="mx-50">·</span>
+                        <span>{{ timeAgo(thread.fechaCreacion) }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="forums-thread-tags">
+                    @for (tag of thread.etiquetas; track tag) {
+                      <span class="badge {{ getEtiquetaClass(tag) }}" style="font-size: 10px; padding: 2px 8px;">{{ tag }}</span>
+                    }
+                  </div>
+                </div>
+                <div class="forums-thread-stats">
+                  <div class="forums-stat-item" title="Respuestas">
+                    <span [data-feather]="'message-circle'" [size]="14"></span>
+                    <span>{{ thread.totalRespuestas }}</span>
+                  </div>
+                  <div class="forums-stat-item" title="Visitas">
+                    <span [data-feather]="'eye'" [size]="14"></span>
+                    <span>{{ thread.visitas }}</span>
+                  </div>
+                  <button class="forums-upvote-btn" (click)="upvoteThread(thread); $event.stopPropagation()" title="Me gusta">
+                    <span [data-feather]="'thumbs-up'" [size]="14"></span>
+                    <span>{{ thread.upvotes }}</span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Paginación -->
+        @if (totalThreadPages() > 1) {
+          <div class="d-flex justify-content-center mt-2">
+            <ngb-pagination [collectionSize]="filteredThreads().length" [(page)]="threadsPage" [pageSize]="threadsPageSize()"
+              [maxSize]="5" [boundaryLinks]="true" size="sm"></ngb-pagination>
+          </div>
+        }
+      </section>
+    }
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VISTA: DETALLE DEL HILO                -->
+    <!-- ════════════════════════════════════════ -->
+    @if (view === 'thread' && selectedThread) {
+      <section class="forums-thread-detail-section">
+        <!-- Back -->
+        <button class="btn btn-outline-secondary btn-sm mb-1" (click)="goToThreads()" rippleEffect>
+          <span [data-feather]="'arrow-left'" [size]="16" class="me-50"></span>
+          Volver a {{ selectedCategory?.nombre }}
+        </button>
+
+        <!-- Main Post Card -->
+        <div class="forums-post-card mb-2">
+          <div class="forums-post-header">
+            <div class="forums-post-author">
+              <div class="forums-thread-avatar" [style.background]="getUserColor(selectedThread.autor)">
+                {{ getUserInitials(selectedThread.autor) }}
+              </div>
+              <div>
+                <h5 class="mb-0">{{ selectedThread.titulo }}</h5>
+                <small class="text-muted">
+                  Por {{ selectedThread.autor }} · {{ formatDate(selectedThread.fechaCreacion) }}
+                  @if (selectedThread.editado) {
+                    <span> · (editado)</span>
+                  }
+                </small>
+              </div>
+            </div>
+            <div class="forums-post-actions">
+              @if (!selectedThread.isLocked) {
+                <button class="btn btn-sm btn-outline-primary" (click)="upvoteThread(selectedThread)" rippleEffect>
+                  <span [data-feather]="'thumbs-up'" [size]="14" class="me-25"></span>
+                  {{ selectedThread.upvotes }}
+                </button>
+              }
+              @if (selectedThread.isPinned) {
+                <span class="badge bg-light-warning ms-50">
+                  <span [data-feather]="'anchor'" [size]="12" class="me-25"></span>
+                  Anclado
+                </span>
+              }
+              @if (selectedThread.isLocked) {
+                <span class="badge bg-light-secondary ms-50">
+                  <span [data-feather]="'lock'" [size]="12" class="me-25"></span>
+                  Cerrado
+                </span>
+              }
+            </div>
+          </div>
+          <div class="forums-post-body" [innerHTML]="selectedThread.contenido">
+          </div>
+          <div class="forums-post-footer">
+            <div class="d-flex align-items-center gap-2">
+              @for (tag of selectedThread.etiquetas; track tag) {
+                <span class="badge {{ getEtiquetaClass(tag) }}">{{ tag }}</span>
+              }
+            </div>
+            <div class="forums-post-stats">
+              <span><span [data-feather]="'message-circle'" [size]="14" class="me-25"></span>{{ selectedThread.totalRespuestas }} respuestas</span>
+              <span class="ms-1"><span [data-feather]="'eye'" [size]="14" class="me-25"></span>{{ selectedThread.visitas }} visitas</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="forums-comments-section">
+          <h5 class="forums-comments-title mb-1">
+            <span [data-feather]="'message-circle'" [size]="20" class="me-50"></span>
+            {{ selectedThread.totalRespuestas }} {{ selectedThread.totalRespuestas === 1 ? 'Respuesta' : 'Respuestas' }}
+          </h5>
+
+          <!-- Comment list -->
+          @if (topLevelComments().length === 0) {
+            <div class="forums-empty small">
+              <span [data-feather]="'message-square'" [size]="32"></span>
+              <p class="mt-1 mb-0">No hay comentarios aún. ¡Sé el primero en responder!</p>
+            </div>
+          }
+
+          @for (comment of topLevelComments(); track comment.id) {
+            <div class="forums-comment-card">
+              <div class="forums-comment-main">
+                <div class="forums-comment-avatar" [style.background]="getUserColor(comment.autor)">
+                  {{ getUserInitials(comment.autor) }}
+                </div>
+                <div class="forums-comment-content">
+                  <div class="forums-comment-header">
+                    <strong>{{ comment.autor }}</strong>
+                    <span class="text-muted small ms-1">{{ timeAgo(comment.fechaCreacion) }}</span>
+                    @if (comment.editado) {
+                      <span class="text-muted small ms-50">(editado)</span>
+                    }
+                  </div>
+                  <div class="forums-comment-text">{{ comment.contenido }}</div>
+                  <div class="forums-comment-actions">
+                    @if (!selectedThread.isLocked) {
+                      <button class="btn btn-sm btn-link forums-action-btn" (click)="setReplyTo(comment)">
+                        <span [data-feather]="'corner-up-left'" [size]="12" class="me-25"></span>
+                        Responder
+                      </button>
+                    }
+                    <button class="btn btn-sm btn-link forums-action-btn" (click)="upvoteComment(comment)">
+                      <span [data-feather]="'thumbs-up'" [size]="12" class="me-25"></span>
+                      {{ comment.upvotes }}
+                    </button>
+                  </div>
+
+                  <!-- Replies -->
+                  @if (getReplies(comment.id).length > 0) {
+                    <div class="forums-replies mt-1">
+                      @for (reply of getReplies(comment.id); track reply.id) {
+                        <div class="forums-comment-card forums-reply-card">
+                          <div class="forums-comment-main">
+                            <div class="forums-comment-avatar small-avatar" [style.background]="getUserColor(reply.autor)">
+                              {{ getUserInitials(reply.autor) }}
+                            </div>
+                            <div class="forums-comment-content">
+                              <div class="forums-comment-header">
+                                <strong>{{ reply.autor }}</strong>
+                                <span class="text-muted small ms-1">{{ timeAgo(reply.fechaCreacion) }}</span>
+                                @if (reply.editado) {
+                                  <span class="text-muted small ms-50">(editado)</span>
+                                }
+                              </div>
+                              <div class="forums-comment-text">{{ reply.contenido }}</div>
+                              <div class="forums-comment-actions">
+                                @if (!selectedThread.isLocked) {
+                                  <button class="btn btn-sm btn-link forums-action-btn" (click)="setReplyTo(reply)">
+                                    <span [data-feather]="'corner-up-left'" [size]="12" class="me-25"></span>
+                                    Responder
+                                  </button>
+                                }
+                                <button class="btn btn-sm btn-link forums-action-btn" (click)="upvoteComment(reply)">
+                                  <span [data-feather]="'thumbs-up'" [size]="12" class="me-25"></span>
+                                  {{ reply.upvotes }}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- Reply Form -->
+          @if (!selectedThread.isLocked) {
+            <div class="forums-reply-form mt-2">
+              @if (replyTo()) {
+                <div class="forums-reply-badge mb-1">
+                  <span [data-feather]="'corner-up-left'" [size]="14" class="me-25"></span>
+                  Respondiendo a <strong>{{ replyTo()?.autor }}</strong>
+                  <button class="btn btn-sm btn-link text-muted ms-1 p-0" (click)="cancelReply()">
+                    <span [data-feather]="'x'" [size]="14"></span>
+                  </button>
+                </div>
+              }
+              <div class="d-flex gap-1 align-items-start">
+                <div class="forums-thread-avatar flex-shrink-0" [style.background]="getUserColor(currentUser)">
+                  {{ getUserInitials(currentUser) }}
+                </div>
+                <div class="flex-grow-1">
+                  <textarea class="form-control" rows="3" placeholder="Escribe tu comentario..." [formControl]="newCommentCtrl"
+                    (keydown.ctrl)="addComment()" (keydown.meta)="addComment()"></textarea>
+                  <div class="d-flex justify-content-between align-items-center mt-1">
+                    <small class="text-muted">Ctrl+Enter para enviar</small>
+                    <button class="btn btn-primary btn-sm" (click)="addComment()" [disabled]="!newCommentCtrl.value?.trim()" rippleEffect>
+                      <span [data-feather]="'send'" [size]="14" class="me-25"></span>
+                      Publicar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (selectedThread.isLocked) {
+            <div class="forums-locked-notice mt-2">
+              <span [data-feather]="'lock'" [size]="16" class="me-50"></span>
+              Este hilo está cerrado. No se aceptan nuevas respuestas.
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- VISTA: ADMIN (CRUD)                    -->
+    <!-- ════════════════════════════════════════ -->
+    @if (view === 'admin') {
+      <section class="forums-admin-section">
+        <div class="card">
+          <div class="card-header-custom">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-1">
+              <div>
+                <h4 class="mb-0">
+                  <span [data-feather]="'settings'" [size]="20" class="me-50"></span>
+                  Administrar Categorías
+                </h4>
+                <small class="text-muted">Gestiona los foros de discusión de la comunidad</small>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <div class="input-group input-group-merge" style="max-width: 200px;">
+                  <span class="input-group-text">
+                    <span [data-feather]="'search'" [size]="14"></span>
+                  </span>
+                  <input type="text" class="form-control form-control-sm" placeholder="Buscar..."
+                    [formControl]="searchAdminCtrl" (keydown)="onAdminSearchKeydown($event)" />
+                </div>
+                <button class="btn btn-primary btn-sm" (click)="openAdminModal(adminModal)" rippleEffect>
+                  <span [data-feather]="'plus'" [size]="14" class="me-25"></span>
+                  Nueva Categoría
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" (click)="goToCategories()" rippleEffect>
+                  <span [data-feather]="'arrow-left'" [size]="14" class="me-25"></span>
+                  Volver
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <ngx-datatable [rows]="paginatedAdminCategories()" [rowHeight]="60"
+              class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
+              [headerHeight]="40" [footerHeight]="0" [limit]="adminPageSize()"
+              [scrollbarH]="false">
+
+              <ngx-datatable-column prop="icono" [width]="70" [sortable]="false">
+                <ng-template ngx-datatable-header-template>
+                  <span [data-feather]="'grid'" [size]="14" class="me-25"></span>
+                  Icono
+                </ng-template>
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <div class="forums-admin-icon" [style.background]="row.color">
+                    <span [data-feather]="row.icono" [size]="16"></span>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column prop="nombre" [width]="150">
+                <ng-template ngx-datatable-header-template>
+                  <span [data-feather]="'type'" [size]="14" class="me-25"></span>
+                  Nombre
+                </ng-template>
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <div class="fw-bold">{{ row.nombre }}</div>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column prop="descripcion" [width]="250">
+                <ng-template ngx-datatable-header-template>
+                  <span [data-feather]="'align-left'" [size]="14" class="me-25"></span>
+                  Descripción
+                </ng-template>
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <small class="text-muted">{{ row.descripcion }}</small>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column prop="totalHilos" [width]="90">
+                <ng-template ngx-datatable-header-template>
+                  <span [data-feather]="'message-square'" [size]="14" class="me-25"></span>
+                  Hilos
+                </ng-template>
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="badge bg-light-primary">{{ row.totalHilos }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column prop="totalComentarios" [width]="110">
+                <ng-template ngx-datatable-header-template>
+                  <span [data-feather]="'message-circle'" [size]="14" class="me-25"></span>
+                  Comentarios
+                </ng-template>
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <span class="badge bg-light-info">{{ row.totalComentarios }}</span>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column prop="ultimaActividad" [width]="130">
+                <ng-template ngx-datatable-header-template>
+                  <span [data-feather]="'clock'" [size]="14" class="me-25"></span>
+                  Actividad
+                </ng-template>
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <small>{{ row.ultimaActividad }}</small>
+                </ng-template>
+              </ngx-datatable-column>
+
+              <ngx-datatable-column [width]="100" [sortable]="false">
+                <ng-template ngx-datatable-header-template>
+                  <span [data-feather]="'more-horizontal'" [size]="14"></span>
+                </ng-template>
+                <ng-template ngx-datatable-cell-template let-row="row">
+                  <div ngbDropdown container="body">
+                    <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
+                      <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+                    </button>
+                    <div ngbDropdownMenu>
+                      <a (click)="openAdminModal(adminModal, row)" ngbDropdownItem>
+                        <span [data-feather]="'edit'" [size]="16" class="me-50"></span> Editar
+                      </a>
+                      <a (click)="deleteAdminCategory(row)" ngbDropdownItem class="text-danger">
+                        <span [data-feather]="'trash-2'" [size]="16" class="me-50"></span> Eliminar
+                      </a>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+          </div>
+
+          <!-- Paginación admin -->
+          @if (totalAdminPages() > 1) {
+            <div class="d-flex justify-content-center p-1">
+              <ngb-pagination [collectionSize]="filteredAdminCategories().length" [(page)]="adminPage"
+                [pageSize]="adminPageSize()" [maxSize]="5" [boundaryLinks]="true" size="sm">
+              </ngb-pagination>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- MODAL ADMIN: Crear/Editar Categoría     -->
+<!-- ════════════════════════════════════════ -->
+<ng-template #adminModal let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">
+      <span [data-feather]="adminEditId() ? 'edit' : 'plus'" [size]="18" class="me-50"></span>
+      {{ adminEditId() ? 'Editar Categoría' : 'Nueva Categoría' }}
+    </h5>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-12 mb-1">
+        <label class="form-label">Nombre *</label>
+        <input type="text" class="form-control" placeholder="Ej: Sugerencias" [formControl]="adminFormNombre"
+          [ngClass]="{ 'is-invalid': adminSubmitted() && !adminFormNombre.value?.trim() }" />
+        @if (adminSubmitted() && !adminFormNombre.value?.trim()) {
+          <div class="invalid-feedback">El nombre es requerido</div>
+        }
+      </div>
+      <div class="col-12 mb-1">
+        <label class="form-label">Descripción *</label>
+        <textarea class="form-control" rows="2" placeholder="Describe el propósito de esta categoría..." [formControl]="adminFormDescripcion"
+          [ngClass]="{ 'is-invalid': adminSubmitted() && !adminFormDescripcion.value?.trim() }"></textarea>
+        @if (adminSubmitted() && !adminFormDescripcion.value?.trim()) {
+          <div class="invalid-feedback">La descripción es requerida</div>
+        }
+      </div>
+      <div class="col-md-6 mb-1">
+        <label class="form-label">Ícono</label>
+        <div class="d-flex flex-wrap gap-50">
+          @for (icon of iconosDisponibles; track icon) {
+            <div class="forums-icon-picker" [class.active]="adminFormIcono.value === icon"
+              (click)="adminFormIcono.setValue(icon)">
+              <span [data-feather]="icon" [size]="16"></span>
+            </div>
+          }
+        </div>
+      </div>
+      <div class="col-md-6 mb-1">
+        <label class="form-label">Color</label>
+        <div class="d-flex flex-wrap gap-50">
+          @for (c of coloresDisponibles; track c.color) {
+            <div class="forums-color-picker" [style.background]="c.color"
+              [class.active]="adminFormColor.value === c.color"
+              [title]="c.nombre"
+              (click)="adminFormColor.setValue(c.color); adminFormGradient.setValue(c.gradient)">
+            </div>
+          }
+        </div>
+        <div class="mt-1">
+          <label class="form-label">Vista previa</label>
+          <div class="forums-color-preview" [style.background]="adminFormGradient.value">
+            <span [data-feather]="adminFormIcono.value || 'edit-3'" [size]="20"></span>
+            <span>{{ adminFormNombre.value || 'Nombre' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" (click)="saveAdminCategory(modal)" rippleEffect>
+      <span [data-feather]="'check'" [size]="16" class="me-25"></span>
+      {{ adminEditId() ? 'Actualizar' : 'Crear' }}
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Close')" rippleEffect>Cancelar</button>
+  </div>
+</ng-template>

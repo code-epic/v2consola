@@ -4,7 +4,7 @@ import { FeatherIconDirective } from '@core/directives/core-feather-icons/core-f
 import { RippleEffectDirective } from '@core/directives/core-ripple-effect/core-ripple-effect.directive';
 
 @NgModule({
-  declarations: [RippleEffectDirective, FeatherIconDirective],
+  imports: [RippleEffectDirective, FeatherIconDirective],
   exports: [RippleEffectDirective, FeatherIconDirective]
 })
 export class CoreDirectivesModule {}

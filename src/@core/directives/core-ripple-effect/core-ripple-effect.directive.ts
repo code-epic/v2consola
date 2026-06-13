@@ -4,7 +4,7 @@ import * as Waves from 'node-waves';
 
 @Directive({
     selector: '[rippleEffect]',
-    standalone: false
+    standalone: true
 })
 export class RippleEffectDirective {
   // Private

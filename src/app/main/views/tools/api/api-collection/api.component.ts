@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore, ProcessID, RestoreAPI } from '@services/apicore/api.service';
 import { PdfService } from '@services/pdf/pdf.service';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -14,13 +14,33 @@ import { TaskService } from '@services/apicore/task.service';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
+
 @Component({
     selector: 'app-api',
     templateUrl: './api.component.html',
     styleUrls: ['./api.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        NgbModule,
+        NgxDatatableModule,
+        NgSelectModule,
+        ContentHeaderComponent,
+    ]
 })
 
 export class ApiComponent implements OnInit {
@@ -85,6 +105,12 @@ export class ApiComponent implements OnInit {
     file_name: ''
   }
 
+  searchValueCtrl = new FormControl('')
+  basicSelectedOptionCtrl = new FormControl(10)
+  sDispositivoCtrl = new FormControl('')
+  exportUsuarioCtrl = new FormControl('')
+  exportClaveCtrl = new FormControl('')
+
   public searchValue = ''
 
   public developer
@@ -97,7 +123,8 @@ export class ApiComponent implements OnInit {
   public ListaApis = []
   public tempData = [];
   public rowData = []
-  public isLoading: boolean = false;;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
 
   public sDispositivo
 
@@ -107,11 +134,6 @@ export class ApiComponent implements OnInit {
     { id: true, name: 'ACTIVO' },
     { id: false, name: 'INACTIVO' },
   ]
-
-  public IExportAPI = {
-    usuario: '',
-    clave: ''
-  }
 
   public passwordTextType: boolean = false;
 
@@ -169,7 +191,6 @@ export class ApiComponent implements OnInit {
     private pdf: PdfService,
     private taskService: TaskService,
     private msjService: WsocketsService,
-    private cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -237,14 +258,12 @@ export class ApiComponent implements OnInit {
     this.xAPI.funcion = '_SYS_R_ListarApis'
     this.xAPI.parametros = t
     this.xAPI.valores = ''
-    this.isLoading = true;
-    this.cdr.detectChanges();
+    this._isLoading.set(true);
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async data => {
         // console.log(data)
         if (data == null) {
-          this.isLoading = false;
-          this.cdr.detectChanges();
+          this._isLoading.set(false);
           return;
         }
 
@@ -255,13 +274,11 @@ export class ApiComponent implements OnInit {
         this.rowData = this.developer;
         this.count = this.rowData.length
         this.tempData = this.rowData;
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       (error) => {
         console.error(error)
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     );
   }
@@ -272,8 +289,8 @@ export class ApiComponent implements OnInit {
     this.fnx = {
       'funcion': nameFnx,
       'basedatos': 'code-epic',
-      'user': this.IExportAPI.usuario,
-      'pass': this.IExportAPI.clave,
+      'user': this.exportUsuarioCtrl.value,
+      'pass': this.exportClaveCtrl.value,
       'driver': this.driversAPP,
       'file_name': environment.colecciones.API_CORE_NAME
     };
@@ -715,8 +732,8 @@ export class ApiComponent implements OnInit {
         if (data.Cuerpo.length > 0) {
           this.xRestore.nombre = data.Cuerpo[0].nomb
           this.xRestore.ruta = data.Cuerpo[0].ruta
-          this.xRestore.pass = this.IExportAPI.clave
-          this.xRestore.user = this.IExportAPI.usuario
+          this.xRestore.pass = this.exportClaveCtrl.value
+          this.xRestore.user = this.exportUsuarioCtrl.value
           this.xRestore.file_name = environment.colecciones.API_CORE_NAME
           this.xRestore.basedatos = environment.driver.DATA_BASE
           this.xRestore.coleccion = environment.colecciones.API_CORE_NAME

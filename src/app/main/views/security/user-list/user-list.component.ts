@@ -1,6 +1,8 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ColumnMode, DatatableComponent, SelectionType, } from "@swimlane/ngx-datatable";
+import { Component, OnInit, ViewChild, ViewEncapsulation, OnDestroy, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { NgbModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ColumnMode, DatatableComponent, SelectionType, NgxDatatableModule, } from "@swimlane/ngx-datatable";
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
@@ -9,6 +11,10 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { UtilService } from '@services/util/util.service';
 import { Sha256Service } from '@services/util/sha256';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
 
 @Component({
     selector: 'app-user-list',
@@ -16,7 +22,17 @@ import { Sha256Service } from '@services/util/sha256';
     styleUrls: ['./user-list.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        NgbModule,
+        NgxDatatableModule,
+        NgSelectModule,
+        ContentHeaderComponent,
+        CoreDirectivesModule,
+        CorePipesModule,
+    ]
 })
 export class UserListComponent implements OnInit, OnDestroy {
 
@@ -59,7 +75,8 @@ export class UserListComponent implements OnInit, OnDestroy {
   public count: number = 0;
   public tempData = []
   public rowData = []
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
 
 
   // Variables para el Modal de Cambio de Clave
@@ -79,6 +96,11 @@ export class UserListComponent implements OnInit, OnDestroy {
   public isPasswordInvalid: boolean = false;
   public isOtpInvalid: boolean = false;
 
+  selectedProfileCtrl = new FormControl('');
+  searchValueCtrl = new FormControl('');
+  newPasswordCtrl = new FormControl('');
+  confirmPasswordCtrl = new FormControl('');
+
   public lstPerfil = []; // Asegúrate de cargar esta lista, por ejemplo en ngOnInit
   public selectedProfile: string = undefined; // Propiedad para el ngModel del nuevo select
 
@@ -95,10 +117,13 @@ export class UserListComponent implements OnInit, OnDestroy {
     private modalService: NgbModal,
     private utilService: UtilService,
     private sha256: Sha256Service,
-    private cdr: ChangeDetectorRef
   ) { }
 
   async ngOnInit() {
+    this.newPasswordCtrl.valueChanges.subscribe(val =>
+      this.checkPasswordStrength(val as string)
+    );
+
     this.isBDV = this.apiService.ConsultaSistemaBDV()
     this.ListarPerfiles();
     await this.listarUsuarios();
@@ -145,7 +170,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   // Nueva función para filtrar por el perfil seleccionado
   filterByProfile() {
-    const profileId = this.selectedProfile;
+    const profileId = this.selectedProfileCtrl.value;
 
     // Primero, asegúrate de que la búsqueda por texto esté vacía para no mezclar filtros inicialmente
     // this.searchValue = ''; 
@@ -172,7 +197,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
     // Empieza con la data ya filtrada por perfil (o la completa si no hay filtro)
     let dataToFilter = this.tempData;
-    if (this.selectedProfile) {
+    if (this.selectedProfileCtrl.value) {
       dataToFilter = this.tempData.filter(item => item.Perfil && item.Perfil.descripcion);
     }
 
@@ -190,7 +215,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
 
   async listarUsuarios() {
-    this.isLoading = true;
+    this._isLoading.set(true);
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.LISTAR_USUARIOS_BLOQUEADOS
     this.xAPI.parametros = ''
@@ -211,13 +236,11 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.rowData = data;
         this.tempData = this.rowData;
         this.count = this.rowData.length
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       },
       error: (error) => {
         console.log(error);
-        this.isLoading = false;
-        this.cdr.detectChanges();
+        this._isLoading.set(false);
       }
     })
   }
@@ -316,8 +339,8 @@ export class UserListComponent implements OnInit, OnDestroy {
   openChangePasswordModal(row: any, content: any) {
     this.selectedUser = row;
     this.vtopCode = '';
-    this.newPassword = '';
-    this.confirmPassword = '';
+    this.newPasswordCtrl.setValue('');
+    this.confirmPasswordCtrl.setValue('');
     this.isSuccess = false;
     this.passwordTextType = false;
     this.confirmpasswordTextType = false;
@@ -357,11 +380,11 @@ export class UserListComponent implements OnInit, OnDestroy {
 
     } else {
       // --- Lógica del Paso 2: Cambiar Contraseña ---
-      if (!this.newPassword || !this.confirmPassword) {
+      if (!this.newPasswordCtrl.value || !this.confirmPasswordCtrl.value) {
         this.utilService.AlertMini('top-end', 'warning', 'Por favor complete todos los campos', 3000);
         return;
       }
-      if (this.newPassword !== this.confirmPassword) {
+      if (this.newPasswordCtrl.value !== this.confirmPasswordCtrl.value) {
         this.utilService.AlertMini('top-end', 'error', 'Las contraseñas no coinciden', 3000);
         return;
       }
@@ -373,7 +396,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
       this.xAPI = {} as IAPICore;
       this.xAPI.funcion = environment.functions.ACTUALIZAR_CLAVE; // Asegúrate de usar el nombre correcto de tu función en BD
-      const hash = await this.sha256.hash(this.newPassword);
+      const hash = await this.sha256.hash(this.newPasswordCtrl.value as string);
       this.xAPI.parametros = `${this.selectedUser.login},${hash},${new Date().toISOString()}`;
       // console.log('Actualizar Clave con parámetros:', this.xAPI.parametros);
 
@@ -425,7 +448,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   validatePassword() {
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
 
-    if (this.newPassword && !passwordRegex.test(this.newPassword)) {
+    if (this.newPasswordCtrl.value && !passwordRegex.test(this.newPasswordCtrl.value as string)) {
       this.isPasswordInvalid = true;
       this.utilService.AlertMini(
         "top-end",

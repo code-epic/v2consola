@@ -1,14 +1,17 @@
 import { Component, OnInit, OnDestroy, ViewEncapsulation, ViewChild } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
-
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { TaskMonitorComponent } from '@core/components/task-monitor/task-monitor.component';
+import { SystemInfoComponent } from '@core/components/system-info/system-info.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
 import { TaskService } from '@services/apicore/task.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
-
+import { ApiService } from '@services/apicore/api.service';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 
 
@@ -17,7 +20,8 @@ import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-dat
     templateUrl: './theme-customizer.component.html',
     styleUrls: ['./theme-customizer.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbModule, CoreDirectivesModule, TaskMonitorComponent, SystemInfoComponent]
 })
 export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
 
@@ -37,6 +41,8 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
   errorMessage = '';
   successMessage = '';
 
+  certificates: any[] = [];
+  loadingCerts = false;
 
   // Private
   private _unsubscribeAll: Subject<any>;
@@ -53,7 +59,8 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
     private _coreConfigService: CoreConfigService,
     private _coreSidebarService: CoreSidebarService,
     private taskService: TaskService,
-    private msjService: WsocketsService
+    private msjService: WsocketsService,
+    private apiService: ApiService
   ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -66,6 +73,7 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
    * On init
    */
   async ngOnInit() {
+    this.loadCertificates();
   }
 
   /**
@@ -136,6 +144,42 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
     };
     this.errorMessage = '';
     this.successMessage = '';
+  }
+
+  loadCertificates() {
+    this.loadingCerts = true;
+    this.apiService.ListCertificates(false).subscribe({
+      next: (data) => {
+        this.certificates = Array.isArray(data) ? data : [];
+        this.loadingCerts = false;
+      },
+      error: () => this.loadingCerts = false
+    });
+  }
+
+  downloadCertificate(cert: any, format: string) {
+    this.apiService.DownloadCertificate(cert.path, format).subscribe({
+      next: (blob: Blob) => {
+        const ext = format === 'p12' || format === 'pfx' || format === 'pkcs12' ? 'p12'
+          : format === 'p7b' || format === 'pkcs7' ? 'p7b' : format;
+        const filename = cert.name.replace(/\.[^.]+$/, '') + '.' + ext;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => console.error('Error descargando certificado:', err)
+    });
+  }
+
+  formatSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   }
 
   /**

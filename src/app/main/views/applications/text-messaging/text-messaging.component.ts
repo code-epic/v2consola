@@ -1,15 +1,18 @@
-import { Component, OnInit, ViewChild, TemplateRef, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
-import { ColumnMode, DatatableComponent } from '@swimlane/ngx-datatable';
+import { Component, OnInit, ViewChild, TemplateRef, ViewEncapsulation, signal } from '@angular/core';
+
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { ColumnMode, DatatableComponent, NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { NgbModule, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectModule } from '@ng-select/ng-select';
 import { ApiService, IAPICore, ProcessID } from '@services/apicore/api.service';
-import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import jwt_decode from "jwt-decode";
 import { Subject } from 'rxjs';
 import { AngularFileUploaderComponent } from 'angular-file-uploader';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { error } from 'console';
 import { TaskService } from '@services/apicore/task.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { UtilService } from '@services/util/util.service';
+import { CoreCommonModule } from '@core/common.module';
 
 @Component({
     selector: 'app-text-messaging',
@@ -17,7 +20,8 @@ import { UtilService } from '@services/util/util.service';
     styleUrls: ['./text-messaging.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [ReactiveFormsModule, RouterModule, NgbModule, NgSelectModule, NgxDatatableModule, CoreCommonModule]
 })
 export class TextMessagingComponent implements OnInit {
 
@@ -56,7 +60,8 @@ export class TextMessagingComponent implements OnInit {
   public ColumnMode = ColumnMode;
   public temp = [];
 
-  public isLoading: number = 0;
+  private _isLoading = signal<number>(0);
+  get isLoading() { return this._isLoading(); }
 
   public listaMensajesDispositivos = []
   public rowsMensajes = []
@@ -69,7 +74,9 @@ export class TextMessagingComponent implements OnInit {
 
   public listaDispositivos: any[] = [];
   public mensajeNoDispositivos: string = ""; // Propiedad para almacenar el mensaje
-  public dispositivoSeleccionado: any = null; // Propiedad para almacenar el valor seleccionado
+  dispositivoSeleccionadoCtrl = new FormControl(null);
+  selectedOptionCtrl = new FormControl(10);
+  searchValueCtrl = new FormControl('');
 
   private _unsubscribeAll: Subject<any>;
 
@@ -83,7 +90,6 @@ export class TextMessagingComponent implements OnInit {
     private taskService: TaskService,
     private msjService: WsocketsService,
     private ws: WsocketsService,
-    private cdr: ChangeDetectorRef
   ) {
     this.formulario = this.fb.group({
       phoneNumbers: ['', [Validators.required, Validators.pattern(/^(\+[0-9]+)(,\+[0-9]+)*$/)]], // Permite números con + y separados por comas
@@ -100,8 +106,7 @@ export class TextMessagingComponent implements OnInit {
 
 
   async ConsultarDispositivo() {
-    this.isLoading = 0;
-    this.cdr.detectChanges();
+    this._isLoading.set(0);
     const config = {
       funcion: 'Fnx_ListarDispositivosMoviles',
       nombre: 'Listar dispositivos móviles',
@@ -141,20 +146,17 @@ export class TextMessagingComponent implements OnInit {
         }];
   
         this.mensajeNoDispositivos = ""; // Limpiar el mensaje si hay dispositivos
-        this.dispositivoSeleccionado = this.listaDispositivos[0]; // Seleccionar el primer dispositivo
-        this.isLoading = 1;
-        this.cdr.detectChanges();
+        this.dispositivoSeleccionadoCtrl.setValue(this.listaDispositivos[0]); // Seleccionar el primer dispositivo
+        this._isLoading.set(1);
         } else {
-          this.isLoading = 2;
-          this.cdr.detectChanges();
+          this._isLoading.set(2);
           this.listaDispositivos = []; // Limpiar la lista si no hay dispositivos
           this.mensajeNoDispositivos = "❌ No hay dispositivos conectados"; // Guardar el mensaje
-          this.dispositivoSeleccionado = "❌ No hay dispositivos conectados"; // Limpiar la selección  
+          this.dispositivoSeleccionadoCtrl.setValue("❌ No hay dispositivos conectados"); // Limpiar la selección  
         }
   
       } else {
-        this.isLoading = 2;
-        this.cdr.detectChanges();
+        this._isLoading.set(2);
       }
     } catch (error) {
       console.log(error);
@@ -255,16 +257,14 @@ export class TextMessagingComponent implements OnInit {
           if (rsJSON.chats.length > 0) {
             rsJSON.chats.map(e => {
               this.listaMensajesDispositivos = rsJSON.chats
-              this.isLoading = 1
+              this._isLoading.set(1);
             });
             this.rowsMensajes = this.listaMensajesDispositivos
             this.tempDataMensajes = this.rowsMensajes
-            this.cdr.detectChanges();
             console.log(this.rowsMensajes)
             
           } else {
-            this.isLoading = 2
-            this.cdr.detectChanges();
+            this._isLoading.set(2);
           }
         }
 

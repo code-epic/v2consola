@@ -34,9 +34,6 @@ const routes = [
 
 
 @NgModule({
-  declarations: [
-    TaskMonitorComponent
-  ],
   imports: [
     RouterModule.forChild(routes),
     CommonModule,
@@ -51,7 +48,8 @@ const routes = [
     CoreDirectivesModule,
     CorePipesModule,
     CoreSidebarModule,
-    CoreCommonModule
+    CoreCommonModule,
+    TaskMonitorComponent
   ]
 })
 export class TaskModule { }

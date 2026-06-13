@@ -5,7 +5,7 @@
       <div class="card-body">
         <a href="javascript:void(0);" class="brand-logo">
           <img src="/assets/images/logo/sandra.png" alt="brand-logo" height="90" />
-          
+
         </a>
         <h2 class="mb-1 text-center" style="margin-top: -20px; color: rgb(61, 15, 103);"><strong>Sandra Server</strong></h2>
 
@@ -20,10 +20,14 @@
               aria-describedby="register-email"
               tabindex="2"
               [ngClass]="{ 'is-invalid': submitted && f.user.errors }"
-            />
-            <div *ngIf="submitted && f.user.errors" class="invalid-feedback">
-              <div *ngIf="f.user.errors.required">Usuario es requerido</div>
-            </div>
+              />
+            @if (submitted && f.user.errors) {
+              <div class="invalid-feedback">
+                @if (f.user.errors.required) {
+                  <div>Usuario es requerido</div>
+                }
+              </div>
+            }
           </div>
 
           <div class="form-group">
@@ -38,32 +42,35 @@
                 aria-describedby="register-password"
                 tabindex="3"
                 [ngClass]="{ 'is-invalid error': submitted && f.password.errors }"
-              />
+                />
               <div class="input-group-append">
                 <span class="input-group-text cursor-pointer"
                   ><i
-                    class="feather font-small-4"
+                  class="feather font-small-4"
                     [ngClass]="{
                       'icon-eye-off': passwordTextType,
                       'icon-eye': !passwordTextType
                     }"
-                    (click)="togglePasswordTextType()"
+                  (click)="togglePasswordTextType()"
                   ></i
                 ></span>
               </div>
             </div>
-            <div
-              *ngIf="submitted && f.password.errors"
-              class="invalid-feedback"
-              [ngClass]="{ 'd-block': submitted && f.password.errors }"
-            >
-              <div *ngIf="f.password.errors.required">Contraseña es requerido</div>
-            </div>
+            @if (submitted && f.password.errors) {
+              <div
+                class="invalid-feedback"
+                [ngClass]="{ 'd-block': submitted && f.password.errors }"
+                >
+                @if (f.password.errors.required) {
+                  <div>Contraseña es requerido</div>
+                }
+              </div>
+            }
           </div>
           <div class="form-group">
-            
-                 <a href="javascript:void(0);">Política de Privacidad y los Términos.</a>
-          
+
+            <a href="javascript:void(0);">Política de Privacidad y los Términos.</a>
+
           </div>
           <button class="btn btn-primary btn-block" tabindex="5" rippleEffect>Crear cuenta</button>
         </form>
@@ -80,7 +87,7 @@
           </a>
         </p>
 
-       
+
         <p class="card-text text-center"><small>Broglie {{version}} <br> {{fecha}}</small></p>
 
       </div>

@@ -1,17 +1,30 @@
-import { Component, HostListener, HostBinding, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
+import { Component, forwardRef, HostListener, HostBinding, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule, NavigationEnd, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 import { CoreConfigService } from '@core/services/config.service';
 import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CoreMenuHorizontalItemComponent } from '@core/components/core-menu/horizontal/item/item.component';
 
 
 @Component({
     selector: '[core-menu-horizontal-collapsible]',
     templateUrl: './collapsible.component.html',
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        RouterModule,
+        TranslateModule,
+        CoreDirectivesModule,
+        CoreMenuHorizontalItemComponent,
+        forwardRef(() => CoreMenuHorizontalCollapsibleComponent)
+    ]
 })
 export class CoreMenuHorizontalCollapsibleComponent implements OnInit, OnDestroy {
   coreConfig: any;

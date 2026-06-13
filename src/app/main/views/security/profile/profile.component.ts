@@ -1,5 +1,7 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from "@angular/core"
-import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap"
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core"
+import { CommonModule } from "@angular/common"
+import { FormControl, ReactiveFormsModule } from "@angular/forms"
+import { NgbModal, NgbModalConfig, NgbModule } from "@ng-bootstrap/ng-bootstrap"
 import { ApiService, IAPICore } from "@services/apicore/api.service"
 import { IPerfil, Privilegios } from "@services/seguridad/rol.service"
 import { UtilService } from "@services/util/util.service"
@@ -7,12 +9,17 @@ import {
   ColumnMode,
   DatatableComponent,
   SelectionType,
+  NgxDatatableModule,
 } from "@swimlane/ngx-datatable"
 import { environment } from "environments/environment"
 import Swal from "sweetalert2"
 import { Md5 } from "ts-md5"
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { NgSelectModule } from "@ng-select/ng-select"
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component"
+import { CoreDirectivesModule } from "@core/directives/directives"
+import { CorePipesModule } from "@core/pipes/pipes.module"
 
 
 
@@ -95,7 +102,17 @@ interface PerfilSave {
     styleUrls: ["./profile.component.scss"],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        NgbModule,
+        NgxDatatableModule,
+        NgSelectModule,
+        ContentHeaderComponent,
+        CoreDirectivesModule,
+        CorePipesModule,
+    ]
 })
 export class ProfileComponent implements OnInit {
 
@@ -124,6 +141,14 @@ export class ProfileComponent implements OnInit {
   }
 
   public SelectionType = SelectionType
+  basicSelectedOptionCtrl = new FormControl(10)
+  perfilAplicacionCtrl = new FormControl('')
+  xaplicacionCtrl = new FormControl({value: '', disabled: true})
+  rolCtrl = new FormControl('')
+  xrolCtrl = new FormControl({value: '', disabled: true})
+  perfilNombreCtrl = new FormControl('')
+  perfilDescripcionCtrl = new FormControl('')
+
   public basicSelectedOption: number = 10;
   public page: number = 1;
 
@@ -142,7 +167,8 @@ export class ProfileComponent implements OnInit {
   public dataRol: any[] = []
   public datamenu = []
   public rowData = []
-  public isLoading: boolean = false;
+  private _isLoading = signal<boolean>(false);
+  get isLoading() { return this._isLoading(); }
   public temprowData = []
   public countSubMenu
   public rowDataAcc = []
@@ -200,7 +226,6 @@ export class ProfileComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
-    private cd: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -228,6 +253,21 @@ export class ProfileComponent implements OnInit {
       },
     }
     this.desactivo = 'false'
+
+    this.perfilNombreCtrl.valueChanges.subscribe(val =>
+      this.Perfil.nombre = val as string
+    )
+    this.perfilDescripcionCtrl.valueChanges.subscribe(val =>
+      this.Perfil.descripcion = val as string
+    )
+    this.perfilAplicacionCtrl.valueChanges.subscribe(val => {
+      this.Perfil.aplicacion = Number(val)
+      this.selRol(val as string)
+    })
+    this.rolCtrl.valueChanges.subscribe(val => {
+      this.rol = val
+      this.selRolDetalle()
+    })
 
     this.CargarListaAplicaciones()
     this.listarPerfiles()
@@ -275,7 +315,6 @@ export class ProfileComponent implements OnInit {
           });
           this.lstPerfil = data
           this.tempPerfil = data
-          this.cd.detectChanges()
         }
 
 
@@ -335,9 +374,9 @@ export class ProfileComponent implements OnInit {
     this.dataRolDetalles = []
     this.dataPlana = []
     this.dataJerarquica = []
-    this.xrol = ''
-    this.Perfil.nombre = ''
-    this.Perfil.descripcion = ''
+    this.xrolCtrl.setValue('')
+    this.perfilNombreCtrl.setValue('')
+    this.perfilDescripcionCtrl.setValue('')
 
     this.aplicacion = this.obtenerAplicacion(event)
 
@@ -351,8 +390,8 @@ export class ProfileComponent implements OnInit {
       "observacion": this.aplicacion.comentario,
       "name": this.aplicacion.Rol.descripcion
     }
-    this.xrol = this.aplicacion.Rol.descripcion
-    this.xaplicacion = this.aplicacion.nombre
+    this.xrolCtrl.setValue(this.aplicacion.Rol.descripcion)
+    this.xaplicacionCtrl.setValue(this.aplicacion.nombre)
     this.dataRol.push(rol)
 
 
@@ -419,7 +458,6 @@ export class ProfileComponent implements OnInit {
     };
     this.initialPermissionsHash = this.getPermissionsHash();
 
-    this.cd.detectChanges();
     return;
   }
 
@@ -970,8 +1008,8 @@ export class ProfileComponent implements OnInit {
     this.desactivo = 'disabled'
     this.selRol(row.aplicacion)
 
-    this.Perfil.nombre = row.nombre
-    this.Perfil.descripcion = row.descripcion
+    this.perfilNombreCtrl.setValue(row.nombre)
+    this.perfilDescripcionCtrl.setValue(row.descripcion)
     this.Perfil.estatus = row.estatus
     this.Perfil.id = row.id
     this.selRolDetalle(row)
@@ -1116,8 +1154,8 @@ export class ProfileComponent implements OnInit {
   guardarPerfiles() {
 
     if (
-      this.Perfil.nombre == "" ||
-      this.Perfil.aplicacion == undefined
+      this.perfilNombreCtrl.value == "" ||
+      this.perfilAplicacionCtrl.value == undefined
     ) {
       this.utilservice.AlertMini(
         "top-end",
@@ -1228,9 +1266,9 @@ export class ProfileComponent implements OnInit {
     this.dataJerarquica = []
     this.xrol = ''
     this.Perfil.id = ''
-    this.Perfil.nombre = ''
-    this.Perfil.descripcion = ''
-    this.rol = ''
+    this.perfilNombreCtrl.setValue('')
+    this.perfilDescripcionCtrl.setValue('')
+    this.rolCtrl.setValue('')
     this.selRol(this.aplicacion.id)
 
     this.listarPerfiles()

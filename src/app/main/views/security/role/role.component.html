@@ -1,290 +1,299 @@
 <div class="content-wrapper container-xxl p-0">
-    <div class="content-body">
-        <!-- Fondo Animado -->
-        <div class="background-shapes">
-            <div class="shape shape1"></div>
-            <div class="shape shape2"></div>
-            <div class="shape shape3"></div>
-        </div>
+  <div class="content-body">
+    <!-- Fondo Animado -->
+    <div class="background-shapes">
+      <div class="shape shape1"></div>
+      <div class="shape shape2"></div>
+      <div class="shape shape3"></div>
+    </div>
 
-        <!-- content-header component -->
-        <app-content-header [contentHeader]="contentHeader"></app-content-header>
+    <!-- content-header component -->
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
 
-        <!-- Invoice List -->
-        <!-- La clase 'position-relative' es necesaria para que el fondo animado no se superponga -->
-        <section class="invoice-list-wrapper position-relative">
-            <div class="card">
+    <!-- Invoice List -->
+    <!-- La clase 'position-relative' es necesaria para que el fondo animado no se superponga -->
+    <section class="invoice-list-wrapper position-relative">
+      <div class="card">
 
-                <div class="col-md-12 ">
+        <div class="col-md-12 ">
+          <br>
+            <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
+              class="nav-tabs justify-content-center">
+              <li [ngbNavItem]="1">
+                <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'list'" class="mr-1"></span><span class="font-weight-bold">Listado de Roles</span></a>
+                <ng-template ngbNavContent>
+
+
+
+                  <div class="col-md-12">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                      <div class="d-flex align-items-center">
+                        <span class="mr-50">Mostrar</span>
+                        <select class="form-control form-control-sm" [formControl]="basicSelectedOptionCtrl"
+                          style="width: 80px;">
+                          <option [value]="10">10</option>
+                          <option [value]="25">25</option>
+                          <option [value]="50">50</option>
+                          <option [value]="100">100</option>
+                        </select>
+                        <span class="ml-50 text-muted small">roles</span>
+                      </div>
+                      <div class="d-flex align-items-center" style="min-width: 280px;">
+                        <div class="premium-search-box w-100">
+                          <span class="mr-1" [data-feather]="'search'" [size]="18" style="color: #b9b9c3;"></span>
+                          <input type="text" class="form-control form-control-sm border-0 bg-transparent"
+                            placeholder="Filtrar por rol, aplicación..."
+                            (keyup)="filterUpdate($event)">
+                        </div>
+                      </div>
+                    </div>
+
+                    <ngx-datatable [rows]="lstRoles" [rowHeight]="58" class="bootstrap core-bootstrap"
+                      [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50"
+                      [scrollbarH]="true" [limit]="basicSelectedOption" [count]="lstRoles.length" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+
+                      <ngx-datatable-column name="DESCRIPCION" prop="observacion" [width]="20">
+                        <ng-template let-observacion="value" let-row="row" ngx-datatable-cell-template>
+                          <div class="d-flex align-items-center">
+                            <span [data-feather]="'box'" [size]="18" class="text-primary mr-1"></span>
+                            <span class="font-weight-bold">{{ observacion }} </span>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+
+                      <ngx-datatable-column name="ROL" prop="rol" [width]="10">
+                        <ng-template let-rol="value" let-row="row" ngx-datatable-cell-template>
+                          <div class="d-flex align-items-center">
+                            <span [data-feather]="'shield'" [size]="16" class="text-info mr-1"></span>
+                            <span class="font-weight-bold">{{ rol}} </span>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+
+                      <ngx-datatable-column name="APLICACION" prop="app" [width]="10">
+                        <ng-template let-app="value" ngx-datatable-cell-template>
+                          <div class="d-flex align-items-center">
+                            <span [data-feather]="'file-text'" [size]="18" class="text-primary mr-1"></span>
+
+                            <span class="font-weight-bold">{{ app }} </span>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+
+
+                      <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
+                        <ng-template let-estatus="value" ngx-datatable-cell-template>
+                          @if (estatus==1) {
+                            <div class="badge badge-pill badge-light-success">Activo</div>
+                          }
+                          @if (estatus != 1) {
+                            <div class="badge badge-pill badge-light-danger">Inactivo</div>
+                          }
+                        </ng-template>
+                      </ngx-datatable-column>
+
+                      <!-- Custom Footer to ensure pager visibility -->
+                      <ngx-datatable-footer>
+                        <ng-template
+                          ngx-datatable-footer-template
+                          let-rowCount="rowCount"
+                          let-pageSize="pageSize"
+                          let-selectedCount="selectedCount"
+                          let-curPage="curPage"
+                          let-offset="offset">
+                          <div class="p-1 d-flex justify-content-between align-items-center w-100">
+                            <div class="text-muted small">
+                              Total: <strong>{{ rowCount }}</strong> roles
+                            </div>
+                            <ngb-pagination
+                              [collectionSize]="rowCount"
+                              [(page)]="page"
+                              [pageSize]="pageSize"
+                              [maxSize]="5"
+                              [rotate]="true"
+
+
+                              (pageChange)="table.offset = $event - 1"
+                              class="pagination-sm mb-0">
+                              <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+                            </ngb-pagination>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-footer>
+
+                    </ngx-datatable>
+
+
+                  </div>
+
+                </ng-template>
+              </li>
+              <li [ngbNavItem]="2" style="display: none;">
+                <a ngbNavLink><span [data-feather]="'git-merge'"></span>{{registrar}}</a>
+                <ng-template ngbNavContent>
+
+                  <div class="col-md-12" style="margin-top: 25px;">
+
+                    <!-- Primer -->
+                    <div class="row">
+
+
+                      @if (blApp) {
+                        <div class="form-group col-md-12">
+                          <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
+                          <ng-select [items]="lstAplicaciones" [formControl]="aplicacionCtrl" bindLabel="name" bindValue="id"
+                          placeholder="Seleccione Aplicación"></ng-select>
+                        </div>
+                      }
+
+                      @if (!blApp) {
+                        <div class="form-group col-md-12">
+                          <label class="form-label">Aplicacion</label>
+                          <input style="font-size:14px;" [formControl]="xaplicacionCtrl" type="text"
+                            placeholder="Aplicacion" class="form-control" disabled="disabled">
+                        </div>
+                      }
+
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label">Nombre del Rol</label>
+                        <input style="font-size:14px;" [formControl]="rolNombreCtrl" type="text"
+                          placeholder="Ingrese Nombre del Rol" class="form-control">
+                      </div>
+
+                      <div class="form-group col-md-8">
+                        <label class="form-label" for="origen">Descripcion del Rol</label>
+                        <input style="font-size:14px;" [formControl]="rolDescripcionCtrl" type="text"
+                          placeholder="Breve descripcion del Rol" class="form-control">
+                      </div>
+
+
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="origen">Modulo</label>
+                        <select multiple class="form-control" style="height: 150px;"
+                          (dblclick)="selectEventModulo($event)" [formControl]="xmoduloCtrl">
+                          @for (e of dataModulo; track e) {
+                            <option value="{{e.id + '|' + e.name}}">
+                            {{e.name}}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="origen">Menu</label>
+                        <select multiple class="form-control" style="height: 150px;"
+                          (click)="this.bmenus = true" (dblclick)="listarAcciones()"
+                          [formControl]="menuCtrl">
+                          @for (e of datamenu; track e) {
+                            <option value="{{e.id + '|' + e.name}}">
+                            {{e.name}}</option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label" for="origen">Acciones</label>
+                        <select multiple class="form-control" style="height: 150px;"
+                          (dblclick)="addElement(xaccion)" [formControl]="xaccionCtrl">
+                          @for (e of rowDataAcc; track e) {
+                            <option
+                              value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}
+                            </option>
+                          }
+                        </select>
+                      </div>
+
+                      <div class="col-md-4"></div>
+                      <div class="form-group col-md-4" align="right">
+                        <button type="button" class="btn btn-primary" [disabled]="!bmenus"
+                          (click)="addMenuList()">
+                          <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar Menu
+                        </button>
+                      </div>
+                      <div class="col-md-4" align="right">
+                        <button type="button" [disabled]="!acciones" class="btn btn-primary">
+                          <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar
+                          Acciones
+                        </button>
+                      </div>
+                    </div>
                     <br>
-                    <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
-                        class="nav-tabs justify-content-center">
-                        <li [ngbNavItem]="1">
-                            <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'list'" class="mr-1"></span><span class="font-weight-bold">Listado de Roles</span></a>
-                            <ng-template ngbNavContent>
+                    </div>
+                    <div class="col-md-12">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>MODULO</th>
+                            <th>MENU</th>
+                            <th>ACCIONES</th>
+                            <tr>
+                            </thead>
+                            <tbody>
+                              @for (e of rowData; track e) {
+                                <tr>
+                                  <td>{{e.modulo}}</td>
+                                  <td>{{e.menu}}</td>
+                                  <td>{{e.accion}}</td>
+                                </tr>
+                              }
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                          </table>
 
-
-
-                                <div class="col-md-12">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <div class="d-flex align-items-center">
-                                            <span class="mr-50">Mostrar</span>
-                                            <select class="form-control form-control-sm" [(ngModel)]="basicSelectedOption"
-                                                style="width: 80px;">
-                                                <option [value]="10">10</option>
-                                                <option [value]="25">25</option>
-                                                <option [value]="50">50</option>
-                                                <option [value]="100">100</option>
-                                            </select>
-                                            <span class="ml-50 text-muted small">roles</span>
-                                        </div>
-                                        <div class="d-flex align-items-center" style="min-width: 280px;">
-                                            <div class="premium-search-box w-100">
-                                                <span class="mr-1" [data-feather]="'search'" [size]="18" style="color: #b9b9c3;"></span>
-                                                <input type="text" class="form-control form-control-sm border-0 bg-transparent"
-                                                    placeholder="Filtrar por rol, aplicación..."
-                                                    (keyup)="filterUpdate($event)">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <ngx-datatable [rows]="lstRoles" [rowHeight]="58" class="bootstrap core-bootstrap"
-                                        [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" 
-                                        [scrollbarH]="true" [limit]="basicSelectedOption" [count]="lstRoles.length" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
-
-                                        <ngx-datatable-column name="DESCRIPCION" prop="observacion" [width]="20">
-                                            <ng-template let-observacion="value" let-row="row" ngx-datatable-cell-template>
-                                                <div class="d-flex align-items-center">
-                                                    <span [data-feather]="'box'" [size]="18" class="text-primary mr-1"></span>
-                                                    <span class="font-weight-bold">{{ observacion }} </span>
-                                                </div>
-                                            </ng-template>
-                                        </ngx-datatable-column>
-
-                                        <ngx-datatable-column name="ROL" prop="rol" [width]="10">
-                                            <ng-template let-rol="value" let-row="row" ngx-datatable-cell-template>
-                                                <div class="d-flex align-items-center">
-                                                    <span [data-feather]="'shield'" [size]="16" class="text-info mr-1"></span>
-                                                    <span class="font-weight-bold">{{ rol}} </span>
-                                                </div>
-                                            </ng-template>
-                                        </ngx-datatable-column>
-
-                                        <ngx-datatable-column name="APLICACION" prop="app" [width]="10">
-                                            <ng-template let-app="value" ngx-datatable-cell-template>
-                                                <div class="d-flex align-items-center">
-                                                    <span [data-feather]="'file-text'" [size]="18" class="text-primary mr-1"></span>
-                                                    
-                                                    <span class="font-weight-bold">{{ app }} </span>
-                                                </div>
-                                            </ng-template>
-                                        </ngx-datatable-column>
-                                       
-
-                                        <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
-                                            <ng-template let-estatus="value" ngx-datatable-cell-template>
-                                                <div class="badge badge-pill badge-light-success" *ngIf="estatus==1">Activo</div>
-                                                <div class="badge badge-pill badge-light-danger" *ngIf="estatus != 1">Inactivo</div>
-                                            </ng-template>
-                                        </ngx-datatable-column>
-
-                                        <!-- Custom Footer to ensure pager visibility -->
-                                        <ngx-datatable-footer>
-                                            <ng-template 
-                                              ngx-datatable-footer-template 
-                                              let-rowCount="rowCount" 
-                                              let-pageSize="pageSize" 
-                                              let-selectedCount="selectedCount" 
-                                              let-curPage="curPage" 
-                                              let-offset="offset">
-                                              <div class="p-1 d-flex justify-content-between align-items-center w-100">
-                                                <div class="text-muted small">
-                                                  Total: <strong>{{ rowCount }}</strong> roles
-                                                </div>
-                                                <ngb-pagination 
-                                                  [collectionSize]="rowCount" 
-                                                  [(page)]="page" 
-                                                  [pageSize]="pageSize"
-                                                  [maxSize]="5" 
-                                                  [rotate]="true" 
-                                                  
-                                                 
-                                                  (pageChange)="table.offset = $event - 1"
-                                                  class="pagination-sm mb-0">
-                                                  <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
-                                                </ngb-pagination>
-                                              </div>
-                                            </ng-template>
-                                          </ngx-datatable-footer>
-
-                                    </ngx-datatable>
-
-
-                                </div>
-
-                            </ng-template>
-                        </li>
-                        <li [ngbNavItem]="2" style="display: none;">
-                            <a ngbNavLink><span [data-feather]="'git-merge'"></span>{{registrar}}</a>
-                            <ng-template ngbNavContent>
-
-                                <div class="col-md-12" style="margin-top: 25px;">
-
-                                    <!-- Primer -->
-                                    <div class="row">
-
-
-                                        <div class="form-group col-md-12" *ngIf="blApp">
-                                            <label class="form-label" for="descripcion">Seleccionar Aplicación</label>
-                                            <ng-select [items]="lstAplicaciones" [(ngModel)]="aplicacion"
-                                                [ngModelOptions]="{standalone: true}" bindLabel="name"
-                                                (ngModelChange)="selModulo($event)" bindLabel="name" bindValue="id"
-                                                placeholder="Seleccione Aplicación"></ng-select>
-                                        </div>
-
-                                        <div class="form-group col-md-12" *ngIf="!blApp">
-                                            <label class="form-label">Aplicacion</label>
-                                            <input style="font-size:14px;" [(ngModel)]="xaplicacion"
-                                                [ngModelOptions]="{standalone: true}" type="text"
-                                                placeholder="Aplicacion" class="form-control" disabled="disabled">
-                                        </div>
-
-
-                                        <div class="form-group col-md-4">
-                                            <label class="form-label">Nombre del Rol</label>
-                                            <input style="font-size:14px;" [(ngModel)]="Rol.nombre"
-                                                [ngModelOptions]="{standalone: true}" type="text"
-                                                placeholder="Ingrese Nombre del Rol" class="form-control">
-                                        </div>
-
-                                        <div class="form-group col-md-8">
-                                            <label class="form-label" for="origen">Descripcion del Rol</label>
-                                            <input style="font-size:14px;" [(ngModel)]="Rol.descripcion"
-                                                [ngModelOptions]="{standalone: true}" type="text"
-                                                placeholder="Breve descripcion del Rol" class="form-control">
-                                        </div>
-
-
-
-                                        <div class="form-group col-md-4">
-                                            <label class="form-label" for="origen">Modulo</label>
-                                            <select multiple class="form-control" style="height: 150px;"
-                                                (dblclick)="selectEventModulo($event)" [(ngModel)]="xmodulo"
-                                                [ngModelOptions]="{standalone: true}">
-                                                <option *ngFor="let e of dataModulo" value="{{e.id + '|' + e.name}}">
-                                                    {{e.name}}</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group col-md-4">
-                                            <label class="form-label" for="origen">Menu</label>
-                                            <select multiple class="form-control" style="height: 150px;"
-                                                (click)="this.bmenus = true" (dblclick)="listarAcciones()"
-                                                [(ngModel)]="menu" [ngModelOptions]="{standalone: true}">
-                                                <option *ngFor="let e of datamenu" value="{{e.id + '|' + e.name}}">
-                                                    {{e.name}}</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="form-group col-md-4">
-                                            <label class="form-label" for="origen">Acciones</label>
-                                            <select multiple class="form-control" style="height: 150px;"
-                                                (dblclick)="addElement(xaccion)" [(ngModel)]="xaccion"
-                                                [ngModelOptions]="{standalone: true}">
-                                                <option *ngFor="let e of rowDataAcc"
-                                                    value="{{e.accid + '|' + e.accnomb}}">{{e.accnomb}}
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-4"></div>
-                                        <div class="form-group col-md-4" align="right">
-                                            <button type="button" class="btn btn-primary" [disabled]="!bmenus"
-                                                (click)="addMenuList()">
-                                                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar Menu
-                                            </button>
-                                        </div>
-                                        <div class="col-md-4" align="right">
-                                            <button type="button" [disabled]="!acciones" class="btn btn-primary">
-                                                <i class="fa fa-arrow-down" aria-hidden="true"></i>&nbsp;Agregar
-                                                Acciones
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <br>
-                                </div>
-                                <div class="col-md-12">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>MODULO</th>
-                                                <th>MENU</th>
-                                                <th>ACCIONES</th>
-                                            <tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr *ngFor="let e of rowData">
-                                                <td>{{e.modulo}}</td>
-                                                <td>{{e.menu}}</td>
-                                                <td>{{e.accion}}</td>
-                                            </tr>
-                                        </tbody>
-                                        <tfoot>
-                                        </tfoot>
-                                    </table>
-
-                                </div>
-                                <div class="col-md-12" align="right">
-                                    <br>
-                                    <button type="button" class="btn btn-success" (click)="guardarRol()">
-                                        <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
-                                    </button>
-                                    &nbsp;&nbsp;
-                                    <button type="button" class="btn btn-warning" (click)="Limpiar()">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
-                                    </button>
-                                </div>
-                                <br><br>
-                            </ng-template>
-                        </li>
+                        </div>
+                        <div class="col-md-12" align="right">
+                          <br>
+                            <button type="button" class="btn btn-success" (click)="guardarRol()">
+                              <i class="fa fa-save" aria-hidden="true"></i>&nbsp;Agregar
+                            </button>
+                            &nbsp;&nbsp;
+                            <button type="button" class="btn btn-warning" (click)="Limpiar()">
+                              <i class="fa fa-trash" aria-hidden="true"></i>&nbsp;Limpiar
+                            </button>
+                          </div>
+                          <br><br>
+                        </ng-template>
+                      </li>
                     </ul>
                     <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+                  </div>
+
+
+
                 </div>
 
-
+              </section>
 
             </div>
+          </div>
 
-        </section>
+          <!-- Estilos para la animación y el diseño -->
+          <style>
+            .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none; /* Asegura que no interfiera con los clics */
+          }
+          .shape {
+          position: absolute;
+          border-radius: 50%;
+          background: rgba(115, 103, 240, 0.05); /* Color principal del tema, muy suave */
+          animation: float 20s infinite linear;
+        }
+        .shape1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
+        .shape2 { width: 150px; height: 150px; top: 60%; left: 85%; animation-duration: 18s; }
+        .shape3 { width: 100px; height: 100px; top: 75%; left: 15%; animation-duration: 22s; }
 
-    </div>
-</div>
-
-<!-- Estilos para la animación y el diseño -->
-<style>
-  .background-shapes {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none; /* Asegura que no interfiera con los clics */
-  }
-  .shape {
-    position: absolute;
-    border-radius: 50%;
-    background: rgba(115, 103, 240, 0.05); /* Color principal del tema, muy suave */
-    animation: float 20s infinite linear;
-  }
-  .shape1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
-  .shape2 { width: 150px; height: 150px; top: 60%; left: 85%; animation-duration: 18s; }
-  .shape3 { width: 100px; height: 100px; top: 75%; left: 15%; animation-duration: 22s; }
-
-  @keyframes float {
-    0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
-    50% { transform: translateY(-25px) translateX(15px) rotate(180deg); }
-    100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
-  }
-</style>
+        @keyframes float {
+        0% { transform: translateY(0px) translateX(0px) rotate(0deg); }
+        50% { transform: translateY(-25px) translateX(15px) rotate(180deg); }
+        100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
+      }
+    </style>

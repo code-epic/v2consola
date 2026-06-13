@@ -1,5 +1,8 @@
-import { Component, OnInit, ViewEncapsulation, HostListener, AfterViewInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, HostListener, AfterViewInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '@services/apicore/api.service';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 import * as feather from 'feather-icons';
 
 export interface Client {
@@ -26,35 +29,56 @@ export interface NetworkMessage {
     templateUrl: './monitoreo.component.html',
     styleUrls: ['./monitoreo.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, ContentHeaderComponent]
 })
 export class MonitoreoComponent implements OnInit, AfterViewInit {
 
     public contentHeader: object;
-    public isDetailedView = false;
-    public clients: Client[] = [];
-    public webClients: Client[] = [];
-    public physicalClients: Client[] = [];
+
+    private _isDetailedView = signal(false);
+    get isDetailedView() { return this._isDetailedView(); }
+
+    private _clients = signal<Client[]>([]);
+    get clients() { return this._clients(); }
+
+    private _webClients = signal<Client[]>([]);
+    get webClients() { return this._webClients(); }
+
+    private _physicalClients = signal<Client[]>([]);
+    get physicalClients() { return this._physicalClients(); }
 
     // Links for SVG rendering (Center to Node)
-    public graphLinks: { x1: number, y1: number, x2: number, y2: number, status: string, delay: number }[] = [];
+    private _graphLinks = signal<{ x1: number, y1: number, x2: number, y2: number, status: string, delay: number }[]>([]);
+    get graphLinks() { return this._graphLinks(); }
 
     public selectedClient: Client | null = null;
     public contextMenuVisible = false;
     public contextMenuPosition = { x: 0, y: 0 };
     public messageModalVisible = false;
-    public messageText = '';
+    messageTextCtrl = new FormControl('');
 
     // Stats for HUD
-    public stats = {
+    private _stats = signal({
         total: 0,
         web: 0,
         physical: 0,
         online: 0,
         offline: 0
-    };
+    });
+    get stats() { return this._stats(); }
 
-    constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) { }
+    private _certificates = signal<any[]>([]);
+    get certificates() { return this._certificates(); }
+
+    private _loadingCerts = signal(false);
+    get loadingCerts() { return this._loadingCerts(); }
+
+    private _selectedFormat = signal<string>('pem');
+    get selectedFormat() { return this._selectedFormat(); }
+    set selectedFormat(v: string) { this._selectedFormat.set(v); }
+
+    constructor(private apiService: ApiService) { }
 
     ngOnInit(): void {
         this.contentHeader = {
@@ -71,6 +95,7 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
         };
 
         this.loadMockData();
+        this.loadCertificates();
     }
 
     ngAfterViewInit() {
@@ -117,19 +142,19 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
     }
 
     processData(data: NetworkMessage) {
-        this.clients = data.message.map(client => ({
+        const clients: Client[] = data.message.map(client => ({
             ...client,
-            type: client.mac_address.includes('WEB') || client.type === 'web' ? 'web' : 'physical'
+            type: (client.mac_address.includes('WEB') || client.type === 'web' ? 'web' : 'physical') as 'web' | 'physical'
         }));
 
-        this.webClients = this.clients.filter(c => c.type === 'web');
-        this.physicalClients = this.clients.filter(c => c.type === 'physical');
+        const webClients = clients.filter(c => c.type === 'web');
+        const physicalClients = clients.filter(c => c.type === 'physical');
 
         // Adaptive View Logic
-        this.isDetailedView = this.clients.length < 20;
+        const isDetailedView = clients.length < 20;
 
         // Prepare Graph Links (Center (50,50) to Client(x,y))
-        this.graphLinks = this.clients.map(c => ({
+        const graphLinks = clients.map(c => ({
             x1: 50, // Center X
             y1: 50, // Center Y
             x2: c.x!,
@@ -139,15 +164,21 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
         }));
 
         // Calculate Stats
-        this.stats = {
-            total: this.clients.length,
-            web: this.webClients.length,
-            physical: this.physicalClients.length,
-            online: this.clients.filter(c => c.status === 'online').length,
-            offline: this.clients.filter(c => c.status === 'offline').length
+        const stats = {
+            total: clients.length,
+            web: webClients.length,
+            physical: physicalClients.length,
+            online: clients.filter(c => c.status === 'online').length,
+            offline: clients.filter(c => c.status === 'offline').length
         };
 
-        this.cdr.detectChanges();
+        this._clients.set(clients);
+        this._webClients.set(webClients);
+        this._physicalClients.set(physicalClients);
+        this._isDetailedView.set(isDetailedView);
+        this._graphLinks.set(graphLinks);
+        this._stats.set(stats);
+
         setTimeout(() => feather.replace(), 100);
     }
 
@@ -180,7 +211,7 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
 
     openMessageModal(client: Client) {
         this.selectedClient = client;
-        this.messageText = '';
+        this.messageTextCtrl.setValue('');
         this.messageModalVisible = true;
     }
 
@@ -189,7 +220,7 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
     }
 
     sendActualMessage() {
-        console.log(`Sending message to ${this.selectedClient?.name}: ${this.messageText}`);
+        console.log(`Sending message to ${this.selectedClient?.name}: ${this.messageTextCtrl.value}`);
         // WebSocket logic here
         this.closeMessageModal();
     }
@@ -201,5 +232,43 @@ export class MonitoreoComponent implements OnInit, AfterViewInit {
 
     viewDetails() {
         console.log('Viewing details for:', this.selectedClient);
+    }
+
+    loadCertificates() {
+        this._loadingCerts.set(true);
+        this.apiService.ListCertificates(false).subscribe({
+            next: (data) => {
+                this._certificates.set(Array.isArray(data) ? data : []);
+                this._loadingCerts.set(false);
+                setTimeout(() => feather.replace(), 100);
+            },
+            error: () => this._loadingCerts.set(false)
+        });
+    }
+
+    downloadCertificate(cert: any) {
+        const fmt = this._selectedFormat();
+        this.apiService.DownloadCertificate(cert.path, fmt).subscribe({
+            next: (blob: Blob) => {
+                const ext = fmt === 'p12' || fmt === 'pfx' || fmt === 'pkcs12' ? 'p12'
+                    : fmt === 'p7b' || fmt === 'pkcs7' ? 'p7b' : fmt;
+                const filename = cert.name.replace(/\.[^.]+$/, '') + '.' + ext;
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            },
+            error: (err) => console.error('Error descargando certificado:', err)
+        });
+    }
+
+    formatSize(bytes: number): string {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+        return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
     }
 }

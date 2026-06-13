@@ -10,8 +10,6 @@ import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
 
 import { CoreCommonModule } from '@core/common.module';
 
-import { ContentHeaderModule } from 'app/layout/components/content-header/content-header.module';
-
 // GitHub Services
 import { GitHubIssuesService } from '@services/github/github-issues.service';
 import { ApplicationsService } from '@services/github/applications.service';
@@ -29,14 +27,11 @@ const routes = [
 ];
 
 @NgModule({
-  declarations: [
-    IssuesComponent
-  ],
   imports: [
+    IssuesComponent,
     RouterModule.forChild(routes), 
     CommonModule, 
     FormsModule,
-    ContentHeaderModule, 
     TranslateModule, 
     CoreCommonModule,
     NgSelectModule,

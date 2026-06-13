@@ -1,7 +1,7 @@
+
 import {
   Component,
   Inject,
-  ChangeDetectorRef,
   ElementRef,
   EventEmitter,
   HostBinding,
@@ -12,6 +12,7 @@ import {
   Output,
   Renderer2,
   ViewEncapsulation,
+  signal,
   DOCUMENT
 } from '@angular/core';
 import { animate, AnimationBuilder, AnimationPlayer, style } from '@angular/animations';
@@ -31,7 +32,8 @@ import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.s
     selector: 'core-sidebar',
     templateUrl: './core-sidebar.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: []
 })
 export class CoreSidebarComponent implements OnInit, OnDestroy {
   // Sidebar name (Component input)
@@ -43,18 +45,18 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
   overlayClass: string;
 
   // Sidebar Opened
-  isOpened: boolean;
+  get isOpened(): boolean { return this._isOpened(); }
 
   // Collapsible sidebar (Component input)
   @Input()
   collapsibleSidebar: string;
 
   // iscollapsibleSidebar
-  iscollapsibleSidebar: boolean;
+  get iscollapsibleSidebar(): boolean { return this._iscollapsibleSidebar(); }
 
   // Collapsible Sidebar expanded
   @HostBinding('class.expanded')
-  expanded: boolean;
+  get expanded(): boolean { return this._expanded(); }
 
   // Collapsed changed event
   @Output()
@@ -68,7 +70,7 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
   @Input()
   overlayVisibility: boolean;
 
-  // Hide sidebar on esc key press
+  // Hide sidebar on esc key push
   @Input()
   hideOnEsc: boolean;
 
@@ -79,18 +81,24 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
   }
 
   // Set menu class for current menu type
-  menuClass: string;
+  get menuClass(): string { return this._menuClass(); }
 
   rootElement: any;
 
   // Private
   private _coreConfig: any;
-  private _collapsed: boolean;
+  private _collapsed = signal<boolean>(false);
   private _wasCollapsible: boolean;
   private _wasCollapsed: boolean;
   private _animationPlayer: AnimationPlayer;
   private _overlay: HTMLElement | null = null;
   private _unsubscribeAll: Subject<any>;
+
+  // Signal-based state
+  private _isOpened = signal<boolean>(false);
+  private _expanded = signal<boolean>(false);
+  private _iscollapsibleSidebar = signal<boolean>(false);
+  private _menuClass = signal<string>('');
 
   /**
    * Constructor
@@ -99,7 +107,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
    * @param {Renderer2} _renderer
    * @param {ElementRef} _elementRef
    * @param {CoreConfigService} _coreConfigService
-   * @param {ChangeDetectorRef} _changeDetectorRef
    * @param {CoreMediaService} _coreMediaService
    * @param {CoreSidebarService} _coreSidebarService
    * @param {AnimationBuilder} _animationBuilder
@@ -110,14 +117,12 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     private _renderer: Renderer2,
     private _elementRef: ElementRef,
     private _coreConfigService: CoreConfigService,
-    private _changeDetectorRef: ChangeDetectorRef,
     private _coreMediaService: CoreMediaService,
     private _coreSidebarService: CoreSidebarService,
     private _animationBuilder: AnimationBuilder,
     private _breakpointObserver: BreakpointObserver
   ) {
     // Set Defaults
-    this.isOpened = false;
     this.overlayVisibility = true;
     this.hideOnEsc = false;
 
@@ -129,7 +134,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     this.openedChangedEvent = new EventEmitter();
 
     // Set Private Defaults
-    this._collapsed = false;
     this._unsubscribeAll = new Subject();
   }
 
@@ -144,7 +148,7 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
   @Input()
   set collapsed(value: boolean) {
     // Set the collapsed value
-    this._collapsed = value;
+    this._collapsed.set(value);
 
     // If the sidebar is closed, return
     if (!this.isOpened) {
@@ -176,7 +180,7 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
   }
 
   get collapsed(): boolean {
-    return this._collapsed;
+    return this._collapsed();
   }
 
   // Lifecycle Hooks
@@ -190,9 +194,9 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this._coreConfig = config;
       if (config.layout.type == 'vertical') {
-        this.menuClass = 'vertical-menu-modern';
+        this._menuClass.set('vertical-menu-modern');
       } else {
-        this.menuClass = 'horizontal-menu';
+        this._menuClass.set('horizontal-menu');
       }
     });
 
@@ -265,12 +269,12 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
       // If isCollapsible is true, use collapsible sidebar
       if (isCollapsible) {
         // Set the collapsibleSidebar status
-        this.iscollapsibleSidebar = true;
+        this._iscollapsibleSidebar.set(true);
 
         // Set the the opened status to true
-        this.isOpened = true;
+        this._isOpened.set(true);
 
-        this.expanded = true; // Adde expanded class init
+        this._expanded.set(true); // Adde expanded class init
 
         // Emit the 'openedChangedEvent' event
         this.openedChangedEvent.emit(this.isOpened);
@@ -280,9 +284,7 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
           // Collapse
           this.collapsed = true;
 
-          this.expanded = false; // Remove expanded class
-          // Change detector
-          this._changeDetectorRef.markForCheck();
+          this._expanded.set(false); // Remove expanded class
         }
 
         // If sidebar is collapsible, switch to collapsible menu (modern-menu)
@@ -297,13 +299,13 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
       // Else use overlay sidebar
       else {
         // Set the collapsibleSidebar status
-        this.iscollapsibleSidebar = false;
+        this._iscollapsibleSidebar.set(false);
 
         // Expanded the sidebar in case if it was collapsed
         this.expand();
 
         // Force the the opened status to close
-        this.isOpened = false;
+        this._isOpened.set(false);
 
         // Emit the 'openedChangedEvent' event
         this.openedChangedEvent.emit(this.isOpened);
@@ -374,8 +376,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     this._overlay.addEventListener('click', () => {
       this.close();
     });
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -406,8 +406,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
         this._overlay = null;
       }
     });
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -430,9 +428,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
         this.rootElement.classList.add('modal-open');
       }
     }
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -456,9 +451,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
         this.rootElement.classList.remove('modal-open');
       }
     }
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   // Public Methods
@@ -476,11 +468,8 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     }
 
     // Collapse the sidebar back
-    this.expanded = false;
+    this._expanded.set(false);
     this.collapsed = true; // Set the menu collapsed while collapsed temp.
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -493,11 +482,8 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     }
 
     // Expanded the sidebar temporarily
-    this.expanded = true;
+    this._expanded.set(true);
     this.collapsed = true; // Set the menu collapsed while collapsed temp.
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -529,9 +515,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
 
     // Set collapse true
     this.collapsed = true;
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -545,9 +528,6 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
 
     // Set collapse false (expanded)
     this.collapsed = false;
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -579,13 +559,10 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     this._showOverlay();
 
     // Set the sidebar opened status
-    this.isOpened = true;
+    this._isOpened.set(true);
 
     // Emit the 'openedChangedEvent' event
     this.openedChangedEvent.emit(this.isOpened);
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**
@@ -601,16 +578,13 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
     this._hideOverlay();
 
     // Set the opened status
-    this.isOpened = false;
+    this._isOpened.set(false);
 
     // Emit the 'openedChangedEvent' event
     this.openedChangedEvent.emit(this.isOpened);
 
     // Hide overlay menu
     this._hideSidebar();
-
-    // Change detector
-    this._changeDetectorRef.markForCheck();
   }
 
   /**

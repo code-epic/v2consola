@@ -1,203 +1,225 @@
 <div class="content-wrapper container-xxl p-0">
-    <div class="chatroom-container">
+  <div class="chatroom-container">
 
-        <!-- Barra Lateral: Usuarios y Canales -->
-        <aside class="chat-sidebar">
-            <div class="sidebar-header">
-                <h2>
-                    <i data-feather="users"></i>
-                    {{ currentUserName | uppercase }}
-                    <span class="status-pill">EN VIVO</span>
-                </h2>
+    <!-- Barra Lateral: Usuarios y Canales -->
+    <aside class="chat-sidebar">
+      <div class="sidebar-header">
+        <h2>
+          <i data-feather="users"></i>
+          {{ currentUserName | uppercase }}
+          <span class="status-pill">EN VIVO</span>
+        </h2>
+      </div>
+
+      <div class="sidebar-content">
+        <div class="section-title">Conexiones Activas</div>
+        <ul class="user-list">
+          @for (user of users; track user) {
+            <li class="user-item"
+              [class.active]="activeUser && user.id === activeUser.id" (click)="selectUser(user)">
+              <div class="avatar-wrapper">
+                <div class="avatar-initials">
+                  {{ user.name.charAt(0) }}
+                </div>
+                <span class="status-indicator" [class.online]="user.status === 'online'"
+                [class.busy]="user.status === 'busy'"></span>
+              </div>
+              <div class="user-info">
+                <div class="user-name">{{ user.name }}</div>
+                <div class="user-status">{{ user.mac_address }}</div>
+              </div>
+            </li>
+          }
+        </ul>
+
+        <div class="section-title">Grupos Comunes</div>
+        <ul class="user-list">
+          <li class="user-item">
+            <div class="avatar-wrapper">
+              <div class="avatar-group-icon">
+                #
+              </div>
             </div>
-
-            <div class="sidebar-content">
-                <div class="section-title">Conexiones Activas</div>
-                <ul class="user-list">
-                    <li *ngFor="let user of users" class="user-item"
-                        [class.active]="activeUser && user.id === activeUser.id" (click)="selectUser(user)">
-                        <div class="avatar-wrapper">
-                            <div class="avatar-initials">
-                                {{ user.name.charAt(0) }}
-                            </div>
-                            <span class="status-indicator" [class.online]="user.status === 'online'"
-                                [class.busy]="user.status === 'busy'"></span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-name">{{ user.name }}</div>
-                            <div class="user-status">{{ user.mac_address }}</div>
-                        </div>
-                    </li>
-                </ul>
-
-                <div class="section-title">Grupos Comunes</div>
-                <ul class="user-list">
-                    <li class="user-item">
-                        <div class="avatar-wrapper">
-                            <div class="avatar-group-icon">
-                                #
-                            </div>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-name">Consola_Principal</div>
-                            <div class="user-status">Canal de Difusión</div>
-                        </div>
-                    </li>
-                </ul>
+            <div class="user-info">
+              <div class="user-name">Consola_Principal</div>
+              <div class="user-status">Canal de Difusión</div>
             </div>
-        </aside>
+          </li>
+        </ul>
+      </div>
+    </aside>
 
-        <!-- Área Principal de Chat -->
-        <main class="chat-main">
-            <header class="chat-header">
-                <div class="active-user-info" *ngIf="activeUser">
-                    <h3>sandra-app://{{ activeUser.name }}</h3>
-                    <span class="encryption-status" *ngIf="encryptionActive">
-                        {{ activeUser.id }}
-                    </span>
+    <!-- Área Principal de Chat -->
+    <main class="chat-main">
+      <header class="chat-header">
+        @if (activeUser) {
+          <div class="active-user-info">
+            <h3>sandra-app://{{ activeUser.name }}</h3>
+            @if (encryptionActive) {
+              <span class="encryption-status">
+                {{ activeUser.id }}
+              </span>
+            }
+          </div>
+        }
+        <div class="header-actions">
+          <button title="Ver Protocolos" (click)="showTools = !showTools">
+            <i [data-feather]="showTools ? 'sidebar' : 'layout'" [inner]="true"></i>
+          </button>
+          <button title="Limpiar Búfer" (click)="messages = []"><i data-feather="trash-2"></i></button>
+          <button title="Análisis Detallado"><i data-feather="info"></i></button>
+        </div>
+      </header>
+
+      <!-- Contenedor Mensajes -->
+      <section class="chat-messages" #scrollMe>
+        @for (msg of messages; track msg) {
+          <div class="message-wrapper" [class.sent]="msg.type === 'sent'"
+            [class.received]="msg.type === 'received'">
+            <div class="message-content" [class.console-type]="!msg.fileInfo">
+              <!-- Texto normal -->
+              @if (!msg.fileInfo) {
+                <span class="typewriter-text">
+                  {{ msg.displayedText || msg.text }}@if (msg.displayedText && msg.displayedText.length < msg.text.length) {
+                  <span class="typing-cursor"
+                  ></span>
+                }
+              </span>
+            }
+            <!-- Tarjeta de Archivo Elegante -->
+            @if (msg.fileInfo) {
+              <div class="file-card">
+                <div class="file-icon-container">
+                  <i [data-feather]="msg.fileInfo.icon" [inner]="true"></i>
+                  <span class="file-badge">{{ msg.fileInfo.extension }}</span>
                 </div>
-                <div class="header-actions">
-                    <button title="Ver Protocolos" (click)="showTools = !showTools">
-                        <i [data-feather]="showTools ? 'sidebar' : 'layout'" [inner]="true"></i>
-                    </button>
-                    <button title="Limpiar Búfer" (click)="messages = []"><i data-feather="trash-2"></i></button>
-                    <button title="Análisis Detallado"><i data-feather="info"></i></button>
+                <div class="file-details">
+                  <div class="file-name">{{ msg.fileInfo.name }}</div>
+                  <div class="file-meta">
+                    <span class="file-size">{{ msg.fileInfo.size }}</span>
+                    <span class="file-action">Listo para descargar</span>
+                  </div>
                 </div>
-            </header>
-
-            <!-- Contenedor Mensajes -->
-            <section class="chat-messages" #scrollMe>
-                <div *ngFor="let msg of messages" class="message-wrapper" [class.sent]="msg.type === 'sent'"
-                    [class.received]="msg.type === 'received'">
-                    <div class="message-content" [class.console-type]="!msg.fileInfo">
-                        <!-- Texto normal -->
-                        <span *ngIf="!msg.fileInfo" class="typewriter-text">
-                            {{ msg.displayedText || msg.text }}<span class="typing-cursor"
-                                *ngIf="msg.displayedText && msg.displayedText.length < msg.text.length"></span>
-                        </span>
-
-                        <!-- Tarjeta de Archivo Elegante -->
-                        <div *ngIf="msg.fileInfo" class="file-card">
-                            <div class="file-icon-container">
-                                <i [data-feather]="msg.fileInfo.icon" [inner]="true"></i>
-                                <span class="file-badge">{{ msg.fileInfo.extension }}</span>
-                            </div>
-                            <div class="file-details">
-                                <div class="file-name">{{ msg.fileInfo.name }}</div>
-                                <div class="file-meta">
-                                    <span class="file-size">{{ msg.fileInfo.size }}</span>
-                                    <span class="file-action">Listo para descargar</span>
-                                </div>
-                            </div>
-                            <div class="file-download-action">
-                                <i data-feather="download"></i>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="message-meta">
-                        <span>{{ msg.timestamp | date:'HH:mm:ss' }}</span>
-                        <span *ngIf="msg.status">[{{ msg.status }}]</span>
-
-                        <!-- Indicador de estado de envío para mensajes del Admin (Usando SVG directo para evitar duplicación) -->
-                        <span class="delivery-status" *ngIf="msg.type === 'sent'">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" 
-                                stroke-linecap="round" stroke-linejoin="round" class="status-icon"
-                                [class.accepted]="msg.isAccepted">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                            <svg *ngIf="msg.isAccepted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" 
-                                stroke-linecap="round" stroke-linejoin="round" class="status-icon second-check accepted">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
-                        </span>
-                    </div>
+                <div class="file-download-action">
+                  <i data-feather="download"></i>
                 </div>
-            </section>
+              </div>
+            }
+          </div>
+          <div class="message-meta">
+            <span>{{ msg.timestamp | date:'HH:mm:ss' }}</span>
+            @if (msg.status) {
+              <span>[{{ msg.status }}]</span>
+            }
+            <!-- Indicador de estado de envío para mensajes del Admin (Usando SVG directo para evitar duplicación) -->
+            @if (msg.type === 'sent') {
+              <span class="delivery-status">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round" class="status-icon"
+                  [class.accepted]="msg.isAccepted">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                @if (msg.isAccepted) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                    stroke-linecap="round" stroke-linejoin="round" class="status-icon second-check accepted">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+              </span>
+            }
+          </div>
+        </div>
+      }
+    </section>
 
-            <!-- Barra de progreso de subida -->
-            <div class="upload-progress-container" *ngIf="isUploading">
-                <div class="progress-info">
-                    <span>Subiendo documento cifrado...</span>
-                    <span>{{ uploadProgress }}%</span>
-                </div>
-                <div class="progress">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
-                        [style.width.%]="uploadProgress"></div>
-                </div>
-            </div>
+    <!-- Barra de progreso de subida -->
+    @if (isUploading) {
+      <div class="upload-progress-container">
+        <div class="progress-info">
+          <span>Subiendo documento cifrado...</span>
+          <span>{{ uploadProgress }}%</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar"
+          [style.width.%]="uploadProgress"></div>
+        </div>
+      </div>
+    }
 
-            <!-- Área de Entrada de Mensajes -->
-            <div class="chat-input-container">
-                <div class="input-wrapper">
-                    <!-- Input de archivo oculto -->
-                    <input type="file" #fileInput style="display: none" (change)="handleFileUpload($event)">
+    <!-- Área de Entrada de Mensajes -->
+    <div class="chat-input-container">
+      <div class="input-wrapper">
+        <!-- Input de archivo oculto -->
+        <input type="file" #fileInput style="display: none" (change)="handleFileUpload($event)">
 
-                    <input type="text" [(ngModel)]="newMessage" placeholder="Escriba un comando o mensaje..."
-                        (keyup.enter)="sendMessage()">
+        <input type="text" [formControl]="newMessageCtrl" placeholder="Escriba un comando o mensaje..."
+          (keyup.enter)="sendMessage()">
 
-                    <div class="action-icons">
-                        <span class="action-icon" (click)="onAttach()" title="Adjuntar Documento">
-                            <i data-feather="paperclip"></i>
-                        </span>
-                        <span class="action-icon" (click)="sendMessage()" title="Enviar (Enter)">
-                            <i data-feather="send"></i>
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- Panel de Herramientas y Configuración -->
-        <aside class="chat-tools" [class.collapsed]="!showTools">
-
-            <div class="tool-section">
-                <h4>Protocolos_de_Sistema</h4>
-                <div class="setting-item">
-                    <span>Historial Persistente</span>
-                    <label class="switch">
-                        <input type="checkbox" [(ngModel)]="saveHistory">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span>Cifrado_de_Capas</span>
-                    <label class="switch">
-                        <input type="checkbox" [(ngModel)]="encryptionActive">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <span>Análisis de Tráfico</span>
-                    <label class="switch">
-                        <input type="checkbox" [(ngModel)]="analyzeTraffic">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-            </div>
-
-            <div class="tool-section">
-                <h4>Módulos_de_Análisis_UI</h4>
-                <button class="btn btn-light-primary btn-block btn-sm mb-1 w-100">
-                    <i data-feather="activity" class="mr-50"></i> Capturador de Paquetes
-                </button>
-                <button class="btn btn-light-danger btn-block btn-sm mb-1 w-100">
-                    <i data-feather="shield-off" class="mr-50"></i> Bloquear Navegación
-                </button>
-                <button class="btn btn-light-info btn-block btn-sm mb-1 w-100">
-                    <i data-feather="download-cloud" class="mr-50"></i> Importar Tráfico PCAP
-                </button>
-            </div>
-
-            <div class="tool-section">
-                <h4>Alias_de_Comando</h4>
-                <div class="command-chips">
-                    <span *ngFor="let cmd of availableCommands" class="command-chip" (click)="newMessage = cmd + ' '">
-                        {{ cmd }}
-                    </span>
-                </div>
-            </div>
-
-        </aside>
-
+        <div class="action-icons">
+          <span class="action-icon" (click)="onAttach()" title="Adjuntar Documento">
+            <i data-feather="paperclip"></i>
+          </span>
+          <span class="action-icon" (click)="sendMessage()" title="Enviar (Enter)">
+            <i data-feather="send"></i>
+          </span>
+        </div>
+      </div>
     </div>
+  </main>
+
+  <!-- Panel de Herramientas y Configuración -->
+  <aside class="chat-tools" [class.collapsed]="!showTools">
+
+    <div class="tool-section">
+      <h4>Protocolos_de_Sistema</h4>
+      <div class="setting-item">
+        <span>Historial Persistente</span>
+        <label class="switch">
+          <input type="checkbox" [formControl]="saveHistoryCtrl">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-item">
+        <span>Cifrado_de_Capas</span>
+        <label class="switch">
+          <input type="checkbox" [formControl]="encryptionActiveCtrl">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting-item">
+        <span>Análisis de Tráfico</span>
+        <label class="switch">
+          <input type="checkbox" [formControl]="analyzeTrafficCtrl">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="tool-section">
+      <h4>Módulos_de_Análisis_UI</h4>
+      <button class="btn btn-light-primary btn-block btn-sm mb-1 w-100">
+        <i data-feather="activity" class="mr-50"></i> Capturador de Paquetes
+      </button>
+      <button class="btn btn-light-danger btn-block btn-sm mb-1 w-100">
+        <i data-feather="shield-off" class="mr-50"></i> Bloquear Navegación
+      </button>
+      <button class="btn btn-light-info btn-block btn-sm mb-1 w-100">
+        <i data-feather="download-cloud" class="mr-50"></i> Importar Tráfico PCAP
+      </button>
+    </div>
+
+    <div class="tool-section">
+      <h4>Alias_de_Comando</h4>
+      <div class="command-chips">
+        @for (cmd of availableCommands; track cmd) {
+          <span class="command-chip" (click)="newMessage = cmd + ' '">
+            {{ cmd }}
+          </span>
+        }
+      </div>
+    </div>
+
+  </aside>
+
+</div>
 </div>

@@ -1,5 +1,12 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { NgbModule, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { CoreCommonModule } from '@core/common.module';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 import { ApiService, ProcessID } from '@services/apicore/api.service';
 import { TaskService } from '@services/apicore/task.service';
 import { UtilService } from '@services/util/util.service';
@@ -15,7 +22,16 @@ import Swal from 'sweetalert2';
     templateUrl: './logs.component.html',
     styleUrls: ['./logs.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    standalone: false
+    standalone: true,
+    imports: [
+    FormsModule,
+    RouterModule,
+    NgbModule,
+    CoreCommonModule,
+    CoreDirectivesModule,
+    CorePipesModule,
+    ContentHeaderComponent
+]
 })
 
 

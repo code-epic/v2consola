@@ -1,17 +1,16 @@
-import { OnInit, OnDestroy, Component } from '@angular/core';
+import { OnInit, OnDestroy, Component, VERSION } from '@angular/core';
 
+import { ScrollTopComponent } from 'app/layout/components/footer/scroll-to-top/scroll-top.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
 import { CoreConfigService } from '@core/services/config.service';
-
-import { VERSION } from '@angular/core';
 
 
 @Component({
     selector: 'footer',
     templateUrl: './footer.component.html',
-    standalone: false
+    standalone: true,
+    imports: [ScrollTopComponent]
 })
 export class FooterComponent implements OnInit, OnDestroy {
   public coreConfig: any;

@@ -7,6 +7,14 @@ import { UtilService } from '@services/util/util.service';
 import JSONFormatter from 'json-formatter-js';
 import Swal from 'sweetalert2';
 
+import { CommonModule } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { CoreDirectivesModule } from '@core/directives/directives';
+import { CorePipesModule } from '@core/pipes/pipes.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { CodemirrorModule } from '@ctrl/ngx-codemirror';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 @Component({
     selector: 'app-api-details',
@@ -14,7 +22,17 @@ import Swal from 'sweetalert2';
     styleUrls: ['./api-details.component.scss'],
     encapsulation: ViewEncapsulation.None,
     host: { class: 'ecommerce-application' },
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        NgbModule,
+        CodemirrorModule,
+        ContentHeaderComponent,
+    ]
 })
 
 
@@ -62,8 +80,12 @@ export class ApiDetailsComponent implements OnInit {
   public xentorno
   resultado: any;
   xresultado: any;
-  xparametro: string = ''
-  valores: string = ''
+  codeTypeJsCtrl = new FormControl('');
+  get codeTypeJs() { return this.codeTypeJsCtrl.value; }
+  xparametroCtrl = new FormControl('');
+  get xparametro() { return this.xparametroCtrl.value; }
+  valoresCtrl = new FormControl('');
+  get valores() { return this.valoresCtrl.value; }
 
   public codeMirrorOptions: any = {
     lineNumbers: true,

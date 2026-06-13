@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
+import { FeatherIconDirective } from '@core/directives/core-feather-icons/core-feather-icons';
+
 @Component({
     selector: 'app-incidencias',
     templateUrl: './incidencias.component.html',
     styleUrls: ['./incidencias.component.scss'],
-    standalone: false
+    standalone: true,
+    imports: [ContentHeaderComponent, FeatherIconDirective]
 })
 export class IncidenciasComponent implements OnInit {
   public contentHeader: any;

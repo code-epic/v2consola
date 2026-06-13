@@ -33,17 +33,14 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [
+  imports: [
     AuthorizationComponent,
     ReportesComponent,
-    CrontabComponent
-  ],
-  imports: [
+    CrontabComponent,
     CommonModule,
     RouterModule.forChild(routes),
     TranslateModule,
     CoreCommonModule,
-    ContentHeaderModule,
     CoreCardModule,
     NgxDatatableModule,
     NgbModule

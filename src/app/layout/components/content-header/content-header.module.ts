@@ -10,8 +10,7 @@ import { BreadcrumbModule } from 'app/layout/components/content-header/breadcrum
 import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 @NgModule({
-  declarations: [ContentHeaderComponent],
-  imports: [CommonModule, RouterModule, CoreCommonModule, BreadcrumbModule, NgbModule],
+  imports: [CommonModule, RouterModule, CoreCommonModule, BreadcrumbModule, NgbModule, ContentHeaderComponent],
   exports: [ContentHeaderComponent]
 })
 export class ContentHeaderModule {}

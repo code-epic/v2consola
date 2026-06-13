@@ -1,14 +1,17 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
-import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
+import { ColumnMode, DatatableComponent, SelectionType, NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
-import { NgbModal, NgbActiveModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { NgSelectConfig } from '@ng-select/ng-select';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { NgbModal, NgbActiveModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgSelectConfig, NgSelectModule } from '@ng-select/ng-select';
+import { FormControl, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ComunicationsService } from '@services/networks/comunications.service';
+import { CoreCommonModule } from '@core/common.module';
+import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 import JSONFormatter from 'json-formatter-js';
 
 
@@ -18,7 +21,15 @@ import JSONFormatter from 'json-formatter-js';
     styleUrls: ['./communications.component.scss'],
     encapsulation: ViewEncapsulation.None,
     providers: [NgbModalConfig, NgbModal],
-    standalone: false
+    standalone: true,
+    imports: [
+        CoreCommonModule,
+        RouterModule,
+        NgbModule,
+        ContentHeaderComponent,
+        NgxDatatableModule,
+        NgSelectModule
+    ]
 })
 
 export class CommunicationsComponent implements OnInit {
@@ -52,17 +63,26 @@ export class CommunicationsComponent implements OnInit {
     logs: false
   };
 
+  searchValueCtrl = new FormControl('');
+  basicSelectedOptionCtrl = new FormControl(10);
+  sDispositivoCtrl = new FormControl('');
+  xrsCtrl = new FormControl({value: '', disabled: true});
+
   public searchValue = ''
   // Private
-  public count
+  private _count = signal<any>(undefined);
+  get count() { return this._count(); }
 
   public titleModal
 
   public fnx
 
-  public ListaComunicaciones = []
-  public tempData = [];
-  public rowData = []
+  private _ListaComunicaciones = signal<any[]>([]);
+  get ListaComunicaciones() { return this._ListaComunicaciones(); }
+  private _tempData = signal<any[]>([]);
+  get tempData() { return this._tempData(); }
+  private _rowData = signal<any[]>([]);
+  get rowData() { return this._rowData(); }
   public isLoading: boolean = false;;
 
   public sDispositivo
@@ -110,7 +130,6 @@ export class CommunicationsComponent implements OnInit {
     private config: NgSelectConfig,
     private _formBuilder: UntypedFormBuilder,
     private utilservice: UtilService,
-    private cdr: ChangeDetectorRef
   ) {
   }
 
@@ -135,7 +154,7 @@ export class CommunicationsComponent implements OnInit {
 
     this.msjService.lstpid$.subscribe(
       (e) => {
-        this.xrs = e.rs
+        this.xrsCtrl.setValue(e.rs)
         this.btnShow = true
       }
     )
@@ -170,12 +189,12 @@ export class CommunicationsComponent implements OnInit {
   filterUpdate(event: any) {
     const val = event.target.value.toLowerCase();
     // filter our data
-    const temp = this.tempData.filter(function (d) {
+    const temp = this._tempData().filter(function (d) {
       return d.descripcion.toLowerCase().indexOf(val) !== -1 || !val;
     });
     // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
+    this._rowData.set(temp);
+    this._count.set(this._rowData().length)
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
@@ -183,12 +202,12 @@ export class CommunicationsComponent implements OnInit {
   filterDispositivo(event: any) {
     const val = event ? event : '';
     // filter our data
-    const temp = this.tempData.filter(function (d) {
+    const temp = this._tempData().filter(function (d) {
       return d.tipo.indexOf(val) !== -1 || !val;
     });
     // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
+    this._rowData.set(temp);
+    this._count.set(this._rowData().length)
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
@@ -207,15 +226,14 @@ export class CommunicationsComponent implements OnInit {
   async CargarLista() {
     this.xAPI.funcion = "_SYS_LstComunicaciones";
     this.xAPI.parametros = ''
-    this.ListaComunicaciones = []
-    this.count = 0
+    this._ListaComunicaciones.set([])
+    this._count.set(0)
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.ListaComunicaciones.push(data);
-        this.rowData = data;
-        this.count = this.rowData.length
-        this.tempData = this.rowData;
-        this.cdr.detectChanges();
+        this._ListaComunicaciones.set([...this._ListaComunicaciones(), data]);
+        this._rowData.set(data);
+        this._count.set(this._rowData().length)
+        this._tempData.set(this._rowData());
       },
       (error) => {
         console.log(error)
@@ -256,7 +274,7 @@ export class CommunicationsComponent implements OnInit {
   }
 
   async Nmap() {
-    this.xrs = 'Escaneando red, por favor Espere...';
+    this.xrsCtrl.setValue('Escaneando red, por favor Espere...');
     this.btnShow = false;
     this.fnx = {
       'funcion': 'Fnx_NMap',
@@ -274,11 +292,11 @@ export class CommunicationsComponent implements OnInit {
 
       // Aquí puedes procesar el resultado del scan
       // console.log('Resultado del escaneo:', resultadoScan);
-      this.xrs = resultadoScan.rs || 'No se encontraron resultados';
+      this.xrsCtrl.setValue(resultadoScan.rs || 'No se encontraron resultados');
       this.btnShow = true; // Restablecer el botón cuando termine (éxito o error)
 
     } catch (error) {
-      this.xrs = 'Error al escanear la red';
+      this.xrsCtrl.setValue('Error al escanear la red');
       this.btnShow = true; // Restablecer el botón en caso de error
       this.utilservice.AlertMini('top-end', 'error', 'Error al generar Nmap', 3000);
       // console.error('Error en Nmap:', error);
@@ -288,7 +306,7 @@ export class CommunicationsComponent implements OnInit {
   }
 
   async ScanRed() {
-    this.xrs = 'Escaneando red, por favor Espere...';
+    this.xrsCtrl.setValue('Escaneando red, por favor Espere...');
     this.btnShow = false;
     this.fnx = {
       'funcion': 'Fnx_ScanRed',
@@ -304,7 +322,7 @@ export class CommunicationsComponent implements OnInit {
       const scanResult = await this.apiService.ConsultarPidScan(data.contenido.id, this.fnx);
 
       // Actualizamos la UI con el resultado
-      this.xrs = scanResult.rs || 'Escaneo completado';
+      this.xrsCtrl.setValue(scanResult.rs || 'Escaneo completado');
       // console.log(scanResult);
 
     } catch (error) {
@@ -383,10 +401,10 @@ export class CommunicationsComponent implements OnInit {
         "driver": "MGDBA",
         "upsert": true
       }
-      this.rowData.push(this.ListaComunicaciones)
+      this._rowData.set([...this._rowData(), this._ListaComunicaciones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
-          this.ListaComunicaciones = []
+          this._ListaComunicaciones.set([])
           this.CargarLista()
           this.modalService.dismissAll('Close')
           this.utilservice.AlertMini('top-end', 'success', `Tu (Comunicacion) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
@@ -412,10 +430,10 @@ export class CommunicationsComponent implements OnInit {
         "driver": "MGDBA",
         "upsert": true
       }
-      this.rowData.push(this.ListaComunicaciones)
+      this._rowData.set([...this._rowData(), this._ListaComunicaciones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
-          this.ListaComunicaciones = []
+          this._ListaComunicaciones.set([])
           this.CargarLista()
           this.modalService.dismissAll('Close')
           this.utilservice.AlertMini('top-end', 'success', `Tu (Comunicacion) ha sido actualizada`, 3000)

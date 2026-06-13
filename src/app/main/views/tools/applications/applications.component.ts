@@ -3,18 +3,40 @@ import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from "@angular/router";
 
+import { CommonModule } from "@angular/common";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import { RouterModule } from "@angular/router";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
+
 @Component({
     selector: "app-applications",
     templateUrl: "./applications.component.html",
     styleUrls: ["./applications.component.scss"],
     encapsulation: ViewEncapsulation.None,
     host: { class: "ecommerce-application" },
-    standalone: false
+    standalone: true,
+    imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterModule,
+        CoreDirectivesModule,
+        CorePipesModule,
+        NgbModule,
+        NgSelectModule,
+        ContentHeaderComponent,
+    ]
 })
 export class ApplicationsComponent implements OnInit {
-  searchType: string = "conexiones"; // Valor inicial del select
-  searchText: string = ''; // Para el input de búsqueda normal
-  selectCustomSelected: any = null; // Para el ng-select
+  searchTypeCtrl = new FormControl("conexiones");
+  get searchType() { return this.searchTypeCtrl.value; }
+  searchTextCtrl = new FormControl('');
+  get searchText() { return this.searchTextCtrl.value; }
+  selectCustomSelectedCtrl = new FormControl(null);
+  get selectCustomSelected() { return this.selectCustomSelectedCtrl.value; }
 
   public contentHeader: object;
   closeResult: string = '';
