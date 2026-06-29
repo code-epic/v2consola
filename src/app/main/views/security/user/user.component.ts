@@ -1,10 +1,29 @@
-import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core'
-import { CommonModule } from '@angular/common'
-import { FormArray, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { NgbModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap'
-import { ApiService, IAPICore, IConfiguracion } from '@services/apicore/api.service'
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewEncapsulation,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormArray,
+  FormControl,
+  FormsModule,
+  ReactiveFormsModule,
+} from "@angular/forms";
+import {
+  NgbModal,
+  NgbModalConfig,
+  NgbModule,
+} from "@ng-bootstrap/ng-bootstrap";
+import {
+  ApiService,
+  IAPICore,
+  IConfiguracion,
+} from "@services/apicore/api.service";
 
-import { IUser } from '@services/seguridad/rol.service'
+import { IUser } from "@services/seguridad/rol.service";
 import {
   Firmadigital,
   Perfil,
@@ -14,242 +33,234 @@ import {
   SRol,
   UserService,
   Usuario,
-} from '@services/seguridad/user.service'
-import { Sha256Service } from '@services/util/sha256'
-import { UtilService } from '@services/util/util.service'
+} from "@services/seguridad/user.service";
+import { Sha256Service } from "@services/util/sha256";
+import { UtilService } from "@services/util/util.service";
 import {
   ColumnMode,
   DatatableComponent,
   id,
   SelectionType,
-} from '@swimlane/ngx-datatable'
-import { environment } from 'environments/environment'
+} from "@swimlane/ngx-datatable";
+import { environment } from "environments/environment";
 
-import Swal from 'sweetalert2'
-import { NgSelectModule } from '@ng-select/ng-select'
-import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component'
-import { CoreDirectivesModule } from '@core/directives/directives'
-import { CorePipesModule } from '@core/pipes/pipes.module'
-
-
-
+import Swal from "sweetalert2";
+import { NgSelectModule } from "@ng-select/ng-select";
+import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
+import { CoreDirectivesModule } from "@core/directives/directives";
+import { CorePipesModule } from "@core/pipes/pipes.module";
 
 @Component({
-    selector: 'app-user',
-    templateUrl: './user.component.html',
-    styleUrls: ['./user.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    providers: [NgbModalConfig, NgbModal],
-    standalone: true,
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        NgbModule,
-        NgSelectModule,
-        ContentHeaderComponent,
-        CoreDirectivesModule,
-        CorePipesModule,
-    ]
+  selector: "app-user",
+  templateUrl: "./user.component.html",
+  styleUrls: ["./user.component.scss"],
+  encapsulation: ViewEncapsulation.None,
+  providers: [NgbModalConfig, NgbModal],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgbModule,
+    NgSelectModule,
+    ContentHeaderComponent,
+    CoreDirectivesModule,
+    CorePipesModule,
+  ],
 })
 export class UserComponent implements OnInit, OnDestroy {
-  @ViewChild(DatatableComponent) table: DatatableComponent
+  @ViewChild(DatatableComponent) table: DatatableComponent;
 
-  public contentHeader: object
+  public contentHeader: object;
 
-  public ColumnMode = ColumnMode
-  public SelectionType = SelectionType
-  public basicSelectedOption: number = 10
+  public ColumnMode = ColumnMode;
+  public SelectionType = SelectionType;
+  public basicSelectedOption: number = 10;
 
   public xAPI: IAPICore = {
-    funcion: '',
-    parametros: '',
+    funcion: "",
+    parametros: "",
     valores: {},
-  }
+  };
 
   public Perfil: Perfil = {
-    id: '',
-    descripcion: '',
-    traza: '',
-  }
+    id: "",
+    descripcion: "",
+    traza: "",
+  };
   public usuario: Usuario = {
-    cedula: '',
-    nombre: '',
-    descripcion: '',
-    observaciones: '',
-    login: '',
-    correo: '',
-    clave: '',
-    sucursal: '',
-    direccion: '',
-    cargo: '',
-    telefono: '',
-    sistema: '',
-    token: '',
+    cedula: "",
+    nombre: "",
+    descripcion: "",
+    observaciones: "",
+    login: "",
+    correo: "",
+    clave: "",
+    sucursal: "",
+    direccion: "",
+    cargo: "",
+    telefono: "",
+    sistema: "",
+    token: "",
     estatus: 1,
     Perfil: this.Perfil,
     Aplicacion: [],
     firmadigital: undefined,
-    endpoint: '',
-    multiplesesion: false
-  }
+    endpoint: "",
+    multiplesesion: false,
+  };
 
   public iUser: IUser = {
-    cedula: '',
+    cedula: "",
     tipoacceso: 3,
     respaldo: 0,
-    endpoint: '',
-    login: '',
-    clave: '',
-    encriptamiento: '',
-    nombre: '',
-    descripcion: '',
+    endpoint: "",
+    login: "",
+    clave: "",
+    encriptamiento: "",
+    nombre: "",
+    descripcion: "",
     estatus: 1,
     vigencia: 180,
-    correo: '',
-    observaciones: '',
+    correo: "",
+    observaciones: "",
     duraciontexto: 60,
     duraciontiempo: 5,
-    oficina: '',
-    regional: '',
+    oficina: "",
+    regional: "",
     multiplesesion: false,
-  }
+    cargo: "",
+  };
 
-  public multiplesesion : any = false
+  public multiplesesion: any = false;
 
   public tipoacceso = [
     // { id: 0, name: 'SELECCIONAR' },
-    { id: 1, name: 'LOCAL' },
-    { id: 3, name: 'DIRECTORIO ACTIVO' },
-  ]
+    { id: 1, name: "LOCAL" },
+    { id: 3, name: "DIRECTORIO ACTIVO" },
+  ];
 
   public lstmultiplesesion = [
-    { id: false, name: 'NO' },
-    { id: true, name: 'SI' },
-  ]
+    { id: false, name: "NO" },
+    { id: true, name: "SI" },
+  ];
 
   public respaldo = [
-    { id: 1, name: 'SI' },
-    { id: 0, name: 'NO' },
-  ]
+    { id: 1, name: "SI" },
+    { id: 0, name: "NO" },
+  ];
 
   public estatus = [
-    { id: 1, name: 'ACTIVO' },
-    { id: 0, name: 'INACTIVO' },
-  ]
+    { id: 1, name: "ACTIVO" },
+    { id: 0, name: "INACTIVO" },
+  ];
 
   public formato = [
-    { id: '1', name: 'SHA256' },
-    { id: '2', name: 'MD5' },
-  ]
+    { id: "1", name: "SHA256" },
+    { id: "2", name: "MD5" },
+  ];
 
   public duracion = [
-    { id: 1, name: 'Segundos' },
-    { id: 60, name: 'Minutos' },
-    { id: 3600, name: 'Horas' },
-  ]
+    { id: 1, name: "Segundos" },
+    { id: 60, name: "Minutos" },
+    { id: 3600, name: "Horas" },
+  ];
 
   public sesion = [
-    { id: 30, name: '30 días' },
-    { id: 60, name: '60 días' },
-    { id: 90, name: '90 días' },
-    { id: 180, name: '180 días' },
-  ]
+    { id: 30, name: "30 días" },
+    { id: 60, name: "60 días" },
+    { id: 90, name: "90 días" },
+    { id: 180, name: "180 días" },
+  ];
 
   public traza = [
-    { id: '1|BAJA', name: 'BAJA' }, //CONEXIONES
-    { id: '2|MEDIA', name: 'MEDIA' }, //CONEXION - PETIONES ACCIONES I,U,R,D
-    { id: '3|ALTA', name: 'ALTA' }, //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
-  ]
+    { id: "1|BAJA", name: "BAJA" }, //CONEXIONES
+    { id: "2|MEDIA", name: "MEDIA" }, //CONEXION - PETIONES ACCIONES I,U,R,D
+    { id: "3|ALTA", name: "ALTA" }, //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
+  ];
 
-  public dataOficina = [
-    { id: 'TODAS', name: 'TODAS' },
-  ]
+  public dataOficina = [{ id: "TODAS", name: "TODAS" }];
 
-  public dataRegional = [
-    { id: 'TODAS', name: 'TODAS' },
-  ]
+  public dataRegional = [{ id: "TODAS", name: "TODAS" }];
 
   public Rol: SRol = {
-    id: '',
-    descripcion: '',
+    id: "",
+    descripcion: "",
     Menu: [],
-  }
+  };
 
   public Menu: SMenu = {
-    url: '',
-    js: '',
-    icono: '',
-    descripcion: '',
-    nombre: '',
-    accion: '',
-    clase: '',
-    color: '',
+    url: "",
+    js: "",
+    icono: "",
+    descripcion: "",
+    nombre: "",
+    accion: "",
+    clase: "",
+    color: "",
     Privilegios: [],
     SubMenu: [],
-  }
+  };
 
   public Aplicacion: SAplicacion = {
-    id: '',
-    nombre: '',
-    url: '',
-    comentario: '',
-    version: '',
-    autor: '',
-    perfil: '',
-    traza: '',
+    id: "",
+    nombre: "",
+    url: "",
+    comentario: "",
+    version: "",
+    autor: "",
+    perfil: "",
+    traza: "",
     estatus: 0,
-    tiempo: '',
+    tiempo: "",
     Rol: {
-      id: '',
-      descripcion: '',
+      id: "",
+      descripcion: "",
       Menu: [],
     },
-  }
+  };
 
-  public ldap: boolean = false
-  public activedirectory = false
-  public property = false
-  public tiempoduracion = '0'
-  public descripcion: string = ''
-  public lstAplicacion: SAplicacion[] = []
+  public ldap: boolean = false;
+  public activedirectory = false;
+  public property = false;
+  public tiempoduracion = "0";
+  public descripcion: string = "";
+  public lstAplicacion: SAplicacion[] = [];
   public Privilegios: SPrivilegios = {
-    metodo: '',
-    descripcion: '',
-    accion: '',
-    directivas: '',
-    endpoint: '',
-    funcion: '',
-  }
+    metodo: "",
+    descripcion: "",
+    accion: "",
+    directivas: "",
+    endpoint: "",
+    funcion: "",
+  };
 
-  public lstPerfil = []
-  public lstEndPoint = []
-  public dataUsers = []
-  public lstUsersApp = []
-  public temprowData = []
+  public lstPerfil = [];
+  public lstEndPoint = [];
+  public dataUsers = [];
+  public lstUsersApp = [];
+  public temprowData = [];
 
   /** FormArray sincronizado con dataUsers para el toggle estatus */
-  public userStatusArray = new FormArray<FormControl<boolean>>([])
-  private userStatusSub?: any
+  public userStatusArray = new FormArray<FormControl<boolean>>([]);
+  private userStatusSub?: any;
 
-  public xaplicacion = ''
-  public xperfil = ''
-  public xtraza = 'BAJA'
-  public ntraza = 1
+  public xaplicacion = "";
+  public xperfil = "";
+  public xtraza = "BAJA";
+  public ntraza = 1;
 
-  public xoficina: any = 'TODAS'
-  public xregional: any = 'TODAS'
+  public xoficina: any = "TODAS";
+  public xregional: any = "TODAS";
 
-  public bEndPoint = false
+  public bEndPoint = false;
   public showClave = false;
-  public bChangePassword = false
-  public blockEdit: string = 'false'
-  public blockEditApp: string = 'false'
-  public bEliminarAllProfile: boolean = false
+  public bChangePassword = false;
+  public blockEdit: string = "false";
+  public blockEditApp: string = "false";
+  public bEliminarAllProfile: boolean = false;
 
-
-  public isBDV: boolean = false
-
+  public isBDV: boolean = false;
 
   public configuracion: IConfiguracion;
   public profileData: any;
@@ -258,39 +269,38 @@ export class UserComponent implements OnInit, OnDestroy {
   // Password Strength properties
   public loginPrefixError: string | null = null;
   public passwordStrength: number = 0;
-  public passwordStrengthLabel: string = 'Sin seguridad';
-  public passwordStrengthColor: string = '';
+  public passwordStrengthLabel: string = "Sin seguridad";
+  public passwordStrengthColor: string = "";
   public passwordStrengthWidth: number = 0;
   public isPasswordInvalid: boolean = false;
 
-  public endpointEstados: string = ''
-  public endpointOficinas: string = ''
+  public endpointEstados: string = "";
+  public endpointOficinas: string = "";
 
-
-  public xsesion: string = ''
+  public xsesion: string = "";
 
   // Reactive Form Controls
-  public iUserTipoaccesoCtrl = new FormControl(3)
-  public iUserRespaldoCtrl = new FormControl(0)
-  public iUserEndpointCtrl = new FormControl('')
-  public iUserLoginCtrl = new FormControl('')
-  public iUserClaveCtrl = new FormControl('')
-  public iUserEncriptamientoCtrl = new FormControl('')
-  public iUserCedulaCtrl = new FormControl('')
-  public iUserNombreCtrl = new FormControl('')
-  public iUserDescripcionCtrl = new FormControl('')
-  public iUserEstatusCtrl = new FormControl(1)
-  public iUserVigenciaCtrl = new FormControl(180)
-  public iUserCorreoCtrl = new FormControl('')
-  public descripcionCtrl = new FormControl('')
-  public iUserDuraciontextoCtrl = new FormControl(60)
-  public iUserDuraciontiempoCtrl = new FormControl(5)
-  public xregionalCtrl = new FormControl('TODAS')
-  public xoficinaCtrl = new FormControl('TODAS')
-  public multiplesesionCtrl = new FormControl(false)
-  public xaplicacionCtrl = new FormControl('')
-  public xperfilCtrl = new FormControl('')
-  public xtrazaCtrl = new FormControl('BAJA')
+  public iUserTipoaccesoCtrl = new FormControl(3);
+  public iUserRespaldoCtrl = new FormControl(0);
+  public iUserEndpointCtrl = new FormControl("");
+  public iUserLoginCtrl = new FormControl("");
+  public iUserClaveCtrl = new FormControl("");
+  public iUserEncriptamientoCtrl = new FormControl("");
+  public iUserCedulaCtrl = new FormControl("");
+  public iUserNombreCtrl = new FormControl("");
+  public iUserDescripcionCtrl = new FormControl("");
+  public iUserEstatusCtrl = new FormControl(1);
+  public iUserVigenciaCtrl = new FormControl(180);
+  public iUserCorreoCtrl = new FormControl("");
+  public descripcionCtrl = new FormControl("");
+  public iUserDuraciontextoCtrl = new FormControl(60);
+  public iUserDuraciontiempoCtrl = new FormControl(5);
+  public xregionalCtrl = new FormControl("TODAS");
+  public xoficinaCtrl = new FormControl("TODAS");
+  public multiplesesionCtrl = new FormControl(false);
+  public xaplicacionCtrl = new FormControl("");
+  public xperfilCtrl = new FormControl("");
+  public xtrazaCtrl = new FormControl("BAJA");
 
   constructor(
     private apiService: ApiService,
@@ -298,59 +308,50 @@ export class UserComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private sha256: Sha256Service,
     private modalService: NgbModal,
-
   ) {
-    this.userService.iniciarObjeto()
-    this.CargarListaEndPoint()
+    this.userService.iniciarObjeto();
+    this.CargarListaEndPoint();
   }
 
   async ngOnInit() {
-    this.isBDV = this.apiService.ConsultaSistemaBDV()
-    
+    this.isBDV = this.apiService.ConsultaSistemaBDV();
+
     this.contentHeader = {
-      headerTitle: 'Aplicaciones',
+      headerTitle: "Aplicaciones",
       actionButton: true,
       breadcrumb: {
-        type: '',
+        type: "",
         links: [
           {
-            name: 'Principal',
+            name: "Principal",
             isLink: true,
-            link: '/home',
+            link: "/home",
           },
           {
-            name: 'Seguridad',
+            name: "Seguridad",
             isLink: false,
           },
           {
-            name: 'Crear Usuarios',
+            name: "Crear Usuarios",
             isLink: false,
           },
         ],
       },
-    }
+    };
 
-    await this.CargarListaAplicaciones()
-    let acceso = this.isBDV ? 3 : 1
-    this.selTipoAcceso(acceso)
-    this.iUser.encriptamiento = '1'
-    this.syncFormControlsFromUser()
+    await this.CargarListaAplicaciones();
+    let acceso = this.isBDV ? 3 : 1;
+    this.selTipoAcceso(acceso);
+    this.iUser.encriptamiento = "1";
+    this.syncFormControlsFromUser();
 
-
-
-    await this.cargarConfiguracionApp()
-    
-  
-
-
+    await this.cargarConfiguracionApp();
   }
 
-
   cargarConfiguracionApp() {
-
-    this.xAPI = {} as IAPICore
+    this.xAPI = {} as IAPICore;
     this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
-    this.xAPI.parametros = environment.ID
+    this.xAPI.parametros = environment.ID;
     this.xAPI.valores = {};
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
@@ -358,47 +359,48 @@ export class UserComponent implements OnInit, OnDestroy {
         if (data != null) {
           if (data.length > 0) {
             // console.log(data)
-            this.configuracion = data[0]
-            this.iUser.endpoint = this.configuracion.endpoints.login
-            this.iUser.duraciontiempo = this.configuracion.sesion.tiempo * this.exportTime(this.configuracion.sesion.unidad)
-            this.endpointOficinas = this.configuracion.endpoints.oficinas
-            this.endpointEstados = this.configuracion.endpoints.estados
+            this.configuracion = data[0];
+            this.iUser.endpoint = this.configuracion.endpoints.login;
+            this.iUser.duraciontiempo =
+              this.configuracion.sesion.tiempo *
+              this.exportTime(this.configuracion.sesion.unidad);
+            this.endpointOficinas = this.configuracion.endpoints.oficinas;
+            this.endpointEstados = this.configuracion.endpoints.estados;
 
-            let usuario: any = window.sessionStorage.getItem('validator')
+            let usuario: any = window.sessionStorage.getItem("validator");
 
             if (usuario == undefined) {
-              this.ntraza = this.getTraza(this.configuracion.traza.nivel)
-              this.xtraza = this.configuracion.traza.nivel
+              this.ntraza = this.getTraza(this.configuracion.traza.nivel);
+              this.xtraza = this.configuracion.traza.nivel;
             }
-            
           }
-          this.consultarRegionales()
-        
+          this.consultarRegionales();
         }
       },
       (error) => {
-        console.error('Error al cargar la configuración de la aplicación:', error);
-
-      }
+        console.error(
+          "Error al cargar la configuración de la aplicación:",
+          error,
+        );
+      },
     );
   }
 
   exportTime(tiemp: string): number {
-    let xtime = 0
+    let xtime = 0;
     switch (tiemp) {
-      case 'segundos':
-        xtime = 1
+      case "segundos":
+        xtime = 1;
         break;
-      case 'minutos':
-        xtime = 60
+      case "minutos":
+        xtime = 60;
         break;
-      case 'horas':
-        xtime = 3600
+      case "horas":
+        xtime = 3600;
         break;
     }
-    return xtime
+    return xtime;
   }
-
 
   cargarUsuario(usuario: Usuario): IUser {
     // Mapeo de propiedades directas
@@ -412,14 +414,16 @@ export class UserComponent implements OnInit, OnDestroy {
     this.iUser.endpoint = usuario.endpoint;
 
     // Mapeo de propiedades con nombres diferentes (basado en getUserApp)
-    this.iUser.descripcion = usuario.cargo;
+    this.iUser.cargo = usuario.cargo;
     this.iUser.oficina = usuario.sucursal;
     this.iUser.regional = usuario.direccion;
-    this.iUser.multiplesesion = usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
+    this.iUser.multiplesesion =
+      usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
 
     this.xregional = usuario.direccion;
     this.xoficina = usuario.sucursal;
-    this.multiplesesion = usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
+    this.multiplesesion =
+      usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
 
     // Mapeo de propiedades anidadas en 'firmadigital'
     if (usuario.firmadigital) {
@@ -428,28 +432,25 @@ export class UserComponent implements OnInit, OnDestroy {
     }
 
     // No se mapea la clave para evitar mostrar el hash. Se debe ingresar una nueva si se desea cambiar.
-    this.iUser.clave = '';
+    this.iUser.clave = "";
     // this.dataUsers = usuario.Aplicacion;
-    this.tk_loadProfile(usuario)
-    this.syncFormControlsFromUser()
+    this.tk_loadProfile(usuario);
+    this.syncFormControlsFromUser();
 
-    return this.iUser
+    return this.iUser;
   }
 
   tk_loadProfile(usuario: Usuario) {
-    
-    usuario.Aplicacion.forEach(usr => {
-      let url = ''
-      let xapp = this.getAplication(usr.id)
-      let xprof = this.getProfile(usr.perfil)
-
+    usuario.Aplicacion.forEach((usr) => {
+      let url = "";
+      let xapp = this.getAplication(usr.id);
+      let xprof = this.getProfile(usr.perfil);
 
       if (xapp !== undefined) {
-        url = xapp.url
+        url = xapp.url;
       } else {
-        this.blockEditApp = 'false'
+        this.blockEditApp = "false";
       }
-
 
       let app = {
         id: usr.id,
@@ -462,174 +463,155 @@ export class UserComponent implements OnInit, OnDestroy {
         estatus: usr.estatus,
         tiempo: usr.tiempo,
         url: url,
-        XPerfil: usuario.Perfil
-      }
+        XPerfil: usuario.Perfil,
+      };
 
-      this.lstUsersApp.push(app)
-     
+      this.lstUsersApp.push(app);
     });
-    this.dataUsers = this.lstUsersApp
-    this.rebuildStatusArray()
+    this.dataUsers = this.lstUsersApp;
+    this.rebuildStatusArray();
   }
   selDuracion(e) {
     if (e == 3) {
-      this.tiempoduracion = '0'
+      this.tiempoduracion = "0";
     }
   }
 
   selTipoAcceso(e) {
     switch (e) {
       case 1:
-        this.property = true
-        this.ldap = false
-        break
+        this.property = true;
+        this.ldap = false;
+        break;
       case 2:
-        this.property = false
-        this.ldap = true
-        break
+        this.property = false;
+        this.ldap = true;
+        break;
       case 3:
-        this.property = false
-        this.ldap = true
-        break
+        this.property = false;
+        this.ldap = true;
+        break;
       default:
-        this.property = false
-        this.ldap = false
-        this.activedirectory = false
-        break
+        this.property = false;
+        this.ldap = false;
+        this.activedirectory = false;
+        break;
     }
   }
 
-
-  onFocusedRegional(item) {
-  }
-
-
+  onFocusedRegional(item) {}
 
   async CargarListaEndPoint() {
-    this.lstEndPoint = []
-    this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.LISTAR_ENDPOINT
-    this.xAPI.parametros = ''
+    this.lstEndPoint = [];
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.LISTAR_ENDPOINT;
+    this.xAPI.parametros = "";
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data != undefined && data != null) {
-          let ends = data[0].usuariosValidos
-          ends.forEach(e => {
-            this.lstEndPoint.push(
-              { name: e.endpoint, id: e.endpoint }
-            )
-          })
+          let ends = data[0].usuariosValidos;
+          ends.forEach((e) => {
+            this.lstEndPoint.push({ name: e.endpoint, id: e.endpoint });
+          });
 
-          this.lstEndPoint.push(
-            { name: "Crear Nuevo", id: "CN" }
-          )
-
-
-
+          this.lstEndPoint.push({ name: "Crear Nuevo", id: "CN" });
         } else {
-          this.bEndPoint = true
-          this.iUser.endpoint = ''
+          this.bEndPoint = true;
+          this.iUser.endpoint = "";
         }
       },
       (error) => {
-        console.log(error)
-      }
-    )
+        console.log(error);
+      },
+    );
   }
 
   selEndPoint(e) {
-    if (this.iUser.endpoint == 'CN') {
-      this.bEndPoint = true
-      this.iUser.endpoint = ''
+    if (this.iUser.endpoint == "CN") {
+      this.bEndPoint = true;
+      this.iUser.endpoint = "";
     }
   }
 
   async CargarListaAplicaciones() {
-    this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES
-    this.xAPI.parametros = ''
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES;
+    this.xAPI.parametros = "";
     await this.apiService.Ejecutar(this.xAPI).subscribe(
-      async data => {
+      async (data) => {
         this.lstAplicacion = data.map((e) => {
-          e.name = `${e.id}  (${e.nombre})`
-          return e
-        })
+          e.name = `${e.id}  (${e.nombre})`;
+          return e;
+        });
 
-
-        let usuario: any = window.sessionStorage.getItem('validator')
+        let usuario: any = window.sessionStorage.getItem("validator");
 
         if (usuario != undefined) {
-          this.usuario = JSON.parse(usuario)
-          this.xaplicacion = this.usuario.sistema
-          await this.selPerfil(this.usuario.sistema)
-          this.usuarioSave = true
-
+          this.usuario = JSON.parse(usuario);
+          this.xaplicacion = this.usuario.sistema;
+          await this.selPerfil(this.usuario.sistema);
+          this.usuarioSave = true;
         }
-
       },
       (error) => {
-        console.log(error)
-      }
-    )
+        console.log(error);
+      },
+    );
   }
 
   selPerfil(e) {
-
     try {
-      let codPerfil = e
-      this.xAPI = {} as IAPICore
-      this.xAPI.funcion = environment.functions.OBTENER_PERFILES_POR_APLICACION
-      this.xAPI.parametros = codPerfil
+      let codPerfil = e;
+      this.xAPI = {} as IAPICore;
+      this.xAPI.funcion = environment.functions.OBTENER_PERFILES_POR_APLICACION;
+      this.xAPI.parametros = codPerfil;
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
           if (data != undefined && data != null) {
-            this.lstPerfil = data
+            this.lstPerfil = data;
           }
 
-          let usuario = window.sessionStorage.getItem('validator')
+          let usuario = window.sessionStorage.getItem("validator");
           if (usuario != undefined) {
-            this.blockEdit = 'disabled'
-            this.blockEditApp = this.usuario.Aplicacion.length > 0 ? 'disabled' : 'false'
+            this.blockEdit = "disabled";
+            this.blockEditApp =
+              this.usuario.Aplicacion.length > 0 ? "disabled" : "false";
 
             if (!this.bEliminarAllProfile) {
-
-              this.cargarUsuario(this.usuario)
-              if (this.usuario.endpoint == undefined || this.usuario.endpoint == '') {
-                this.iUser.tipoacceso = 1
-                this.selTipoAcceso(1)
+              this.cargarUsuario(this.usuario);
+              if (
+                this.usuario.endpoint == undefined ||
+                this.usuario.endpoint == ""
+              ) {
+                this.iUser.tipoacceso = 1;
+                this.selTipoAcceso(1);
               }
             } else {
-              this.blockEditApp = 'false'
+              this.blockEditApp = "false";
             }
-
-
-
           }
         },
         (error) => {
-          console.log(error)
-        }
-      )
+          console.log(error);
+        },
+      );
     } catch (error) {
-      console.error('Errores varios: ', error)
+      console.error("Errores varios: ", error);
     }
   }
 
-
   getAplication(id) {
-    return this.lstAplicacion.find((item) => item.id == id)
-
+    return this.lstAplicacion.find((item) => item.id == id);
   }
 
   getProfile(nombre) {
-    return this.lstPerfil.find((item) => item.nombre == nombre)
+    return this.lstPerfil.find((item) => item.nombre == nombre);
   }
 
   async getUserApp() {
-    this.syncUserFromFormControls()
-    let apps: any = {}
-    let lstApp: SAplicacion[] = []
-
+    this.syncUserFromFormControls();
+    let apps: any = {};
+    let lstApp: SAplicacion[] = [];
 
     await this.lstUsersApp.forEach(async (appx) => {
       apps = appx;
@@ -637,7 +619,7 @@ export class UserComponent implements OnInit, OnDestroy {
         id: appx.idper.id,
         descripcion: appx.idper.Rol.descripcion,
         Menu: appx.idper.Rol.Menu,
-      }
+      };
 
       let xapps: SAplicacion = {
         autor: appx.idapp.autor,
@@ -648,103 +630,101 @@ export class UserComponent implements OnInit, OnDestroy {
         perfil: appx.perfil,
         traza: appx.XPerfil == undefined ? appx.traza : appx.XPerfil.traza,
         estatus: appx.estatus,
-        comentario: 'Generado por sistema',
+        comentario: "Generado por sistema",
         tiempo: appx.tiempo,
         Rol: rol,
-      }
-      lstApp.push(xapps)
+      };
+      lstApp.push(xapps);
+    });
 
-    })
+    this.usuario.Perfil.id = apps.idper == undefined ? "" : apps.idper.id;
+    this.usuario.Perfil.descripcion = apps.perfil;
+    this.usuario.Perfil.traza = apps.traza;
+    this.usuario.cedula = this.iUser.cedula;
+    this.usuario.login = this.iUser.login;
+    this.usuario.nombre = this.iUser.nombre;
+    this.usuario.descripcion = this.iUser.descripcion;
+    this.usuario.correo = this.iUser.correo;
+    this.usuario.cargo = this.iUser.descripcion;
+    this.usuario.observaciones = this.descripcion;
+    this.usuario.endpoint =
+      this.iUser.tipoacceso == 3 ? this.iUser.endpoint : "";
+    this.usuario.sucursal =
+      this.xoficina.name != undefined ? this.xoficina.name : this.xoficina;
+    this.usuario.direccion =
+      this.xregional.name != undefined ? this.xregional.name : this.xregional;
+    this.usuario.estatus = this.iUser.estatus;
+    console.log("this.multiplesesion", this.multiplesesion);
+    this.usuario.multiplesesion =
+      this.multiplesesion.id != undefined
+        ? this.multiplesesion.id
+        : this.multiplesesion;
 
-
-
-    this.usuario.Perfil.id = apps.idper == undefined ? '' : apps.idper.id
-    this.usuario.Perfil.descripcion = apps.perfil
-    this.usuario.Perfil.traza = apps.traza
-    this.usuario.cedula = this.iUser.cedula
-    this.usuario.login = this.iUser.login
-    this.usuario.nombre = this.iUser.nombre
-    this.usuario.descripcion = this.iUser.descripcion
-    this.usuario.correo = this.iUser.correo
-    this.usuario.cargo = this.iUser.descripcion
-    this.usuario.observaciones = this.descripcion
-    this.usuario.endpoint = this.iUser.tipoacceso == 3 ? this.iUser.endpoint : ''
-    this.usuario.sucursal = this.xoficina.name != undefined ? this.xoficina.name : this.xoficina
-    this.usuario.direccion = this.xregional.name != undefined ? this.xregional.name : this.xregional
-    this.usuario.estatus = this.iUser.estatus
-    console.log('this.multiplesesion',  this.multiplesesion)
-    this.usuario.multiplesesion = this.multiplesesion.id != undefined ? this.multiplesesion.id : this.multiplesesion
-
-
-
-    let usuario = window.sessionStorage.getItem('validator')
+    let usuario = window.sessionStorage.getItem("validator");
 
     if (usuario == undefined) {
-      if (this.iUser.clave != '') {
-        await this.sha256.hash(this.iUser.clave).then(hash => {
-          this.usuario.clave = hash
-        })
-
-
+      if (this.iUser.clave != "") {
+        await this.sha256.hash(this.iUser.clave).then((hash) => {
+          this.usuario.clave = hash;
+        });
       }
     }
 
-
-    await this.sha256.hash(this.iUser.cedula + this.iUser.login).then(xhash => {
-      this.xsesion = xhash
-    })
-
+    await this.sha256
+      .hash(this.iUser.cedula + this.iUser.login)
+      .then((xhash) => {
+        this.xsesion = xhash;
+      });
 
     let firma: Firmadigital = {
       vigencia: this.iUser.vigencia,
       duracion: this.iUser.duraciontiempo,
-      direccionmac: '',
-      direccionip: '',
+      direccionmac: "",
+      direccionip: "",
       tiempo: new Date().toISOString(),
-      nivel: apps.firmadigital != undefined ? apps.firmadigital.nivel: parseInt(apps.idtra),
-      sesion: this.xsesion
-    }
+      nivel:
+        apps.firmadigital != undefined
+          ? apps.firmadigital.nivel
+          : parseInt(apps.idtra),
+      sesion: this.xsesion,
+    };
 
-
-    this.usuario.firmadigital = firma
+    this.usuario.firmadigital = firma;
     if (apps.idapp == undefined) {
-      this.usuario.sistema = 'App.Consola'
-      this.usuario.Aplicacion = []
+      this.usuario.sistema = "App.Consola";
+      this.usuario.Aplicacion = [];
     } else {
-      this.usuario.sistema = apps.idapp.id
-      this.usuario.Aplicacion = lstApp
+      this.usuario.sistema = apps.idapp.id;
+      this.usuario.Aplicacion = lstApp;
     }
-
-
   }
 
   async agregarAplicacion() {
-    let app = {}
+    let app = {};
     if (
-      this.xaplicacion == '' ||
-      this.xperfil == '' ||
+      this.xaplicacion == "" ||
+      this.xperfil == "" ||
       this.xtraza == undefined
     ) {
       this.utilservice.AlertMini(
-        'top-end',
-        'error',
-        'Debe verificar los campos',
-        3000
-      )
-      return false
+        "top-end",
+        "error",
+        "Debe verificar los campos",
+        3000,
+      );
+      return false;
     }
 
     if (this.validarSiSeleccion()) {
       this.utilservice.AlertMini(
-        'top-end',
-        'warning',
-        'La aplicación y el perfil seleccionados ya han sido asociados.',
-        3000
-      )
+        "top-end",
+        "warning",
+        "La aplicación y el perfil seleccionados ya han sido asociados.",
+        3000,
+      );
       return false;
     }
 
-  
     app = {
       id: this.getAplication(this.xaplicacion).id,
       idapp: this.getAplication(this.xaplicacion),
@@ -756,11 +736,11 @@ export class UserComponent implements OnInit, OnDestroy {
       tiempo: new Date().toISOString(),
       perfil: this.getProfile(this.xperfil).nombre,
       estatus: 1,
-    }
+    };
 
-    this.lstUsersApp.push(app)
-    this.dataUsers = this.lstUsersApp
-    this.rebuildStatusArray()
+    this.lstUsersApp.push(app);
+    this.dataUsers = this.lstUsersApp;
+    this.rebuildStatusArray();
     this.xperfil = null;
   }
 
@@ -771,8 +751,8 @@ export class UserComponent implements OnInit, OnDestroy {
   validarSiSeleccion(): boolean {
     const aplicacionId = this.xaplicacion;
     const perfilNombre = this.xperfil;
-    const existe = this.dataUsers.some(item =>
-      item.id === aplicacionId && item.perfil === perfilNombre
+    const existe = this.dataUsers.some(
+      (item) => item.id === aplicacionId && item.perfil === perfilNombre,
     );
 
     return existe;
@@ -783,25 +763,27 @@ export class UserComponent implements OnInit, OnDestroy {
    * y suscribe valueChanges para sincronizar dataUsers/lstUsersApp.
    */
   private rebuildStatusArray(): void {
-    this.userStatusSub?.unsubscribe()
-    this.userStatusArray.clear()
+    this.userStatusSub?.unsubscribe();
+    this.userStatusArray.clear();
     this.dataUsers.forEach((u: any) => {
-      this.userStatusArray.push(new FormControl(u.estatus === 1))
-    })
-    this.userStatusSub = this.userStatusArray.valueChanges.subscribe(values => {
-      values.forEach((val, i) => {
-        const numVal = val ? 1 : 0
-        const now = new Date().toISOString()
-        if (this.dataUsers[i]) {
-          this.dataUsers[i].estatus = numVal
-          this.dataUsers[i].tiempo = now
-        }
-        if (this.lstUsersApp[i]) {
-          this.lstUsersApp[i].estatus = numVal
-          this.lstUsersApp[i].tiempo = now
-        }
-      })
-    })
+      this.userStatusArray.push(new FormControl(u.estatus === 1));
+    });
+    this.userStatusSub = this.userStatusArray.valueChanges.subscribe(
+      (values) => {
+        values.forEach((val, i) => {
+          const numVal = val ? 1 : 0;
+          const now = new Date().toISOString();
+          if (this.dataUsers[i]) {
+            this.dataUsers[i].estatus = numVal;
+            this.dataUsers[i].tiempo = now;
+          }
+          if (this.lstUsersApp[i]) {
+            this.lstUsersApp[i].estatus = numVal;
+            this.lstUsersApp[i].tiempo = now;
+          }
+        });
+      },
+    );
   }
 
   /**
@@ -817,36 +799,32 @@ export class UserComponent implements OnInit, OnDestroy {
 
   quitarElemento(i: number) {
     Swal.fire({
-      title: 'Eliminar',
-      text: '¿Está seguro que desea eliminar perfil?',
-      icon: 'question',
+      title: "Eliminar",
+      text: "¿Está seguro que desea eliminar perfil?",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#C81D11',
-      confirmButtonText: 'Si, Aceptar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#C81D11",
+      confirmButtonText: "Si, Aceptar",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-
         this.dataUsers.splice(i, 1);
         this.userStatusArray.removeAt(i);
         if (this.dataUsers.length == 0) {
-          this.blockEditApp = 'false'
-          this.bEliminarAllProfile = true
+          this.blockEditApp = "false";
+          this.bEliminarAllProfile = true;
         }
-
       }
-
-    })
-
+    });
   }
 
   verPerfil(profileData: any, modal: any) {
     this.profileData = profileData;
     if (this.profileData?.idper?.Rol?.Menu) {
-      this.profileData.idper.Rol.Menu.forEach(menu => {
+      this.profileData.idper.Rol.Menu.forEach((menu) => {
         menu.isExpanded = false;
-        menu.SubMenu?.forEach(subMenu => subMenu.isExpanded = false);
+        menu.SubMenu?.forEach((subMenu) => (subMenu.isExpanded = false));
       });
     }
     this.modalService.open(modal, {
@@ -854,27 +832,21 @@ export class UserComponent implements OnInit, OnDestroy {
       size: "lg",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal", scrollable: true
+      windowClass: "fondo-modal",
+      scrollable: true,
     });
   }
-
-
-
 
   toggleExpand(item: any) {
     item.isExpanded = !item.isExpanded;
   }
 
-
-
   async agregarUsuario(tipo: number) {
-
-    let usuario = window.sessionStorage.getItem('validator')
-
+    let usuario = window.sessionStorage.getItem("validator");
 
     if (usuario == undefined) {
       if (this.property) {
-        const password = this.iUser.clave
+        const password = this.iUser.clave;
         const passwordRegex =
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
 
@@ -883,32 +855,31 @@ export class UserComponent implements OnInit, OnDestroy {
             "top-end",
             "error",
             "La clave no cumple con los requisitos de complejidad. Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
-            8000
+            8000,
           );
           return;
         }
       }
     }
 
+    await this.getUserApp();
 
-    await this.getUserApp()
-
-    let texto = tipo == 1 ? 'guardar' : 'modificar'
+    let texto = tipo == 1 ? "guardar" : "modificar";
 
     Swal.fire({
-      title: 'Alerta',
-      text: '¿Está seguro que desea ' + texto + ' el usuario?',
-      icon: 'question',
+      title: "Alerta",
+      text: "¿Está seguro que desea " + texto + " el usuario?",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#C81D11',
-      confirmButtonText: 'Si, Aceptar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#C81D11",
+      confirmButtonText: "Si, Aceptar",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.ok(tipo)
+        this.ok(tipo);
       }
-    })
+    });
   }
 
   ok(tipo: number) {
@@ -918,88 +889,84 @@ export class UserComponent implements OnInit, OnDestroy {
       donde: JSON.stringify({ cedula: this.usuario.cedula }),
       driver: environment.driver.PRINCIPAL,
       upsert: true,
-    }
+    };
 
     this.apiService.ExecColeccion(fnx).subscribe(
       (data) => {
         if (tipo == 2) {
-          this.xaplicacion = null
-          this.xperfil = null
+          this.xaplicacion = null;
+          this.xperfil = null;
         }
 
-        this.finalizando(tipo)
+        this.finalizando(tipo);
       },
       (error) => {
         this.utilservice.AlertMini(
-          'top-end',
-          'error',
-          'Error al Guardadar los Datos',
-          3000
-        )
-      }
-    )
+          "top-end",
+          "error",
+          "Error al Guardadar los Datos",
+          3000,
+        );
+      },
+    );
   }
 
   finalizando(tipo: number) {
-    let texto = tipo == 1 ? 'registrado' : 'modificado'
+    let texto = tipo == 1 ? "registrado" : "modificado";
     Swal.fire({
-      title: 'Aviso',
-      text: 'Tu usuario ha sido ' + texto,
-      icon: 'success',
+      title: "Aviso",
+      text: "Tu usuario ha sido " + texto,
+      icon: "success",
       showCancelButton: false,
-      confirmButtonColor: '#3085d6',
-      confirmButtonText: 'Aceptar',
+      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Aceptar",
     }).then((result) => {
       if (result.isConfirmed) {
         if (tipo == 2) {
-
-
-          this.usuarioSave = false
-          this.limpiar()
-
+          this.usuarioSave = false;
+          this.limpiar();
         } else {
-          this.usuarioSave = true
+          this.usuarioSave = true;
         }
       }
-    })
+    });
   }
 
   async limpiar() {
-    window.sessionStorage.removeItem('validator')
+    window.sessionStorage.removeItem("validator");
     this.iUser = {
-      cedula: '',
+      cedula: "",
       tipoacceso: 3,
       respaldo: 0,
-      endpoint: '',
-      login: '',
-      clave: '',
-      encriptamiento: '1',
-      nombre: '',
-      descripcion: '',
+      endpoint: "",
+      login: "",
+      clave: "",
+      encriptamiento: "1",
+      nombre: "",
+      descripcion: "",
       estatus: 1,
       vigencia: 180,
-      correo: '',
-      observaciones: '',
+      correo: "",
+      observaciones: "",
       duraciontexto: 1,
       duraciontiempo: 5,
-      oficina: 'TODAS',
-      regional: 'TODAS',
+      oficina: "TODAS",
+      regional: "TODAS",
       multiplesesion: false,
-    }
-    this.xoficina = 'TODAS'
-    this.xregional = 'TODAS'
-    this.descripcion = ''
-    this.dataUsers = []
-    this.lstUsersApp = []
+      cargo: "",
+    };
+    this.xoficina = "TODAS";
+    this.xregional = "TODAS";
+    this.descripcion = "";
+    this.dataUsers = [];
+    this.lstUsersApp = [];
 
+    this.blockEdit = "false";
+    this.userService.iniciarObjeto();
+    await this.CargarListaEndPoint();
 
-    this.blockEdit = 'false'
-    this.userService.iniciarObjeto()
-    await this.CargarListaEndPoint()
-
-
-    this.syncFormControlsFromUser()
-    this.ngOnInit()
+    this.syncFormControlsFromUser();
+    this.ngOnInit();
   }
 
   onLoginInput() {
@@ -1008,34 +975,40 @@ export class UserComponent implements OnInit, OnDestroy {
       return;
     }
 
-    let login = this.iUserLoginCtrl.value || '';
+    let login = this.iUserLoginCtrl.value || "";
     login = login.toUpperCase();
 
-    let validatedLogin = '';
+    let validatedLogin = "";
     this.loginPrefixError = null; // Reset error
 
     for (let i = 0; i < login.length && i < 7; i++) {
       const char = login[i];
 
-      if (i === 0) { // Primer carácter
-        if (char === 'N' || char === 'C') {
+      if (i === 0) {
+        // Primer carácter
+        if (char === "N" || char === "C") {
           validatedLogin += char;
         } else {
-          this.loginPrefixError = 'Debe iniciar con NM o CT.';
+          this.loginPrefixError = "Debe iniciar con NM o CT.";
         }
-      } else if (i === 1) { // Segundo carácter
+      } else if (i === 1) {
+        // Segundo carácter
         const firstChar = validatedLogin[0];
-        if ((firstChar === 'N' && char === 'M') || (firstChar === 'C' && char === 'T')) {
+        if (
+          (firstChar === "N" && char === "M") ||
+          (firstChar === "C" && char === "T")
+        ) {
           validatedLogin += char;
           this.loginPrefixError = null; // Prefijo correcto, limpiar error
-        } else if (firstChar === 'N' && char !== 'M') {
-          this.loginPrefixError = 'El prefijo debe ser NM.';
-        } else if (firstChar === 'C' && char !== 'T') {
-          this.loginPrefixError = 'El prefijo debe ser CT.';
+        } else if (firstChar === "N" && char !== "M") {
+          this.loginPrefixError = "El prefijo debe ser NM.";
+        } else if (firstChar === "C" && char !== "T") {
+          this.loginPrefixError = "El prefijo debe ser CT.";
         } else {
           // Si el primer caracter fue inválido, no se añade el segundo
         }
-      } else { // Caracteres del 2 al 6 (índices)
+      } else {
+        // Caracteres del 2 al 6 (índices)
         if (/[0-9]/.test(char)) {
           validatedLogin += char;
         }
@@ -1054,153 +1027,177 @@ export class UserComponent implements OnInit, OnDestroy {
   SearchLoginLDAP() {
     if (this.isBDV && this.iUser.tipoacceso == 3) {
       let cod = {
-        'codUsuario': this.iUser.login
-      }
+        codUsuario: this.iUser.login,
+      };
 
       let data = {
-        'url': this.configuracion.endpoints.directorioActivo,
-        'data': JSON.stringify(cod),
-      }
+        url: this.configuracion.endpoints.directorioActivo,
+        data: JSON.stringify(cod),
+      };
 
       this.apiService.SendRequestPostAnonimous(data).subscribe(
         (data) => {
           if (data.usuario != null) {
-            let usr = data.usuario
-            this.iUser.cedula = usr.cedula
-            this.iUser.nombre = usr.nombres + ' ' + usr.apellidos
-            this.iUser.descripcion = usr.descCargo
-            this.descripcion = usr.descUnidad
-            this.iUser.correo = usr.correo
-            this.syncFormControlsFromUser()
+            let usr = data.usuario;
+            this.iUser.cedula = usr.cedula;
+            this.iUser.nombre = usr.nombres + " " + usr.apellidos;
+            this.iUser.descripcion = usr.descCargo;
+            this.descripcion = usr.descUnidad;
+            this.iUser.correo = usr.correo;
+            this.syncFormControlsFromUser();
           } else {
             this.utilservice.AlertMini(
-              'top-end',
-              'warning',
-              'Usuario no se encuentra registrado en el directorio activo',
-              3000
-            )
+              "top-end",
+              "warning",
+              "Usuario no se encuentra registrado en el directorio activo",
+              3000,
+            );
           }
         },
         (error) => {
-          this.utilservice.AlertMini(
-            'top-end',
-            'warning',
-            error,
-            3000
-          )
-        }
-      )
-
+          this.utilservice.AlertMini("top-end", "warning", error, 3000);
+        },
+      );
     }
   }
 
-
   consultarRegionales() {
-    this.dataRegional = []
-    console.log(this.endpointOficinas, this.isBDV)
+    this.dataRegional = [];
+    console.log(this.endpointOficinas, this.isBDV);
     if (this.isBDV) {
-      this.xAPI = {} as IAPICore
+      this.xAPI = {} as IAPICore;
       this.xAPI.funcion = environment.functions.CONSULTAR_REGIONALES; // Asumiendo que esta es tu función de backend
-      this.xAPI.parametros = ''
+      this.xAPI.parametros = "";
       this.xAPI.valores = {};
 
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          this.dataRegional = data.Cuerpo
+          this.dataRegional = data.Cuerpo;
         },
         (error) => {
-          console.error('Error al cargar la configuración de la aplicación:', error);
-
-        }
+          console.error(
+            "Error al cargar la configuración de la aplicación:",
+            error,
+          );
+        },
       );
-    }else if(  this.endpointOficinas != ''){
-      
-      this.xAPI = {} as IAPICore
-      this.xAPI.funcion =   this.endpointOficinas // Asumiendo que esta es tu función de backend
-      this.xAPI.parametros = ''
+    } else if (this.endpointOficinas != "") {
+      this.xAPI = {} as IAPICore;
+      this.xAPI.funcion = this.endpointOficinas; // Asumiendo que esta es tu función de backend
+      this.xAPI.parametros = "";
       this.xAPI.valores = {};
 
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          this.dataRegional = data.Cuerpo
+          this.dataRegional = data.Cuerpo;
         },
         (error) => {
-          console.error('Error al cargar la configuración de la aplicación:', error);
-
-        }
+          console.error(
+            "Error al cargar la configuración de la aplicación:",
+            error,
+          );
+        },
       );
     }
   }
 
   consultarOficinas(e) {
     // console.log(e)
-    this.dataOficina = []
+    this.dataOficina = [];
     if (this.isBDV) {
-      this.xAPI = {} as IAPICore
+      this.xAPI = {} as IAPICore;
       this.xAPI.funcion = environment.functions.CONSULTAR_OFICINAS; // Asumiendo que esta es tu función de backend
-      this.xAPI.parametros = this.utilservice.zfill(e.id, 2)
+      this.xAPI.parametros = this.utilservice.zfill(e.id, 2);
       this.xAPI.valores = {};
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          this.dataOficina = data.Cuerpo
+          this.dataOficina = data.Cuerpo;
         },
         (error) => {
-          console.error('Error al cargar la configuración de la aplicación:', error);
-
-        }
+          console.error(
+            "Error al cargar la configuración de la aplicación:",
+            error,
+          );
+        },
       );
-    }else if(this.endpointEstados != ''){
-      this.xAPI = {} as IAPICore
+    } else if (this.endpointEstados != "") {
+      this.xAPI = {} as IAPICore;
       this.xAPI.funcion = this.endpointEstados; // Asumiendo que esta es tu función de backend
-      this.xAPI.parametros = `${ parseInt(e.id)}`
+      this.xAPI.parametros = `${parseInt(e.id)}`;
       this.xAPI.valores = {};
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          this.dataOficina = data.Cuerpo
+          this.dataOficina = data.Cuerpo;
         },
         (error) => {
-          console.error('Error al cargar la configuración de la aplicación:', error);
-
-        }
+          console.error(
+            "Error al cargar la configuración de la aplicación:",
+            error,
+          );
+        },
       );
     }
   }
 
   async registrarUsuario() {
-    await this.getUserApp()
-    let texto = 'registrar'
+    await this.getUserApp();
+    let texto = "registrar";
     Swal.fire({
-      title: 'Alerta',
-      text: '¿Está seguro que desea ' + texto + ' un usuario?',
-      icon: 'question',
+      title: "Alerta",
+      text: "¿Está seguro que desea " + texto + " un usuario?",
+      icon: "question",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#C81D11',
-      confirmButtonText: 'Si, Aceptar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#C81D11",
+      confirmButtonText: "Si, Aceptar",
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.ok(1)
+        this.ok(1);
       }
-    })
-
+    });
   }
 
   validateUserForm(): boolean {
-    if (this.iUserLoginCtrl.value == '' || this.iUserLoginCtrl.value == undefined) return false;
-    if (this.iUserCedulaCtrl.value == '' || this.iUserCedulaCtrl.value == undefined) return false;
-    if (this.iUserNombreCtrl.value == '' || this.iUserNombreCtrl.value == undefined) return false;
-    if (this.iUserDescripcionCtrl.value == '' || this.iUserDescripcionCtrl.value == undefined) return false;
-    if (this.iUserCorreoCtrl.value == '' || this.iUserCorreoCtrl.value == undefined) return false;
-    if (this.descripcionCtrl.value == '' || this.descripcionCtrl.value == undefined) return false;
+    if (
+      this.iUserLoginCtrl.value == "" ||
+      this.iUserLoginCtrl.value == undefined
+    )
+      return false;
+    if (
+      this.iUserCedulaCtrl.value == "" ||
+      this.iUserCedulaCtrl.value == undefined
+    )
+      return false;
+    if (
+      this.iUserNombreCtrl.value == "" ||
+      this.iUserNombreCtrl.value == undefined
+    )
+      return false;
+    if (
+      this.iUserDescripcionCtrl.value == "" ||
+      this.iUserDescripcionCtrl.value == undefined
+    )
+      return false;
+    if (
+      this.iUserCorreoCtrl.value == "" ||
+      this.iUserCorreoCtrl.value == undefined
+    )
+      return false;
+    if (
+      this.descripcionCtrl.value == "" ||
+      this.descripcionCtrl.value == undefined
+    )
+      return false;
     return true;
   }
 
-
-
   validateEmail() {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (this.iUserCorreoCtrl.value && this.iUserCorreoCtrl.value.trim() !== '') {
+    if (
+      this.iUserCorreoCtrl.value &&
+      this.iUserCorreoCtrl.value.trim() !== ""
+    ) {
       this.isEmailInvalid = !emailRegex.test(this.iUserCorreoCtrl.value);
     } else {
       this.isEmailInvalid = false;
@@ -1209,7 +1206,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   /**
    * Check Password Strength
-   * @param password 
+   * @param password
    */
   checkPasswordStrength(password: string): void {
     let result = 0;
@@ -1224,150 +1221,151 @@ export class UserComponent implements OnInit, OnDestroy {
     this.passwordStrengthWidth = result;
 
     if (result < 40) {
-      this.passwordStrengthLabel = 'Débil';
-      this.passwordStrengthColor = 'bg-danger';
+      this.passwordStrengthLabel = "Débil";
+      this.passwordStrengthColor = "bg-danger";
     } else if (result < 80) {
-      this.passwordStrengthLabel = 'Media';
-      this.passwordStrengthColor = 'bg-warning';
+      this.passwordStrengthLabel = "Media";
+      this.passwordStrengthColor = "bg-warning";
     } else if (result === 100) {
-      this.passwordStrengthLabel = 'Fuerte';
-      this.passwordStrengthColor = 'bg-success';
+      this.passwordStrengthLabel = "Fuerte";
+      this.passwordStrengthColor = "bg-success";
     } else {
-      this.passwordStrengthLabel = 'Buena';
-      this.passwordStrengthColor = 'bg-info';
+      this.passwordStrengthLabel = "Buena";
+      this.passwordStrengthColor = "bg-info";
     }
   }
 
   validatePassword() {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/;
 
-    if (this.iUserClaveCtrl.value && !passwordRegex.test(this.iUserClaveCtrl.value)) {
+    if (
+      this.iUserClaveCtrl.value &&
+      !passwordRegex.test(this.iUserClaveCtrl.value)
+    ) {
       this.isPasswordInvalid = true;
       this.utilservice.AlertMini(
         "top-end",
         "error",
         "La clave no cumple con los requisitos. Debe tener entre 8 y 16 caracteres, incluir mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).",
-        5000
+        5000,
       );
     } else {
       this.isPasswordInvalid = false;
     }
   }
 
-
   consultarCedula() {
-    this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.CONSULTAR_CEDULA
-    this.xAPI.parametros = this.iUserCedulaCtrl.value
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.CONSULTAR_CEDULA;
+    this.xAPI.parametros = this.iUserCedulaCtrl.value;
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data != null) {
           if (data.length > 0) {
             this.utilservice.AlertMini(
-              'top-end',
-              'warning',
-              'Cédula ya se encuentra registrado',
-              3000
-            )
-            this.iUserCedulaCtrl.setValue('')
-            this.iUser.cedula = ''
+              "top-end",
+              "warning",
+              "Cédula ya se encuentra registrado",
+              3000,
+            );
+            this.iUserCedulaCtrl.setValue("");
+            this.iUser.cedula = "";
           }
         }
-
       },
       (error) => {
-        console.log(error)
-      }
-    )
+        console.log(error);
+      },
+    );
   }
 
   consultarLogin() {
-    this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.CONSULTAR_LOGIN
-    this.xAPI.parametros = this.iUserLoginCtrl.value
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.CONSULTAR_LOGIN;
+    this.xAPI.parametros = this.iUserLoginCtrl.value;
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data != null) {
           if (data.length > 0) {
             this.utilservice.AlertMini(
-              'top-end',
-              'warning',
-              'Login ya se encuentra registrado',
-              3000
-            )
-            this.iUserLoginCtrl.setValue('')
-            this.iUser.login = ''
+              "top-end",
+              "warning",
+              "Login ya se encuentra registrado",
+              3000,
+            );
+            this.iUserLoginCtrl.setValue("");
+            this.iUser.login = "";
           }
         }
       },
       (error) => {
-        console.log(error)
-      }
-    )
+        console.log(error);
+      },
+    );
   }
 
-  getTraza(id) : number { 
-    switch (id) { 
-      case 'BAJA':
-        return 1
-      case 'MEDIA':
-        return 2
-      case 'ALTA':
-        return 3
-    } 
+  getTraza(id): number {
+    switch (id) {
+      case "BAJA":
+        return 1;
+      case "MEDIA":
+        return 2;
+      case "ALTA":
+        return 3;
+    }
   }
 
   syncFormControlsFromUser(): void {
-    this.iUserTipoaccesoCtrl.setValue(this.iUser.tipoacceso)
-    this.iUserRespaldoCtrl.setValue(this.iUser.respaldo)
-    this.iUserEndpointCtrl.setValue(this.iUser.endpoint ?? '')
-    this.iUserLoginCtrl.setValue(this.iUser.login ?? '')
-    this.iUserClaveCtrl.setValue(this.iUser.clave ?? '')
-    this.iUserEncriptamientoCtrl.setValue(this.iUser.encriptamiento ?? '')
-    this.iUserCedulaCtrl.setValue(this.iUser.cedula ?? '')
-    this.iUserNombreCtrl.setValue(this.iUser.nombre ?? '')
-    this.iUserDescripcionCtrl.setValue(this.iUser.descripcion ?? '')
-    this.iUserEstatusCtrl.setValue(this.iUser.estatus)
-    this.iUserVigenciaCtrl.setValue(this.iUser.vigencia)
-    this.iUserCorreoCtrl.setValue(this.iUser.correo ?? '')
-    this.descripcionCtrl.setValue(this.descripcion ?? '')
-    this.iUserDuraciontextoCtrl.setValue(this.iUser.duraciontexto)
-    this.iUserDuraciontiempoCtrl.setValue(this.iUser.duraciontiempo)
-    this.xregionalCtrl.setValue(this.xregional)
-    this.xoficinaCtrl.setValue(this.xoficina)
-    this.multiplesesionCtrl.setValue(this.multiplesesion)
-    this.xaplicacionCtrl.setValue(this.xaplicacion)
-    this.xperfilCtrl.setValue(this.xperfil)
-    this.xtrazaCtrl.setValue(this.xtraza)
+    this.iUserTipoaccesoCtrl.setValue(this.iUser.tipoacceso);
+    this.iUserRespaldoCtrl.setValue(this.iUser.respaldo);
+    this.iUserEndpointCtrl.setValue(this.iUser.endpoint ?? "");
+    this.iUserLoginCtrl.setValue(this.iUser.login ?? "");
+    this.iUserClaveCtrl.setValue(this.iUser.clave ?? "");
+    this.iUserEncriptamientoCtrl.setValue(this.iUser.encriptamiento ?? "");
+    this.iUserCedulaCtrl.setValue(this.iUser.cedula ?? "");
+    this.iUserNombreCtrl.setValue(this.iUser.nombre ?? "");
+    this.iUserDescripcionCtrl.setValue(this.iUser.cargo ?? "");
+    this.iUserEstatusCtrl.setValue(this.iUser.estatus);
+    this.iUserVigenciaCtrl.setValue(this.iUser.vigencia);
+    this.iUserCorreoCtrl.setValue(this.iUser.correo ?? "");
+    this.descripcionCtrl.setValue(this.descripcion ?? "");
+    this.iUserDuraciontextoCtrl.setValue(this.iUser.duraciontexto);
+    this.iUserDuraciontiempoCtrl.setValue(this.iUser.duraciontiempo);
+    this.xregionalCtrl.setValue(this.xregional);
+    this.xoficinaCtrl.setValue(this.xoficina);
+    this.multiplesesionCtrl.setValue(this.multiplesesion);
+    this.xaplicacionCtrl.setValue(this.xaplicacion);
+    this.xperfilCtrl.setValue(this.xperfil);
+    this.xtrazaCtrl.setValue(this.xtraza);
   }
 
   syncUserFromFormControls(): void {
-    this.iUser.tipoacceso = this.iUserTipoaccesoCtrl.value
-    this.iUser.respaldo = this.iUserRespaldoCtrl.value
-    this.iUser.endpoint = this.iUserEndpointCtrl.value
-    this.iUser.login = this.iUserLoginCtrl.value
-    this.iUser.clave = this.iUserClaveCtrl.value
-    this.iUser.encriptamiento = this.iUserEncriptamientoCtrl.value
-    this.iUser.cedula = this.iUserCedulaCtrl.value
-    this.iUser.nombre = this.iUserNombreCtrl.value
-    this.iUser.descripcion = this.iUserDescripcionCtrl.value
-    this.iUser.estatus = this.iUserEstatusCtrl.value
-    this.iUser.vigencia = this.iUserVigenciaCtrl.value
-    this.iUser.correo = this.iUserCorreoCtrl.value
-    this.descripcion = this.descripcionCtrl.value
-    this.iUser.duraciontexto = this.iUserDuraciontextoCtrl.value
-    this.iUser.duraciontiempo = this.iUserDuraciontiempoCtrl.value
-    this.xregional = this.xregionalCtrl.value
-    this.xoficina = this.xoficinaCtrl.value
-    this.multiplesesion = this.multiplesesionCtrl.value
-    this.xaplicacion = this.xaplicacionCtrl.value
-    this.xperfil = this.xperfilCtrl.value
-    this.xtraza = this.xtrazaCtrl.value
+    this.iUser.tipoacceso = this.iUserTipoaccesoCtrl.value;
+    this.iUser.respaldo = this.iUserRespaldoCtrl.value;
+    this.iUser.endpoint = this.iUserEndpointCtrl.value;
+    this.iUser.login = this.iUserLoginCtrl.value;
+    this.iUser.clave = this.iUserClaveCtrl.value;
+    this.iUser.encriptamiento = this.iUserEncriptamientoCtrl.value;
+    this.iUser.cedula = this.iUserCedulaCtrl.value;
+    this.iUser.nombre = this.iUserNombreCtrl.value;
+    this.iUser.descripcion = this.iUserDescripcionCtrl.value;
+    this.iUser.estatus = this.iUserEstatusCtrl.value;
+    this.iUser.vigencia = this.iUserVigenciaCtrl.value;
+    this.iUser.correo = this.iUserCorreoCtrl.value;
+    this.descripcion = this.descripcionCtrl.value;
+    this.iUser.duraciontexto = this.iUserDuraciontextoCtrl.value;
+    this.iUser.duraciontiempo = this.iUserDuraciontiempoCtrl.value;
+    this.xregional = this.xregionalCtrl.value;
+    this.xoficina = this.xoficinaCtrl.value;
+    this.multiplesesion = this.multiplesesionCtrl.value;
+    this.xaplicacion = this.xaplicacionCtrl.value;
+    this.xperfil = this.xperfilCtrl.value;
+    this.xtraza = this.xtrazaCtrl.value;
   }
 
   ngOnDestroy(): void {
-    this.userStatusSub?.unsubscribe()
-    window.sessionStorage.removeItem('validator')
+    this.userStatusSub?.unsubscribe();
+    window.sessionStorage.removeItem("validator");
   }
-
 }

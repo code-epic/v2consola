@@ -10,7 +10,7 @@
 
         <div class="col-md-12 ">
           <br>
-            <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (click)="selTab($event)"
+            <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (activeIdChange)="selTab($event)"
               class="nav-pills justify-content-center">
               <li [ngbNavItem]="1">
                 <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'list'"
@@ -42,9 +42,20 @@
                         </div>
                       </div>
 
+                      @if (isLoading) {
+                        <div class="d-flex justify-content-center align-items-center py-5">
+                          <div class="text-center">
+                            <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                              <span class="sr-only">Cargando...</span>
+                            </div>
+                            <p class="text-muted font-weight-bold mb-0">Cargando lista de perfiles…</p>
+                          </div>
+                        </div>
+                      }
                       <ngx-datatable [rows]="lstPerfil" [rowHeight]="58" class="bootstrap core-bootstrap"
                         [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50"
-                        [scrollbarH]="true" [limit]="basicSelectedOptionCtrl.value" [count]="lstPerfil.length" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+                        [scrollbarH]="true" [limit]="basicSelectedOptionCtrl.value" [count]="lstPerfil.length"
+                        [class.loading]="isLoading" [loadingIndicator]="isLoading" [hidden]="isLoading">
 
                         <ngx-datatable-column name="APLICACION / ROL" prop="llave" [width]="10">
                           <ng-template ngx-datatable-header-template>

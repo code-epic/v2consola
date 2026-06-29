@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core"
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core"
 import { CommonModule } from "@angular/common"
 import { FormControl, ReactiveFormsModule } from "@angular/forms"
 import { NgbModal, NgbModalConfig, NgbModule } from "@ng-bootstrap/ng-bootstrap"
@@ -226,6 +226,7 @@ export class ProfileComponent implements OnInit {
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -273,17 +274,17 @@ export class ProfileComponent implements OnInit {
     this.listarPerfiles()
   }
 
-  async CargarListaAplicaciones() {
+  CargarListaAplicaciones() {
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES
     this.xAPI.parametros = ''
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
+    this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstAplicaciones = data.map((e) => {
           e.name = `${e.id}  (${e.nombre})`
           return e
         })
-
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error)
@@ -297,6 +298,7 @@ export class ProfileComponent implements OnInit {
   }
 
   listarPerfiles() {
+    this._isLoading.set(true);
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_LISTA_PERFILES
     this.xAPI.parametros = ''
@@ -304,8 +306,6 @@ export class ProfileComponent implements OnInit {
     this.lstPerfil = []
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-
-
         if (data != null) {
           data.sort((a, b) => {
             if ((a.aplicacion || '').localeCompare(b.aplicacion || '') === 0) {
@@ -316,11 +316,13 @@ export class ProfileComponent implements OnInit {
           this.lstPerfil = data
           this.tempPerfil = data
         }
-
-
+        this._isLoading.set(false);
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error)
+        this._isLoading.set(false);
+        this.cdr.detectChanges();
       }
     )
   }

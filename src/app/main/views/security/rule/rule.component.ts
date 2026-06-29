@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -44,8 +44,10 @@ export class RuleComponent implements OnInit {
 
   // Propiedades para la nueva interfaz
   public lstAplicaciones = [];
-  public aplicacionSeleccionada: string;
+  public aplicacionSeleccionada: any;
   public configuracion: IConfiguracion;
+  public isLoadingApp = false;
+  public isLoadingConfig = false;
 
   public aplicacionSeleccionadaCtrl = new FormControl('');
   public configuracionEstatusCtrl = new FormControl(false);
@@ -84,7 +86,8 @@ export class RuleComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private utilService: UtilService
+    private utilService: UtilService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -105,19 +108,24 @@ export class RuleComponent implements OnInit {
     this.cargarAplicaciones();
   }
 
-  async cargarAplicaciones() {
+  cargarAplicaciones() {
+    this.isLoadingApp = true;
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_APLICACIONES;
     this.xAPI.parametros = '';
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
+    this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this.lstAplicaciones = data.map((e) => {
           e.name = `${e.id}  (${e.nombre})`
           return e
         })
+        this.isLoadingApp = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error cargando las aplicaciones:', error);
+        this.isLoadingApp = false;
+        this.cdr.detectChanges();
       }
     );
   }
@@ -129,30 +137,40 @@ export class RuleComponent implements OnInit {
    */
   cargarConfiguracionApp(event: any) {
     if (!event) {
+      this.aplicacionSeleccionada = null;
       this.configuracion = null;
+      this.isLoadingConfig = false;
       return;
     }
 
+    this.aplicacionSeleccionada = event;
+    this.isLoadingConfig = true;
+    this.configuracion = null;
     const appId = event.id;
     this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
+    this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP;
     this.xAPI.parametros = appId;
     this.xAPI.valores = {};
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        if (data != null) {
-          if (data.length > 0) {
-            this.configuracion = data[0]
-            this.syncFormControlsFromConfig()
-            return
-          }
+        if (data != null && data.length > 0) {
+          // Fusionar datos de API con valores por defecto para nunca tener undefined
+          this.configuracion = { ...this.crearConfiguracionDefecto(appId), ...data[0] };
+        } else {
+          this.configuracion = this.crearConfiguracionDefecto(appId);
         }
-        this.configuracion = this.crearConfiguracionDefecto(appId)
+        this.syncFormControlsFromConfig();
+        this.isLoadingConfig = false;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error al cargar la configuración de la aplicación:', error);
+        this.configuracion = this.crearConfiguracionDefecto(appId);
+        this.syncFormControlsFromConfig();
+        this.isLoadingConfig = false;
         this.utilService.AlertMini('top-end', 'error', 'No se pudo cargar la configuración.', 3000);
+        this.cdr.detectChanges();
       }
     );
   }
@@ -164,19 +182,37 @@ export class RuleComponent implements OnInit {
    */
   crearConfiguracionDefecto(appId: string): IConfiguracion {
 
+    const now = new Date().toISOString();
+    const usuario = this.token?.Usuario?.nombre ?? '';
+
     return {
       id: appId,
       estatus: true,
       sesion: { tiempo: 300, unidad: 'segundos' },
       endpoints: { login: '', oficinas: '', estados: '', directorioActivo: '' },
       traza: { nivel: 'MEDIA' },
-      creado: new Date().toISOString(),
-      actualizado: new Date().toISOString(),
-      usuariocreado: this.token.Usuario.nombre,
-      usuarioactualizado: this.token.Usuario.nombre,
+      creado: now,
+      actualizado: now,
+      usuariocreado: usuario,
+      usuarioactualizado: usuario,
       encriptamiento: 'SHA256',
       certificado_digital: '',
-      certificado_pass: ''
+      certificado_pass: '',
+      // Auditor
+      auditor_nombre: '',
+      auditor_nacionalidad: 'V',
+      auditor_cedula: '',
+      auditor_firma: '',
+      // Director
+      director_nombre: '',
+      director_nacionalidad: 'V',
+      director_cedula: '',
+      director_firma: '',
+      // Membrete
+      membrete_l1: '',
+      membrete_l2: '',
+      membrete_l3: '',
+      logo_membrete: '',
     } as any;
   }
 
