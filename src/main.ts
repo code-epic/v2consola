@@ -1,7 +1,8 @@
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { importProvidersFrom, enableProdMode } from '@angular/core';
 
 import { AppModule } from './app/app.module';
+import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
 
 import 'codemirror/lib/codemirror';
@@ -26,7 +27,11 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule).catch(err => {
+bootstrapApplication(AppComponent, {
+  providers: [
+    importProvidersFrom(AppModule)
+  ]
+}).catch(err => {
     // Si el error es por un token inválido (común en librerías JWT),
     // limpiamos el almacenamiento para evitar que el error persista
     // y recargamos la página para que el usuario pueda iniciar sesión de nuevo.

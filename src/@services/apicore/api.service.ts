@@ -1,4 +1,9 @@
-import { HttpClient, HttpContext, HttpContextToken, HttpHeaders } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpContext,
+  HttpContextToken,
+  HttpHeaders,
+} from "@angular/common/http";
 import { Inject, Injectable, DOCUMENT } from "@angular/core";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
@@ -8,7 +13,7 @@ import { WsocketsService } from "@services/websockets/wsockets.service";
 import { UtilService } from "@services/util/util.service";
 import { TaskService } from "./task.service";
 
-import { Md5 } from 'ts-md5';
+import { Md5 } from "ts-md5";
 
 export interface RestoreAPI {
   nombre: string;
@@ -137,6 +142,7 @@ export interface IAPI {
   respaldo: number;
   puente?: string;
   hsf?: boolean;
+  fecha?: string;
 }
 
 export interface WkfEstatus {
@@ -262,12 +268,11 @@ export interface WTipoArchivo {
   archivo?: string; //CodeEncrypt
 }
 
-
 // Interfaces para tipar el objeto de configuración
 
 export interface ISesionConfig {
   tiempo: number;
-  unidad: 'horas' | 'minutos' | 'segundos';
+  unidad: "horas" | "minutos" | "segundos";
 }
 
 export interface IEndpointsConfig {
@@ -278,7 +283,7 @@ export interface IEndpointsConfig {
 }
 
 export interface ITrazaConfig {
-  nivel: 'BAJA' | 'MEDIA' | 'ALTA';
+  nivel: "BAJA" | "MEDIA" | "ALTA";
 }
 
 export interface IConfiguracion {
@@ -306,7 +311,6 @@ export interface IConfiguracion {
   membrete_l3?: string;
   certificado_pass?: string;
 }
-
 
 @Injectable({
   providedIn: "root",
@@ -340,8 +344,8 @@ export class ApiService {
     private router: Router,
     private http: HttpClient,
     private ws: WsocketsService,
-    @Inject(DOCUMENT) private document: Document
-  ) { }
+    @Inject(DOCUMENT) private document: Document,
+  ) {}
 
   //EnviarArchivos generales
   EnviarArchivos(frm: FormData): Observable<any> {
@@ -422,22 +426,21 @@ export class ApiService {
       },
       (error) => {
         console.log(error);
-      }
+      },
     );
   }
-
 
   ConsultarPidScan(id: string, paquete: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.ExecFnxId(id).subscribe(
         (data) => {
           setTimeout(() => {
-            if (data.documento == 'PROCESADO') {
+            if (data.documento == "PROCESADO") {
               this.pID.id = id;
               this.pID.estatus = false;
               this.pID.contenido = paquete;
               this.ws.pidScan$.emit(this.pID);
-              console.log(data)
+              console.log(data);
               resolve(data); // Resuelve la promesa con los datos
             } else {
               this.ConsultarPidScan(id, paquete).then(resolve).catch(reject);
@@ -447,11 +450,10 @@ export class ApiService {
         (error) => {
           // console.log(error);
           reject(error); // Rechaza la promesa en caso de error
-        }
+        },
       );
     });
   }
-
 
   DwsCdn(peticion: string, tipo: string, filename: string) {
     let ruta = this.URL + "dwsother/" + peticion;
@@ -465,16 +467,16 @@ export class ApiService {
     };
 
     this.http.get(ruta, httpOptions).subscribe((response: any) => {
-      const blob = new Blob([response], { type: tipo })
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.download = filename === '' ? Md5.hashStr(peticion) : filename
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      window.URL.revokeObjectURL(url)
-    })
+      const blob = new Blob([response], { type: tipo });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename === "" ? Md5.hashStr(peticion) : filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    });
   }
 
   getDwsCdn(tpf: WTipoArchivo): Observable<any> {
@@ -513,7 +515,7 @@ export class ApiService {
         (error) => {
           // console.log(error);
           reject(error); // Rechaza la promesa en caso de error
-        }
+        },
       );
     });
   }
@@ -599,7 +601,7 @@ export class ApiService {
     msj: string,
     txt: string,
     icono: SweetAlertIcon,
-    destino: string
+    destino: string,
   ): boolean {
     let respuesta = false;
     Swal.fire({
@@ -619,42 +621,33 @@ export class ApiService {
     return respuesta;
   }
 
-
-
   //ListarModulos
   SendRequestPostAnonimous(data: any): Observable<any> {
     var url = this.URL + "sendrequestpostanonimous";
     return this.http.post<any>(url, data, this.httpOptions);
   }
 
-
   ConsultaSistemaBDV(): boolean {
-    let cadena = this.document.location.href
+    let cadena = this.document.location.href;
     const cadenaNormalizada = cadena.toLowerCase();
-    const palabrasProhibidas = ['sicoex', 'banv', 'corp', '4202'];
-    return palabrasProhibidas.some(palabra =>
-      cadenaNormalizada.includes(palabra)
+    const palabrasProhibidas = ["sicoex", "banv", "corp", "4202"];
+    return palabrasProhibidas.some((palabra) =>
+      cadenaNormalizada.includes(palabra),
     );
-
   }
 
-
-
-
-
   /**
-   * @param id uuid del usuario su conexion 
-   * @returns 
+   * @param id uuid del usuario su conexion
+   * @returns
    */
   ExecBackup(dump): Observable<any> {
     var url = this.URL + "db/dump";
     return this.http.post<any>(url, dump, this.httpOptions);
   }
 
-
   /**
-   * @param id uuid del usuario su conexion 
-   * @returns 
+   * @param id uuid del usuario su conexion
+   * @returns
    */
   ExecRestore(restore): Observable<any> {
     var url = this.URL + "db/restore";
@@ -671,19 +664,19 @@ export class ApiService {
   }
 
   /**
-  * @param tipo png | base64
-  * @returns QR
-  */
+   * @param tipo png | base64
+   * @returns QR
+   */
   Validar_TOTP(codigo: string, tempAuthToken: string): Observable<any> {
     const options = {
       headers: new HttpHeaders({
         Authorization: "Bearer " + tempAuthToken,
-        'X-Skip-Interceptor': 'true' // <--- Nuestra señal secreta
+        "X-Skip-Interceptor": "true", // <--- Nuestra señal secreta
       }),
     };
 
     const url = this.URL + "wusuario/vtotp";
-    return this.http.post<any>(url, { "codigo": codigo }, options);
+    return this.http.post<any>(url, { codigo: codigo }, options);
   }
 
   /**
@@ -694,7 +687,7 @@ export class ApiService {
     const options = {
       headers: new HttpHeaders({
         Authorization: "Bearer " + tempAuthToken,
-        'X-Skip-Interceptor': 'true'
+        "X-Skip-Interceptor": "true",
       }),
     };
 
@@ -707,7 +700,6 @@ export class ApiService {
    * @returns QR
    */
   GetImageQR(id: string): Observable<any> {
-
     var url = this.URL + "imgslocalbase64/" + id;
     return this.http.get(url, this.httpOptions);
   }
@@ -716,23 +708,25 @@ export class ApiService {
    * @returns Conections
    */
   GetConnectionsWebSocket(): Observable<any> {
-
     var url = this.URL + "sandra_sessions";
     return this.http.get(url, this.httpOptions);
   }
 
   /**
- * @returns Conections
- */
+   * @returns Conections
+   */
   SendMessage(data): Observable<any> {
-
     var url = this.URL + "sandra_send-message";
     return this.http.post<any>(url, data, this.httpOptions);
   }
 
   ListCertificates(includeKeys: boolean = false): Observable<any> {
     var url = this.URL + "certificate/list";
-    return this.http.post<any>(url, { include_keys: includeKeys }, this.httpOptions);
+    return this.http.post<any>(
+      url,
+      { include_keys: includeKeys },
+      this.httpOptions,
+    );
   }
 
   DownloadCertificate(path: string, format?: string): Observable<Blob> {
@@ -748,17 +742,22 @@ export class ApiService {
     return this.http.post<any>(url, body, opts);
   }
 
-
-
-  public async postStream<T>(endpoint: string, body: unknown, onRow: (row: T) => void): Promise<void> {
+  public async postStream<T>(
+    endpoint: string,
+    body: unknown,
+    onRow: (row: T) => void,
+  ): Promise<void> {
     const url = this._resolveUrl(endpoint);
     console.log(`[ApiService] Iniciando XHR stream para: ${url}`);
 
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', url, true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader('Authorization', `Bearer ${sessionStorage.getItem('token')}`);
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.setRequestHeader(
+        "Authorization",
+        `Bearer ${sessionStorage.getItem("token")}`,
+      );
 
       let lastIndex = 0;
       let rowCount = 0;
@@ -766,13 +765,13 @@ export class ApiService {
       xhr.onprogress = () => {
         const currentResponse = xhr.responseText;
         const newContent = currentResponse.substring(lastIndex);
-        const lines = newContent.split('\n');
+        const lines = newContent.split("\n");
 
         // El último elemento se guarda si no termina en newline (o se procesará al final)
-        if (newContent.endsWith('\n')) {
+        if (newContent.endsWith("\n")) {
           lastIndex = currentResponse.length;
         } else {
-          lastIndex = currentResponse.lastIndexOf('\n') + 1;
+          lastIndex = currentResponse.lastIndexOf("\n") + 1;
         }
 
         for (const line of lines) {
@@ -791,7 +790,9 @@ export class ApiService {
 
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          console.log(`[ApiService] XHR Stream finalizado. Total filas: ${rowCount}`);
+          console.log(
+            `[ApiService] XHR Stream finalizado. Total filas: ${rowCount}`,
+          );
           resolve();
         } else {
           reject(new Error(`HTTP Error ${xhr.status}: ${xhr.statusText}`));
@@ -799,13 +800,12 @@ export class ApiService {
       };
 
       xhr.onerror = () => {
-        reject(new Error('Network Error during XHR stream.'));
+        reject(new Error("Network Error during XHR stream."));
       };
 
       xhr.send(JSON.stringify(body));
     });
   }
-
 
   /**
    * Construye la URL completa manejando slashes y dominios
@@ -814,20 +814,23 @@ export class ApiService {
     if (/^https?:\/\//.test(endpoint)) return endpoint;
 
     // Asegurar que la URL base termine en /
-    const baseUrl = this._url.endsWith('/') ? this._url : `${this._url}/`;
+    const baseUrl = this._url.endsWith("/") ? this._url : `${this._url}/`;
     // Limpiar el endpoint de slash inicial
-    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+    const cleanEndpoint = endpoint.startsWith("/")
+      ? endpoint.substring(1)
+      : endpoint;
 
     let url = baseUrl + cleanEndpoint;
 
     // Regla: si el endpoint inicia con 'crud' o 'fnx' y NO contiene ya el hash, lo anexamos.
     // Se asume que estos endpoints requieren la firma del hash.
-    if ((cleanEndpoint.startsWith('crud')) && !cleanEndpoint.includes(environment.Hash)) {
-      url += ':' + environment.Hash;
+    if (
+      cleanEndpoint.startsWith("crud") &&
+      !cleanEndpoint.includes(environment.Hash)
+    ) {
+      url += ":" + environment.Hash;
     }
 
     return url;
   }
-
-
 }

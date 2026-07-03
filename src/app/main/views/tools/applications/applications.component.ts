@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, ViewChild, ChangeDetectorRef } from "@angular/core";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
 import { Router } from "@angular/router";
@@ -61,17 +61,18 @@ export class ApplicationsComponent implements OnInit {
   constructor(
     private ruta: Router,
     config: NgbModalConfig,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private cdr: ChangeDetectorRef
   ) {
     config.backdrop = false;
     config.keyboard = false;
   }
 
 
-  async ngOnInit() {
+  ngOnInit() {
     // this.CargarDrivers()
-    await this.ListarApis();
-    await this.CargarListaAplicaciones();
+    this.ListarApis();
+    this.CargarListaAplicaciones();
 
     this.contentHeader = {
       headerTitle: 'Herramientas',
@@ -98,7 +99,7 @@ export class ApplicationsComponent implements OnInit {
     // console.log('Selección cambiada:', event)
   }
 
-  async ListarApis() {
+  ListarApis() {
     this.developer = [];
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "_SYS_R_ListarTodasApis";
@@ -113,6 +114,7 @@ export class ApplicationsComponent implements OnInit {
           return e;
         });
         this.tempData = this.rowData;
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error(error);
@@ -127,16 +129,15 @@ export class ApplicationsComponent implements OnInit {
     this.ruta.navigate([surl]);
   }
 
-  async CargarListaAplicaciones() {
+  CargarListaAplicaciones() {
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "_SYS_LstAplicaciones";
     this.xAPI.parametros = '';
     this.ListaAplicaciones = [];
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
+    this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        data.Cuerpo.map((e) => {
-          this.ListaAplicaciones.push(e);
-        });
+        this.ListaAplicaciones = data.Cuerpo ? [...data.Cuerpo] : [];
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error);

@@ -599,7 +599,8 @@ export class ApiComponent implements OnInit {
     const val = event.id
     // filter our data
     const temp = this.tempData.filter(function (d) {
-      return d.estatus.indexOf(val) !== -1 || !val;
+      if (val === undefined || val === null || val === '') return true;
+      return String(d.estatus) === String(val);
     });
     // update the rows
     this.rowData = temp;

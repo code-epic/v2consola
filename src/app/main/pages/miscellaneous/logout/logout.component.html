@@ -24,7 +24,7 @@
       <!-- Progress Steps -->
       <div class="logout-steps-container">
         <ul class="logout-steps">
-          @for (step of steps; track step; let i = $index) {
+          @for (step of steps; track step.key; let i = $index) {
             <li class="step-item" [ngClass]="'status-' + step.status" [style.animation-delay.ms]="i * 150">
               <div class="step-icon">
                 <!-- Pending -->

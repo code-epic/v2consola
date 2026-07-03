@@ -175,7 +175,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="16"></span></span>
                       </div>
-                      <input [formControl]="versionCtrl" [disabled]="true"
+                      <input [formControl]="versionCtrl"
                         type="text" name="version" id="version" class="form-control">
                     </div>
                   </div>
@@ -334,7 +334,7 @@
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
                         </div>
-                        <input type="text" [formControl]="coleccionCtrl" [disabled]="DisabledNoSql == true"
+                        <input type="text" [formControl]="coleccionCtrl" 
                           class="form-control" placeholder="Coleccion">
                       </div>
                     </div>
@@ -363,7 +363,7 @@
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'filter'" [size]="16"></span></span>
                         </div>
-                        <ng-select [items]="lstDml" [formControl]="xdmlCtrl" [disabled]="DisabledTipoDato == true"
+                        <ng-select [items]="lstDml" [formControl]="xdmlCtrl" 
                           bindLabel="nombre"
                         bindValue="id" placeholder="Seleccione Tipo de dato"></ng-select>
                       </div>
@@ -390,7 +390,7 @@
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'help-circle'" [size]="16"></span></span>
                         </div>
-                        <ng-select [items]="lstcondicion" [disabled]="xcondicion == true" [formControl]="condicionCtrl"
+                        <ng-select [items]="lstcondicion" [formControl]="condicionCtrl" 
                           bindLabel="name" bindId="id" bindValue="name"
                         placeholder="Seleccione Condición"></ng-select>
                       </div>

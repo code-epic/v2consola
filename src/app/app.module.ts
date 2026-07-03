@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { IMAGE_CONFIG } from '@angular/common';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -68,7 +69,6 @@ const appRoutes: Routes = [
 
 @NgModule({
     imports: [
-        AppComponent,
         BrowserModule,
         BrowserAnimationsModule,
         RouterModule.forRoot(appRoutes, {
@@ -102,7 +102,6 @@ const appRoutes: Routes = [
         SoporteModule
     ],
     schemas: [NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA],
-    bootstrap: [AppComponent],
     providers: [
         {
             provide: RECAPTCHA_V3_SITE_KEY,
@@ -112,6 +111,13 @@ const appRoutes: Routes = [
             provide: HTTP_INTERCEPTORS,
             useClass: AuthInterceptorService,
             multi: true
+        },
+        {
+            provide: IMAGE_CONFIG,
+            useValue: {
+              disableImageSizeWarning: true, 
+              disableImageLazyLoadWarning: true
+            }
         },
         PushService,
         provideCharts(withDefaultRegisterables()),
