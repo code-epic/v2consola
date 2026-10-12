@@ -10,6 +10,7 @@ import { ApiService, IAPI, IAPICore } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
 import Stepper from "bs-stepper";
 import { environment } from "environments/environment";
+import Swal from "sweetalert2";
 
 import { AES } from "crypto-js";
 const clave =
@@ -362,6 +363,11 @@ export class RegisterApiComponent implements OnInit {
   distribucionCtrl = new FormControl(0, Validators.required);
   aplicacionCtrl = new FormControl("", Validators.required);
   funcionCtrl = new FormControl("", Validators.required);
+
+  // --- Validación de existencia de función ---
+  public isVerificandoFuncion: boolean = false;
+  public isFuncionDisponible: boolean = false;
+  public mensajeErrorFuncion: string = "";
   versionCtrl = new FormControl({ value: "0.0.1", disabled: true });
   driverCtrl = new FormControl(undefined);
   categoriaCtrl = new FormControl("", Validators.required);
@@ -396,6 +402,8 @@ export class RegisterApiComponent implements OnInit {
   aliasCtrl = new FormControl("");
   tipodatoCtrl = new FormControl(undefined);
   funcionalidadSelectCtrl = new FormControl("");
+  columnaConsultaCtrl = new FormControl("");
+  parametrosCtrl = new FormControl("");
 
   constructor(
     private rutaActiva: ActivatedRoute,
@@ -408,6 +416,15 @@ export class RegisterApiComponent implements OnInit {
 
   horizontalWizardStepperNext(data) {
     if (data.form.valid === true) {
+      if (this.getURL !== "update-api" && !this.isFuncionDisponible) {
+        this.utilservice.AlertMini(
+          "top-end",
+          "warning",
+          "Debe validar que la función esté disponible antes de continuar",
+          4000,
+        );
+        return;
+      }
       this.horizontalWizardStepper.next();
     }
   }
@@ -434,6 +451,9 @@ export class RegisterApiComponent implements OnInit {
     this.LeerAPI(this.rutaURL);
 
     this.getURL = this.rutaActiva.snapshot.url[2].path;
+    if (this.getURL === "update-api") {
+      this.funcionCtrl.disable();
+    }
     let funcion = this.rutaActiva.snapshot.url[3].path;
 
     this.horizontalWizardStepper = new Stepper(
@@ -514,6 +534,10 @@ export class RegisterApiComponent implements OnInit {
     });
     this.entradasCtrl.valueChanges.subscribe((v) => this.setEditorContent(v));
     this.queryCtrl.valueChanges.subscribe((v) => this.setEditorContent(v));
+    this.funcionCtrl.valueChanges.subscribe(() => {
+      this.isFuncionDisponible = false;
+      this.mensajeErrorFuncion = "";
+    });
   }
 
   CargarDrivers() {
@@ -526,12 +550,16 @@ export class RegisterApiComponent implements OnInit {
           e.name = e.descripcion + " - " + "(" + e.basedatos + ")";
           return e;
         });
-        this.drivers.push({
-          id: "MGDBA",
-          name: "Sandra Server MongoDB (MGDBA)",
-          driver: "mongodb",
-        });
-        // console.log(this.drivers)
+        if (!this.drivers.some((e) => e.id === "MGDBA")) {
+          this.drivers.push({
+            id: "MGDBA",
+            name: "Sandra Server MongoDB (MGDBA)",
+            driver: "mongodb",
+          });
+        }
+        if (this.driverCtrl.value) {
+          this.selDataBase(this.driverCtrl.value);
+        }
       },
       (error) => {
         console.log(error);
@@ -546,9 +574,13 @@ export class RegisterApiComponent implements OnInit {
     this.xAPIDB.tipo = this.tipoCtrl.value;
     this.xAPIDB.distribucion = this.distribucionCtrl.value;
     this.xAPIDB.aplicacion = this.aplicacionCtrl.value;
-    this.xAPIDB.funcion = this.funcionCtrl.value;
+    this.xAPIDB.funcion = this.funcionCtrl.value || this.rutaURL || this.xAPIDB.funcion;
     this.xAPIDB.version = this.versionCtrl.value;
-    this.xAPIDB.driver = this.driverCtrl.value;
+
+    // Conexión / driver: garantizamos que sea siempre el ID como string, no un objeto
+    const dVal = this.driverCtrl.value;
+    this.xAPIDB.driver = typeof dVal === 'object' && dVal !== null ? (dVal.id || '') : (dVal || '');
+
     this.xAPIDB.categoria = this.categoriaCtrl.value;
     this.xAPIDB.funcionalidad = this.funcionalidadCtrl.value;
     this.xAPIDB.descripcion = this.descripcionCtrl.value;
@@ -558,6 +590,7 @@ export class RegisterApiComponent implements OnInit {
     this.xAPIDB.coleccion = this.coleccionCtrl.value;
     this.xAPIDB.entradas = this.entradasCtrl.value;
     this.xAPIDB.query = this.queryCtrl.value;
+    this.xAPIDB.parametros = this.parametrosCtrl.value;
     this.xAPIDB.consumidores = this.consumidoresCtrl.value;
     this.xAPIDB.cache = this.cacheCtrl.value;
     this.xAPIDB.logs = this.logsCtrl.value;
@@ -582,8 +615,21 @@ export class RegisterApiComponent implements OnInit {
     this.distribucionCtrl.setValue(data.distribucion, { emitEvent: false });
     this.aplicacionCtrl.setValue(data.aplicacion, { emitEvent: false });
     this.funcionCtrl.setValue(data.funcion, { emitEvent: false });
+    if (this.getURL === "update-api") {
+      this.funcionCtrl.disable({ emitEvent: false });
+      this.isFuncionDisponible = true;
+    }
     this.versionCtrl.setValue(data.version, { emitEvent: false });
-    this.driverCtrl.setValue(data.driver, { emitEvent: false });
+
+    // Normalizar driver en caso de que venga como objeto desde BD o string
+    const driverId = typeof data.driver === 'object' && data.driver !== null
+      ? (data.driver as any).id
+      : (data.driver || '');
+    this.driverCtrl.setValue(driverId, { emitEvent: false });
+    if (driverId) {
+      this.selDataBase(driverId);
+    }
+
     this.categoriaCtrl.setValue(data.categoria, { emitEvent: false });
     this.funcionalidadCtrl.setValue(data.funcionalidad, { emitEvent: false });
     this.descripcionCtrl.setValue(data.descripcion, { emitEvent: false });
@@ -593,6 +639,7 @@ export class RegisterApiComponent implements OnInit {
     this.coleccionCtrl.setValue(data.coleccion, { emitEvent: false });
     this.entradasCtrl.setValue(data.entradas, { emitEvent: false });
     this.queryCtrl.setValue(data.query, { emitEvent: false });
+    this.parametrosCtrl.setValue(data.parametros || '', { emitEvent: false });
     this.consumidoresCtrl.setValue(data.consumidores, { emitEvent: false });
     this.cacheCtrl.setValue(data.cache, { emitEvent: false });
     this.logsCtrl.setValue(data.logs, { emitEvent: false });
@@ -611,7 +658,20 @@ export class RegisterApiComponent implements OnInit {
   }
 
   RegistrarAPI() {
+    if (this.getURL !== "update-api" && !this.isFuncionDisponible) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "error",
+        "No se puede registrar: la función no ha sido validada o ya existe en el sistema",
+        4500,
+      );
+      return;
+    }
     this.syncToModel();
+    // Asegurar que driver siempre sea string
+    if (typeof this.xAPIDB.driver === 'object' && this.xAPIDB.driver !== null) {
+      this.xAPIDB.driver = (this.xAPIDB.driver as any).id || '';
+    }
     this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString());
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString());
     var obj = {
@@ -671,6 +731,10 @@ export class RegisterApiComponent implements OnInit {
 
   async UpdateAPI(funcion: string, entorno: string) {
     this.syncToModel();
+    // Asegurar que driver siempre sea string
+    if (typeof this.xAPIDB.driver === 'object' && this.xAPIDB.driver !== null) {
+      this.xAPIDB.driver = (this.xAPIDB.driver as any).id || '';
+    }
     this.xAPIDB.puertohttp = parseInt(this.xAPIDB.puertohttp.toString());
     this.xAPIDB.puertohttps = parseInt(this.xAPIDB.puertohttps.toString());
     this.apiUpdate.entorno = entorno;
@@ -707,6 +771,235 @@ export class RegisterApiComponent implements OnInit {
         );
       },
     );
+  }
+
+  onBlurFuncion() {
+    if (this.funcionCtrl.value && !this.isFuncionDisponible && !this.isVerificandoFuncion && this.getURL !== "update-api") {
+      this.validarExistenciaFuncion();
+    }
+  }
+
+  onKeydownFuncion(event: KeyboardEvent) {
+    if (event.key === "Tab") {
+      if (!event.shiftKey) {
+        event.preventDefault();
+        this.validarExistenciaFuncion(true);
+      }
+    } else if (event.key === "Enter") {
+      event.preventDefault();
+      this.validarExistenciaFuncion(false);
+    }
+  }
+
+  validarExistenciaFuncion(desdeTab: boolean = false) {
+    const nombre = (this.funcionCtrl.value || "").trim();
+    if (!nombre) {
+      this.isFuncionDisponible = false;
+      this.utilservice.AlertMini(
+        "top-end",
+        "warning",
+        "Por favor ingrese el nombre de la función a validar",
+        3000,
+      );
+      setTimeout(() => {
+        const funcionEl = document.getElementById("funcion") as HTMLElement;
+        if (funcionEl) funcionEl.focus();
+      }, 50);
+      return;
+    }
+
+    // Si estamos en update-api y no se modificó el nombre original
+    if (
+      this.getURL === "update-api" &&
+      this.rutaURL &&
+      nombre.toLowerCase() === this.rutaURL.trim().toLowerCase()
+    ) {
+      this.isFuncionDisponible = true;
+      if (desdeTab) {
+        setTimeout(() => {
+          const driverInput =
+            (document.querySelector("#driver input") as HTMLElement) ||
+            (document.querySelector("#driver .ng-input input") as HTMLElement) ||
+            (document.querySelector("#driver") as HTMLElement);
+          if (driverInput) {
+            driverInput.focus();
+          }
+        }, 50);
+      }
+      return;
+    }
+
+    this.isVerificandoFuncion = true;
+    this.isFuncionDisponible = false;
+
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.CONSULTAR_EXISTENCIA_APICORE;
+    this.xAPI.parametros = nombre;
+    this.xAPI.valores = "";
+
+    this.apiService.Ejecutar(this.xAPI).subscribe({
+      next: (data: any) => {
+        this.isVerificandoFuncion = false;
+        let lista: any[] = [];
+        if (Array.isArray(data)) {
+          lista = data;
+        } else if (data?.Cuerpo) {
+          if (Array.isArray(data.Cuerpo)) {
+            lista = data.Cuerpo;
+          } else if (typeof data.Cuerpo === "string") {
+            try {
+              const parsed = JSON.parse(data.Cuerpo);
+              lista = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) {
+              lista = [];
+            }
+          } else if (typeof data.Cuerpo === "object") {
+            lista = [data.Cuerpo];
+          }
+        } else if (typeof data === "string") {
+          try {
+            const parsed = JSON.parse(data);
+            lista = Array.isArray(parsed) ? parsed : [parsed];
+          } catch (e) {
+            lista = [];
+          }
+        } else if (typeof data === "object" && data !== null) {
+          if (data.funcion || data.Funcion || data.aplicacion || data.Aplicacion) {
+            lista = [data];
+          }
+        }
+
+        // Si la consulta retornó registros, significa que la función YA EXISTE en BD
+        const yaExiste = Array.isArray(lista) && lista.length > 0;
+
+        if (yaExiste) {
+          const item = lista[0] || {};
+          const app = item.aplicacion || item.Aplicacion || item.app || "consola";
+          const driver = item.driver || item.Driver || "MGDBA";
+          const fnName = item.funcion || item.Funcion || nombre;
+          const autor = item.autor || item.Autor || item.usuario || item.Usuario || item.user || item.creador || "";
+          const desc = item.descripcion || item.Descripcion || "";
+
+          let fechaFormateada = "";
+          if (item.fecha || item.Fecha) {
+            try {
+              const d = new Date(item.fecha || item.Fecha);
+              if (!isNaN(d.getTime())) {
+                fechaFormateada = d.toLocaleDateString("es-ES", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                });
+              } else {
+                fechaFormateada = (item.fecha || item.Fecha).toString();
+              }
+            } catch (e) {
+              fechaFormateada = (item.fecha || item.Fecha).toString();
+            }
+          }
+
+          // Si estamos en update-api y corresponde a la misma API que estamos editando
+          if (
+            this.getURL === "update-api" &&
+            (fnName || "").toString().trim().toLowerCase() ===
+              (this.rutaURL || "").trim().toLowerCase()
+          ) {
+            this.isFuncionDisponible = true;
+            this.mensajeErrorFuncion = "";
+            if (desdeTab) {
+              setTimeout(() => {
+                const driverInput =
+                  (document.querySelector("#driver input") as HTMLElement) ||
+                  (document.querySelector("#driver .ng-input input") as HTMLElement) ||
+                  (document.querySelector("#driver") as HTMLElement);
+                if (driverInput) {
+                  driverInput.focus();
+                }
+              }, 50);
+            }
+            return;
+          }
+
+          // SI YA EXISTE: NO LA DEJA REGISTRAR Y LIMPIA LA CAJA
+          this.isFuncionDisponible = false;
+          this.mensajeErrorFuncion = `La función "${fnName}" ya existe en "${app}" (${driver})`;
+
+          // Toast elegante estructurado con Swal
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "warning",
+            showConfirmButton: false,
+            timer: 7000,
+            timerProgressBar: true,
+            background: "#ffffff",
+            didOpen: (toast) => {
+              toast.addEventListener("mouseenter", Swal.stopTimer);
+              toast.addEventListener("mouseleave", Swal.resumeTimer);
+            },
+            html: `
+              <div style="text-align: left; font-family: inherit; font-size: 0.84rem; line-height: 1.45; color: #374151;">
+                <div style="font-size: 0.92rem; font-weight: 700; color: #b45309; margin-bottom: 5px;">
+                  ⚠️ Función Ya Registrada
+                </div>
+                <div style="margin-bottom: 4px;">
+                  <strong style="color: #4b5563;">Función:</strong>
+                  <code style="background-color: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 0.83rem;">${fnName}</code>
+                </div>
+                <div style="margin-bottom: 3px; font-size: 0.80rem; color: #4b5563;">
+                  <strong>Aplicación:</strong> <span style="color: #7c3aed; font-weight: 600;">${app}</span> &nbsp;|&nbsp; 
+                  <strong>Driver:</strong> <span style="color: #0284c7; font-weight: 600;">${driver}</span>
+                </div>
+                ${autor ? `<div style="margin-bottom: 3px; font-size: 0.79rem; color: #6b7280;"><strong>Autor:</strong> ${autor}</div>` : ""}
+                ${fechaFormateada ? `<div style="margin-bottom: 3px; font-size: 0.79rem; color: #6b7280;"><strong>Fecha:</strong> ${fechaFormateada}</div>` : ""}
+                ${desc ? `<div style="margin-top: 5px; font-size: 0.78rem; color: #4b5563; background: #fefce8; border-left: 3px solid #eab308; padding: 4px 8px; border-radius: 3px; font-style: italic;">"${desc}"</div>` : ""}
+              </div>
+            `,
+          });
+
+          this.funcionCtrl.setValue("");
+          this.funcionCtrl.setErrors({ yaExiste: true });
+
+          // Como no se puede registrar y se limpió el campo, devolvemos el foco al campo función
+          setTimeout(() => {
+            const funcionEl = document.getElementById("funcion") as HTMLInputElement;
+            if (funcionEl) {
+              funcionEl.focus();
+            }
+          }, 60);
+        } else {
+          // NO EXISTE EN BD -> DISPONIBLE: quitar cargando y colocar en verde la caja sin mensaje toast
+          this.isFuncionDisponible = true;
+          this.mensajeErrorFuncion = "";
+          this.funcionCtrl.setErrors(null);
+
+          // Si venía navegando con Tab, ahora que está disponible saltamos directamente a Conexión
+          if (desdeTab) {
+            setTimeout(() => {
+              const driverInput =
+                (document.querySelector("#driver input") as HTMLElement) ||
+                (document.querySelector("#driver .ng-input input") as HTMLElement) ||
+                (document.querySelector("#driver") as HTMLElement);
+              if (driverInput) {
+                driverInput.focus();
+              }
+            }, 60);
+          }
+        }
+      },
+      error: (error: any) => {
+        this.isVerificandoFuncion = false;
+        console.error("Error al validar existencia de función:", error);
+        this.utilservice.AlertMini(
+          "top-end",
+          "error",
+          "Error al verificar la función en el servidor",
+          3000,
+        );
+      },
+    });
   }
 
   validarVersion() {
@@ -777,33 +1070,36 @@ export class RegisterApiComponent implements OnInit {
   }
 
   selDataBase(valor: any): void {
-    this.driversID = valor.id;
-    this.xAPI.parametros = valor.basedatos;
+    let driverObj: any;
+    if (typeof valor === 'object' && valor !== null) {
+      driverObj = valor;
+      this.driversID = valor.id;
+    } else {
+      this.driversID = valor;
+      driverObj = this.drivers?.find((d) => d.id === valor);
+    }
+
+    if (!driverObj) {
+      return;
+    }
+
+    this.xAPI.parametros = driverObj.basedatos;
     this.dataModulo = [];
     this.xAPI.funcion = "";
 
-    switch (valor.driver) {
+    switch (driverObj.driver) {
       case "mysql8":
-        this.xAPI.funcion = "_SYS_MYSQL";
-        break;
       case "mariadb":
         this.xAPI.funcion = "_SYS_MYSQL";
         break;
       case "postgres13":
-        this.xAPI.funcion = "_SYS_POSTGRES";
-        break;
       case "postgres96":
         this.xAPI.funcion = "_SYS_POSTGRES";
         break;
       case "mongodb":
-        break;
       case "puenteurl":
-        break;
       case "sqlserver17":
-        break;
       case "oracle19c":
-        break;
-
       default:
         break;
     }

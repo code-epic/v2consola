@@ -95,6 +95,7 @@ export const environment = {
     ACTUALIZAR_CLAVE: "_SYS_UClaveUsuario",
     LISTAR_AUTHORIZATIONS: "_SYS_CBoveda",
     LISTAR_ESQUEMAS_APLICACIONES: "_SYS_SCHEMA_APP",
+    CONSULTAR_EXISTENCIA_APICORE: "_SYS_CApicoreFunciones",
   },
   subPath: {
     LOGIN: "ipsfa/api/web/loginWsx",

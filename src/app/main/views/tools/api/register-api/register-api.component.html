@@ -152,19 +152,54 @@
                 <div class="row">
                   <div class="form-group col-md-4">
                     <label class="form-label" for="funcion">Función</label>
-                    <div class="input-group-pastel">
+                    <div class="input-group-pastel"
+                      [class.disabled]="getURL === 'update-api'"
+                      [class.is-valid-pastel]="isFuncionDisponible && !isVerificandoFuncion && getURL !== 'update-api'">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
                       </div>
                       <input type="text" [formControl]="funcionCtrl"
-                        [class.error]="accountDetailsForm.submitted" id="funcion" name="funcion"
-                        class="form-control">
+                        [readonly]="getURL === 'update-api'"
+                        (keydown)="onKeydownFuncion($event)"
+                        (blur)="onBlurFuncion()"
+                        [class.error]="accountDetailsForm.submitted && funcionCtrl.invalid" id="funcion" name="funcion"
+                        class="form-control"
+                        placeholder="Nombre de la función">
+                      @if (getURL !== 'update-api') {
+                        <div class="input-group-append">
+                          <button type="button" class="btn-validation-pastel" tabindex="-1" (click)="validarExistenciaFuncion()"
+                            [title]="isVerificandoFuncion ? 'Validando existencia...' : (isFuncionDisponible ? 'Función disponible para registro' : 'Validar existencia de la función')"
+                            [disabled]="isVerificandoFuncion || !funcionCtrl.value">
+                            @if (isVerificandoFuncion) {
+                              <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+                            } @else if (isFuncionDisponible) {
+                              <span [data-feather]="'check-circle'" [inner]="true" class="text-success" [size]="16"></span>
+                            } @else {
+                              <span [data-feather]="'search'" [inner]="true" class="text-muted" [size]="16"></span>
+                            }
+                          </button>
+                        </div>
+                      } @else {
+                        <div class="input-group-append">
+                          <span class="input-group-text" title="En modo edición la función no se puede modificar">
+                            <span [data-feather]="'lock'" [size]="16"></span>
+                          </span>
+                        </div>
+                      }
                     </div>
+                    @if (mensajeErrorFuncion) {
+                      <span class="invalid-feedback d-block text-danger font-weight-bold mt-25">
+                        <small>⚠️ {{ mensajeErrorFuncion }}</small>
+                      </span>
+                    }
                     @if (accountDetailsForm.submitted && funcionCtrl.invalid) {
                       <span class="invalid-form">
                         @if (funcionCtrl.errors?.required) {
                           <small class="form-text text-danger">Este campo es
                           requerido!</small>
+                        }
+                        @if (funcionCtrl.errors?.yaExiste) {
+                          <small class="form-text text-danger">Esta función ya existe en la base de datos y no puede registrarse nuevamente.</small>
                         }
                       </span>
                     }
@@ -175,19 +210,20 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="16"></span></span>
                       </div>
-                      <input [formControl]="versionCtrl"
+                      <input [formControl]="versionCtrl" tabindex="-1"
                         type="text" name="version" id="version" class="form-control">
                     </div>
                   </div>
                   <div class="form-group col-md-6">
-                    <label class="form-label" for="conexion">Conexión</label>
+                    <label class="form-label" for="driver">Conexión</label>
                     <div class="ng-select-group-pastel">
                       <div class="input-group-prepend">
                         <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
                       </div>
                       <ng-select [items]="drivers" [formControl]="driverCtrl"
                         [class.error]="accountDetailsForm.submitted" id="driver" name="driver" bindLabel="name"
-                      placeholder="Seleccione Conexión"></ng-select>
+                        bindValue="id"
+                        placeholder="Seleccione Conexión"></ng-select>
                     </div>
                     @if (accountDetailsForm.submitted && driverCtrl.invalid) {
                       <span class="invalid-form">
@@ -274,6 +310,7 @@
                     <span class="align-middle d-sm-inline-block d-none">Atras</span>
                   </button>
                   <button (click)="horizontalWizardStepperNext(accountDetailsForm)" type="submit"
+                    [disabled]="getURL !== 'update-api' && (!isFuncionDisponible || isVerificandoFuncion || !funcionCtrl.value)"
                     class="btn btn-primary btn-next" rippleEffect>
                     <span class="align-middle d-sm-inline-block d-none">Siguiente</span>
                     <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i>
@@ -288,12 +325,12 @@
 
                   @if (!btnInterfaz) {
                     <div class="form-group col-md-12">
-                      <label class="form-label" for="metodo">Puente</label>
+                      <label class="form-label" for="puente">Puente</label>
                       <div class="input-group-pastel">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'shuffle'" [size]="16"></span></span>
                         </div>
-                        <input type="text" [formControl]="puenteCtrl"
+                        <input type="text" [formControl]="puenteCtrl" id="puente"
                           class="form-control" placeholder="Puente">
                       </div>
                     </div>
@@ -372,12 +409,12 @@
 
                   @if (btnInterfaz) {
                     <div class="form-group col-md-2">
-                      <label class="form-label" for="funcion">Valor por defecto</label>
+                      <label class="form-label" for="defecto">Valor por defecto</label>
                       <div class="input-group-pastel">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'check-square'" [size]="16"></span></span>
                         </div>
-                        <input type="text" [formControl]="defectoCtrl"
+                        <input type="text" [formControl]="defectoCtrl" id="defecto"
                           class="form-control" placeholder="Valor por defecto">
                       </div>
                     </div>
@@ -385,12 +422,12 @@
 
                   @if (btnInterfaz) {
                     <div class="form-group col-md-4">
-                      <label class="form-label" for="version">Condición</label>
+                      <label class="form-label" for="condicion">Condición</label>
                       <div class="ng-select-group-pastel">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'help-circle'" [size]="16"></span></span>
                         </div>
-                        <ng-select [items]="lstcondicion" [formControl]="condicionCtrl" 
+                        <ng-select [items]="lstcondicion" [formControl]="condicionCtrl" id="condicion"
                           bindLabel="name" bindId="id" bindValue="name"
                         placeholder="Seleccione Condición"></ng-select>
                       </div>
@@ -480,7 +517,7 @@
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Parametros">
+                        <input type="text" [formControl]="parametrosCtrl" id="parametros" class="form-control" placeholder="Parametros">
                       </div>
                     </div>
                   }
@@ -507,12 +544,12 @@
                 <div class="row">
                   @if (btnInterfaz) {
                     <div class="form-group col-md-6">
-                      <label class="form-label" for="version">Funciones de la prueba</label>
+                      <label class="form-label" for="funcionesPrueba">Funciones de la prueba</label>
                       <div class="ng-select-group-pastel">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'play-circle'" [size]="16"></span></span>
                         </div>
-                        <ng-select [items]="funciones" [formControl]="funcionalidadSelectCtrl"
+                        <ng-select [items]="funciones" [formControl]="funcionalidadSelectCtrl" id="funcionesPrueba"
                         bindLabel="name" bindId="id" placeholder="Seleccione Funciones"></ng-select>
                       </div>
                     </div>
@@ -521,12 +558,12 @@
 
                   @if (btnInterfaz) {
                     <div class="form-group col-md-6">
-                      <label class="form-label" for="funcion">Agregar columna de la consulta</label>
+                      <label class="form-label" for="columnaConsulta">Agregar columna de la consulta</label>
                       <div class="input-group-pastel">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'plus-circle'" [size]="16"></span></span>
                         </div>
-                        <input type="text" [formControl]="consumidoresCtrl"
+                        <input type="text" [formControl]="columnaConsultaCtrl" id="columnaConsulta"
                           class="form-control" placeholder="Agregar columna de la consulta">
                       </div>
                     </div>
@@ -762,7 +799,8 @@
                   }
                   @if (getURL == 'register-api') {
                     <button class="btn btn-success btn-submit" (click)="RegistrarAPI()"
-                    rippleEffect>Guardar</button>
+                      [disabled]="!isFuncionDisponible || isVerificandoFuncion"
+                      rippleEffect>Guardar</button>
                   }
                 </div>
               </form>
