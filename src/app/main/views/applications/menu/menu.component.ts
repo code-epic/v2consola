@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild, ViewEncap
 import { CommonModule } from '@angular/common';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { NgbModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalConfig, NgbModule, NgbNav } from '@ng-bootstrap/ng-bootstrap';
 import { ApiService, IAPICore } from '@services/apicore/api.service';
 import { UtilService } from '@services/util/util.service';
 import { ColumnMode, DatatableComponent, NgxDatatableModule } from '@swimlane/ngx-datatable';
@@ -14,6 +14,7 @@ import { ContentHeaderComponent } from 'app/layout/components/content-header/con
 import { NgSelectModule } from '@ng-select/ng-select';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import Swal from 'sweetalert2';
 
 import * as Feather from 'feather-icons';
 
@@ -93,6 +94,7 @@ export interface IAplicacionSchema {
 })
 export class MenuComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
+  @ViewChild('navWithIcons') navWithIcons: NgbNav;
 
   public contentHeader: object;
   public ColumnMode = ColumnMode;
@@ -221,32 +223,83 @@ export class MenuComponent implements OnInit {
     this.xAPI.funcion = environment.functions.LISTAR_ESQUEMAS_APLICACIONES;
     this.xAPI.parametros = id;
     this.xAPI.valores = '';
-    this.aplicacion = this.crearEsquemaVacio();
     this._isLoading.set(true);
 
     this.apiService.Ejecutar(this.xAPI).subscribe({
       next: (data) => {
-        const rawItems = data?.Cuerpo || (Array.isArray(data) ? data : data ? [data] : []);
-        this.aplicacione = rawItems.map((e) => {
-          e.name = e.nomb || e.nombre || e.id;
-          return e;
-        });
+        try {
+          let cuerpo = data?.Cuerpo !== undefined ? data.Cuerpo : data;
+          if (typeof cuerpo === 'string') {
+            try {
+              cuerpo = JSON.parse(cuerpo);
+            } catch (e) {
+              console.warn('Cuerpo de respuesta no es JSON válido:', e);
+            }
+          }
+          const rawItems = Array.isArray(cuerpo)
+            ? cuerpo
+            : cuerpo && typeof cuerpo === 'object'
+            ? [cuerpo]
+            : [];
 
-        if (id && this.aplicacione.length > 0) {
-          this.seleccionarEsquema(this.aplicacione[0]);
-        } else {
-          this.lstEsquemas = [...this.aplicacione];
-          this.tempEsquemas = [...this.aplicacione];
+          this.aplicacione = rawItems.map((e: any) => {
+            if (!e || typeof e !== 'object') return { id: '', nombre: '' };
+            e.name = e.nomb || e.nombre || e.id;
+            return e;
+          });
+
+          if (id && this.aplicacione.length > 0) {
+            this.seleccionarEsquema(this.aplicacione[0]);
+          } else {
+            this.lstEsquemas = [...this.aplicacione];
+            this.tempEsquemas = [...this.aplicacione];
+          }
+
+          if (this.searchFilterCtrl?.value) {
+            this.filterUpdate(this.searchFilterCtrl.value);
+          }
+        } catch (err) {
+          console.error('Error procesando respuesta de esquemas:', err);
+        } finally {
+          this._isLoading.set(false);
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+          }, 100);
         }
-        this._isLoading.set(false);
-        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error al listar esquemas de aplicaciones:', error);
         this.utilservice.AlertMini('top-end', 'error', 'Error al cargar esquemas', 3000);
         this._isLoading.set(false);
         this.cdr.detectChanges();
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 100);
       },
+    });
+  }
+
+  // ============================================================================
+  // Confirmación al Editar Esquema desde la Tabla
+  // ============================================================================
+
+  confirmarEditarEsquema(row: any): void {
+    const nombre = row?.nombre || row?.name || row?.id || 'este esquema';
+    Swal.fire({
+      title: '¿Está seguro de editar?',
+      text: `¿Desea cargar el esquema "${nombre}" en el Diseñador para su edición?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#577590',
+      cancelButtonColor: '#82909e',
+      confirmButtonText: 'Sí, editar',
+      cancelButtonText: 'Cancelar',
+      focusCancel: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.seleccionarEsquema(row);
+      }
     });
   }
 
@@ -279,10 +332,18 @@ export class MenuComponent implements OnInit {
 
   selTab(tabId: number): void {
     this.active = tabId;
+    if (this.navWithIcons) {
+      this.navWithIcons.select(tabId);
+    }
     if (tabId === 3) {
       this.sincronizarTextoJSON();
     }
     this.cdr.detectChanges();
+    if (tabId === 1) {
+      setTimeout(() => {
+        window.dispatchEvent(new Event('resize'));
+      }, 100);
+    }
   }
 
   // ============================================================================
@@ -384,6 +445,35 @@ export class MenuComponent implements OnInit {
       return;
     }
 
+    const esEdicion = this.lstEsquemas.some(
+      (e) => (e.id || '').trim().toLowerCase() === (this.aplicacion.id || '').trim().toLowerCase()
+    );
+
+    const titulo = esEdicion ? '¿Está seguro de editar?' : '¿Está seguro de guardar?';
+    const texto = esEdicion
+      ? `Se actualizarán los cambios del esquema "${this.aplicacion.nombre || this.aplicacion.id}" en el sistema.`
+      : `Se guardará el nuevo esquema "${this.aplicacion.nombre || this.aplicacion.id}" en el sistema.`;
+    const botonConfirmar = esEdicion ? 'Sí, editar' : 'Sí, guardar';
+    const colorConfirmar = esEdicion ? '#577590' : '#3d8e86';
+
+    Swal.fire({
+      title: titulo,
+      text: texto,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: colorConfirmar,
+      cancelButtonColor: '#82909e',
+      confirmButtonText: botonConfirmar,
+      cancelButtonText: 'Cancelar',
+      focusCancel: false,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.ejecutarGuardado(tipo);
+      }
+    });
+  }
+
+  private ejecutarGuardado(tipo: number): void {
     const fnx = {
       coleccion: environment.colecciones.SYS_SCHEMA,
       objeto: this.aplicacion,
@@ -403,13 +493,11 @@ export class MenuComponent implements OnInit {
           3000
         );
 
-        if (tipo === 2) {
-          this.xaplicacion = null;
-          this.xperfil = null;
-          this.active = 1;
-        }
-
+        this.xaplicacion = null;
+        this.xperfil = null;
+        this.selTab(1);
         this.obtenerListaEsquemas();
+        this.cdr.detectChanges();
       },
       error: (error) => {
         this._isLoading.set(false);

@@ -33,17 +33,15 @@
                       </select>
                       <span class="ml-50 text-muted small mr-2">esquemas</span>
 
-                      <!-- Botón Nuevo Esquema (Tonalidad Pastel Armonizada - Solo Texto) -->
-                      <button type="button" class="btn btn-pastel-primary mr-1" (click)="nuevoEsquema()"
-                        style="background-color: #5b8fc9; color: #ffffff !important; min-width: 140px;">
+                      <!-- Botón Nuevo Esquema (Pastel Verde Salvia Mate) -->
+                      <button type="button" class="btn btn-pastel-nuevo-esquema mr-1" (click)="nuevoEsquema()">
                         Nuevo Esquema
                       </button>
 
-                      <!-- Botón Recargar (Tonalidad Pastel Armonizada - Solo Texto) -->
-                      <button type="button" class="btn btn-pastel-secondary" (click)="obtenerListaEsquemas()"
-                        style="background-color: #7b9bbd; color: #ffffff !important; min-width: 120px;"
-                        title="Recargar lista de esquemas">
-                        Recargar
+                      <!-- Botón Refrescar (Pastel Azul Cielo Mate) -->
+                      <button type="button" class="btn btn-pastel-refrescar" (click)="obtenerListaEsquemas()"
+                        title="Refrescar lista de esquemas">
+                        Refrescar
                       </button>
                     </div>
 
@@ -57,8 +55,8 @@
                     </div>
                   </div>
 
-                  <!-- Indicador de Carga -->
-                  @if (isLoading) {
+                  <!-- Indicador de Carga Inicial -->
+                  @if (isLoading && lstEsquemas.length === 0) {
                     <div class="d-flex justify-content-center align-items-center py-5">
                       <div class="text-center">
                         <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
@@ -73,7 +71,7 @@
                   <ngx-datatable [rows]="lstEsquemas" [rowHeight]="62" class="bootstrap core-bootstrap shadow-none"
                     [columnMode]="ColumnMode.force" [headerHeight]="45" [footerHeight]="50"
                     [scrollbarH]="true" [limit]="basicSelectedOptionCtrl.value" [count]="lstEsquemas.length"
-                    [class.loading]="isLoading" [loadingIndicator]="isLoading" [hidden]="isLoading">
+                    [class.loading]="isLoading" [loadingIndicator]="isLoading">
 
                     <!-- Columna: ID y Aplicación -->
                     <ngx-datatable-column name="APLICACIÓN / ID" prop="id" [width]="240">
@@ -172,7 +170,7 @@
                         <div class="d-flex align-items-center justify-content-center">
                           <!-- Botón Editar / Cargar en Diseñador -->
                           <button type="button" class="btn btn-icon btn-sm btn-light-primary mr-50"
-                            (click)="seleccionarEsquema(row)" title="Cargar en Diseñador" rippleEffect>
+                            (click)="confirmarEditarEsquema(row)" title="Editar esquema" rippleEffect>
                             <span [data-feather]="'edit-2'" [size]="14" [inner]="true"></span>
                           </button>
                           
@@ -229,23 +227,20 @@
                         </div>
                       </div>
 
-                      <!-- Botones de Acción Principales (Tonalidad Pastel Armonizada - Solo Texto) -->
+                      <!-- Botones de Acción Principales (Tonalidades Pasteles Variadas Mate) -->
                       <div class="d-flex align-items-center flex-wrap mt-2 mt-md-0">
-                        <!-- Guardar y Salir -->
-                        <button type="button" class="btn btn-pastel-primary mr-1" (click)="ok(2)" [disabled]="isLoading"
-                          style="background-color: #5b8fc9; color: #ffffff !important; min-width: 130px;">
+                        <!-- Guardar / Editar Esquema -->
+                        <button type="button" class="btn btn-pastel-guardar mr-1" (click)="ok(2)" [disabled]="isLoading">
                           Guardar
                         </button>
 
                         <!-- Generar PDF -->
-                        <button type="button" class="btn btn-pastel-secondary mr-1" (click)="exportarPDF()"
-                          style="background-color: #7b9bbd; color: #ffffff !important; min-width: 130px;">
+                        <button type="button" class="btn btn-pastel-pdf mr-1" (click)="exportarPDF()">
                           Generar PDF
                         </button>
 
                         <!-- Limpiar / Cancelar -->
-                        <button type="button" class="btn btn-pastel-muted" (click)="limpiarFormulario()"
-                          style="background-color: #9eb5cc; color: #ffffff !important; min-width: 120px;">
+                        <button type="button" class="btn btn-pastel-cancelar" (click)="limpiarFormulario()">
                           Cancelar
                         </button>
                       </div>
@@ -309,9 +304,8 @@
                       </small>
                     </div>
 
-                    <!-- Botón Nuevo Módulo (Tonalidad Pastel Armonizada - Solo Texto) -->
-                    <button type="button" class="btn btn-pastel-primary" (click)="abrirModalMenu(modalMenuTemplate)"
-                      style="background-color: #5b8fc9; color: #ffffff !important; min-width: 140px;">
+                    <!-- Botón Nuevo Módulo (Pastel Azul Acero / Denim Mate) -->
+                    <button type="button" class="btn btn-pastel-nuevo-modulo" (click)="abrirModalMenu(modalMenuTemplate)">
                       Nuevo Módulo
                     </button>
                   </div>
@@ -324,8 +318,7 @@
                       </div>
                       <h6 class="font-weight-bold text-dark">No hay módulos configurados en este esquema</h6>
                       <p class="small text-muted mb-3">Comience creando el primer módulo para organizar las secciones de su aplicación.</p>
-                      <button type="button" class="btn btn-pastel-primary" (click)="abrirModalMenu(modalMenuTemplate)"
-                        style="background-color: #5b8fc9; color: #ffffff !important; min-width: 150px;">
+                      <button type="button" class="btn btn-pastel-nuevo-modulo" (click)="abrirModalMenu(modalMenuTemplate)">
                         Crear Primer Módulo
                       </button>
                     </div>
@@ -649,19 +642,16 @@
                       </div>
 
                       <div class="d-flex align-items-center mt-1 mt-md-0">
-                        <!-- Botones Tonalidad Pastel Armonizada - Solo Texto -->
-                        <button type="button" class="btn btn-pastel-muted mr-1" (click)="copiarJSON()"
-                          style="background-color: #9eb5cc; color: #ffffff !important; min-width: 130px;">
+                        <!-- Botones Tonalidades Pasteles Variadas Mate - Solo Texto -->
+                        <button type="button" class="btn btn-pastel-copiar-json mr-1" (click)="copiarJSON()">
                           Copiar JSON
                         </button>
 
-                        <button type="button" class="btn btn-pastel-secondary mr-1" (click)="descargarJSON()"
-                          style="background-color: #7b9bbd; color: #ffffff !important; min-width: 140px;">
+                        <button type="button" class="btn btn-pastel-descargar-json mr-1" (click)="descargarJSON()">
                           Descargar JSON
                         </button>
 
-                        <button type="button" class="btn btn-pastel-primary" (click)="aplicarJSONDesdeEditor()"
-                          style="background-color: #5b8fc9; color: #ffffff !important; min-width: 140px;">
+                        <button type="button" class="btn btn-pastel-aplicar-cambios" (click)="aplicarJSONDesdeEditor()">
                           Aplicar Cambios
                         </button>
                       </div>

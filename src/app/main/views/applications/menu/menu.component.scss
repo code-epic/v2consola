@@ -898,11 +898,9 @@ app-menu {
 }
 
 // ============================================================================
-// Botones de Menú Superior: Tonalidad Pastel Armonizada (Solo Texto)
+// Botones de Menú Superior: Tonalidades Pasteles Armonizadas y Combinadas (Mate)
 // ============================================================================
-.btn-pastel-primary {
-  background-color: #5b8fc9 !important;
-  color: #ffffff !important;
+.btn-pastel-base {
   border: none !important;
   font-weight: 500 !important;
   font-size: 13.5px !important;
@@ -913,82 +911,164 @@ app-menu {
   align-items: center !important;
   justify-content: center !important;
   padding: 0 1.4rem !important;
-  box-shadow: 0 2px 5px rgba(91, 143, 201, 0.22) !important;
   cursor: pointer;
-  transition: all 0.2s ease !important;
+  color: #ffffff !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
 
   &:hover {
-    background-color: #4c7eb6 !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 8px rgba(91, 143, 201, 0.3) !important;
     transform: translateY(-1px);
+    filter: brightness(1.06);
   }
 
   &:active {
     transform: translateY(0);
+    filter: brightness(0.96);
   }
 
   &:disabled {
     opacity: 0.65;
     pointer-events: none;
+    cursor: not-allowed;
   }
+}
+
+// 1. Nuevo esquema - Pastel Sage / Verde Salvia Mate
+.btn-pastel-mint,
+.btn-pastel-nuevo-esquema {
+  @extend .btn-pastel-base;
+  background-color: #529977 !important;
+  box-shadow: 0 2px 5px rgba(82, 153, 119, 0.25) !important;
+  min-width: 140px;
+
+  &:hover {
+    background-color: #458666 !important;
+    box-shadow: 0 4px 10px rgba(82, 153, 119, 0.35) !important;
+  }
+}
+
+// 2. Refrescar - Pastel Sky / Azul Cielo Mate
+.btn-pastel-sky,
+.btn-pastel-refrescar {
+  @extend .btn-pastel-base;
+  background-color: #5b92ba !important;
+  box-shadow: 0 2px 5px rgba(91, 146, 186, 0.25) !important;
+  min-width: 120px;
+
+  &:hover {
+    background-color: #4c81a7 !important;
+    box-shadow: 0 4px 10px rgba(91, 146, 186, 0.35) !important;
+  }
+}
+
+// 3. Guardar - Pastel Teal / Verde Bosque Mate
+.btn-pastel-emerald,
+.btn-pastel-guardar {
+  @extend .btn-pastel-base;
+  background-color: #3d8e86 !important;
+  box-shadow: 0 2px 5px rgba(61, 142, 134, 0.25) !important;
+  min-width: 130px;
+
+  &:hover {
+    background-color: #327a73 !important;
+    box-shadow: 0 4px 10px rgba(61, 142, 134, 0.35) !important;
+  }
+}
+
+// 4. Generar PDF - Pastel Rose / Coral Terracota Mate
+.btn-pastel-rose,
+.btn-pastel-pdf {
+  @extend .btn-pastel-base;
+  background-color: #c06c72 !important;
+  box-shadow: 0 2px 5px rgba(192, 108, 114, 0.25) !important;
+  min-width: 130px;
+
+  &:hover {
+    background-color: #ad5a60 !important;
+    box-shadow: 0 4px 10px rgba(192, 108, 114, 0.35) !important;
+  }
+}
+
+// 5. Cancelar - Pastel Warm Slate / Gris Cálido Mate
+.btn-pastel-slate,
+.btn-pastel-cancelar {
+  @extend .btn-pastel-base;
+  background-color: #82909e !important;
+  box-shadow: 0 2px 5px rgba(130, 144, 158, 0.25) !important;
+  min-width: 120px;
+
+  &:hover {
+    background-color: #717e8c !important;
+    box-shadow: 0 4px 10px rgba(130, 144, 158, 0.35) !important;
+  }
+}
+
+// 6. Copiar JSON - Pastel Warm Amber / Miel Mate
+.btn-pastel-amber,
+.btn-pastel-copiar-json {
+  @extend .btn-pastel-base;
+  background-color: #c28b52 !important;
+  box-shadow: 0 2px 5px rgba(194, 139, 82, 0.25) !important;
+  min-width: 130px;
+
+  &:hover {
+    background-color: #ad7942 !important;
+    box-shadow: 0 4px 10px rgba(194, 139, 82, 0.35) !important;
+  }
+}
+
+// 7. Descargar JSON - Pastel Soft Turquoise / Turquesa Suave Mate
+.btn-pastel-teal,
+.btn-pastel-descargar-json {
+  @extend .btn-pastel-base;
+  background-color: #449c9c !important;
+  box-shadow: 0 2px 5px rgba(68, 156, 156, 0.25) !important;
+  min-width: 140px;
+
+  &:hover {
+    background-color: #378787 !important;
+    box-shadow: 0 4px 10px rgba(68, 156, 156, 0.35) !important;
+  }
+}
+
+// 8. Aplicar Cambios - Pastel Lavender / Lavanda Amatista Mate
+.btn-pastel-purple,
+.btn-pastel-aplicar-cambios {
+  @extend .btn-pastel-base;
+  background-color: #826da4 !important;
+  box-shadow: 0 2px 5px rgba(130, 109, 164, 0.25) !important;
+  min-width: 140px;
+
+  &:hover {
+    background-color: #725d94 !important;
+    box-shadow: 0 4px 10px rgba(130, 109, 164, 0.35) !important;
+  }
+}
+
+// 9. Nuevo Modulo - Pastel Steel Denim / Azul Acero Mate
+.btn-pastel-indigo,
+.btn-pastel-nuevo-modulo {
+  @extend .btn-pastel-base;
+  background-color: #577590 !important;
+  box-shadow: 0 2px 5px rgba(87, 117, 144, 0.25) !important;
+  min-width: 140px;
+
+  &:hover {
+    background-color: #47637c !important;
+    box-shadow: 0 4px 10px rgba(87, 117, 144, 0.35) !important;
+  }
+}
+
+// Clases de compatibilidad previa
+.btn-pastel-primary {
+  @extend .btn-pastel-nuevo-modulo;
 }
 
 .btn-pastel-secondary {
-  background-color: #7b9bbd !important;
-  color: #ffffff !important;
-  border: none !important;
-  font-weight: 500 !important;
-  font-size: 13.5px !important;
-  height: 40px !important;
-  min-height: 40px !important;
-  border-radius: 6px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 1.4rem !important;
-  box-shadow: 0 2px 5px rgba(123, 155, 189, 0.2) !important;
-  cursor: pointer;
-  transition: all 0.2s ease !important;
-
-  &:hover {
-    background-color: #6a8cae !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 8px rgba(123, 155, 189, 0.28) !important;
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
+  @extend .btn-pastel-refrescar;
 }
 
 .btn-pastel-muted {
-  background-color: #9eb5cc !important;
-  color: #ffffff !important;
-  border: none !important;
-  font-weight: 500 !important;
-  font-size: 13.5px !important;
-  height: 40px !important;
-  min-height: 40px !important;
-  border-radius: 6px !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  padding: 0 1.4rem !important;
-  box-shadow: 0 2px 5px rgba(158, 181, 204, 0.18) !important;
-  cursor: pointer;
-  transition: all 0.2s ease !important;
-
-  &:hover {
-    background-color: #8da5bc !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 8px rgba(158, 181, 204, 0.25) !important;
-    transform: translateY(-1px);
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
+  @extend .btn-pastel-cancelar;
 }
+
 

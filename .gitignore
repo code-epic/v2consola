@@ -6,6 +6,8 @@
 **/*.zip
 package-lock.json
 
+TASK-OWASP-v2consola.md
+
 # dependencies
 /node_modules
 
