@@ -1,604 +1,1064 @@
 <div class="content-wrapper container-xxl p-0">
   <div class="content-body">
-    <!-- content-header component -->
+    <!-- Encabezado de contenido -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-    <!-- Invoice List -->
+    <!-- Sección Principal -->
     <section class="invoice-list-wrapper">
-      <div class="card">
+      <div class="card shadow-sm border-0">
+        <div class="col-md-12 py-3">
+          
+          <!-- Pestañas de Navegación Estilo Pasteles (Inspirado en Security Profile) -->
+          <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (activeIdChange)="selTab($event)"
+            class="nav-pills justify-content-center border-bottom pb-2">
+            
+            <!-- Tab 1: Listado de Esquemas -->
+            <li [ngbNavItem]="1">
+              <a ngbNavLink class="d-flex align-items-center py-1 px-3">
+                <span [data-feather]="'list'" [inner]="true" class="mr-1"></span>
+                <span class="font-weight-bold">Listado de Esquemas</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="col-md-12 mt-2">
+                  <!-- Barra Superior de Controles y Búsqueda -->
+                  <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                    <div class="d-flex align-items-center mb-1 mb-md-0">
+                      <span class="mr-50 text-muted small">Mostrar</span>
+                      <select class="form-control form-control-sm select-soft" [formControl]="basicSelectedOptionCtrl"
+                        style="width: 80px;">
+                        <option [value]="10">10</option>
+                        <option [value]="25">25</option>
+                        <option [value]="50">50</option>
+                        <option [value]="100">100</option>
+                      </select>
+                      <span class="ml-50 text-muted small mr-2">esquemas</span>
 
-        <!-- Menu List Header -->
-        <!-- Table Header & Controls -->
-        <div class="card-header-custom">
-
-          <!-- Top Section: Title & Filters -->
-          <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-            <div class="header-title-group">
-              <h4 class="content-header-title mb-0">Gestión de Menús</h4>
-              <small class="text-muted">Administración y configuración de menús de aplicación</small>
-            </div>
-          </div>
-
-          <!-- Bottom Section: Filters & Actions -->
-          <div class="d-flex justify-content-between align-items-center flex-wrap actions-bar">
-
-            <!-- Left: Application Filters -->
-            <div class="d-flex align-items-center flex-wrap actions-left">
-              <div class="filter-group mr-2 mb-1 mb-md-0" style="min-width: 300px;">
-                <div class="ng-select-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'package'" [size]="16"></span></span>
-                  </div>
-                  <ng-select [items]="lstAplicaciones" [formControl]="aplicacionCtrl"
- bindLabel="name"
-                    (change)="selModulo($event)" bindValue="id"
-                    placeholder="Seleccionar Aplicación" class="custom-select-soft">
-                  </ng-select>
-                </div>
-              </div>
-
-              <div class="filter-group mr-2 mb-1 mb-md-0" style="min-width: 200px;">
-                <div class="ng-select-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'menu'" [size]="16"></span></span>
-                  </div>
-                  <ng-select [items]="dataModulo" [addTag]="true" [formControl]="xmoduloCtrl"
- bindLabel="name"
-                    (change)="selectEventModulo($event)"
-                    (input)="onFocusedModulo($event)"
-                    placeholder="Menu" class="custom-select-soft">
-                  </ng-select>
-                </div>
-              </div>
-
-              <div class="filter-group mb-1 mb-md-0" style="min-width: 200px;">
-                <div class="ng-select-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'list'" [size]="16"></span></span>
-                  </div>
-                  <ng-select [items]="datamenu" [addTag]="true" [formControl]="menuCtrl"
- (change)="selectEventMenu($event)"
-                    (input)='onFocusedMenu($event)'
-                    bindLabel="name" placeholder="Sub Menu" class="custom-select-soft">
-                  </ng-select>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right: Action Buttons -->
-            <div class="actions-right mb-1 mb-md-0">
-              @if (!showDiv) {
-                <button type="button" class="btn btn-primary mr-1" (click)="procesar()" rippleEffect>
-                  <span [data-feather]="'search'" [size]="16" class="mr-50"></span>
-                  <span class="align-middle">Consultar</span>
-                </button>
-              }
-
-              <button type="button" class="btn btn-outline-secondary" (click)="Limpiar()" rippleEffect title="Limpiar">
-                <span [data-feather]="'refresh-cw'" [size]="16"></span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-        <!--/ Menu List Header -->
-
-        <div class="col-md-12" style="margin-top: 25px;">
-
-          <!-- Menu Definition Panel -->
-          @if (showDiv) {
-            <div class="menu-definition-panel">
-              <!-- Section Header -->
-              <div class="section-header-pastel mb-3">
-                <div class="d-flex align-items-center justify-content-between">
-                  <div class="d-flex align-items-center">
-                    <div class="header-icon-wrapper">
-                      <span [data-feather]="'edit-3'" [size]="20"></span>
-                    </div>
-                    <div>
-                      <h5 class="section-title mb-0">Definición de Menú</h5>
-                      <small class="section-subtitle">Configure los detalles del menú seleccionado</small>
-                    </div>
-                  </div>
-                  <div class="action-buttons">
-                    @if (!btnMenu) {
-                      <button type="button" class="btn btn-success" (click)="GuardarMenu()" rippleEffect>
-                        <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
-                        <span class="align-middle">Agregar</span>
+                      <!-- Botón Nuevo Esquema (Tonalidad Pastel Armonizada - Solo Texto) -->
+                      <button type="button" class="btn btn-pastel-primary mr-1" (click)="nuevoEsquema()"
+                        style="background-color: #5b8fc9; color: #ffffff !important; min-width: 140px;">
+                        Nuevo Esquema
                       </button>
-                    }
-                    @if (btnMenu) {
-                      <button type="button" class="btn btn-warning" (click)="UpdateMenu(IDefinirMenu.id)" rippleEffect>
-                        <span [data-feather]="'save'" [size]="16" class="mr-50"></span>
-                        <span class="align-middle">Actualizar</span>
-                      </button>
-                    }
-                  </div>
-                </div>
-              </div>
-              <!-- Form Fields -->
-              <div class="row">
-                <!-- Row 1: Nombre y URL -->
-                <div class="form-group col-md-4">
-                  <label class="form-label" for="descripcion">
-                    <span [data-feather]="'type'" [size]="14" class="mr-1"></span>
-                    Nombre
-                  </label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
-                    </div>
-                    <input style="font-size:14px;" [formControl]="IDefinirMenuNombreCtrl"
-   type="text" placeholder="Ingrese Nombre"
-                      class="form-control">
-                  </div>
-                </div>
-                <div class="form-group col-md-8">
-                  <label class="form-label" for="origen">
-                    <span [data-feather]="'link'" [size]="14" class="mr-1"></span>
-                    Dirección URL
-                  </label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
-                    </div>
-                    <input style="font-size:14px;" [formControl]="IDefinirMenuUrlCtrl"
-   type="text" placeholder="Ingrese Dirección URL"
-                      class="form-control">
-                  </div>
-                </div>
-                <!-- Row 2: Icono, Color, Clase CSS -->
-                <div class="form-group col-md-3">
-                  <label class="form-label" for="descripcion">
-                    <span [data-feather]="'feather'" [size]="14" class="mr-1"></span>
-                    Icono
-                  </label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'feather'" [size]="16"></span></span>
-                    </div>
-                    <input style="font-size:14px;" type="text" [formControl]="IDefinirMenuIconCtrl"
-   placeholder="ej: home" class="form-control">
-                  </div>
-                </div>
-                <div class="form-group col-md-3">
-                  <label class="form-label" for="descripcion">
-                    <span [data-feather]="'droplet'" [size]="14" class="mr-1"></span>
-                    Color
-                  </label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'droplet'" [size]="16"></span></span>
-                    </div>
-                    <input style="font-size:14px;" type="text" [formControl]="IDefinirMenuColorCtrl"
-   placeholder="ej: #7c3aed" class="form-control">
-                  </div>
-                </div>
-                <div class="form-group col-md-3">
-                  <label class="form-label" for="descripcion">
-                    <span [data-feather]="'code'" [size]="14" class="mr-1"></span>
-                    Clase CSS
-                  </label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
-                    </div>
-                    <input style="font-size:14px;" [formControl]="IDefinirMenuClaseCtrl"
-   type="text" placeholder="ej: btn-primary"
-                      class="form-control">
-                  </div>
-                </div>
-                <div class="form-group col-md-3">
-                  <label class="form-label" for="descripcion">
-                    <span [data-feather]="'tag'" [size]="14" class="mr-1"></span>
-                    Tipo
-                  </label>
-                  <div class="ng-select-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'tag'" [size]="16"></span></span>
-                    </div>
-                    <ng-select [items]="lstEstatus" [formControl]="IDefinirMenuTipoCtrl"
-   bindLabel="name" bindValue="id"
-                    placeholder="Seleccione Tipo"></ng-select>
-                  </div>
-                </div>
-                <!-- Row 3: JavaScript Code (Full Width) -->
-                <div class="form-group col-md-12">
-                  <label class="form-label" for="descripcion">
-                    <span [data-feather]="'terminal'" [size]="14" class="mr-1"></span>
-                    Código JavaScript
-                  </label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'terminal'" [size]="16"></span></span>
-                    </div>
-                    <input style="font-size:14px;" [formControl]="IDefinirMenuJsCtrl"
-   type="text"
-                      placeholder="Ingrese Código JavaScript (opcional)" class="form-control">
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-          <!-- Menu Definition Panel -->
 
-          <!-- TABLA -->
-          @if (showDiv) {
-            <div class="container">
-              <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-left">
-                <li ngbNavItem>
-                  <a ngbNavLink><span [data-feather]="'cast'"></span> Acciones</a>
-                  <ng-template ngbNavContent>
-                    <div class="row">
-                      <div class="col-md-6 col-12">
-                        <div class="d-flex justify-content-between align-items-center m-1">
-                          <div class="d-flex align-items-center">
-                            <label class="d-flex align-items-center">Mostrar
-                              <select class="form-control mx-25"
-                                [formControl]="basicSelectedOptionCtrl">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                              </select>
-                            </label>
-                            <button type="button" style="height: 38px; margin-top: -4px;"
-                              (click)="ModalAddAcciones(ModalAcciones)"
-                              class="btn btn-icon btn-info" rippleEffect>
-                              <span [data-feather]="'plus'"></span> Agregar Acciones</button>
-                            </div>
-                          </div>
-                        </div>
-                                        <div class="
-                                                    col-md-6 col-lg-4 col-12
-                                                    d-flex
-                                                    justify-content-start justify-content-md-end
-                                                    align-items-center
-                                                    offset-lg-2
-                                                  ">
-                          <div class="col-10 col-md-6 mt-2 ml-1 ml-md-0 mt-md-0">
-                            <fieldset class="form-group mb-0">
-                              <label class="d-flex align-items-center mb-0 ml-1 ml-md-0"><input
-                                [formControl]="searchAccionCtrl" name="searchValue" type="search"
-                                autocomplete="off"
-                                class="form-control" placeholder="Buscar..."
-                                (keyup)="filterUpdateAcciones($event)"
-                              (search)="filterUpdateAcciones($event)" /></label>
-                            </fieldset>
-                          </div>
-                        </div>
+                      <!-- Botón Recargar (Tonalidad Pastel Armonizada - Solo Texto) -->
+                      <button type="button" class="btn btn-pastel-secondary" (click)="obtenerListaEsquemas()"
+                        style="background-color: #7b9bbd; color: #ffffff !important; min-width: 120px;"
+                        title="Recargar lista de esquemas">
+                        Recargar
+                      </button>
+                    </div>
+
+                    <div class="d-flex align-items-center mb-1 mb-md-0" style="min-width: 320px;">
+                      <div class="premium-search-box w-100">
+                        <span class="mr-1 text-muted" [data-feather]="'search'" [size]="16" [inner]="true"></span>
+                        <input type="text" class="form-control form-control-sm border-0 bg-transparent"
+                          placeholder="Buscar por ID, nombre, comentario..."
+                          [formControl]="searchFilterCtrl">
                       </div>
-                      <div class="row">
-                        <div class="col-md-12">
-                          <ngx-datatable [rows]="rowDataAcc" [rowHeight]="58"
-                            class="bootstrap core-bootstrap bordered-table" [limit]="10"
-                            [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
-                            <ngx-datatable-column name="NOMBRE" prop="accnomb" [width]="300">
-                              <ng-template let-accnomb="value" ngx-datatable-cell-template>
-                                <div>
-                                  <span class="font-weight-bold">{{ accnomb }} </span>
-                                </div>
-                              </ng-template>
-                            </ngx-datatable-column>
-                            <ngx-datatable-column name="FUNCION" prop="func" [width]="200">
-                              <ng-template let-func="value" ngx-datatable-cell-template>
-                                <div>
-                                  <span class="font-weight-bold">{{ func }}</span>
-                                </div>
-                              </ng-template>
-                            </ngx-datatable-column>
-                            <ngx-datatable-column name="EndPoint" prop="endpoint" [width]="600">
-                              <ng-template let-endpoint="value" ngx-datatable-cell-template>
-                                <div>
-                                  <span class="font-weight-bold">{{ endpoint }}</span>
-                                </div>
-                              </ng-template>
-                            </ngx-datatable-column>
-                          </ngx-datatable>
+                    </div>
+                  </div>
+
+                  <!-- Indicador de Carga -->
+                  @if (isLoading) {
+                    <div class="d-flex justify-content-center align-items-center py-5">
+                      <div class="text-center">
+                        <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+                          <span class="sr-only">Cargando...</span>
                         </div>
+                        <p class="text-muted font-weight-bold mb-0">Cargando esquemas de aplicaciones…</p>
                       </div>
-                    </ng-template>
-                  </li>
-                  <li ngbNavItem>
-                    <a ngbNavLink><span [data-feather]="'settings'"></span> Sub Menu</a>
-                    <ng-template ngbNavContent>
-                      <div class="row">
-                        <div class="col-md-6 col-12">
-                          <div class="d-flex justify-content-between align-items-center m-1">
-                            <div class="d-flex align-items-center">
-                              <label class="d-flex align-items-center">Mostrar
-                                <select class="form-control mx-25"
-                                  [formControl]="basicSelectedOptionCtrl">
-                                  <option value="10">10</option>
-                                  <option value="25">25</option>
-                                  <option value="50">50</option>
-                                  <option value="100">100</option>
-                                </select>
-                              </label>
-                              <button type="button" style="height: 38px; margin-top: -4px;"
-                                (click)="ModalAddSubMenu(ModalSubMenu)"
-                                class="btn btn-icon btn-warning" rippleEffect>
-                                <span [data-feather]="'plus'"></span> Agregar Sub Menu</button>
-                              </div>
-                            </div>
-                          </div>
-                                        <div class="
-                                                    col-md-6 col-lg-4 col-12
-                                                    d-flex
-                                                    justify-content-start justify-content-md-end
-                                                    align-items-center
-                                                    offset-lg-2
-                                                  ">
-                            <div class="col-10 col-md-6 mt-2 ml-1 ml-md-0 mt-md-0">
-                              <fieldset class="form-group mb-0">
-                                <label class="d-flex align-items-center mb-0 ml-1 ml-md-0"><input
-                                  [formControl]="searchSubMenuCtrl" name="searchValue" type="search"
-                                  class="form-control" placeholder="Buscar..."
-                                  autocomplete="off"
-                                  (keyup)="filterUpdateSubMenu($event)"
-                                (search)="filterUpdateSubMenu($event)" /></label>
-                              </fieldset>
-                            </div>
-                          </div>
+                    </div>
+                  }
+
+                  <!-- Tabla ngx-datatable con Truncado / Short Cut Word -->
+                  <ngx-datatable [rows]="lstEsquemas" [rowHeight]="62" class="bootstrap core-bootstrap shadow-none"
+                    [columnMode]="ColumnMode.force" [headerHeight]="45" [footerHeight]="50"
+                    [scrollbarH]="true" [limit]="basicSelectedOptionCtrl.value" [count]="lstEsquemas.length"
+                    [class.loading]="isLoading" [loadingIndicator]="isLoading" [hidden]="isLoading">
+
+                    <!-- Columna: ID y Aplicación -->
+                    <ngx-datatable-column name="APLICACIÓN / ID" prop="id" [width]="240">
+                      <ng-template ngx-datatable-header-template>
+                        <div class="d-flex align-items-center">
+                          <span [data-feather]="'box'" [size]="16" [inner]="true" style="color: #5b8fc9;"></span>
+                          <span class="ml-1 font-weight-bolder text-uppercase">Aplicación / ID</span>
                         </div>
-                        <div class="row">
-                          <div class="col-md-12">
-                            <ngx-datatable [rows]="ListarowSubMenu" [rowHeight]="58"
-                              class="bootstrap core-bootstrap bordered-table" [limit]="10"
-                              [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true">
-                              <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="400">
-                                <ng-template let-nomb="value" ngx-datatable-cell-template>
-                                  <div>
-                                    <span class="font-weight-bold">{{ nomb }} ... </span>
-                                  </div>
-                                </ng-template>
-                              </ngx-datatable-column>
-                              <ngx-datatable-column name="DESCRIPCIÓN" prop="des" [width]="650">
-                                <ng-template let-des="value" ngx-datatable-cell-template>
-                                  <div>
-                                    <span class="font-weight-bold">{{ des.slice(0.100) }} ...
-                                    </span>
-                                  </div>
-                                </ng-template>
-                              </ngx-datatable-column>
-                              <ngx-datatable-column name="Status" prop="est" [width]="200">
-                                <ng-template let-est="value" ngx-datatable-cell-template>
-                                  @if (est == 1) {
-                                    <div class="badge badge-success">Activo</div>
-                                  }
-                                  @if (est == 0) {
-                                    <div class="badge badge-danger">Inactivo</div>
-                                  }
-                                </ng-template>
-                              </ngx-datatable-column>
-                            </ngx-datatable>
+                      </ng-template>
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div class="d-flex align-items-center cell-truncate" style="max-width: 230px;">
+                          <div class="avatar-soft bg-light-primary mr-1 flex-shrink-0">
+                            <span [data-feather]="'box'" [size]="16" [inner]="true" class="text-primary"></span>
+                          </div>
+                          <div class="cell-truncate">
+                            <span class="font-weight-bold d-block text-primary cell-truncate" [title]="row.nombre || row.name || 'Sin Nombre'">
+                              {{ row.nombre || row.name || 'Sin Nombre' }}
+                            </span>
+                            <div class="d-flex align-items-center cell-truncate">
+                              <small class="text-muted font-monospace cell-truncate" [title]="row.id">{{ row.id }}</small>
+                              @if (row.version) {
+                                <span class="badge badge-light-secondary ml-1 py-0 px-50 flex-shrink-0" style="font-size: 10px;">v{{ row.version }}</span>
+                              }
+                            </div>
                           </div>
                         </div>
                       </ng-template>
-                    </li>
-                  </ul>
-                  <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+                    </ngx-datatable-column>
+
+                    <!-- Columna: URL Base -->
+                    <ngx-datatable-column name="URL ACCESO" prop="url" [width]="200">
+                      <ng-template ngx-datatable-header-template>
+                        <div class="d-flex align-items-center">
+                          <span [data-feather]="'link'" [size]="16" [inner]="true" style="color: #6ba88e;"></span>
+                          <span class="ml-1 font-weight-bolder text-uppercase">URL Base</span>
+                        </div>
+                      </ng-template>
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div class="d-flex align-items-center cell-truncate" style="max-width: 190px;">
+                          <span [data-feather]="'globe'" [size]="14" [inner]="true" class="text-secondary mr-50 flex-shrink-0"></span>
+                          <span class="text-muted small cell-truncate" [title]="row.url || 'No especificada'">
+                            {{ row.url || 'N/A' }}
+                          </span>
+                        </div>
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <!-- Columna: Módulos y Menús -->
+                    <ngx-datatable-column name="ESTRUCTURA" [width]="180">
+                      <ng-template ngx-datatable-header-template>
+                        <div class="d-flex align-items-center">
+                          <span [data-feather]="'layers'" [size]="16" [inner]="true" style="color: #d4a574;"></span>
+                          <span class="ml-1 font-weight-bolder text-uppercase">Estructura</span>
+                        </div>
+                      </ng-template>
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div class="d-flex align-items-center cell-truncate" style="max-width: 170px;">
+                          <span class="badge badge-light-info mr-1 d-inline-flex align-items-center cell-truncate"
+                            [title]="(row.Rol?.Menu?.length || 0) + ' Módulos configurados'">
+                            <span [data-feather]="'folder'" [size]="12" [inner]="true" class="mr-25 flex-shrink-0"></span>
+                            {{ row.Rol?.Menu?.length || 0 }} Módulos
+                          </span>
+                        </div>
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <!-- Columna: Autor y Comentario -->
+                    <ngx-datatable-column name="COMENTARIO / AUTOR" prop="comentario" [width]="220">
+                      <ng-template ngx-datatable-header-template>
+                        <div class="d-flex align-items-center">
+                          <span [data-feather]="'file-text'" [size]="16" [inner]="true" style="color: #9e9e9e;"></span>
+                          <span class="ml-1 font-weight-bolder text-uppercase">Comentario / Autor</span>
+                        </div>
+                      </ng-template>
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div class="cell-truncate" style="max-width: 210px;">
+                          <span class="d-block cell-truncate small" [title]="row.comentario || ''">
+                            {{ row.comentario || 'Sin comentario' }}
+                          </span>
+                          <small class="text-muted font-italic cell-truncate d-block" [title]="row.autor || 'Code-Epic Technologies'">
+                            {{ row.autor || 'Code-Epic Technologies' }}
+                          </small>
+                        </div>
+                      </ng-template>
+                    </ngx-datatable-column>
+
+                    <!-- Columna: Acciones -->
+                    <ngx-datatable-column name="ACCIONES" [width]="180" [sortable]="false">
+                      <ng-template ngx-datatable-header-template>
+                        <div class="d-flex align-items-center justify-content-center">
+                          <span [data-feather]="'settings'" [size]="16" [inner]="true" style="color: #4fc3f7;"></span>
+                          <span class="ml-1 font-weight-bolder text-uppercase">Acciones</span>
+                        </div>
+                      </ng-template>
+                      <ng-template let-row="row" ngx-datatable-cell-template>
+                        <div class="d-flex align-items-center justify-content-center">
+                          <!-- Botón Editar / Cargar en Diseñador -->
+                          <button type="button" class="btn btn-icon btn-sm btn-light-primary mr-50"
+                            (click)="seleccionarEsquema(row)" title="Cargar en Diseñador" rippleEffect>
+                            <span [data-feather]="'edit-2'" [size]="14" [inner]="true"></span>
+                          </button>
+                          
+                          <!-- Botón Generar PDF -->
+                          <button type="button" class="btn btn-icon btn-sm btn-light-success mr-50"
+                            (click)="exportarPDF(row)" title="Exportar Documentación PDF" rippleEffect>
+                            <span [data-feather]="'file-text'" [size]="14" [inner]="true"></span>
+                          </button>
+
+                          <!-- Botón Ver JSON -->
+                          <button type="button" class="btn btn-icon btn-sm btn-light-secondary"
+                            (click)="seleccionarEsquema(row); selTab(3)" title="Ver en Editor JSON" rippleEffect>
+                            <span [data-feather]="'code'" [size]="14" [inner]="true"></span>
+                          </button>
+                        </div>
+                      </ng-template>
+                    </ngx-datatable-column>
+                  </ngx-datatable>
                 </div>
-              }
-              <!-- TABLA -->
+              </ng-template>
+            </li>
 
-            </div>
+            <!-- Tab 2: Diseñador & Editor de Menú -->
+            <li [ngbNavItem]="2">
+              <a ngbNavLink class="d-flex align-items-center py-1 px-3">
+                <span [data-feather]="'sliders'" [inner]="true" class="mr-1"></span>
+                <span class="font-weight-bold">Diseñador de Menús</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="col-md-12 mt-2">
+                  
+                  <!-- Tarjeta 1: Configuración de Cabecera de la Aplicación -->
+                  <div class="card card-app-header border-0 shadow-sm p-3 mb-4 rounded-lg">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-3 pb-2 border-bottom">
+                      <div class="d-flex align-items-center">
+                        <div class="app-avatar-banner mr-2">
+                          <span [data-feather]="'box'" [size]="24" [inner]="true" class="text-primary"></span>
+                        </div>
+                        <div>
+                          <h4 class="mb-0 font-weight-bolder text-dark">
+                            {{ aplicacion.nombre ? aplicacion.nombre : 'Nueva Aplicación' }}
+                          </h4>
+                          <div class="d-flex align-items-center flex-wrap mt-25">
+                            <span class="badge badge-light-primary mr-1 font-monospace">
+                              {{ aplicacion.id ? aplicacion.id : 'ID pendiente' }}
+                            </span>
+                            <span class="badge badge-light-secondary mr-1">
+                              v{{ aplicacion.version || '1.0.0' }}
+                            </span>
+                            <span class="text-muted small">
+                              {{ aplicacion.autor || 'Code-Epic Technologies' }}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
 
-          </div>
-        </section>
+                      <!-- Botones de Acción Principales (Tonalidad Pastel Armonizada - Solo Texto) -->
+                      <div class="d-flex align-items-center flex-wrap mt-2 mt-md-0">
+                        <!-- Guardar y Salir -->
+                        <button type="button" class="btn btn-pastel-primary mr-1" (click)="ok(2)" [disabled]="isLoading"
+                          style="background-color: #5b8fc9; color: #ffffff !important; min-width: 130px;">
+                          Guardar
+                        </button>
 
+                        <!-- Generar PDF -->
+                        <button type="button" class="btn btn-pastel-secondary mr-1" (click)="exportarPDF()"
+                          style="background-color: #7b9bbd; color: #ffffff !important; min-width: 130px;">
+                          Generar PDF
+                        </button>
+
+                        <!-- Limpiar / Cancelar -->
+                        <button type="button" class="btn btn-pastel-muted" (click)="limpiarFormulario()"
+                          style="background-color: #9eb5cc; color: #ffffff !important; min-width: 120px;">
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Campos del Objeto Básico -->
+                    <div class="row">
+                      <div class="form-group col-md-3">
+                        <label class="form-label-minimal">ID Único (Clave de Aplicación) *</label>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="aplicacion.id"
+                          placeholder="Ej: App.Consola">
+                      </div>
+
+                      <div class="form-group col-md-3">
+                        <label class="form-label-minimal">Nombre Comercial *</label>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="aplicacion.nombre"
+                          placeholder="Ej: Aplicacion (Consola)">
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label-minimal">Endpoint / URL Base</label>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="aplicacion.url"
+                          placeholder="Ej: http://localhost/consola">
+                      </div>
+
+                      <div class="form-group col-md-2">
+                        <label class="form-label-minimal">Versión</label>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="aplicacion.version"
+                          placeholder="Ej: 2.0.0">
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label-minimal">Autor / Fabricante</label>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="aplicacion.autor"
+                          placeholder="Ej: Code-Epic Technologies">
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label-minimal">Rol del Sistema</label>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="aplicacion.Rol.descripcion"
+                          placeholder="Ej: Consola Sistema">
+                      </div>
+
+                      <div class="form-group col-md-4">
+                        <label class="form-label-minimal">Comentarios u Observaciones</label>
+                        <input type="text" class="form-control form-control-sm" [(ngModel)]="aplicacion.comentario"
+                          placeholder="Ej: Consola Sistema Principal">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Barra de Herramientas del Árbol de Menús -->
+                  <div class="d-flex justify-content-between align-items-center mb-3 px-1">
+                    <div>
+                      <h5 class="mb-0 font-weight-bolder text-dark d-flex align-items-center">
+                        <span [data-feather]="'layers'" [size]="18" [inner]="true" class="mr-1 text-primary"></span>
+                        Árbol de Módulos, Submenús y Acciones
+                      </h5>
+                      <small class="text-muted">
+                        Administre la estructura jerárquica con navegación asistida y llamadas a funciones.
+                      </small>
+                    </div>
+
+                    <!-- Botón Nuevo Módulo (Tonalidad Pastel Armonizada - Solo Texto) -->
+                    <button type="button" class="btn btn-pastel-primary" (click)="abrirModalMenu(modalMenuTemplate)"
+                      style="background-color: #5b8fc9; color: #ffffff !important; min-width: 140px;">
+                      Nuevo Módulo
+                    </button>
+                  </div>
+
+                  <!-- Árbol Jerárquico Visual -->
+                  @if (!aplicacion.Rol.Menu || aplicacion.Rol.Menu.length === 0) {
+                    <div class="text-center py-5 border rounded-lg bg-white shadow-xs">
+                      <div class="empty-tree-icon mb-2">
+                        <span [data-feather]="'inbox'" [size]="40" [inner]="true" class="text-muted"></span>
+                      </div>
+                      <h6 class="font-weight-bold text-dark">No hay módulos configurados en este esquema</h6>
+                      <p class="small text-muted mb-3">Comience creando el primer módulo para organizar las secciones de su aplicación.</p>
+                      <button type="button" class="btn btn-pastel-primary" (click)="abrirModalMenu(modalMenuTemplate)"
+                        style="background-color: #5b8fc9; color: #ffffff !important; min-width: 150px;">
+                        Crear Primer Módulo
+                      </button>
+                    </div>
+                  }
+
+                  <div class="menu-tree-container">
+                    @for (menu of aplicacion.Rol.Menu; track $index; let mIdx = $index) {
+                      <div class="module-card mb-3 shadow-xs rounded-lg">
+                        
+                        <!-- Cabecera Nivel 1: Módulo Principal -->
+                        <div class="module-header p-2 d-flex justify-content-between align-items-center flex-wrap">
+                          <div class="d-flex align-items-center flex-grow-1 cursor-pointer"
+                            (click)="menu.isExpanded = !menu.isExpanded">
+                            
+                            <!-- Toggle Chevron: Solo si tiene submenús para no desplegar vacíos al inicio -->
+                            @if (menu.SubMenu && menu.SubMenu.length > 0) {
+                              <button type="button" class="btn-toggle-chevron mr-2"
+                                [title]="menu.isExpanded ? 'Contraer submenús' : 'Desplegar submenús'">
+                                <span [data-feather]="menu.isExpanded ? 'chevron-down' : 'chevron-right'" [size]="16" [inner]="true"></span>
+                              </button>
+                            } @else {
+                              <span class="tree-bullet-placeholder mr-2" title="Módulo simple sin submenús">
+                                <span class="bullet-dot"></span>
+                              </span>
+                            }
+
+                            <!-- Avatar de Ícono de Módulo -->
+                            <div class="module-avatar-icon mr-2">
+                              <span [data-feather]="sanitizarIcono(menu.icono, 'layers')" [size]="22" [inner]="true"></span>
+                            </div>
+
+                            <!-- Información Principal del Módulo -->
+                            <div>
+                              <div class="d-flex align-items-center flex-wrap">
+                                <span class="font-weight-bold text-dark h6 mb-0 mr-1">{{ menu.nombre }}</span>
+                                
+                                <!-- Chip de Tipo con Símbolo (▾ o ●) -->
+                                @if (menu.clase === 'collapsible') {
+                                  <span class="chip-type chip-type-collapsible mr-1" title="Módulo desplegable con submenús">
+                                    <span [data-feather]="'folder'" [size]="11" [inner]="true" class="mr-25"></span>
+                                    ▾ Desplegable
+                                  </span>
+                                } @else {
+                                  <span class="chip-type chip-type-item mr-1" title="Enlace directo sin submenús">
+                                    <span [data-feather]="'link'" [size]="11" [inner]="true" class="mr-25"></span>
+                                    ● Directo
+                                  </span>
+                                }
+
+                                <!-- Chip Contador de Submenús -->
+                                <span class="chip-counter mr-1" title="Cantidad de submenús dentro de este módulo">
+                                  {{ menu.SubMenu?.length || 0 }} submenús
+                                </span>
+
+                                <!-- Chip de Color si está definido -->
+                                @if (menu.color) {
+                                  <span class="chip-color-dot mr-1" title="Color de insignia">
+                                    <span class="color-dot-indicator" [style.background-color]="obtenerHexColor(menu.color)"></span>
+                                    {{ obtenerNombreColor(menu.color) }}
+                                  </span>
+                                }
+                              </div>
+
+                              <div class="d-flex align-items-center mt-25">
+                                <span class="chip-route-code mr-1">
+                                  <span [data-feather]="'link-2'" [size]="11" [inner]="true" class="mr-25 text-muted"></span>
+                                  {{ menu.url }}
+                                </span>
+                                @if (menu.descripcion && menu.descripcion !== menu.nombre) {
+                                  <small class="text-muted text-truncate">{{ menu.descripcion }}</small>
+                                }
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Toolbar de Acciones del Módulo (Inspirado en Iconos Suficientes con Tonalidad Mate) -->
+                          <div class="d-flex align-items-center mt-1 mt-md-0">
+                            <!-- Mini Stepper de Reordenación -->
+                            <div class="reorder-stepper mr-2">
+                              <button type="button" class="btn-stepper" [disabled]="mIdx === 0"
+                                (click)="moverMenu(mIdx, 'arriba')" title="Mover módulo arriba">
+                                <span [data-feather]="'chevron-up'" [size]="14" [inner]="true"></span>
+                              </button>
+                              <button type="button" class="btn-stepper" [disabled]="mIdx === aplicacion.Rol.Menu.length - 1"
+                                (click)="moverMenu(mIdx, 'abajo')" title="Mover módulo abajo">
+                                <span [data-feather]="'chevron-down'" [size]="14" [inner]="true"></span>
+                              </button>
+                            </div>
+
+                            <!-- Botón "+ SubMenú" (Icono Suficiente Mate Verde) -->
+                            <button type="button" class="btn btn-tree-icon btn-matte-green mr-1"
+                              (click)="abrirModalSubMenu(modalSubMenuTemplate, mIdx)"
+                              title="Agregar SubMenú a este Módulo">
+                              <span [data-feather]="'plus'" [size]="16" [inner]="true"></span>
+                            </button>
+
+                            <!-- Botón Modificar (Icono Suficiente Mate Ocre) -->
+                            <button type="button" class="btn btn-tree-icon btn-matte-ochre mr-1"
+                              (click)="abrirModalMenu(modalMenuTemplate, mIdx)"
+                              title="Modificar Módulo">
+                              <span [data-feather]="'edit-2'" [size]="15" [inner]="true"></span>
+                            </button>
+
+                            <!-- Botón Eliminar (Icono Suficiente Mate Arcilla) -->
+                            <button type="button" class="btn btn-tree-icon btn-matte-clay"
+                              (click)="eliminarMenu(mIdx)"
+                              title="Eliminar Módulo">
+                              <span [data-feather]="'trash-2'" [size]="15" [inner]="true"></span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <!-- Cuerpo Nivel 1: Lista de Submenús (Solo si está expandido y tiene submenús) -->
+                        @if (menu.isExpanded && menu.SubMenu && menu.SubMenu.length > 0) {
+                          <div class="module-body p-3 bg-white">
+                            @if (!menu.SubMenu || menu.SubMenu.length === 0) {
+                              <div class="empty-submenu-state p-3 text-center border rounded-lg bg-light-soft">
+                                <span [data-feather]="'folder-plus'" [size]="28" [inner]="true" class="text-muted mb-1"></span>
+                                <h6 class="text-muted font-weight-500 mb-1">Este módulo no tiene submenús aún</h6>
+                                <p class="small text-muted mb-2">Haga clic en "+ SubMenú" para agregar páginas y opciones bajo este módulo.</p>
+                                <button type="button" class="btn btn-pastel-primary"
+                                  (click)="abrirModalSubMenu(modalSubMenuTemplate, mIdx)"
+                                  style="background-color: #5b8fc9; color: #ffffff !important; min-width: 140px;">
+                                  Agregar SubMenú
+                                </button>
+                              </div>
+                            }
+
+                            @for (sub of menu.SubMenu; track $index; let sIdx = $index) {
+                              <div class="submenu-card mb-2 rounded-lg">
+                                
+                                <!-- Cabecera Nivel 2: SubMenú -->
+                                <div class="submenu-header p-2 d-flex justify-content-between align-items-center flex-wrap">
+                                  <div class="d-flex align-items-center flex-grow-1 cursor-pointer"
+                                    (click)="sub.isExpanded = !sub.isExpanded">
+                                    
+                                    <!-- Toggle Chevron solo si tiene acciones para no desplegar vacío -->
+                                    @if (sub.Privilegios && sub.Privilegios.length > 0) {
+                                      <button type="button" class="btn-toggle-chevron-sm mr-2"
+                                        [title]="sub.isExpanded ? 'Contraer acciones' : 'Ver acciones'">
+                                        <span [data-feather]="sub.isExpanded ? 'chevron-down' : 'chevron-right'" [size]="14" [inner]="true"></span>
+                                      </button>
+                                    } @else {
+                                      <span class="tree-bullet-placeholder mr-2" style="width: 26px; height: 26px;" title="Submenú sin acciones secundarias">
+                                        <span class="bullet-dot" style="width: 5px; height: 5px;"></span>
+                                      </span>
+                                    }
+
+                                    <!-- Avatar de Ícono de Submenú -->
+                                    <div class="submenu-avatar-icon mr-2">
+                                      <span [data-feather]="sanitizarIcono(sub.icono, 'layout')" [size]="18" [inner]="true"></span>
+                                    </div>
+
+                                    <!-- Datos del SubMenú -->
+                                    <div>
+                                      <div class="d-flex align-items-center flex-wrap">
+                                        <span class="font-weight-bold text-dark mb-0 mr-1">{{ sub.nombre }}</span>
+                                        
+                                        <!-- Insignia de Color -->
+                                        @if (sub.color) {
+                                          <span class="badge-swatch mr-1">
+                                            <span class="color-dot-indicator" [style.background-color]="obtenerHexColor(sub.color)"></span>
+                                            {{ obtenerNombreColor(sub.color) }}
+                                          </span>
+                                        }
+
+                                        <!-- Insignia de conteo de acciones -->
+                                        <span class="chip-counter-actions mr-1">
+                                          ⚡ {{ sub.Privilegios?.length || 0 }} acciones
+                                        </span>
+                                      </div>
+
+                                      <div class="d-flex align-items-center flex-wrap mt-25">
+                                        <span class="chip-route-code mr-1">
+                                          <span [data-feather]="'corner-down-right'" [size]="10" [inner]="true" class="mr-25 text-muted"></span>
+                                          {{ sub.url }}
+                                        </span>
+                                        @if (sub.accion) {
+                                          <span class="chip-js-action">
+                                            <span [data-feather]="'play'" [size]="9" [inner]="true" class="mr-25"></span>
+                                            {{ sub.accion }}
+                                          </span>
+                                        }
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Toolbar de Acciones del SubMenú (Iconos Suficientes Mate) -->
+                                  <div class="d-flex align-items-center mt-1 mt-md-0">
+                                    <!-- Mini Stepper de Reordenación -->
+                                    <div class="reorder-stepper mr-2">
+                                      <button type="button" class="btn-stepper" [disabled]="sIdx === 0"
+                                        (click)="moverSubMenu(mIdx, sIdx, 'arriba')" title="Mover submenú arriba">
+                                        <span [data-feather]="'chevron-up'" [size]="13" [inner]="true"></span>
+                                      </button>
+                                      <button type="button" class="btn-stepper" [disabled]="sIdx === menu.SubMenu.length - 1"
+                                        (click)="moverSubMenu(mIdx, sIdx, 'abajo')" title="Mover submenú abajo">
+                                        <span [data-feather]="'chevron-down'" [size]="13" [inner]="true"></span>
+                                      </button>
+                                    </div>
+
+                                    <!-- Botón "+ Acción" (Icono Suficiente Mate Azul) -->
+                                    <button type="button" class="btn btn-tree-icon-sm btn-matte-blue mr-1"
+                                      (click)="abrirModalPrivilegio(modalPrivilegioTemplate, mIdx, sIdx)"
+                                      title="Añadir Acción / Permiso">
+                                      <span [data-feather]="'plus'" [size]="14" [inner]="true"></span>
+                                    </button>
+
+                                    <!-- Botón Modificar (Icono Suficiente Mate Ocre) -->
+                                    <button type="button" class="btn btn-tree-icon-sm btn-matte-ochre mr-1"
+                                      (click)="abrirModalSubMenu(modalSubMenuTemplate, mIdx, sIdx)"
+                                      title="Modificar SubMenú">
+                                      <span [data-feather]="'edit-2'" [size]="14" [inner]="true"></span>
+                                    </button>
+
+                                    <!-- Botón Eliminar (Icono Suficiente Mate Arcilla) -->
+                                    <button type="button" class="btn btn-tree-icon-sm btn-matte-clay"
+                                      (click)="eliminarSubMenu(mIdx, sIdx)"
+                                      title="Eliminar SubMenú">
+                                      <span [data-feather]="'trash-2'" [size]="14" [inner]="true"></span>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                <!-- Cuerpo Nivel 3: Privilegios / Acciones (Solo visible cuando se expande y tiene acciones) -->
+                                @if (sub.isExpanded && sub.Privilegios && sub.Privilegios.length > 0) {
+                                  <div class="privileges-panel p-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                      <span class="small font-weight-bold text-muted text-uppercase d-flex align-items-center">
+                                        <span [data-feather]="'shield'" [size]="14" [inner]="true" class="mr-50 text-primary"></span>
+                                        Matriz de Métodos & Permisos
+                                      </span>
+                                      
+                                      <button type="button" class="btn btn-tree-icon-xs btn-matte-blue"
+                                        (click)="abrirModalPrivilegio(modalPrivilegioTemplate, mIdx, sIdx)"
+                                        title="Añadir Acción / Permiso">
+                                        <span [data-feather]="'plus'" [size]="13" [inner]="true"></span>
+                                      </button>
+                                    </div>
+
+                                    <div class="action-tiles-list">
+                                      @for (priv of sub.Privilegios; track $index; let pIdx = $index) {
+                                        <div class="action-tile-row d-flex justify-content-between align-items-center p-2 mb-1 bg-white rounded border">
+                                          <div class="d-flex align-items-center flex-wrap">
+                                            <!-- Insignia del Método -->
+                                            <span class="badge-method-pill mr-2" [ngClass]="{
+                                              'method-green': priv.metodo === 'agregar' || priv.metodo === 'nuevaFuncion' || priv.metodo === 'nuevaApi',
+                                              'method-blue': priv.metodo === 'editar' || priv.metodo === 'salvar',
+                                              'method-red': priv.metodo === 'eliminar' || priv.metodo === 'EliminarUsuario',
+                                              'method-purple': priv.metodo === 'escanear' || priv.metodo === 'importar' || priv.metodo === 'exportar' || priv.metodo === 'imprimir'
+                                            }">
+                                              ● {{ priv.metodo }}
+                                            </span>
+
+                                            <!-- Descripción de la Acción -->
+                                            <span class="font-weight-600 text-dark mr-2">{{ priv.descripcion }}</span>
+
+                                            <!-- Invocación de Función JS -->
+                                            <span class="chip-js-code mr-2 font-monospace">
+                                              <span [data-feather]="'terminal'" [size]="10" [inner]="true" class="mr-25 text-muted"></span>
+                                              {{ priv.accion }}
+                                            </span>
+
+                                            <!-- Directivas -->
+                                            @if (priv.directivas) {
+                                              <span class="badge badge-light-secondary font-monospace mr-1">
+                                                {{ priv.directivas }}
+                                              </span>
+                                            }
+                                          </div>
+
+                                          <div class="d-flex align-items-center">
+                                            <!-- Modificar Acción (edit-2) -->
+                                            <button type="button" class="btn btn-tree-icon-xs btn-matte-ochre mr-1"
+                                              (click)="abrirModalPrivilegio(modalPrivilegioTemplate, mIdx, sIdx, pIdx)"
+                                              title="Modificar Acción">
+                                              <span [data-feather]="'edit-2'" [size]="13" [inner]="true"></span>
+                                            </button>
+
+                                            <!-- Eliminar Acción -->
+                                            <button type="button" class="btn btn-tree-icon-xs btn-matte-clay"
+                                              (click)="eliminarPrivilegio(mIdx, sIdx, pIdx)"
+                                              title="Eliminar Acción">
+                                              <span [data-feather]="'trash-2'" [size]="13" [inner]="true"></span>
+                                            </button>
+                                          </div>
+                                        </div>
+                                      }
+                                    </div>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+                        }
+                      </div>
+                    }
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+            <!-- Tab 3: Editor / Visor JSON en Vivo -->
+            <li [ngbNavItem]="3">
+              <a ngbNavLink class="d-flex align-items-center py-1 px-3">
+                <span [data-feather]="'code'" [inner]="true" class="mr-1"></span>
+                <span class="font-weight-bold">Editor / Visor JSON</span>
+              </a>
+              <ng-template ngbNavContent>
+                <div class="col-md-12 mt-2">
+                  <div class="card border-0 shadow-sm p-3 bg-light-soft rounded-lg">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
+                      <div>
+                        <h5 class="mb-0 font-weight-bold text-dark d-flex align-items-center">
+                          <span [data-feather]="'code'" [size]="18" [inner]="true" class="mr-1 text-primary"></span>
+                          Documento JSON de MongoDB (SYS_SCHEMA)
+                        </h5>
+                        <small class="text-muted">
+                          Estructura en tiempo real lista para persistencia con upsert: true. Puede editarlo directamente y aplicarlo.
+                        </small>
+                      </div>
+
+                      <div class="d-flex align-items-center mt-1 mt-md-0">
+                        <!-- Botones Tonalidad Pastel Armonizada - Solo Texto -->
+                        <button type="button" class="btn btn-pastel-muted mr-1" (click)="copiarJSON()"
+                          style="background-color: #9eb5cc; color: #ffffff !important; min-width: 130px;">
+                          Copiar JSON
+                        </button>
+
+                        <button type="button" class="btn btn-pastel-secondary mr-1" (click)="descargarJSON()"
+                          style="background-color: #7b9bbd; color: #ffffff !important; min-width: 140px;">
+                          Descargar JSON
+                        </button>
+
+                        <button type="button" class="btn btn-pastel-primary" (click)="aplicarJSONDesdeEditor()"
+                          style="background-color: #5b8fc9; color: #ffffff !important; min-width: 140px;">
+                          Aplicar Cambios
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="form-group mb-0">
+                      <textarea class="form-control font-monospace p-3 json-editor-area" rows="22"
+                        [(ngModel)]="jsonEditorText" spellcheck="false"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+
+          </ul>
+
+          <!-- Contenedor del Outlet de Tabs -->
+          <div [ngbNavOutlet]="navWithIcons" class="mt-1"></div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- ============================================================================ -->
+<!-- MODALES ASISTIDOS (ESTILO fondo-modal size="xl" CON BOTÓN CERRAR SIN CORTES) -->
+<!-- ============================================================================ -->
+
+<!-- Modal: Módulo Principal (Nivel 1) -->
+<ng-template #modalMenuTemplate let-modal>
+  <div class="modal-header-custom d-flex justify-content-between align-items-center p-3 border-bottom bg-white">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge mr-2">
+        <span [data-feather]="'layers'" [size]="20" [inner]="true" class="text-primary"></span>
+      </div>
+      <div>
+        <h5 class="modal-title font-weight-bolder mb-0 text-dark">{{ modalTitulo }}</h5>
+        <small class="text-muted">Configure las propiedades generales de la sección o módulo principal</small>
       </div>
     </div>
+    <!-- Botón de Cerrar que NUNCA se corta -->
+    <button type="button" class="btn-close-modal" (click)="modal.dismiss()" aria-label="Cerrar" title="Cerrar">
+      <span [data-feather]="'x'" [size]="20" [inner]="true"></span>
+    </button>
+  </div>
 
+  <div class="modal-body p-3 bg-white">
+    <div class="row">
+      <!-- Columna Izquierda: Datos y Rutas -->
+      <div class="col-md-7 border-right">
+        <h6 class="font-weight-bolder text-primary mb-2 d-flex align-items-center">
+          <span [data-feather]="'file-text'" [size]="15" [inner]="true" class="mr-50"></span>
+          Información y Rutas del Módulo
+        </h6>
 
-    <ng-template #ModalAcciones let-modal>
-      <div class="modal-header">
-        <h5 class="modal-title" id="myModalLabel160">{{ titleModal }}</h5>
-        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form class="auth-login-form mt-2">
-        <div class="modal-body" tabindex="0" ngbAutofocus>
-          <!-- Invoice -->
-          <div class="col-xl-12 col-md-12 col-12">
-            <!-- Header Starts -->
-            <div class="row">
-
-              <div class="col-md-4 col-12 mb-1">
-                <label for="login-tipo" class="form-label">Seleccione Metodo</label>
-                <div class="ng-select-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'settings'" [size]="16"></span></span>
-                  </div>
-                  <ng-select [items]="metodos" bindLabel="descripcion" placeholder="Seleccione Metodo"
-                    [formControl]="IAccionNombreCtrl" bindValue="id"
-                    bindLabel="name">
-                  </ng-select>
-                </div>
-              </div>
-
-              <div class="col-md-4 col-12 mb-1">
-                <label for="login-host" class="form-label">Nombre</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
-                  </div>
-                    <input type="text" class="form-control" [formControl]="IAccionNombCtrl"
- placeholder="Nombre"
-                    tabindex="1" autofocus />
-                </div>
-              </div>
-
-              <div class="col-md-4 col-4 mb-1">
-                <label for="login-host" class="form-label">Función</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'zap'" [size]="16"></span></span>
-                  </div>
-                    <input type="text" class="form-control" [formControl]="IAccionFuncCtrl"
- placeholder="Función"
-                    tabindex="1" autofocus />
-                </div>
-              </div>
-
-              <div class="col-md-2 col-2 mb-1">
-                <label class="form-label">Clase</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
-                  </div>
-                    <input type="text" class="form-control" [formControl]="IAccionClaseCtrl"
- placeholder="Clase"
-                    tabindex="1" autofocus />
-                </div>
-              </div>
-              <div class="col-md-2 col-2 mb-1">
-                <label class="form-label">Icono</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'feather'" [size]="16"></span></span>
-                  </div>
-                    <input type="text" class="form-control" [formControl]="IAccionIconoCtrl"
- placeholder="Icono"
-                    tabindex="1" autofocus />
-                </div>
-              </div>
-              <div class="col-md-2 col-2 mb-1">
-                <label class="form-label">Color</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'droplet'" [size]="16"></span></span>
-                  </div>
-                    <input type="text" class="form-control" [formControl]="IAccionColorCtrl"
- placeholder="Color"
-                    tabindex="1" autofocus />
-                </div>
-              </div>
-              <div class="col-md-6 col-6 mb-1">
-                <label class="form-label">EndPoint</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
-                  </div>
-                                      <input type="text" [formControl]="IAccionEndpointCtrl"
-                    class="form-control" placeholder="EndPoint"  tabindex="1"
-                    autofocus />
-                </div>
-              </div>
-
-              <div class="col-md-12 col-12 mb-1">
-                <label for="login-host" class="form-label">Directiva</label>
-                                    <textarea type="text" row="5" [formControl]="IAccionDirecCtrl"
-                  class="form-control" placeholder="Directiva"  tabindex="1"
-                autofocus></textarea>
-              </div>
-
-
-            </div>
-
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Nombre del Módulo *</label>
+            <input type="text" class="form-control" [(ngModel)]="tempMenu.nombre" placeholder="Ej: Redes, Herramientas, Seguridad">
           </div>
 
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" tabindex="4" rippleEffect
-          (click)="GuardarAccion()">{{titleBtnModal}}</button>
-          <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
-          rippleEffect>Cerrar</button>
-        </div>
-      </form>
-
-    </ng-template>
-
-
-    <ng-template #ModalSubMenu let-modal>
-      <div class="modal-header">
-        <h5 class="modal-title" id="myModalLabel160">{{ titleModal }}</h5>
-        <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <form class="auth-login-form mt-2">
-        <div class="modal-body" tabindex="0" ngbAutofocus>
-          <!-- Invoice -->
-          <div class="col-xl-12 col-md-12 col-12">
-            <!-- Header Starts -->
-            <div class="row">
-
-
-              <div class="col-md-6 col-12 mb-1">
-                <label for="login-host" class="form-label">Nombre</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
-                  </div>
-                    <input type="text" class="form-control" [formControl]="IAddSubMenuNombCtrl"
- placeholder="Nombre"
-                    tabindex="1" autofocus />
-                </div>
-              </div>
-
-              <div class="col-md-6 col-12 mb-1">
-                <label for="login-host" class="form-label">Dirección URL</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
-                  </div>
-                    <input type="text" class="form-control" [formControl]="IAddSubMenuUrlCtrl"
- placeholder="Dirección URL"
-                    tabindex="1" autofocus />
-                </div>
-              </div>
-
-              <div class="col-md-5 col-12 mb-1">
-                <label for="login-host" class="form-label">Codigo JavaScript</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'terminal'" [size]="16"></span></span>
-                  </div>
-                                      <input type="text" [formControl]="IAddSubMenuJsCtrl"
-                    class="form-control" placeholder="Codigo JavaScript"  tabindex="1"
-                    autofocus />
-                </div>
-              </div>
-
-              <div class="col-md-4 col-12 mb-1">
-                <label for="login-host" class="form-label">Clase Css</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
-                  </div>
-                                      <input type="text" [formControl]="IAddSubMenuClaseCtrl"
-                    class="form-control" placeholder="Clase Css"  tabindex="1"
-                    autofocus />
-                </div>
-              </div>
-
-              <div class="col-md-3 col-12 mb-1">
-                <label for="login-tipo" class="form-label">Estatus</label>
-                <div class="ng-select-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'activity'" [size]="16"></span></span>
-                  </div>
-                  <ng-select [items]="tipoMenu" bindLabel="descripcion" placeholder="Seleccione"
-                    [formControl]="IAddSubMenuTipoCtrl" bindValue="id"
-                    bindLabel="name">
-                  </ng-select>
-                </div>
-              </div>
-
-
-            </div>
-
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Ruta URL *</label>
+            <input type="text" class="form-control" [(ngModel)]="tempMenu.url" placeholder="Ej: /redes, /principal">
           </div>
 
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-success" tabindex="4" rippleEffect
-          (click)="GuardarSubMenu()">{{titleBtnModal}}</button>
-          <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')"
-          rippleEffect>Cerrar</button>
-        </div>
-      </form>
+          <div class="form-group col-md-12">
+            <label class="form-label-minimal">Descripción Detallada</label>
+            <input type="text" class="form-control" [(ngModel)]="tempMenu.descripcion" placeholder="Ej: Redes y Telecomunicaciones">
+          </div>
 
-    </ng-template>
+          <!-- Tipo de Menú Ocupa la Fila Completa para Evitar Recortes -->
+          <div class="form-group col-md-12">
+            <label class="form-label-minimal font-weight-bold">Tipo de Menú *</label>
+            <ng-select [items]="tiposMenuClase" bindValue="id" bindLabel="label" [(ngModel)]="tempMenu.clase" [clearable]="false" class="w-100">
+              <ng-template ng-label-tmp let-item="item">
+                <div class="d-flex align-items-center">
+                  <span [data-feather]="item.icono" [size]="15" [inner]="true" class="mr-1 text-primary"></span>
+                  <span class="font-weight-bolder mr-50 text-dark">{{ item.simbolo }}</span>
+                  <span class="font-weight-600">{{ item.label }}</span>
+                </div>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                <div class="d-flex align-items-center py-50">
+                  <span [data-feather]="item.icono" [size]="15" [inner]="true" class="mr-1 text-primary"></span>
+                  <span class="font-weight-bolder mr-50 text-dark">{{ item.simbolo }}</span>
+                  <span class="font-weight-600">{{ item.label }}</span>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Acción Ejecutable (Opcional)</label>
+            <input type="text" class="form-control" [(ngModel)]="tempMenu.accion" placeholder="Opcional: CargarUrl(...)">
+          </div>
+
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Función JS (Opcional)</label>
+            <input type="text" class="form-control" [(ngModel)]="tempMenu.js" placeholder="Opcional: MonitoreoFlujo()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Estilo Visual, Ícono y Paleta Interactiva de Colores -->
+      <div class="col-md-5">
+        <h6 class="font-weight-bolder text-primary mb-2 d-flex align-items-center">
+          <span [data-feather]="'eye'" [size]="15" [inner]="true" class="mr-50"></span>
+          Aspecto Visual y Personalización
+        </h6>
+
+        <!-- Selector de Ícono con Vista Previa Visual -->
+        <div class="form-group">
+          <label class="form-label-minimal">Ícono Distintivo</label>
+          <ng-select [items]="iconosSugeridos" [(ngModel)]="tempMenu.icono" placeholder="Seleccionar ícono..." [addTag]="true">
+            <ng-template ng-label-tmp let-item="item">
+              <div class="d-flex align-items-center">
+                <span [data-feather]="sanitizarIcono(item, 'layers')" [size]="16" [inner]="true" class="mr-1 text-primary"></span>
+                <span class="font-weight-500">{{ item }}</span>
+              </div>
+            </ng-template>
+            <ng-template ng-option-tmp let-item="item">
+              <div class="d-flex align-items-center py-25">
+                <span [data-feather]="sanitizarIcono(item, 'layers')" [size]="16" [inner]="true" class="mr-1 text-primary"></span>
+                <span>{{ item }}</span>
+              </div>
+            </ng-template>
+          </ng-select>
+        </div>
+
+        <!-- Paleta Interactiva de Colores (Experiencia Superior en Modales) -->
+        <div class="form-group">
+          <label class="form-label-minimal">Color de Acento (Selección Rápida)</label>
+          <div class="color-palette-swatches d-flex align-items-center flex-wrap">
+            @for (col of coloresSugeridos; track col.id) {
+              <button type="button" class="color-swatch-btn mr-1 mb-1"
+                [class.active]="tempMenu.color === col.id"
+                [title]="col.name"
+                (click)="tempMenu.color = col.id">
+                <span class="swatch-circle" [style.background-color]="col.hex"></span>
+                <span class="swatch-label">{{ col.name }}</span>
+                @if (tempMenu.color === col.id) {
+                  <span [data-feather]="'check'" [size]="12" [inner]="true" class="swatch-check"></span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Tarjeta de Vista Previa en Vivo (Con Insignia Prominente y Legible) -->
+        <div class="preview-item-card p-3 rounded-lg border bg-white mt-3 shadow-xs">
+          <div class="d-flex align-items-center justify-content-between mb-2 pb-1 border-bottom">
+            <span class="text-muted font-weight-bolder text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">
+              <span [data-feather]="'eye'" [size]="13" [inner]="true" class="mr-50 text-primary"></span>
+              Vista Previa en Barra de Navegación
+            </span>
+            <span class="badge badge-light-secondary font-monospace" style="font-size: 11px;">En vivo</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="avatar-preview-box mr-2" [style.background-color]="obtenerHexColor(tempMenu.color) + '22'"
+              [style.border]="'1px solid ' + obtenerHexColor(tempMenu.color) + '55'">
+              <span [data-feather]="sanitizarIcono(tempMenu.icono, 'layers')" [size]="24" [inner]="true" [style.color]="obtenerHexColor(tempMenu.color)"></span>
+            </div>
+            <div class="flex-grow-1">
+              <div class="font-weight-bolder text-dark h5 mb-1">{{ tempMenu.nombre || 'Nombre del Módulo' }}</div>
+              <div class="d-flex align-items-center flex-wrap">
+                <span class="badge-preview-tag text-white mr-2" [style.background-color]="obtenerHexColor(tempMenu.color)">
+                  <span class="color-dot-indicator bg-white mr-1" style="width: 8px; height: 8px;"></span>
+                  {{ obtenerNombreColor(tempMenu.color) }}
+                </span>
+                <span class="text-muted font-monospace small">
+                  <span [data-feather]="'link-2'" [size]="12" [inner]="true" class="mr-25"></span>
+                  {{ tempMenu.url || '/ruta' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Modal (Tonalidad Pastel Armonizada - Solo Texto y Máxima Legibilidad) -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-modal-cancel mr-1" (click)="modal.dismiss()"
+      style="background-color: #eef3f8; color: #405771 !important; border: 1px solid #c9d8e7 !important; min-width: 130px; height: 40px; border-radius: 6px; font-weight: 500;">
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-modal-save" (click)="guardarModalMenu()"
+      style="background-color: #5b8fc9; color: #ffffff !important; border: none !important; min-width: 150px; height: 40px; border-radius: 6px; font-weight: 500;">
+      Guardar Módulo
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modal: SubMenú (Nivel 2) -->
+<ng-template #modalSubMenuTemplate let-modal>
+  <div class="modal-header-custom d-flex justify-content-between align-items-center p-3 border-bottom bg-white">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge mr-2 bg-light-success">
+        <span [data-feather]="'layout'" [size]="20" [inner]="true" class="text-success"></span>
+      </div>
+      <div>
+        <h5 class="modal-title font-weight-bolder mb-0 text-dark">{{ modalTitulo }}</h5>
+        <small class="text-muted">Configure las rutas y especificaciones del submenú</small>
+      </div>
+    </div>
+    <!-- Botón de Cerrar que NUNCA se corta -->
+    <button type="button" class="btn-close-modal" (click)="modal.dismiss()" aria-label="Cerrar" title="Cerrar">
+      <span [data-feather]="'x'" [size]="20" [inner]="true"></span>
+    </button>
+  </div>
+
+  <div class="modal-body p-3 bg-white">
+    <div class="row">
+      <!-- Columna Izquierda: Datos y Rutas -->
+      <div class="col-md-7 border-right">
+        <h6 class="font-weight-bolder text-success mb-2 d-flex align-items-center">
+          <span [data-feather]="'link'" [size]="15" [inner]="true" class="mr-50"></span>
+          Información y Rutas del SubMenú
+        </h6>
+
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Nombre del SubMenú *</label>
+            <input type="text" class="form-control" [(ngModel)]="tempSubMenu.nombre" placeholder="Ej: Comunicaciones, Conexiones">
+          </div>
+
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Descripción</label>
+            <input type="text" class="form-control" [(ngModel)]="tempSubMenu.descripcion" placeholder="Ej: Panel de Comunicaciones">
+          </div>
+
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Ruta URL de Navegación *</label>
+            <input type="text" class="form-control" [(ngModel)]="tempSubMenu.url" placeholder="Ej: networks/communications">
+          </div>
+
+          <div class="form-group col-md-6">
+            <label class="form-label-minimal">Clase de Plantilla</label>
+            <input type="text" class="form-control" [(ngModel)]="tempSubMenu.clase" placeholder="item">
+          </div>
+
+          <div class="form-group col-md-12">
+            <label class="form-label-minimal">Acción Ejecutable (Función JavaScript)</label>
+            <input type="text" class="form-control font-monospace" [(ngModel)]="tempSubMenu.accion" placeholder="Ej: CargarUrl('control', 'buzon')">
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Estilo Visual, Ícono y Paleta Interactiva de Colores -->
+      <div class="col-md-5">
+        <h6 class="font-weight-bolder text-success mb-2 d-flex align-items-center">
+          <span [data-feather]="'eye'" [size]="15" [inner]="true" class="mr-50"></span>
+          Aspecto Visual del SubMenú
+        </h6>
+
+        <!-- Selector de Ícono -->
+        <div class="form-group">
+          <label class="form-label-minimal">Ícono Distintivo</label>
+          <ng-select [items]="iconosSugeridos" [(ngModel)]="tempSubMenu.icono" placeholder="Seleccionar ícono..." [addTag]="true">
+            <ng-template ng-label-tmp let-item="item">
+              <div class="d-flex align-items-center">
+                <span [data-feather]="sanitizarIcono(item, 'layout')" [size]="16" [inner]="true" class="mr-1 text-success"></span>
+                <span class="font-weight-500">{{ item }}</span>
+              </div>
+            </ng-template>
+            <ng-template ng-option-tmp let-item="item">
+              <div class="d-flex align-items-center py-25">
+                <span [data-feather]="sanitizarIcono(item, 'layout')" [size]="16" [inner]="true" class="mr-1 text-success"></span>
+                <span>{{ item }}</span>
+              </div>
+            </ng-template>
+          </ng-select>
+        </div>
+
+        <!-- Paleta Interactiva de Colores -->
+        <div class="form-group">
+          <label class="form-label-minimal">Color de Insignia (Selección Rápida)</label>
+          <div class="color-palette-swatches d-flex align-items-center flex-wrap">
+            @for (col of coloresSugeridos; track col.id) {
+              <button type="button" class="color-swatch-btn mr-1 mb-1"
+                [class.active]="tempSubMenu.color === col.id"
+                [title]="col.name"
+                (click)="tempSubMenu.color = col.id">
+                <span class="swatch-circle" [style.background-color]="col.hex"></span>
+                <span class="swatch-label">{{ col.name }}</span>
+                @if (tempSubMenu.color === col.id) {
+                  <span [data-feather]="'check'" [size]="12" [inner]="true" class="swatch-check"></span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Tarjeta de Vista Previa en Vivo (Con Insignia Prominente y Legible) -->
+        <div class="preview-item-card p-3 rounded-lg border bg-white mt-3 shadow-xs">
+          <div class="d-flex align-items-center justify-content-between mb-2 pb-1 border-bottom">
+            <span class="text-muted font-weight-bolder text-uppercase" style="font-size: 11px; letter-spacing: 0.5px;">
+              <span [data-feather]="'eye'" [size]="13" [inner]="true" class="mr-50 text-success"></span>
+              Vista Previa del SubMenú
+            </span>
+            <span class="badge badge-light-secondary font-monospace" style="font-size: 11px;">En vivo</span>
+          </div>
+          <div class="d-flex align-items-center">
+            <div class="avatar-preview-box mr-2" [style.background-color]="obtenerHexColor(tempSubMenu.color) + '22'"
+              [style.border]="'1px solid ' + obtenerHexColor(tempSubMenu.color) + '55'">
+              <span [data-feather]="sanitizarIcono(tempSubMenu.icono, 'layout')" [size]="22" [inner]="true" [style.color]="obtenerHexColor(tempSubMenu.color)"></span>
+            </div>
+            <div class="flex-grow-1">
+              <div class="font-weight-bolder text-dark h5 mb-1">{{ tempSubMenu.nombre || 'Nombre del SubMenú' }}</div>
+              <div class="d-flex align-items-center flex-wrap">
+                <span class="badge-preview-tag text-white mr-2" [style.background-color]="obtenerHexColor(tempSubMenu.color)">
+                  <span class="color-dot-indicator bg-white mr-1" style="width: 8px; height: 8px;"></span>
+                  {{ obtenerNombreColor(tempSubMenu.color) }}
+                </span>
+                <span class="text-muted font-monospace small">
+                  <span [data-feather]="'corner-down-right'" [size]="12" [inner]="true" class="mr-25"></span>
+                  {{ tempSubMenu.url || 'ruta/sub' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Modal (Tonalidad Pastel Armonizada - Solo Texto y Máxima Legibilidad) -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-modal-cancel mr-1" (click)="modal.dismiss()"
+      style="background-color: #eef3f8; color: #405771 !important; border: 1px solid #c9d8e7 !important; min-width: 130px; height: 40px; border-radius: 6px; font-weight: 500;">
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-modal-save" (click)="guardarModalSubMenu()"
+      style="background-color: #5b8fc9; color: #ffffff !important; border: none !important; min-width: 150px; height: 40px; border-radius: 6px; font-weight: 500;">
+      Guardar SubMenú
+    </button>
+  </div>
+</ng-template>
+
+<!-- Modal: Privilegio / Acción (Nivel 3) -->
+<ng-template #modalPrivilegioTemplate let-modal>
+  <div class="modal-header-custom d-flex justify-content-between align-items-center p-3 border-bottom bg-white">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge mr-2 bg-light-info">
+        <span [data-feather]="'command'" [size]="20" [inner]="true" class="text-info"></span>
+      </div>
+      <div>
+        <h5 class="modal-title font-weight-bolder mb-0 text-dark">{{ modalTitulo }}</h5>
+        <small class="text-muted">Configure las acciones específicas con sus métodos y directivas</small>
+      </div>
+    </div>
+    <!-- Botón de Cerrar que NUNCA se corta -->
+    <button type="button" class="btn-close-modal" (click)="modal.dismiss()" aria-label="Cerrar" title="Cerrar">
+      <span [data-feather]="'x'" [size]="20" [inner]="true"></span>
+    </button>
+  </div>
+
+  <div class="modal-body p-3 bg-white">
+    <div class="row">
+      <div class="form-group col-md-6">
+        <label class="form-label-minimal">Método Identificador *</label>
+        <input type="text" class="form-control" [(ngModel)]="tempPrivilegio.metodo" placeholder="Ej: agregar, editar, eliminar, exportar">
+        <small class="text-muted">Clave del método de seguridad (minúsculas recomendadas)</small>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label class="form-label-minimal">Descripción Legible *</label>
+        <input type="text" class="form-control" [(ngModel)]="tempPrivilegio.descripcion" placeholder="Ej: Agregar Registro, Editar Datos">
+        <small class="text-muted">Nombre comprensible en perfiles de seguridad</small>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label class="form-label-minimal">Acción JS Invocada *</label>
+        <input type="text" class="form-control font-monospace" [(ngModel)]="tempPrivilegio.accion" placeholder="Ej: Agregar(), Editar()">
+        <small class="text-muted">Función que dispara el botón o directiva</small>
+      </div>
+
+      <div class="form-group col-md-6">
+        <label class="form-label-minimal">Directivas de Seguridad</label>
+        <input type="text" class="form-control" [(ngModel)]="tempPrivilegio.directivas" placeholder="Opcional: directivas especiales">
+        <small class="text-muted">Restricciones adicionales si aplican</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pie de Modal (Tonalidad Pastel Armonizada - Solo Texto y Máxima Legibilidad) -->
+  <div class="modal-footer">
+    <button type="button" class="btn btn-modal-cancel mr-1" (click)="modal.dismiss()"
+      style="background-color: #eef3f8; color: #405771 !important; border: 1px solid #c9d8e7 !important; min-width: 130px; height: 40px; border-radius: 6px; font-weight: 500;">
+      Cancelar
+    </button>
+    <button type="button" class="btn btn-modal-save" (click)="guardarModalPrivilegio()"
+      style="background-color: #5b8fc9; color: #ffffff !important; border: none !important; min-width: 150px; height: 40px; border-radius: 6px; font-weight: 500;">
+      Guardar Acción
+    </button>
+  </div>
+</ng-template>

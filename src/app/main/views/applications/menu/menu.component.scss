@@ -1,214 +1,994 @@
-@import '@core/scss/base/pages/app-ecommerce.scss';
+// ============================================================================
+// Variables de Tema Pastel Minimalista (Inspirado en security/profile)
+// ============================================================================
+$primary-soft: #e8f0fe;
+$primary-text: #5b8fc9;
+$success-soft: #e6f4ea;
+$success-text: #6ba88e;
+$warning-soft: #fef7e0;
+$warning-text: #d4a574;
+$danger-soft: #fce8e6;
+$danger-text: #d18a9a;
+$info-soft: #e1f5fe;
+$info-text: #4fc3f7;
+$secondary-soft: #f5f5f5;
+$secondary-text: #9e9e9e;
 
-// ========================================
-// Menu Component Styles (Soft Minimalist)
-// ========================================
-
-// Typography
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
-// Colors - Soft Palette
 $soft-bg: #f8f9fa;
-$card-bg: #ffffff;
-$text-primary: #5e5873;
-$text-secondary: #b9b9c3;
 $border-color: #ebe9f1;
+$text-primary: #2c3e50;
+$text-secondary: #7f8c8d;
+$card-bg: #ffffff;
 
-$primary-soft: #e3f2fd; // Light Blue
-$primary-text: #2196f3;
+// ============================================================================
+// Contenedor y Tipografía Global
+// ============================================================================
+app-menu {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
-$success-soft: #e8f5e9; // Light Green
-$success-text: #4caf50;
-
-$warning-soft: #fff3e0; // Light Orange
-$warning-text: #ff9800;
-
-$danger-soft: #ffebee; // Light Red
-$danger-text: #f44336;
-
-// ========================================
-// Header & Controls Styles
-// ========================================
-
-.card-header-custom {
-  padding: 24px 24px 16px 24px;
-  background: white;
-  border-bottom: 1px solid $border-color;
-  border-radius: 8px 8px 0 0;
-}
-
-.header-title-group {
-  .content-header-title {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    color: $text-primary;
-    font-size: 1.5rem;
-    letter-spacing: -0.5px;
+  input, select, textarea {
+    font-size: 13.5px;
   }
-  
-  small {
-    font-size: 0.9rem;
-    color: $text-secondary;
+
+  .cursor-pointer {
+    cursor: pointer;
   }
-}
 
-.actions-bar {
-  margin-top: 16px;
-}
+  // Truncado de texto seguro (Short Cut Word)
+  .cell-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
 
-.filter-group {
-  .ng-select.custom-select-soft {
-    .ng-select-container {
-      background: $soft-bg;
-      border: 1px solid transparent;
-      min-height: 38px;
-      border-radius: 6px;
-    }
-    
-    &.ng-select-opened .ng-select-container {
-      background: white;
-      border-color: $border-color;
+  // Garantizar visibilidad y renderizado de iconos Feather
+  [data-feather] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+
+    svg {
+      display: inline-block;
+      vertical-align: middle;
+      stroke: currentColor;
     }
   }
-}
 
-.actions-right {
-  .btn {
-    padding: 0.6rem 1.2rem;
-    font-weight: 500;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    
-    &.btn-primary {
-      background: $primary-text;
+  // Botón estándar con altura y presencia generosa (Inspirado en profile.component.html:L454-L458 con acabado mate sutil)
+  .btn-action-profile {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    border-radius: 6px !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    padding: 0 1.25rem !important;
+    transition: all 0.2s ease !important;
+
+    &:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12) !important;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // Botones de acción basados puramente en iconos con acabados mate sutiles
+  .btn-tree-icon {
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.14) !important;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-tree-icon-sm {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 6px !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.14) !important;
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-tree-icon-xs {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 4px !important;
+    border: none !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    &:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // Paleta Mate Sutil y Suave
+  .btn-matte-green {
+    background-color: #43936c !important;
+  }
+  .btn-matte-blue {
+    background-color: #48739e !important;
+  }
+  .btn-matte-ochre {
+    background-color: #a28643 !important;
+  }
+  .btn-matte-clay {
+    background-color: #a56449 !important;
+  }
+  .btn-matte-purple {
+    background-color: #6d5b91 !important;
+  }
+
+  // Indicador de nodo directo / sin submenús
+  .tree-bullet-placeholder {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .bullet-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #94a3b8;
+      display: inline-block;
+    }
+  }
+
+  // ============================================================================
+  // Pestañas Estilizadas (ngbNav Nav-Pills)
+  // ============================================================================
+  .nav-pills {
+    .nav-item {
+      margin: 0 4px;
+
+      .nav-link {
+        color: $text-secondary;
+        border-radius: 8px;
+        transition: all 0.25s ease;
+        font-weight: 600;
+        background: transparent;
+
+        &:hover {
+          color: $primary-text;
+          background: $primary-soft;
+        }
+
+        &.active {
+          color: #ffffff !important;
+          background: linear-gradient(135deg, $primary-text 0%, #427ebf 100%) !important;
+          box-shadow: 0 4px 12px rgba(91, 143, 201, 0.35);
+        }
+      }
+    }
+  }
+
+  // ============================================================================
+  // Buscador Premium y Select Soft
+  // ============================================================================
+  .premium-search-box {
+    display: flex;
+    align-items: center;
+    background: $soft-bg;
+    border: 1px solid $border-color;
+    border-radius: 20px;
+    padding: 2px 14px;
+    transition: all 0.25s ease;
+
+    &:focus-within {
+      background: #ffffff;
       border-color: $primary-text;
-      box-shadow: 0 4px 12px rgba($primary-text, 0.2);
-      
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba($primary-text, 0.3);
-      }
+      box-shadow: 0 0 0 3px rgba(91, 143, 201, 0.15);
     }
-    
-    &.btn-outline-secondary {
+
+    input {
+      outline: none;
+      box-shadow: none;
+    }
+  }
+
+  .select-soft {
+    border-radius: 6px;
+    border: 1px solid $border-color;
+    background-color: $soft-bg;
+  }
+
+  .form-label-minimal {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 0.35rem;
+    display: block;
+  }
+
+  // ============================================================================
+  // Muestras Visuales de Color (Swatches en Combos)
+  // ============================================================================
+  .color-swatch-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+  }
+
+  .color-dot-indicator {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  .ng-select {
+    .ng-select-container {
+      border-radius: 6px;
       border-color: $border-color;
-      color: $text-primary;
-      
-      &:hover {
-        background: $soft-bg;
-        border-color: darken($border-color, 10%);
+      min-height: 38px;
+    }
+
+    &.ng-select-opened .ng-select-container {
+      border-color: $primary-text;
+      box-shadow: 0 0 0 2px rgba(91, 143, 201, 0.15);
+    }
+
+    .ng-dropdown-panel {
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      border: 1px solid $border-color;
+
+      .ng-option {
+        padding: 8px 12px;
+        transition: background-color 0.15s ease;
+
+        &.ng-option-marked {
+          background-color: $primary-soft;
+        }
+
+        &.ng-option-selected {
+          background-color: lighten($primary-soft, 3%);
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // ============================================================================
+  // Avatares e Insignias Suaves
+  // ============================================================================
+  .avatar-soft {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app-avatar-banner {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, $primary-soft 0%, #f0f4ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bg-light-primary { background-color: $primary-soft !important; }
+  .bg-light-success { background-color: $success-soft !important; }
+  .bg-light-info { background-color: $info-soft !important; }
+  .bg-light-soft { background-color: #fbfbfd !important; }
+
+  .badge-light-primary { background-color: $primary-soft; color: $primary-text; }
+  .badge-light-success { background-color: $success-soft; color: $success-text; }
+  .badge-light-info { background-color: $info-soft; color: $info-text; }
+  .badge-light-warning { background-color: $warning-soft; color: $warning-text; }
+  .badge-light-secondary { background-color: $secondary-soft; color: $secondary-text; }
+
+  // Colores estándar del sistema
+  .bg-c-blue { background-color: #4099ff !important; color: #ffffff; }
+  .bg-c-green { background-color: #2ed8b6 !important; color: #ffffff; }
+  .bg-c-yellow { background-color: #ffb64d !important; color: #ffffff; }
+  .bg-c-red { background-color: #ff5370 !important; color: #ffffff; }
+  .bg-c-pink { background-color: #ff869a !important; color: #ffffff; }
+  .bg-c-purple { background-color: #7b59d0 !important; color: #ffffff; }
+
+  .shadow-xs { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
+
+  // ============================================================================
+  // Estilo de la ngx-datatable con Truncado Automático
+  // ============================================================================
+  .ngx-datatable.bootstrap {
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    overflow: hidden;
+
+    .datatable-header {
+      background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 4%) 100%);
+      border-bottom: 2px solid $border-color;
+
+      .datatable-header-cell {
+        padding: 0.9rem 1rem;
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: 0.5px;
         color: $text-primary;
+        text-transform: uppercase;
+      }
+    }
+
+    .datatable-body {
+      .datatable-body-row {
+        border-bottom: 1px solid lighten($border-color, 3%);
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: lighten($primary-soft, 6%) !important;
+        }
+
+        .datatable-body-cell {
+          padding: 0.75rem 1rem;
+          vertical-align: middle;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+  }
+
+  // ============================================================================
+  // Diseñador de Menús: Tarjetas y Jerarquía Minimalista
+  // ============================================================================
+  .card-app-header {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.8) !important;
+  }
+
+  // Nivel 1: Tarjeta de Módulo
+  .module-card {
+    background: #ffffff;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    border-left: 4px solid $primary-text !important;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: all 0.25s ease;
+
+    &:hover {
+      border-color: rgba(148, 163, 184, 0.6);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .module-header {
+      background: linear-gradient(135deg, #fcfdff 0%, #f7f9fc 100%);
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    .module-avatar-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, $primary-soft 0%, #f0f4ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #5b8fc9;
+
+      svg {
+        stroke: currentColor;
+      }
+    }
+  }
+
+  // Nivel 2: Tarjeta de SubMenú
+  .submenu-card {
+    background: #fbfcfe;
+    border: 1px solid rgba(230, 235, 241, 0.95);
+    border-left: 3px solid $success-text !important;
+    border-radius: 8px;
+    margin-left: 1.5rem;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -1.5rem;
+      top: 1.25rem;
+      width: 1.5rem;
+      height: 1px;
+      background: #cbd5e1;
+    }
+
+    .submenu-header {
+      background: #ffffff;
+      border-bottom: 1px solid rgba(230, 235, 241, 0.8);
+    }
+
+    .submenu-avatar-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, $success-soft 0%, #f0faf4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: #40a671;
+
+      svg {
+        stroke: currentColor;
+      }
+    }
+  }
+
+  // Nivel 3: Panel de Privilegios / Acciones
+  .privileges-panel {
+    background: #f8fafc;
+    border-top: 1px dashed rgba(226, 232, 240, 0.9);
+  }
+
+  .action-tile-row {
+    border: 1px solid rgba(226, 232, 240, 0.7);
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: $info-text;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  // ============================================================================
+  // Chips y Etiquetas Semánticas
+  // ============================================================================
+  .chip-type {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+
+    &.chip-type-collapsible {
+      background-color: $primary-soft;
+      color: $primary-text;
+    }
+
+    &.chip-type-item {
+      background-color: $secondary-soft;
+      color: $text-secondary;
+    }
+  }
+
+  .chip-counter {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 12px;
+    background-color: #f1f5f9;
+    color: #475569;
+  }
+
+  .chip-counter-actions {
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background-color: $info-soft;
+    color: $info-text;
+  }
+
+  .chip-color-dot {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 1px 7px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .chip-route-code {
+    font-size: 11px;
+    font-family: monospace;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 1px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .chip-js-action, .chip-js-code {
+    font-size: 10.5px;
+    font-family: monospace;
+    color: #0f766e;
+    background: #f0fdfa;
+    border: 1px solid #ccfbf1;
+    padding: 1px 6px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-swatch {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  // Insignias para métodos en Nivel 3
+  .badge-method-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+
+    &.method-green {
+      background-color: #ecfdf5;
+      color: #059669;
+    }
+    &.method-blue {
+      background-color: #eff6ff;
+      color: #2563eb;
+    }
+    &.method-red {
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+    &.method-purple {
+      background-color: #faf5ff;
+      color: #7e22ce;
+    }
+  }
+
+  // ============================================================================
+  // Botones y Controles de Acción Minimalistas
+  // ============================================================================
+  .btn-toggle-chevron, .btn-toggle-chevron-sm {
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $primary-text;
+    }
+  }
+
+  .reorder-stepper {
+    display: inline-flex;
+    background: #f1f5f9;
+    border-radius: 6px;
+    padding: 2px;
+
+    .btn-stepper {
+      background: transparent;
+      border: none;
+      width: 26px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #64748b;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: background 0.15s ease;
+
+      &:hover:not(:disabled) {
+        background: #e2e8f0;
+        color: #1e293b;
+      }
+
+      &:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  // ============================================================================
+  // Visor / Editor JSON
+  // ============================================================================
+  .json-editor-area {
+    background: #1e1e24;
+    color: #e2e8f0;
+    border: 1px solid #2d3748;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    tab-size: 2;
+    resize: vertical;
+
+    &:focus {
+      background: #1a1a20;
+      color: #f8fafc;
+      border-color: $primary-text;
+      box-shadow: 0 0 0 3px rgba(91, 143, 201, 0.25);
+    }
+  }
+}
+
+// ============================================================================
+// Modales de Estilo fondo-modal con Botón de Cierre Limpio (Sin Cortes)
+// ============================================================================
+.fondo-modal {
+  .modal-dialog {
+    max-width: 950px;
+    margin: 1.75rem auto;
+  }
+
+  .modal-content {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    overflow: visible; // Permite que no se corte ningún elemento
+    background-color: #ffffff;
+  }
+
+  .modal-header-custom {
+    padding: 1.25rem 1.5rem;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    position: relative;
+  }
+
+  .modal-icon-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, $primary-soft 0%, #f0f4ff 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  // Botón de cierre que NUNCA se corta
+  .btn-close-modal {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    margin-left: auto;
+
+    &:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+      transform: scale(1.05);
+    }
+  }
+
+  // Paleta Interactiva de Colores en Modales
+  .color-palette-swatches {
+    gap: 10px;
+
+    .color-swatch-btn {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      min-height: 40px;
+      padding: 6px 14px;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      .swatch-circle {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        margin-right: 8px;
+        flex-shrink: 0;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .swatch-label {
+        font-weight: 500;
+        color: #475569;
+      }
+
+      .swatch-check {
+        margin-left: 8px;
+        color: $primary-text;
+      }
+
+      &:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        transform: translateY(-1px);
+      }
+
+      &.active {
+        background: $primary-soft;
+        border-color: $primary-text;
+        box-shadow: 0 0 0 2px rgba(91, 143, 201, 0.2);
+
+        .swatch-label {
+          color: $primary-text;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  // Tarjeta de Vista Previa en Vivo en Modales con Baget / Insignia Grande y Prominente
+  .preview-item-card {
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    .avatar-preview-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+  }
+
+  // Insignia / Baget de vista previa prominente, legible y elegante
+  .badge-preview-tag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 13px !important;
+    font-weight: 600;
+    padding: 5px 14px !important;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
+    line-height: 1.4;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  // Estilos de Pie de Modal - Botones Elegantes, Altos y Perfectamente Legibles
+  .modal-footer {
+    padding: 1.15rem 1.5rem !important;
+    background-color: #f8fafc !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    display: flex !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 12px;
+
+    .btn-modal-cancel {
+      background-color: #eef3f8 !important;
+      color: #405771 !important;
+      border: 1px solid #c9d8e7 !important;
+      font-weight: 500 !important;
+      font-size: 13.5px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      min-width: 130px !important;
+      border-radius: 6px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 1.35rem !important;
+      box-shadow: none !important;
+      cursor: pointer;
+      transition: all 0.2s ease !important;
+
+      &:hover {
+        background-color: #dfe9f2 !important;
+        color: #2b3d50 !important;
+        border-color: #b3c8dc !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+      }
+
+      &:active {
+        transform: translateY(0);
+      }
+    }
+
+    .btn-modal-save {
+      background-color: #5b8fc9 !important;
+      color: #ffffff !important;
+      border: none !important;
+      font-weight: 500 !important;
+      font-size: 13.5px !important;
+      height: 40px !important;
+      min-height: 40px !important;
+      min-width: 150px !important;
+      border-radius: 6px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 0 1.35rem !important;
+      box-shadow: 0 2px 5px rgba(91, 143, 201, 0.25) !important;
+      cursor: pointer;
+      transition: all 0.2s ease !important;
+
+      &:hover {
+        background-color: #4b7eb6 !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 10px rgba(91, 143, 201, 0.35) !important;
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        transform: translateY(0);
       }
     }
   }
 }
 
-// ========================================
-// Menu Definition Panel Styles
-// ========================================
+// ============================================================================
+// Botones de Menú Superior: Tonalidad Pastel Armonizada (Solo Texto)
+// ============================================================================
+.btn-pastel-primary {
+  background-color: #5b8fc9 !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 500 !important;
+  font-size: 13.5px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.4rem !important;
+  box-shadow: 0 2px 5px rgba(91, 143, 201, 0.22) !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
 
-.menu-definition-panel {
-  background: $card-bg;
-  border-radius: 8px;
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  border: 1px solid $border-color;
-  animation: slideDown 0.3s ease;
+  &:hover {
+    background-color: #4c7eb6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 8px rgba(91, 143, 201, 0.3) !important;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    pointer-events: none;
+  }
 }
 
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+.btn-pastel-secondary {
+  background-color: #7b9bbd !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 500 !important;
+  font-size: 13.5px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.4rem !important;
+  box-shadow: 0 2px 5px rgba(123, 155, 189, 0.2) !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background-color: #6a8cae !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 8px rgba(123, 155, 189, 0.28) !important;
+    transform: translateY(-1px);
   }
-  to {
-    opacity: 1;
+
+  &:active {
     transform: translateY(0);
   }
 }
 
-.section-header-pastel {
-  padding-bottom: 16px;
-  border-bottom: 2px solid $border-color;
-  
-  .header-icon-wrapper {
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #e8e0ff 0%, #f0ebff 100%);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 16px;
-    color: #8b5cf6;
-    transition: all 0.3s ease;
-    
-    &:hover {
-      background: linear-gradient(135deg, #d4c5ff 0%, #e8e0ff 100%);
-      transform: scale(1.05);
-    }
+.btn-pastel-muted {
+  background-color: #9eb5cc !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 500 !important;
+  font-size: 13.5px !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  border-radius: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.4rem !important;
+  box-shadow: 0 2px 5px rgba(158, 181, 204, 0.18) !important;
+  cursor: pointer;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background-color: #8da5bc !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 8px rgba(158, 181, 204, 0.25) !important;
+    transform: translateY(-1px);
   }
-  
-  .section-title {
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    color: $text-primary;
-    font-size: 1.1rem;
-    letter-spacing: -0.3px;
-  }
-  
-  .section-subtitle {
-    font-size: 0.85rem;
-    color: $text-secondary;
-  }
-  
-  .action-buttons {
-    .btn {
-      padding: 0.65rem 1.5rem;
-      font-weight: 600;
-      border-radius: 8px;
-      transition: all 0.3s ease;
-      
-      &.btn-success {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        border: none;
-        box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
-        
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
-        }
-      }
-      
-      &.btn-warning {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        border: none;
-        box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
-        
-        &:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 15px rgba(245, 158, 11, 0.3);
-        }
-      }
-    }
+
+  &:active {
+    transform: translateY(0);
   }
 }
 
-// Form Labels with Icons
-.form-label {
-  display: flex;
-  align-items: center;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: $text-primary;
-  margin-bottom: 0.5rem;
-  
-  svg {
-    color: #a78bfa;
-    flex-shrink: 0;
-  }
-}
-
-// Import pastel input styles
-@import './menu-pastel.scss';
