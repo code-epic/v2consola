@@ -74,7 +74,17 @@ export class WsSandraService {
                     const data = JSON.parse(dataAsString);
                     // console.log('ChatComponent: Mensaje WebSocket recibido y parseado:', data);
 
-                    if (data && typeof data.content === 'string' && typeof data.done === 'boolean') {
+                    if (data && data.from === 'exec-pipe') {
+                        let msj = data.message !== undefined ? data.message : ''
+                        if (msj && msj.error !== undefined && msj.error !== '') {
+                            this.ErrorMessage(msj.error)
+                        }
+                        if (data.type === 'restore_finished') {
+                            this.OkMessage('El proceso de restauración ha finalizado correctamente')
+                        }
+
+                        this.mensajeService.progreso$.emit(data);
+                    } else if (data && typeof data.content === 'string' && typeof data.done === 'boolean') {
                         const lastMessage = this.messages[this.messages.length - 1];
                         if (lastMessage && lastMessage.from === 'bot' && this.loading) {
                             lastMessage.message += data.content;
@@ -108,19 +118,6 @@ export class WsSandraService {
                         });
                         this.loading = false;
                         this.saveHistory();
-                    } else if (data.from === 'exec-pipe') {
-                        // Mensaje con formato inesperado
-                        // console.log(data)
-                        let msj = data.message !== undefined ? data.message : ''
-                        if (msj.error !== undefined && msj.error !== '') {
-                            this.ErrorMessage(msj.error)
-                        }
-                        if (data.type === 'restore_finished') {
-                            this.OkMessage('El proceso de restauración ha finalizado correctamente')
-                        }
-
-                        this.mensajeService.progreso$.emit(data);
-
                     } else {
                         console.warn('ChatComponent: Mensaje WebSocket con formato inesperado:', dataAsString);
                         this.messages.push({ from: 'bot', message: String(dataAsString), id: this.userId });

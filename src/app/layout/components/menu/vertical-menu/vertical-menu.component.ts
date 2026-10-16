@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, ViewEncapsulation, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ViewEncapsulation, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -56,7 +56,8 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     private _coreSidebarService: CoreSidebarService,
     private _router: Router,
     private apiService: ApiService,
-    private mensajeService: MensajeService
+    private mensajeService: MensajeService,
+    private cdr: ChangeDetectorRef
   ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
@@ -154,6 +155,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
         console.warn('VerticalMenuComponent: Fuente de progreso desconocida:', progreso.from);
         break;
     }
+    this.cdr.detectChanges();
   }
 
   /**
@@ -165,23 +167,27 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
       case 'progress': // Backup progress
         this.progressMode = 'indeterminate';
         this.progressLabel = 'Generando Respaldo...';
-        this.actualizarProgresoIndeterminado(progreso.message.bytes, progreso.message.speed);
+        this.actualizarProgresoIndeterminado(progreso.message?.bytes ?? 0, progreso.message?.speed ?? 0);
         break;
       case 'dump_finished':
         // console.log(progreso.message)
         this.finishProgress('Respaldo Completado');
-        this.apiService.DwsCdn("bck-export/" + progreso.message.file, "application/zip", progreso.message.file);
-        this.mensajeService.finalizacion$.emit({"estatus": true})
-        break
+        if (progreso.message?.file) {
+          this.apiService.DwsCdn("bck-export/" + progreso.message.file, "application/zip", progreso.message.file);
+        }
+        this.mensajeService.finalizacion$.emit({"estatus": true});
+        break;
       case 'restore':
         this.progressMode = 'determinate';
         this.progressLabel = 'Restaurando Base de Datos...';
-        this.actualizarProgreso(progreso.message.percentage, progreso.message.total);
+        this.actualizarProgreso(progreso.message?.percentage ?? 0, progreso.message?.total ?? 100);
         break;
       case 'restore_finished':
         this.finishProgress('Restauración Completada');
+        this.mensajeService.finalizacion$.emit({"estatus": true});
         break;
     }
+    this.cdr.detectChanges();
   }
 
   /**
@@ -200,6 +206,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
         this.finishProgress('Subida Finalizada');
         break;
     }
+    this.cdr.detectChanges();
   }
 
 
@@ -216,6 +223,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     const downloadedInMB = totalSizeInMB * (this.progressPercentage / 100);
 
     this.progressText = `${downloadedInMB.toFixed(1)} MB de ${totalSizeInMB.toFixed(1)} MB`;
+    this.cdr.detectChanges();
   }
 
   /**
@@ -249,6 +257,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     } else {
       this.progressText = `${(bytes / 1024).toFixed(1)} KB`;
     }
+    this.cdr.detectChanges();
   }
 
   /**
@@ -260,10 +269,10 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     if (this.progressMode === 'determinate' && this.progressPercentage < 100) {
       this.progressPercentage = 100;
     }
+    this.cdr.detectChanges();
     setTimeout(() => {
       this.blCargando = false;
-
-
+      this.cdr.detectChanges();
     }, 2000);
   }
 

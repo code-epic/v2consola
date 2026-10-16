@@ -35,39 +35,140 @@
                 <div id="account-details" class="content">
                   <form #accountDetailsForm="ngForm">
 
+                    <!-- Selector de Modo: Existente vs Nueva -->
+                    <div class="col-12 px-0 mb-1">
+                      <div class="app-mode-switch-card">
+                        <div class="d-flex align-items-center">
+                          <div class="mode-pill-group">
+                            <button type="button" class="btn-mode-pill"
+                              [class.active]="showAppA"
+                              (click)="setModoRegistro('existente')">
+                              <span [data-feather]="'layers'" [size]="14" class="mr-50"></span>
+                              Seleccionar Existente
+                            </button>
+                            <button type="button" class="btn-mode-pill"
+                              [class.active]="showAppB"
+                              (click)="setModoRegistro('nueva')">
+                              <span [data-feather]="'plus-circle'" [size]="14" class="mr-50"></span>
+                              Nueva Aplicación
+                            </button>
+                          </div>
+                        </div>
+
+                        @if (showAppA && selectedAppInfo) {
+                          <div class="active-app-badge-box">
+                            <span [data-feather]="'check-circle'" [size]="13"></span>
+                            <span>Cargada: <strong>{{ selectedAppInfo.nombre }}</strong> <span class="text-muted font-small-1">({{ selectedAppInfo.VERSION || selectedAppInfo.version || '0.0.1' }})</span></span>
+                            <button type="button" class="btn-clear-selection ml-50" (click)="limpiarSeleccion()" title="Limpiar y deseleccionar">
+                              <span [data-feather]="'x'" [size]="14"></span>
+                            </button>
+                          </div>
+                        }
+
+                        @if (showAppB) {
+                          <div class="text-muted font-small-2 d-none d-sm-block">
+                            <span [data-feather]="'info'" [size]="12" class="mr-25 text-primary"></span>
+                            Modo registro: creando nueva aplicación desde cero
+                          </div>
+                        }
+                      </div>
+                    </div>
+
                     <div class="row">
 
                       @if (showAppA) {
                         <div class="form-group col-md-6">
-                          <label class="form-label" for="apli">Aplicacion</label>
-                          <div class="ng-select-group-pastel">
+                          <label class="form-label" for="aplicacion">
+                            <span>Aplicación</span>
+                            @if (isConsultingApp) {
+                              <span class="spinner-border spinner-border-sm text-primary ml-1" role="status"></span>
+                              <span class="font-small-1 text-primary ml-25">Cargando datos...</span>
+                            }
+                          </label>
+                          <div class="ng-select-group-pastel" [class.loading-pulse]="isConsultingApp">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><span [data-feather]="'grid'"
                               [size]="16"></span></span>
                             </div>
                             <ng-select [items]="dataApp"
                               [formControl]="nameAppCtrl"
-                              (change)='selectEventModuloo(nameAppCtrl.value)'
-                              [class.error]="accountDetailsForm.submitted" bindLabel="name"
+                              (change)='selectEventModuloo($event)'
+                              [class.error]="accountDetailsForm.submitted && nameAppCtrl.invalid"
+                              bindLabel="name"
                               name="aplicacion" id="aplicacion"
-                              placeholder="Seleccione" bindValue="identificador">
+                              placeholder="Seleccione o busque una aplicación..."
+                              bindValue="identificador"
+                              [clearable]="true"
+                              [searchable]="true"
+                              [loading]="isLoadingApp"
+                              required>
+
+                              <!-- Custom Selected Label -->
+                              <ng-template ng-label-tmp let-item="item">
+                                <div class="app-selected-label">
+                                  <span [data-feather]="'box'" [size]="13" class="text-primary mr-25"></span>
+                                  <span>{{ item.nombre || item.name }}</span>
+                                  @if (item.VERSION || item.version) {
+                                    <span class="label-tag">v{{ item.VERSION || item.version }}</span>
+                                  }
+                                </div>
+                              </ng-template>
+
+                              <!-- Custom Dropdown Options -->
+                              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                                @if (item.isActionNew) {
+                                  <div class="app-select-option is-new-option">
+                                    <div class="app-avatar">
+                                      <span [data-feather]="'plus'" [size]="14"></span>
+                                    </div>
+                                    <div class="app-info">
+                                      <div class="app-title text-primary">+ Registrar Nueva Aplicación</div>
+                                      <div class="app-sub">Configurar un nuevo proyecto</div>
+                                    </div>
+                                  </div>
+                                } @else {
+                                  <div class="app-select-option">
+                                    <div class="app-avatar">
+                                      {{ (item.nombre || item.name)?.substring(0, 2)?.toUpperCase() }}
+                                    </div>
+                                    <div class="app-info">
+                                      <div class="app-title">{{ item.nombre || item.name }}</div>
+                                      <div class="app-sub">
+                                        @if (item.origen) {
+                                          <span><span [data-feather]="'server'" [size]="10"></span> {{ item.origen }}</span>
+                                        }
+                                        @if (item.rama) {
+                                          <span><span [data-feather]="'git-branch'" [size]="10"></span> {{ item.rama }}</span>
+                                        }
+                                      </div>
+                                    </div>
+                                    @if (item.VERSION || item.version) {
+                                      <span class="app-version-pill">
+                                        v{{ item.VERSION || item.version }}
+                                      </span>
+                                    }
+                                  </div>
+                                }
+                              </ng-template>
                             </ng-select>
                           </div>
                           @if (accountDetailsForm.submitted && nameAppCtrl.invalid) {
-                            <span
-                              class="invalid-form">
-                              @if (nameAppCtrl.hasError('required')) {
-                                <small class="form-text text-danger"
-                                  >Este campo es
-                                requerido!</small>
-                              }
-                            </span>
+                            <div class="pastel-error-hint">
+                              <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                              ¡Debes seleccionar una aplicación!
+                            </div>
                           }
                         </div>
                       }
                       @if (showAppB) {
                         <div class="form-group col-md-6">
-                          <label class="form-label" for="aplicacion">Aplicacion</label>
+                          <div class="d-flex justify-content-between align-items-center mb-50">
+                            <label class="form-label mb-0" for="aplicacion">Nombre de Nueva Aplicación</label>
+                            <button type="button" class="btn btn-link btn-sm text-primary p-0 font-small-2" (click)="setModoRegistro('existente')">
+                              <span [data-feather]="'arrow-left'" [size]="11" class="mr-25"></span>
+                              Seleccionar existente
+                            </button>
+                          </div>
                           <div class="input-group-pastel">
                             <div class="input-group-prepend">
                               <span class="input-group-text"><span [data-feather]="'grid'"
@@ -75,17 +176,16 @@
                             </div>
                             <input [formControl]="iAppNombreCtrl" type="text"
                               name="aplicacion" id="aplicacion" class="form-control"
+                              placeholder="Ej. mi-nueva-aplicacion"
                               (blur)='selectEventModulo($event)'
-                              [class.error]="iAppNombreCtrl.invalid && accountDetailsForm.submitted" />
+                              [class.error]="iAppNombreCtrl.invalid && accountDetailsForm.submitted"
+                              required />
                           </div>
                           @if (accountDetailsForm.submitted && iAppNombreCtrl.invalid) {
-                            <span
-                              class="invalid-form">
-                              @if (iAppNombreCtrl.hasError('required')) {
-                                <small class="form-text text-danger"
-                                >Este campo es requerido!</small>
-                              }
-                            </span>
+                            <div class="pastel-error-hint">
+                              <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                              ¡El nombre de la aplicación es requerido!
+                            </div>
                           }
                         </div>
                       }
@@ -100,18 +200,16 @@
                           </div>
                           <input [formControl]="iAppProyectoCtrl"
                             type="text" name="proyecto" id="proyecto" class="form-control"
-                            [class.error]="iAppProyectoCtrl.invalid && accountDetailsForm.submitted" />
+                            placeholder="Ej. backend-app"
+                            [class.error]="iAppProyectoCtrl.invalid && accountDetailsForm.submitted"
+                            required />
                         </div>
 
                         @if (accountDetailsForm.submitted && iAppProyectoCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppProyectoCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                                >Este campo es
-                              requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
 
@@ -124,17 +222,16 @@
                           </div>
                           <input [formControl]="iAppRamaCtrl" type="text"
                             name="rama" id="rama" class="form-control"
-                            [class.error]="iAppRamaCtrl.invalid && accountDetailsForm.submitted" />
+                            placeholder="Ej. main"
+                            [class.error]="iAppRamaCtrl.invalid && accountDetailsForm.submitted"
+                            required />
                         </div>
 
                         @if (accountDetailsForm.submitted && iAppRamaCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppRamaCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
 
@@ -150,21 +247,17 @@
                             [size]="16"></span></span>
                           </div>
                           <ng-select [items]="tipos" [formControl]="iAppTipoCtrl"
-                            [class.error]="accountDetailsForm.submitted"
+                            [class.error]="accountDetailsForm.submitted && iAppTipoCtrl.invalid"
                             (change)="CapturarSeleccion(iAppTipoCtrl.value)"
                             bindLabel="descripcion" name="tipo" id="tipo"
-                            placeholder="Seleccione" bindValue="id">
-                            <!-- <ng-option *ngFor="let mdl of hosts" value="{{mdl.host}}" >{{ mdl.id }} | {{ mdl.descripcion }}</ng-option> -->
+                            placeholder="Seleccione tipo" bindValue="id">
                           </ng-select>
                         </div>
                         @if (accountDetailsForm.submitted && iAppTipoCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppTipoCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                       <div class="form-group col-md-4">
@@ -174,25 +267,26 @@
                             <span class="input-group-text"><span [data-feather]="'server'"
                             [size]="16"></span></span>
                           </div>
-                          <ng-select [formControl]="iAppOrigenCtrl"
-                            [class.error]="accountDetailsForm.submitted"
+                          <ng-select [items]="hosts" [formControl]="iAppOrigenCtrl"
+                            [class.error]="accountDetailsForm.submitted && iAppOrigenCtrl.invalid"
                             bindLabel="descripcion" name="servidor" id="servidor"
-                            placeholder="Seleccione Servidor" bindValue="id">
-                            @for (mdl of hosts; track mdl) {
-                              <ng-option value="{{mdl.host}}">{{
-                                mdl.id
-                              }} | {{ mdl.descripcion }}</ng-option>
-                            }
+                            placeholder="Seleccione Servidor" bindValue="host">
+                            <ng-template ng-option-tmp let-item="item">
+                              <div class="d-flex align-items-center justify-content-between w-100">
+                                <span>{{ item.id }} | {{ item.descripcion }}</span>
+                                <small class="text-muted ml-1">{{ item.host }}</small>
+                              </div>
+                            </ng-template>
+                            <ng-template ng-label-tmp let-item="item">
+                              <span>{{ item.id ? (item.id + ' | ' + item.descripcion) : item.host }}</span>
+                            </ng-template>
                           </ng-select>
                         </div>
                         @if (accountDetailsForm.submitted && iAppOrigenCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppOrigenCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                       <div class="form-group col-md-4">
@@ -203,19 +297,16 @@
                             [size]="16"></span></span>
                           </div>
                           <ng-select [items]="sistemasOperativos" [formControl]="iAppSistemaCtrl"
-                            [class.error]="accountDetailsForm.submitted"
+                            [class.error]="accountDetailsForm.submitted && iAppSistemaCtrl.invalid"
                             bindLabel="descripcion" name="sistemas" id="sistemas"
-                            placeholder="Seleccione Servidor" bindValue="id">
+                            placeholder="Seleccione Sistema Operativo" bindValue="id">
                           </ng-select>
                         </div>
                         @if (accountDetailsForm.submitted && iAppSistemaCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppSistemaCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                     </div>
@@ -234,13 +325,10 @@
                         </div>
 
                         @if (accountDetailsForm.submitted && iAppRepositorioCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppRepositorioCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                       <div class="form-group col-md-2">
@@ -256,13 +344,10 @@
                         </div>
 
                         @if (accountDetailsForm.submitted && iAppUsuarioCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppUsuarioCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                       <div class="form-group col-md-4">
@@ -310,13 +395,10 @@
                           </ng-select>
                         </div>
                         @if (accountDetailsForm.submitted && iAppBasedatosCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppBasedatosCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                       <div class="form-group col-md-3">
@@ -333,13 +415,10 @@
                         </div>
 
                         @if (accountDetailsForm.submitted && iAppVersionCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppVersionCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                       <div class="form-group col-md-3">
@@ -356,14 +435,10 @@
                           </ng-select>
                         </div>
                         @if (accountDetailsForm.submitted && iAppLenguajeCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppLenguajeCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                                >Este campo es
-                              requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
                       @if (showInput) {
@@ -388,14 +463,10 @@
                           [class.error]="iAppObservacionCtrl.invalid && accountDetailsForm.submitted"></textarea>
                         </div>
                         @if (accountDetailsForm.submitted && iAppObservacionCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (iAppObservacionCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                                >Este campo es
-                              requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
 
@@ -419,93 +490,194 @@
 
                 <div id="personal-info" class="content">
                   <form #personalInfoForm="ngForm">
-                    <div class="row align-items-end">
-                      <div class="form-group col-md-9">
-                        <label class="form-label" for="tipo">Seleccione el driver</label>
+                    <!-- Step 2 Intro Banner -->
+                    <div class="step2-info-banner mb-2 p-2 rounded d-flex align-items-center justify-content-between">
+                      <div class="d-flex align-items-center">
+                        <div class="step2-banner-icon mr-1 rounded p-50 d-flex align-items-center justify-content-center">
+                          <i [data-feather]="'database'" [size]="20"></i>
+                        </div>
+                        <div>
+                          <h6 class="mb-25 font-weight-bolder text-primary">Conexión a Base de Datos</h6>
+                          <small class="text-muted">
+                            Gestión de driver, respaldo y restauración para 
+                            <strong class="text-dark">{{ iApp.nombre || 'tu aplicación' }}</strong>
+                          </small>
+                        </div>
+                      </div>
+                      <div class="d-none d-md-flex align-items-center">
+                        <span class="badge badge-pill badge-light-primary font-small-2 px-1 py-50">
+                          Paso 2 / 2
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Driver & Backup Action Row (Pixel-stable, matching top baselines) -->
+                    <div class="row align-items-start">
+                      <!-- Driver selector column -->
+                      <div class="form-group col-lg-8 col-md-7 col-12 mb-1">
+                        <label class="form-label font-weight-bold" for="driver">
+                          Seleccione el driver <span class="text-danger">*</span>
+                        </label>
                         <div class="ng-select-group-pastel">
                           <div class="input-group-prepend">
-                            <span class="input-group-text"><span [data-feather]="'settings'"
-                            [size]="16"></span></span>
+                            <span class="input-group-text">
+                              <span [data-feather]="'layers'" [size]="16"></span>
+                            </span>
                           </div>
-                          <ng-select [items]="drivers" [formControl]="driverCtrl"
-                            bindLabel="descripcion" name="name" id="id"
-                            placeholder="Seleccione driver" bindLabel="name">
+                          <ng-select [items]="drivers"
+                            [formControl]="driverCtrl"
+                            (change)="onDriverChange($event)"
+                            bindLabel="name"
+                            name="driver"
+                            id="driver"
+                            placeholder="Seleccione driver de base de datos..."
+                            [class.error]="accountDetailsForm.submitted && driverCtrl.invalid">
+                            
+                            <!-- Custom Option Template -->
+                            <ng-template ng-option-tmp let-item="item">
+                              <div class="driver-option-item d-flex align-items-center justify-content-between py-25">
+                                <div class="d-flex align-items-center">
+                                  <span class="badge badge-pill font-small-1 mr-1 px-1" [ngClass]="getDriverBadgeClass(item.driver)">
+                                    {{ (item.driver || 'DB') | uppercase }}
+                                  </span>
+                                  <div>
+                                    <div class="font-weight-bold text-dark font-small-3">{{ item.descripcion || item.name }}</div>
+                                    <small class="text-muted font-small-2">BD: {{ item.basedatos || 'N/A' }}</small>
+                                  </div>
+                                </div>
+                                <span class="badge badge-light-secondary font-small-1">{{ item.id }}</span>
+                              </div>
+                            </ng-template>
+
+                            <!-- Custom Selected Label Template -->
+                            <ng-template ng-label-tmp let-item="item">
+                              <div class="d-flex align-items-center">
+                                <span class="badge badge-pill font-small-1 mr-75 px-75" [ngClass]="getDriverBadgeClass(item.driver)">
+                                  {{ (item.driver || 'DB') | uppercase }}
+                                </span>
+                                <span class="font-weight-bolder text-dark font-small-3 mr-50">
+                                  {{ item.descripcion || item.name }}
+                                </span>
+                                <span class="text-muted font-small-2">({{ item.basedatos || 'BD' }})</span>
+                              </div>
+                            </ng-template>
                           </ng-select>
                         </div>
                         @if (accountDetailsForm.submitted && driverCtrl.invalid) {
-                          <span
-                            class="invalid-form">
-                            @if (driverCtrl.hasError('required')) {
-                              <small class="form-text text-danger"
-                              >Este campo es requerido!</small>
-                            }
-                          </span>
+                          <div class="pastel-error-hint">
+                            <span [data-feather]="'alert-circle'" [size]="12" class="mr-25"></span>
+                            ¡Este campo es requerido!
+                          </div>
                         }
                       </div>
-                      <div class="form-group col-md-3" >
+
+                      <!-- Backup button column with explicit label for equal baseline -->
+                      <div class="form-group col-lg-4 col-md-5 col-12 mb-1">
+                        <label class="form-label font-weight-bold text-muted d-flex align-items-center justify-content-between">
+                          <span>Acción de Respaldo</span>
+                          <small class="text-primary font-small-2">Dump seguro</small>
+                        </label>
                         <button type="button"
-                          class="btn btn-primary btn-prev"
+                          class="btn btn-primary backup-action-btn w-100 d-flex align-items-center justify-content-center"
                           rippleEffect
                           (click)="backupDatabase()"
-                          [disabled]="!bDescarga"
-                          style="height: 40px;width: 100%;">
-                          <!-- [class.disabled]="bDescarga" -->
-
+                          [disabled]="!bDescarga || driverCtrl.invalid"
+                          [title]="driverCtrl.invalid ? 'Seleccione un driver primero' : 'Crear y descargar respaldo'">
                           @if (bDescarga) {
-                            <div>
-                              <span class="align-middle d-sm-inline-block d-none">Crear Respaldo&nbsp;&nbsp;</span>
-                              <i data-feather="archive" class="mr-1"></i>
+                            <div class="d-flex align-items-center">
+                              <i data-feather="archive" class="mr-75"></i>
+                              <span class="font-weight-bolder">Crear Respaldo</span>
                             </div>
                           }
                           @if (!bDescarga) {
-                            <div>
-                              <span class="align-middle d-sm-inline-block d-none">Procesando...&nbsp;&nbsp;</span>
-                              <span class="spinner-border spinner-border-sm mr-1" role="status"></span>
+                            <div class="d-flex align-items-center">
+                              <span class="spinner-border spinner-border-sm mr-75" role="status"></span>
+                              <span>Procesando...</span>
                             </div>
                           }
                         </button>
                       </div>
                     </div>
 
-                    <div class="row mt-3">
+                    <!-- Active Driver Summary Chip -->
+                    @if (driver || driverCtrl.value) {
+                      <div class="step2-active-driver-chip mb-2 p-1 rounded d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center flex-wrap">
+                          <span class="pulse-indicator-dot mr-75"></span>
+                          <span class="font-small-2 text-muted mr-50">Conexión activa:</span>
+                          <span class="badge badge-pill mr-75" [ngClass]="getDriverBadgeClass(driver?.driver || driverCtrl.value?.driver)">
+                            {{ (driver?.driver || driverCtrl.value?.driver || 'DB') | uppercase }}
+                          </span>
+                          <strong class="font-small-3 text-dark mr-75">{{ driver?.descripcion || driverCtrl.value?.descripcion || driver?.name || driverCtrl.value?.name }}</strong>
+                          <span class="badge badge-light-primary font-small-1">BD: {{ driver?.basedatos || driverCtrl.value?.basedatos || 'N/A' }}</span>
+                        </div>
+                        <div class="font-small-1 text-muted d-none d-sm-block">
+                          ID: <code class="text-primary font-weight-bold">{{ driver?.id || driverCtrl.value?.id }}</code>
+                        </div>
+                      </div>
+                    }
+
+                    <div class="row mt-2">
                       <div class="form-group col-md-12">
                         <form method="post" enctype="multipart/form-data" id="forma" name="forma">
-                          <label class="form-label" for="sql-file-upload">Script de Base de Datos (.sql, .dump, .zip)</label>
-                          <!-- File Upload Wrapper -->
+                          <label class="form-label font-weight-bold" for="sql-file-upload">
+                            Script de Base de Datos (.sql, .dump, .zip)
+                          </label>
+
+                          <!-- File Upload Wrapper (Controlled by Driver Selection) -->
                           <div class="file-upload-wrapper-pastel"
-                            (click)="fileInput.click()"
+                            (click)="triggerFileInput(fileInput)"
                             (dragover)="onDragOver($event)"
                             (dragleave)="onDragLeave($event)"
                             (drop)="onDrop($event)"
-                            [class.drag-over]="isDragOver">
+                            [class.drag-over]="isDragOver"
+                            [class.disabled-dropzone]="!isDriverSelected()">
 
                             <!-- Hidden Input -->
                             <input name="archivos"
                               type="file" #fileInput hidden
                               (change)="onFileSelected($event)" accept=".sql,.dump,.zip" />
 
-                            <!-- Prompt State -->
-                            @if (!selectedFile) {
+                            <!-- State 1: Locked Dropzone (No driver selected yet) -->
+                            @if (!isDriverSelected()) {
+                              <div class="upload-prompt locked-prompt py-1 text-center">
+                                <div class="upload-icon locked-icon mb-1">
+                                  <i [data-feather]="'lock'" [size]="42"></i>
+                                </div>
+                                <h6 class="font-weight-bolder text-muted mb-50">Carga de Script Bloqueada</h6>
+                                <p class="upload-subtext text-muted mb-75">
+                                  Debe seleccionar un <strong>Driver de Base de Datos</strong> en el campo superior antes de adjuntar el script.
+                                </p>
+                                <span class="badge badge-light-warning font-small-2 py-50 px-1">
+                                  <i [data-feather]="'alert-circle'" [size]="12" class="mr-25"></i> Seleccione el driver primero
+                                </span>
+                              </div>
+                            }
+
+                            <!-- State 2: Active Dropzone Prompt (Driver selected, awaiting file) -->
+                            @if (isDriverSelected() && !selectedFile) {
                               <div class="upload-prompt">
                                 <div class="upload-icon">
                                   <i [data-feather]="'upload-cloud'" [size]="48"></i>
                                 </div>
-                                <p class="upload-text">Arrastra y suelta tu archivo <strong>.sql</strong>,<strong>.zip</strong>,<strong>.dump</strong>  aquí</p>
+                                <p class="upload-text">Arrastra y suelta tu archivo <strong>.sql</strong>, <strong>.zip</strong>, <strong>.dump</strong> aquí</p>
                                 <p class="upload-subtext">o haz clic para buscar en tu equipo</p>
-                                <small class="upload-limit">Límite de 1.2 GB </small>
+                                <small class="upload-limit">Límite de 1.2 GB</small>
                               </div>
                             }
 
-                            <!-- File Selected/Uploading State -->
+                            <!-- State 3: File Selected State (Uploading or Ready to Restore) -->
                             @if (selectedFile) {
                               <div class="file-details">
-                                <div class="file-info">
-                                  <div class="file-icon bg-light-primary">
-                                    <i [data-feather]="'database'" [size]="24" class="text-primary"></i>
-                                  </div>
-                                  <div class="file-meta">
-                                    <span class="file-name" [title]="selectedFile.name">{{ selectedFile.name }}</span>
-                                    <span class="file-size">{{ fileSize }}</span>
+                                <div class="file-info d-flex align-items-center justify-content-between">
+                                  <div class="d-flex align-items-center">
+                                    <div class="file-icon bg-light-primary mr-1">
+                                      <i [data-feather]="'database'" [size]="24" class="text-primary"></i>
+                                    </div>
+                                    <div class="file-meta">
+                                      <span class="file-name font-weight-bold" [title]="selectedFile.name">{{ selectedFile.name }}</span>
+                                      <span class="file-size text-muted font-small-2">{{ fileSize }}</span>
+                                    </div>
                                   </div>
                                   @if (!isUploading) {
                                     <button (click)="removeFile($event)" type="button" class="btn btn-icon btn-sm btn-outline-danger btn-round remove-file-btn" title="Eliminar archivo">
@@ -513,51 +685,62 @@
                                     </button>
                                   }
                                 </div>
+
+                                <!-- Progress Bar while file is loading/validating -->
                                 @if (isUploading) {
-                                  <div class="upload-progress-wrapper">
-                                    <div class="progress progress-bar-primary">
-                                      <div class="progress-bar" role="progressbar" [style.width.%]="uploadProgress" aria-valuemin="0" aria-valuemax="100"></div>
+                                  <div class="upload-progress-wrapper mt-1">
+                                    <div class="d-flex align-items-center justify-content-between mb-50">
+                                      <small class="text-primary font-weight-bold d-flex align-items-center">
+                                        <span class="spinner-border spinner-border-sm mr-50" role="status"></span>
+                                        Cargando y procesando archivo...
+                                      </small>
+                                      <span class="progress-percentage font-weight-bold text-primary">{{ uploadProgress }}%</span>
                                     </div>
-                                    <span class="progress-percentage">{{ uploadProgress }}%</span>
+                                    <div class="progress progress-bar-primary" style="height: 8px;">
+                                      <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                        role="progressbar"
+                                        [style.width.%]="uploadProgress"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"></div>
+                                    </div>
+                                  </div>
+                                }
+
+                                <!-- Ready State when upload finishes -->
+                                @if (!isUploading) {
+                                  <div class="file-ready-banner mt-1 p-75 rounded d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                      <i [data-feather]="'check-circle'" [size]="18" class="text-success mr-75"></i>
+                                      <div>
+                                        <strong class="text-success font-small-3 d-block">Archivo verificado y listo</strong>
+                                        <small class="text-muted">El botón Restaurar ahora se encuentra activo</small>
+                                      </div>
+                                    </div>
+                                    <span class="badge badge-light-success font-small-2 px-1 py-50">100% Listo</span>
                                   </div>
                                 }
                               </div>
                             }
                           </div>
-
-
                         </form>
                       </div>
                     </div>
-                    <!-- <div class="row">
-                    <div class="form-group col-md-12">
-                      <label class="form-label" for="country">SQL</label>
-                      <div class="input-group-pastel">
-                        <div class="input-group-prepend">
-                          <span class="input-group-text"><span [data-feather]="'database'"
-                          [size]="16"></span></span>
-                        </div>
-                        <textarea rows="7" class="form-control"></textarea>
-                      </div>
+
+                    <div class="d-flex justify-content-between mt-2">
+                      <button type="button" (click)="horizontalWizardStepperPrevious()"
+                        [disabled]="!bDescarga"
+                        class="btn btn-primary btn-prev" rippleEffect>
+                        <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                        <span class="align-middle d-sm-inline-block d-none">Atrás</span>
+                      </button>
+                      <button (click)="ProcesarDB()"
+                        [disabled]="bRestaurar || !isDriverSelected() || !selectedFile"
+                        [class.btn-restaurar-active]="!bRestaurar && isDriverSelected() && selectedFile"
+                        class="btn btn-primary btn-next" rippleEffect>
+                        <span class="align-middle d-sm-inline-block d-none">Restaurar &nbsp;</span>
+                        <i data-feather="database" class="align-middle ml-sm-25 ml-0"></i>
+                      </button>
                     </div>
-
-                  </div> -->
-
-                  <div class="d-flex justify-content-between">
-                    <button type="button" (click)="horizontalWizardStepperPrevious()"
-                      [disabled]="!bDescarga"
-                      class="btn btn-primary btn-prev" rippleEffect>
-                      <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
-                      <span class="align-middle d-sm-inline-block d-none">Atrás</span>
-                    </button>
-                    <button (click)="ProcesarDB()"
-                      [disabled]="bRestaurar"
-                      class="btn btn-primary btn-next" rippleEffect>
-
-                      <span class="align-middle d-sm-inline-block d-none">Restaurar &nbsp;</span>
-                      <i data-feather="database" class="align-middle ml-sm-25 ml-0"></i>
-                    </button>
-                  </div>
                 </form>
               </div>
             </form>
