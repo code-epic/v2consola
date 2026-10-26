@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal, ChangeDetectorRef } from '@angular/core';
 import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-datatable';
 import { ApiService, IAPICore, ProcessID, RestoreAPI } from '@services/apicore/api.service';
 import { PdfService } from '@services/pdf/pdf.service';
@@ -141,7 +141,10 @@ export class ApiComponent implements OnInit {
     this.passwordTextType = !this.passwordTextType;
   }
 
-  public archivos = []
+  public archivos = [];
+  public selectedUploadFile: File | null = null;
+  public uploadFileSize: string = '';
+  public isDragOver: boolean = false;
 
   public rutaURL
 
@@ -191,6 +194,7 @@ export class ApiComponent implements OnInit {
     private pdf: PdfService,
     private taskService: TaskService,
     private msjService: WsocketsService,
+    private cdr: ChangeDetectorRef,
   ) {
   }
 
@@ -583,14 +587,24 @@ export class ApiComponent implements OnInit {
   }
 
   filterUpdate(event: any) {
-    const val = event.target.value.toLowerCase();
-    // filter our data
+    const val = (event?.target?.value || '').toLowerCase().trim();
+    // filter our data by funcion, descripcion, entorno, version
     const temp = this.tempData.filter(function (d) {
-      return d.funcion.toLowerCase().indexOf(val) !== -1 || !val;
+      if (!val) return true;
+      const funcion = (d.funcion || '').toLowerCase();
+      const descripcion = (d.descripcion || '').toLowerCase();
+      const entorno = (d.entorno || '').toLowerCase();
+      const version = (d.version != null ? String(d.version) : '').toLowerCase();
+      return (
+        funcion.indexOf(val) !== -1 ||
+        descripcion.indexOf(val) !== -1 ||
+        entorno.indexOf(val) !== -1 ||
+        version.indexOf(val) !== -1
+      );
     });
     // update the rows
     this.rowData = temp;
-    this.count = this.rowData.length
+    this.count = this.rowData.length;
     // Whenever the filter changes, always go back to the first page
     this.table.offset = 0;
   }
@@ -661,35 +675,119 @@ export class ApiComponent implements OnInit {
   }
 
 
-  fileSelected(e) {
-    this.archivos.push(e.target.files[0])
+  fileSelected(e: any) {
+    const file: File = e?.target?.files?.[0];
+    if (file) {
+      this.handleUploadFile(file);
+    }
   }
 
-  async SubirArchivo(e) {
-    console.log(document.getElementById('identificador'))
-    var frm = new FormData(document.forms.namedItem("forma"))
-    try {
-      await this.apiService.EnviarArchivos(frm).subscribe(
-        (data) => {
-          this.ValoresMasivos()
+  triggerFileInput(fileInput: HTMLInputElement): void {
+    if (!this.selectedUploadFile && fileInput) {
+      fileInput.click();
+    }
+  }
 
-        }
-      )
-    } catch (error) {
-      console.error(error)
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent, fileInput?: HTMLInputElement): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.handleUploadFile(files[0], fileInput);
+    }
+  }
+
+  handleUploadFile(file: File, fileInput?: HTMLInputElement): void {
+    const lowerName = file.name.toLowerCase();
+    if (!lowerName.endsWith('.zip') && !lowerName.endsWith('.gz')) {
+      this.utilservice.AlertMini('top-end', 'error', 'Formato no permitido. Solo archivos .zip o .gz', 4000);
+      if (fileInput) fileInput.value = '';
+      return;
+    }
+    const maxSizeInBytes = 100 * 1024 * 1024; // 100 MB
+    if (file.size > maxSizeInBytes) {
+      this.utilservice.AlertMini('top-end', 'error', 'El archivo no puede superar los 100 MB.', 4000);
+      if (fileInput) fileInput.value = '';
+      return;
     }
 
+    this.selectedUploadFile = file;
+    this.uploadFileSize = this.formatBytes(file.size);
+    this.archivos = [file];
+    this.cdr.detectChanges();
   }
 
+  removeUploadFile(event: MouseEvent, fileInput?: HTMLInputElement): void {
+    event.stopPropagation();
+    this.selectedUploadFile = null;
+    this.uploadFileSize = '';
+    this.archivos = [];
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.cdr.detectChanges();
+  }
 
+  formatBytes(bytes: number, decimals = 2): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
 
+  async SubirArchivo() {
+    if (!this.selectedUploadFile && (!this.archivos || this.archivos.length === 0)) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Debe seleccionar un archivo .zip o .gz primero', 3500);
+      return;
+    }
+    if (!this.exportUsuarioCtrl.value || !this.exportClaveCtrl.value) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Ingrese su usuario y contraseña para autorizar la carga', 3500);
+      return;
+    }
 
+    const formEl = document.forms.namedItem("forma") as HTMLFormElement;
+    const frm = new FormData(formEl);
+    if (this.selectedUploadFile && (!frm.get('archivos') || (frm.get('archivos') as File).size === 0)) {
+      frm.delete('archivos');
+      frm.append('archivos', this.selectedUploadFile, this.selectedUploadFile.name);
+    }
+
+    try {
+      this.apiService.EnviarArchivos(frm).subscribe({
+        next: (data) => {
+          this.ValoresMasivos();
+        },
+        error: (error) => {
+          console.error(error);
+          this.utilservice.AlertMini('top-end', 'error', 'Error al enviar el archivo al servidor', 3500);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   ValoresMasivos() {
+    const fileName = this.selectedUploadFile ? this.selectedUploadFile.name : (this.archivos[0]?.name || '');
     let cargaMasiva = {
       codigo: this.llave,
       ruta: this.hashcontrol,
-      nombre: this.archivos[0].name,
+      nombre: fileName,
       funcion: "SetPath",
       inicio: this.utilservice.FechaActual(0),
       fin: this.utilservice.FechaActual(0),
@@ -701,7 +799,6 @@ export class ApiComponent implements OnInit {
       usuario: environment.Hash,
     };
 
-
     this.xAPI.funcion = environment.functions.INSERT_FILE_PATH;
     this.xAPI.parametros = "";
     this.xAPI.valores = JSON.stringify(cargaMasiva);
@@ -709,17 +806,20 @@ export class ApiComponent implements OnInit {
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data.tipo == 1) {
-          this.ObtenerNombreArchivo()
-          document.forms.namedItem("forma").reset();
-          this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end', 'success', 'Archivo Subido Exitosamente', 3000)
+          this.ObtenerNombreArchivo();
+          (document.forms.namedItem("forma") as HTMLFormElement)?.reset();
+          this.selectedUploadFile = null;
+          this.uploadFileSize = '';
+          this.archivos = [];
+          this.modalService.dismissAll('Close');
+          this.utilservice.AlertMini('top-end', 'success', 'Archivo Subido Exitosamente', 3000);
         } else {
-          this.utilservice.AlertMini('top-end', 'error', 'El archivo no pudo ser subido, por favor verifica e intente de nuevo', 3000)
+          this.utilservice.AlertMini('top-end', 'error', 'El archivo no pudo ser subido, por favor verifica e intente de nuevo', 3000);
         }
       },
       (errot) => {
         console.log(errot);
-        this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
+        this.utilservice.AlertMini('top-end', 'error', 'Error al Guardar los Datos', 3000);
       }
     );
   }
@@ -799,20 +899,24 @@ export class ApiComponent implements OnInit {
   ModalExportarArchivo(modal) {
     this.modalService.open(modal, {
       centered: true,
-      size: 'sm',
+      size: 'md',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
   }
 
   ModalSubirArchivo(modal) {
+    this.selectedUploadFile = null;
+    this.uploadFileSize = '';
+    this.archivos = [];
+    this.isDragOver = false;
     this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
   }
 

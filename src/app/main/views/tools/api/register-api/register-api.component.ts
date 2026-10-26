@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren, QueryList } from "@angular/core";
+import { Component, OnInit, ViewChildren, QueryList, ChangeDetectorRef } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import {
   FormsModule,
@@ -410,6 +410,7 @@ export class RegisterApiComponent implements OnInit {
     private apiService: ApiService,
     private utilservice: UtilService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   private horizontalWizardStepper: Stepper;
@@ -534,6 +535,11 @@ export class RegisterApiComponent implements OnInit {
     });
     this.entradasCtrl.valueChanges.subscribe((v) => this.setEditorContent(v));
     this.queryCtrl.valueChanges.subscribe((v) => this.setEditorContent(v));
+    this.aplicacionCtrl.valueChanges.subscribe((v: any) => {
+      if (v) {
+        this.xAPIDB.aplicacion = typeof v === "object" && v !== null ? (v.nombre || v.name || v.identificador || "") : v;
+      }
+    });
     this.funcionCtrl.valueChanges.subscribe(() => {
       this.isFuncionDisponible = false;
       this.mensajeErrorFuncion = "";
@@ -573,7 +579,11 @@ export class RegisterApiComponent implements OnInit {
     this.xAPIDB.puertohttps = this.puertohttpsCtrl.value;
     this.xAPIDB.tipo = this.tipoCtrl.value;
     this.xAPIDB.distribucion = this.distribucionCtrl.value;
-    this.xAPIDB.aplicacion = this.aplicacionCtrl.value;
+    const appCtrlVal: any = this.aplicacionCtrl.value;
+    const appVal = typeof appCtrlVal === "object" && appCtrlVal !== null
+      ? (appCtrlVal.nombre || appCtrlVal.name || appCtrlVal.identificador || "")
+      : (appCtrlVal || "");
+    this.xAPIDB.aplicacion = appVal;
     this.xAPIDB.funcion = this.funcionCtrl.value || this.rutaURL || this.xAPIDB.funcion;
     this.xAPIDB.version = this.versionCtrl.value;
 
@@ -613,7 +623,14 @@ export class RegisterApiComponent implements OnInit {
     this.puertohttpsCtrl.setValue(data.puertohttps, { emitEvent: false });
     this.tipoCtrl.setValue(data.tipo, { emitEvent: false });
     this.distribucionCtrl.setValue(data.distribucion, { emitEvent: false });
-    this.aplicacionCtrl.setValue(data.aplicacion, { emitEvent: false });
+
+    // Normalizar aplicacion inicial asegurando compatibilidad con string u objeto y fallback a la URL
+    const appVal = typeof data.aplicacion === "object" && data.aplicacion !== null
+      ? ((data.aplicacion as any).nombre || (data.aplicacion as any).name || (data.aplicacion as any).identificador || (data.aplicacion as any).id || "")
+      : (data.aplicacion || this.url || "");
+    this.aplicacionCtrl.setValue(appVal, { emitEvent: false });
+    this.xAPIDB.aplicacion = appVal;
+
     this.funcionCtrl.setValue(data.funcion, { emitEvent: false });
     if (this.getURL === "update-api") {
       this.funcionCtrl.disable({ emitEvent: false });
@@ -714,14 +731,23 @@ export class RegisterApiComponent implements OnInit {
       (data) => {
         if (data != null && data.length > 0) {
           this.xAPIDB = data[0];
-          this.xAPIAux = data[0];
+
+          // Normalizar aplicacion inicial si viene vacía usando la url de la ruta
+          const appIni = typeof this.xAPIDB.aplicacion === "object" && this.xAPIDB.aplicacion !== null
+            ? ((this.xAPIDB.aplicacion as any).nombre || (this.xAPIDB.aplicacion as any).name || (this.xAPIDB.aplicacion as any).identificador || "")
+            : (this.xAPIDB.aplicacion || this.url || "");
+          this.xAPIDB.aplicacion = appIni;
+
+          // Clon profundo para mantener el estado original de la BD para comparaciones
+          this.xAPIAux = JSON.parse(JSON.stringify(this.xAPIDB));
         }
         this.syncFromModel(this.xAPIDB);
         this.onTipo(this.xAPIDB.tipo);
-        this.xAPIDB.version = this.existe
-          ? this.validarVersion()
-          : this.xAPI.version;
+        this.xAPIDB.version = this.xAPIDB.version || "0.0.1";
+        this.versionCtrl.setValue(this.xAPIDB.version, { emitEvent: false });
         this.syncToModel();
+        this.resolverAplicacion();
+        this.cdr.detectChanges();
       },
       (error) => {
         console.log(error);
@@ -731,6 +757,12 @@ export class RegisterApiComponent implements OnInit {
 
   async UpdateAPI(funcion: string, entorno: string) {
     this.syncToModel();
+
+    // Evaluar y calcular la nueva versión antes de enviar la petición
+    const nuevaVersion = this.validarVersion();
+    this.xAPIDB.version = nuevaVersion;
+    this.versionCtrl.setValue(nuevaVersion, { emitEvent: false });
+
     // Asegurar que driver siempre sea string
     if (typeof this.xAPIDB.driver === 'object' && this.xAPIDB.driver !== null) {
       this.xAPIDB.driver = (this.xAPIDB.driver as any).id || '';
@@ -758,7 +790,7 @@ export class RegisterApiComponent implements OnInit {
         this.utilservice.AlertMini(
           "top-end",
           "success",
-          `Tu (API) ha sido actualizada`,
+          `Tu (API) ha sido actualizada a la versión ${this.xAPIDB.version}`,
           3000,
         );
       },
@@ -1002,41 +1034,98 @@ export class RegisterApiComponent implements OnInit {
     });
   }
 
-  validarVersion() {
-    let version = this.xAPIDB.version.split(".");
-    let mayor = parseInt(version[0]);
-    let menor = parseInt(version[1]);
-    let menor_aux = parseInt(version[2]);
-    const _api = this.xAPIDB;
-    const _aux = this.xAPIAux;
+  validarVersion(): string {
+    const _api = this.xAPIDB || ({} as any);
+    const _aux = this.xAPIAux || ({} as any);
 
-    if (
-      _api.tipo != _aux.tipo ||
-      _api.driver != _aux.driver ||
-      _api.concurrencia != _aux.concurrencia ||
-      _api.entradas != _aux.entradas ||
-      _api.query != _aux.query
-    ) {
-      mayor = parseInt(version[0]) + 1;
+    // Helpers de normalización para comparaciones seguras de tipo
+    const num = (v: any): number => {
+      const n = parseInt(v, 10);
+      return isNaN(n) ? 0 : n;
+    };
+    const bool = (v: any): boolean => {
+      return v === true || v === "true" || v === 1 || v === "1";
+    };
+    const str = (v: any): string => {
+      if (v == null) return "";
+      if (typeof v === "object") {
+        return (v.nombre || v.name || v.id || v.identificador || JSON.stringify(v)).trim();
+      }
+      return String(v).trim();
+    };
+
+    // 1. Mayor, Primera cifra (X):
+    // Puertos HTTP o HTTPS, Drivers, Consultas y Método, Relacional, Esquema (entradas),
+    // Colección en caso de ser NOSQL, distribución, Aplicación, Entorno, Tipo, Puente
+    const cambioMayor =
+      num(_api.puertohttp) !== num(_aux.puertohttp) ||
+      num(_api.puertohttps) !== num(_aux.puertohttps) ||
+      str(_api.driver) !== str(_aux.driver) ||
+      str(_api.query) !== str(_aux.query) ||
+      str(_api.metodo) !== str(_aux.metodo) ||
+      bool(_api.relacional) !== bool(_aux.relacional) ||
+      str(_api.entradas) !== str(_aux.entradas) ||
+      str(_api.coleccion) !== str(_aux.coleccion) ||
+      num(_api.distribucion) !== num(_aux.distribucion) ||
+      str(_api.aplicacion).toLowerCase() !== str(_aux.aplicacion).toLowerCase() ||
+      str(_api.entorno).toLowerCase() !== str(_aux.entorno).toLowerCase() ||
+      str(_api.tipo) !== str(_aux.tipo) ||
+      str(_api.puente) !== str(_aux.puente);
+
+    // 2. Menor, Segunda cifra (Y):
+    // Consumidores, Cache, Logs, Concurrente, Retorno, Tiempo de Duración, Tipo Duración,
+    // Prioridad, Aplicar Waf (acción), Bitácora, Respaldo, Estatus, Inclusión JWT, HSF
+    const cambioMenor =
+      num(_api.consumidores) !== num(_aux.consumidores) ||
+      num(_api.cache) !== num(_aux.cache) ||
+      bool(_api.logs) !== bool(_aux.logs) ||
+      bool(_api.concurrencia) !== bool(_aux.concurrencia) ||
+      bool(_api.retorna) !== bool(_aux.retorna) ||
+      num(_api.tiempoduracion) !== num(_aux.tiempoduracion) ||
+      num(_api.tipoduracion) !== num(_aux.tipoduracion) ||
+      str(_api.prioridad) !== str(_aux.prioridad) ||
+      bool(_api.accion) !== bool(_aux.accion) ||
+      num(_api.bitacora) !== num(_aux.bitacora) ||
+      num(_api.respaldo) !== num(_aux.respaldo) ||
+      bool(_api.estatus) !== bool(_aux.estatus) ||
+      bool(_api.inclusionjwt) !== bool(_aux.inclusionjwt) ||
+      bool(_api.hsf) !== bool(_aux.hsf);
+
+    // 3. Revisión, Tercera cifra (Z):
+    // Descripción, Categoría, Funcionalidad, Parámetros
+    const cambioRevision =
+      str(_api.descripcion) !== str(_aux.descripcion) ||
+      str(_api.categoria) !== str(_aux.categoria) ||
+      str(_api.funcionalidad) !== str(_aux.funcionalidad) ||
+      str(_api.parametros) !== str(_aux.parametros);
+
+    // Extraer base de versión original guardada en BD
+    const baseVersion = (_aux.version || _api.version || "0.0.1").toString();
+    const versionParts = baseVersion.split(".");
+    let mayor = parseInt(versionParts[0], 10);
+    let menor = parseInt(versionParts[1], 10);
+    let revision = parseInt(versionParts[2], 10);
+
+    if (isNaN(mayor)) mayor = 0;
+    if (isNaN(menor)) menor = 0;
+    if (isNaN(revision)) revision = 1;
+
+    // Regla de versiones X.Y.Z:
+    if (cambioMayor) {
+      // Cambio en Mayor (X): se incrementa X, Y y Z se reinician a 0
+      mayor = mayor + 1;
+      menor = 0;
+      revision = 0;
+    } else if (cambioMenor) {
+      // Sin cambio en Mayor, cambio en Menor (Y): se incrementa Y, Z se reinicia a 0
+      menor = menor + 1;
+      revision = 0;
+    } else if (cambioRevision) {
+      // Sin cambio en Mayor ni Menor, cambio en Revisión (Z): se incrementa Z
+      revision = revision + 1;
     }
-    if (
-      _api.logs != _aux.logs ||
-      _api.cache != _aux.cache ||
-      _api.prioridad != _aux.prioridad ||
-      _api.accion != _aux.accion
-    ) {
-      menor = parseInt(version[1]) + 1;
-    }
-    if (
-      _api.descripcion != _aux.descripcion ||
-      _api.categoria != _aux.categoria
-    ) {
-      menor_aux = parseInt(version[2]) + 1;
-    }
-    // console.log(_api)
-    // console.log(_aux)
-    // console.log(mayor + '.' + menor + '.' + menor_aux)
-    return mayor + "." + menor + "." + menor_aux;
+
+    return `${mayor}.${menor}.${revision}`;
   }
 
   onTipo(e) {
@@ -1231,17 +1320,60 @@ export class RegisterApiComponent implements OnInit {
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = environment.functions.LISTAR_APLICACIONES;
     this.xAPI.parametros = "";
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        this.ListaAplicaciones = data.Cuerpo.map((e) => {
-          e.name = e.nombre + " : " + e.VERSION;
-          return e;
-        });
+    this.apiService.Ejecutar(this.xAPI).subscribe({
+      next: (data) => {
+        if (data && data.Cuerpo) {
+          this.ListaAplicaciones = data.Cuerpo.map((e: any) => {
+            const nombreApp = e.nombre || e.name || e.identificador || e.id || "";
+            const versionApp = e.VERSION || e.version || "";
+            e.nombre = nombreApp;
+            e.name = versionApp ? `${nombreApp} : ${versionApp}` : nombreApp;
+            return e;
+          });
+          this.resolverAplicacion();
+          this.cdr.detectChanges();
+        }
       },
-      (error) => {
+      error: (error) => {
         console.log(error);
       },
-    );
+    });
+  }
+
+  resolverAplicacion() {
+    if (!this.ListaAplicaciones || this.ListaAplicaciones.length === 0) return;
+
+    let targetApp = (this.aplicacionCtrl.value || this.xAPIDB?.aplicacion || this.url || "").toString().trim();
+    if (typeof targetApp === "object" && targetApp !== null) {
+      targetApp = ((targetApp as any).nombre || (targetApp as any).name || (targetApp as any).identificador || "").toString().trim();
+    }
+    if (!targetApp) return;
+
+    // Buscar coincidencia exacta o case-insensitive por nombre, identificador o id
+    const match = this.ListaAplicaciones.find((item: any) => {
+      const nom = (item.nombre || "").toLowerCase();
+      const ident = (item.identificador || "").toLowerCase();
+      const id = (item.id || "").toLowerCase();
+      const target = targetApp.toLowerCase();
+      return nom === target || ident === target || id === target;
+    });
+
+    if (match) {
+      this.aplicacionCtrl.setValue(match.nombre, { emitEvent: false });
+      this.xAPIDB.aplicacion = match.nombre;
+    } else {
+      // Si la aplicación no está en la lista pero existe en BD o URL, agregarla para que ng-select la muestre siempre
+      this.ListaAplicaciones = [
+        ...this.ListaAplicaciones,
+        {
+          nombre: targetApp,
+          name: targetApp,
+          identificador: targetApp,
+        },
+      ];
+      this.aplicacionCtrl.setValue(targetApp, { emitEvent: false });
+      this.xAPIDB.aplicacion = targetApp;
+    }
   }
 
   //agregarEntrada a los elementos de la interfaz de una API

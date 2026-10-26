@@ -661,3 +661,319 @@ $purple-text: #9c27b0;
   display: flex;
   align-items: center;
 }
+
+// ========================================
+// PASTEL INPUT GROUPS & WARM MODAL STYLES
+// ========================================
+
+.input-group-pastel {
+  display: flex !important;
+  align-items: stretch;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background-color: #ffffff;
+  transition: all 0.25s ease-in-out;
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18);
+    background-color: #fafbff;
+
+    .input-group-prepend .input-group-text {
+      background-color: #f3f0ff;
+      color: #7c3aed;
+    }
+  }
+
+  .input-group-prepend,
+  .input-group-append {
+    display: flex;
+    align-items: stretch;
+
+    .input-group-text {
+      border: none;
+      background-color: #f8fafc;
+      color: #64748b;
+      padding: 0.65rem 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+  }
+
+  .input-group-prepend .input-group-text {
+    border-right: 1px solid #e2e8f0;
+  }
+
+  .input-group-append .input-group-text {
+    border-left: 1px solid #e2e8f0;
+
+    &.cursor-pointer:hover {
+      background-color: #ede9fe;
+      color: #6d28d9;
+    }
+  }
+
+  .form-control {
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0.65rem 0.95rem;
+    font-size: 0.9rem;
+    color: #1e293b;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+
+    &:focus {
+      border: none !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+// Modal Pastel Card Styles
+.modal-pastel-card {
+  .modal-dialog {
+    margin: 1.75rem auto;
+    max-width: 520px;
+
+    &.modal-lg {
+      max-width: 680px;
+    }
+  }
+
+  .modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15);
+    background-color: #ffffff;
+    overflow: hidden;
+  }
+}
+
+.modal-header-custom {
+  background: linear-gradient(135deg, #f8faff 0%, #f3f0ff 100%);
+  border-bottom: 1px solid #edf2f7;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .modal-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.modal-icon-upload {
+      background: linear-gradient(135deg, #dcfce7 0%, #d1fae5 100%);
+      color: #059669;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+    }
+
+    &.modal-icon-export {
+      background: linear-gradient(135deg, #ede9fe 0%, #e0e7ff 100%);
+      color: #6366f1;
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.15);
+    }
+  }
+
+  .modal-title {
+    font-size: 1.15rem;
+    color: #1e293b;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-close-modal {
+    background: #f1f5f9;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+
+    &:hover {
+      background: #fee2e2;
+      color: #ef4444;
+      transform: rotate(90deg);
+    }
+  }
+}
+
+.modal-info-banner {
+  background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+  border: 1px solid #dbeafe;
+
+  .banner-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(59, 130, 246, 0.12);
+  }
+}
+
+// File Upload Pastel (Install Style Dropzone & Visor)
+.file-upload-wrapper-pastel {
+  border: 2px dashed #cbd5e1;
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #f8fafc;
+  position: relative;
+
+  &:hover {
+    border-color: #a78bfa;
+    background-color: #faf5ff;
+
+    .upload-icon {
+      transform: translateY(-4px) scale(1.08);
+      color: #7c3aed;
+    }
+  }
+
+  &.drag-over {
+    border-color: #7c3aed;
+    background-color: #f3e8ff;
+    transform: scale(1.01);
+    box-shadow: 0 6px 24px rgba(124, 58, 237, 0.12);
+  }
+
+  .upload-prompt {
+    .upload-icon {
+      color: #8b5cf6;
+      transition: transform 0.3s ease, color 0.3s ease;
+      display: inline-block;
+    }
+
+    .upload-text {
+      font-size: 1rem;
+      color: #334155;
+    }
+
+    .upload-subtext {
+      color: #64748b;
+    }
+  }
+
+  .file-details {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    .file-info {
+      .file-icon-box {
+        width: 44px;
+        height: 44px;
+        background-color: #ede9fe;
+        color: #7c3aed;
+        flex-shrink: 0;
+      }
+
+      .file-meta {
+        .file-name {
+          font-size: 0.92rem;
+          color: #1e293b;
+        }
+      }
+
+      .remove-file-btn {
+        transition: all 0.2s ease;
+
+        &:hover {
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    .file-ready-banner {
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+    }
+  }
+}
+
+.modal-footer-custom {
+  border-top: 1px solid #edf2f7;
+  padding: 1.1rem 1.5rem;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+
+  .btn-modal-action {
+    padding: 0.65rem 1.35rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &.btn-outline-secondary {
+      border-color: #cbd5e1;
+      color: #64748b;
+
+      &:hover {
+        background-color: #f1f5f9;
+        color: #334155;
+        border-color: #94a3b8;
+      }
+    }
+
+    &.btn-modal-upload {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: none;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.45);
+        color: #ffffff;
+      }
+
+      &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+    }
+
+    &.btn-modal-export {
+      background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+      border: none;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+        color: #ffffff;
+      }
+
+      &:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+

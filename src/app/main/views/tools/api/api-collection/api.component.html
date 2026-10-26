@@ -24,7 +24,7 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text"><span [data-feather]="'search'" [size]="16"></span></span>
                 </div>
-                <input type="text" class="form-control" placeholder="Buscar por nombre, hash o función..."
+                <input type="text" class="form-control" placeholder="Buscar por función, descripción o versión..."
                   [formControl]="searchValueCtrl" (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" />
               </div>
             </div>
@@ -377,119 +377,227 @@
 
 
 <ng-template #ModalSubir let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Credenciales: Subir Archivo</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-custom">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-upload mr-1">
+        <span [data-feather]="'upload-cloud'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title font-weight-bolder mb-25" id="myModalLabel160">Importar Colección de APIs</h5>
+        <small class="text-muted">Suba un paquete comprimido para registrar o restaurar endpoints</small>
+      </div>
+    </div>
+    <button type="button" class="btn-close-modal" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="16"></span>
     </button>
   </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <div class="form-row">
-        <div class="form-group col-md-12">
-        </div>
-        <div class="form-group col-md-12">
-          <form method="post" enctype="multipart/form-data" id="forma" name="forma">
-            <input type="hidden" name="identificador" value="{{hashcontrol}}">
-            <div class="row">
 
-              <div class="col-md-12">
-                <label>Nombre de Usuario</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
-                  </div>
-                  <input type="text" [formControl]="exportUsuarioCtrl"
-                    class="form-control" placeholder="Ingrese nombre de usuario" />
-                </div>
-              </div>
+  <div class="modal-body p-2" tabindex="0" ngbAutofocus>
+    <div class="modal-info-banner mb-2 p-1 rounded d-flex align-items-center">
+      <div class="banner-icon mr-1 d-flex align-items-center justify-content-center">
+        <span [data-feather]="'shield'" [size]="18" class="text-primary"></span>
+      </div>
+      <div class="banner-text">
+        <span class="font-weight-bold text-primary font-small-3 d-block">Autenticación de Seguridad</span>
+        <small class="text-muted">Proporcione sus credenciales administrativas para procesar el archivo en el sistema.</small>
+      </div>
+    </div>
 
-              <div class="col-md-12">
-                <label>Contraseña</label>
-                <div class="input-group-pastel">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
-                  </div>
-                  <input type="password" [formControl]="exportClaveCtrl"
-                    class="form-control" placeholder="Ingrese contraseña" />
-                </div>
-              </div>
+    <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+      <input type="hidden" name="identificador" value="{{hashcontrol}}">
 
-              <div class="col-md-12">
-                <label>Cargar Archivo .zip</label>
-                <div class="input_container">
-                  <input (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos" accept=".zip, .gz" />
-                </div>
-              </div>
+      <div class="row">
+        <!-- Usuario -->
+        <div class="col-md-6 form-group">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'user'" [size]="14" class="mr-50 text-primary"></span>
+            Usuario
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
             </div>
-          </form>
+            <input type="text" [formControl]="exportUsuarioCtrl"
+              class="form-control" placeholder="Ingrese nombre de usuario" autocomplete="username" />
+          </div>
         </div>
-      </div>
 
-      <hr>
+        <!-- Clave con toggle visor -->
+        <div class="col-md-6 form-group">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'lock'" [size]="14" class="mr-50 text-primary"></span>
+            Contraseña
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
+            </div>
+            <input [type]="passwordTextType ? 'text' : 'password'" [formControl]="exportClaveCtrl"
+              class="form-control" placeholder="Ingrese contraseña" autocomplete="current-password" />
+            <div class="input-group-append">
+              <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()" title="Ver / Ocultar Contraseña">
+                <span [data-feather]="passwordTextType ? 'eye' : 'eye-off'" [size]="16"></span>
+              </span>
+            </div>
+          </div>
+        </div>
 
-      </div>
+        <!-- Carga de archivo estilo install.component.html -->
+        <div class="col-12 form-group mb-0">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'package'" [size]="14" class="mr-50 text-primary"></span>
+            Archivo Comprimido (.zip, .gz)
+          </label>
 
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" (click)="SubirArchivo()" rippleEffect>Subir Archivo</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-    </div>
+          <div class="file-upload-wrapper-pastel"
+            (click)="triggerFileInput(fileUploadInput)"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event, fileUploadInput)"
+            [class.drag-over]="isDragOver">
 
-  </ng-template>
+            <!-- Input oculto para compatibilidad con FormData("forma") -->
+            <input #fileUploadInput (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos" accept=".zip, .gz" hidden />
 
-
-
-  <ng-template #ModalExportar let-modal>
-    <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">Credenciales: Exportar APIS</h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-      <!-- Invoice -->
-      <div class="col-xl-12 col-md-12 col-12">
-        <!-- Header Starts -->
-        <div class="form-row">
-          <div class="form-group col-md-12">
-            <form method="post"  id="frmExport" name="frmExport">
-
-              <div class="row">
-
-                <div class="col-md-12">
-                  <label>Nombre de Usuario</label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
-                    </div>
-                    <input type="text" [formControl]="exportUsuarioCtrl"
-                      class="form-control" placeholder="Ingrese nombre de usuario" />
-                  </div>
+            <!-- Estado 1: Sin archivo -->
+            @if (!selectedUploadFile && archivos.length === 0) {
+              <div class="upload-prompt py-1 text-center">
+                <div class="upload-icon mb-1">
+                  <span [data-feather]="'upload-cloud'" [size]="44"></span>
                 </div>
+                <p class="upload-text mb-25 font-weight-bold">
+                  Arrastra y suelta tu archivo <strong>.zip</strong> o <strong>.gz</strong> aquí
+                </p>
+                <p class="upload-subtext text-muted mb-75 font-small-3">o haz clic para buscar en tu equipo</p>
+                <span class="badge badge-pill badge-light-primary font-small-1 px-1 py-50">
+                  <span [data-feather]="'info'" [size]="12" class="mr-25"></span> Límite máximo: 100 MB
+                </span>
+              </div>
+            }
 
-                <div class="col-md-12">
-                  <label>Contraseña</label>
-                  <div class="input-group-pastel">
-                    <div class="input-group-prepend">
-                      <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
+            <!-- Estado 2: Archivo seleccionado (Visor elegante) -->
+            @if (selectedUploadFile) {
+              <div class="file-details">
+                <div class="file-info d-flex align-items-center justify-content-between p-1">
+                  <div class="d-flex align-items-center min-w-0">
+                    <div class="file-icon-box bg-light-primary mr-1 d-flex align-items-center justify-content-center rounded">
+                      <span [data-feather]="'archive'" [size]="26" class="text-primary"></span>
                     </div>
-                    <input type="password" [formControl]="exportClaveCtrl"
-                      class="form-control" placeholder="Ingrese contraseña" />
+                    <div class="file-meta text-left">
+                      <span class="file-name font-weight-bold text-dark d-block text-truncate" [title]="selectedUploadFile.name">
+                        {{ selectedUploadFile.name }}
+                      </span>
+                      <small class="file-size text-muted font-small-2">{{ uploadFileSize }}</small>
+                    </div>
                   </div>
+                  <button (click)="removeUploadFile($event, fileUploadInput)" type="button"
+                    class="btn btn-icon btn-sm btn-outline-danger btn-round ml-1 remove-file-btn" title="Eliminar archivo">
+                    <span [data-feather]="'trash-2'" [size]="15"></span>
+                  </button>
+                </div>
+                <div class="file-ready-banner mt-75 p-50 rounded d-flex align-items-center justify-content-between bg-light-success">
+                  <div class="d-flex align-items-center">
+                    <span [data-feather]="'check-circle'" [size]="16" class="text-success mr-50"></span>
+                    <span class="text-success font-small-2 font-weight-bold">Archivo verificado y listo para importar</span>
+                  </div>
+                  <span class="badge badge-pill badge-light-success font-small-1">100% Listo</span>
                 </div>
               </div>
-            </form>
+            }
+          </div>
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer modal-footer-custom">
+    <button type="button" class="btn btn-outline-secondary btn-modal-action" (click)="modal.close('Accept click')" rippleEffect>
+      <span [data-feather]="'x'" [size]="15" class="mr-50"></span>
+      Cerrar
+    </button>
+    <button class="btn btn-success btn-modal-action btn-modal-upload" tabindex="4" (click)="SubirArchivo()"
+      [disabled]="!selectedUploadFile && archivos.length === 0" rippleEffect>
+      <span [data-feather]="'upload'" [size]="15" class="mr-50"></span>
+      Subir Archivo
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #ModalExportar let-modal>
+  <div class="modal-header modal-header-custom">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-export mr-1">
+        <span [data-feather]="'download-cloud'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title font-weight-bolder mb-25" id="myModalLabel160">Exportar Colección de APIs</h5>
+        <small class="text-muted">Descargue una copia de respaldo segura de sus endpoints</small>
+      </div>
+    </div>
+    <button type="button" class="btn-close-modal" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="16"></span>
+    </button>
+  </div>
+
+  <div class="modal-body p-2" tabindex="0" ngbAutofocus>
+    <div class="modal-info-banner mb-2 p-1 rounded d-flex align-items-center">
+      <div class="banner-icon mr-1 d-flex align-items-center justify-content-center">
+        <span [data-feather]="'lock'" [size]="18" class="text-primary"></span>
+      </div>
+      <div class="banner-text">
+        <span class="font-weight-bold text-primary font-small-3 d-block">Credenciales de Exportación</span>
+        <small class="text-muted">Ingrese su usuario y clave para autorizar la generación y descarga del paquete.</small>
+      </div>
+    </div>
+
+    <form method="post" id="frmExport" name="frmExport">
+      <div class="row">
+        <div class="col-12 form-group">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'user'" [size]="14" class="mr-50 text-primary"></span>
+            Nombre de Usuario
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
+            </div>
+            <input type="text" [formControl]="exportUsuarioCtrl"
+              class="form-control" placeholder="Ingrese nombre de usuario" autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="col-12 form-group mb-0">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'lock'" [size]="14" class="mr-50 text-primary"></span>
+            Contraseña
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
+            </div>
+            <input [type]="passwordTextType ? 'text' : 'password'" [formControl]="exportClaveCtrl"
+              class="form-control" placeholder="Ingrese contraseña" autocomplete="current-password" />
+            <div class="input-group-append">
+              <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()" title="Ver / Ocultar Contraseña">
+                <span [data-feather]="passwordTextType ? 'eye' : 'eye-off'" [size]="16"></span>
+              </span>
+            </div>
           </div>
         </div>
       </div>
+    </form>
+  </div>
 
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" (click)="ExportApi()" rippleEffect>Exportar APIS</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-    </div>
-
-  </ng-template>
+  <div class="modal-footer modal-footer-custom">
+    <button type="button" class="btn btn-outline-secondary btn-modal-action" (click)="modal.close('Accept click')" rippleEffect>
+      <span [data-feather]="'x'" [size]="15" class="mr-50"></span>
+      Cerrar
+    </button>
+    <button class="btn btn-primary btn-modal-action btn-modal-export" tabindex="4" (click)="ExportApi()"
+      [disabled]="!exportUsuarioCtrl.value || !exportClaveCtrl.value" rippleEffect>
+      <span [data-feather]="'download'" [size]="15" class="mr-50"></span>
+      Exportar APIs
+    </button>
+  </div>
+</ng-template>
