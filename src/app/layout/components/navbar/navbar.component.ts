@@ -128,6 +128,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public passwordStrengthColor: string = '';
   public passwordStrengthWidth: number = 0;
 
+  // Propiedades para versión de la aplicación en Navbar (Glassmorphic)
+  public appVersion: string = '3.0.0';
+  public appBuild: string = environment.version || 'Broglie 1.0.1-1b419f3';
+  public buildDate: string = environment.buildDateTime || '';
+  public appDate: string = '';
+  public appTime: string = '';
+  public formattedDateTime: string = '';
 
   // Agrega estas propiedades a tu clase NavbarComponent
   public showTotpSection: boolean = false;
@@ -192,8 +199,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
-
-
+    this.initAppVersionDateTime();
 
     this.accionesGenerales()
 
@@ -730,4 +736,36 @@ export class NavbarComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Inicializa la fecha y hora de la versión para el área glassmórfica del navbar
+   */
+  private initAppVersionDateTime(): void {
+    try {
+      if (environment.buildDateTime) {
+        const d = new Date(environment.buildDateTime);
+        if (!isNaN(d.getTime())) {
+          const day = String(d.getDate()).padStart(2, '0');
+          const month = String(d.getMonth() + 1).padStart(2, '0');
+          const year = d.getFullYear();
+          const hours = String(d.getHours()).padStart(2, '0');
+          const minutes = String(d.getMinutes()).padStart(2, '0');
+          const seconds = String(d.getSeconds()).padStart(2, '0');
+          this.appDate = `${day}/${month}/${year}`;
+          this.appTime = `${hours}:${minutes}:${seconds}`;
+          this.formattedDateTime = `${this.appDate} ${this.appTime}`;
+          return;
+        }
+      }
+      if (environment.fecha) {
+        this.formattedDateTime = environment.fecha;
+        const parts = environment.fecha.split(' ');
+        this.appDate = parts[0] || '';
+        this.appTime = parts[1] || '';
+      }
+    } catch {
+      this.formattedDateTime = environment.fecha || '';
+      this.appDate = environment.fecha || '';
+    }
+  }
 }
+

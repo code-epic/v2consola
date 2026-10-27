@@ -9,7 +9,7 @@ export const environment = {
   API: "/v1/api/",
   ID: "App.Consola",
   Hash: "551582bbd1370fffe7c7198a854490e9.sse",
-  buildDateTime: "Mon Oct 26 2026 18:08:37 GMT-0400 (Venezuela Time)",
+  buildDateTime: "Tue Oct 27 2026 09:29:39 GMT-0400 (Venezuela Time)",
   version: "Broglie 1.0.1-1b419f3",
   fecha: "2025-04-12 05:08:00",
   BD: "code-epic",

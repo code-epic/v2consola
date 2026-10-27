@@ -27,6 +27,31 @@
   </div>
   <ul class="nav navbar-nav align-items-center ml-auto">
 
+    <!-- Navbar Version Badge (Glassmorphic Minimalist) -->
+    <li class="nav-item d-none d-sm-flex align-items-center mr-1">
+      <div class="navbar-version-glass" [title]="'v' + appVersion + ' (' + appBuild + ') • ' + formattedDateTime">
+        <div class="version-badge-icon">
+          <span [data-feather]="'layers'" class="glass-icon"></span>
+          <span class="status-pulse-dot" title="Sistema Activo"></span>
+        </div>
+        <div class="version-meta">
+          <div class="version-row-primary">
+            <span class="version-pill">v{{ appVersion }}</span>
+            <span class="version-build-tag text-truncate">{{ appBuild }}</span>
+          </div>
+          @if (appDate || appTime) {
+            <div class="version-row-datetime">
+              <span [data-feather]="'calendar'" class="datetime-icon"></span>
+              <span class="datetime-text">{{ appDate }}</span>
+              <span class="datetime-separator">•</span>
+              <span [data-feather]="'clock'" class="datetime-icon"></span>
+              <span class="datetime-text">{{ appTime }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </li>
+
     <li ngbDropdown class="nav-item dropdown-user">
       <a class="nav-link dropdown-toggle dropdown-user-link" id="dropdown-user" ngbDropdownToggle
         id="navbarUserDropdown" aria-haspopup="true" aria-expanded="false">
