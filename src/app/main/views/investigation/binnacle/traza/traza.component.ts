@@ -52,7 +52,8 @@ export class TrazaComponent implements OnInit {
   public userPageSize: number = 25; // 25 cards per page
 
   searchTextCtrl = new FormControl('');
-  get searchText() { return this.searchTextCtrl.value; }
+  private _searchText = signal<string>('');
+  get searchText() { return this._searchText(); }
 
   public xAPI: IAPICore = {
     funcion: '',
@@ -73,7 +74,8 @@ export class TrazaComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.searchTextCtrl.valueChanges.subscribe(() => {
+    this.searchTextCtrl.valueChanges.subscribe((val) => {
+      this._searchText.set(val || '');
       this.userPage = 1;
       this.page = 1;
     });
@@ -111,15 +113,27 @@ export class TrazaComponent implements OnInit {
     };
   }
 
+  private getColorClass(seed: string): string {
+    const colors = ['primary', 'success', 'warning', 'info'];
+    if (!seed) return colors[0];
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+
   cargarUsuarios() {
-    // console.log(this.appData);
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_USUARIO;
     this.xAPI.parametros = this.appData.id;
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data: any[]) => {
         if (!data) return;
-        console.log(data);
-        this._usuarios.set(data);
+        const enriched = data.map(u => ({
+          ...u,
+          _colorClass: this.getColorClass(u.nombre || u.login || '')
+        }));
+        this._usuarios.set(enriched);
       },
       (error) => {
         console.error(error);

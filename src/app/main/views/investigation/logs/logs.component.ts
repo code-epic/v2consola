@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation, signal } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -13,6 +13,7 @@ import { UtilService } from '@services/util/util.service';
 import { WsocketsService } from '@services/websockets/wsockets.service';
 import { ColumnMode, SelectionType } from '@swimlane/ngx-datatable';
 import { environment } from 'environments/environment';
+import { QueryLogComponent } from '../query-log/query-log.component';
 
 import Swal from 'sweetalert2';
 
@@ -30,7 +31,8 @@ import Swal from 'sweetalert2';
     CoreCommonModule,
     CoreDirectivesModule,
     CorePipesModule,
-    ContentHeaderComponent
+    ContentHeaderComponent,
+    QueryLogComponent
 ]
 })
 
@@ -45,9 +47,9 @@ export class LogsComponent implements OnInit {
   public SelectionType = SelectionType
   public basicSelectedOption: number = 10
 
-  public nameFnx = '';
+  public nameFnx = signal<string>('');
 
-  public selectedLogType: number | null = null;
+  public selectedLogType = signal<number | null>(null);
   public pID: ProcessID = {
     id: "",
     estatus: false,
@@ -61,6 +63,7 @@ export class LogsComponent implements OnInit {
     private msjService: WsocketsService,
     private modalService: NgbModal,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   public logOptions = [
@@ -126,27 +129,30 @@ export class LogsComponent implements OnInit {
 
   selectOption(option: any) {
     if (option.action === 'backup') {
-      this.nameFnx = ''
+      this.nameFnx.set('');
+      this.selectedLogType.set(option.id);
+      this.cdr.markForCheck();
       this.backupLogs();
       return;
     }
 
-    this.selectedLogType = option.id;
+    this.selectedLogType.set(option.id);
 
     switch (option.id) {
       case 1:
-        this.nameFnx = "Fnx_SystemLog";
+        this.nameFnx.set("Fnx_SystemLog");
         break;
       case 2:
-        this.nameFnx = "Fnx_CacheLog";
+        this.nameFnx.set("Fnx_CacheLog");
         break;
       case 3:
-        this.nameFnx = "Fnx_QueryLog";
+        this.nameFnx.set("Fnx_QueryLog");
         break;
       default:
-        this.nameFnx = ''
+        this.nameFnx.set('');
         break;
     }
+    this.cdr.markForCheck();
   }
 
   async backupLogs() {

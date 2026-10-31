@@ -12,12 +12,12 @@
       <div class="log-header">
         <div class="log-controls">
           <div class="input-group">
-            <span class="input-group-icon"><i data-feather="search"></i></span>
+            <span class="input-group-icon"><span [data-feather]="'search'"></span></span>
             <input type="text" [formControl]="searchTextCtrl" (input)="onSearchChange()"
               placeholder="Buscar por consulta, archivo o error..." [disabled]="isLoading">
           </div>
           <div class="input-group">
-            <span class="input-group-icon"><i data-feather="filter"></i></span>
+            <span class="input-group-icon"><span [data-feather]="'filter'"></span></span>
             <select [formControl]="selectedTypeCtrl" (change)="onTypeChange()" [disabled]="isLoading">
               <option value="">Todos los Tipos</option>
               @for (type of logTypes; track type) {
@@ -27,25 +27,25 @@
           </div>
           <button class="btn-control btn-refresh" (click)="verLogs()" [disabled]="isLoading"
             title="Refrescar Registros">
-            <i data-feather="refresh-cw" [class.spin]="isLoading"></i>
+            <span [data-feather]="'refresh-cw'" [class.spin]="isLoading"></span>
             <span>Refrescar</span>
           </button>
           <button class="btn-control btn-download" (click)="descargarLogs()"
             [disabled]="isLoading || filteredLogs.length === 0" title="Descargar Logs como TXT">
-            <i data-feather="download"></i>
+            <span [data-feather]="'download'"></span>
             <span>Descargar</span>
           </button>
           @if (isView) {
             <button class="btn-control btn-download" (click)="verGraficos()"
               title="Ver Gráficos">
-              <i data-feather="pie-chart"></i>
+              <span [data-feather]="'pie-chart'"></span>
               <span>Gráficos</span>
             </button>
           }
           @if (!isView) {
             <button class="btn-control btn-download" (click)="verGraficos()"
               title="Ver Logs">
-              <i data-feather="code"></i>
+              <span [data-feather]="'code'"></span>
               <span>Logs</span>
             </button>
           }
@@ -59,12 +59,12 @@
           <div class="header-info" style="margin-left: 10px">
             <h3>Resumen de Actividad</h3>
             <p class="text-muted">
-              <i data-feather="clock" class="mr-1"></i>
+              <span [data-feather]="'clock'" class="mr-1"></span>
               {{ currentDate }}
             </p>
           </div>
           <button class="btn-control btn-pdf" (click)="exportToPDF()" title="Exportar Reporte PDF">
-            <i data-feather="file-text"></i>
+            <span [data-feather]="'file-text'"></span>
             <span>Exportar PDF</span>
           </button>
         </div>
@@ -82,7 +82,7 @@
         </div>
         <div class="stats-column">
           <div class="stat-card">
-            <div class="stat-icon-wrapper"><i data-feather="activity"></i></div>
+            <div class="stat-icon-wrapper"><span [data-feather]="'activity'"></span></div>
             <div class="stat-info">
               <span class="stat-value">{{ filteredLogs.length }}</span>
               <span class="stat-label">Consultas Totales</span>
@@ -90,7 +90,7 @@
             </div>
           </div>
           <div class="stat-card error">
-            <div class="stat-icon-wrapper"><i data-feather="alert-triangle"></i></div>
+            <div class="stat-icon-wrapper"><span [data-feather]="'alert-triangle'"></span></div>
             <div class="stat-info">
               <span class="stat-value">{{ getErrorCount() }}</span>
               <span class="stat-label">Errores Detectados</span>
@@ -102,13 +102,13 @@
     }
     @if (isView && !isLoading) {
       <div class="log-list">
-        @for (log of filteredLogs; track log) {
+        @for (log of filteredLogs; track $index) {
           <div class="log-entry" [ngClass]="getLogClass(log)">
             <div class="log-header-line">
               <span class="log-type" [class]="log.type.toLowerCase()">{{log.type}}</span>
               <div class="log-meta">
-                <span class="log-date"><i data-feather="calendar"></i>{{log.date}}</span>
-                <span class="log-file"><i data-feather="file-text"></i>{{log.file}}:{{log.line}}</span>
+                <span class="log-date"><span [data-feather]="'calendar'"></span>{{log.date}}</span>
+                <span class="log-file"><span [data-feather]="'file-text'"></span>{{log.file}}:{{log.line}}</span>
               </div>
             </div>
             <div class="sql-container">
@@ -123,14 +123,14 @@
               <div class="sql-footer">
                 @if (log.error) {
                   <div class="log-error">
-                    <i data-feather="alert-circle"></i>
+                    <span [data-feather]="'alert-circle'"></span>
                     <strong>Error:</strong> {{log.error}}
                   </div>
                 }
                 <div class="action-buttons">
                   @if (!log.showFullQuery) {
                     <button class="toggle-sql-btn" (click)="toggleView(log)">
-                      <i data-feather="maximize-2"></i>
+                      <span [data-feather]="'maximize-2'"></span>
                       <span>Ver Todo</span>
                     </button>
                   }
@@ -138,19 +138,19 @@
                     @if (!log.isCopied) {
                       <button class="btn-inline-action btn-copy"
                         (click)="copyToClipboard(log)" [class.btn-success]="log.isCopied">
-                        <i data-feather="copy"></i>
+                        <span [data-feather]="'copy'"></span>
                         <span>Copiar</span>
                       </button>
                     }
                     @if (log.isCopied) {
                       <button class="btn-inline-action btn-copy"
                         (click)="copyToClipboard(log)" [class.btn-success]="log.isCopied">
-                        <i data-feather="check"></i>
+                        <span [data-feather]="'check'"></span>
                         <span>¡Copiado!</span>
                       </button>
                     }
                     <button class="btn-inline-action btn-hide" (click)="toggleView(log)">
-                      <i data-feather="minimize-2"></i> Ocultar
+                      <span [data-feather]="'minimize-2'"></span> Ocultar
                     </button>
                   }
                 </div>
@@ -160,7 +160,7 @@
         }
         @if (!isLoading && filteredLogs.length === 0) {
           <div class="no-logs">
-            <i data-feather="info" class="no-logs-icon"></i>
+            <span [data-feather]="'info'" class="no-logs-icon"></span>
             <h4>No se encontraron registros</h4>
             <p>No hay consultas que coincidan con los criterios de búsqueda o filtro actuales.</p>
           </div>
@@ -174,7 +174,7 @@
 @if (!sinRegistros) {
   <div class="log-viewer-container">
     <div class="no-logs">
-      <i data-feather="info" class="no-logs-icon"></i>
+      <span [data-feather]="'info'" class="no-logs-icon"></span>
       <h4>No se encontraron registros</h4>
       <p>No hay consultas que coincidan con los criterios de búsqueda o filtro actuales.</p>
     </div>

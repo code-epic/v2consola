@@ -2,325 +2,278 @@
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
 
-    <!-- Stepper Navigation -->
-    <div class="card mb-2">
-      <div class="card-body p-1">
-        <div class="d-flex justify-content-center align-items-center traza-stepper">
-          <div class="step-item" [class.active]="currentStep >= 1" (click)="goToStep(1)">
-            <div class="step-circle">1</div>
-            <span class="step-label">Usuarios</span>
-          </div>
-          <div class="step-line" [class.active]="currentStep >= 2"></div>
-          <div class="step-item" [class.active]="currentStep >= 2"
-            (click)="currentStep >= 2 ? goToStep(2) : null">
-            <div class="step-circle">2</div>
-            <span class="step-label">Patrones</span>
-          </div>
-          <div class="step-line" [class.active]="currentStep >= 3"></div>
-          <div class="step-item" [class.active]="currentStep >= 3"
-            (click)="currentStep >= 3 ? goToStep(3) : null">
-            <div class="step-circle">3</div>
-            <span class="step-label">Análisis</span>
-          </div>
+    <!-- Stepper Navigation Minimalista -->
+    <div class="traza-panel mb-2 p-1">
+      <div class="d-flex justify-content-center align-items-center traza-stepper">
+        <div class="step-item" [class.active]="currentStep >= 1" (click)="goToStep(1)">
+          <div class="step-circle">1</div>
+          <span class="step-label">Usuarios</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep >= 2"></div>
+        <div class="step-item" [class.active]="currentStep >= 2"
+          (click)="currentStep >= 2 ? goToStep(2) : null">
+          <div class="step-circle">2</div>
+          <span class="step-label">Patrones</span>
+        </div>
+        <div class="step-line" [class.active]="currentStep >= 3"></div>
+        <div class="step-item" [class.active]="currentStep >= 3"
+          (click)="currentStep >= 3 ? goToStep(3) : null">
+          <div class="step-circle">3</div>
+          <span class="step-label">Análisis</span>
         </div>
       </div>
     </div>
 
-    <!-- Phase 1: User Selection -->
+    <!-- Phase 1: User Selection (Patrón Minimalista Logs) -->
     @if (currentStep === 1) {
-      <section class="animate__animated animate__fadeIn">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
-              <div>
-                <h4 class="card-title mb-0">Investigación de Patrones (Eventos)</h4>
-                <small class="text-muted">{{ filteredUsers.length }} de {{ usuarios.length }} usuarios
-                encontrados</small>
-              </div>
-              <div class="d-flex align-items-center" style="min-width: 320px;">
-                <span class="search-label-mini d-none d-md-inline">Filtrar</span>
-                <div class="premium-search-box flex-grow-1">
-                  <span class="material-symbols-outlined">search</span>
-                  <input type="text" [formControl]="searchTextCtrl" placeholder="Nombre, login o perfil...">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              @for (user of filteredUsers | slice: (userPage - 1) * userPageSize : userPage * userPageSize; track user) {
-                <div
-                  class="col-xl-3 col-lg-4 col-md-6 col-sm-12 mb-1 px-1">
-                  <div class="user-card-slim animate__animated animate__fadeInUp" (click)="selectUser(user)">
-                    <div class="card-body p-1">
-                      <div class="d-flex align-items-center">
-                        <div class="avatar avatar-md bg-light-primary shadow-sm mr-1">
-                          <span class="avatar-content font-small-3 text-primary">{{ user.nombre ?
-                          user.nombre.charAt(0) : 'U' }}</span>
-                        </div>
-                        <div class="user-info-wrapper overflow-hidden flex-grow-1">
-                          <h6 class="mb-0 text-truncate font-weight-bolder text-primary"
-                            [title]="user.nombre">
-                            {{ user.nombre }}
-                          </h6>
-                          <div class="d-flex align-items-center">
-                            <span class="text-muted font-small-2 text-truncate mr-1"
-                              [title]="user.perfil">
-                              {{ user.perfil }}
-                            </span>
-                            <span
-                              class="badge badge-light-secondary badge-pill font-small-1 py-0 px-50">
-                              {{ user.login }}
-                            </span>
-                          </div>
-                        </div>
-                        <div class="slim-action-arrow ml-50">
-                          <span
-                          class="material-symbols-outlined font-small-3 text-primary">chevron_right</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              }
-              @if (usuarios.length === 0) {
-                <div class="col-12 text-center py-3">
-                  <p class="text-muted italic">No se encontraron usuarios para {{ appData?.nombre }}.</p>
-                </div>
-              }
-            </div>
-            <!-- User Pagination Footer Centered (Always Visible) -->
-            <div class="d-flex flex-column align-items-center mt-3 border-top pt-2 px-1 text-center">
-              <div class="text-muted font-small-2 mb-1">
-                Mostrando usuarios del {{ (userPage - 1) * userPageSize + 1 }} al
-                {{ (userPage * userPageSize) > filteredUsers.length ? filteredUsers.length : (userPage * userPageSize) }}
-                de {{ filteredUsers.length }} encontrados
-              </div>
-              <ngb-pagination [collectionSize]="filteredUsers.length" [(page)]="userPage" [pageSize]="userPageSize"
-                [maxSize]="5" [rotate]="true"
-                class="pagination-sm mb-0">
-                <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
-              </ngb-pagination>
-            </div>
+      <section class="traza-panel slide-up-fade">
+        <div class="panel-header">
+          <div>
+            <h4 class="panel-title">Investigación de Patrones (Eventos)</h4>
+            <small class="text-muted">{{ filteredUsers.length }} de {{ usuarios.length }} usuarios encontrados</small>
+          </div>
+          <div class="minimal-search-box">
+            <i data-feather="search" [size]="'16'"></i>
+            <input type="text" [formControl]="searchTextCtrl" placeholder="Nombre, login o perfil...">
           </div>
         </div>
+
+        <div class="user-selection-grid">
+          @for (user of filteredUsers | slice: (userPage - 1) * userPageSize : userPage * userPageSize; track $index) {
+            <div class="user-option-card" [ngClass]="user._colorClass || 'primary'" (click)="selectUser(user)">
+              <div class="card-icon">
+                <span>{{ user.nombre ? user.nombre.charAt(0).toUpperCase() : 'U' }}</span>
+              </div>
+              <div class="card-content">
+                <h3 [title]="user.nombre">{{ user.nombre || 'Usuario' }}</h3>
+                <div class="user-meta">
+                  <span class="user-role" [title]="user.perfil">{{ user.perfil || 'Sin perfil' }}</span>
+                  @if (user.login) {
+                    <span class="user-badge">{{ user.login }}</span>
+                  }
+                </div>
+              </div>
+              <div class="card-action-indicator">
+                <i data-feather="arrow-right" [size]="'16'"></i>
+              </div>
+            </div>
+          }
+        </div>
+
+        @if (filteredUsers.length === 0) {
+          <div class="empty-minimal">
+            <i data-feather="users" [size]="'36'"></i>
+            <p>No se encontraron usuarios para {{ appData?.nombre }}.</p>
+          </div>
+        }
+
+        @if (filteredUsers.length > 0) {
+          <div class="panel-footer-pagination">
+            <div class="text-muted small mb-1">
+              Mostrando {{ (userPage - 1) * userPageSize + 1 }} -
+              {{ (userPage * userPageSize) > filteredUsers.length ? filteredUsers.length : (userPage * userPageSize) }}
+              de {{ filteredUsers.length }}
+            </div>
+            <ngb-pagination [collectionSize]="filteredUsers.length" [(page)]="userPage" [pageSize]="userPageSize"
+              [maxSize]="5" [rotate]="true" class="pagination-sm mb-0">
+              <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+            </ngb-pagination>
+          </div>
+        }
       </section>
     }
 
     <!-- Phase 2: Patrones de Actividad -->
     @if (currentStep === 2) {
-      <section class="animate__animated animate__fadeIn">
-        <div class="d-flex align-items-center justify-content-between mb-2 px-1">
+      <section class="slide-up-fade">
+        <div class="traza-panel mb-2 py-1 px-2 d-flex align-items-center justify-content-between flex-wrap">
           <div class="d-flex align-items-center">
-            <button class="btn btn-sm btn-icon btn-flat-secondary mr-1 rounded-pill" (click)="goToStep(1)">
-              <span class="material-symbols-outlined">arrow_back</span>
+            <button type="button" class="btn-icon-minimal mr-1" (click)="goToStep(1)" title="Volver a usuarios">
+              <i data-feather="arrow-left" [size]="'16'"></i>
             </button>
             <div>
-              <h4 class="mb-0 font-weight-bolder text-dark">Patrones de {{ selectedUser?.nombre }}</h4>
+              <h4 class="panel-title">Patrones de {{ selectedUser?.nombre }}</h4>
               <small class="text-muted">Análisis de invocaciones por método y función</small>
             </div>
           </div>
-          <button class="btn btn-premium-glow" (click)="goToStep(3)">
-            GENERAR ANÁLISIS <span class="material-symbols-outlined font-small-2 ml-50">analytics</span>
+          <button type="button" class="btn-minimal-primary" (click)="goToStep(3)">
+            <span>Generar Análisis</span>
+            <i data-feather="bar-chart-2" [size]="'15'"></i>
           </button>
         </div>
-        <!-- Enhanced Table Area -->
-        <div class="card overflow-hidden shadow-sm border-0 position-relative" style="min-height: 400px;">
-          <!-- Svelte Progress Bar - Integrated from Traza Style -->
+
+        <div class="position-relative">
           @if (loading) {
-            <div class="svelte-progress-container-xl"
-              style="position: absolute; top:0; left:0; width:100%; height:4px; z-index:100; overflow:hidden;">
-              <div class="svelte-progress-bar-xl"
-                style="height:100%; background: linear-gradient(90deg, #7367f0, #ff9f43, #7367f0); width: 60%; position: absolute; animation: svelte-loading-xl 1.5s infinite ease-in-out;">
+            <div class="svelte-progress-container mb-1">
+              <div class="svelte-progress-bar"></div>
+            </div>
+          }
+
+          @for (methodBlock of ListarBitacora; track methodBlock.metodo || $index) {
+            <div class="traza-panel p-0 overflow-hidden mb-1">
+              <div class="method-card-header">
+                <div class="d-flex align-items-center">
+                  <div class="row-icon mr-75" [class.warning]="methodBlock.metodo === 'OTRAS OPERACIONES'">
+                    <i [data-feather]="methodBlock.metodo === 'OTRAS OPERACIONES' ? 'grid' : 'layers'" [size]="'16'"></i>
+                  </div>
+                  <h5 class="mb-0 font-weight-bold text-dark">{{ methodBlock.metodo || 'SIN MÉTODO' }}</h5>
+                </div>
+                <span class="invocation-badge">{{ methodBlock.total_invocaciones }} invocaciones</span>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table table-hover mb-0 minimal-table">
+                  <thead>
+                    <tr>
+                      <th>Función / Operación</th>
+                      <th>Último Acceso</th>
+                      <th class="text-center">Ejecuciones</th>
+                      <th class="text-right">Detalle</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (func of methodBlock.funciones; track func.nombre_funcion || $index) {
+                      <tr>
+                        <td>
+                          <div class="d-flex flex-column">
+                            <span class="font-weight-bold text-dark">{{ func.nombre_funcion }}</span>
+                            <small class="text-muted">Versión: {{ func.v }}</small>
+                          </div>
+                        </td>
+                        <td>
+                          <div class="d-flex align-items-center text-muted small">
+                            <i data-feather="calendar" [size]="'13'" class="mr-50"></i>
+                            {{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}
+                          </div>
+                        </td>
+                        <td class="text-center">
+                          <span class="action-pill">{{ func.ejecuciones }}</span>
+                        </td>
+                        <td class="text-right">
+                          <button type="button" class="btn-icon-minimal" (click)="ModalExePlay(ModalPlay, func)" title="Ver ejecuciones">
+                            <i data-feather="eye" [size]="'15'"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
               </div>
             </div>
           }
-          <div class="row mx-0">
-            @for (methodBlock of ListarBitacora; track methodBlock) {
-              <div class="col-12 px-0 mb-2 border-bottom">
-                <div class="card shadow-none border-0 overflow-hidden mb-0"
-                  [class.bg-light-analysis]="methodBlock.metodo === 'OTRAS OPERACIONES'">
-                  <div
-                    class="card-header py-1 px-2 d-flex justify-content-between align-items-center bg-transparent">
-                    <div class="d-flex align-items-center">
-                      <div class="icon-wrapper-mini mr-1">
-                        <span class="material-symbols-outlined font-medium-1 text-primary">
-                          {{ methodBlock.metodo === 'OTRAS OPERACIONES' ? 'category' : 'layers' }}
-                        </span>
-                      </div>
-                      <h5 class="mb-0 font-weight-bolder text-dark">{{ methodBlock.metodo || 'SIN MÉTODO'
-                      }}</h5>
-                    </div>
-                    <span class="badge badge-light-primary badge-pill">{{ methodBlock.total_invocaciones }}
-                    INVOCACIONES</span>
-                  </div>
-                  <div class="table-responsive">
-                    <table class="table table-hover mb-0">
-                      <thead class="bg-light">
-                        <tr>
-                          <th class="py-1 pl-2">FUNCIÓN / OPERACIÓN</th>
-                          <th class="py-1">ÚLTIMO ACCESO</th>
-                          <th class="py-1 text-center">EJECUCIONES</th>
-                          <th class="py-1 text-right pr-2">DETALLE</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @for (func of methodBlock.funciones; track func) {
-                          <tr>
-                            <td class="py-1 pl-2">
-                              <div class="d-flex flex-column">
-                                <span class="font-weight-bolder text-dark">{{ func.nombre_funcion
-                                }}</span>
-                                <small class="text-muted font-small-2">Versión: {{ func.v }}</small>
-                              </div>
-                            </td>
-                            <td class="py-1">
-                              <div class="d-flex align-items-center text-muted small">
-                                <span
-                                class="material-symbols-outlined font-small-3 mr-50 text-secondary">calendar_today</span>
-                                {{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}
-                              </div>
-                            </td>
-                            <td class="py-1 text-center">
-                              <div class="badge badge-pill badge-light-secondary font-small-2">{{
-                              func.ejecuciones }}</div>
-                            </td>
-                            <td class="py-1 text-right pr-2">
-                              <button class="btn btn-sm btn-icon btn-flat-primary rounded-circle"
-                                (click)="ModalExePlay(ModalPlay, func)">
-                                <span
-                                class="material-symbols-outlined font-small-3">visibility</span>
-                              </button>
-                            </td>
-                          </tr>
-                        }
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
         </div>
       </section>
     }
 
     <!-- Phase 3: SRE Analysis & Reports -->
     @if (currentStep === 3) {
-      <section class="animate__animated animate__fadeIn">
-        <!-- SRE Key Metrics Row -->
-        <div class="row mb-2">
-          <div class="col-md-3 mb-1 px-1">
-            <div class="stats-card-premium">
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper-mini mr-1">
-                  <span class="material-symbols-outlined">analytics</span>
-                </div>
-                <div>
-                  <h3 class="font-weight-bolder mb-0">{{ totalInvocations }}</h3>
-                  <p class="small text-muted mb-0">Total Invocaciones</p>
-                </div>
-              </div>
+      <section class="slide-up-fade">
+        <!-- SRE Key Metrics Grid (Patrón Tarjetas Minimalistas) -->
+        <div class="metrics-selection-grid mb-2">
+          <div class="metric-option-card primary">
+            <div class="card-icon">
+              <i data-feather="activity"></i>
+            </div>
+            <div class="card-content">
+              <h3>{{ totalInvocations }}</h3>
+              <p>Total Invocaciones</p>
             </div>
           </div>
-          <div class="col-md-3 mb-1 px-1">
-            <div class="stats-card-premium">
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper-mini mr-1">
-                  <span class="material-symbols-outlined text-info">speed</span>
-                </div>
-                <div>
-                  <h3 class="font-weight-bolder mb-0">{{ formatSeconds(sreMetrics.avgLatency) }}</h3>
-                  <p class="small text-muted mb-0">Latencia Media</p>
-                </div>
-              </div>
+
+          <div class="metric-option-card info">
+            <div class="card-icon">
+              <i data-feather="zap"></i>
+            </div>
+            <div class="card-content">
+              <h3>{{ formatSeconds(sreMetrics.avgLatency) }}</h3>
+              <p>Latencia Media</p>
             </div>
           </div>
-          <div class="col-md-3 mb-1 px-1">
-            <div class="stats-card-premium">
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper-mini mr-1">
-                  <span class="material-symbols-outlined text-danger">warning</span>
-                </div>
-                <div>
-                  <h3 class="font-weight-bolder mb-0">{{ sreMetrics.criticalCount }}</h3>
-                  <p class="small text-muted mb-0">Eventos Críticos</p>
-                </div>
-              </div>
+
+          <div class="metric-option-card danger">
+            <div class="card-icon">
+              <i data-feather="alert-triangle"></i>
+            </div>
+            <div class="card-content">
+              <h3>{{ sreMetrics.criticalCount }}</h3>
+              <p>Eventos Críticos</p>
             </div>
           </div>
-          <div class="col-md-3 mb-1 px-1">
-            <div class="stats-card-premium">
-              <div class="d-flex align-items-center">
-                <div class="icon-wrapper-mini mr-1">
-                  <span class="material-symbols-outlined text-success">verified_user</span>
-                </div>
-                <div>
-                  <h3 class="font-weight-bolder mb-0">INTEGRO</h3>
-                  <p class="small text-muted mb-0">Estado Auditoría</p>
-                </div>
-              </div>
+
+          <div class="metric-option-card success">
+            <div class="card-icon">
+              <i data-feather="check-circle"></i>
+            </div>
+            <div class="card-content">
+              <h3>ÍNTEGRO</h3>
+              <p>Estado Auditoría</p>
             </div>
           </div>
         </div>
+
         <!-- Main Analysis Content -->
         <div class="row">
-          <!-- Activity Distribution Chart (matching Traza) -->
-          <div class="col-lg-8 px-1">
-            <div class="card stats-card-premium h-100 mb-0">
-              <div class="card-header border-bottom-0 pb-1">
-                <div class="d-flex align-items-center">
-                  <span class="material-symbols-outlined mr-50 text-primary">leaderboard</span>
-                  <h4 class="card-title font-weight-bolder mb-0">CARGA POR MÉTODO (DISTRIBUCIÓN)</h4>
+          <div class="col-lg-8 mb-2 mb-lg-0">
+            <div class="traza-panel h-100">
+              <div class="d-flex align-items-center mb-2">
+                <div class="row-icon mr-75">
+                  <i data-feather="bar-chart-2" [size]="'16'"></i>
                 </div>
+                <h4 class="panel-title mb-0">Carga por Método (Distribución)</h4>
               </div>
-              <div class="card-body">
-                @for (stat of actionStats; track stat) {
-                  <div class="analysis-chart-item animate__animated animate__fadeInLeft">
-                    <div class="chart-label d-flex justify-content-between">
-                      <span class="font-weight-bold">{{ stat.name }}</span>
-                      <span class="text-muted">{{ stat.count }} inyectados</span>
-                    </div>
-                    <div class="analysis-bar-wrapper">
-                      <div class="bar-filled" [style.width.%]="stat.percent"></div>
-                    </div>
+
+              @for (stat of actionStats; track stat.name) {
+                <div class="analysis-chart-item">
+                  <div class="chart-label">
+                    <span>{{ stat.name }}</span>
+                    <span class="text-muted">{{ stat.count }} inyectados ({{ stat.percent | number:'1.0-1' }}%)</span>
                   </div>
-                }
-                <div class="mt-3 p-1 rounded bg-light-analysis border-dashed">
-                  <div class="d-flex align-items-center">
-                    <span class="material-symbols-outlined text-info mr-50">info</span>
-                    <p class="small text-muted mb-0">
-                      Análisis SRE: La distribución refleja los servicios con mayor impacto en el rendimiento.
-                      Los eventos críticos corresponden a latencias superiores a 2.0s.
-                    </p>
+                  <div class="analysis-bar-wrapper">
+                    <div class="bar-filled" [style.width.%]="stat.percent"></div>
                   </div>
                 </div>
+              }
+
+              <div class="info-note-box mt-2">
+                <i data-feather="info" [size]="'16'"></i>
+                <p class="mb-0">
+                  Análisis SRE: La distribución refleja los servicios con mayor impacto en el rendimiento.
+                  Los eventos críticos corresponden a latencias superiores a 2.0s.
+                </p>
               </div>
             </div>
           </div>
+
           <!-- Export & User Info -->
-          <div class="col-lg-4 px-1 d-flex flex-column">
-            <div class="card shadow-sm border-0 mb-2 flex-grow-1">
-              <div class="card-body text-center py-4">
-                <div class="avatar avatar-xl bg-light-primary shadow-sm mb-1 mx-auto" style="width: 70px; height: 70px;">
-                  <div class="avatar-content" style="font-size: 1.8rem;">{{ selectedUser?.nombre?.charAt(0) }}</div>
-                </div>
-                <h4 class="font-weight-bolder mb-0">{{ selectedUser?.nombre }}</h4>
-                <small class="text-muted d-block mb-2">{{ selectedUser?.perfil }}</small>
-                <hr class="w-100 my-2">
-                <h6 class="text-uppercase text-muted font-weight-bold small mb-2">Generar Reportes</h6>
-                <button class="btn btn-export-premium w-100 mb-1" (click)="exportCSV()">
-                  <span class="material-symbols-outlined mr-50">table_view</span> DESCARGAR CSV
+          <div class="col-lg-4 d-flex flex-column">
+            <div class="traza-panel mb-1 flex-grow-1 d-flex flex-column align-items-center justify-content-center text-center">
+              <div class="export-icon-box mb-1">
+                <span>{{ selectedUser?.nombre ? selectedUser.nombre.charAt(0).toUpperCase() : 'U' }}</span>
+              </div>
+              <h4 class="panel-title mb-25">{{ selectedUser?.nombre }}</h4>
+              <small class="text-muted d-block mb-1">{{ selectedUser?.perfil }}</small>
+
+              <div class="w-100 border-top pt-1 mt-50">
+                <small class="text-uppercase text-muted font-weight-bold d-block mb-1">Generar Reportes</small>
+                <button type="button" class="btn-export-minimal mb-75" (click)="exportCSV()">
+                  <i data-feather="download" [size]="'16'"></i>
+                  <span>Descargar CSV</span>
                 </button>
-                <button class="btn btn-export-premium w-100" (click)="exportPDF()">
-                  <span class="material-symbols-outlined mr-50">picture_as_pdf</span> GENERAR PDF
+                <button type="button" class="btn-export-minimal" (click)="exportPDF()">
+                  <i data-feather="printer" [size]="'16'"></i>
+                  <span>Generar PDF</span>
                 </button>
               </div>
             </div>
+
             <div class="d-flex justify-content-between">
-              <button class="btn btn-nav-action px-1" (click)="goToStep(2)">
-                <span class="material-symbols-outlined mr-50">undo</span> VOLVER
+              <button type="button" class="btn-nav-minimal" (click)="goToStep(2)">
+                <i data-feather="arrow-left" [size]="'15'"></i>
+                <span>Volver</span>
               </button>
-              <button class="btn btn-nav-action px-1" (click)="goToStep(1)">
-                <span class="material-symbols-outlined mr-50">logout</span> FINALIZAR
+              <button type="button" class="btn-nav-minimal" (click)="goToStep(1)">
+                <i data-feather="users" [size]="'15'"></i>
+                <span>Finalizar</span>
               </button>
             </div>
           </div>
@@ -332,58 +285,59 @@
 
 <!-- Modal: Logs List -->
 <ng-template #ModalPlay let-modal>
-  <div class="modal-header bg-white border-bottom pb-1">
-    <h5 class="modal-title d-flex align-items-center font-weight-bolder text-dark">
-      <span class="material-symbols-outlined mr-50 text-primary">list_alt</span>
-      LISTADO DE EJECUCIONES
+  <div class="modal-header bg-white border-bottom py-1 px-2">
+    <h5 class="modal-title d-flex align-items-center font-weight-bold text-dark mb-0">
+      <div class="row-icon mr-75">
+        <i data-feather="list" [size]="'15'"></i>
+      </div>
+      Listado de Ejecuciones
     </h5>
     <button type="button" class="close text-secondary" (click)="modal.dismiss()">&times;</button>
   </div>
 
   <div class="modal-body p-0">
-    <div class="bg-light p-1 border-bottom d-flex justify-content-between align-items-center">
-      <div class="ml-1">
+    <div class="bg-light py-75 px-2 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-50">
+      <div>
         <span class="text-muted small">Total registros: </span>
-        <span class="font-weight-bolder text-primary">{{ rowDataRegistros.length }}</span>
+        <span class="font-weight-bold text-primary">{{ filteredRegistros.length }}</span>
       </div>
-      <div class="premium-search-box" style="width: 250px; height: 32px;">
-        <span class="material-symbols-outlined font-small-3">search</span>
+      <div class="minimal-search-box" style="min-width: 240px; height: 34px; background: #fff;">
+        <i data-feather="search" [size]="'14'"></i>
         <input type="text" [formControl]="searchRegistrosCtrl" placeholder="Buscar por hash...">
       </div>
     </div>
 
     <div class="table-responsive" style="max-height: 450px;">
-      <table class="table table-hover table-striped mb-0">
-        <thead class="sticky-top bg-white">
+      <table class="table table-hover mb-0 minimal-table">
+        <thead class="sticky-top">
           <tr>
-            <th class="py-1 pl-2 small">FECHA</th>
-            <th class="py-1 small">HASH OPERACIÓN</th>
-            <th class="py-1 small">ACCION</th>
-            <th class="py-1 text-right pr-2 small">ACCIÓN</th>
+            <th>Fecha</th>
+            <th>Hash Operación</th>
+            <th>Acción</th>
+            <th class="text-right">Detalle</th>
           </tr>
         </thead>
         <tbody>
-          @for (log of rowDataRegistros; track log) {
+          @for (log of filteredRegistros; track log.hash || $index) {
             <tr>
-              <td class="py-1 pl-2 text-dark small">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
-              <td class="py-1">
+              <td class="text-dark small">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+              <td>
                 <div class="d-flex align-items-center">
-                  <span class="text-muted font-small-2 font-family-monospace text-truncate"
-                  style="max-width: 140px;" [title]="log.hash">{{ log.hash }}</span>
-                  <button class="btn btn-sm btn-icon btn-flat-secondary"
-                    (click)="copyToClipboard(log.hash)">
-                    <span class="material-symbols-outlined font-small-2">content_copy</span>
+                  <span class="text-muted small font-family-monospace text-truncate mr-50"
+                    style="max-width: 150px;" [title]="log.hash">{{ log.hash }}</span>
+                  <button type="button" class="btn-icon-minimal" style="width: 28px; height: 28px;"
+                    (click)="copyToClipboard(log.hash)" title="Copiar Hash">
+                    <i data-feather="copy" [size]="'13'"></i>
                   </button>
                 </div>
               </td>
-              <td class="py-1 font-small-2">{{ log.metodo }}</td>
-              <td class="py-1 text-right pr-2 border-left">
+              <td class="small">{{ log.metodo || '---' }}</td>
+              <td class="text-right">
                 <div class="d-flex align-items-center justify-content-end">
-                  <span class="font-weight-bolder mr-1 font-small-2 text-dark">{{ log.formattedDuration
-                  }}</span>
-                  <button class="btn btn-sm btn-flat-primary rounded-circle"
-                    (click)="openDetail(log, ModalDetalle)">
-                    <span class="material-symbols-outlined font-small-3">visibility</span>
+                  <span class="action-pill mr-75">{{ log.formattedDuration }}</span>
+                  <button type="button" class="btn-icon-minimal" style="width: 30px; height: 30px;"
+                    (click)="openDetail(log, ModalDetalle)" title="Ver transacción">
+                    <i data-feather="eye" [size]="'14'"></i>
                   </button>
                 </div>
               </td>
@@ -397,73 +351,60 @@
 
 <!-- Modal: JSON Detail with Decompression -->
 <ng-template #ModalDetalle let-modal>
-  <div class="modal-header bg-white border-bottom pb-1">
-    <h5 class="modal-title d-flex align-items-center font-weight-bolder text-dark">
-      <span class="material-symbols-outlined mr-50 text-primary">analytics</span>
-      DETALLE DE TRANSACCIÓN
+  <div class="modal-header bg-white border-bottom py-1 px-2">
+    <h5 class="modal-title d-flex align-items-center font-weight-bold text-dark mb-0">
+      <div class="row-icon mr-75">
+        <i data-feather="terminal" [size]="'15'"></i>
+      </div>
+      Detalle de Transacción
     </h5>
     <button type="button" class="close text-secondary" (click)="modal.dismiss()">&times;</button>
   </div>
 
   <div class="modal-body bg-light p-2">
     <!-- Header Info Card -->
-    <div class="card mb-1 shadow-none border bg-white rounded-lg overflow-hidden">
-      <div class="card-body p-1">
-        <div class="row align-items-center">
-          <div class="col-md-4 border-right">
-            <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Operación</small>
-            <span class="text-dark font-weight-bolder text-truncate d-block">{{
-            currentFunctionData?.nombre_funcion }}</span>
-          </div>
-          <div class="col-md-4 border-right px-1 text-center">
-            <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Fecha y
-            Hora</small>
-            <span class="text-dark font-weight-bolder d-block">{{ selectedLog?.fecha | date:'dd/MM/yyyy
-            HH:mm:ss' }}</span>
-          </div>
-          <div class="col-md-4 px-1 text-center">
-            <small
-            class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Procesamiento</small>
-            <span class="text-primary font-weight-bolder d-block">{{ selectedLog?.formattedDuration
-            }}</span>
-          </div>
+    <div class="traza-panel p-1 mb-1">
+      <div class="row align-items-center">
+        <div class="col-md-4 border-right">
+          <small class="text-muted d-block text-uppercase font-weight-bold">Operación</small>
+          <span class="text-dark font-weight-bold text-truncate d-block">{{ currentFunctionData?.nombre_funcion }}</span>
+        </div>
+        <div class="col-md-4 border-right px-1 text-center">
+          <small class="text-muted d-block text-uppercase font-weight-bold">Fecha y Hora</small>
+          <span class="text-dark font-weight-bold d-block">{{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+        </div>
+        <div class="col-md-4 px-1 text-center">
+          <small class="text-muted d-block text-uppercase font-weight-bold">Procesamiento</small>
+          <span class="text-primary font-weight-bold d-block">{{ selectedLog?.formattedDuration }}</span>
         </div>
       </div>
     </div>
 
     <div class="row match-height">
       <div class="col-md-6 mb-1">
-        <div class="card h-100 shadow-none border mb-0 rounded-lg">
-          <div class="card-header bg-white p-50 border-bottom">
-            <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-dark">
-              <span class="material-symbols-outlined mr-50 font-small-3 text-secondary">input</span>
-              INPUT (DECODIFICADO)
-            </h6>
+        <div class="traza-panel p-0 overflow-hidden h-100">
+          <div class="py-75 px-1 border-bottom d-flex align-items-center">
+            <i data-feather="log-in" [size]="'15'" class="text-secondary mr-50"></i>
+            <h6 class="mb-0 font-weight-bold small text-dark">INPUT (DECODIFICADO)</h6>
           </div>
-          <div class="card-body p-0">
-            <pre class="m-0 p-1 bg-light font-small-2 border-0"
-              style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6 mb-1">
-          <div class="card h-100 shadow-none border mb-0 rounded-lg">
-            <div class="card-header bg-white p-50 border-bottom">
-              <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-primary">
-                <span class="material-symbols-outlined mr-50 font-small-3">output</span>
-                OUTPUT (DESCOMPRIMIDO)
-              </h6>
-            </div>
-            <div class="card-body p-0">
-              <pre class="m-0 p-1 bg-info-light font-small-2 border-0"
-                style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
-              </div>
-            </div>
-          </div>
+          <pre class="m-0 p-1 font-small-2 border-0"
+            style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
         </div>
       </div>
+      <div class="col-md-6 mb-1">
+        <div class="traza-panel p-0 overflow-hidden h-100">
+          <div class="py-75 px-1 border-bottom d-flex align-items-center">
+            <i data-feather="log-out" [size]="'15'" class="text-primary mr-50"></i>
+            <h6 class="mb-0 font-weight-bold small text-primary">OUTPUT (DESCOMPRIMIDO)</h6>
+          </div>
+          <pre class="m-0 p-1 font-small-2 border-0"
+            style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <div class="modal-footer bg-white p-50">
-        <button class="btn btn-sm btn-nav-action" (click)="modal.close()">CERRAR DETALLE</button>
-      </div>
-    </ng-template>
+  <div class="modal-footer bg-white py-75 px-2">
+    <button type="button" class="btn-nav-minimal" (click)="modal.close()">Cerrar Detalle</button>
+  </div>
+</ng-template>

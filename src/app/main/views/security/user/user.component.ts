@@ -112,7 +112,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
   public iUser: IUser = {
     cedula: "",
-    tipoacceso: 3,
+    tipoacceso: 1,
     respaldo: 0,
     endpoint: "",
     login: "",
@@ -130,6 +130,8 @@ export class UserComponent implements OnInit, OnDestroy {
     regional: "",
     multiplesesion: false,
     cargo: "",
+    nivel: 0,
+    telefono: "",
   };
 
   public multiplesesion: any = false;
@@ -137,7 +139,8 @@ export class UserComponent implements OnInit, OnDestroy {
   public tipoacceso = [
     // { id: 0, name: 'SELECCIONAR' },
     { id: 1, name: "LOCAL" },
-    { id: 3, name: "DIRECTORIO ACTIVO" },
+    { id: 2, name: "PROTOCOLO LIGERO DE ACCESO A DIRECTORIOS (LDAP)" },
+    { id: 3, name: "ACTIVE DIRECTORY (AD)" },
   ];
 
   public lstmultiplesesion = [
@@ -179,9 +182,56 @@ export class UserComponent implements OnInit, OnDestroy {
     { id: "3|ALTA", name: "ALTA" }, //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
   ];
 
+  public nivelesTrazabilidad = [
+    {
+      id: 0,
+      name: "0: Bajo",
+      shortLabel: "Bajo",
+      badgeClass: "badge-light-info",
+      color: "#00cfe8",
+      desc: "Guarda datos de la API que es consultada por el usuario.",
+      example: "Ej: Usuario, IP, Fecha y Endpoint (/api/consulta).",
+    },
+    {
+      id: 1,
+      name: "1: Medio",
+      shortLabel: "Medio",
+      badgeClass: "badge-light-warning",
+      color: "#ff9f43",
+      desc: "Guarda la API consultada más el Query utilizado.",
+      example: "Ej: Nivel 0 + Parámetros / Query ejecutado (SELECT / Payload).",
+    },
+    {
+      id: 2,
+      name: "2: Alto",
+      shortLabel: "Alto",
+      badgeClass: "badge-light-danger",
+      color: "#ea5455",
+      desc: "Guarda todas las anteriores más las respuestas.",
+      example: "Ej: Nivel 1 + Respuesta completa devuelta por el servidor.",
+    },
+  ];
+
   public dataOficina = [{ id: "TODAS", name: "TODAS" }];
 
   public dataRegional = [{ id: "TODAS", name: "TODAS" }];
+
+  public codigosTelefono = [
+    { id: "0412", name: "0412" },
+    { id: "0422", name: "0422" },
+    { id: "0414", name: "0414" },
+    { id: "0424", name: "0424" },
+    { id: "0416", name: "0416" },
+    { id: "0426", name: "0426" },
+    { id: "0212", name: "0212" },
+    { id: "0241", name: "0241" },
+    { id: "0243", name: "0243" },
+    { id: "0251", name: "0251" },
+    { id: "0261", name: "0261" },
+    { id: "0281", name: "0281" },
+    { id: "0286", name: "0286" },
+    { id: "0295", name: "0295" },
+  ];
 
   public Rol: SRol = {
     id: "",
@@ -248,7 +298,7 @@ export class UserComponent implements OnInit, OnDestroy {
   public xaplicacion = "";
   public xperfil = "";
   public xtraza = "BAJA";
-  public ntraza = 1;
+  public ntraza = 0;
 
   public xoficina: any = "TODAS";
   public xregional: any = "TODAS";
@@ -280,7 +330,7 @@ export class UserComponent implements OnInit, OnDestroy {
   public xsesion: string = "";
 
   // Reactive Form Controls
-  public iUserTipoaccesoCtrl = new FormControl(3);
+  public iUserTipoaccesoCtrl = new FormControl(1);
   public iUserRespaldoCtrl = new FormControl(0);
   public iUserEndpointCtrl = new FormControl("");
   public iUserLoginCtrl = new FormControl("");
@@ -292,11 +342,73 @@ export class UserComponent implements OnInit, OnDestroy {
   public iUserEstatusCtrl = new FormControl(1);
   public iUserVigenciaCtrl = new FormControl(180);
   public iUserCorreoCtrl = new FormControl("");
+  public iUserNivelCtrl = new FormControl(0);
+  public showTrazaHelp: boolean = false;
+
+  get selectedNivelInfo() {
+    const val = Number(this.iUserNivelCtrl.value ?? this.iUser.nivel ?? 0);
+    return (
+      this.nivelesTrazabilidad.find((n) => n.id === val) ||
+      this.nivelesTrazabilidad[0]
+    );
+  }
+
+  get userLifeInfo() {
+    const isEditing =
+      this.usuarioSave ||
+      this.blockEdit === "disabled" ||
+      window.sessionStorage.getItem("validator") != undefined;
+    const firma: any = this.usuario?.firmadigital;
+    if (!isEditing || !firma || !firma.tiempo) return null;
+
+    const rawTiempo = firma.tiempo?.$date || firma.tiempo;
+    const fechaInicio = new Date(rawTiempo);
+    if (isNaN(fechaInicio.getTime())) return null;
+
+    const diasVigencia = Number(
+      this.iUserVigenciaCtrl.value ?? firma.vigencia ?? this.iUser.vigencia ?? 180
+    );
+    const fechaVencimiento = new Date(
+      fechaInicio.getTime() + diasVigencia * 24 * 60 * 60 * 1000
+    );
+    const diffMs = fechaVencimiento.getTime() - Date.now();
+    const diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    const porcentaje =
+      diasVigencia > 0
+        ? Math.min(100, Math.max(0, Math.round((diasRestantes / diasVigencia) * 100)))
+        : 0;
+
+    let statusClass = "life-success";
+    let label = `${diasRestantes} días restantes`;
+
+    if (diasRestantes <= 0) {
+      statusClass = "life-danger";
+      label =
+        diasRestantes === 0
+          ? "Vence hoy"
+          : `Vencido hace ${Math.abs(diasRestantes)} días`;
+    } else if (diasRestantes <= 15) {
+      statusClass = "life-warning";
+      label = `Por vencer (${diasRestantes} días)`;
+    }
+
+    return {
+      fechaInicio,
+      fechaVencimiento,
+      diasVigencia,
+      diasRestantes,
+      porcentaje,
+      statusClass,
+      label,
+    };
+  }
   public descripcionCtrl = new FormControl("");
   public iUserDuraciontextoCtrl = new FormControl(60);
   public iUserDuraciontiempoCtrl = new FormControl(5);
   public xregionalCtrl = new FormControl("TODAS");
   public xoficinaCtrl = new FormControl("TODAS");
+  public iUserTelCodigoCtrl = new FormControl("0412");
+  public iUserTelNumeroCtrl = new FormControl("");
   public multiplesesionCtrl = new FormControl(false);
   public xaplicacionCtrl = new FormControl("");
   public xperfilCtrl = new FormControl("");
@@ -340,7 +452,8 @@ export class UserComponent implements OnInit, OnDestroy {
     };
 
     await this.CargarListaAplicaciones();
-    let acceso = this.isBDV ? 3 : 1;
+    let acceso = 1;
+    this.iUser.tipoacceso = acceso;
     this.selTipoAcceso(acceso);
     this.iUser.encriptamiento = "1";
     this.syncFormControlsFromUser();
@@ -361,6 +474,7 @@ export class UserComponent implements OnInit, OnDestroy {
             // console.log(data)
             this.configuracion = data[0];
             this.iUser.endpoint = this.configuracion.endpoints.login;
+            this.iUserEndpointCtrl.setValue(this.iUser.endpoint ?? "");
             this.iUser.duraciontiempo =
               this.configuracion.sesion.tiempo *
               this.exportTime(this.configuracion.sesion.unidad);
@@ -370,8 +484,10 @@ export class UserComponent implements OnInit, OnDestroy {
             let usuario: any = window.sessionStorage.getItem("validator");
 
             if (usuario == undefined) {
-              this.ntraza = this.getTraza(this.configuracion.traza.nivel);
-              this.xtraza = this.configuracion.traza.nivel;
+              this.ntraza = this.getTraza(this.configuracion.traza?.nivel);
+              this.xtraza = this.configuracion.traza?.nivel;
+              this.iUser.nivel = this.ntraza;
+              this.iUserNivelCtrl.setValue(this.ntraza);
             }
           }
           this.consultarRegionales();
@@ -410,6 +526,7 @@ export class UserComponent implements OnInit, OnDestroy {
     this.iUser.descripcion = usuario.descripcion;
     this.descripcion = usuario.observaciones;
     this.iUser.correo = usuario.correo;
+    this.iUser.telefono = usuario.telefono ?? "";
     this.iUser.estatus = usuario.estatus;
     this.iUser.endpoint = usuario.endpoint;
 
@@ -429,6 +546,12 @@ export class UserComponent implements OnInit, OnDestroy {
     if (usuario.firmadigital) {
       this.iUser.vigencia = usuario.firmadigital.vigencia;
       this.xsesion = usuario.firmadigital.sesion;
+      const rawNivel = usuario.firmadigital.nivel;
+      this.iUser.nivel =
+        rawNivel !== undefined && rawNivel !== null ? Number(rawNivel) : 0;
+      this.ntraza = this.iUser.nivel;
+    } else {
+      this.iUser.nivel = 0;
     }
 
     // No se mapea la clave para evitar mostrar el hash. Se debe ingresar una nueva si se desea cambiar.
@@ -441,10 +564,20 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   tk_loadProfile(usuario: Usuario) {
-    usuario.Aplicacion.forEach((usr) => {
+    this.lstUsersApp = [];
+    (usuario.Aplicacion || []).forEach((usr) => {
       let url = "";
       let xapp = this.getAplication(usr.id);
-      let xprof = this.getProfile(usr.perfil);
+      let xprof =
+        this.getProfile(usr.perfil) ||
+        (usr.Rol
+          ? {
+              id: usr.Rol.id,
+              nombre: usr.perfil,
+              descripcion: usr.Rol.descripcion,
+              Rol: usr.Rol,
+            }
+          : undefined);
 
       if (xapp !== undefined) {
         url = xapp.url;
@@ -457,7 +590,7 @@ export class UserComponent implements OnInit, OnDestroy {
         idapp: xapp,
         idper: xprof,
         firmadigital: usuario.firmadigital,
-        traza: usuario.Perfil.traza,
+        traza: usuario.Perfil?.traza,
         nombre: usr.nombre,
         perfil: usr.perfil,
         estatus: usr.estatus,
@@ -478,18 +611,23 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   selTipoAcceso(e) {
-    switch (e) {
+    const val = typeof e === "object" && e !== null ? e.id : e;
+    this.iUser.tipoacceso = val;
+    switch (val) {
       case 1:
         this.property = true;
         this.ldap = false;
+        this.activedirectory = false;
         break;
       case 2:
         this.property = false;
         this.ldap = true;
+        this.activedirectory = true;
         break;
       case 3:
         this.property = false;
         this.ldap = true;
+        this.activedirectory = false;
         break;
       default:
         this.property = false;
@@ -549,7 +687,7 @@ export class UserComponent implements OnInit, OnDestroy {
         if (usuario != undefined) {
           this.usuario = JSON.parse(usuario);
           this.xaplicacion = this.usuario.sistema;
-          await this.selPerfil(this.usuario.sistema);
+          await this.selPerfil(this.usuario.sistema, true);
           this.usuarioSave = true;
         }
       },
@@ -559,26 +697,56 @@ export class UserComponent implements OnInit, OnDestroy {
     );
   }
 
-  selPerfil(e) {
+  selPerfil(e: any, isInitialLoad: boolean = false) {
     try {
-      let codPerfil = e;
+      const codPerfil =
+        typeof e === "object" && e !== null
+          ? e.id
+          : e ?? this.xaplicacionCtrl.value;
+      this.xaplicacion = codPerfil || "";
+
+      if (!isInitialLoad) {
+        this.xperfil = "";
+        this.xperfilCtrl.setValue(null);
+      }
+
+      if (!codPerfil) {
+        this.lstPerfil = [];
+        let usuario = window.sessionStorage.getItem("validator");
+        if (isInitialLoad && usuario != undefined) {
+          this.blockEdit = "disabled";
+          this.blockEditApp =
+            this.usuario.Aplicacion?.length > 0 ? "disabled" : "false";
+          if (!this.bEliminarAllProfile) {
+            if (
+              this.usuario.endpoint == undefined ||
+              this.usuario.endpoint == ""
+            ) {
+              this.iUser.tipoacceso = 1;
+              this.selTipoAcceso(1);
+            }
+            this.cargarUsuario(this.usuario);
+          } else {
+            this.blockEditApp = "false";
+          }
+        }
+        return;
+      }
+
       this.xAPI = {} as IAPICore;
       this.xAPI.funcion = environment.functions.OBTENER_PERFILES_POR_APLICACION;
       this.xAPI.parametros = codPerfil;
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          if (data != undefined && data != null) {
-            this.lstPerfil = data;
-          }
+          this.lstPerfil = data != undefined && data != null ? data : [];
 
           let usuario = window.sessionStorage.getItem("validator");
-          if (usuario != undefined) {
+          if (isInitialLoad && usuario != undefined) {
             this.blockEdit = "disabled";
             this.blockEditApp =
               this.usuario.Aplicacion.length > 0 ? "disabled" : "false";
 
             if (!this.bEliminarAllProfile) {
-              this.cargarUsuario(this.usuario);
               if (
                 this.usuario.endpoint == undefined ||
                 this.usuario.endpoint == ""
@@ -586,6 +754,7 @@ export class UserComponent implements OnInit, OnDestroy {
                 this.iUser.tipoacceso = 1;
                 this.selTipoAcceso(1);
               }
+              this.cargarUsuario(this.usuario);
             } else {
               this.blockEditApp = "false";
             }
@@ -645,10 +814,13 @@ export class UserComponent implements OnInit, OnDestroy {
     this.usuario.nombre = this.iUser.nombre;
     this.usuario.descripcion = this.iUser.descripcion;
     this.usuario.correo = this.iUser.correo;
+    this.usuario.telefono = this.iUser.telefono ?? "";
     this.usuario.cargo = this.iUser.descripcion;
     this.usuario.observaciones = this.descripcion;
     this.usuario.endpoint =
-      this.iUser.tipoacceso == 3 ? this.iUser.endpoint : "";
+      this.iUser.tipoacceso == 3 || this.iUser.tipoacceso == 2
+        ? this.iUser.endpoint
+        : "";
     this.usuario.sucursal =
       this.xoficina.name != undefined ? this.xoficina.name : this.xoficina;
     this.usuario.direccion =
@@ -662,7 +834,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
     let usuario = window.sessionStorage.getItem("validator");
 
-    if (usuario == undefined) {
+    if (usuario == undefined && !this.usuarioSave && this.blockEdit !== "disabled") {
       if (this.iUser.clave != "") {
         await this.sha256.hash(this.iUser.clave).then((hash) => {
           this.usuario.clave = hash;
@@ -676,16 +848,14 @@ export class UserComponent implements OnInit, OnDestroy {
         this.xsesion = xhash;
       });
 
+    const nivelSeleccionado = Number(this.iUser.nivel ?? 0);
     let firma: Firmadigital = {
-      vigencia: this.iUser.vigencia,
-      duracion: this.iUser.duraciontiempo,
+      vigencia: Number(this.iUser.vigencia),
+      duracion: Number(this.iUser.duraciontiempo),
       direccionmac: "",
       direccionip: "",
       tiempo: new Date().toISOString(),
-      nivel:
-        apps.firmadigital != undefined
-          ? apps.firmadigital.nivel
-          : parseInt(apps.idtra),
+      nivel: isNaN(nivelSeleccionado) ? 0 : nivelSeleccionado,
       sesion: this.xsesion,
     };
 
@@ -701,11 +871,11 @@ export class UserComponent implements OnInit, OnDestroy {
 
   async agregarAplicacion() {
     let app = {};
-    if (
-      this.xaplicacion == "" ||
-      this.xperfil == "" ||
-      this.xtraza == undefined
-    ) {
+    this.xaplicacion = this.xaplicacionCtrl.value || "";
+    this.xperfil = this.xperfilCtrl.value || "";
+    this.xtraza = this.xtrazaCtrl.value || this.xtraza || "BAJA";
+
+    if (!this.xaplicacion || !this.xperfil || !this.xtraza) {
       this.utilservice.AlertMini(
         "top-end",
         "error",
@@ -725,23 +895,36 @@ export class UserComponent implements OnInit, OnDestroy {
       return false;
     }
 
+    const appSel = this.getAplication(this.xaplicacion);
+    const perfSel = this.getProfile(this.xperfil);
+    if (!appSel || !perfSel) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "error",
+        "Aplicación o perfil no válido",
+        3000,
+      );
+      return false;
+    }
+
     app = {
-      id: this.getAplication(this.xaplicacion).id,
-      idapp: this.getAplication(this.xaplicacion),
-      idper: this.getProfile(this.xperfil),
+      id: appSel.id,
+      idapp: appSel,
+      idper: perfSel,
       traza: this.xtraza,
       idtra: this.ntraza,
-      nombre: this.getAplication(this.xaplicacion).nombre,
-      url: this.getAplication(this.xaplicacion).url,
+      nombre: appSel.nombre,
+      url: appSel.url,
       tiempo: new Date().toISOString(),
-      perfil: this.getProfile(this.xperfil).nombre,
+      perfil: perfSel.nombre,
       estatus: 1,
     };
 
     this.lstUsersApp.push(app);
     this.dataUsers = this.lstUsersApp;
     this.rebuildStatusArray();
-    this.xperfil = null;
+    this.xperfil = "";
+    this.xperfilCtrl.setValue(null);
   }
 
   /**
@@ -927,6 +1110,8 @@ export class UserComponent implements OnInit, OnDestroy {
           this.limpiar();
         } else {
           this.usuarioSave = true;
+          this.blockEdit = "disabled";
+          this.iUserClaveCtrl.disable({ emitEvent: false });
         }
       }
     });
@@ -936,7 +1121,7 @@ export class UserComponent implements OnInit, OnDestroy {
     window.sessionStorage.removeItem("validator");
     this.iUser = {
       cedula: "",
-      tipoacceso: 3,
+      tipoacceso: 1,
       respaldo: 0,
       endpoint: "",
       login: "",
@@ -954,6 +1139,8 @@ export class UserComponent implements OnInit, OnDestroy {
       regional: "TODAS",
       multiplesesion: false,
       cargo: "",
+      nivel: 0,
+      telefono: "",
     };
     this.xoficina = "TODAS";
     this.xregional = "TODAS";
@@ -1305,15 +1492,48 @@ export class UserComponent implements OnInit, OnDestroy {
     );
   }
 
-  getTraza(id): number {
-    switch (id) {
+  getTraza(id: any): number {
+    if (typeof id === "number") return id;
+    switch ((id || "").toString().toUpperCase().trim()) {
+      case "BAJO":
       case "BAJA":
-        return 1;
+      case "0":
+        return 0;
+      case "MEDIO":
       case "MEDIA":
-        return 2;
+      case "1":
+        return 1;
+      case "ALTO":
       case "ALTA":
-        return 3;
+      case "2":
+        return 2;
+      default:
+        return 0;
     }
+  }
+
+  onPhoneInput(event?: any): void {
+    const raw = (this.iUserTelNumeroCtrl.value || "").replace(/\D/g, "").slice(0, 7);
+    let formatted = raw;
+    if (raw.length > 3) {
+      formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
+    }
+    this.iUserTelNumeroCtrl.setValue(formatted, { emitEvent: false });
+    const cod = this.iUserTelCodigoCtrl.value || "0412";
+    this.iUser.telefono = formatted ? `(${cod}) ${formatted}` : "";
+  }
+
+  private parseTelefono(rawTel: string): { codigo: string; numero: string } {
+    if (!rawTel) return { codigo: "0412", numero: "" };
+    const digits = rawTel.replace(/\D/g, "");
+    if (digits.length >= 4) {
+      const possibleCode = digits.slice(0, 4);
+      const rest = digits.slice(4, 11);
+      const formattedRest =
+        rest.length > 3 ? `${rest.slice(0, 3)}-${rest.slice(3)}` : rest;
+      return { codigo: possibleCode, numero: formattedRest };
+    }
+    return { codigo: "0412", numero: digits };
   }
 
   syncFormControlsFromUser(): void {
@@ -1322,18 +1542,42 @@ export class UserComponent implements OnInit, OnDestroy {
     this.iUserEndpointCtrl.setValue(this.iUser.endpoint ?? "");
     this.iUserLoginCtrl.setValue(this.iUser.login ?? "");
     this.iUserClaveCtrl.setValue(this.iUser.clave ?? "");
+
+    const isEditing =
+      this.blockEdit === "disabled" ||
+      this.usuarioSave ||
+      window.sessionStorage.getItem("validator") != undefined;
+
+    if (isEditing) {
+      this.iUserClaveCtrl.disable({ emitEvent: false });
+      this.iUserLoginCtrl.disable({ emitEvent: false });
+      this.iUserTipoaccesoCtrl.disable({ emitEvent: false });
+    } else {
+      this.iUserClaveCtrl.enable({ emitEvent: false });
+      this.iUserLoginCtrl.enable({ emitEvent: false });
+      this.iUserTipoaccesoCtrl.enable({ emitEvent: false });
+    }
+
     this.iUserEncriptamientoCtrl.setValue(this.iUser.encriptamiento ?? "");
     this.iUserCedulaCtrl.setValue(this.iUser.cedula ?? "");
     this.iUserNombreCtrl.setValue(this.iUser.nombre ?? "");
-    this.iUserDescripcionCtrl.setValue(this.iUser.cargo ?? "");
+    this.iUserDescripcionCtrl.setValue(
+      this.iUser.cargo ?? this.iUser.descripcion ?? "",
+    );
     this.iUserEstatusCtrl.setValue(this.iUser.estatus);
     this.iUserVigenciaCtrl.setValue(this.iUser.vigencia);
     this.iUserCorreoCtrl.setValue(this.iUser.correo ?? "");
+    this.iUserNivelCtrl.setValue(this.iUser.nivel ?? 0);
     this.descripcionCtrl.setValue(this.descripcion ?? "");
     this.iUserDuraciontextoCtrl.setValue(this.iUser.duraciontexto);
     this.iUserDuraciontiempoCtrl.setValue(this.iUser.duraciontiempo);
     this.xregionalCtrl.setValue(this.xregional);
     this.xoficinaCtrl.setValue(this.xoficina);
+
+    const parsedTel = this.parseTelefono(this.iUser.telefono ?? "");
+    this.iUserTelCodigoCtrl.setValue(parsedTel.codigo);
+    this.iUserTelNumeroCtrl.setValue(parsedTel.numero);
+
     this.multiplesesionCtrl.setValue(this.multiplesesion);
     this.xaplicacionCtrl.setValue(this.xaplicacion);
     this.xperfilCtrl.setValue(this.xperfil);
@@ -1353,11 +1597,22 @@ export class UserComponent implements OnInit, OnDestroy {
     this.iUser.estatus = this.iUserEstatusCtrl.value;
     this.iUser.vigencia = this.iUserVigenciaCtrl.value;
     this.iUser.correo = this.iUserCorreoCtrl.value;
+    this.iUser.nivel = Number(this.iUserNivelCtrl.value ?? 0);
+    this.ntraza = this.iUser.nivel;
     this.descripcion = this.descripcionCtrl.value;
     this.iUser.duraciontexto = this.iUserDuraciontextoCtrl.value;
     this.iUser.duraciontiempo = this.iUserDuraciontiempoCtrl.value;
     this.xregional = this.xregionalCtrl.value;
     this.xoficina = this.xoficinaCtrl.value;
+
+    const telNum = (this.iUserTelNumeroCtrl.value || "").trim();
+    const telCodRaw: any = this.iUserTelCodigoCtrl.value;
+    const telCod =
+      typeof telCodRaw === "object" && telCodRaw !== null
+        ? telCodRaw.id || telCodRaw.name
+        : telCodRaw || "0412";
+    this.iUser.telefono = telNum ? `(${telCod}) ${telNum}` : "";
+
     this.multiplesesion = this.multiplesesionCtrl.value;
     this.xaplicacion = this.xaplicacionCtrl.value;
     this.xperfil = this.xperfilCtrl.value;

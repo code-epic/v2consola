@@ -88,41 +88,42 @@
       </div>
     </section>
 
-    <!-- Application Cards Grid (Default Vista) -->
+    <!-- Application Cards Grid (Default Vista - Patrón Minimalista de Logs) -->
     @if (!isListView) {
-      <section id="wishlist" class="grid-view wishlist-items">
-        @for (product of ListarBitacora | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize; track product; let i = $index) {
-          <div
-            class="card binnacle-elegant-card">
-            <div class="binnacle-card-body">
-              <div class="d-flex align-items-center mb-1">
-                <div class="binnacle-icon-wrapper">
-                  <span class="material-symbols-outlined">{{ getMaterialIcon(product.nombre) }}</span>
+      <section class="binnacle-selection-section">
+        <div class="binnacle-selection-grid">
+          @for (product of filteredBitacora | slice: (page - 1) * pageSize : page * pageSize; track product.id || product.nombre || $index) {
+            <div class="binnacle-option-card" [ngClass]="product._colorClass || 'primary'">
+              <div class="card-header-row">
+                <div class="card-icon">
+                  <i [data-feather]="product._icon || 'grid'"></i>
                 </div>
-                <div class="overflow-hidden" style="flex: 1">
-                  <h5 class="binnacle-card-title" [title]="product.nombre">{{ product.nombre || 'Aplicación' }}</h5>
-                  <div class="binnacle-card-subtitle">
-                    <span data-feather="tag" class="icon"></span>
-                    <span class="text-truncate">{{ product.version || 'v1.0.0' }}</span>
-                  </div>
-                </div>
+                <span class="version-badge">
+                  <i data-feather="tag" [size]="'12'"></i>
+                  {{ product.version || 'v1.0.0' }}
+                </span>
               </div>
-              <p class="binnacle-card-desc" [title]="product.comentario">
-                {{ product.comentario || 'Sin descripción disponible.' }}
-              </p>
-              <div class="binnacle-card-actions">
-                <button class="btn btn-outline-primary btn-sm rounded-pill"
+
+              <div class="card-content">
+                <h3 [title]="product.nombre">{{ product.nombre || 'Aplicación' }}</h3>
+                <p [title]="product.comentario">{{ product.comentario || 'Sin descripción disponible.' }}</p>
+              </div>
+
+              <div class="card-actions">
+                <button type="button" class="btn-card-action primary"
                   (click)="irA('/investigation/binnacle/traza/', product)">
-                  <span class="material-symbols-outlined me-50">history</span> Traza
+                  <i data-feather="activity" [size]="'14'"></i>
+                  <span>Traza</span>
                 </button>
-                <button class="btn btn-flat-secondary btn-sm rounded-pill"
+                <button type="button" class="btn-card-action secondary"
                   (click)="irA('/investigation/binnacle/events/', product)">
-                  <span class="material-symbols-outlined me-50">event_note</span> Eventos
+                  <i data-feather="file-text" [size]="'14'"></i>
+                  <span>Eventos</span>
                 </button>
               </div>
             </div>
-          </div>
-        }
+          }
+        </div>
       </section>
     }
 
@@ -172,9 +173,8 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @for (item of ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo' | slice: (page - 1) * pageSize : page * pageSize; track item) {
-                      <tr
-                        >
+                    @for (item of filteredAuditoriaLogs | slice: (page - 1) * pageSize : page * pageSize; track $index) {
+                      <tr>
                         <td>
                           <span class="font-weight-bold">{{ item.usuario }}</span><br>
                           @if (item.usuarioSo) {
@@ -216,7 +216,7 @@
     }
 
     <!-- Empty State (when no results) -->
-    @if ((!isListView && (ListarBitacora | filter: searchText:'nombre').length === 0) || (isListView && (ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo').length === 0)) {
+    @if ((!isListView && filteredBitacora.length === 0) || (isListView && filteredAuditoriaLogs.length === 0)) {
       <section
         class="empty-state">
         <div class="empty-icon">
@@ -228,14 +228,13 @@
     }
 
     <!-- Pagination -->
-    @if ((!isListView && (ListarBitacora | filter: searchText:'nombre').length > 0) || (isListView && (ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo').length > 0)) {
-      <section id="ecommerce-pagination"
-        >
+    @if ((!isListView && filteredBitacora.length > 0) || (isListView && filteredAuditoriaLogs.length > 0)) {
+      <section id="ecommerce-pagination">
         <div class="row">
           <div class="col-sm-12">
             <div class="d-flex justify-content-center">
               <ngb-pagination
-                [collectionSize]="!isListView ? (ListarBitacora | filter: searchText:'nombre').length : (ListarAuditoriaLogs | filter: searchText:'usuario' | filter: filterActividad:'tipo').length"
+                [collectionSize]="!isListView ? filteredBitacora.length : filteredAuditoriaLogs.length"
                 [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true"
                 aria-label="Pagination">
                 <!-- First Page -->

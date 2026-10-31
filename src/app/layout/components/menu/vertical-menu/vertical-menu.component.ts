@@ -1,26 +1,34 @@
-import { Component, OnInit, OnDestroy, ViewChild, ViewEncapsulation, ElementRef, ChangeDetectorRef } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ViewEncapsulation,
+  ElementRef,
+  ChangeDetectorRef,
+} from "@angular/core";
+import { Router, NavigationEnd } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 
-import { Subject } from 'rxjs';
-import { take, takeUntil, filter } from 'rxjs/operators';
+import { Subject } from "rxjs";
+import { take, takeUntil, filter } from "rxjs/operators";
 
-import { CoreConfigService } from '@core/services/config.service';
-import { CoreMenuModule } from '@core/components';
-import { CoreMenuService } from '@core/components/core-menu/core-menu.service';
-import { CoreSidebarService } from '@core/components/core-sidebar/core-sidebar.service';
-import { ApiService } from '@services/apicore/api.service';
-import { MensajeService } from '@services/util/mensaje.service';
-import { CoreCommonModule } from '@core/common.module';
+import { CoreConfigService } from "@core/services/config.service";
+import { CoreMenuModule } from "@core/components";
+import { CoreMenuService } from "@core/components/core-menu/core-menu.service";
+import { CoreSidebarService } from "@core/components/core-sidebar/core-sidebar.service";
+import { ApiService } from "@services/apicore/api.service";
+import { MensajeService } from "@services/util/mensaje.service";
+import { CoreCommonModule } from "@core/common.module";
 
 @Component({
-    selector: 'vertical-menu',
-    templateUrl: './vertical-menu.component.html',
-    styleUrls: ['./vertical-menu.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    standalone: true,
-    imports: [CommonModule, RouterModule, CoreCommonModule, CoreMenuModule]
+  selector: "vertical-menu",
+  templateUrl: "./vertical-menu.component.html",
+  styleUrls: ["./vertical-menu.component.scss"],
+  encapsulation: ViewEncapsulation.None,
+  standalone: true,
+  imports: [CommonModule, RouterModule, CoreCommonModule, CoreMenuModule],
 })
 export class VerticalMenuComponent implements OnInit, OnDestroy {
   coreConfig: any;
@@ -30,17 +38,17 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
 
   // Private
   private _unsubscribeAll: Subject<any>;
-  public logo: string = '';
-  public logoWidth: string = '36';
+  public logo: string = "";
+  public logoWidth: string = "36";
   public isBDV: boolean = false;
 
   // Propiedades para el indicador de progreso
   public blCargando: boolean = false;
   public progressPercentage: number = 0;
-  public progressText: string = '';
-  public progressMode: 'determinate' | 'indeterminate' = 'determinate';
-  public speed: string = '';
-  public progressLabel: string = 'Sincronizando...';
+  public progressText: string = "";
+  public progressMode: "determinate" | "indeterminate" = "determinate";
+  public speed: string = "";
+  public progressLabel: string = "Sincronizando...";
 
   /**
    * Constructor
@@ -57,13 +65,13 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     private _router: Router,
     private apiService: ApiService,
     private mensajeService: MensajeService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
   }
 
-  @ViewChild('mainMenuContent', { static: false }) mainMenuContent?: ElementRef;
+  @ViewChild("mainMenuContent", { static: false }) mainMenuContent?: ElementRef;
 
   // Lifecycle Hooks
   // -----------------------------------------------------------------------------------------------------
@@ -72,41 +80,45 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    * On Init
    */
   ngOnInit(): void {
-
     this.mensajeService.progreso$
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(progreso => this.handleProgressUpdate(progreso));
+      .subscribe((progreso) => this.handleProgressUpdate(progreso));
 
     // Subscribe config change
-    this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
-      this.coreConfig = config;
-    });
+    this._coreConfigService.config
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((config) => {
+        this.coreConfig = config;
+      });
 
-    this.isCollapsed = this._coreSidebarService.getSidebarRegistry('menu').collapsed;
+    this.isCollapsed =
+      this._coreSidebarService.getSidebarRegistry("menu").collapsed;
 
     // Close the menu on router NavigationEnd (Required for small screen to close the menu on select)
     this._router.events
       .pipe(
-        filter(event => event instanceof NavigationEnd),
-        takeUntil(this._unsubscribeAll)
+        filter((event) => event instanceof NavigationEnd),
+        takeUntil(this._unsubscribeAll),
       )
       .subscribe(() => {
-        if (this._coreSidebarService.getSidebarRegistry('menu')) {
-          this._coreSidebarService.getSidebarRegistry('menu').close();
+        if (this._coreSidebarService.getSidebarRegistry("menu")) {
+          this._coreSidebarService.getSidebarRegistry("menu").close();
         }
       });
 
     // scroll to active on navigation end
     this._router.events
       .pipe(
-        filter(event => event instanceof NavigationEnd),
-        take(1)
+        filter((event) => event instanceof NavigationEnd),
+        take(1),
       )
       .subscribe(() => {
         setTimeout(() => {
-          const activeEl = this.mainMenuContent?.nativeElement?.querySelector('.navigation .active');
+          const activeEl = this.mainMenuContent?.nativeElement?.querySelector(
+            ".navigation .active",
+          );
           if (activeEl) {
-            activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            activeEl.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         });
       });
@@ -114,22 +126,21 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     // Get current menu
     this._coreMenuService.onMenuChanged
       .pipe(
-        filter(value => value !== null),
-        takeUntil(this._unsubscribeAll)
+        filter((value) => value !== null),
+        takeUntil(this._unsubscribeAll),
       )
       .subscribe(() => {
         this.menu = this._coreMenuService.getCurrentMenu();
       });
 
-    this.isBDV = this.apiService.ConsultaSistemaBDV()
+    this.isBDV = this.apiService.ConsultaSistemaBDV();
     if (this.isBDV) {
-      this.coreConfig.app.appName = ''
-      this.logo = 'assets/images/bdv/bdv.png'
-      this.logoWidth = '70'
+      this.coreConfig.app.appName = "";
+      this.logo = "assets/images/bdv/bdv.png";
+      this.logoWidth = "70";
     } else {
-      this.logo = 'assets/images/logo/logo.png'
+      this.logo = "assets/images/logo/logo.png";
     }
-
   }
 
   /**
@@ -144,15 +155,18 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     this.blCargando = true;
 
     switch (progreso.from) {
-      case 'exec-pipe':
+      case "exec-pipe":
         this.handleExecPipe(progreso);
         break;
-      case 'file-upload':
+      case "file-upload":
         this.handleFileUpload(progreso);
         break;
       default:
         this.blCargando = false;
-        console.warn('VerticalMenuComponent: Fuente de progreso desconocida:', progreso.from);
+        console.warn(
+          "VerticalMenuComponent: Fuente de progreso desconocida:",
+          progreso.from,
+        );
         break;
     }
     this.cdr.detectChanges();
@@ -164,27 +178,37 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    */
   private handleExecPipe(progreso: any): void {
     switch (progreso.type) {
-      case 'progress': // Backup progress
-        this.progressMode = 'indeterminate';
-        this.progressLabel = 'Generando Respaldo...';
-        this.actualizarProgresoIndeterminado(progreso.message?.bytes ?? 0, progreso.message?.speed ?? 0);
+      case "progress": // Backup progress
+        this.progressMode = "indeterminate";
+        this.progressLabel = "Generando Respaldo...";
+        this.actualizarProgresoIndeterminado(
+          progreso.message?.bytes ?? 0,
+          progreso.message?.speed ?? 0,
+        );
         break;
-      case 'dump_finished':
+      case "dump_finished":
         // console.log(progreso.message)
-        this.finishProgress('Respaldo Completado');
+        this.finishProgress("Respaldo Completado");
         if (progreso.message?.file) {
-          this.apiService.DwsCdn("bck-export/" + progreso.message.file, "application/zip", progreso.message.file);
+          this.apiService.DwsCdn(
+            "bck-export/" + progreso.message.file,
+            "application/zip",
+            progreso.message.file,
+          );
         }
-        this.mensajeService.finalizacion$.emit({"estatus": true});
+        this.mensajeService.finalizacion$.emit({ estatus: true });
         break;
-      case 'restore':
-        this.progressMode = 'determinate';
-        this.progressLabel = 'Restaurando Base de Datos...';
-        this.actualizarProgreso(progreso.message?.percentage ?? 0, progreso.message?.total ?? 100);
+      case "restore":
+        this.progressMode = "determinate";
+        this.progressLabel = "Restaurando Base de Datos...";
+        this.actualizarProgreso(
+          progreso.message?.percentage ?? 0,
+          progreso.message?.total ?? 100,
+        );
         break;
-      case 'restore_finished':
-        this.finishProgress('Restauración Completada');
-        this.mensajeService.finalizacion$.emit({"estatus": true});
+      case "restore_finished":
+        this.finishProgress("Restauración Completada");
+        this.mensajeService.finalizacion$.emit({ estatus: true });
         break;
     }
     this.cdr.detectChanges();
@@ -196,21 +220,21 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    */
   private handleFileUpload(progreso: any): void {
     switch (progreso.type) {
-      case 'progress':
-        this.progressMode = 'determinate';
-        this.progressLabel = progreso.progress < 99 ? 'Subiendo Archivo...' : 'Procesando en servidor...';
+      case "progress":
+        this.progressMode = "determinate";
+        this.progressLabel =
+          progreso.progress < 99
+            ? "Subiendo Archivo..."
+            : "Procesando en servidor...";
         this.progressPercentage = progreso.progress;
         this.progressText = `${this.formatBytes(progreso.loaded)} de ${this.formatBytes(progreso.total)}`;
         break;
-      case 'finished':
-        this.finishProgress('Subida Finalizada');
+      case "finished":
+        this.finishProgress("Subida Finalizada");
         break;
     }
     this.cdr.detectChanges();
   }
-
-
-
 
   /**
    * Actualiza los valores del indicador de progreso.
@@ -232,19 +256,19 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    * @param decimals El número de decimales.
    */
   private formatBytes(bytes: number, decimals = 2): string {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   }
 
   /**
- * Actualiza los valores del indicador de progreso INDETERMINADO.
- * @param bytes Los bytes procesados hasta ahora.
- * @param speedInBps La velocidad actual en bytes por segundo.
- */
+   * Actualiza los valores del indicador de progreso INDETERMINADO.
+   * @param bytes Los bytes procesados hasta ahora.
+   * @param speedInBps La velocidad actual en bytes por segundo.
+   */
   actualizarProgresoIndeterminado(bytes: number, speedInBps: number): void {
     if (speedInBps > 1024 * 1024) {
       this.speed = `${(speedInBps / (1024 * 1024)).toFixed(2)} MB/s`;
@@ -266,7 +290,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    */
   private finishProgress(label: string): void {
     this.progressLabel = label;
-    if (this.progressMode === 'determinate' && this.progressPercentage < 100) {
+    if (this.progressMode === "determinate" && this.progressPercentage < 100) {
       this.progressPercentage = 100;
     }
     this.cdr.detectChanges();
@@ -275,7 +299,6 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
       this.cdr.detectChanges();
     }, 2000);
   }
-
 
   /**
    * On Destroy
@@ -301,7 +324,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
    * Toggle sidebar expanded status
    */
   toggleSidebar(): void {
-    this._coreSidebarService.getSidebarRegistry('menu').toggleOpen();
+    this._coreSidebarService.getSidebarRegistry("menu").toggleOpen();
   }
 
   /**
@@ -312,14 +335,20 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     this._coreConfigService
       .getConfig()
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(config => {
+      .subscribe((config) => {
         this.isCollapsed = config.layout.menu.collapsed;
       });
 
     if (this.isCollapsed) {
-      this._coreConfigService.setConfig({ layout: { menu: { collapsed: false } } }, { emitEvent: true });
+      this._coreConfigService.setConfig(
+        { layout: { menu: { collapsed: false } } },
+        { emitEvent: true },
+      );
     } else {
-      this._coreConfigService.setConfig({ layout: { menu: { collapsed: true } } }, { emitEvent: true });
+      this._coreConfigService.setConfig(
+        { layout: { menu: { collapsed: true } } },
+        { emitEvent: true },
+      );
     }
   }
 }

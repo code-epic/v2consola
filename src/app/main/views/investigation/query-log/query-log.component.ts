@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, ViewEncapsulation, ViewChild, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewEncapsulation, ViewChild, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '@services/apicore/api.service';
@@ -42,11 +42,12 @@ interface QueryLog {
         BaseChartDirective
     ]
 })
-export class QueryLogComponent implements OnInit, OnDestroy {
+export class QueryLogComponent implements OnInit, OnChanges, OnDestroy {
 
   @ViewChild(BaseChartDirective) chart: BaseChartDirective;
 
   @Input() rawLogs: string = '';
+  rawLogContent: string = '';
   parsedLogs: QueryLog[] = [];
   filteredLogs: QueryLog[] = [];
   logTypes: string[] = [];
@@ -57,7 +58,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   private _isLoading = signal<boolean>(false);
   get isLoading() { return this._isLoading(); }
   nameFnx = '';
-  sinRegistros: boolean = false;
+  sinRegistros: boolean = true;
   activeId = 1;
 
   public chartData: ChartData<'line'> = {
@@ -183,6 +184,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef,
   ) {
     moment.locale('es');
   }
@@ -250,10 +252,14 @@ export class QueryLogComponent implements OnInit, OnDestroy {
     };
   }
 
-  async ngOnChanges() {
-    this.nameFnx = this.rawLogs;
-    this.sinRegistros = true;
-    await this.verLogs();
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes['rawLogs'] && this.rawLogs) {
+      this.nameFnx = this.rawLogs;
+      this.sinRegistros = true;
+      this.parsedLogs = [];
+      this.filteredLogs = [];
+      await this.verLogs();
+    }
   }
 
   ngOnInit() {
@@ -262,40 +268,50 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       distinctUntilChanged()
     ).subscribe(searchValue => {
       this.filterLogs();
+      this.cdr.markForCheck();
     });
 
-    this.nameFnx = this.rawLogs;
-    this.verLogs();
+    if (!this.nameFnx && this.rawLogs) {
+      this.nameFnx = this.rawLogs;
+      this.sinRegistros = true;
+      this.verLogs();
+    }
   }
 
   async verLogs() {
+    if (!this.nameFnx) return;
     this._isLoading.set(true);
+    this.sinRegistros = true;
+    this.cdr.markForCheck();
     let fnx = { funcion: this.nameFnx };
-    await this.apiService.ExecFnx(fnx).subscribe(
+    this.apiService.ExecFnx(fnx).subscribe(
       async (data) => {
-        if (data.msj == '' || data.msj == null) {
+        if (!data || data.msj == '' || data.msj == null || !data.contenido?.id) {
           this.utilservice.AlertMini(
             "top-end",
             "warning",
             `No hay registros de logs actualmente`,
             3000
-          )
+          );
           this.sinRegistros = false;
           this._isLoading.set(false);
+          this.cdr.markForCheck();
           return;
         }
         setTimeout(() => {
           this.apiService.ExecFnxId(data.contenido.id).subscribe(
-            (data) => {
-              this.rawLogs = data.rs;
+            (res) => {
+              this.rawLogContent = res?.rs || '';
               this.parseLogs();
               this.filterLogs();
               this.processChartData();
               this._isLoading.set(false);
+              this.cdr.markForCheck();
             },
             (error) => {
               console.log(error);
               this._isLoading.set(false);
+              this.cdr.markForCheck();
             }
           );
         }, 3000);
@@ -303,18 +319,24 @@ export class QueryLogComponent implements OnInit, OnDestroy {
       (error) => {
         console.log(error);
         this._isLoading.set(false);
+        this.cdr.markForCheck();
       }
     );
   }
 
   verGraficos() {
     this.isView = !this.isView;
+    this.cdr.markForCheck();
   }
 
   parseLogs() {
-    if (!this.rawLogs) return;
+    const content = this.rawLogContent || '';
+    if (!content) {
+      this.parsedLogs = [];
+      return;
+    }
 
-    const logLines = this.rawLogs.split('\n');
+    const logLines = content.split('\n');
     this.parsedLogs = [];
     let currentQuery: Partial<QueryLog> = {};
     let collectingQuery = false;
@@ -398,14 +420,17 @@ export class QueryLogComponent implements OnInit, OnDestroy {
 
   toggleView(log: QueryLog) {
     log.showFullQuery = !log.showFullQuery;
+    this.cdr.markForCheck();
   }
 
   copyToClipboard(log: QueryLog) {
     if (log.query) {
       navigator.clipboard.writeText(log.query).then(() => {
         log.isCopied = true;
+        this.cdr.markForCheck();
         setTimeout(() => {
           log.isCopied = false;
+          this.cdr.markForCheck();
         }, 2000);
       }).catch(err => {
         console.error('Error al copiar al portapapeles', err);
@@ -473,6 +498,7 @@ export class QueryLogComponent implements OnInit, OnDestroy {
 
   onTypeChange() {
     this.filterLogs();
+    this.cdr.markForCheck();
   }
 
   onSearchChange() {

@@ -9,17 +9,39 @@
       <div class="card">
 
         <div class="card-body">
-          <h4 class="card-title">Información de Acceso</h4>
+          <div class="d-flex justify-content-between align-items-center flex-wrap gap-50">
+            <h4 class="card-title mb-0">Información de Acceso</h4>
+            @if (userLifeInfo; as life) {
+              <div class="user-life-badge" [ngClass]="life.statusClass"
+                [title]="'Activado: ' + (life.fechaInicio | date:'dd/MM/yyyy HH:mm') + ' | Vigencia: ' + life.diasVigencia + ' días'">
+                <div class="life-icon">
+                  <span [data-feather]="'clock'" [size]="'15'"></span>
+                </div>
+                <div class="life-details">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="life-status-text">{{ life.label }}</span>
+                    <span class="life-percent ml-75">{{ life.porcentaje }}%</span>
+                  </div>
+                  <div class="life-progress-track">
+                    <div class="life-progress-fill" [style.width.%]="life.porcentaje"></div>
+                  </div>
+                  <small class="life-dates">
+                    Inicio: {{ life.fechaInicio | date:'dd/MM/yyyy' }} • Vence: {{ life.fechaVencimiento | date:'dd/MM/yyyy' }} ({{ life.diasVigencia }}d)
+                  </small>
+                </div>
+              </div>
+            }
+          </div>
           <hr>
             <div class="row">
-              <div class="form-group col-md-3">
+              <div class="form-group" [ngClass]="ldap ? 'col-md-5' : 'col-md-3'">
                 <label class="form-label" for="descripcion">Tipo de acceso</label>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
                   [data-feather]="'shield'"></span></span></div>
                   <ng-select [items]="tipoacceso" [formControl]="iUserTipoaccesoCtrl"
-                    (change)="selTipoAcceso(iUserTipoaccesoCtrl.value)" bindLabel="name" bindValue="id" [disabled]="blockEdit === 'disabled'"
-                  placeholder="Seleccione acceso" appendTo="body" class="flex-grow-1"></ng-select>
+                    (change)="selTipoAcceso(iUserTipoaccesoCtrl.value)" bindLabel="name" bindValue="id" [clearable]="false"
+                    placeholder="Seleccione acceso" appendTo="body" class="flex-grow-1"></ng-select>
                 </div>
               </div>
               @if (ldap) {
@@ -35,7 +57,7 @@
               }
 
               @if (ldap) {
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                   <label class="form-label" for="descripcion">End Point</label>
                   <div class="input-group input-group-pastel">
                     <div class="input-group-prepend"><span class="input-group-text"><span
@@ -80,10 +102,10 @@
                     <div class="input-group-prepend"><span class="input-group-text"><span
                     [data-feather]="'key'"></span></span></div>
                     <input [type]="showClave ? 'text' : 'password'" [formControl]="iUserClaveCtrl"
-                      (input)="checkPasswordStrength(iUserClaveCtrl.value)" (blur)="validatePassword()"
+                      (input)="checkPasswordStrength(iUserClaveCtrl.value)" (blur)="!usuarioSave && blockEdit !== 'disabled' && validatePassword()"
                       [class.border-danger]="isPasswordInvalid"
-                      class="form-control" [disabled]="blockEdit === 'disabled'"
-                      placeholder="Clave" />
+                      class="form-control" [readonly]="blockEdit === 'disabled' || usuarioSave"
+                      [placeholder]="(blockEdit === 'disabled' || usuarioSave) ? '••••••••' : 'Clave'" />
                     @if (isPasswordInvalid) {
                       <div class="input-group-append" title="Contraseña débil">
                         <span class="input-group-text bg-transparent border-danger text-danger">
@@ -91,10 +113,12 @@
                         </span>
                       </div>
                     }
-                    <div class="input-group-append">
-                      <span class="input-group-text cursor-pointer" [class.border-danger]="isPasswordInvalid" (click)="showClave = !showClave"><i class="feather"
-                      [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i></span>
-                    </div>
+                    @if (blockEdit !== 'disabled' && !usuarioSave) {
+                      <div class="input-group-append">
+                        <span class="input-group-text cursor-pointer" [class.border-danger]="isPasswordInvalid" (click)="showClave = !showClave"><i class="feather"
+                        [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i></span>
+                      </div>
+                    }
                   </div>
                 </div>
               }
@@ -113,6 +137,7 @@
             </div>
 
 
+            <!-- Fila 2: Cédula, Nombre de usuario y Descripción / Cargo (ocupa hasta el final de la fila) -->
             <div class="row">
               <div class="form-group col-md-2">
                 <label class="form-label" for="descripcion">Cédula</label>
@@ -132,7 +157,7 @@
                     placeholder="Nombre del usuario" class="form-control">
                 </div>
               </div>
-              <div class="form-group col-md-4">
+              <div class="form-group col-md-6">
                 <label class="form-label" for="descripcion">Descripcion / Cargo</label>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
@@ -141,18 +166,20 @@
                     placeholder="Descripcion del usuario" class="form-control">
                 </div>
               </div>
+            </div>
+
+            <!-- Fila 3: Estatus, Vigencia de:, Correo del usuario y Nivel de trazabilidad -->
+            <div class="row">
               <div class="form-group col-md-2">
                 <label class="form-label" for="estatus">Estatus</label>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
-                  [data-feather]="'activity'" [style.color]="iUser.estatus == 1 ? '#28c76f' : (iUser.estatus == 0 ? '#ea5455' : '#6e6b7b')"></span></span></div>
+                  [data-feather]="'activity'" [style.color]="iUserEstatusCtrl.value == 1 ? '#28c76f' : (iUserEstatusCtrl.value == 0 ? '#ea5455' : '#6e6b7b')"></span></span></div>
                   <ng-select [items]="estatus" [formControl]="iUserEstatusCtrl" bindLabel="name" bindValue="id"
                   placeholder="Estatus" appendTo="body" class="flex-grow-1"></ng-select>
                 </div>
               </div>
-            </div>
 
-            <div class="row">
               <div class="form-group col-md-2">
                 <label class="form-label" for="tipoduracion">Vigencia de:</label>
                 <div class="input-group input-group-pastel">
@@ -179,7 +206,74 @@
                   }
                 </div>
               </div>
-              <div class="form-group col-md-6">
+
+              <div class="form-group col-md-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="form-label mb-50" for="nivelTrazabilidad">Nivel de trazabilidad</label>
+                  <button type="button" class="btn-traza-help" (click)="showTrazaHelp = !showTrazaHelp"
+                    title="Ver guía de niveles de trazabilidad">
+                    <span [data-feather]="'help-circle'" [size]="'14'"></span>
+                    <span>{{ showTrazaHelp ? 'Ocultar guía' : 'Guía y ejemplos' }}</span>
+                  </button>
+                </div>
+                <div class="input-group input-group-pastel">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <span [data-feather]="'layers'" [style.color]="selectedNivelInfo.color"></span>
+                    </span>
+                  </div>
+                  <ng-select [items]="nivelesTrazabilidad" [formControl]="iUserNivelCtrl"
+                    bindLabel="name" bindValue="id" [clearable]="false"
+                    placeholder="Seleccione nivel" appendTo="body" class="flex-grow-1">
+                    <ng-template ng-option-tmp let-item="item">
+                      <div class="traza-option-item">
+                        <div class="d-flex align-items-center justify-content-between mb-25">
+                          <span class="font-weight-bold">{{ item.name }}</span>
+                          <span class="badge" [ngClass]="item.badgeClass">{{ item.shortLabel }}</span>
+                        </div>
+                        <small class="d-block text-muted" style="white-space: normal; line-height: 1.3;">{{ item.desc }}</small>
+                      </div>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel desplegable de Guía y Ejemplos de Trazabilidad -->
+            @if (showTrazaHelp) {
+              <div class="row mb-1">
+                <div class="col-12">
+                  <div class="traza-help-banner">
+                    <div class="d-flex justify-content-between align-items-center mb-75">
+                      <div class="d-flex align-items-center">
+                        <span [data-feather]="'info'" [size]="'16'" class="text-primary mr-50"></span>
+                        <strong class="text-dark small text-uppercase">Guía de Niveles de Trazabilidad (`firmadigital.nivel`)</strong>
+                      </div>
+                      <button type="button" class="close-help-btn" (click)="showTrazaHelp = false">&times;</button>
+                    </div>
+                    <div class="traza-help-grid">
+                      @for (lvl of nivelesTrazabilidad; track lvl.id) {
+                        <div class="traza-help-card" [class.active]="selectedNivelInfo.id === lvl.id"
+                          (click)="iUserNivelCtrl.setValue(lvl.id)">
+                          <div class="d-flex align-items-center justify-content-between mb-25">
+                            <span class="badge" [ngClass]="lvl.badgeClass">{{ lvl.name }}</span>
+                            @if (selectedNivelInfo.id === lvl.id) {
+                              <small class="text-primary font-weight-bold">Seleccionado</small>
+                            }
+                          </div>
+                          <p class="mb-25 text-dark small font-weight-bold">{{ lvl.desc }}</p>
+                          <small class="text-muted d-block">{{ lvl.example }}</small>
+                        </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- Fila 4: Descripción general alineada con Múltiple Sesión -->
+            <div class="row">
+              <div class="form-group" [ngClass]="!ldap ? 'col-md-9' : 'col-md-12'">
                 <label class="form-label">Descripcion general</label>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
@@ -188,9 +282,21 @@
                     placeholder="Descripcion general" class="form-control">
                 </div>
               </div>
+              @if (!ldap) {
+                <div class="form-group col-md-3">
+                  <label class="form-label" for="origen">Multiple Sesión</label>
+                  <div class="input-group input-group-pastel">
+                    <div class="input-group-prepend"><span class="input-group-text"><span
+                    [data-feather]="'users'"></span></span></div>
+                    <ng-select [items]="lstmultiplesesion" [addTag]="true" [formControl]="multiplesesionCtrl"
+                      bindValue="id" bindLabel="name" placeholder="Multiple Sesión"
+                    appendTo="body" class="flex-grow-1"></ng-select>
+                  </div>
+                </div>
+              }
             </div>
 
-
+            <!-- Fila 5 (Última fila): Teléfono, Regional / Sucursal y Oficina / Departamento -->
             @if (!ldap) {
               <div class="row">
                 <div class="form-group col-md-2" style="display: none;">
@@ -203,6 +309,23 @@
                   <label class="form-label" for="tiempoduracion">Tiempo sesión</label>
                   <input type="number" [formControl]="iUserDuraciontiempoCtrl"
                     placeholder="Tiempo" class="form-control">
+                </div>
+                <div class="form-group col-md-3">
+                  <label class="form-label" for="telefono">Teléfono</label>
+                  <div class="input-group input-group-pastel phone-input-group">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <span [data-feather]="'phone'"></span>
+                      </span>
+                    </div>
+                    <ng-select [items]="codigosTelefono" [formControl]="iUserTelCodigoCtrl"
+                      bindLabel="name" bindValue="id" [clearable]="false" [searchable]="false"
+                      (change)="onPhoneInput()" appendTo="body" class="phone-code-select">
+                    </ng-select>
+                    <input type="text" [formControl]="iUserTelNumeroCtrl"
+                      (input)="onPhoneInput($event)" maxlength="8"
+                      placeholder="000-0000" class="form-control phone-number-input" />
+                  </div>
                 </div>
                 <div class="form-group col-md-4">
                   <label class="form-label" for="origen">Regional / Sucursal</label>
@@ -238,16 +361,6 @@
                         }
                       </ng-template>
                     </ng-select>
-                  </div>
-                </div>
-                <div class="form-group col-md-3">
-                  <label class="form-label" for="origen">Multiple Sesión</label>
-                  <div class="input-group input-group-pastel">
-                    <div class="input-group-prepend"><span class="input-group-text"><span
-                    [data-feather]="'map-pin'"></span></span></div>
-                    <ng-select [items]="lstmultiplesesion" [addTag]="true" [formControl]="multiplesesionCtrl"
-                      bindValue="id" bindLabel="name" placeholder="Multiple Sesión"
-                    appendTo="body" class="flex-grow-1"></ng-select>
                   </div>
                 </div>
               </div>

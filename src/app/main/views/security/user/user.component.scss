@@ -67,6 +67,9 @@ $info-text: #00bcd4;
 // Pastel Input Groups
 // ========================================
 .input-group-pastel {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
   box-shadow: 0 2px 10px rgba(0,0,0,0.03);
   border-radius: 8px;
   transition: all 0.3s ease;
@@ -153,7 +156,9 @@ $info-text: #00bcd4;
 ::ng-deep {
   .ng-select {
     &.flex-grow-1 {
-      flex: 1;
+      flex: 1 1 auto;
+      width: 1%;
+      min-width: 0;
       
       .ng-select-container {
         background: white;
@@ -162,17 +167,27 @@ $info-text: #00bcd4;
         min-height: 44px;
         border-radius: 0 8px 8px 0;
         transition: all 0.3s ease;
+        overflow: hidden;
         
         .ng-value-container {
           padding-left: 0.75rem;
+          min-width: 0;
+          overflow: hidden;
           
           .ng-placeholder {
             color: lighten($text-secondary, 10%);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
           
           .ng-value {
             color: $text-primary;
             font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
             
             &.ng-value-more {
               background-color: $primary-soft;
@@ -546,6 +561,260 @@ $info-text: #00bcd4;
   
   .btn {
     min-width: 120px;
+  }
+}
+
+// ========================================
+// Phone Input Group (Code Selector + Mask)
+// ========================================
+.phone-input-group {
+  ::ng-deep .ng-select.phone-code-select {
+    width: 88px;
+    min-width: 88px;
+    flex: 0 0 88px;
+
+    .ng-select-container {
+      background: #f8fafc !important;
+      border: 1px solid $border-color !important;
+      border-left: none !important;
+      border-right: 1px solid $border-color !important;
+      min-height: 44px;
+      height: 44px;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+
+      .ng-value-container {
+        padding-left: 0.65rem !important;
+        padding-right: 0.25rem !important;
+        border-top: 0 !important;
+
+        .ng-value {
+          font-weight: 600;
+          color: $text-primary;
+          font-size: 0.9rem;
+        }
+      }
+
+      .ng-arrow-wrapper {
+        padding-right: 0.5rem;
+      }
+    }
+
+    &.ng-select-opened > .ng-select-container,
+    &.ng-select-focused > .ng-select-container {
+      border-color: $border-color !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .phone-number-input {
+    border-left: none !important;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+  }
+}
+
+// ========================================
+// User Life / Validity Header Badge
+// ========================================
+.user-life-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  min-width: 250px;
+  transition: all 0.2s ease;
+
+  .life-icon {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .life-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .life-status-text {
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .life-percent {
+    font-size: 0.72rem;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+
+  .life-progress-track {
+    width: 100%;
+    height: 5px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 3px 0 4px;
+  }
+
+  .life-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+  }
+
+  .life-dates {
+    display: block;
+    font-size: 0.7rem;
+    color: #64748b;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  &.life-success {
+    border-color: rgba(40, 199, 111, 0.25);
+    background: rgba(40, 199, 111, 0.04);
+
+    .life-icon {
+      background: rgba(40, 199, 111, 0.12);
+      color: #28c76f;
+    }
+
+    .life-status-text,
+    .life-percent {
+      color: #28c76f;
+    }
+
+    .life-progress-fill {
+      background: #28c76f;
+    }
+  }
+
+  &.life-warning {
+    border-color: rgba(255, 159, 67, 0.3);
+    background: rgba(255, 159, 67, 0.05);
+
+    .life-icon {
+      background: rgba(255, 159, 67, 0.14);
+      color: #ff9f43;
+    }
+
+    .life-status-text,
+    .life-percent {
+      color: #ff9f43;
+    }
+
+    .life-progress-fill {
+      background: #ff9f43;
+    }
+  }
+
+  &.life-danger {
+    border-color: rgba(234, 84, 85, 0.3);
+    background: rgba(234, 84, 85, 0.05);
+
+    .life-icon {
+      background: rgba(234, 84, 85, 0.14);
+      color: #ea5455;
+    }
+
+    .life-status-text,
+    .life-percent {
+      color: #ea5455;
+    }
+
+    .life-progress-fill {
+      background: #ea5455;
+    }
+  }
+}
+
+// ========================================
+// Traceability Level Help & Hint UI
+// ========================================
+.btn-traza-help {
+  background: rgba(115, 103, 240, 0.08);
+  border: 1px solid rgba(115, 103, 240, 0.2);
+  color: #7367f0;
+  border-radius: 6px;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #7367f0;
+    color: #ffffff;
+    border-color: #7367f0;
+  }
+}
+
+.traza-active-hint {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+  padding: 0.35rem 0.65rem;
+  line-height: 1.3;
+}
+
+.traza-help-banner {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.5rem;
+
+  .close-help-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: #94a3b8;
+    cursor: pointer;
+
+    &:hover {
+      color: $text-primary;
+    }
+  }
+}
+
+.traza-help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.85rem;
+}
+
+.traza-help-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  }
+
+  &.active {
+    border-color: #7367f0;
+    background: rgba(115, 103, 240, 0.03);
+    box-shadow: 0 0 0 2px rgba(115, 103, 240, 0.12);
   }
 }
 

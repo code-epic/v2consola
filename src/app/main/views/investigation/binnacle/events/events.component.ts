@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, NgZone } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, NgZone, ChangeDetectorRef, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule, ActivatedRoute } from "@angular/router";
@@ -62,12 +62,29 @@ export class EventComponent implements OnInit {
   public userPageSize: number = 25;
 
   searchTextCtrl = new FormControl('');
-  get searchText() { return this.searchTextCtrl.value; }
-  public usuarios: any[] = [];
-  public selectedUser: any = null;
-  public ListarBitacora: IMetodoBitacora[] = [];
-  public currentStep: number = 1;
-  public loading: boolean = false;
+  private _searchText = signal<string>('');
+  get searchText() { return this._searchText(); }
+
+  private _usuarios = signal<any[]>([]);
+  get usuarios() { return this._usuarios(); }
+  set usuarios(val: any[]) { this._usuarios.set(val); }
+
+  private _selectedUser = signal<any>(null);
+  get selectedUser() { return this._selectedUser(); }
+  set selectedUser(val: any) { this._selectedUser.set(val); }
+
+  private _listarBitacora = signal<IMetodoBitacora[]>([]);
+  get ListarBitacora() { return this._listarBitacora(); }
+  set ListarBitacora(val: IMetodoBitacora[]) { this._listarBitacora.set(val); }
+
+  private _currentStep = signal<number>(1);
+  get currentStep() { return this._currentStep(); }
+  set currentStep(val: number) { this._currentStep.set(val); }
+
+  private _loading = signal<boolean>(false);
+  get loading() { return this._loading(); }
+  set loading(val: boolean) { this._loading.set(val); }
+
   public totalInvocations: number = 0;
   public totalFunctions: number = 0;
   public actionStats: any[] = [];
@@ -78,9 +95,14 @@ export class EventComponent implements OnInit {
   };
 
   // Modal State
-  public rowDataRegistros: any[] = [];
+  private _rowDataRegistros = signal<any[]>([]);
+  get rowDataRegistros() { return this._rowDataRegistros(); }
+  set rowDataRegistros(val: any[]) { this._rowDataRegistros.set(val); }
+
   searchRegistrosCtrl = new FormControl('');
-  get searchRegistros() { return this.searchRegistrosCtrl.value; }
+  private _searchRegistros = signal<string>('');
+  get searchRegistros() { return this._searchRegistros(); }
+
   public selectedLog: any = null;
   public decodedConsulta: string = '';
   public decodedContenido: string = '';
@@ -97,7 +119,9 @@ export class EventComponent implements OnInit {
     version: '',
   }
 
-  public appData: any = null;
+  private _appData = signal<any>(null);
+  get appData() { return this._appData(); }
+  set appData(val: any) { this._appData.set(val); }
 
   constructor(
     private route: ActivatedRoute,
@@ -105,21 +129,28 @@ export class EventComponent implements OnInit {
     private modalService: NgbModal,
     private utilService: UtilService,
     private compresionService: CompresionService,
-    private zone: NgZone // Inyectado para detección de cambios en streaming
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    this.searchTextCtrl.valueChanges.subscribe(() => {
+    this.searchTextCtrl.valueChanges.subscribe((val) => {
+      this._searchText.set(val || '');
       this.userPage = 1;
+      this.cdr.markForCheck();
+    });
+    this.searchRegistrosCtrl.valueChanges.subscribe((val) => {
+      this._searchRegistros.set(val || '');
+      this.cdr.markForCheck();
     });
     this.route.params.subscribe(params => {
       const appIdEncoded = params['id'];
       if (appIdEncoded) {
         try {
-          this.appData = JSON.parse(atob(appIdEncoded));
+          this._appData.set(JSON.parse(atob(appIdEncoded)));
         } catch (e) {
           console.error('[EventComponent] Error decodificando appId:', e);
-          this.appData = { id: appIdEncoded, nombre: appIdEncoded };
+          this._appData.set({ id: appIdEncoded, nombre: appIdEncoded });
         }
         this.cargarUsuarios();
       }
@@ -136,79 +167,104 @@ export class EventComponent implements OnInit {
     };
   }
 
+  private getColorClass(seed: string): string {
+    const colors = ['primary', 'success', 'warning', 'info'];
+    if (!seed) return colors[0];
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      hash = seed.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  }
+
   cargarUsuarios() {
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_USUARIO;
     this.xAPI.parametros = this.appData.id;
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data: any[]) => {
         if (!data) return;
-        this.usuarios = data;
+        const enriched = data.map(u => ({
+          ...u,
+          _colorClass: this.getColorClass(u.nombre || u.login || '')
+        }));
+        this._usuarios.set(enriched);
+        this.cdr.markForCheck();
       },
       (error) => console.error(error)
     )
   }
 
   selectUser(user: any) {
-    this.selectedUser = user;
+    this._selectedUser.set(user);
     this.cargarEventos(user.login || user.usuario || user.cedula);
-    this.currentStep = 2;
+    this._currentStep.set(2);
+    this.cdr.markForCheck();
   }
 
   get filteredUsers() {
-    if (!this.searchText) return this.usuarios;
+    const list = this.usuarios;
+    if (!this.searchText) return list;
     const search = this.searchText.toLowerCase();
-    return this.usuarios.filter(user =>
+    return list.filter(user =>
       (user.nombre?.toLowerCase().includes(search)) ||
       (user.login?.toLowerCase().includes(search)) ||
       (user.perfil?.toLowerCase().includes(search))
     );
   }
 
+  get filteredRegistros() {
+    const list = this.rowDataRegistros;
+    if (!this.searchRegistros) return list;
+    const search = this.searchRegistros.toLowerCase();
+    return list.filter(r =>
+      (r.hash?.toLowerCase().includes(search)) ||
+      (r.metodo?.toLowerCase().includes(search))
+    );
+  }
+
   async cargarEventos(login: string) {
-    this.loading = true;
+    this._loading.set(true);
     this.totalInvocations = 0;
     this.totalFunctions = 0;
-    this.ListarBitacora = [];
+    this._listarBitacora.set([]);
     this.xAPI.funcion = "_SYS_CLogPatterns";
     this.xAPI.parametros = login;
 
     try {
-      // Uso de postStream para mejor rendimiento en datasets grandes
       await this.apiService.postStream<IMetodoBitacora>('crudstream', this.xAPI, (row) => {
         this.zone.run(() => {
-          // Procesamiento de metadatos de la fila en tiempo real
-          console.log("row.init");
-          console.log(row);
-          console.log("row.end");
           if (row.funciones) {
             row.funciones.forEach(f => {
               if (f.logs && f.logs.length > 0) {
-                // Encontrar log más reciente para mostrar "Última actividad"
                 const latest = f.logs.reduce((prev, curr) => (prev.fecha > curr.fecha) ? prev : curr);
                 f.ultimaFecha = latest.fecha;
               }
             });
           }
 
-          // Clasificación on-the-fly de operaciones huérfanas
           if (!row.metodo || row.metodo.trim() === '') {
             row.metodo = 'OTRAS OPERACIONES';
           }
 
-          this.ListarBitacora.push(row);
-          // Actualización de contadores globales para análisis
           this.totalInvocations += row.total_invocaciones;
           this.totalFunctions += row.funciones ? row.funciones.length : 0;
 
-          // Ordenar por volumen de invocaciones para mantener jerarquía
-          this.ListarBitacora.sort((a, b) => b.total_invocaciones - a.total_invocaciones);
+          this._listarBitacora.update(curr => {
+            const next = [...curr, row];
+            next.sort((a, b) => b.total_invocaciones - a.total_invocaciones);
+            return next;
+          });
+          this.cdr.markForCheck();
         });
       });
     } catch (error) {
       console.error('[EventComponent] Stream Error:', error);
     } finally {
-      this.loading = false;
-      this.actualizarEstadisticas();
+      this.zone.run(() => {
+        this._loading.set(false);
+        this.actualizarEstadisticas();
+        this.cdr.markForCheck();
+      });
     }
   }
 
@@ -441,6 +497,7 @@ export class EventComponent implements OnInit {
           keyboard: false,
           windowClass: 'fondo-modal'
         });
+        this.cdr.markForCheck();
 
         modalRef.result.then(() => this.reopenPrevious(), () => this.reopenPrevious());
       },
@@ -473,6 +530,7 @@ export class EventComponent implements OnInit {
   }
 
   goToStep(step: number) {
-    this.currentStep = step;
+    this._currentStep.set(step);
+    this.cdr.markForCheck();
   }
 }

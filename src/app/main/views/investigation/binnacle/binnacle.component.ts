@@ -53,14 +53,21 @@ export class BinnacleComponent implements OnInit {
 
   searchType: string = "conexiones";
   searchTextCtrl = new FormControl('');
-  get searchText() { return this.searchTextCtrl.value; }
+  private _searchText = signal<string>('');
+  get searchText() { return this._searchText(); }
   selectCustomSelectedCtrl = new FormControl([]);
   get selectCustomSelected() { return this.selectCustomSelectedCtrl.value; }
 
   public contentHeader: object;
 
-  public ListarBitacora = [];
-  public ListarAuditoriaLogs = [];
+  private _listarBitacora = signal<any[]>([]);
+  get ListarBitacora() { return this._listarBitacora(); }
+  set ListarBitacora(val: any[]) { this._listarBitacora.set(val); }
+
+  private _listarAuditoriaLogs = signal<any[]>([]);
+  get ListarAuditoriaLogs() { return this._listarAuditoriaLogs(); }
+  set ListarAuditoriaLogs(val: any[]) { this._listarAuditoriaLogs.set(val); }
+
   private _loadingStreaming = signal<boolean>(false);
   get loadingStreaming() { return this._loadingStreaming(); }
 
@@ -74,7 +81,8 @@ export class BinnacleComponent implements OnInit {
   public pageSize = 10;
   public pageBasic = 1;
   filterActividadCtrl = new FormControl('');
-  get filterActividad() { return this.filterActividadCtrl.value; }
+  private _filterActividad = signal<string>('');
+  get filterActividad() { return this._filterActividad(); }
 
   public developer = [];
   public rowData = [];
@@ -88,6 +96,14 @@ export class BinnacleComponent implements OnInit {
 
 
   async ngOnInit() {
+    this.searchTextCtrl.valueChanges.subscribe((val) => {
+      this._searchText.set(val || '');
+      this.page = 1;
+    });
+    this.filterActividadCtrl.valueChanges.subscribe((val) => {
+      this._filterActividad.set(val || '');
+      this.page = 1;
+    });
 
     await this.CargarBitacora()
 
@@ -120,32 +136,57 @@ export class BinnacleComponent implements OnInit {
     this.ruta.navigate([base + '/' + datoCodificado]);
   }
 
-  getMaterialIcon(nombre: string): string {
+  getCardMeta(nombre: string): { icon: string; colorClass: string } {
     const icons = [
-      'apps', 'dashboard', 'terminal', 'memory', 'database',
-      'developer_board', 'cloud', 'security', 'dns', 'bug_report',
-      'api', 'integration_instructions', 'web', 'code', 'build'
+      'grid', 'layout', 'terminal', 'cpu', 'database',
+      'server', 'cloud', 'shield', 'hard-drive', 'activity',
+      'code', 'layers', 'globe', 'box', 'tool'
     ];
-    if (!nombre) return icons[0];
+    const colors = ['primary', 'success', 'warning', 'info'];
+    if (!nombre) return { icon: icons[0], colorClass: colors[0] };
     let hash = 0;
     for (let i = 0; i < nombre.length; i++) {
       hash = nombre.charCodeAt(i) + ((hash << 5) - hash);
     }
-    const index = Math.abs(hash) % icons.length;
-    return icons[index];
+    const absHash = Math.abs(hash);
+    return {
+      icon: icons[absHash % icons.length],
+      colorClass: colors[absHash % colors.length]
+    };
+  }
+
+  get filteredBitacora(): any[] {
+    const term = (this.searchText || '').toLowerCase().trim();
+    if (!term) return this.ListarBitacora;
+    return this.ListarBitacora.filter(item =>
+      (item.nombre || '').toLowerCase().includes(term) ||
+      (item.comentario || '').toLowerCase().includes(term)
+    );
+  }
+
+  get filteredAuditoriaLogs(): any[] {
+    const term = (this.searchText || '').toLowerCase().trim();
+    const act = (this.filterActividad || '').toLowerCase().trim();
+    return this.ListarAuditoriaLogs.filter(item => {
+      const matchUser = !term || (item.usuario || '').toLowerCase().includes(term);
+      const matchAct = !act || (item.tipo || '').toLowerCase().includes(act);
+      return matchUser && matchAct;
+    });
   }
 
   async CargarBitacora() {
-    this.ListarBitacora = [];
+    this._listarBitacora.set([]);
     this._loadingStreaming.set(true);
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_LOGS;
     this.xAPI.parametros = ''
 
     try {
       await this.apiService.postStream<any>('crudstream', this.xAPI, (row) => {
+        const meta = this.getCardMeta(row?.nombre);
+        const enrichedRow = { ...row, _icon: meta.icon, _colorClass: meta.colorClass };
         this.zone.run(() => {
-          this.ListarBitacora.push(row);
-          this.rowData = this.ListarBitacora;
+          this._listarBitacora.update(curr => [...curr, enrichedRow]);
+          this.rowData = this._listarBitacora();
           this.tempData = this.rowData;
         });
       });
@@ -159,7 +200,7 @@ export class BinnacleComponent implements OnInit {
   }
 
   async CargarReporteAuditoriaLogs(print: boolean = true) {
-    this.ListarAuditoriaLogs = [];
+    this._listarAuditoriaLogs.set([]);
     this._loadingStreaming.set(true);
     this.xAPI.funcion = environment.functions.CONSULTAR_APPS_AUDITORIA_LOGS;
     this.xAPI.parametros = ''
@@ -167,7 +208,7 @@ export class BinnacleComponent implements OnInit {
     try {
       await this.apiService.postStream<any>('crudstream', this.xAPI, (row) => {
         this.zone.run(() => {
-          this.ListarAuditoriaLogs.push(row);
+          this._listarAuditoriaLogs.update(curr => [...curr, row]);
         });
       });
       

@@ -20,6 +20,8 @@ export interface IUser {
   oficina: string;
   regional: string;
   multiplesesion: boolean;
+  nivel?: number;
+  telefono?: string;
 }
 
 export interface IRol {
