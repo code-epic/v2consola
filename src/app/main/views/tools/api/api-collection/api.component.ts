@@ -659,7 +659,7 @@ export class ApiComponent implements OnInit {
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
   }
 
@@ -670,7 +670,7 @@ export class ApiComponent implements OnInit {
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
   }
 
@@ -892,7 +892,7 @@ export class ApiComponent implements OnInit {
       size: 'xl',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
   }
 

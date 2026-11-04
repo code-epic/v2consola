@@ -227,7 +227,7 @@ export class ApiDetailsComponent implements OnInit {
       size: "xl",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     });
   }
 

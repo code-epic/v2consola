@@ -443,84 +443,115 @@
                                         </span> Frame
                                       </a>
                                       <!-- INICIO DEL MODAL -->
-                                      <ng-template #modalPrimary style="width: 100vw; z-index: 2000;">
-                                        <div class="modal-header">
-                                          <h5 class="modal-title" id="myModalLabel160">Frame</h5>
-                                          <button type="button" class="close" (click)="onCloseClick($event)"
-                                            aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
+                                      <ng-template #modalPrimary>
+                                        <div class="modal-header modal-header-pastel">
+                                          <div class="d-flex align-items-center">
+                                            <div class="modal-icon-badge modal-icon-primary mr-1">
+                                              <span [data-feather]="'grid'" [size]="20"></span>
+                                            </div>
+                                            <div>
+                                              <h5 class="modal-title mb-0" id="myModalLabel160">Configurar Frame</h5>
+                                              <small class="text-muted">Defina los campos y parámetros del frame de visualización</small>
+                                            </div>
+                                          </div>
+                                          <button type="button" class="close btn-close-pastel" (click)="onCloseClick($event)"
+                                            aria-label="Close" title="Cerrar">
+                                            <span [data-feather]="'x'" [size]="17"></span>
                                           </button>
                                         </div>
                                         <div class="modal-body" tabindex="0" ngbAutofocus>
                                           <div class="row">
                                             <div class="form-group col-md-4">
-                                              <label class="form-label" for="nombre">Nombre del campo</label>
-                                              <input [formControl]="wkfFormNombreCtrl"
-                                                autocomplete="off" required type="text" name="nombre" id="nombre"
-                                                placeholder="Nombre del campo ..." class="form-control" />
+                                              <label class="form-label font-weight-bold" for="nombre">Nombre del Campo</label>
+                                              <div class="input-group-pastel">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text"><span [data-feather]="'type'" [size]="15"></span></span>
+                                                </div>
+                                                <input [formControl]="wkfFormNombreCtrl"
+                                                  autocomplete="off" required type="text" name="nombre" id="nombre"
+                                                  placeholder="Nombre del campo..." class="form-control" />
+                                              </div>
                                             </div>
                                             <div class="form-group col-md-4">
-                                              <label class="form-label" for="nombre">Descripción del campo</label>
-                                              <input [formControl]="wkfFormDescripcionCtrl"
-                                                autocomplete="off" required
-                                                type="text" name="descripcion" id="descripcion"
-                                                placeholder="Descripción del campo ..." class="form-control" />
+                                              <label class="form-label font-weight-bold" for="descripcion">Descripción</label>
+                                              <div class="input-group-pastel">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text"><span [data-feather]="'file-text'" [size]="15"></span></span>
+                                                </div>
+                                                <input [formControl]="wkfFormDescripcionCtrl"
+                                                  autocomplete="off" required
+                                                  type="text" name="descripcion" id="descripcion"
+                                                  placeholder="Descripción del campo..." class="form-control" />
+                                              </div>
                                             </div>
                                             <div class="form-group col-md-4">
-                                              <label class="form-label" for="tipo">Tipo de campo</label>
-                                              <ng-select [formControl]="xtipoCtrl" bindLabel="descripcion"
-                                                name="descripcion" id="id" required placeholder="Seleccione" bindValue="id"
-                                                (change)="selTipo()">
-                                                @for (item of lstTipo; track item) {
-                                                  <ng-option value="{{item.id}}">{{
-                                                    item.descripcion }}
-                                                  </ng-option>
-                                                }
-                                              </ng-select>
+                                              <label class="form-label font-weight-bold" for="tipo">Tipo de Campo</label>
+                                              <div class="ng-select-group-pastel">
+                                                <div class="input-group-prepend">
+                                                  <span class="input-group-text"><span [data-feather]="'tag'" [size]="15"></span></span>
+                                                </div>
+                                                <ng-select [formControl]="xtipoCtrl" bindLabel="descripcion"
+                                                  name="descripcion" id="id" required placeholder="Seleccione" bindValue="id"
+                                                  (change)="selTipo()">
+                                                  @for (item of lstTipo; track item) {
+                                                    <ng-option value="{{item.id}}">{{
+                                                      item.descripcion }}
+                                                    </ng-option>
+                                                  }
+                                                </ng-select>
+                                              </div>
                                             </div>
                                           </div>
                                           <div class="row">
                                             @if (xdatos_val) {
                                               <div class="form-group col-md-4">
-                                                <label class="form-label" for="datos">Origen de datos</label>
-                                                <ng-select [formControl]="xdatosCtrl" bindLabel="descripcion"
-                                                  name="descripcion" id="id" required placeholder="Origen de datos"
-                                                  bindValue="id" (change)="selOrigen()">
-                                                  @for (item of lstDatos; track item) {
-                                                    <ng-option value="{{item.id}}">{{
-                                                      item.descripcion }}
-                                                    </ng-option>
-                                                  }
-                                                </ng-select>
+                                                <label class="form-label font-weight-bold" for="datos">Origen de Datos</label>
+                                                <div class="ng-select-group-pastel">
+                                                  <div class="input-group-prepend">
+                                                    <span class="input-group-text"><span [data-feather]="'database'" [size]="15"></span></span>
+                                                  </div>
+                                                  <ng-select [formControl]="xdatosCtrl" bindLabel="descripcion"
+                                                    name="descripcion" id="id" required placeholder="Origen de datos"
+                                                    bindValue="id" (change)="selOrigen()">
+                                                    @for (item of lstDatos; track item) {
+                                                      <ng-option value="{{item.id}}">{{
+                                                        item.descripcion }}
+                                                      </ng-option>
+                                                    }
+                                                  </ng-select>
+                                                </div>
                                               </div>
                                             }
                                             @if (xdatos_api) {
                                               <div class="form-group col-md-8">
-                                                <label class="form-label" for="api">Origen de API</label>
-                                                <ng-select [formControl]="xorigenCtrl" bindLabel="descripcion"
-                                                  name="descripcion" id="id" required placeholder="Origen de API"
-                                                  bindValue="id">
-                                                  @for (item of lstAPI; track item) {
-                                                    <ng-option value="{{item.id}}">{{
-                                                      item.descripcion }}
-                                                    </ng-option>
-                                                  }
-                                                </ng-select>
+                                                <label class="form-label font-weight-bold" for="api">Origen de API</label>
+                                                <div class="ng-select-group-pastel">
+                                                  <div class="input-group-prepend">
+                                                    <span class="input-group-text"><span [data-feather]="'server'" [size]="15"></span></span>
+                                                  </div>
+                                                  <ng-select [formControl]="xorigenCtrl" bindLabel="descripcion"
+                                                    name="descripcion" id="id" required placeholder="Seleccione API"
+                                                    bindValue="id">
+                                                    @for (item of lstAPI; track item) {
+                                                      <ng-option value="{{item.id}}">{{
+                                                        item.descripcion }}
+                                                      </ng-option>
+                                                    }
+                                                  </ng-select>
+                                                </div>
                                               </div>
                                             }
                                           </div>
-                                          <div class="modal-footer">
-                                            <div class="col-md-12">
-                                              <div class="d-flex justify-content-end">
-                                                <button type="button" class="btn btn-success mr-2"
-                                                  (click)="addItemForm()">Agregar
-                                                </button>
-                                                <button type="button" class="btn btn-danger"
-                                                  (click)="onCloseClick(e)">Cerrar
-                                                </button>
-                                              </div>
-                                            </div>
-                                          </div>
+                                        </div>
+                                        <div class="modal-footer modal-footer-pastel">
+                                          <button type="button" class="btn btn-outline-secondary"
+                                            (click)="onCloseClick($event)" rippleEffect>
+                                            <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cerrar
+                                          </button>
+                                          <button type="button" class="btn btn-success"
+                                            (click)="addItemForm()" rippleEffect>
+                                            <span [data-feather]="'plus'" [size]="15" class="mr-50"></span> Agregar Campo
+                                          </button>
                                         </div>
                                       </ng-template>
                                       <!-- FIN DEL MODAL -->

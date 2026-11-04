@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
 import { Sha256Service } from './sha256';
 import moment from 'moment';
+import { environment } from 'environments/environment';
 
 
 @Injectable({
@@ -199,6 +200,35 @@ export class UtilService {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+  /**
+   * Obtiene la aplicación activa verificando si coincide con environment.ID o devuelve la primera.
+   */
+  obtenerAplicacionPorId(aplicaciones: any[]): any {
+    if (!Array.isArray(aplicaciones) || aplicaciones.length === 0) return null;
+    return (
+      aplicaciones.find(
+        (app: any) => (app?.id ?? app?.ID) === environment.ID
+      ) ?? aplicaciones[0]
+    );
+  }
 
+  /**
+   * Ordena el arreglo ubicando prioritariamente en el índice 0 la aplicación coincidente con environment.ID.
+   */
+  ordenarAplicacionesPorId(aplicaciones: any[]): any[] {
+    if (!Array.isArray(aplicaciones) || aplicaciones.length <= 1) {
+      return aplicaciones || [];
+    }
 
+    const index = aplicaciones.findIndex(
+      (app: any) => (app?.id ?? app?.ID) === environment.ID
+    );
+
+    if (index > 0) {
+      const [appTarget] = aplicaciones.splice(index, 1);
+      aplicaciones.unshift(appTarget);
+    }
+
+    return aplicaciones;
+  }
 }

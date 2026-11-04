@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Output, EventEmitter, signal } from '@angular/core'
+import { Component, OnInit, ViewChild, Output, EventEmitter, signal, ViewEncapsulation } from '@angular/core'
 import { ApiService, IAPICore, WkfDescripcionRed, WkfEstado, WkfEstatus, WkfFrom, WkfZRed, wkfRed, wkfTransicion } from '@services/apicore/api.service'
 import { ComunicacionesService } from '@services/comunicaciones/comunicaciones.service'
 import { UtilService } from '@services/util/util.service'
@@ -21,6 +21,7 @@ import { ContentHeaderComponent } from 'app/layout/components/content-header/con
     selector: 'app-workflow',
     templateUrl: './workflow.component.html',
     styleUrls: ['./workflow.component.scss'],
+    encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [
         CommonModule,
@@ -668,9 +669,10 @@ export class WorkflowComponent implements OnInit {
   abrirModal(modalPrimary) {
     this.modalService.open(modalPrimary, {
       centered: true,
-      windowClass: 'modal modal-primary',
+      windowClass: 'fondo-modal modal-pastel-card',
       size: 'lg',
-      backdrop: false
+      backdrop: false,
+      keyboard: false,
     });
   }
 

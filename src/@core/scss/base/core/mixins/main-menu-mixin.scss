@@ -306,11 +306,21 @@
 
         .active {
           background: linear-gradient(118deg, rgba($primary, 1), rgba($primary, 0.7));
-          box-shadow: 0 0 10px 1px rgba($primary, 0.7);
-          border-radius: 4px;
+          box-shadow: 0 3px 10px 0 rgba($primary, 0.28);
+          border-radius: 8px;
           z-index: 1;
           > a {
-            color: $white;
+            color: $white !important;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+
+            span,
+            i,
+            svg {
+              color: $white !important;
+              stroke: $white !important;
+            }
           }
         }
       }

@@ -1,4 +1,4 @@
-// Contenedor principal 100% transparente
+// Contenedor principal 100% transparente y estable
 .home-container {
   position: relative;
   min-height: calc(100vh - 130px);
@@ -7,19 +7,6 @@
   border: none !important;
   padding: 1rem 0.5rem 1.5rem 0.5rem;
   overflow: hidden;
-  animation: homeGentleFocus 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: filter, opacity;
-}
-
-@keyframes homeGentleFocus {
-  0% {
-    filter: blur(5px);
-    opacity: 0.3;
-  }
-  100% {
-    filter: blur(0px);
-    opacity: 1;
-  }
 }
 
 .content-body {
@@ -38,6 +25,193 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+// Contenedores gemelos (Skeleton y Contenido Real) para anclaje geométrico exacto
+.ecosystem-skeleton-stage,
+.ecosystem-stage-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 150px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// Transición suave de entrada sin saltos al terminar el skeleton
+.ecosystem-content-fade-in {
+  animation: ecosystemStageFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity, transform;
+}
+
+@keyframes ecosystemStageFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ============================================================
+// PATRÓN SKELETON CON BRILLO Y SHIMMER DE CARGA SUAVE
+// ============================================================
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: #f1f4f9;
+  border-radius: 6px;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.65) 25%,
+      rgba(115, 103, 240, 0.16) 50%,
+      rgba(255, 255, 255, 0.65) 75%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: skeletonShimmerWave 1.85s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    content: '';
+    pointer-events: none;
+  }
+}
+
+@keyframes skeletonShimmerWave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+// Tarjetas y elementos Skeleton
+.skeleton-card {
+  min-height: 145px;
+  pointer-events: none;
+  cursor: default;
+}
+
+.skeleton-pill {
+  height: 18px;
+  border-radius: 20px;
+
+  &-cat {
+    width: 95px;
+  }
+
+  &-badge {
+    width: 62px;
+  }
+}
+
+.skeleton-icon-pill {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  margin-right: 0.85rem;
+  flex-shrink: 0;
+}
+
+.skeleton-line {
+  height: 11px;
+  border-radius: 6px;
+
+  &-title {
+    height: 15px;
+    width: 65%;
+  }
+
+  &-desc {
+    width: 95%;
+  }
+
+  &-desc-short {
+    width: 70%;
+  }
+
+  &-tele-label {
+    width: 65px;
+    height: 10px;
+  }
+
+  &-tele-val {
+    width: 115px;
+    height: 10px;
+  }
+}
+
+.skeleton-avatar-wrap {
+  .skeleton-circle-logo {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+  }
+}
+
+.skeleton-hub-title {
+  height: 32px;
+  width: 220px;
+  border-radius: 8px;
+}
+
+.skeleton-hub-subtitle {
+  height: 14px;
+  width: 280px;
+  border-radius: 6px;
+}
+
+.skeleton-dock {
+  min-width: 310px;
+  height: 48px;
+
+  .skeleton-dot-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .skeleton-dock-heading {
+    width: 165px;
+    height: 12px;
+  }
+
+  .skeleton-dock-operator {
+    width: 135px;
+    height: 10px;
+  }
+}
+
+.skeleton-footer {
+  min-width: 520px;
+  height: 38px;
+  border-radius: 20px;
+
+  .skeleton-footer-item-1 {
+    width: 120px;
+    height: 10px;
+  }
+
+  .skeleton-footer-item-2 {
+    width: 175px;
+    height: 10px;
+  }
+
+  .skeleton-footer-item-3 {
+    width: 135px;
+    height: 10px;
+  }
 }
 
 // ============================================================
@@ -205,6 +379,7 @@
   position: relative;
   z-index: 1;
   width: 100%;
+  min-height: 440px;
   display: grid;
   grid-template-columns: 310px 1fr 310px;
   gap: 1.75rem;
@@ -248,28 +423,17 @@
   padding: 1.15rem 1.25rem;
   box-shadow: 0 4px 18px rgba(34, 41, 47, 0.03);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
 
-  @media (max-width: 960px) {
-    width: calc(50% - 0.75rem);
-    min-width: 260px;
-  }
-
-  @media (max-width: 580px) {
-    width: 100%;
-  }
-
-  &:hover {
-    transform: translateY(-2px);
-    background: #ffffff;
+  &:hover:not(.skeleton-card) {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(115, 103, 240, 0.1);
     border-color: rgba(115, 103, 240, 0.35);
-    box-shadow: 0 8px 24px -4px rgba(115, 103, 240, 0.12), 0 2px 6px rgba(34, 41, 47, 0.03);
 
-    .card-icon-pill {
+    .card-body-content .card-icon-pill {
       background: #7367f0;
       color: #ffffff;
+      border-color: #7367f0;
+      transform: scale(1.08) rotate(3deg);
 
       svg {
         stroke: #ffffff;
@@ -294,9 +458,9 @@
     .card-status-badge {
       display: inline-flex;
       align-items: center;
-      font-size: 0.68rem;
+      font-size: 0.7rem;
       font-weight: 600;
-      padding: 0.15rem 0.55rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 6px;
 
       .mini-dot {
@@ -582,5 +746,107 @@
 
   .footer-dot-sep {
     color: #cbd5e1;
+  }
+}
+
+// ============================================================
+// ADAPTACIONES MODO OSCURO (DARK THEME)
+// ============================================================
+
+.dark-layout {
+  .skeleton-shimmer {
+    background: #283046;
+
+    &::after {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.05) 25%,
+        rgba(115, 103, 240, 0.24) 50%,
+        rgba(255, 255, 255, 0.05) 75%,
+        rgba(255, 255, 255, 0) 100%
+      );
+    }
+  }
+
+  .skeleton-card,
+  .skeleton-dock,
+  .skeleton-footer {
+    background: rgba(40, 48, 70, 0.85);
+    border-color: #3b4253;
+  }
+
+  .ecosystem-card {
+    background: rgba(40, 48, 70, 0.85);
+    border-color: #3b4253;
+
+    .card-body-content {
+      .card-icon-pill {
+        background: #1e253b;
+        border-color: #3b4253;
+        color: #b4b7bd;
+
+        svg {
+          stroke: #b4b7bd;
+        }
+      }
+
+      .card-text-block {
+        .card-title {
+          color: #d0d2d6;
+        }
+        .card-desc {
+          color: #82868b;
+        }
+      }
+    }
+
+    .card-footer-telemetry {
+      border-top-color: #3b4253;
+      .telemetry-val {
+        color: #d0d2d6;
+      }
+    }
+  }
+
+  .core-hub-column {
+    .hub-branding-block {
+      .hub-title {
+        color: #d0d2d6;
+      }
+      .hub-subtitle {
+        color: #82868b;
+      }
+    }
+
+    .hub-session-dock {
+      background: rgba(40, 48, 70, 0.85);
+      border-color: #3b4253;
+
+      .session-info-meta {
+        .session-heading {
+          color: #d0d2d6;
+        }
+        .session-operator {
+          color: #82868b;
+          .session-system {
+            color: #82868b;
+          }
+        }
+      }
+    }
+  }
+
+  .sandra-dock-footer {
+    background: rgba(40, 48, 70, 0.75);
+    border-color: #3b4253;
+    color: #82868b;
+
+    .footer-meta-item {
+      .meta-value,
+      .meta-date {
+        color: #b4b7bd;
+      }
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core"
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core"
 import {
   ColumnMode,
   DatatableComponent,
@@ -27,7 +27,6 @@ import { IFunciones } from "@services/tools/functions.service"
 import Swal from "sweetalert2"
 import { environment } from "environments/environment"
 import { TaskService } from "@services/apicore/task.service"
-import { env } from "process"
 
 import { CommonModule } from "@angular/common"
 import { ReactiveFormsModule } from "@angular/forms"
@@ -246,6 +245,11 @@ export class FunctionsComponent implements OnInit {
   public hashcontrol: string
   public archivos = []
 
+  // Carga y Subida de Archivos Masivos (Unificado con API)
+  public passwordTextType: boolean = false
+  public selectedUploadFile: File | null = null
+  public uploadFileSize: string = ''
+  public isDragOver: boolean = false
 
   constructor(
     private apiService: ApiService,
@@ -254,6 +258,7 @@ export class FunctionsComponent implements OnInit {
     private utilservice: UtilService,
     private msjService: WsocketsService,
     private taskService: TaskService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   // convenience getter for easy access to form fields
@@ -410,6 +415,11 @@ export class FunctionsComponent implements OnInit {
   }
 
   LimpiarForm() {
+    this.submitted = false
+    this.divTiempo = false
+    if (this.prefijoCtrl) {
+      this.prefijoCtrl.reset()
+    }
     this.loginForm = this._formBuilder.group({
       id: [this.utilservice.GenerarUnicId().toUpperCase(), [Validators.required]],
       tipo: [undefined, [Validators.required]],
@@ -422,7 +432,7 @@ export class FunctionsComponent implements OnInit {
       descripcion: ["", [Validators.required]],
       codigo: ["", [Validators.required]],
       tiempo: [""],
-      fecha: [this.Fnx.fecha],
+      fecha: [this.Fnx?.fecha || this.utilservice.FechaActual(0)],
     })
   }
 
@@ -453,6 +463,7 @@ export class FunctionsComponent implements OnInit {
   ModalEdit(modal, data) {
     this.clickRefresh(0)
     this.existe = false
+    this.submitted = false
     this.loginForm = this._formBuilder.group({
       id: [data.id, [Validators.required]],
       tipo: [data.tipo, [Validators.required]],
@@ -465,26 +476,34 @@ export class FunctionsComponent implements OnInit {
       descripcion: [data.descripcion, [Validators.required]],
       codigo: [data.codigo, [Validators.required]],
       tiempo: [data.tiempo],
-      fecha: [this.loginForm.value.fecha],
+      fecha: [this.loginForm?.value?.fecha || this.utilservice.FechaActual(0)],
     })
-    this.modalService.open(modal, {
+    const modalRef = this.modalService.open(modal, {
       centered: true,
       size: "xl",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     })
+    modalRef.result.then(
+      () => this.LimpiarForm(),
+      () => this.LimpiarForm()
+    )
   }
 
   ModalAdd(modal) {
     this.LimpiarForm()
-    this.modalService.open(modal, {
+    const modalRef = this.modalService.open(modal, {
       centered: true,
       size: "xl",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     })
+    modalRef.result.then(
+      () => this.LimpiarForm(),
+      () => this.LimpiarForm()
+    )
   }
 
   async CargarListaAplicaciones() {
@@ -576,7 +595,7 @@ export class FunctionsComponent implements OnInit {
       size: "lg",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     })
   }
 
@@ -586,7 +605,7 @@ export class FunctionsComponent implements OnInit {
       size: "lg",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     })
   }
 
@@ -603,14 +622,14 @@ export class FunctionsComponent implements OnInit {
       descripcion: [data.descripcion, [Validators.required]],
       codigo: [data.codigo, [Validators.required]],
       tiempo: [data.tiempo],
-      fecha: [this.loginForm.value.fecha],
+      fecha: [this.loginForm?.value?.fecha || this.utilservice.FechaActual(0)],
     })
     this.modalService.open(modal, {
       centered: true,
       size: "lg",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     })
   }
 
@@ -664,21 +683,97 @@ export class FunctionsComponent implements OnInit {
   ModalExportarArchivo(modal) {
     this.modalService.open(modal, {
       centered: true,
-      size: "sm",
+      size: "lg",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     });
   }
 
   ModalSubirArchivo(modal) {
+    this.selectedUploadFile = null;
+    this.uploadFileSize = '';
+    this.archivos = [];
+    this.isDragOver = false;
     this.modalService.open(modal, {
       centered: true,
       size: "lg",
       backdrop: false,
       keyboard: false,
-      windowClass: "fondo-modal",
+      windowClass: "fondo-modal modal-pastel-card",
     });
+  }
+
+  togglePasswordTextType(): void {
+    this.passwordTextType = !this.passwordTextType;
+  }
+
+  triggerFileInput(fileInput: HTMLInputElement): void {
+    if (!this.selectedUploadFile && fileInput) {
+      fileInput.click();
+    }
+  }
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent, fileInput?: HTMLInputElement): void {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.handleUploadFile(files[0], fileInput);
+    }
+  }
+
+  handleUploadFile(file: File, fileInput?: HTMLInputElement): void {
+    const lowerName = file.name.toLowerCase();
+    if (!lowerName.endsWith('.zip') && !lowerName.endsWith('.gz')) {
+      this.utilservice.AlertMini('top-end', 'error', 'Formato no permitido. Solo archivos .zip o .gz', 4000);
+      if (fileInput) fileInput.value = '';
+      return;
+    }
+    const maxSizeInBytes = 100 * 1024 * 1024; // 100 MB
+    if (file.size > maxSizeInBytes) {
+      this.utilservice.AlertMini('top-end', 'error', 'El archivo no puede superar los 100 MB.', 4000);
+      if (fileInput) fileInput.value = '';
+      return;
+    }
+
+    this.selectedUploadFile = file;
+    this.uploadFileSize = this.formatBytes(file.size);
+    this.archivos = [file];
+    this.cdr.detectChanges();
+  }
+
+  removeUploadFile(event: MouseEvent, fileInput?: HTMLInputElement): void {
+    event.stopPropagation();
+    this.selectedUploadFile = null;
+    this.uploadFileSize = '';
+    this.archivos = [];
+    if (fileInput) {
+      fileInput.value = '';
+    }
+    this.cdr.detectChanges();
+  }
+
+  formatBytes(bytes: number, decimals = 2): string {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
   async ExportFunciones() {
@@ -727,33 +822,51 @@ export class FunctionsComponent implements OnInit {
     })
   }
 
-
-  fileSelected(e) {
-    this.archivos.push(e.target.files[0])
+  fileSelected(e: any, fileInput?: HTMLInputElement) {
+    const file = e.target?.files?.[0];
+    if (file) {
+      this.handleUploadFile(file, fileInput);
+    }
   }
 
-  async SubirArchivo(e) {
-    console.log(document.getElementById('identificador'))
-    var frm = new FormData(document.forms.namedItem("forma"))
-    try {
-      await this.apiService.EnviarArchivos(frm).subscribe(
-        (data) => {
-          this.ValoresMasivos()
-
-        }
-      )
-    } catch (error) {
-      console.error(error)
+  async SubirArchivo() {
+    if (!this.selectedUploadFile && (!this.archivos || this.archivos.length === 0)) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Debe seleccionar un archivo .zip o .gz primero', 3500);
+      return;
+    }
+    if (!this.exportUsuarioCtrl.value || !this.exportClaveCtrl.value) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Ingrese su usuario y contraseña para autorizar la carga', 3500);
+      return;
     }
 
+    const formEl = document.forms.namedItem("forma") as HTMLFormElement;
+    const frm = new FormData(formEl);
+    if (this.selectedUploadFile && (!frm.get('archivos') || (frm.get('archivos') as File).size === 0)) {
+      frm.delete('archivos');
+      frm.append('archivos', this.selectedUploadFile, this.selectedUploadFile.name);
+    }
+
+    try {
+      this.apiService.EnviarArchivos(frm).subscribe({
+        next: (data) => {
+          this.ValoresMasivos();
+        },
+        error: (error) => {
+          console.error(error);
+          this.utilservice.AlertMini('top-end', 'error', 'Error al enviar el archivo al servidor', 3500);
+        }
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-
   ValoresMasivos() {
+    const fileName = this.selectedUploadFile ? this.selectedUploadFile.name : (this.archivos[0]?.name || '');
     let cargaMasiva = {
       codigo: this.llave,
       ruta: this.hashcontrol,
-      nombre: this.archivos[0].name,
+      nombre: fileName,
       funcion: "SetPath",
       inicio: this.utilservice.FechaActual(0),
       fin: this.utilservice.FechaActual(0),

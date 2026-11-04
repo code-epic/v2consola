@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '@services/apicore/api.service';
 import { LoginService } from '@services/seguridad/login.service';
@@ -32,6 +32,7 @@ export class HomeComponent implements OnInit {
   public version: string = environment.version || '1.0.0';
   public buildDate: string = environment.buildDateTime || 'Sat Oct 31 2026';
   public currentDate: Date = new Date();
+  public isLoading: boolean = true;
 
   // Nodos representativos del ecosistema Sandra Server Core L7
   public leftEcosystemNodes: IEcosystemNode[] = [
@@ -82,10 +83,16 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    this.cargarDatosUsuario();
+    this.iniciarEsqueletoCarga();
+  }
+
+  private cargarDatosUsuario(): void {
     const token = sessionStorage.getItem('token');
     if (token) {
       try {
@@ -98,6 +105,36 @@ export class HomeComponent implements OnInit {
       } catch (err) {
         console.warn('[HomeComponent] Error decodificando token:', err);
       }
+    }
+  }
+
+  private iniciarEsqueletoCarga(): void {
+    const minWaitTime = 450; // Tiempo óptimo para suavizar el renderizado y estabilizar el layout
+    const startTime = performance.now();
+
+    const img = new Image();
+    img.src = this.logoUrl;
+
+    const finalizar = () => {
+      const elapsed = performance.now() - startTime;
+      const delay = Math.max(0, minWaitTime - elapsed);
+      setTimeout(() => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      }, delay);
+    };
+
+    if (img.complete) {
+      finalizar();
+    } else {
+      img.onload = () => finalizar();
+      img.onerror = () => finalizar();
+      setTimeout(() => {
+        if (this.isLoading) {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+        }
+      }, 850);
     }
   }
 }

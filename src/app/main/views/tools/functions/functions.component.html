@@ -189,509 +189,818 @@
 
 
 <ng-template #ModalAddFunction let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Agregar Función</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-primary mr-1">
+        <span [data-feather]="'plus-circle'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Nueva Función</h5>
+        <small class="text-muted">Configure y registre una nueva función lógica en el sistema</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="GuardarFuncion()">
+  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="GuardarFuncion()">
     <div class="modal-body" tabindex="0" ngbAutofocus>
       <div class="col-xl-12 col-md-12 col-12">
         <div class="row">
 
-          <div class="col-md-2 col-12 mb-1">
-            <label for="login-id" class="form-label">Id del proceso</label>
-            <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="Id de proceso"
-              aria-describedby="login-basedatos" tabindex="1" autofocus />
-          </div>
-
-          <div class="col-md-2 col-12 mb-1">
-            <label for="login-tipo" class="form-label">Tipo</label>
-            <ng-select [items]="tipo" formControlName="tipo" bindLabel="name" placeholder="Seleccione Tipo"
-              bindValue="name">
-            </ng-select>
-          </div>
-
-          <div class="col-md-4 col-12 mb-1">
+          <!-- Fila 1: Nombre, Tipo y Estado -->
+          <div class="col-md-6 col-12 mb-1">
             <label for="login-nombre" class="form-label">Nombre Función</label>
-            <input type="text" formControlName="nombre" class="form-control" placeholder="Ingrese Nombre"
-              aria-describedby="login-nombre" tabindex="1" autofocus
-              [ngClass]="{ 'is-invalid': submitted && f.nombre.errors }" />
+            <div class="input-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'code'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="nombre" class="form-control" placeholder="Ingrese nombre de la función"
+                tabindex="1" autofocus [ngClass]="{ 'is-invalid': submitted && f.nombre.errors }" />
+            </div>
             @if (submitted && f.nombre.errors) {
-              <div class="invalid-feedback">
+              <div class="invalid-feedback d-block">
                 @if (f.nombre.errors.required) {
-                  <div>Nombre Funcion es requerido</div>
+                  <div>Nombre de función es requerido</div>
                 }
               </div>
             }
           </div>
 
-          <div class="col-md-2 col-12 mb-1">
-            <label for="login-version" class="form-label">Version</label>
-            <input type="text" formControlName="version" [readonly]="true" class="form-control" placeholder="Version"
-              aria-describedby="login-basedatos" tabindex="1" autofocus />
-          </div>
-
-          <div class="col-md-2 col-12 mb-1">
-            <label for="login-estatus" class="form-label">Estatus</label>
-            <ng-select [items]="estatus" formControlName="estatus" placeholder="Seleccione Estatus"
-              [attr.disabled]="true" bindLabel="name" bindValue="id">
-            </ng-select>
+          <div class="col-md-3 col-12 mb-1">
+            <label for="login-tipo" class="form-label">Tipo</label>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'tag'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="tipo" formControlName="tipo" bindLabel="name" placeholder="Seleccione Tipo"
+                bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
           <div class="col-md-3 col-12 mb-1">
+            <label for="login-estatus" class="form-label">Estado</label>
+            <div class="ng-select-group-pastel is-disabled">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'activity'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="estatus" formControlName="estatus" placeholder="Seleccione Estado"
+                [attr.disabled]="true" bindLabel="name" bindValue="id" [clearable]="false">
+              </ng-select>
+            </div>
+          </div>
+
+          <!-- Fila 2: Lenguaje, Categoría y Retorno -->
+          <div class="col-md-4 col-12 mb-1">
             <label for="login-lenguaje" class="form-label">Lenguaje</label>
-            <ng-select [items]="lenguaje" formControlName="lenguaje" bindLabel="descripcion"
-              placeholder="Seleccione Lenguaje" bindValue="name">
-            </ng-select>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'cpu'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="lenguaje" formControlName="lenguaje" bindLabel="descripcion"
+                placeholder="Seleccione Lenguaje" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
-          <div class="col-md-3 col-12 mb-1">
-            <label for="login-categoria" class="form-label">Categoria</label>
-            <ng-select [items]="categoria" formControlName="categoria"
-              bindLabel="descripcion" placeholder="Seleccione Categoria" bindValue="name">
-            </ng-select>
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-categoria" class="form-label">Categoría</label>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'folder'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="categoria" formControlName="categoria"
+                bindLabel="descripcion" placeholder="Seleccione Categoría" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
-          <div class="col-md-3 col-12 mb-1">
-            <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
-            <ng-select [items]="retorno" formControlName="retorno" bindLabel="descripcion"
-              placeholder="Seleccione Valor Retorno" bindValue="name">
-            </ng-select>
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-valor-retorno" class="form-label">Valor de Retorno</label>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'corner-down-right'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="retorno" formControlName="retorno" bindLabel="descripcion"
+                placeholder="Seleccione Retorno" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
+          <!-- Fila 3: Metadatos y Aplicación / Tiempo -->
           <div class="col-md-3 col-12 mb-1">
+            <label for="login-id" class="form-label">ID Proceso</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'hash'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="ID de proceso"
+                tabindex="1" />
+            </div>
+          </div>
+
+          <div class="col-md-2 col-12 mb-1">
+            <label for="login-version" class="form-label">Versión</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="version" [readonly]="true" class="form-control" placeholder="Versión"
+                tabindex="1" />
+            </div>
+          </div>
+
+          <div [class]="divTiempo ? 'col-md-4 col-12 mb-1' : 'col-md-7 col-12 mb-1'">
             <label class="form-label" for="http">Aplicación</label>
-            <ng-select [items]="ListaAplicaciones" [formControl]="prefijoCtrl"
-              bindLabel="name" bindValue="id"
-            placeholder="Seleccione Aplicación"></ng-select>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'box'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="ListaAplicaciones" [formControl]="prefijoCtrl"
+                bindLabel="name" bindValue="id" placeholder="Seleccione Aplicación" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
           @if (divTiempo) {
             <div class="col-md-3 col-12 mb-1">
-              <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
-              <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
-              <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
-                aria-describedby="login-tiempo" tabindex="1" autofocus />
+              <div class="d-flex justify-content-between align-items-center mb-50">
+                <label for="login-tiempo" class="form-label mb-0">Tiempo (Cron)</label>
+                <span class="badge badge-scan-pastel badge-warning" (click)="openHelp(ModalHelp)">
+                  Ayuda Cron
+                </span>
+              </div>
+              <div class="input-group-pastel">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><span [data-feather]="'clock'" [size]="15"></span></span>
+                </div>
+                <input type="text" formControlName="tiempo" class="form-control" placeholder="Ej. */5 * * * *"
+                  tabindex="1" />
+              </div>
             </div>
           }
 
-
-
-
+          <!-- Fila 4: Descripción -->
           <div class="col-md-12 col-12 mb-1">
             <label for="login-descripcion" class="form-label">Descripción</label>
-            <textarea type="text" formControlName="descripcion" rows="3" class="form-control"
-              placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus
-            [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }"></textarea>
+            <textarea type="text" formControlName="descripcion" rows="2" class="form-control"
+              placeholder="Ingrese una descripción concisa de la función" tabindex="1"
+              [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }"></textarea>
             @if (submitted && f.descripcion.errors) {
-              <div class="invalid-feedback">
+              <div class="invalid-feedback d-block">
                 @if (f.descripcion.errors.required) {
-                  <div>Descripción es requerido</div>
+                  <div>Descripción es requerida</div>
                 }
               </div>
             }
           </div>
 
+          <!-- Fila 5: Código Fuente -->
           <div class="col-md-12 col-12 mb-1">
-            <label for="login-codigo" class="form-label">Escribir codigo fuente</label>
-            <ngx-codemirror #codemirror aria-describedby="login-codigo" tabindex="1" autofocus formControlName="codigo"
-              [options]="codeMirrorOptions">
-            </ngx-codemirror>
+            <label for="login-codigo" class="form-label">Código Fuente</label>
+            <div class="border rounded overflow-hidden">
+              <ngx-codemirror #codemirror aria-describedby="login-codigo" tabindex="1" formControlName="codigo"
+                [options]="codeMirrorOptions">
+              </ngx-codemirror>
+            </div>
             @if (submitted && f.codigo.errors) {
-              <div class="invalid-feedback">
+              <div class="invalid-feedback d-block">
                 @if (f.codigo.errors.required) {
-                  <div>Codigo es requerido</div>
+                  <div>Código fuente es requerido</div>
                 }
               </div>
             }
           </div>
-
 
         </div>
-
       </div>
-
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" rippleEffect>Guardar</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <div class="modal-footer modal-footer-pastel">
+      <button type="button" class="btn btn-pastel-secondary" (click)="modal.close('Accept click')" rippleEffect>
+        Cancelar
+      </button>
+      <button class="btn btn-pastel-primary" tabindex="4" type="submit" rippleEffect>
+        Guardar Función
+      </button>
     </div>
   </form>
 </ng-template>
 
 <ng-template #ModalHelp let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Opciones del tiempo</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-info mr-1">
+        <span [data-feather]="'clock'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Guía de Expresiones Cron</h5>
+        <small class="text-muted">Formato estándar para ejecución periódica en segundo plano</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
   <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-
-
-      <!-- <code> -->
-      Cron es un administrador regular de procesos en segundo plano.<br>
-      Los procesos que deben ejecutarse y la hora a la que deben hacerlo se especifican en<br>
-      la funcion. El nombre cron proviene del griego chronos que significa "tiempo".<br>
-      .--------------- minuto (0-59)<br>
-      | .------------ hora (0-23)<br>
-      | | .--------- día del mes (1-31)<br>
-      | | | .------ mes (1-12) o jan,feb,mar,apr,may,jun,jul...<br>
-      | | | | .--- día de la semana (0-6) (domingo=0 o 7)<br>
-      | | | | |<br>
-      * * * * * comando a ejecutar<br>
-      */5 * * * * se ejecuta cada 5 minutos.<br>
-    <!-- </code> -->
-
+    <div class="modal-info-banner mb-2 p-1 rounded d-flex align-items-center">
+      <div class="banner-icon mr-1 d-flex align-items-center justify-content-center">
+        <span [data-feather]="'info'" [size]="18" class="text-primary"></span>
+      </div>
+      <div class="banner-text">
+        <span class="font-weight-bold text-primary font-small-3 d-block">Administrador de Procesos Cron</span>
+        <small class="text-muted">Especifique minuto, hora, día del mes, mes y día de la semana separados por espacio.</small>
+      </div>
+    </div>
+    <div class="p-1 rounded bg-light border">
+      <pre class="mb-0 font-small-2 p-1 bg-white rounded border" style="font-family: 'JetBrains Mono', monospace; line-height: 1.6; color: #4b5563;">
+.--------------- Minuto (0 - 59)
+| .------------ Hora (0 - 23)
+| | .--------- Día del Mes (1 - 31)
+| | | .------ Mes (1 - 12 o jan, feb, mar, apr...)
+| | | | .--- Día de la Semana (0 - 6) (Domingo = 0 o 7)
+| | | | |
+* * * * *    Comando o proceso a ejecutar
+*/5 * * * *  Se ejecuta cada 5 minutos
+0 */2 * * *  Se ejecuta cada 2 horas
+0 0 * * *    Se ejecuta todos los días a medianoche</pre>
+    </div>
   </div>
-
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-</div>
+  <div class="modal-footer modal-footer-pastel">
+    <button type="button" class="btn btn-pastel-secondary" (click)="modal.close('Accept click')" rippleEffect>
+      Entendido
+    </button>
+  </div>
 </ng-template>
 
 <ng-template #ModalConfigFunction let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Ejecución de funciones</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-info mr-1">
+        <span [data-feather]="'settings'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Ejecución de Funciones</h5>
+        <small class="text-muted">Parámetros de configuración del proceso</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <form class="auth-login-form mt-2" [formGroup]="loginForm">
+  <form class="auth-login-form mt-1" [formGroup]="loginForm">
     <div class="modal-body" tabindex="0" ngbAutofocus>
-      <!-- Invoice -->
       <div class="col-xl-12 col-md-12 col-12">
-        <!-- Header Starts -->
         <div class="row">
 
-          <div class="col-md-3 col-12 mb-1">
-            <label for="login-id" class="form-label">Id del proceso</label>
-            <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="Id de proceso"
-              aria-describedby="login-basedatos" tabindex="1" autofocus />
+          <!-- Fila 1: Nombre, Tipo y Estado -->
+          <div class="col-md-6 col-12 mb-1">
+            <label for="login-nombre" class="form-label">Nombre Función</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'code'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="nombre" [readonly]="true" class="form-control"
+                placeholder="Nombre" tabindex="1" />
+            </div>
           </div>
 
           <div class="col-md-3 col-12 mb-1">
             <label for="login-tipo" class="form-label">Tipo</label>
-            <ng-select [items]="tipo" [readonly]="true" formControlName="tipo" bindLabel="name"
-              placeholder="Seleccione Tipo" bindValue="name">
-            </ng-select>
+            <div class="ng-select-group-pastel is-disabled">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'tag'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="tipo" [readonly]="true" formControlName="tipo" bindLabel="name"
+                placeholder="Seleccione Tipo" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
           <div class="col-md-3 col-12 mb-1">
-            <label for="login-nombre" class="form-label">Nombre Función</label>
-            <input type="text" formControlName="nombre" [readonly]="true" class="form-control"
-              placeholder="Ingrese Nombre" aria-describedby="login-nombre" tabindex="1" autofocus />
+            <label for="login-estatus" class="form-label">Estado</label>
+            <div class="ng-select-group-pastel is-disabled">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'activity'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="estatus" formControlName="estatus" placeholder="Seleccione Estado"
+                [attr.disabled]="true" bindLabel="name" bindValue="id" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
-          <div class="col-md-3 col-12 mb-1">
-            <label for="login-version" class="form-label">Version</label>
-            <input type="text" formControlName="version" [readonly]="true" [readonly]="true" class="form-control"
-              placeholder="Version" aria-describedby="login-version" tabindex="1" autofocus />
-          </div>
-
-
+          <!-- Fila 2: Lenguaje, Categoría y Retorno -->
           <div class="col-md-4 col-12 mb-1">
             <label for="login-lenguaje" class="form-label">Lenguaje</label>
-            <ng-select [items]="lenguaje" [readonly]="true" formControlName="lenguaje"
-              bindLabel="descripcion" placeholder="Seleccione Lenguaje" bindValue="name">
-            </ng-select>
+            <div class="ng-select-group-pastel is-disabled">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'cpu'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="lenguaje" [readonly]="true" formControlName="lenguaje"
+                bindLabel="descripcion" placeholder="Seleccione Lenguaje" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
           <div class="col-md-4 col-12 mb-1">
-            <label for="login-categoria" class="form-label">Categoria</label>
-            <ng-select [items]="categoria" [readonly]="true" formControlName="categoria" bindLabel="descripcion"
-              placeholder="Seleccione Categoria" bindValue="name">
-            </ng-select>
+            <label for="login-categoria" class="form-label">Categoría</label>
+            <div class="ng-select-group-pastel is-disabled">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'folder'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="categoria" [readonly]="true" formControlName="categoria" bindLabel="descripcion"
+                placeholder="Seleccione Categoría" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
           <div class="col-md-4 col-12 mb-1">
             <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
-            <ng-select [items]="retorno" [readonly]="true" formControlName="retorno" bindLabel="descripcion"
-              placeholder="Seleccione Valor Retorno" bindValue="name">
-            </ng-select>
+            <div class="ng-select-group-pastel is-disabled">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'corner-down-right'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="retorno" [readonly]="true" formControlName="retorno" bindLabel="descripcion"
+                placeholder="Seleccione Retorno" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
+          <!-- Fila 3: Metadatos y Tiempo -->
+          <div class="col-md-3 col-12 mb-1">
+            <label for="login-id" class="form-label">ID Proceso</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'hash'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="ID de proceso"
+                tabindex="1" />
+            </div>
+          </div>
 
+          <div class="col-md-3 col-12 mb-1">
+            <label for="login-version" class="form-label">Versión</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="version" [readonly]="true" class="form-control"
+                placeholder="Versión" tabindex="1" />
+            </div>
+          </div>
+
+          <div class="col-md-6 col-12 mb-1">
+            <label for="login-tiempo" class="form-label">Especificación del Tiempo</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'clock'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="tiempo" [readonly]="true" class="form-control"
+                placeholder="Especificación" tabindex="1" />
+            </div>
+          </div>
+
+          <!-- Fila 4: Descripción -->
           <div class="col-md-12 col-12 mb-1">
             <label for="login-descripcion" class="form-label">Descripción</label>
-            <textarea type="text" formControlName="descripcion" [readonly]="true" rows="3" class="form-control"
-            placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus></textarea>
+            <textarea type="text" formControlName="descripcion" [readonly]="true" rows="2" class="form-control"
+              placeholder="Descripción" tabindex="1"></textarea>
           </div>
-
-
-          <div class="col-md-6 col-12 mb-1">
-            <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
-            <input type="text" formControlName="tiempo" [readonly]="true" class="form-control"
-              placeholder="Ingrese Especificacion" aria-describedby="login-tiempo" tabindex="1" autofocus />
-          </div>
-
-          <div class="col-md-6 col-12 mb-1">
-            <label for="login-estatus" class="form-label">Estatus</label>
-            <ng-select [items]="estatus" formControlName="estatus" placeholder="Seleccione Estatus"
-              [attr.disabled]="true" bindLabel="name" bindValue="id">
-            </ng-select>
-          </div>
-
-
 
         </div>
-
       </div>
-
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" rippleEffect>Procesar</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <div class="modal-footer modal-footer-pastel">
+      <button type="button" class="btn btn-pastel-secondary" (click)="modal.close('Accept click')" rippleEffect>
+        Cerrar
+      </button>
+      <button class="btn btn-pastel-primary" tabindex="4" rippleEffect>
+        Procesar
+      </button>
     </div>
   </form>
 </ng-template>
 
-
 <ng-template #ModalEditFunction let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Editar Función</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-warning mr-1">
+        <span [data-feather]="'edit-3'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Editar Función</h5>
+        <small class="text-muted">Modifique los parámetros y el código fuente de la función</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="Editarfuncion()">
+  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="Editarfuncion()">
     <div class="modal-body" tabindex="0" ngbAutofocus>
-      <!-- Invoice -->
       <div class="col-xl-12 col-md-12 col-12">
-        <!-- Header Starts -->
-
-
         <div class="row">
 
-          <div class="col-md-2 col-12 mb-1">
-            <label for="login-id" class="form-label">Id del proceso</label>
-            <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="Id de proceso"
-              aria-describedby="login-basedatos" tabindex="1" autofocus />
+          <!-- Fila 1: Nombre, Tipo y Estado -->
+          <div class="col-md-6 col-12 mb-1">
+            <label for="login-nombre" class="form-label">Nombre Función</label>
+            <div class="input-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'code'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="nombre" class="form-control" placeholder="Ingrese nombre de la función"
+                tabindex="1" autofocus />
+            </div>
           </div>
 
-          <div class="col-md-2 col-12 mb-1">
+          <div class="col-md-3 col-12 mb-1">
             <label for="login-tipo" class="form-label">Tipo</label>
-            <ng-select [items]="tipo" formControlName="tipo" bindLabel="name" placeholder="Seleccione Tipo"
-              bindValue="name">
-            </ng-select>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'tag'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="tipo" formControlName="tipo" bindLabel="name" placeholder="Seleccione Tipo"
+                bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-12 mb-1">
+            <label for="login-estatus" class="form-label">Estado</label>
+            <div class="ng-select-group-pastel is-disabled">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'activity'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="estatus" formControlName="estatus" placeholder="Seleccione Estado"
+                [attr.disabled]="true" bindLabel="name" bindValue="id" [clearable]="false">
+              </ng-select>
+            </div>
+          </div>
+
+          <!-- Fila 2: Lenguaje, Categoría y Retorno -->
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-lenguaje" class="form-label">Lenguaje</label>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'cpu'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="lenguaje" formControlName="lenguaje"
+                bindLabel="descripcion" placeholder="Seleccione Lenguaje" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
           <div class="col-md-4 col-12 mb-1">
-            <label for="login-nombre" class="form-label">Nombre Función</label>
-            <input type="text" formControlName="nombre" class="form-control" placeholder="Ingrese Nombre"
-              aria-describedby="login-nombre" tabindex="1" autofocus />
+            <label for="login-categoria" class="form-label">Categoría</label>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'folder'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="categoria" formControlName="categoria"
+                bindLabel="descripcion" placeholder="Seleccione Categoría" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
           </div>
 
-          <div class="col-md-2 col-12 mb-1">
-            <label for="login-version" class="form-label">Version</label>
-            <input type="text" formControlName="version" [readonly]="true" class="form-control" placeholder="Version"
-              aria-describedby="login-version" tabindex="1" autofocus />
-          </div>
-
-          <div class="col-md-2 col-12 mb-1">
-            <label for="login-estatus" class="form-label">Estatus</label>
-            <ng-select [items]="estatus" formControlName="estatus" placeholder="Seleccione Estatus"
-              [attr.disabled]="true" bindLabel="name" bindValue="id">
-            </ng-select>
-          </div>
-
-          <div class="col-md-3 col-12 mb-1">
-            <label for="login-lenguaje" class="form-label">Lenguaje</label>
-            <ng-select [items]="lenguaje" formControlName="lenguaje"
-              bindLabel="descripcion" placeholder="Seleccione Lenguaje" bindValue="name">
-            </ng-select>
-          </div>
-
-          <div class="col-md-3 col-12 mb-1">
-            <label for="login-categoria" class="form-label">Categoria</label>
-            <ng-select [items]="categoria" formControlName="categoria"
-              bindLabel="descripcion" placeholder="Seleccione Categoria" bindValue="name">
-            </ng-select>
-          </div>
-
-          <div class="col-md-3 col-12 mb-1">
+          <div class="col-md-4 col-12 mb-1">
             <label for="login-valor-retorno" class="form-label">Valor Retorno</label>
-            <ng-select [items]="retorno" formControlName="retorno" bindLabel="descripcion"
-              placeholder="Seleccione Valor Retorno" bindValue="name">
-            </ng-select>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'corner-down-right'" [size]="15"></span></span>
+              </div>
+              <ng-select [items]="retorno" formControlName="retorno" bindLabel="descripcion"
+                placeholder="Seleccione Retorno" bindValue="name" [clearable]="false">
+              </ng-select>
+            </div>
+          </div>
+
+          <!-- Fila 3: Metadatos y Tiempo -->
+          <div [class]="divTiempo ? 'col-md-3 col-12 mb-1' : 'col-md-6 col-12 mb-1'">
+            <label for="login-id" class="form-label">ID Proceso</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'hash'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="id" [readonly]="true" class="form-control" placeholder="ID de proceso"
+                tabindex="1" />
+            </div>
+          </div>
+
+          <div [class]="divTiempo ? 'col-md-3 col-12 mb-1' : 'col-md-6 col-12 mb-1'">
+            <label for="login-version" class="form-label">Versión</label>
+            <div class="input-group-pastel is-readonly">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'git-branch'" [size]="15"></span></span>
+              </div>
+              <input type="text" formControlName="version" [readonly]="true" class="form-control" placeholder="Versión"
+                tabindex="1" />
+            </div>
           </div>
 
           @if (divTiempo) {
-            <div class="col-md-3 col-12 mb-1">
-              <label for="login-tiempo" class="form-label">Especificaci&oacute;n del tiempo</label>&nbsp;
-              <div class="badge badge-warning" (click)="openHelp(ModalHelp)"><small>Ayuda?</small></div>
-              <input type="text" formControlName="tiempo" class="form-control" placeholder="Ingrese Especificacion"
-                aria-describedby="login-tiempo" tabindex="1" autofocus />
+            <div class="col-md-6 col-12 mb-1">
+              <div class="d-flex justify-content-between align-items-center mb-50">
+                <label for="login-tiempo" class="form-label mb-0">Especificación del Tiempo (Cron)</label>
+                <span class="badge badge-scan-pastel badge-warning cursor-pointer" (click)="openHelp(ModalHelp)">
+                  Ayuda Cron
+                </span>
+              </div>
+              <div class="input-group-pastel">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><span [data-feather]="'clock'" [size]="15"></span></span>
+                </div>
+                <input type="text" formControlName="tiempo" class="form-control" placeholder="Especificación"
+                  tabindex="1" />
+              </div>
             </div>
           }
 
-
+          <!-- Fila 4: Descripción -->
           <div class="col-md-12 col-12 mb-1">
             <label for="login-descripcion" class="form-label">Descripción</label>
-            <textarea type="text" formControlName="descripcion" rows="3" class="form-control"
-            placeholder="Ingrese Descripción" aria-describedby="login-descripcion" tabindex="1" autofocus></textarea>
+            <textarea type="text" formControlName="descripcion" rows="2" class="form-control"
+              placeholder="Descripción" tabindex="1"></textarea>
           </div>
 
+          <!-- Fila 5: Código Fuente -->
           <div class="col-md-12 col-12 mb-1">
-            <label for="login-codigo" class="form-label">Escribir codigo fuente</label>
-            <ngx-codemirror #codeEditor aria-describedby="login-codigo" tabindex="1" autofocus formControlName="codigo"
-              [options]="codeMirrorOptions">
-            </ngx-codemirror>
+            <label for="login-codigo" class="form-label">Código Fuente</label>
+            <div class="border rounded overflow-hidden">
+              <ngx-codemirror #codeEditor aria-describedby="login-codigo" tabindex="1" formControlName="codigo"
+                [options]="codeMirrorOptions">
+              </ngx-codemirror>
+            </div>
           </div>
-
 
         </div>
-
       </div>
-
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" rippleEffect>Guardar</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <div class="modal-footer modal-footer-pastel">
+      <button type="button" class="btn btn-pastel-secondary" (click)="modal.close('Accept click')" rippleEffect>
+        Cancelar
+      </button>
+      <button class="btn btn-pastel-warning" tabindex="4" type="submit" rippleEffect>
+        Actualizar Función
+      </button>
     </div>
   </form>
 </ng-template>
 
 <ng-template #ModalPlay let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Escaneando de Redes</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-success mr-1">
+        <span [data-feather]="'terminal'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Escaneo de Redes / Consola</h5>
+        <small class="text-muted">Resultados de ejecución y diagnóstico del proceso</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
   <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
     <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <div class="row">
-
-        <div class="col-md-12">
-          <div class="form-group">
-            <label>Resultado</label>
-            <div style="width:100%; height:400px; overflow: scroll;">
-              <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
-              [formControl]="xrsCtrl"></textarea>
-            </div>
-          </div>
+      <div class="form-group mb-0">
+        <label class="form-label font-weight-bold">Salida de Diagnóstico</label>
+        <div class="rounded border p-1 bg-dark" style="width:100%; height:340px; overflow: auto;">
+          <textarea id="xrs" style="font-family: 'JetBrains Mono', monospace; font-size:12px; width: 100%; height: 320px; background: transparent; color: #34d399; border: none; outline: none; resize: none;"
+          [formControl]="xrsCtrl" readonly></textarea>
         </div>
-
       </div>
-
     </div>
-
   </div>
-  <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="ScanRed()" rippleEffect>Escanear</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+  <div class="modal-footer modal-footer-pastel">
+    <button type="button" class="btn btn-pastel-secondary" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+    <button class="btn btn-pastel-primary" tabindex="4" (click)="ScanRed()" rippleEffect>
+      Escanear
+    </button>
   </div>
-
 </ng-template>
 
 
 
 <ng-template #ModalSubir let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Credenciales: Subir Archivo</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-upload mr-1">
+        <span [data-feather]="'upload-cloud'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title font-weight-bolder mb-25" id="myModalLabel160">Importar Colección de Funciones</h5>
+        <small class="text-muted">Suba un paquete comprimido para registrar o restaurar funciones</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <div class="form-row">
-        <div class="form-group col-md-12">
-        </div>
-        <div class="form-group col-md-12">
-          <form method="post" enctype="multipart/form-data" id="forma" name="forma">
-            <input type="hidden" name="identificador" value="{{hashcontrol}}">
-            <div class="row">
 
-              <div class="col-md-12">
-                <label>Nombre de Usuario</label>
-                <input type="text" [formControl]="exportUsuarioCtrl"
-                  class="form-control" />
-              </div>
+  <div class="modal-body p-2" tabindex="0" ngbAutofocus>
+    <div class="modal-info-banner mb-2 p-1 rounded d-flex align-items-center">
+      <div class="banner-icon mr-1 d-flex align-items-center justify-content-center">
+        <span [data-feather]="'shield'" [size]="18" class="text-primary"></span>
+      </div>
+      <div class="banner-text">
+        <span class="font-weight-bold text-primary font-small-3 d-block">Autenticación de Seguridad</span>
+        <small class="text-muted">Proporcione sus credenciales administrativas para procesar el archivo en el sistema.</small>
+      </div>
+    </div>
 
-              <div class="col-md-12">
-                <label>Constraseña</label>
-                <input type="password" [formControl]="exportClaveCtrl"
-                  class="form-control" />
-              </div>
+    <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+      <input type="hidden" name="identificador" value="{{hashcontrol}}">
 
-              <div class="col-md-12">
-                <label>Cargar Archivo .zip</label>
-                <div class="input_container">
-                  <input (change)="fileSelected($event)" id="fileUpload" type="file" name="archivos"
-                    accept=".zip, .gz" />
-                </div>
-              </div>
+      <div class="row">
+        <!-- Usuario -->
+        <div class="col-md-6 form-group">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'user'" [size]="14" class="mr-50 text-primary"></span>
+            Usuario
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
             </div>
-          </form>
-        </div>
-      </div>
-
-      <hr>
-
-      </div>
-
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" (click)="SubirArchivo()" rippleEffect>Subir Archivo</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-    </div>
-
-  </ng-template>
-
-
-  <ng-template #ModalExportar let-modal>
-    <div class="modal-header">
-      <h5 class="modal-title" id="myModalLabel160">Credenciales: Exportar Funciones</h5>
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-      <div class="col-xl-12 col-md-12 col-12">
-        <div class="form-row">
-          <div class="form-group col-md-12">
+            <input type="text" [formControl]="exportUsuarioCtrl"
+              class="form-control" placeholder="Ingrese nombre de usuario" autocomplete="username" />
           </div>
-          <div class="form-group col-md-12">
-            <form method="post" id="frmExport" name="frmExport">
+        </div>
 
-              <div class="row">
+        <!-- Clave con toggle visor -->
+        <div class="col-md-6 form-group">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'lock'" [size]="14" class="mr-50 text-primary"></span>
+            Contraseña
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
+            </div>
+            <input [type]="passwordTextType ? 'text' : 'password'" [formControl]="exportClaveCtrl"
+              class="form-control" placeholder="Ingrese contraseña" autocomplete="current-password" />
+            <div class="input-group-append">
+              <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()" title="Ver / Ocultar Contraseña">
+                <span [data-feather]="passwordTextType ? 'eye' : 'eye-off'" [size]="16"></span>
+              </span>
+            </div>
+          </div>
+        </div>
 
-                <div class="col-md-12">
-                  <label>Nombre de Usuario</label>
-                  <input type="text" [formControl]="exportUsuarioCtrl"
-                    class="form-control" />
+        <!-- Carga de archivo estilo dropzone con visor elegante -->
+        <div class="col-12 form-group mb-0">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'package'" [size]="14" class="mr-50 text-primary"></span>
+            Archivo Comprimido (.zip, .gz)
+          </label>
+
+          <div class="file-upload-wrapper-pastel"
+            (click)="triggerFileInput(fileUploadInput)"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event, fileUploadInput)"
+            [class.drag-over]="isDragOver">
+
+            <input #fileUploadInput (change)="fileSelected($event, fileUploadInput)" id="fileUpload" type="file" name="archivos" accept=".zip, .gz" hidden />
+
+            <!-- Estado 1: Sin archivo -->
+            @if (!selectedUploadFile && archivos.length === 0) {
+              <div class="upload-prompt py-1 text-center">
+                <div class="upload-icon mb-1">
+                  <span [data-feather]="'upload-cloud'" [size]="44"></span>
                 </div>
+                <p class="upload-text mb-25 font-weight-bold">
+                  Arrastra y suelta tu archivo <strong>.zip</strong> o <strong>.gz</strong> aquí
+                </p>
+                <p class="upload-subtext text-muted mb-75 font-small-3">o haz clic para buscar en tu equipo</p>
+                <span class="badge badge-pill badge-light-primary font-small-1 px-1 py-50">
+                  <span [data-feather]="'info'" [size]="12" class="mr-25"></span> Límite máximo: 100 MB
+                </span>
+              </div>
+            }
 
-                <div class="col-md-12">
-                  <label>Constraseña</label>
-                  <input type="password" [formControl]="exportClaveCtrl"
-                    class="form-control" />
+            <!-- Estado 2: Archivo seleccionado (Visor elegante) -->
+            @if (selectedUploadFile) {
+              <div class="file-details">
+                <div class="file-info d-flex align-items-center justify-content-between p-1">
+                  <div class="d-flex align-items-center min-w-0">
+                    <div class="file-icon-box bg-light-primary mr-1 d-flex align-items-center justify-content-center rounded">
+                      <span [data-feather]="'archive'" [size]="26" class="text-primary"></span>
+                    </div>
+                    <div class="file-meta text-left">
+                      <span class="file-name font-weight-bold text-dark d-block text-truncate" [title]="selectedUploadFile.name">
+                        {{ selectedUploadFile.name }}
+                      </span>
+                      <small class="file-size text-muted font-small-2">{{ uploadFileSize }}</small>
+                    </div>
+                  </div>
+                  <button (click)="removeUploadFile($event, fileUploadInput)" type="button"
+                    class="btn btn-icon btn-sm btn-outline-danger btn-round ml-1 remove-file-btn" title="Eliminar archivo">
+                    <span [data-feather]="'trash-2'" [size]="15"></span>
+                  </button>
+                </div>
+                <div class="file-ready-banner mt-75 p-50 rounded d-flex align-items-center justify-content-between bg-light-success">
+                  <div class="d-flex align-items-center">
+                    <span [data-feather]="'check-circle'" [size]="16" class="text-success mr-50"></span>
+                    <span class="text-success font-small-2 font-weight-bold">Archivo verificado y listo para importar</span>
+                  </div>
+                  <span class="badge badge-pill badge-light-success font-small-1">100% Listo</span>
                 </div>
               </div>
-            </form>
+            }
           </div>
         </div>
 
-        <hr>
+      </div>
+    </form>
+  </div>
 
+  <div class="modal-footer modal-footer-pastel">
+    <button type="button" class="btn btn-pastel-secondary" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+    <button class="btn btn-pastel-success" tabindex="4" (click)="SubirArchivo()"
+      [disabled]="!selectedUploadFile && archivos.length === 0" rippleEffect>
+      Subir Archivo
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #ModalExportar let-modal>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-export mr-1">
+        <span [data-feather]="'download-cloud'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title font-weight-bolder mb-25" id="myModalLabel160">Exportar Colección de Funciones</h5>
+        <small class="text-muted">Descargue una copia de respaldo segura de sus funciones</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close" title="Cerrar">
+      <span [data-feather]="'x'" [size]="17"></span>
+    </button>
+  </div>
+
+  <div class="modal-body p-2" tabindex="0" ngbAutofocus>
+    <div class="modal-info-banner mb-2 p-1 rounded d-flex align-items-center">
+      <div class="banner-icon mr-1 d-flex align-items-center justify-content-center">
+        <span [data-feather]="'lock'" [size]="18" class="text-primary"></span>
+      </div>
+      <div class="banner-text">
+        <span class="font-weight-bold text-primary font-small-3 d-block">Credenciales de Exportación</span>
+        <small class="text-muted">Ingrese su usuario y clave para autorizar la generación y descarga del paquete.</small>
+      </div>
+    </div>
+
+    <form method="post" id="frmExport" name="frmExport">
+      <div class="row">
+        <div class="col-12 form-group">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'user'" [size]="14" class="mr-50 text-primary"></span>
+            Nombre de Usuario
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
+            </div>
+            <input type="text" [formControl]="exportUsuarioCtrl"
+              class="form-control" placeholder="Ingrese nombre de usuario" autocomplete="username" />
+          </div>
         </div>
 
+        <div class="col-12 form-group mb-0">
+          <label class="form-label font-weight-bold">
+            <span [data-feather]="'lock'" [size]="14" class="mr-50 text-primary"></span>
+            Contraseña
+          </label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
+            </div>
+            <input [type]="passwordTextType ? 'text' : 'password'" [formControl]="exportClaveCtrl"
+              class="form-control" placeholder="Ingrese contraseña" autocomplete="current-password" />
+            <div class="input-group-append">
+              <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()" title="Ver / Ocultar Contraseña">
+                <span [data-feather]="passwordTextType ? 'eye' : 'eye-off'" [size]="16"></span>
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-success" tabindex="4" (click)="ExportFunciones()" rippleEffect>Exportar Funciones</button>
-        <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-      </div>
+    </form>
+  </div>
 
-    </ng-template>
+  <div class="modal-footer modal-footer-pastel">
+    <button type="button" class="btn btn-pastel-secondary" (click)="modal.close('Accept click')" rippleEffect>
+      Cerrar
+    </button>
+    <button class="btn btn-pastel-primary" tabindex="4" (click)="ExportFunciones()"
+      [disabled]="!exportUsuarioCtrl.value || !exportClaveCtrl.value" rippleEffect>
+      Exportar Funciones
+    </button>
+  </div>
+</ng-template>

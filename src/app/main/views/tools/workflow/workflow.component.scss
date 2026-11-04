@@ -48,3 +48,161 @@
 
 // Import pastel input styles
 @import '../api/register-api/register-api-pastel.scss';
+
+// =========================================================================
+// DECORO PASTEL PARA MODALES WORKFLOW (Unificado con Redes)
+// =========================================================================
+
+.modal-pastel-card {
+  .modal-dialog {
+    margin: 1.75rem auto;
+    max-width: 540px;
+
+    &.modal-lg {
+      max-width: 720px;
+    }
+  }
+
+  .modal-content {
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15), 0 8px 18px rgba(15, 23, 42, 0.05) !important;
+    overflow: hidden !important;
+    background-color: #ffffff;
+  }
+}
+
+.modal-header-pastel {
+  padding: 1.25rem 1.75rem !important;
+  background: linear-gradient(135deg, #faf9fe 0%, #f4f3fb 100%) !important;
+  border-bottom: 1px solid rgba(115, 103, 240, 0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  border-top-left-radius: 16px !important;
+  border-top-right-radius: 16px !important;
+
+  .modal-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #383256;
+    letter-spacing: -0.2px;
+  }
+
+  small {
+    font-size: 0.8rem;
+    color: #8b88a2;
+  }
+
+  .modal-icon-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.modal-icon-primary {
+      background: rgba(115, 103, 240, 0.12);
+      color: #7367f0;
+    }
+  }
+
+  button.close.btn-close-pastel,
+  .btn-close-pastel {
+    position: static !important;
+    transform: none !important;
+    margin: 0 0 0 auto !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    border-radius: 10px !important;
+    background: rgba(100, 116, 139, 0.08) !important;
+    border: 1px solid rgba(100, 116, 139, 0.12) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #64748b !important;
+    opacity: 0.85 !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    outline: none !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    flex-shrink: 0 !important;
+
+    svg, i {
+      stroke-width: 2.2 !important;
+      transition: transform 0.22s ease !important;
+    }
+
+    &:hover {
+      background: rgba(115, 103, 240, 0.12) !important;
+      border-color: rgba(115, 103, 240, 0.25) !important;
+      color: #7367f0 !important;
+      opacity: 1 !important;
+      transform: scale(1.06) !important;
+
+      svg, i {
+        transform: rotate(90deg);
+      }
+    }
+
+    &:active {
+      transform: scale(0.95) !important;
+    }
+  }
+}
+
+.modal-footer-pastel,
+.modal-footer {
+  padding: 1.15rem 1.75rem !important;
+  background: linear-gradient(135deg, #faf9fe 0%, #f7f6fd 100%) !important;
+  border-top: 1px solid rgba(115, 103, 240, 0.08) !important;
+  gap: 10px;
+
+  .btn {
+    border-radius: 9px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    padding: 8px 18px;
+    transition: all 0.2s ease;
+
+    &.btn-primary {
+      background: linear-gradient(135deg, #7367f0 0%, #8c82f8 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.25);
+      color: #ffffff;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(115, 103, 240, 0.35);
+      }
+    }
+
+    &.btn-success {
+      background: linear-gradient(135deg, #28c76f 0%, #48da89 100%);
+      border: none;
+      box-shadow: 0 4px 12px rgba(40, 199, 111, 0.25);
+      color: #ffffff;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(40, 199, 111, 0.35);
+      }
+    }
+
+    &.btn-outline-secondary {
+      border: 1px solid #d8d6de;
+      background: #ffffff;
+      color: #6e6b7b;
+
+      &:hover {
+        background: #f8f8fa;
+        border-color: #b9b9c3;
+        color: #4a475a;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
