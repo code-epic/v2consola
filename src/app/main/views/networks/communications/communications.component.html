@@ -197,13 +197,21 @@
 
 
 <ng-template #ModalAddDevice let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Agregar Dispositivo</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-primary mr-1">
+        <span [data-feather]="'plus-circle'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Agregar Dispositivo</h5>
+        <small class="text-muted">Registre un nuevo dispositivo para monitoreo y comunicaciones</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="GuardarDispositivo()">
+  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="GuardarDispositivo()">
     <div class="modal-body" tabindex="0" ngbAutofocus>
       <!-- Invoice -->
       <div class="col-xl-12 col-md-12 col-12">
@@ -216,10 +224,14 @@
           <div class="col-md-4 col-12 mb-1">
             <label for="login-host" class="form-label">Dirección Host/IP</label>&nbsp;
             @if (btnShowScan) {
-              <div class="badge badge-warning" (click)="ScanRedMac()">Escanear</div>
+              <span class="badge badge-scan-pastel badge-warning" (click)="ScanRedMac()">
+                <span [data-feather]="'search'" [size]="11" class="mr-25"></span> Escanear
+              </span>
             }
             @if (!btnShowScan) {
-              <div class="badge badge-danger">Buscando</div>
+              <span class="badge badge-scan-pastel badge-danger">
+                <span [data-feather]="'loader'" [size]="11" class="mr-25"></span> Buscando...
+              </span>
             }
             <div class="input-group-pastel">
               <div class="input-group-prepend">
@@ -296,7 +308,7 @@
           </div>
 
           <div class="col-md-4 col-12 mb-1">
-            <label for="login-tipo" class="form-label">Seleccione Dispositivo</label>
+            <label for="login-tipo" class="form-label">Tipo de Dispositivo</label>
             <div class="ng-select-group-pastel">
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'settings'" [size]="16"></span></span>
@@ -305,50 +317,54 @@
                 placeholder="Seleccione Dispositivo" bindValue="id">
               </ng-select>
             </div>
-            <!-- <div *ngIf="submitted && f.tipo.errors" class="invalid-feedback">
-            <div *ngIf="f.tipo.errors.required">Tipo es requerido</div>
-          </div> -->
+          </div>
+
+
+          <div class="col-md-4 col-12 mb-1">
+            <label for="login-estatus" class="form-label">Estado</label>
+            <div class="ng-select-group-pastel">
+              <div class="input-group-prepend">
+                <span class="input-group-text"><span [data-feather]="'activity'" [size]="16"></span></span>
+              </div>
+              <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Estado"
+                bindValue="id">
+              </ng-select>
+            </div>
+          </div>
+
         </div>
 
-
-        <div class="col-md-4 col-12 mb-1">
-          <label for="login-estatus" class="form-label">Seleccione Dispositivo</label>
-          <div class="ng-select-group-pastel">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><span [data-feather]="'activity'" [size]="16"></span></span>
-            </div>
-            <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Dispositivo"
-              bindValue="id">
-            </ng-select>
-          </div>
-          <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
-          <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
-        </div> -->
       </div>
 
-
-
     </div>
-
-  </div>
-
-</div>
-<div class="modal-footer">
-  <button class="btn btn-success" tabindex="4" rippleEffect>Guardar</button>
-  <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
-</div>
-</form>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
+        <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cancelar
+      </button>
+      <button class="btn btn-primary" tabindex="4" rippleEffect>
+        <span [data-feather]="'save'" [size]="15" class="mr-50"></span> Guardar
+      </button>
+    </div>
+  </form>
 </ng-template>
 
 
 <ng-template #ModalEditDevice let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Editar Dispositivo</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-warning mr-1">
+        <span [data-feather]="'edit'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Editar Dispositivo</h5>
+        <small class="text-muted">Actualice los parámetros del dispositivo en la red</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
+  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
     <div class="modal-body" tabindex="0" ngbAutofocus>
       <!-- Invoice -->
       <div class="col-xl-12 col-md-12 col-12">
@@ -470,19 +486,31 @@
 
 </div>
 <div class="modal-footer">
-  <button class="btn btn-success" tabindex="4" rippleEffect>Actualizar</button>
-  <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+  <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
+    <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cancelar
+  </button>
+  <button class="btn btn-warning" tabindex="4" rippleEffect>
+    <span [data-feather]="'check'" [size]="15" class="mr-50"></span> Actualizar
+  </button>
 </div>
 </form>
 
 </ng-template>
 
 <ng-template #ModalEscaneoNmap let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Escaneando: <strong>{{titleModal}}</strong></h5>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-info mr-1">
+        <span [data-feather]="'terminal'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Diagnóstico Nmap: <strong>{{titleModal}}</strong></h5>
+        <small class="text-muted">Escaneo de puertos activos y servicios remotos</small>
+      </div>
+    </div>
     @if (btnShow) {
-      <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+      <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
+        <span [data-feather]="'x'" [size]="17"></span>
       </button>
     }
   </div>
@@ -493,10 +521,10 @@
       <div class="row">
 
         <div class="col-md-12">
-          <div class="form-group">
-            <label>Resultado</label>
-            <div style="width:100%; height:400px; overflow: scroll;">
-              <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
+          <div class="form-group mb-0">
+            <label class="form-label">Salida de Consola</label>
+            <div style="width:100%; height:380px; overflow: auto; border: 1px solid #ebe9f1; border-radius: 8px; background: #1e1e2d; padding: 10px;">
+              <textarea id="xrs" style="font-family: 'Fira Code', 'Monaco', monospace; font-size:12px; width: 100%; height: 100%; background: transparent; color: #a6accd; border: none; resize: none; outline: none;"
               [formControl]="xrsCtrl"></textarea>
             </div>
           </div>
@@ -509,10 +537,12 @@
   </div>
   <div class="modal-footer">
     @if (btnShow) {
-      <button class="btn btn-success" tabindex="4" (click)="Nmap()" rippleEffect>Escanear</button>
-    }
-    @if (btnShow) {
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
+        <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cerrar
+      </button>
+      <button class="btn btn-primary" tabindex="4" (click)="Nmap()" rippleEffect>
+        <span [data-feather]="'activity'" [size]="15" class="mr-50"></span> Re-Escanear
+      </button>
     }
   </div>
 
@@ -520,10 +550,18 @@
 
 
 <ng-template #ModalScanF let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Escaneando de Redes</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-primary mr-1">
+        <span [data-feather]="'wifi'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Escaneo de Red</h5>
+        <small class="text-muted">Descubrimiento automático de hosts en el segmento local</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
   <div class="modal-body" tabindex="0" ngbAutofocus>
@@ -533,10 +571,10 @@
       <div class="row">
 
         <div class="col-md-12">
-          <div class="form-group">
-            <label>Resultado</label>
-            <div style="width:100%; height:400px; overflow: scroll;">
-              <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
+          <div class="form-group mb-0">
+            <label class="form-label">Resultado del Análisis</label>
+            <div style="width:100%; height:380px; overflow: auto; border: 1px solid #ebe9f1; border-radius: 8px; background: #1e1e2d; padding: 10px;">
+              <textarea id="xrs" style="font-family: 'Fira Code', 'Monaco', monospace; font-size:12px; width: 100%; height: 100%; background: transparent; color: #a6accd; border: none; resize: none; outline: none;"
               [formControl]="xrsCtrl"></textarea>
             </div>
           </div>
@@ -548,8 +586,12 @@
 
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="ScanRed()" rippleEffect>Escanear</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
+      <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cerrar
+    </button>
+    <button class="btn btn-primary" tabindex="4" (click)="ScanRed()" rippleEffect>
+      <span [data-feather]="'activity'" [size]="15" class="mr-50"></span> Iniciar Escaneo
+    </button>
   </div>
 
 </ng-template>

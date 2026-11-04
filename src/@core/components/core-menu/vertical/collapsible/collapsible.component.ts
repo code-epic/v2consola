@@ -185,7 +185,7 @@ export class CoreMenuVerticalCollapsibleComponent implements OnInit, OnDestroy {
       }
 
       // If child.url is same as provided url
-      if (child.url === url || url.includes(child.url)) {
+      if (child.url && child.url.trim() !== '' && (child.url === url || (url && url.includes(child.url)))) {
         return true;
       }
     }

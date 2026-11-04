@@ -114,44 +114,22 @@ export class AppComponent implements OnInit, OnDestroy {
     if (token === null) {
       this.menu = menu;
     } else {
-      this.Menu = JSON.parse(sessionStorage.getItem("menu"));
-      if (this.Menu == undefined) {
+      const storedMenu = sessionStorage.getItem("menu");
+      if (storedMenu) {
+        try {
+          this.Menu = JSON.parse(storedMenu);
+          this.menu = this.loginService.buildMenu(this.Menu);
+        } catch (e) {
+          console.error("Error al parsear menú desde sessionStorage:", e);
+          this.menu = menu;
+        }
+      } else {
         this.loginService.Token = this.loginService.getUserDecrypt(token);
         this.loginService.obenterAplicacion(token);
-        // window.location.reload();
-      } else {
-        this.menu = menu;
       }
-
-      this.menu = this.Menu.map((e) => {
-        e.id = e.nombre.toLowerCase();
-        e.type = e.clase;
-        e.icon = e.icono;
-        e.translate = "";
-        e.title = e.nombre;
-        if (e.SubMenu != undefined) {
-          e.children = e.SubMenu.map((el) => {
-            el.id = el.nombre.toLowerCase();
-            el.title = el.descripcion;
-            el.type = el.clase;
-            el.icon = el.icono;
-            return el;
-          });
-          switch (e.type) {
-            case "item":
-              e.url = e.descripcion;
-              break;
-            case "collapsible":
-              e.url = "";
-              break;
-            default:
-              break;
-          }
-        }
-        return e;
-      });
-      // Register the menu to the menu service
-      this._coreMenuService.register("main", this.menu);
+    }
+    // Register the menu to the menu service
+    this._coreMenuService.register("main", this.menu);
 
       // Set the main menu as our current menu
       this._coreMenuService.setCurrentMenu("main");
@@ -164,9 +142,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
       // Set the translations for the menu
       this._coreTranslationService.translate(menuEnglish, menuEspanish);
-
-      // Set the private defaults
-    }
   }
 
   @HostListener("contextmenu", ["$event"])
@@ -283,16 +258,14 @@ export class AppComponent implements OnInit, OnDestroy {
           );
         } else {
           this._elementRef.nativeElement.classList.remove("blank-page");
-          // ! Fix: Transition issue while coming from blank page
-          setTimeout(() => {
-            this._renderer.setAttribute(
-              this._elementRef.nativeElement.getElementsByClassName(
-                "app-content",
-              )[0],
-              "style",
-              "transition:300ms ease all",
-            );
-          }, 0);
+          // Prevenir barrido horizontal en app-content al salir de blank-page
+          this._renderer.setAttribute(
+            this._elementRef.nativeElement.getElementsByClassName(
+              "app-content",
+            )[0],
+            "style",
+            "transition:none",
+          );
           // If navbar hidden
           if (this.coreConfig.layout.navbar.hidden) {
             this._elementRef.nativeElement.classList.add("navbar-hidden");

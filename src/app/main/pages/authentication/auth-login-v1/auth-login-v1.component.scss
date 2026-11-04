@@ -1,21 +1,34 @@
 @import '@core/scss/base/bootstrap-extended/include'; // Bootstrap includes
 @import '@core/scss/base/pages/page-auth.scss';
 
+.login {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 700px;
+  height: 700px;
+  pointer-events: none;
+  z-index: 1;
+}
+
 .login:before,
 .login__circuit-mask {
   content: '';
   position: absolute;
-  z-index: -1;
-  top: 48%;
+  z-index: 1;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   display: block;
   width: 700px;
   height: 700px;
+  pointer-events: none;
 }
 
 .login:before {
-  background: url(/assets/circuito/bg-circuito.svg)
+  background: url(/assets/circuito/bg-circuito.svg) no-repeat center center;
+  background-size: contain;
 }
 
 .login__circuit-mask {
@@ -87,9 +100,17 @@
 
 .contenedor {
   display: flex;
-  min-height: 320px;
-  width: 640px;
+  min-height: 480px;
+  width: 660px;
   padding: 5px;
+  transform: none !important;
+  transition: filter 0.35s ease, opacity 0.35s ease;
+
+  &.card-fade-out {
+    filter: blur(4px);
+    opacity: 0.7;
+    pointer-events: none;
+  }
 }
 
 @media (max-width: 767px) {
@@ -183,6 +204,10 @@
   width: 55%;
   height: 102% !important;
   border-radius: 0 10px 10px 0;
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 @media (max-width: 767px) {
@@ -202,11 +227,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
   justify-content: center;
   width: 100%;
   height: 100%;
-  padding: 20px 45px;
+  padding: 15px 35px;
 }
 
 .xinput {
@@ -456,4 +481,483 @@
   color: #ea5455;
   font-size: 0.85rem;
   margin-top: 10px;
+}
+
+// ==========================================
+// Validador de Seguridad / Reto Challenge PoW
+// ==========================================
+
+.validador-seguridad {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.65rem 0.95rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+
+  &:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+  }
+
+  &:focus {
+    outline: 2px solid #7367f0;
+    outline-offset: 1px;
+  }
+
+  &.validador-cargando {
+    background: #f0f7ff;
+    border-color: #bfdbfe;
+    animation: pulsoVerificando 2s infinite ease-in-out;
+
+    .validador-texto {
+      color: #1d4ed8;
+      font-weight: 500;
+    }
+  }
+
+  &.validador-exito {
+    background: #f0fdf4;
+    border-color: #bbf7d0;
+
+    .validador-texto {
+      color: #166534;
+      font-weight: 500;
+    }
+  }
+
+  .validador-checkbox {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+
+    .checkbox-box {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid #94a3b8;
+      border-radius: 5px;
+      background: #ffffff;
+      transition: all 0.2s ease;
+    }
+
+    .check-icono {
+      width: 20px;
+      height: 20px;
+      color: #28c76f !important;
+      animation: aparecerCheck 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+  }
+
+  .validador-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .validador-texto {
+      font-size: 0.84rem;
+      color: #334155;
+      line-height: 1.2;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .validador-marca {
+      font-size: 0.68rem;
+      color: #94a3b8;
+      margin-top: 2px;
+      letter-spacing: 0.02em;
+    }
+  }
+
+  .validador-icono {
+    font-size: 1.15rem;
+    color: #94a3b8;
+    margin-left: 0.5rem;
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .icono-activo {
+      color: #28c76f;
+      stroke: #28c76f;
+      filter: drop-shadow(0 0 4px rgba(40, 199, 111, 0.4));
+      transition: color 0.3s ease;
+    }
+  }
+}
+
+// Estilo adaptado para el modo BDV
+.validador-bdv {
+  background: #ffffff;
+  border: 1px solid #d8d4d4;
+  border-radius: 5px;
+  padding: 0.45rem 0.75rem;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif !important;
+
+  &:hover {
+    border-color: #0067b1;
+    background: #f8fbfe;
+  }
+
+  &.validador-cargando {
+    background: #f0f7fc;
+    border-color: #0067b1;
+
+    .validador-texto {
+      color: #0067b1;
+    }
+  }
+
+  &.validador-exito {
+    background: #f2fbf6;
+    border-color: #28c76f;
+  }
+
+  .validador-info {
+    .validador-texto {
+      font-size: 0.78rem;
+    }
+    .validador-marca {
+      font-size: 0.65rem;
+      color: #7b7b7b;
+    }
+  }
+}
+
+@keyframes pulsoVerificando {
+  0%, 100% {
+    border-color: #bfdbfe;
+    box-shadow: 0 0 0 0 rgba(115, 103, 240, 0.1);
+  }
+  50% {
+    border-color: #7367f0;
+    box-shadow: 0 0 0 4px rgba(115, 103, 240, 0.12);
+  }
+}
+
+@keyframes aparecerCheck {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Fila unificada Recuérdame y ¿Has olvidado tu contraseña?
+.auth-remember-forgot {
+  padding: 0 2px;
+  min-height: 24px;
+
+  .custom-control-label {
+    cursor: pointer;
+    user-select: none;
+    color: #6e6b7b;
+  }
+
+  .forgot-password-link {
+    color: #7367f0;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+
+    &:hover {
+      color: #5e50ee;
+      text-decoration: underline;
+    }
+  }
+}
+
+// ==========================================
+// Tarjeta refinada y cabecera suave
+// ==========================================
+
+.auth-card-refined {
+  position: relative;
+  z-index: 5 !important;
+  border-radius: 16px;
+  border: 1px solid #eef2f6;
+  box-shadow: 0 16px 36px -6px rgba(34, 41, 47, 0.08), 0 6px 12px -3px rgba(34, 41, 47, 0.04);
+  background: #ffffff !important;
+  transform: none !important;
+  transition: filter 0.35s ease, opacity 0.35s ease;
+
+  &.card-fade-out {
+    filter: blur(4px);
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .card-body {
+    position: relative;
+    z-index: 6;
+    background: #ffffff !important;
+    border-radius: 16px;
+    padding: 2.25rem 2.25rem 1.75rem 2.25rem;
+    min-height: 530px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+.brand-header {
+  .brand-logo-img {
+    transition: transform 0.25s ease;
+    &:hover {
+      transform: scale(1.03);
+    }
+  }
+
+  .brand-title {
+    color: #2c2e3e;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-subtitle {
+    letter-spacing: 0.01em;
+  }
+}
+
+.auth-login-form {
+  .form-control {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.12);
+      border-color: #7367f0;
+    }
+  }
+
+  .btn-primary {
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.65rem 1.25rem;
+    letter-spacing: 0.2px;
+    box-shadow: 0 4px 12px rgba(115, 103, 240, 0.25);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(115, 103, 240, 0.35);
+    }
+  }
+}
+
+// ==========================================
+// Pie de página elegante y discreto (Footer)
+// ==========================================
+
+.auth-footer {
+  .footer-divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(226, 232, 240, 0.9) 20%, rgba(226, 232, 240, 0.9) 80%, transparent);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-copy {
+    color: #82868b;
+    font-size: 0.78rem;
+  }
+
+  .footer-meta {
+    font-size: 0.72rem;
+    color: #a0aec0;
+
+    .footer-pill {
+      display: inline-flex;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 2px 8px;
+      color: #64748b;
+      font-weight: 500;
+      font-size: 0.7rem;
+      letter-spacing: 0.01em;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #f1f5f9;
+        color: #475569;
+        border-color: #cbd5e1;
+      }
+    }
+
+    .footer-date {
+      display: inline-flex;
+      align-items: center;
+      color: #94a3b8;
+    }
+
+    .meta-icon {
+      width: 11px;
+      height: 11px;
+      stroke-width: 2.2;
+    }
+
+    .footer-meta-sep {
+      opacity: 0.5;
+    }
+  }
+}
+
+// Pie de página BDV
+.bdv-footer-wrapper {
+  margin-top: 0.75rem;
+
+  .separador {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, #e2e8f0 15%, #e2e8f0 85%, transparent);
+  }
+
+  .bdv-footer-content {
+    font-size: 10.5px;
+    color: #7b7b7b;
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+
+    .bdv-meta-badge {
+      font-weight: 600;
+      color: #4a5568;
+    }
+
+    .bdv-meta-date {
+      color: #888888;
+    }
+  }
+}
+
+// ==========================================
+// Pantalla de Carga Interactiva y Animada (Login Transition)
+// ==========================================
+
+.auth-transition-overlay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.75rem 1.5rem;
+  min-height: 350px;
+  animation: fadeIn 0.3s ease-out forwards;
+
+  .transition-shield-container {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .shield-icon-wrapper {
+    position: relative;
+    z-index: 2;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(115, 103, 240, 0.12) 0%, rgba(115, 103, 240, 0.22) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(115, 103, 240, 0.15);
+    transition: all 0.3s ease;
+
+    .shield-icon {
+      width: 26px;
+      height: 26px;
+      color: #7367f0;
+      stroke: #7367f0;
+      stroke-width: 2.2;
+      transition: all 0.3s ease;
+    }
+
+    &.shield-wrapper-success {
+      background: linear-gradient(135deg, rgba(40, 199, 111, 0.15) 0%, rgba(40, 199, 111, 0.28) 100%);
+      box-shadow: 0 8px 16px rgba(40, 199, 111, 0.2);
+
+      .shield-icon {
+        color: #28c76f;
+        stroke: #28c76f;
+      }
+    }
+  }
+
+  .shield-pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(115, 103, 240, 0.35);
+    animation: ripplePulse 2.4s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    &.delay-1 {
+      animation-delay: 0.8s;
+    }
+  }
+
+  .transition-title {
+    color: #2c2e3e;
+    letter-spacing: -0.01em;
+  }
+
+  .transition-step {
+    min-height: 20px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .transition-progress-container {
+    width: 85%;
+    max-width: 260px;
+    height: 6px;
+    background: #edf2f7;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    .transition-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #7367f0 0%, #9e95f5 50%, #28c76f 100%);
+      border-radius: 10px;
+      transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 8px rgba(115, 103, 240, 0.4);
+    }
+  }
+}
+
+@keyframes ripplePulse {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
 }

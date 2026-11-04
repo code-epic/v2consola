@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Inject, DOCUMENT } from "@angular/core";
+import { Component, OnInit, ViewEncapsulation, Inject, DOCUMENT, ChangeDetectorRef } from "@angular/core";
 import {
   UntypedFormBuilder,
   UntypedFormGroup,
@@ -15,6 +15,7 @@ import { CoreConfigService } from "@core/services/config.service";
 import { CoreCommonModule } from "@core/common.module";
 
 import { IToken, LoginService } from "@services/seguridad/login.service";
+import { CaptchaService, ICaptchaSolution } from "@services/seguridad/captcha.service";
 
 import { environment } from "environments/environment";
 import { UtilService } from "@services/util/util.service";
@@ -54,6 +55,17 @@ export class AuthLoginV1Component implements OnInit {
 
   public bdv: boolean = true;
 
+  // Challenge PoW / Captcha
+  public botValidado: boolean = false;
+  public validandoBot: boolean = false;
+  public captchaData: ICaptchaSolution | null = null;
+
+  // Transición animada de ingreso interactivo
+  public isFadingOut: boolean = false;
+  public isTransitioning: boolean = false;
+  public transitionStep: string = "Iniciando sesión segura...";
+  public transitionPercent: number = 10;
+
   // Private
   private _unsubscribeAll: Subject<any>;
   public showTotpSection = false;
@@ -84,6 +96,8 @@ export class AuthLoginV1Component implements OnInit {
     // private toastrService: ToastrService,
     private utilservice: UtilService,
     private apiService: ApiService,
+    private captchaService: CaptchaService,
+    private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.bdv = true;
@@ -157,50 +171,116 @@ export class AuthLoginV1Component implements OnInit {
       );
       this.loginService.obenterAplicacion(this.validar_token);
     }
+
+    // Reto criptográfico PoW automático y transparente de fondo
+    setTimeout(() => {
+      this.validarHumano();
+    }, 400);
   }
 
   getCurrentDate() {
     return new Date(); // or format as you prefer
   }
 
-  login() {
+  /**
+   * Resuelve o regenera el reto criptográfico PoW de Sandra Server
+   */
+  async validarHumano() {
+    if (this.botValidado || this.validandoBot) return;
+    this.validandoBot = true;
+    this.cdr.markForCheck();
+    try {
+      const solData = await this.captchaService.obtenerYResolver();
+      if (solData) {
+        this.captchaData = solData;
+        this.botValidado = true;
+      } else {
+        // Fallback cuando Sandra Server no requiere captcha o endpoint retorna nulo
+        this.botValidado = true;
+      }
+    } catch (err) {
+      console.warn("[AuthLoginV1Component] Validación captcha fallback:", err);
+      this.botValidado = !environment.production;
+    } finally {
+      this.validandoBot = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+  async login() {
     this.submitted = true;
     // stop here if form is invalid
     if (this.loginForm.invalid) {
       return;
-    } else {
-      this.loading = true;
-      this.loginService
-        .getLogin(this.loginForm.value.email, this.loginForm.value.password)
-        .subscribe(
-          (itk) => {
+    }
+
+    if (!this.botValidado && !this.validandoBot) {
+      await this.validarHumano();
+    }
+
+    this.loading = true;
+    this.loginService
+      .getLogin(this.loginForm.value.email, this.loginForm.value.password, this.captchaData)
+      .subscribe(
+        (itk) => {
+          this.loading = false;
+          this.isHidden = false;
+          let tk: any = this.loginService.getUserDecrypt(itk.token);
+
+          if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
             this.loading = false;
             this.isHidden = false;
-            let tk: any = this.loginService.getUserDecrypt(itk.token);
+            this.showTotpSection = true;
 
-            if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
-              this.showTotpSection = true;
-
-              this.tempAuthToken = itk.token; // Store the temporary token
-            } else {
-              // No 2FA, proceed with normal login
-              this.loginService.Iniciar(itk.token);
-            }
-          },
-          (er) => {
-            this.loading = false;
+            this.tempAuthToken = itk.token; // Store the temporary token
+          } else {
+            // No 2FA, proceed with interactive animated transition
             this.isHidden = false;
-            // Diagnóstico: mostrar error real en consola
-            console.error('[LOGIN_ERROR]', er, er.error || '(sin error.http)');
-            const msg = er.error?.msj || (typeof er === 'string' ? er : 'Error al acceder al sistema');
-            this.utilservice.AlertMini(
-              "top-end",
-              "error",
-              msg,
-              5000,
-            );
-          },
-        );
+            this.iniciarSesionConTransicion(itk.token);
+          }
+          this.cdr.markForCheck();
+        },
+        (er) => {
+          this.loading = false;
+          this.isFadingOut = false;
+          this.isHidden = false;
+          this.isTransitioning = false;
+          // Diagnóstico: mostrar error real en consola
+          console.error('[LOGIN_ERROR]', er, er.error || '(sin error.http)');
+          const msg = er.error?.msj || (typeof er === 'string' ? er : 'Error al acceder al sistema');
+          this.utilservice.AlertMini(
+            "top-end",
+            "error",
+            msg,
+            5000,
+          );
+
+          // Regenerar reto de seguridad en caso de fallo
+          this.botValidado = false;
+          this.captchaData = null;
+          this.cdr.markForCheck();
+          setTimeout(() => {
+            this.validarHumano();
+          }, 400);
+        },
+      );
+  }
+
+  /**
+   * Ejecuta la transición suave de ingreso con difuminado elegante sin mover la tarjeta
+   */
+  async iniciarSesionConTransicion(token: string) {
+    this.isFadingOut = true;
+    this.loading = true;
+    this.cdr.markForCheck();
+
+    try {
+      await this.loginService.Iniciar(token);
+    } catch (err) {
+      console.error("[iniciarSesionConTransicion] Error:", err);
+      this.isFadingOut = false;
+      this.loading = false;
+      this.cdr.markForCheck();
     }
   }
 
@@ -210,29 +290,37 @@ export class AuthLoginV1Component implements OnInit {
   ngOnDestroy(): void {
     this._unsubscribeAll.next(undefined);
     this._unsubscribeAll.complete();
+    this._coreConfigService.resetConfig();
   }
 
-  loginOpt() {
+  async loginOpt() {
     this.xWidth = "660px";
+
+    if (!this.botValidado && !this.validandoBot) {
+      await this.validarHumano();
+    }
+
     this.loading = true;
     console.log(this.usuarioCtrl.value, this.claveCtrl.value);
-    this.loginService.getLogin(this.usuarioCtrl.value, this.claveCtrl.value).subscribe(
+    this.loginService.getLogin(this.usuarioCtrl.value, this.claveCtrl.value, this.captchaData).subscribe(
       (itk) => {
-        this.loading = false;
-        this.isHidden = false;
         let tk: any = this.loginService.getUserDecrypt(itk.token);
         this.tempAuthToken = itk.token;
         if (tk.Usuario.token !== undefined && tk.Usuario.token !== null) {
+          this.loading = false;
+          this.isHidden = false;
           this.xWidth = "840px";
           this.showTotpSection = true;
         } else {
-          console.log(this.tempAuthToken);
-          this.loginService.Iniciar(this.tempAuthToken);
+          this.isHidden = false;
+          this.iniciarSesionConTransicion(this.tempAuthToken);
         }
+        this.cdr.markForCheck();
       },
       (er) => {
         this.loading = false;
-        this.isHidden = false;
+        this.isFadingOut = false;
+        this.isTransitioning = false;
         console.error('[LOGIN_OPT_ERROR]', er, er.error || '(sin error.http)');
         const msg = er.error?.msj || (typeof er === 'string' ? er : 'Error al acceder al sistema');
         this.utilservice.AlertMini(
@@ -241,6 +329,14 @@ export class AuthLoginV1Component implements OnInit {
           msg,
           5000,
         );
+
+        // Regenerar reto de seguridad en caso de fallo
+        this.botValidado = false;
+        this.captchaData = null;
+        this.cdr.markForCheck();
+        setTimeout(() => {
+          this.validarHumano();
+        }, 400);
       },
     );
   }
@@ -288,6 +384,7 @@ export class AuthLoginV1Component implements OnInit {
    */
   goBackToLogin() {
     this.showTotpSection = false;
+    this.isTransitioning = false;
     this.tempAuthToken = "";
     this.isOtpInvalid = false;
     this.otp = new Array(6).fill("");
@@ -389,7 +486,7 @@ export class AuthLoginV1Component implements OnInit {
             (xdata) => {
               console.log(xdata);
               if (xdata.msj === "Ok") {
-                this.loginService.Iniciar(this.tempAuthToken);
+                this.iniciarSesionConTransicion(this.tempAuthToken);
               } else if (xdata.tipo == 99) {
                 this.handleOtpError(xdata.msj);
                 this.goBackToLogin();

@@ -211,13 +211,21 @@
 
 
 <ng-template #ModalAddDevice let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Agregar Conexión</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-primary mr-1">
+        <span [data-feather]="'link-2'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Agregar Conexión</h5>
+        <small class="text-muted">Configure parámetros de conexión y credenciales de acceso</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="GuardarConexion()">
+  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="GuardarConexion()">
     <div class="modal-body" tabindex="0" ngbAutofocus>
       <!-- Invoice -->
       <div class="col-xl-12 col-md-12 col-12">
@@ -232,7 +240,7 @@
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'server'" [size]="16"></span></span>
               </div>
-              <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion" bindLabel="descripcion"
+              <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion"
                 placeholder="Seleccione Hostname" bindValue="host">
               </ng-select>
             </div>
@@ -447,21 +455,36 @@
 
     </div>
     <div class="modal-footer">
-      <button class="btn btn-success" tabindex="4" rippleEffect>Guardar</button>
-      <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+      <button type="button" class="btn btn-outline-primary mr-auto" (click)="EvaluarConexion()" rippleEffect>
+        <span [data-feather]="'zap'" [size]="15" class="mr-50"></span> Probar Conexión
+      </button>
+      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
+        <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cancelar
+      </button>
+      <button class="btn btn-primary" tabindex="4" rippleEffect>
+        <span [data-feather]="'save'" [size]="15" class="mr-50"></span> Guardar
+      </button>
     </div>
   </form>
 </ng-template>
 
 
 <ng-template #ModalEditDevice let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Editar Dispositivo</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-warning mr-1">
+        <span [data-feather]="'edit'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Editar Conexión</h5>
+        <small class="text-muted">Modifique los parámetros del driver y base de datos</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
-  <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
+  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
     <div class="modal-body" tabindex="0" ngbAutofocus>
       <!-- Invoice -->
       <div class="col-xl-12 col-md-12 col-12">
@@ -684,18 +707,33 @@
 
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" rippleEffect>Actualizar</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <button type="button" class="btn btn-outline-primary mr-auto" (click)="EvaluarConexion()" rippleEffect>
+      <span [data-feather]="'zap'" [size]="15" class="mr-50"></span> Probar Conexión
+    </button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
+      <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cancelar
+    </button>
+    <button class="btn btn-warning" tabindex="4" rippleEffect>
+      <span [data-feather]="'check'" [size]="15" class="mr-50"></span> Actualizar
+    </button>
   </div>
 </form>
 
 </ng-template>
 
 <ng-template #ModalEscaneoNmap let-modal>
-  <div class="modal-header">
-    <h5 class="modal-title" id="myModalLabel160">Escaneando: nmap -sT</h5>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
+  <div class="modal-header modal-header-pastel">
+    <div class="d-flex align-items-center">
+      <div class="modal-icon-badge modal-icon-info mr-1">
+        <span [data-feather]="'terminal'" [size]="20"></span>
+      </div>
+      <div>
+        <h5 class="modal-title mb-0" id="myModalLabel160">Diagnóstico: nmap -sT</h5>
+        <small class="text-muted">Escaneo de socket TCP y disponibilidad de conexión</small>
+      </div>
+    </div>
+    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      <span [data-feather]="'x'" [size]="17"></span>
     </button>
   </div>
   <div class="modal-body" tabindex="0" ngbAutofocus>
@@ -705,10 +743,10 @@
       <div class="row">
 
         <div class="col-md-12">
-          <div class="form-group">
-            <label>Resultado</label>
-            <div style="width:100%; height:400px; overflow: scroll;">
-              <textarea id="xrs" style="font-size:11px; width: 100%; height: 400px;"
+          <div class="form-group mb-0">
+            <label class="form-label">Resultado del Análisis</label>
+            <div style="width:100%; height:380px; overflow: auto; border: 1px solid #ebe9f1; border-radius: 8px; background: #1e1e2d; padding: 10px;">
+              <textarea id="xrs" style="font-family: 'Fira Code', 'Monaco', monospace; font-size:12px; width: 100%; height: 100%; background: transparent; color: #a6accd; border: none; resize: none; outline: none;"
               [formControl]="xrsCtrl"></textarea>
             </div>
           </div>
@@ -720,8 +758,12 @@
 
   </div>
   <div class="modal-footer">
-    <button class="btn btn-success" tabindex="4" (click)="ScanRed()" rippleEffect>Escanear</button>
-    <button type="button" class="btn btn-danger" (click)="modal.close('Accept click')" rippleEffect>Cerrar</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
+      <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cerrar
+    </button>
+    <button class="btn btn-primary" tabindex="4" (click)="ScanRed()" rippleEffect>
+      <span [data-feather]="'activity'" [size]="15" class="mr-50"></span> Iniciar Escaneo
+    </button>
   </div>
 
 </ng-template>

@@ -1,10 +1,10 @@
-<!-- NAVBAR -->
-<ng-container *ngTemplateOutlet="navbar"></ng-container>
-<!--/ NAVBAR -->
-
 <!-- MENU -->
 <ng-container *ngTemplateOutlet="menu"></ng-container>
 <!--/ MENU -->
+
+<!-- NAVBAR -->
+<ng-container *ngTemplateOutlet="navbar"></ng-container>
+<!--/ NAVBAR -->
 
 <!-- APP-CONTENT -->
 <div class="app-content content">
@@ -52,7 +52,7 @@
       name="menu"
       [collapsed]="coreConfig.layout.menu.collapsed"
       collapsibleSidebar="bs-gt-xl"
-      class="main-menu menu-fixed menu-accordio menu-shadow"
+      class="main-menu menu-fixed menu-accordion menu-shadow"
       overlayClass="sidenav-overlay"
     [ngClass]="[
       coreConfig.layout.skin === 'semi-dark' || coreConfig.layout.skin === 'dark' ? 'menu-dark' : 'menu-light',

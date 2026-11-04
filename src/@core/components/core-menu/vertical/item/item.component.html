@@ -1,29 +1,41 @@
 @if (!item.hidden) {
   <!-- item with router url -->
-  @if (item.url && !item.externalUrl) {
+  @if (formattedUrl && !item.externalUrl) {
     <a
-      class="d-flex align-items-center"
+      class="d-flex align-items-center w-100"
       [ngClass]="item.classes"
-      [routerLink]="[item.url]"
+      [routerLink]="[formattedUrl]"
       [target]="item.openInNewTab ? '_blank' : '_self'"
       >
       <ng-container *ngTemplateOutlet="itemContent"></ng-container>
     </a>
   }
   <!-- item with external url -->
-  @if (item.url && item.externalUrl) {
+  @if (formattedUrl && item.externalUrl) {
     <a
-      class="d-flex align-items-center"
+      class="d-flex align-items-center w-100"
       [ngClass]="item.classes"
-      [href]="item.url"
+      [href]="formattedUrl"
       [target]="item.openInNewTab ? '_blank' : '_self'"
+      >
+      <ng-container *ngTemplateOutlet="itemContent"></ng-container>
+    </a>
+  }
+  <!-- item without url or empty url fallback -->
+  @if (!formattedUrl) {
+    <a
+      class="d-flex align-items-center w-100"
+      [ngClass]="item.classes"
+      href="javascript:void(0);"
       >
       <ng-container *ngTemplateOutlet="itemContent"></ng-container>
     </a>
   }
   <ng-template #itemContent>
     @if (item.icon) {
-      <span [data-feather]="item.icon"></span>
+      <span class="menu-icon-wrap">
+        <span [data-feather]="item.icon"></span>
+      </span>
     }
     <span class="menu-title text-truncate" [translate]="item.translate">{{ item.title }}</span>
     @if (item.badge) {

@@ -78,18 +78,16 @@ export class CoreMenuService {
    * @param menu
    */
   register(key, menu): void {
-    // Confirm if the key already used
-    if (this._registry[key]) {
-      console.error(`Menu with the key '${key}' already exists. Either unregister it first or use a unique key.`);
-
-      return;
-    }
-
-    // Add to registry
+    // Add or update menu in registry
     this._registry[key] = menu;
 
     // Notify subject
     this._onMenuRegistered.next([key, menu]);
+
+    // If currently active menu is being updated, notify subscribers immediately
+    if (this._currentMenuKey === key) {
+      this._onMenuChanged.next(key);
+    }
   }
 
   /**

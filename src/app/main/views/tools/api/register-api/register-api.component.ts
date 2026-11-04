@@ -701,22 +701,22 @@ export class RegisterApiComponent implements OnInit {
 
     this.apiService.ExecColeccion(obj).subscribe(
       (data) => {
-        this.router.navigate([
-          `tools/applications/api-list/${this.urlControl}`,
-        ]);
         this.utilservice.AlertMini(
           "top-end",
           "success",
-          `Tu (API) ha sido registrada codigo: ${data.UpsertedID}`,
+          `Tu (API) ha sido registrada código: ${data.UpsertedID || 'OK'}`,
           3000,
         );
+        this.router.navigate([
+          `tools/applications/api-list/${this.urlControl}`,
+        ]);
       },
       (error) => {
         this.utilservice.AlertMini(
           "top-end",
           "error",
-          "Error al Guardadar API",
-          3000,
+          "Error al Guardar API",
+          3500,
         );
       },
     );
@@ -784,22 +784,22 @@ export class RegisterApiComponent implements OnInit {
     // console.log(this.xAPIDB)
     await this.apiService.Guardar(jsonG, sApi).subscribe(
       (data) => {
-        this.router.navigate([
-          `tools/applications/api-details/${this.rutaURL}/${this.urlControl}`,
-        ]);
         this.utilservice.AlertMini(
           "top-end",
           "success",
           `Tu (API) ha sido actualizada a la versión ${this.xAPIDB.version}`,
           3000,
         );
+        this.router.navigate([
+          `tools/applications/api-details/${this.rutaURL}/${this.urlControl}`,
+        ]);
       },
-      (errot) => {
+      (error) => {
         this.utilservice.AlertMini(
           "top-end",
           "error",
-          "Fallo la conexión, con el API",
-          3000,
+          "Falló la conexión con el API",
+          3500,
         );
       },
     );
@@ -964,12 +964,17 @@ export class RegisterApiComponent implements OnInit {
             position: "top-end",
             icon: "warning",
             showConfirmButton: false,
-            timer: 7000,
+            showCloseButton: true,
+            timer: 6000,
             timerProgressBar: true,
             background: "#ffffff",
             didOpen: (toast) => {
-              toast.addEventListener("mouseenter", Swal.stopTimer);
-              toast.addEventListener("mouseleave", Swal.resumeTimer);
+              toast.style.cursor = "pointer";
+              toast.addEventListener("click", (e: MouseEvent) => {
+                if (!(e.target as HTMLElement).closest(".swal2-close")) {
+                  Swal.close();
+                }
+              });
             },
             html: `
               <div style="text-align: left; font-family: inherit; font-size: 0.84rem; line-height: 1.45; color: #374151;">

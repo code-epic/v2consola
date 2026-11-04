@@ -1,15 +1,305 @@
-//  Hide collapsible menu while menu is collapsed
-.vertical-layout:not(.vertical-overlay-menu) {
-  .main-menu:not(.expanded) {
-    .nav-item.has-sub.open {
-      .menu-content {
-        display: none;
+// =========================================================================
+//  Sandra Core L7 - Modern, Refined & Intuitive Sidebar Navigation Styling
+// =========================================================================
+
+// Ensure submenus stay closed only when vertical menu is in collapsed icon mode (desktop)
+.vertical-layout.menu-collapsed:not(:hover) {
+  .nav-item.has-sub {
+    .menu-content {
+      display: none !important;
+    }
+  }
+}
+
+.main-menu {
+  user-select: none;
+
+  .navigation {
+    padding-top: 0.6rem;
+    padding-bottom: 2.5rem;
+
+    // Base nav item styling
+    .nav-item {
+      margin: 3px 12px;
+      position: relative;
+      transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      > a {
+        padding: 10px 14px;
+        padding-right: 36px;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 0.93rem;
+        letter-spacing: -0.01em;
+        color: #524f65;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+        .menu-icon-wrap,
+        svg,
+        i {
+          margin-right: 12px;
+          height: 19px;
+          width: 19px;
+          min-width: 19px;
+          stroke-width: 1.85;
+          opacity: 0.78;
+          color: inherit;
+          transition: transform 0.2s ease, opacity 0.2s ease, stroke 0.2s ease;
+        }
+
+        .menu-title {
+          font-weight: inherit;
+          letter-spacing: -0.01em;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        &:hover {
+          background: rgba(115, 103, 240, 0.06);
+          color: #7367f0;
+          transform: translateX(3px);
+
+          .menu-icon-wrap,
+          svg,
+          i {
+            opacity: 1;
+            stroke: #7367f0;
+            transform: scale(1.08);
+          }
+        }
+
+        &:active {
+          transform: scale(0.985);
+        }
+      }
+
+      // Top-level active item (e.g. Principal)
+      &.active:not(.has-sub) {
+        > a {
+          background: linear-gradient(135deg, #7367f0 0%, #8e85f7 100%) !important;
+          color: #ffffff !important;
+          box-shadow: 0 4px 14px 0 rgba(115, 103, 240, 0.32);
+          font-weight: 600;
+
+          .menu-icon-wrap,
+          svg,
+          i {
+            stroke: #ffffff !important;
+            opacity: 1 !important;
+          }
+
+          &:hover {
+            transform: none;
+            color: #ffffff !important;
+          }
+        }
+      }
+
+      // Collapsible Groups (e.g. Redes, Herramientas, Aplicaciones)
+      &.has-sub {
+        > a {
+          position: relative;
+          cursor: pointer;
+
+          &:after {
+            position: absolute;
+            right: 14px;
+            top: calc(50% - 7px) !important;
+            height: 14px;
+            width: 14px;
+            background-size: 14px;
+            opacity: 0.45;
+            transform: rotate(0deg);
+            transition: transform 0.26s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease !important;
+          }
+        }
+
+        // Parent open state
+        &.open {
+          > a {
+            background: rgba(115, 103, 240, 0.08);
+            color: #7367f0;
+            font-weight: 600;
+            border-radius: 10px;
+
+            .menu-icon-wrap,
+            svg,
+            i {
+              opacity: 1;
+              color: #7367f0;
+              stroke: #7367f0;
+            }
+
+            &:after {
+              opacity: 0.9;
+              transform: rotate(90deg) !important;
+            }
+          }
+
+          // Submenu container: smooth unfold with structured tree hierarchy
+          > .menu-content {
+            display: block !important;
+            animation: delicateSubmenuSlide 0.26s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+          }
+        }
+
+        &:not(.open) {
+          > .menu-content {
+            display: none !important;
+          }
+        }
+
+        // Submenu list container: Tree structure with elegant left guide line
+        .menu-content {
+          list-style: none;
+          padding: 4px 0 6px 0;
+          margin: 4px 10px 8px 22px;
+          border-left: 2px solid rgba(115, 103, 240, 0.16);
+          padding-left: 8px;
+
+          li {
+            margin: 3px 0;
+            width: 100%;
+
+            > a {
+              display: flex;
+              align-items: center;
+              width: 100%;
+              padding: 8px 12px;
+              border-radius: 8px;
+              font-size: 0.88rem;
+              font-weight: 450;
+              color: #555268;
+              cursor: pointer;
+              text-decoration: none;
+              transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+              .menu-icon-wrap,
+              svg,
+              i {
+                height: 15px;
+                width: 15px;
+                min-width: 15px;
+                margin-right: 10px;
+                stroke-width: 1.8;
+                opacity: 0.7;
+                color: inherit;
+                transition: all 0.2s ease;
+              }
+
+              .menu-title {
+                font-weight: inherit;
+                letter-spacing: -0.01em;
+              }
+
+              &:hover {
+                background: rgba(115, 103, 240, 0.08);
+                color: #7367f0;
+                transform: translateX(3px);
+
+                .menu-icon-wrap,
+                svg,
+                i {
+                  opacity: 1;
+                  color: #7367f0;
+                  stroke: #7367f0;
+                  transform: scale(1.1);
+                }
+              }
+
+              &:active {
+                transform: scale(0.98);
+              }
+            }
+
+            // Submenu active item
+            &.active {
+              > a {
+                background: linear-gradient(135deg, rgba(115, 103, 240, 0.14), rgba(115, 103, 240, 0.08)) !important;
+                color: #7367f0 !important;
+                font-weight: 600;
+                box-shadow: none;
+
+                .menu-icon-wrap,
+                svg,
+                i {
+                  opacity: 1;
+                  color: #7367f0;
+                  stroke: #7367f0;
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
 }
+
+// Dark theme adaptations
+.menu-dark,
+.dark-layout .main-menu {
+  .navigation .nav-item {
+    > a {
+      color: #b4b7bd;
+
+      &:hover {
+        background: rgba(115, 103, 240, 0.12);
+        color: #c4beff;
+      }
+    }
+
+    &.has-sub {
+      &.open > a {
+        background: rgba(115, 103, 240, 0.1);
+        color: #c4beff;
+      }
+
+      .menu-content {
+        border-left-color: rgba(115, 103, 240, 0.25);
+
+        li {
+          > a {
+            color: #92959e;
+
+            &:hover {
+              background: rgba(115, 103, 240, 0.12);
+              color: #c4beff;
+            }
+          }
+
+          &.active > a {
+            background: rgba(115, 103, 240, 0.2) !important;
+            color: #c4beff !important;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Smooth unfolding animation
+@keyframes delicateSubmenuSlide {
+  0% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .nav-item {
   &.disabled {
     outline: none;
+    opacity: 0.5;
+    pointer-events: none;
   }
 }

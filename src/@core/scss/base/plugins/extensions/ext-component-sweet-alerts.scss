@@ -1,130 +1,546 @@
 @import '../../bootstrap-extended/include'; // Bootstrap includes
 @import '../../components/include'; // Components includes
 
+// =========================================================================================
+// SWEETALERT2: ESTILO MAESTRO DELICADO • TONOS PASTELES • MINIMALISMO & ANIMATE
+// =========================================================================================
+
+// Contenedor global de SweetAlert2 con desenfoque de fondo sutil (SOLO modales, NO toasts)
 .swal2-container {
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+
+  // Backdrop con desenfoque elegante para modales estándar
+  &.swal2-backdrop-show {
+    background: rgba(15, 23, 42, 0.32) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+  }
+
+  // ==========================================
+  // MODAL PRINCIPAL: Tarjeta Minimalista
+  // ==========================================
   .swal2-popup {
-    border-radius: $card-border-radius;
-    padding-bottom: 1.5rem;
+    pointer-events: auto !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    background: #ffffff !important;
+    box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.12), 0 8px 18px -4px rgba(15, 23, 42, 0.04) !important;
+    padding: 2.25rem 2rem 2rem 2rem !important;
+    width: auto !important;
+    max-width: 480px !important;
+    font-family: inherit !important;
+    animation: swalDelicateIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 
-    // close button
-    .swal2-close:focus {
-      outline: none;
-      box-shadow: none;
+    &.swal2-hide {
+      animation: swalDelicateOut 0.22s ease-in forwards !important;
     }
 
-    // content
-    .swal2-content {
-      color: $body-color;
-    }
+    // Botón cerrar sutil
+    .swal2-close {
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      color: #94a3b8 !important;
+      font-size: 1.5rem !important;
+      top: 14px !important;
+      right: 14px !important;
+      transition: all 0.2s ease !important;
 
-    // header styling
-    .swal2-title {
-      font-size: $h3-font-size;
-      font-weight: $headings-font-family;
-      color: $headings-color;
-    }
+      &:hover {
+        color: #475569 !important;
+        transform: scale(1.1) !important;
+      }
 
-    // remove box-shadow on focus of buttons
-    button.swal2-confirm:focus {
-      box-shadow: none;
-    }
-
-    // input
-    input.swal2-input {
-      height: $input-height;
-      font-size: $font-size-base;
-      padding: $input-padding-y $input-padding-x;
-      color: $body-color;
-      border-color: $custom-control-border-color;
-      border-radius: $border-radius;
-      line-height: $line-height-base;
       &:focus {
-        border-color: $primary !important;
-        box-shadow: $input-focus-box-shadow;
+        outline: none !important;
+        box-shadow: none !important;
       }
     }
 
-    // steps
-    .swal2-progress-steps {
-      .swal2-progress-step {
-        background-color: $primary;
-        &.swal2-active-progress-step {
-          ~ .swal2-progress-step-line,
-          ~ .swal2-progress-step {
-            background-color: lighten(theme-color('primary'), 15%);
+    // Cabecera y Título
+    .swal2-title {
+      font-size: 1.25rem !important;
+      font-weight: 700 !important;
+      color: #1e293b !important;
+      letter-spacing: -0.02em !important;
+      margin: 0.75rem 0 0.5rem 0 !important;
+      padding: 0 !important;
+    }
+
+    // Contenido y Texto
+    .swal2-html-container,
+    .swal2-content {
+      font-size: 0.92rem !important;
+      color: #64748b !important;
+      line-height: 1.55 !important;
+      margin: 0.35rem 0 1.5rem 0 !important;
+      padding: 0 !important;
+    }
+
+    // Acciones y Botones
+    .swal2-actions {
+      pointer-events: auto !important;
+      margin: 1.25rem 0 0 0 !important;
+      gap: 0.75rem !important;
+      width: 100% !important;
+      justify-content: center !important;
+    }
+
+    // Botones con estilo minimalista refinado
+    .swal2-styled {
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      margin: 0 !important;
+      padding: 0.65rem 1.4rem !important;
+      border-radius: 10px !important;
+      font-size: 0.88rem !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.01em !important;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      border: 1px solid transparent !important;
+
+      &:focus {
+        box-shadow: none !important;
+        outline: none !important;
+      }
+
+      // Confirmar (Color suave con elevación sutil)
+      &.swal2-confirm {
+        background-color: #7367f0 !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(115, 103, 240, 0.25) !important;
+
+        &:hover {
+          background-color: #6355ee !important;
+          transform: translateY(-1.5px) !important;
+          box-shadow: 0 6px 16px rgba(115, 103, 240, 0.35) !important;
+        }
+
+        &:active {
+          transform: translateY(0) !important;
+        }
+      }
+
+      // Cancelar (Estilo neutro pastel)
+      &.swal2-cancel {
+        background-color: #f8fafc !important;
+        color: #475569 !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+
+        &:hover {
+          background-color: #f1f5f9 !important;
+          color: #1e293b !important;
+          border-color: #cbd5e1 !important;
+          transform: translateY(-1.5px) !important;
+        }
+
+        &:active {
+          transform: translateY(0) !important;
+        }
+      }
+
+      // Denegar
+      &.swal2-deny {
+        background-color: #fff1f2 !important;
+        color: #f43f5e !important;
+        border: 1px solid #fecdd3 !important;
+
+        &:hover {
+          background-color: #ffe4e6 !important;
+          transform: translateY(-1.5px) !important;
+        }
+      }
+    }
+
+    // Input dentro del SweetAlert
+    input.swal2-input {
+      height: 42px !important;
+      border-radius: 8px !important;
+      border: 1px solid #e2e8f0 !important;
+      font-size: 0.9rem !important;
+      padding: 0.5rem 0.85rem !important;
+      color: #1e293b !important;
+      transition: all 0.2s ease !important;
+      margin: 1rem auto !important;
+
+      &:focus {
+        border-color: #7367f0 !important;
+        box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.12) !important;
+        outline: none !important;
+      }
+    }
+
+    // Barra de footer
+    .swal2-footer {
+      border-top: 1px solid #f1f5f9 !important;
+      color: #94a3b8 !important;
+      font-size: 0.78rem !important;
+      padding-top: 0.85rem !important;
+      margin-top: 1.25rem !important;
+    }
+  }
+
+  // ============================================================
+  // ICONOS CON TONOS PASTELES Y ANIMACIONES DELICADAS
+  // ============================================================
+  .swal2-icon {
+    width: 68px !important;
+    height: 68px !important;
+    margin: 0 auto 0.75rem auto !important;
+    border-width: 2px !important;
+    border-style: solid !important;
+    animation: swalIconDelicate 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+
+    // ÉXITO (Success en Verde Menta Pastel)
+    &.swal2-success {
+      border-color: rgba(40, 199, 111, 0.35) !important;
+      background-color: rgba(40, 199, 111, 0.08) !important;
+      color: #28c76f !important;
+
+      .swal2-success-ring {
+        border-color: rgba(40, 199, 111, 0.3) !important;
+      }
+
+      .swal2-success-line-tip,
+      .swal2-success-line-long {
+        background-color: #28c76f !important;
+        height: 3px !important;
+      }
+
+      .swal2-success-circular-line-left,
+      .swal2-success-circular-line-right,
+      .swal2-success-fix {
+        background-color: transparent !important;
+      }
+    }
+
+    // ERROR (Danger en Rosa / Coral Pastel)
+    &.swal2-error {
+      border-color: rgba(234, 84, 85, 0.35) !important;
+      background-color: rgba(234, 84, 85, 0.08) !important;
+      color: #ea5455 !important;
+
+      .swal2-x-mark {
+        .swal2-x-mark-line-left,
+        .swal2-x-mark-line-right {
+          background-color: #ea5455 !important;
+          height: 3px !important;
+          border-radius: 2px !important;
+        }
+      }
+    }
+
+    // ADVERTENCIA (Warning en Ámbar Pastel Cálido)
+    &.swal2-warning {
+      border-color: rgba(255, 159, 67, 0.4) !important;
+      background-color: rgba(255, 159, 67, 0.09) !important;
+      color: #ff9f43 !important;
+
+      .swal2-icon-content {
+        color: #ff9f43 !important;
+        font-size: 2.2rem !important;
+        font-weight: 600 !important;
+      }
+    }
+
+    // INFORMACIÓN (Info en Cian / Azul Pastel)
+    &.swal2-info {
+      border-color: rgba(0, 207, 232, 0.35) !important;
+      background-color: rgba(0, 207, 232, 0.08) !important;
+      color: #00cfe8 !important;
+
+      .swal2-icon-content {
+        color: #00cfe8 !important;
+        font-size: 2rem !important;
+        font-weight: 600 !important;
+      }
+    }
+
+    // PREGUNTA (Question en Lavanda / Violeta Pastel)
+    &.swal2-question {
+      border-color: rgba(115, 103, 240, 0.35) !important;
+      background-color: rgba(115, 103, 240, 0.08) !important;
+      color: #7367f0 !important;
+
+      .swal2-icon-content {
+        color: #7367f0 !important;
+        font-size: 2.2rem !important;
+        font-weight: 600 !important;
+      }
+    }
+  }
+
+  // ============================================================
+  // TOASTS MINIMALISTAS (AlertMini y Alertas Flotantes)
+  // ============================================================
+  &.swal2-top-end,
+  &.swal2-top,
+  &.swal2-top-start,
+  &.swal2-bottom-end,
+  &.swal2-bottom,
+  &.swal2-bottom-start {
+    .swal2-popup.swal2-toast {
+      border-radius: 12px !important;
+      padding: 0.75rem 1.15rem !important;
+      background: rgba(255, 255, 255, 0.96) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border: 1px solid #edf2f7 !important;
+      box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.08), 0 3px 8px -2px rgba(15, 23, 42, 0.04) !important;
+
+      &.swal2-show {
+        animation: swalToastSlideIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      }
+
+      &.swal2-hide {
+        animation: swalToastSlideOut 0.22s cubic-bezier(0.4, 0, 1, 1) forwards !important;
+      }
+
+      .swal2-title {
+        font-size: 0.85rem !important;
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        margin: 0 !important;
+      }
+
+      .swal2-html-container {
+        font-size: 0.78rem !important;
+        color: #64748b !important;
+        margin: 0 !important;
+      }
+
+      .swal2-icon {
+        width: 32px !important;
+        height: 32px !important;
+        min-width: 32px !important;
+        margin: 0 0.75rem 0 0 !important;
+        border-width: 1.5px !important;
+
+        .swal2-icon-content {
+          font-size: 1.1rem !important;
+        }
+
+        &.swal2-success {
+          .swal2-success-line-tip,
+          .swal2-success-line-long {
+            height: 2px !important;
+          }
+        }
+
+        &.swal2-error {
+          .swal2-x-mark {
+            .swal2-x-mark-line-left,
+            .swal2-x-mark-line-right {
+              height: 2px !important;
+            }
           }
         }
       }
-      .swal2-progress-step-line {
-        background-color: $primary;
+
+      // Barra de progreso pastel del Toast
+      .swal2-timer-progress-bar {
+        height: 3px !important;
+        background: linear-gradient(90deg, #7367f0 0%, #00cfe8 100%) !important;
+        border-bottom-left-radius: 12px !important;
+        border-bottom-right-radius: 12px !important;
+        opacity: 0.8 !important;
       }
-    }
 
-    // pre code
-    pre {
-      min-height: 1.35rem;
-      margin-top: 0.5rem;
-    }
+      // Botón cerrar interactivo y nítido en Toast
+      .swal2-close {
+        font-size: 1.25rem !important;
+        font-family: inherit !important;
+        font-weight: 500 !important;
+        color: #94a3b8 !important;
+        position: static !important;
+        margin-left: 0.75rem !important;
+        padding: 0 !important;
+        width: 24px !important;
+        height: 24px !important;
+        min-width: 24px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 6px !important;
+        line-height: 1 !important;
+        transition: all 0.18s ease !important;
+        z-index: 10 !important;
 
-    // footer
-    .swal2-footer {
-      border-color: $border-color;
-      color: $body-color;
+        &:hover {
+          color: #ef4444 !important;
+          background: rgba(239, 68, 68, 0.08) !important;
+          transform: scale(1.15) !important;
+        }
+
+        &:active {
+          transform: scale(0.95) !important;
+        }
+
+        &:focus {
+          outline: none !important;
+          box-shadow: none !important;
+        }
+      }
     }
   }
 }
 
-// Dark Layout
+// Respaldo global absoluto: mientras haya un toast visible, ningún fondo ni desenfoque puede oscurecer la página
+body.swal2-toast-shown {
+  .swal2-container {
+    background: transparent !important;
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none !important;
+
+    &.swal2-backdrop-show {
+      background: transparent !important;
+      background-color: transparent !important;
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+
+    .swal2-popup.swal2-toast {
+      pointer-events: auto !important;
+
+      * {
+        pointer-events: auto !important;
+      }
+
+      .swal2-close {
+        pointer-events: auto !important;
+        cursor: pointer !important;
+      }
+    }
+  }
+}
+
+// ============================================================
+// ANIMACIONES DELICADAS ("ANIMATE")
+// ============================================================
+
+@keyframes swalDelicateIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.93) translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes swalDelicateOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.95) translateY(6px);
+  }
+}
+
+@keyframes swalToastSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(18px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes swalToastSlideOut {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(20px) scale(0.94);
+  }
+}
+
+@keyframes swalIconDelicate {
+  0% {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+  65% {
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ============================================================
+// ADAPTACIÓN EN MODO OSCURO (DARK LAYOUT)
+// ============================================================
+
 .dark-layout {
   .swal2-container {
-    .swal2-popup .swal2-title {
-      color: $theme-dark-headings-color;
+    &.swal2-backdrop-show {
+      background: rgba(10, 15, 29, 0.55) !important;
     }
-    .swal2-modal {
-      background-color: $theme-dark-card-bg;
-      .swal2-header {
-        .swal2-title {
-          color: $theme-dark-headings-color;
-        }
-        .swal2-icon-text {
-          color: inherit;
-        }
 
-        .swal2-success-circular-line-left,
-        .swal2-success-circular-line-right,
-        .swal2-success-fix,
-        .swal2-animate-success-icon {
-          background-color: $theme-dark-card-bg !important;
-        }
+    .swal2-popup {
+      background: #1e2640 !important;
+      border-color: rgba(67, 78, 107, 0.55) !important;
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.35) !important;
+
+      .swal2-title {
+        color: #f1f5f9 !important;
+      }
+
+      .swal2-html-container,
+      .swal2-content {
+        color: #94a3b8 !important;
       }
 
       input.swal2-input {
-        border-color: $theme-dark-border-color;
-        color: $theme-dark-body-color;
+        background-color: #141b2d !important;
+        border-color: #334155 !important;
+        color: #f1f5f9 !important;
       }
 
-      .swal2-content,
-      .swal2-html-container {
-        color: $theme-dark-body-color;
+      .swal2-styled.swal2-cancel {
+        background-color: #242e47 !important;
+        border-color: #3b4764 !important;
+        color: #cbd5e1 !important;
+
+        &:hover {
+          background-color: #2d3856 !important;
+          color: #f8fafc !important;
+        }
       }
 
-      pre,
-      code {
-        color: $theme-dark-body-color;
-      }
-      .swal2-input {
-        background-color: $theme-dark-card-bg;
-      }
-
-      // footer
       .swal2-footer {
-        border-color: $theme-dark-border-color;
-        color: $theme-dark-body-color;
+        border-top-color: #2d3748 !important;
+        color: #64748b !important;
       }
     }
-    .swal2-validation-message {
-      background-color: $theme-dark-body-bg;
-      color: $theme-dark-body-color;
+
+    .swal2-popup.swal2-toast {
+      background: rgba(30, 38, 64, 0.95) !important;
+      border-color: #334155 !important;
+
+      .swal2-title {
+        color: #f1f5f9 !important;
+      }
+
+      .swal2-html-container {
+        color: #94a3b8 !important;
+      }
     }
   }
 }

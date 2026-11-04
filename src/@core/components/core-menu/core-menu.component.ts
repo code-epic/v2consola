@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, ViewEncapsulation, signal } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewEncapsulation, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -50,8 +50,12 @@ export class CoreMenuComponent implements OnInit {
 
   /**
    * @param {CoreMenuService} _coreMenuService
+   * @param {ChangeDetectorRef} _cdr
    */
-  constructor(private _coreMenuService: CoreMenuService) {
+  constructor(
+    private _coreMenuService: CoreMenuService,
+    private _cdr: ChangeDetectorRef
+  ) {
     // Set the private defaults
     this._unsubscribeAll = new Subject();
   }
@@ -68,9 +72,9 @@ export class CoreMenuComponent implements OnInit {
 
     // Subscribe to the current menu changes
     this._coreMenuService.onMenuChanged.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-
       // Load menu
       this._menu.set(this._coreMenuService.getCurrentMenu());
+      this._cdr.markForCheck();
     });
   }
 }

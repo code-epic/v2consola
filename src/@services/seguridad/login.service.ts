@@ -13,6 +13,9 @@ import { Md5 } from "ts-md5";
 import Swal from "sweetalert2";
 import jwt_decode from "jwt-decode";
 import { Sha256Service } from "@services/util/sha256";
+import { CoreMenuService } from "@core/components/core-menu/core-menu.service";
+import { CoreConfigService } from "@core/services/config.service";
+import { aplicacion } from "app/menu/schema";
 
 export interface IUsuario {
   nombre: string;
@@ -135,18 +138,23 @@ export class LoginService {
     private sha256: Sha256Service,
     private apiService: ApiService,
     private sessionService: SessionService,
+    private coreMenuService: CoreMenuService,
+    private coreConfigService: CoreConfigService,
   ) {
     this.urlGet = environment.API;
     this.Id = environment.ID;
   }
 
-  async Iniciar(itk: string) {
+  async Iniciar(
+    itk: string,
+    onProgress?: (msg: string, pct: number) => void,
+  ): Promise<boolean> {
     this.Token = await this.getUserDecrypt(itk);
     sessionStorage.setItem("token", itk);
-    this.obenterAplicacion(itk);
+    return this.obenterAplicacion(itk, onProgress);
   }
 
-  getLogin(user: string, clave: string): Observable<IToken> {
+  getLogin(user: string, clave: string, captchaData?: any): Observable<IToken> {
     const netInfo = sessionStorage.getItem("net_info");
     let deviceContext = "";
 
@@ -160,23 +168,37 @@ export class LoginService {
         };
         deviceContext = btoa(JSON.stringify(context));
       } catch (e) {
-        console.warn('[LoginService] Error parseando net_info:', e);
+        console.warn("[LoginService] Error parseando net_info:", e);
       }
     }
 
     const timestamp = new Date().getTime().toString();
-    const usuario = { nombre: user, clave: clave };
+    const usuario: any = {
+      nombre: user,
+      clave: clave,
+      ...(captchaData
+        ? {
+            sol: captchaData.sol,
+            sig: captchaData.sig,
+            signature: captchaData.sig,
+            salt: captchaData.salt,
+            challenge: captchaData.challenge,
+          }
+        : {}),
+    };
     const url = this.urlGet + "wusuario/loginV2";
 
     // Fallback: si falla la criptografía (crypto.subtle no disponible),
     // hacemos el POST sin X-Device-Context (el servidor lo tolera)
-    const cryptoPromise = this.sha256.EncryptDeviceContext(
-      deviceContext,
-      environment.Hash.slice(-32),
-    ).catch((cryptoErr) => {
-      console.warn('[LoginService] crypto.subtle falló, continuando sin device context:', cryptoErr);
-      return "";
-    });
+    const cryptoPromise = this.sha256
+      .EncryptDeviceContext(deviceContext, environment.Hash.slice(-32))
+      .catch((cryptoErr) => {
+        console.warn(
+          "[LoginService] crypto.subtle falló, continuando sin device context:",
+          cryptoErr,
+        );
+        return "";
+      });
 
     const httpOptions = (ctx: string) => {
       const headers: any = {
@@ -190,7 +212,9 @@ export class LoginService {
     };
 
     return from(cryptoPromise).pipe(
-      switchMap((ctx) => this.http.post<IToken>(url, usuario, httpOptions(ctx))),
+      switchMap((ctx) =>
+        this.http.post<IToken>(url, usuario, httpOptions(ctx)),
+      ),
     );
   }
 
@@ -212,13 +236,12 @@ export class LoginService {
   logout() {
     Swal.fire({
       title: "¿Desea cerrar sesión?",
-      text: "Gracias por su tiempo",
+      text: "La sesión actual de la consola será finalizada de forma segura.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
       confirmButtonText: "Si, cerrar",
       cancelButtonText: "Cancelar",
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         this.router.navigate(["/miscellaneous/logout"]);
@@ -323,79 +346,157 @@ export class LoginService {
   }
 
   getUserDecrypt(itk: string) {
-    if (!itk || itk === 'undefined' || itk === 'null') {
+    if (!itk || itk === "undefined" || itk === "null") {
       return null;
     }
     try {
       var t = jwt_decode(itk);
       return t;
     } catch (error) {
-      console.error('Error decodificando token en getUserDecrypt:', error);
+      console.error("Error decodificando token en getUserDecrypt:", error);
       return null;
     }
   }
 
-  //ObenterAplicacion
-  public async obenterAplicacion(itk: string) {
-    await this.utils.sleep(800); // Pequeña pausa para UX
-    let cadena =
-      this.Token.Usuario.cedula +
-      "," +
-      this.Token.Usuario.sistema +
-      "," +
-      this.Token.Usuario.correo;
-    this.xAPI = {} as IAPICore;
-    this.xAPI.funcion = environment.functions.CONSULTAR_USUARIO_PERFIL;
-    this.xAPI.parametros = cadena;
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
+  /**
+   * Construye la estructura de navegación de CoreMenu a partir de los datos del backend
+   */
+  public buildMenu(rawMenu: any[]): any[] {
+    const normalizeUrl = (u: string) => {
+      if (!u) return '';
+      const trimmed = u.trim();
+      if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
+      return trimmed.startsWith('/') ? trimmed : '/' + trimmed;
+    };
+
+    const schemaMenu = (aplicacion && aplicacion[0]?.Rol?.Menu) || [];
+
+    return (rawMenu || []).map((e) => {
+      let rawSubs: any = e.SubMenu || e.submenu || e.children || e.sub_menu || [];
+      if (typeof rawSubs === 'string' && rawSubs.trim() !== '') {
         try {
-          // Verificamos que la data y las propiedades anidadas existan antes de usarlas
-          if (
-            !data ||
-            data.length === 0 ||
-            !data[0].Aplicacion ||
-            data[0].Aplicacion.length === 0 ||
-            !data[0].Aplicacion[0].Rol
-          ) {
-            throw new Error(
-              "La respuesta del perfil de usuario no es válida o está vacía.",
-            );
+          rawSubs = JSON.parse(rawSubs);
+        } catch {
+          rawSubs = [];
+        }
+      }
+      if (!Array.isArray(rawSubs)) {
+        rawSubs = [];
+      }
+
+      const isCollapsible =
+        e.clase === 'collapsible' ||
+        rawSubs.length > 0 ||
+        (e.tipo === 'collapsible');
+
+      // Si es colapsable pero viene sin submenús en el perfil remoto, buscar los submenús por defecto en el esquema maestro
+      if (isCollapsible && rawSubs.length === 0) {
+        const titleKey = (e.nombre || e.descripcion || '').toLowerCase().trim();
+        const fallbackSchema = schemaMenu.find((sm: any) =>
+          (sm.nombre || sm.descripcion || '').toLowerCase().trim() === titleKey
+        );
+        if (fallbackSchema && Array.isArray(fallbackSchema.SubMenu) && fallbackSchema.SubMenu.length > 0) {
+          rawSubs = fallbackSchema.SubMenu;
+        }
+      }
+
+      const item: any = {
+        id: (e.nombre || '').toLowerCase(),
+        type: isCollapsible ? 'collapsible' : (e.clase || 'item'),
+        icon: e.icono || 'grid',
+        translate: '',
+        title: e.descripcion || e.nombre,
+        url: isCollapsible ? '' : normalizeUrl(e.url || e.descripcion || ''),
+      };
+
+      if (Array.isArray(rawSubs) && rawSubs.length > 0) {
+        item.children = rawSubs.map((el: any) => {
+          return {
+            id: (el.nombre || '').toLowerCase(),
+            title: el.descripcion || el.nombre,
+            type: el.clase || 'item',
+            icon: el.icono || 'circle',
+            url: normalizeUrl(el.url || el.descripcion || ''),
+            externalUrl: el.externalUrl || false,
+            openInNewTab: el.openInNewTab || false,
+          };
+        });
+        item.url = '';
+      }
+      return item;
+    });
+  }
+
+  // ObenterAplicacion sin window.location.reload()
+  public obenterAplicacion(
+    itk: string,
+    onProgress?: (msg: string, pct: number) => void,
+  ): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      if (onProgress) onProgress("Consultando perfil y permisos...", 40);
+
+      let cadena =
+        this.Token.Usuario.cedula +
+        "," +
+        this.Token.Usuario.sistema +
+        "," +
+        this.Token.Usuario.correo;
+      this.xAPI = {} as IAPICore;
+      this.xAPI.funcion = environment.functions.CONSULTAR_USUARIO_PERFIL;
+      this.xAPI.parametros = cadena;
+
+      this.apiService.Ejecutar(this.xAPI).subscribe(
+        async (data) => {
+          try {
+            if (
+              !data ||
+              data.length === 0 ||
+              !data[0].Aplicacion ||
+              data[0].Aplicacion.length === 0 ||
+              !data[0].Aplicacion[0].Rol
+            ) {
+              throw new Error(
+                "La respuesta del perfil de usuario no es válida o está vacía.",
+              );
+            }
+
+            const rawMenu = data[0].Aplicacion[0].Rol.Menu;
+            sessionStorage.setItem("menu", JSON.stringify(rawMenu));
+            const texto = Md5.hashStr(JSON.stringify(rawMenu));
+            this.utils.uuidv4();
+            sessionStorage.setItem("crypt", texto);
+
+            if (onProgress)
+              onProgress("Configurando consola de seguridad...", 75);
+
+            // Mapeo e inyección del menú en caliente sin recargar la página
+            const mappedMenu = this.buildMenu(rawMenu);
+            this.coreMenuService.register("main", mappedMenu);
+            this.coreMenuService.setCurrentMenu("main");
+
+            // Navegar directamente a home; la configuración del layout se restaura
+            // limpiamente en el teardown (ngOnDestroy) del componente de login
+            await this.router.navigate(["home"]);
+            resolve(true);
+          } catch (e) {
+            console.error("Error al procesar el perfil del usuario:", e);
+            Swal.fire({
+              title: "Error de Perfil",
+              text: "No se pudo cargar la configuración de su perfil. Por favor, contacte al administrador.",
+              icon: "error",
+            });
+            sessionStorage.clear();
+            localStorage.clear();
+            reject(e);
           }
-
-          sessionStorage.setItem(
-            "menu",
-            JSON.stringify(data[0].Aplicacion[0].Rol.Menu),
-          );
-          let texto = Md5.hashStr(
-            JSON.stringify(data[0].Aplicacion[0].Rol.Menu),
-          );
-
-          this.utils.uuidv4();
-
-          sessionStorage.setItem("crypt", texto);
-          this.router.navigate(["home"]).then(() => {
-            window.location.reload();
-          });
-        } catch (e) {
-          console.error("Error al procesar el perfil del usuario:", e);
-          Swal.fire({
-            title: "Error de Perfil",
-            text: "No se pudo cargar la configuración de su perfil. Por favor, contacte al administrador.",
-            icon: "error",
-          });
+        },
+        (error) => {
           sessionStorage.clear();
           localStorage.clear();
-        }
-      },
-      (error) => {
-        sessionStorage.clear();
-        localStorage.clear();
-        // this.router.navigate(["/login"]).then(() => {
-        //   window.location.reload();
-        // });
-        console.error("Fallo conectando al perfil del usuario: ", error);
-      },
-    );
+          console.error("Fallo conectando al perfil del usuario: ", error);
+          reject(error);
+        },
+      );
+    });
   }
 }

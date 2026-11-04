@@ -213,14 +213,20 @@ export class CommunicationsComponent implements OnInit {
   }
 
   LimpiarForm() {
-    this.loginForm = this._formBuilder.group({
-      host: ['', [Validators.required]],
-      mac: ['', [Validators.required]],
-      descripcion: ['', [Validators.required]],
-      id: ['', [Validators.required]],
-      tipo: [undefined],
-      estatus: [undefined],
-    });
+    this.submitted = false;
+    this.btnShowScan = true;
+    if (this.loginForm) {
+      this.loginForm.reset({
+        host: '',
+        mac: '',
+        descripcion: '',
+        id: '',
+        tipo: undefined,
+        estatus: undefined,
+      });
+      this.loginForm.markAsPristine();
+      this.loginForm.markAsUntouched();
+    }
   }
 
   async CargarLista() {
@@ -242,21 +248,26 @@ export class CommunicationsComponent implements OnInit {
   }
 
   ModalEdit(modal, data) {
-    this.loginForm = this._formBuilder.group({
-      host: [data.host, [Validators.required]],
-      mac: [data.mac, [Validators.required]],
-      descripcion: [data.descripcion, [Validators.required]],
-      id: [data.id, [Validators.required]],
-      tipo: [data.tipo],
-      estatus: [data.estatus],
+    this.LimpiarForm();
+    this.loginForm.patchValue({
+      host: data.host || '',
+      mac: data.mac || '',
+      descripcion: data.descripcion || '',
+      id: data.id || '',
+      tipo: data.tipo,
+      estatus: data.estatus,
     });
-    this.modalService.open(modal, {
+    const modalRef = this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
+    modalRef.result.then(
+      () => this.LimpiarForm(),
+      () => this.LimpiarForm()
+    );
   }
 
   ModalEscaneo(modal, data) {
@@ -380,13 +391,18 @@ export class CommunicationsComponent implements OnInit {
   }
 
   ModalAdd(modal) {
-    this.modalService.open(modal, {
+    this.LimpiarForm();
+    const modalRef = this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
+    modalRef.result.then(
+      () => this.LimpiarForm(),
+      () => this.LimpiarForm()
+    );
   }
 
   GuardarDispositivo() {

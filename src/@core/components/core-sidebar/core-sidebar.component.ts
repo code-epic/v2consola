@@ -190,6 +190,13 @@ export class CoreSidebarComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+    if (!this.rootElement) {
+      this.rootElement =
+        this.document.querySelectorAll('.vertical-layout')[0] ||
+        this.document.querySelectorAll('.horizontal-layout')[0] ||
+        this.document.body;
+    }
+
     // Subscribe to app-config changes
     this._coreConfigService.config.pipe(takeUntil(this._unsubscribeAll)).subscribe(config => {
       this._coreConfig = config;

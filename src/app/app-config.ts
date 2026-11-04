@@ -24,7 +24,7 @@ export const coreConfig: CoreConfig = {
   layout: {
     skin  : 'default',                        // default, dark, bordered, semi-dark
     type  : 'vertical',                       // vertical, horizontal
-    animation : 'zoomIn',                     // fadeInLeft, zoomIn , fadeIn, none
+    animation : 'none',                       // fadeInLeft, zoomIn , fadeIn, none
     menu : {
       hidden               : false,           // Boolean: true, false
       collapsed            : false,           // Boolean: true, false

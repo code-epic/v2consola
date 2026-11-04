@@ -131,6 +131,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.menu = this._coreMenuService.getCurrentMenu();
+        this.cdr.markForCheck();
       });
 
     this.isBDV = this.apiService.ConsultaSistemaBDV();

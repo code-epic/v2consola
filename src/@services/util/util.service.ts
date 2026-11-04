@@ -34,22 +34,28 @@ export class UtilService {
     return fecha.year + '-' + + fecha.month + '-' + fecha.day
   }
 
-  alertConfirmMini(icon, title) {
-    const Toast = Swal.mixin({
+  alertConfirmMini(icon: any, title: any, timer: number = 3000) {
+    if (Swal.isVisible()) {
+      Swal.close();
+    }
+    Swal.fire({
       toast: true,
       position: 'top-end',
+      icon: icon || 'info',
+      title: title || '',
       showConfirmButton: false,
-      timer: 3000,
+      showCloseButton: true,
+      timer: timer || 3000,
       timerProgressBar: true,
       didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
+        toast.style.cursor = 'pointer';
+        toast.addEventListener('click', (e: MouseEvent) => {
+          if (!(e.target as HTMLElement).closest('.swal2-close')) {
+            Swal.close();
+          }
+        });
       }
-    })
-    Toast.fire({
-      icon: icon,
-      title: title
-    })
+    });
   }
 
 
@@ -128,23 +134,52 @@ export class UtilService {
   }
 
 
-  AlertMini(position:any,icon:any,title:any,timer:number){
-    const Toast = Swal.mixin({
+  AlertMini(position: any, icon: any, title: any, timer: number = 3000) {
+    if (Swal.isVisible()) {
+      Swal.close();
+    }
+
+    Swal.fire({
       toast: true,
-      position: position,
+      position: position || 'top-end',
+      icon: icon || 'info',
+      title: title || '',
       showConfirmButton: false,
-      timer: timer,
+      showCloseButton: true,
+      timer: timer || 3000,
       timerProgressBar: true,
       didOpen: (toast) => {
-        toast.addEventListener('mouseenter', Swal.stopTimer)
-        toast.addEventListener('mouseleave', Swal.resumeTimer)
+        toast.style.cursor = 'pointer';
+        // Permite descartar de inmediato al hacer clic en el toast sin interferir con el botón cerrar
+        toast.addEventListener('click', (e: MouseEvent) => {
+          if (!(e.target as HTMLElement).closest('.swal2-close')) {
+            Swal.close();
+          }
+        });
       }
-    })
-    
-    Toast.fire({
+    });
+  }
+
+  /**
+   * Diálogo de confirmación maestro con estilo pastel minimalista
+   */
+  async ConfirmPastel(
+    title: string,
+    text: string = '',
+    confirmText: string = 'Confirmar',
+    cancelText: string = 'Cancelar',
+    icon: any = 'question'
+  ): Promise<boolean> {
+    const res = await Swal.fire({
+      title: title,
+      text: text,
       icon: icon,
-      title: title
-    })
+      showCancelButton: true,
+      confirmButtonText: confirmText,
+      cancelButtonText: cancelText,
+      reverseButtons: true,
+    });
+    return res.isConfirmed;
   }
 
    // Generador UUID v4 compatible con navegadores

@@ -14,4 +14,11 @@ import { CoreMenuItem } from '@core/types';
 export class CoreMenuVerticalItemComponent {
   @Input()
   item: CoreMenuItem;
+
+  get formattedUrl(): string {
+    if (!this.item || !this.item.url) return '';
+    const u = this.item.url.trim();
+    if (u.startsWith('http://') || u.startsWith('https://')) return u;
+    return u.startsWith('/') ? u : '/' + u;
+  }
 }

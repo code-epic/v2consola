@@ -50,20 +50,44 @@ export class AuthGuardGuard implements CanActivate {
       let texto = Md5.hashStr(sessionStorage.getItem('menu'))
       let validar = sessionStorage.getItem('crypt')
       if (texto == validar) {
-        let valor = false
+        let valor = false;
+        // Normalizar la URL solicitada (sin query params y sin slash inicial)
+        const cleanStateUrl = state.url.split('?')[0].replace(/^\/+/, '').toLowerCase();
+
         // Lista de URLs siempre permitidas
-        const whitelistedUrls = ['/home', '/Principal', '/options/upgrade'];
-        if (whitelistedUrls.includes(state.url)) {
+        const whitelistedUrls = ['home', 'principal', 'options/upgrade'];
+        if (whitelistedUrls.includes(cleanStateUrl)) {
           return true;
         }
 
-        menu.forEach(e => {
-          e.SubMenu.forEach(xe => {
-            if (state.url.indexOf(xe.url) == 1) return valor = true
-          });
-        })
-        if (!valor) this.msj()
-        return valor
+        if (Array.isArray(menu)) {
+          for (const e of menu) {
+            // Verificar ruta en nivel principal
+            if (e.url) {
+              const cleanParent = e.url.split('?')[0].replace(/^\/+/, '').toLowerCase();
+              if (cleanParent && (cleanStateUrl === cleanParent || cleanStateUrl.startsWith(cleanParent))) {
+                valor = true;
+                break;
+              }
+            }
+            // Verificar ruta en submenú
+            if (e.SubMenu && Array.isArray(e.SubMenu)) {
+              for (const xe of e.SubMenu) {
+                if (xe.url) {
+                  const cleanChild = xe.url.split('?')[0].replace(/^\/+/, '').toLowerCase();
+                  if (cleanChild && (cleanStateUrl === cleanChild || cleanStateUrl.startsWith(cleanChild))) {
+                    valor = true;
+                    break;
+                  }
+                }
+              }
+            }
+            if (valor) break;
+          }
+        }
+
+        if (!valor) this.msj();
+        return valor;
       } else {
         return false
       }

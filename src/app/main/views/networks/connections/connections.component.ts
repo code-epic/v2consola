@@ -235,18 +235,29 @@ export class ConnectionsComponent implements OnInit {
   }
 
   LimpiarForm() {
-    this.loginForm = this._formBuilder.group({
-      usuario: ['', [Validators.required]],
-      identificador: ['', [Validators.required]],
-      basedatos: ['', [Validators.required]],
-      url: ['', [Validators.required]],
-      estatus: ['', [Validators.required]],
-      driver: ['', [Validators.required]],
-      clave: ['', [Validators.required]],
-      host: ['', [Validators.required]],
-      puerto: ['', [Validators.required]],
-      descripcion: ['', [Validators.required]],
-    });
+    this.submitted = false;
+    this.showBaseDatos = false;
+    this.showPuente = false;
+    this.lbd = 'Base de Datos';
+    this.passwordTextType = false;
+    if (this.loginForm) {
+      this.loginForm.reset({
+        id: '',
+        usuario: '',
+        basedatos: '',
+        url: '',
+        estatus: undefined,
+        driver: undefined,
+        clave: '',
+        protocolo: '',
+        host: undefined,
+        aplicacion: '',
+        puerto: '',
+        descripcion: '',
+      });
+      this.loginForm.markAsPristine();
+      this.loginForm.markAsUntouched();
+    }
   }
 
   async CargarListaConexiones() {
@@ -299,27 +310,33 @@ export class ConnectionsComponent implements OnInit {
   }
 
   ModalEdit(modal, data) {
-    this.loginForm = this._formBuilder.group({
-      id: [data.id, [Validators.required]],
-      usuario: [data.usuario, [Validators.required]],
-      basedatos: [data.basedatos, [Validators.required]],
-      url: [data.url],
-      estatus: [data.estatus, [Validators.required]],
-      driver: [data.driver, [Validators.required]],
-      clave: [data.clave, [Validators.required]],
-      protocolo: [data.protocolo],
-      host: [data.host, [Validators.required]],
-      puerto: [data.puerto, [Validators.required]],
-      descripcion: [data.descripcion, [Validators.required]],
-      aplicacion: [data.aplicacion],
+    this.LimpiarForm();
+    this.CambiarVisibilidadDriver(data.driver);
+    this.loginForm.patchValue({
+      id: data.id || '',
+      usuario: data.usuario || '',
+      basedatos: data.basedatos || '',
+      url: data.url || '',
+      estatus: data.estatus,
+      driver: data.driver,
+      clave: data.clave || '',
+      protocolo: data.protocolo || '',
+      host: data.host,
+      puerto: data.puerto || '',
+      descripcion: data.descripcion || '',
+      aplicacion: data.aplicacion || '',
     });
-    this.modalService.open(modal, {
+    const modalRef = this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
+    modalRef.result.then(
+      () => this.LimpiarForm(),
+      () => this.LimpiarForm()
+    );
   }
 
   ModalEscaneo(modal, data) {
@@ -329,7 +346,7 @@ export class ConnectionsComponent implements OnInit {
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
   }
 
@@ -349,13 +366,18 @@ export class ConnectionsComponent implements OnInit {
   }
 
   ModalAdd(modal) {
-    this.modalService.open(modal, {
+    this.LimpiarForm();
+    const modalRef = this.modalService.open(modal, {
       centered: true,
       size: 'lg',
       backdrop: false,
       keyboard: false,
-      windowClass: 'fondo-modal',
+      windowClass: 'fondo-modal modal-pastel-card',
     });
+    modalRef.result.then(
+      () => this.LimpiarForm(),
+      () => this.LimpiarForm()
+    );
   }
 
   GuardarConexion() {

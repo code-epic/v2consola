@@ -73,7 +73,10 @@ export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
    * On init
    */
   async ngOnInit() {
-    this.loadCertificates();
+    // Solo consultar certificados si el usuario ya está autenticado con sesión activa
+    if (sessionStorage.getItem('token')) {
+      this.loadCertificates();
+    }
   }
 
   /**
