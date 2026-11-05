@@ -91,6 +91,28 @@
               "./node_modules/katex/dist/katex.min.js",
               "./node_modules/quill/dist/quill.min.js"
             ],
+            "allowedCommonJsDependencies": [
+              "crypto-js",
+              "codemirror",
+              "core-js",
+              "raf",
+              "rgbcolor",
+              "node-waves",
+              "sweetalert2",
+              "lodash",
+              "feather-icons",
+              "dijkstrajs",
+              "jspdf-autotable",
+              "qrcode",
+              "bs-stepper",
+              "xterm",
+              "@xterm/addon-fit",
+              "moment",
+              "html2canvas",
+              "canvg",
+              "file-saver",
+              "flatpickr"
+            ],
             "sourceMap": true,
             "optimization": false
           },
@@ -102,10 +124,13 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "baseHref": "/",
+              "baseHref": "./",
               "optimization": {
                 "scripts": true,
-                "styles": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
                 "fonts": {
                   "inline": false
                 }

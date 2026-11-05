@@ -249,23 +249,29 @@ export class AppComponent implements OnInit, OnDestroy {
         ) {
           this._elementRef.nativeElement.classList.add("blank-page");
           // ! Fix: Transition issue while coming from blank page
-          this._renderer.setAttribute(
-            this._elementRef.nativeElement.getElementsByClassName(
-              "app-content",
-            )[0],
-            "style",
-            "transition:none",
-          );
+          const appContentEl = this._elementRef.nativeElement.getElementsByClassName(
+            "app-content",
+          )?.[0];
+          if (appContentEl) {
+            this._renderer.setAttribute(
+              appContentEl,
+              "style",
+              "transition:none",
+            );
+          }
         } else {
           this._elementRef.nativeElement.classList.remove("blank-page");
           // Prevenir barrido horizontal en app-content al salir de blank-page
-          this._renderer.setAttribute(
-            this._elementRef.nativeElement.getElementsByClassName(
-              "app-content",
-            )[0],
-            "style",
-            "transition:none",
-          );
+          const appContentEl = this._elementRef.nativeElement.getElementsByClassName(
+            "app-content",
+          )?.[0];
+          if (appContentEl) {
+            this._renderer.setAttribute(
+              appContentEl,
+              "style",
+              "transition:none",
+            );
+          }
           // If navbar hidden
           if (this.coreConfig.layout.navbar.hidden) {
             this._elementRef.nativeElement.classList.add("navbar-hidden");

@@ -9,7 +9,7 @@ export const environment = {
   API: "/v1/api/",
   ID: "sandra.app.consola",
   Hash: "551582bbd1370fffe7c7198a854490e9.sse",
-  buildDateTime: "Thu Nov 05 2026 12:24:18 GMT-0400 (Venezuela Time)",
+  buildDateTime: "Thu Nov 05 2026 12:52:57 GMT-0400 (Venezuela Time)",
   version: "Broglie 1.0.1-1b419f3",
   fecha: "2025-04-12 05:08:00",
   BD: "code-epic",

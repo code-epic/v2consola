@@ -29,7 +29,7 @@
     "start": "ng serve --open --port 4200 --proxy-config ./src/proxy.conf.json",
     "build": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build",
     "build-stats": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --stats-json",
-    "build:prod": "node build.js && node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --configuration production --base-href=\"/\" && ./strip-maps.sh",
+    "build:prod": "node build.js && node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --configuration production --base-href=\"./\" && ./strip-maps.sh",
     "serve:prod": "python3 -m http.server 5500 --directory dist",
     "build:prod-stats": "node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --configuration production --stats-json",
     "bundle-analyzer": "webpack-bundle-analyzer dist/vuexy/stats.json",

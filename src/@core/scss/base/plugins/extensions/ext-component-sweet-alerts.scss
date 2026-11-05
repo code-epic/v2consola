@@ -84,6 +84,11 @@
       gap: 0.75rem !important;
       width: 100% !important;
       justify-content: center !important;
+
+      button[style*="display: none"],
+      button[style*="display:none"] {
+        display: none !important;
+      }
     }
 
     // Botones con estilo minimalista refinado (Uniforme, redondo y formal)
@@ -94,7 +99,7 @@
       padding: 0 1.6rem !important;
       height: 44px !important;
       min-width: 130px !important;
-      display: inline-flex !important;
+      display: inline-flex;
       align-items: center !important;
       justify-content: center !important;
       border-radius: 14px !important;
@@ -103,6 +108,11 @@
       letter-spacing: 0.01em !important;
       transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
       border: 1px solid transparent !important;
+
+      &[style*="display: none"],
+      &[style*="display:none"] {
+        display: none !important;
+      }
 
       &:focus {
         box-shadow: none !important;

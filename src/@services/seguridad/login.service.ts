@@ -239,8 +239,9 @@ export class LoginService {
       text: "La sesión actual de la consola será finalizada de forma segura.",
       icon: "warning",
       showCancelButton: true,
+      showDenyButton: false,
       confirmButtonText: "Si, cerrar",
-      cancelButtonText: "Cancelar",
+      cancelButtonText: "No",
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {

@@ -164,6 +164,7 @@ export class IdleService {
             html: '¿Desea continuar disfrutando de nuestros servicios o prefiere cerrar sesión por seguridad?<br><br>Cerrando sesión en <b>60</b> segundos.',
             icon: 'question',
             showDenyButton: true,
+            showCancelButton: false,
             confirmButtonText: 'Continuar Sesión',
             denyButtonText: 'Cerrar Sesión',
             confirmButtonColor: '#7367f0',
