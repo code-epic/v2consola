@@ -27,6 +27,51 @@
   </div>
   <ul class="nav navbar-nav align-items-center ml-auto">
 
+    <!-- Contador de Inactividad Glassmorphic (Solo visible al superar 5s de inactividad) -->
+    @if (idleState?.isIdle) {
+      <li class="nav-item d-flex align-items-center mr-1">
+        <div class="navbar-idle-glass animate-fade-in is-idle-active"
+             [class.idle-warning]="idleState.isWarning"
+             [class.idle-danger]="idleState.isDanger"
+             [title]="'Inactividad detectada: cerrando en ' + idleState.formattedTime">
+          <div class="idle-badge-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="glass-icon">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span class="idle-pulse-dot pulse-active"></span>
+          </div>
+          <div class="idle-meta">
+            <span class="idle-label">Inactividad</span>
+            <span class="idle-counter">{{ idleState.formattedTime }}</span>
+          </div>
+        </div>
+      </li>
+    }
+
+    <!-- Navbar Vigencia Badge (Discreto Glassmorphic) -->
+    @if (vigenciaDias !== null) {
+      <li class="nav-item d-none d-md-flex align-items-center mr-1">
+        <div class="navbar-vigencia-glass"
+             [ngClass]="vigenciaStatusClass"
+             [title]="vigenciaTooltip">
+          <div class="vigencia-badge-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="glass-icon">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span class="vigencia-pulse-dot"></span>
+          </div>
+          <div class="vigencia-meta">
+            <span class="vigencia-label">Vigencia</span>
+            <div class="vigencia-counter">
+              <span class="vigencia-days">{{ vigenciaDias }}</span>
+              <span class="vigencia-unit">{{ vigenciaDias === 1 ? 'día' : 'días' }}</span>
+            </div>
+          </div>
+        </div>
+      </li>
+    }
+
     <!-- Navbar Version Badge (Glassmorphic Minimalist) -->
     <li class="nav-item d-none d-sm-flex align-items-center mr-1">
       <div class="navbar-version-glass" [title]="'v' + appVersion + ' (' + appBuild + ') • ' + formattedDateTime">

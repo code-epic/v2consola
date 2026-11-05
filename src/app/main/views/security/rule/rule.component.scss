@@ -1,0 +1,661 @@
+// =========================================================================
+// Reglas de Seguridad - Experiencia de Usuario Stepper Híbrido & Botones Mate
+// =========================================================================
+
+.security-rules-container {
+  position: relative;
+  width: 100%;
+
+  // Selector Superior de Aplicación
+  .selector-card {
+    border-radius: 12px;
+    border: 1px solid #eef2f6;
+    background: #ffffff;
+
+    .app-status-badge-wrap {
+      .app-id-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: #f1f4f9;
+        padding: 0.35rem 0.75rem;
+        border-radius: 7px;
+        font-size: 0.78rem;
+
+        .pill-label {
+          color: #94a3b8;
+          font-weight: 600;
+        }
+
+        .pill-value {
+          color: #7367f0;
+          font-weight: 700;
+          font-family: SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+      }
+
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.75rem;
+        border-radius: 7px;
+        font-size: 0.76rem;
+        font-weight: 600;
+
+        .status-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+        }
+
+        &.status-active {
+          background: rgba(40, 199, 111, 0.12);
+          color: #28c76f;
+          .status-dot {
+            background: #28c76f;
+            box-shadow: 0 0 6px rgba(40, 199, 111, 0.75);
+          }
+        }
+
+        &.status-inactive {
+          background: rgba(108, 117, 125, 0.12);
+          color: #6c757d;
+          .status-dot {
+            background: #6c757d;
+          }
+        }
+      }
+    }
+  }
+
+  // Estado vacío refinado
+  .empty-state-card {
+    border-radius: 14px;
+    border: 1px dashed #cbd5e1;
+    background: #fafbfd;
+
+    .empty-state-icon {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: rgba(115, 103, 240, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  // =========================================================================
+  // Stepper Header Track
+  // =========================================================================
+  .stepper-nav-card {
+    border-radius: 12px;
+    border: 1px solid #eef2f6;
+    background: #ffffff;
+
+    .stepper-header-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .step-node {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        cursor: pointer;
+        padding: 0.4rem 0.6rem;
+        border-radius: 8px;
+        transition: all 0.22s ease;
+        user-select: none;
+
+        &:hover {
+          background: rgba(115, 103, 240, 0.04);
+        }
+
+        .step-circle {
+          width: 36px;
+          height: 36px;
+          min-width: 36px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 600;
+          font-size: 0.88rem;
+          background: #f1f4f9;
+          color: #64748b;
+          border: 2px solid #e2e8f0;
+          transition: all 0.25s ease;
+        }
+
+        .step-info {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.2;
+
+          .step-title {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #475569;
+            transition: color 0.2s ease;
+          }
+
+          .step-subtitle {
+            font-size: 0.72rem;
+            color: #94a3b8;
+          }
+        }
+
+        &.active {
+          .step-circle {
+            background: #7367f0;
+            color: #ffffff;
+            border-color: #7367f0;
+            box-shadow: 0 3px 10px rgba(115, 103, 240, 0.32);
+          }
+
+          .step-info .step-title {
+            color: #7367f0;
+          }
+        }
+
+        &.completed:not(.active) {
+          .step-circle {
+            background: rgba(40, 199, 111, 0.12);
+            color: #28c76f;
+            border-color: rgba(40, 199, 111, 0.35);
+          }
+
+          .step-info .step-title {
+            color: #334155;
+          }
+        }
+      }
+
+      .step-divider {
+        flex: 1;
+        height: 2px;
+        background: #e2e8f0;
+        margin: 0 0.85rem;
+        transition: background-color 0.3s ease;
+
+        &.active {
+          background: #7367f0;
+        }
+      }
+    }
+  }
+
+  // =========================================================================
+  // Step Content Panels
+  // =========================================================================
+  .step-content-card {
+    border-radius: 14px;
+    border: 1px solid #eef2f6;
+    background: #ffffff;
+    min-height: 380px;
+
+    .panel-header {
+      .panel-icon-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: rgba(115, 103, 240, 0.1);
+        color: #7367f0;
+      }
+    }
+
+    // Switch Maestro
+    .master-switch-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+
+      .switch-status-indicator {
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        background: #edf2f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .indicator-dot {
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #94a3b8;
+          transition: all 0.25s ease;
+        }
+
+        &.on {
+          background: rgba(40, 199, 111, 0.12);
+          .indicator-dot {
+            background: #28c76f;
+            box-shadow: 0 0 8px rgba(40, 199, 111, 0.8);
+          }
+        }
+      }
+    }
+
+    // Unidades de tiempo select
+    .units-select {
+      width: 130px;
+      .ng-select-container {
+        border-top-left-radius: 0 !important;
+        border-bottom-left-radius: 0 !important;
+      }
+    }
+
+    // Metadatos de Auditoría
+    .audit-meta-bar {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 10px;
+      font-size: 0.8rem;
+
+      .audit-badge-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background: rgba(115, 103, 240, 0.08);
+        color: #7367f0;
+      }
+
+      .audit-label {
+        color: #64748b;
+        font-weight: 500;
+        margin-right: 0.35rem;
+      }
+
+      .audit-val {
+        color: #1e293b;
+        font-weight: 600;
+      }
+
+      .audit-user {
+        color: #7367f0;
+        font-size: 0.74rem;
+        margin-left: 0.25rem;
+      }
+    }
+
+    // Paso 3: Tarjetas de Trazabilidad Interactivas
+    .trace-card-option {
+      position: relative;
+      border: 2px solid #eef2f6;
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      background: #ffffff;
+      height: 100%;
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      &:hover {
+        transform: translateY(-2px);
+        border-color: rgba(115, 103, 240, 0.35);
+        box-shadow: 0 6px 18px rgba(115, 103, 240, 0.08);
+      }
+
+      &.selected {
+        border-color: #7367f0;
+        background: rgba(115, 103, 240, 0.02);
+        box-shadow: 0 4px 16px rgba(115, 103, 240, 0.12);
+
+        .trace-radio-dot {
+          border-color: #7367f0;
+          background: #7367f0;
+          box-shadow: inset 0 0 0 3px #ffffff;
+        }
+      }
+
+      .trace-radio-dot {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        border: 2px solid #cbd5e1;
+        transition: all 0.2s ease;
+      }
+
+      .trace-badge {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 0.2rem 0.55rem;
+        border-radius: 5px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+
+        &.badge-baja {
+          background: rgba(100, 116, 139, 0.12);
+          color: #475569;
+        }
+        &.badge-media {
+          background: rgba(255, 159, 67, 0.14);
+          color: #ff9f43;
+        }
+        &.badge-alta {
+          background: rgba(234, 84, 85, 0.14);
+          color: #ea5455;
+        }
+      }
+
+      .trace-title {
+        font-size: 0.98rem;
+        color: #1e293b;
+        margin-top: 0.5rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .trace-desc {
+        font-size: 0.8rem;
+        color: #64748b;
+        line-height: 1.45;
+        min-height: 48px;
+        margin-bottom: 0.75rem;
+      }
+
+      .trace-meta-tag {
+        font-size: 0.72rem;
+        font-weight: 500;
+        color: #94a3b8;
+        padding-top: 0.5rem;
+        border-top: 1px solid #f1f5f9;
+      }
+    }
+
+    // Paso 4: Subtarjetas de Caución y Dropzones
+    .section-subcard {
+      background: #fafbfd;
+      border: 1px solid #edf2f7;
+      border-radius: 10px;
+    }
+
+    .nationality-select {
+      width: 58px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      background: #f1f4f9;
+      font-weight: 600;
+      padding-left: 0.6rem;
+      padding-right: 0.4rem;
+    }
+
+    .signature-upload-box,
+    .logo-upload-box {
+      width: 120px;
+      height: 84px;
+      border: 2px dashed #cbd5e1;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+      background: #ffffff;
+      overflow: hidden;
+      transition: all 0.25s ease;
+
+      &:hover {
+        border-color: #7367f0;
+        background: rgba(115, 103, 240, 0.03);
+      }
+
+      &.has-file {
+        border-style: solid;
+        border-color: #e2e8f0;
+      }
+
+      .upload-empty-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #94a3b8;
+
+        .upload-caption {
+          font-size: 0.7rem;
+          font-weight: 500;
+          margin-top: 0.2rem;
+        }
+      }
+
+      .signature-preview-img,
+      .logo-preview-img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+      }
+
+      .upload-action-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.45);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      &:hover .upload-action-overlay {
+        opacity: 1;
+      }
+    }
+
+    .logo-upload-box {
+      width: 100%;
+      min-height: 130px;
+    }
+  }
+
+  // =========================================================================
+  // Botonera Inferior Mate (Pastel & Refinada)
+  // =========================================================================
+  .stepper-footer-bar {
+    border-top: 1px solid #f1f5f9;
+
+    .step-indicator-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+  }
+
+  // Clases Estándar para Botones Pastel Mate
+  .btn-pastel-primary {
+    background: rgba(115, 103, 240, 0.12);
+    color: #7367f0;
+    border: 1px solid rgba(115, 103, 240, 0.28);
+    border-radius: 8px;
+    font-weight: 550;
+    padding: 0.55rem 1.35rem;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: none !important;
+
+    &:hover {
+      background: #7367f0;
+      color: #ffffff;
+      border-color: #7367f0;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .btn-pastel-secondary {
+    background: #f1f4f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.55rem 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: none !important;
+
+    &:hover {
+      background: #e2e8f0;
+      color: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: scale(0.98);
+    }
+  }
+
+  .btn-pastel-success {
+    background: rgba(40, 199, 111, 0.14);
+    color: #28c76f;
+    border: 1px solid rgba(40, 199, 111, 0.32);
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.55rem 1.45rem;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.22s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: none !important;
+
+    &:hover:not(:disabled) {
+      background: #28c76f;
+      color: #ffffff;
+      border-color: #28c76f;
+      transform: translateY(-1px);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    &:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Transición suave entre pasos
+.animate-fade-in {
+  animation: stepFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes stepFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// =========================================================================
+// Adaptaciones Dark Layout (Modo Oscuro)
+// =========================================================================
+.dark-layout {
+  .security-rules-container {
+    .selector-card,
+    .stepper-nav-card,
+    .step-content-card {
+      background: #283046;
+      border-color: #3b4253;
+    }
+
+    .selector-card .app-status-badge-wrap .app-id-pill {
+      background: #1e253b;
+      color: #b4b7bd;
+    }
+
+    .empty-state-card {
+      background: #1e253b;
+      border-color: #3b4253;
+    }
+
+    .stepper-nav-card .stepper-header-track {
+      .step-node {
+        .step-circle {
+          background: #1e253b;
+          border-color: #3b4253;
+          color: #b4b7bd;
+        }
+
+        .step-info .step-title {
+          color: #d0d2d6;
+        }
+
+        &.active .step-circle {
+          background: #7367f0;
+          color: #ffffff;
+        }
+      }
+
+      .step-divider {
+        background: #3b4253;
+      }
+    }
+
+    .step-content-card {
+      .master-switch-card,
+      .audit-meta-bar,
+      .section-subcard {
+        background: #1e253b;
+        border-color: #3b4253;
+      }
+
+      .trace-card-option {
+        background: #283046;
+        border-color: #3b4253;
+
+        &.selected {
+          background: rgba(115, 103, 240, 0.08);
+          border-color: #7367f0;
+        }
+
+        .trace-title {
+          color: #d0d2d6;
+        }
+
+        .trace-desc {
+          color: #82868b;
+        }
+      }
+
+      .signature-upload-box,
+      .logo-upload-box {
+        background: #1e253b;
+        border-color: #3b4253;
+      }
+
+      .stepper-footer-bar {
+        border-top-color: #3b4253;
+      }
+    }
+
+    .btn-pastel-secondary {
+      background: #1e253b;
+      border-color: #3b4253;
+      color: #b4b7bd;
+
+      &:hover {
+        background: #283046;
+        color: #fff;
+      }
+    }
+  }
+}
+

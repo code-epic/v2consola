@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core"
 import { CommonModule } from "@angular/common"
-import { FormControl, ReactiveFormsModule } from "@angular/forms"
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms"
 import { NgbModal, NgbModalConfig, NgbModule } from "@ng-bootstrap/ng-bootstrap"
 import { ApiService, IAPICore } from "@services/apicore/api.service"
 import { IPerfil, Privilegios } from "@services/seguridad/rol.service"
@@ -105,6 +105,7 @@ interface PerfilSave {
     standalone: true,
     imports: [
         CommonModule,
+        FormsModule,
         ReactiveFormsModule,
         NgbModule,
         NgxDatatableModule,
@@ -148,6 +149,77 @@ export class ProfileComponent implements OnInit {
   xrolCtrl = new FormControl({value: '', disabled: true})
   perfilNombreCtrl = new FormControl('')
   perfilDescripcionCtrl = new FormControl('')
+  searchValueCtrl = new FormControl('')
+
+  public selectedStatusFilter: string = 'all'; // 'all' | 'activos' | 'inactivos'
+
+  get totalPerfiles(): number {
+    return this.tempPerfil ? this.tempPerfil.length : 0;
+  }
+
+  get totalActivos(): number {
+    return this.tempPerfil ? this.tempPerfil.filter(p => p.estatus == 1 || p.estatus === true || p.estatus === '1').length : 0;
+  }
+
+  get totalInactivos(): number {
+    return this.tempPerfil ? this.tempPerfil.filter(p => p.estatus == 0 || p.estatus === false || p.estatus === '0').length : 0;
+  }
+
+  setStatusFilter(filter: string) {
+    this.selectedStatusFilter = filter;
+    this.applyCombinedFilters();
+  }
+
+  clearSearch() {
+    this.searchValueCtrl.setValue('');
+    this.applyCombinedFilters();
+  }
+
+  verTodos() {
+    this.searchValueCtrl.setValue('');
+    this.selectedStatusFilter = 'all';
+    this.applyCombinedFilters();
+  }
+
+  recargar() {
+    this.listarPerfiles();
+  }
+
+  applyCombinedFilters() {
+    const val = (this.searchValueCtrl.value || '').toLowerCase().trim();
+    const statusFilter = this.selectedStatusFilter;
+
+    const filtered = (this.tempPerfil || []).filter(d => {
+      // 1. Live search filter
+      if (val) {
+        const nombre = (d.nombre || '').toLowerCase();
+        const descripcion = (d.descripcion || '').toLowerCase();
+        const llave = (d.llave || '').toLowerCase();
+        const matchesSearch =
+          nombre.indexOf(val) !== -1 ||
+          descripcion.indexOf(val) !== -1 ||
+          llave.indexOf(val) !== -1;
+        if (!matchesSearch) return false;
+      }
+
+      // 2. Status filter
+      if (statusFilter === 'activos') {
+        const isActive = d.estatus == 1 || d.estatus === true || d.estatus === '1';
+        if (!isActive) return false;
+      } else if (statusFilter === 'inactivos') {
+        const isInactive = d.estatus == 0 || d.estatus === false || d.estatus === '0';
+        if (!isInactive) return false;
+      }
+
+      return true;
+    });
+
+    this.lstPerfil = filtered;
+    this.page = 1;
+    if (this.table) {
+      this.table.offset = 0;
+    }
+  }
 
   public basicSelectedOption: number = 10;
   public page: number = 1;
@@ -161,6 +233,7 @@ export class ProfileComponent implements OnInit {
   }
 
   public showDiv: boolean = false
+  public isEditing: boolean = false
   public lstAplicaciones = []
   public lstRol = []
   public dataRolDetalles: PermisoPadre[] = [];
@@ -196,6 +269,8 @@ export class ProfileComponent implements OnInit {
   public registrar = "Registrar nuevo perfil"
 
   @ViewChild("rowDetail") rowDetail: any
+  @ViewChild('navWithIcons') navWithIcons: any
+  @ViewChild('tablePermissions') tablePermissions: any
 
 
   public ColumnMode = ColumnMode
@@ -262,12 +337,24 @@ export class ProfileComponent implements OnInit {
       this.Perfil.descripcion = val as string
     )
     this.perfilAplicacionCtrl.valueChanges.subscribe(val => {
-      this.Perfil.aplicacion = Number(val)
-      this.selRol(val as string)
+      if (val !== null && val !== undefined && val !== '') {
+        this.Perfil.aplicacion = Number(val);
+        this.selRol(val as string);
+        if (this.dataRol && this.dataRol.length === 1) {
+          this.rolCtrl.setValue(this.dataRol[0].id);
+        }
+      } else {
+        this.Perfil.aplicacion = undefined;
+        this.dataRol = [];
+        this.dataRolDetalles = [];
+        this.rolCtrl.setValue(null, { emitEvent: false });
+      }
     })
     this.rolCtrl.valueChanges.subscribe(val => {
-      this.rol = val
-      this.selRolDetalle()
+      if (val !== null && val !== undefined && val !== '') {
+        this.rol = val;
+        this.selRolDetalle();
+      }
     })
 
     this.CargarListaAplicaciones()
@@ -315,6 +402,7 @@ export class ProfileComponent implements OnInit {
           });
           this.lstPerfil = data
           this.tempPerfil = data
+          this.applyCombinedFilters();
         }
         this._isLoading.set(false);
         this.cdr.detectChanges();
@@ -327,42 +415,57 @@ export class ProfileComponent implements OnInit {
     )
   }
 
-  selTab(e) {
-    if (this.active == 2) {
-      this.blApp = true
-      this.dataRolDetalles = []
-      this.dataPlana = []
-      this.dataJerarquica = []
-      this.padresMap = new Map<string, PermisoPadre>();
-      this.SelectOn = []
-      this.lista = []
-      // this.rol = undefined
-      this.Perfil.descripcion = ''
-      this.Perfil.nombre = ''
+  nuevoPerfil(): void {
+    this.isEditing = false;
+    this.registrar = "Registrar nuevo perfil";
+    this.blApp = true;
+    this.desactivo = 'false';
 
+    this.perfilNombreCtrl.setValue('', { emitEvent: false });
+    this.perfilDescripcionCtrl.setValue('', { emitEvent: false });
+    this.perfilAplicacionCtrl.setValue(null, { emitEvent: false });
+    this.xaplicacionCtrl.setValue('', { emitEvent: false });
+    this.xrolCtrl.setValue('', { emitEvent: false });
+    this.rolCtrl.setValue(null, { emitEvent: false });
 
-    } else {
-      this.registrar = "Registrar nuevo perfil"
-      this.desactivo = 'false'
+    this.Perfil = {
+      id: "",
+      nombre: "",
+      descripcion: "",
+      estatus: 1,
+      aplicacion: undefined,
+    };
+    this.aplicacion = undefined;
 
+    this.dataRolDetalles = [];
+    this.dataRol = [];
+    this.dataPlana = [];
+    this.dataJerarquica = [];
+    this.padresMap = new Map<string, PermisoPadre>();
+    this.SelectOn = [];
+    this.lista = [];
+
+    this.active = 2;
+    if (this.navWithIcons) {
+      this.navWithIcons.select(2);
+    }
+    this.cdr.detectChanges();
+  }
+
+  selTab(e: any) {
+    const tabId = Number(e);
+    if (tabId === 1) {
+      this.isEditing = false;
+      this.registrar = "Registrar nuevo perfil";
+    } else if (tabId === 2) {
+      if (!this.isEditing) {
+        this.nuevoPerfil();
+      }
     }
   }
 
   filterUpdate(event) {
-    const val = event.target.value.toLowerCase();
-
-    // filter our data
-    const temp = this.tempPerfil.filter(function (d) {
-      return (d.nombre?.toLowerCase().indexOf(val) !== -1) || 
-             (d.descripcion?.toLowerCase().indexOf(val) !== -1) || 
-             (d.llave?.toLowerCase().indexOf(val) !== -1) || !val;
-    });
-
-    // update the rows
-    this.lstPerfil = temp;
-    // Whenever the filter changes, always go back to the first page
-    this.page = 1;
-    this.table.offset = 0;
+    this.applyCombinedFilters();
   }
 
   onSelect({ selected }) {
@@ -370,42 +473,57 @@ export class ProfileComponent implements OnInit {
     this.SelectOn = selected
   }
 
-  selRol(event: any): void {
+  selRol(event: any, rowFallback: any = null): void {
+    this.dataRol = [];
+    this.dataRolDetalles = [];
+    this.dataPlana = [];
+    this.dataJerarquica = [];
+    this.xrolCtrl.setValue('');
+    if (!this.isEditing) {
+      this.perfilNombreCtrl.setValue('');
+      this.perfilDescripcionCtrl.setValue('');
+    }
 
-    this.dataRol = []
-    this.dataRolDetalles = []
-    this.dataPlana = []
-    this.dataJerarquica = []
-    this.xrolCtrl.setValue('')
-    this.perfilNombreCtrl.setValue('')
-    this.perfilDescripcionCtrl.setValue('')
+    this.aplicacion = this.obtenerAplicacion(event);
 
-    this.aplicacion = this.obtenerAplicacion(event)
+    if (!this.aplicacion) {
+      const fallbackRol = rowFallback?.Rol || { descripcion: 'Sistema', Menu: [] };
+      this.aplicacion = {
+        id: event || (rowFallback ? rowFallback.aplicacion : ''),
+        nombre: (rowFallback && rowFallback.aplicacion) ? rowFallback.aplicacion : 'Aplicación',
+        autor: '',
+        comentario: '',
+        version: (rowFallback && rowFallback.version) ? rowFallback.version : '1.0',
+        Rol: fallbackRol
+      };
+    }
 
-
-    this.dataRol = []
     let rol = {
       "app": event,
       "estatus": "1",
       "id": event,
-      "llave": this.aplicacion.autor,
-      "observacion": this.aplicacion.comentario,
-      "name": this.aplicacion.Rol.descripcion
-    }
-    this.xrolCtrl.setValue(this.aplicacion.Rol.descripcion)
-    this.xaplicacionCtrl.setValue(this.aplicacion.nombre)
-    this.dataRol.push(rol)
-
-
+      "llave": this.aplicacion?.autor || '',
+      "observacion": this.aplicacion?.comentario || '',
+      "name": this.aplicacion?.Rol?.descripcion || 'Sistema'
+    };
+    this.xrolCtrl.setValue(this.aplicacion?.Rol?.descripcion || 'Sistema');
+    this.xaplicacionCtrl.setValue(this.aplicacion?.nombre || '');
+    this.dataRol.push(rol);
   }
 
   selRolDetalle(row: any = null): void {
-    this.dataRolDetalles = []
-    this.dataPlana = []
-    this.dataJerarquica = []
-    let lst = []
+    this.dataRolDetalles = [];
+    this.dataPlana = [];
+    this.dataJerarquica = [];
+    let lst = [];
 
-    this.aplicacion.Rol.Menu.forEach(mnu => {
+    const menuList = this.aplicacion?.Rol?.Menu || row?.Rol?.Menu || [];
+    if (!menuList || menuList.length === 0) {
+      console.warn('No se encontraron menús en la aplicación/rol');
+      return;
+    }
+
+    menuList.forEach(mnu => {
       let obj = {
         "accion": "-",
         "menu": mnu.nombre,
@@ -416,9 +534,9 @@ export class ProfileComponent implements OnInit {
         "xmodulo": "",
         "xrol": "1",
         "estatus": 0
-      }
-      lst.push(obj)
-      if (mnu.SubMenu.length > 0) {
+      };
+      lst.push(obj);
+      if (mnu.SubMenu && mnu.SubMenu.length > 0) {
         mnu.SubMenu.forEach(sub => {
           let obj = {
             "accion": sub.nombre,
@@ -429,37 +547,32 @@ export class ProfileComponent implements OnInit {
             "xmenu": "1",
             "xmodulo": "",
             "xrol": "1",
-            "estatus": 0, // Se inicia en 0, la lógica de update se encargará de marcarlo
+            "estatus": 0,
             "Privilegios": sub.Privilegios
-          }
-          lst.push(obj)
-
-        })
+          };
+          lst.push(obj);
+        });
       }
     });
 
-    this.dataPlana = lst
-    this.convertirDataPlana()
-    // console.log(this.dataJerarquica)
-    if (row != null) {
-      this.dataRolDetalles = this.updateMenuEstatusOnly(this.dataJerarquica, row.Rol.Menu)
-    } else {
-      this.dataRolDetalles = this.dataJerarquica
+    this.dataPlana = lst;
+    this.convertirDataPlana();
 
+    if (row != null && row.Rol && row.Rol.Menu) {
+      this.dataRolDetalles = this.updateMenuEstatusOnly(this.dataJerarquica, row.Rol.Menu);
+    } else {
+      this.dataRolDetalles = this.dataJerarquica;
     }
-    // this.dataRolDetalles = this.dataJerarquica
 
     // Recalcular el estado de todos los padres después de cargar los datos
     this.recalcularTodosLosPadres();
 
     // SNAPSHOT INICIAL
-    // Guardamos el estado inicial para comparar después
     this.initialPerfilSnapshot = {
       nombre: this.Perfil.nombre,
       descripcion: this.Perfil.descripcion
     };
     this.initialPermissionsHash = this.getPermissionsHash();
-
     return;
   }
 
@@ -548,82 +661,66 @@ export class ProfileComponent implements OnInit {
   // En profile.component.ts, dentro de la clase ProfileComponent
 
   /**
+   * Recorre recursivamente un nodo y todos sus descendientes
+   * (SubMenus, Privilegios) asignando el nuevo estatus (1 o 0).
+   */
+  private setStatusCascade(node: any, status: number): void {
+    if (!node) return;
+    node.estatus = status;
+    if (node.children && Array.isArray(node.children)) {
+      node.children.forEach((child: any) => this.setStatusCascade(child, status));
+    }
+    if (node.Privilegios && Array.isArray(node.Privilegios)) {
+      node.Privilegios.forEach((priv: any) => this.setStatusCascade(priv, status));
+    }
+  }
+
+  isMasterChecked(): boolean {
+    if (!this.dataRolDetalles || this.dataRolDetalles.length === 0) return false;
+    return this.dataRolDetalles.every(p => p.estatus === 1);
+  }
+
+  isMasterIndeterminate(): boolean {
+    if (!this.dataRolDetalles || this.dataRolDetalles.length === 0) return false;
+    const hasAny = this.dataRolDetalles.some(p => p.estatus === 1 || this.hasSelectedChildren(p));
+    return hasAny && !this.isMasterChecked();
+  }
+
+  /**
    * Maneja el checkbox maestro de la cabecera. Recorre TODA la lista
-   * de permisos y actualiza el 'estatus' de padres e hijos.
+   * de permisos y actualiza en cascada padres, hijos y nietos.
    */
   onMasterCheckboxChange(event: any): void {
     const isChecked = event.target.checked;
-    const newStatus = isChecked ? 1 : 0; // Usamos 1 o 0 (number)
+    const newStatus = isChecked ? 1 : 0;
 
     this.dataRolDetalles.forEach(padre => {
-      // 1. Actualizar el estado del Padre
-      padre.estatus = newStatus;
-
-      // 2. Actualizar el estado de todos los Hijos (cascada total)
-      if (padre.children) {
-        padre.children.forEach(child => {
-          child.estatus = newStatus;
-        });
-      }
+      this.setStatusCascade(padre, newStatus);
     });
 
-    // CRÍTICO: Re-asignar el array fuerza a ngx-datatable a detectar y aplicar los cambios visuales.
+    this.recalcularTodosLosPadres();
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
 
-  // En profile.component.ts, dentro de la clase ProfileComponent
-
-  // Asegúrate de usar la interfaz PermisoPadre para tipar
   onParentCheckboxChange(row: PermisoPadre, event: any): void {
     const isChecked = event.target.checked;
     const newStatus = isChecked ? 1 : 0;
 
-    // 1. Actualizar el estado del Padre (Nivel 1 - Módulo)
-    row.estatus = newStatus;
-
-    // 2. Actualizar en cascada el estado de todos los Hijos (Nivel 2 - SubMenús) y Nietos (Nivel 3 - Privilegios)
-    if (row.children) {
-      row.children.forEach(child => {
-        child.estatus = newStatus;
-        if (child.children) {
-          child.children.forEach(privilegio => {
-            privilegio.estatus = newStatus;
-          });
-        }
-      });
-    }
-
-    // 3. Recalcular todos los padres para asegurar consistencia
+    this.setStatusCascade(row, newStatus);
     this.recalcularTodosLosPadres();
-
-    // 4. Forzar la actualización de la tabla para que se refresque visualmente
-    // Esto es crucial para que ngx-datatable reconozca el cambio de estado
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
 
   /**
    * Maneja el checkbox del SubMenú (Nivel 2).
-   * Actualiza sus Privilegios (Nivel 3) y recalcula el estado del Menú (Nivel 1).
+   * Actualiza sus Privilegios (Nivel 3) y recalcula el estado de la jerarquía.
    */
   onSubMenuCheckboxChange(subMenu: SubMenu, event: any): void {
     const isChecked = event.target.checked;
     const newStatus = isChecked ? 1 : 0;
-    subMenu.estatus = newStatus;
 
-    // 1. Aplicar el estado a todos los Privilegios (Nivel 3)
-    if (subMenu.children) {
-      subMenu.children.forEach(privilegio => {
-        privilegio.estatus = newStatus;
-      });
-    }
-
-    // 2. Recalcular el estado del Menú principal (Nivel 1)
-    this.recalcularEstadoPadre(subMenu.menu);
-
-    // 3. Recalcular todos los padres para asegurar consistencia
+    this.setStatusCascade(subMenu, newStatus);
     this.recalcularTodosLosPadres();
-
-    // 4. Forzar actualización de la tabla para ver los cambios
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
 
@@ -632,98 +729,18 @@ export class ProfileComponent implements OnInit {
    * Recalcula el estado del SubMenú (Nivel 2) y del Menú (Nivel 1).
    */
   onPrivilegeCheckboxChange(privilegio: Privilegio, subMenu: SubMenu, event: any): void {
-    // 1. Actualiza el estado del privilegio clickeado
     privilegio.estatus = event.target.checked ? 1 : 0;
-
-    // 2. Recalcular el estado del SubMenu basado en sus privilegios
-    if (subMenu.children && subMenu.children.length > 0) {
-      const todosPrivilegiosSeleccionados = subMenu.children.every(priv => priv.estatus === 1);
-      const algunPrivilegioSeleccionado = subMenu.children.some(priv => priv.estatus === 1);
-
-      // Si todos los privilegios están seleccionados, seleccionar el SubMenu
-      if (todosPrivilegiosSeleccionados) {
-        subMenu.estatus = 1;
-      }
-      // Si ninguno está seleccionado, deseleccionar el SubMenu
-      else if (!algunPrivilegioSeleccionado) {
-        subMenu.estatus = 0;
-      }
-      // Si algunos están seleccionados (parcial), deseleccionar el SubMenu
-      // El indicador visual (badge "-") mostrará que hay selección parcial
-      else {
-        subMenu.estatus = 0;
-      }
-    }
-
-    // 3. Recalcular el estado del Módulo padre
-    this.recalcularEstadoPadre(subMenu.menu);
-
-    // 4. Recalcular todos los padres para asegurar consistencia
     this.recalcularTodosLosPadres();
-
-    // 5. Forzar actualización de la tabla
     this.dataRolDetalles = [...this.dataRolDetalles];
   }
 
-  /**
-   * Función auxiliar para recalcular el estado del Menú (Nivel 1) basado en sus SubMenús (Nivel 2) y Privilegios (Nivel 3).
-   * El padre solo se selecciona si TODOS los SubMenus Y TODOS los Privilegios están seleccionados.
-   */
   recalcularEstadoPadre(menuNombre: string): void {
-    // Buscar el padre en el mapa usando todas las posibles claves
-    // La clave del mapa es "${modulo}-${menu}"
-    let parent: PermisoPadre | undefined;
-
-    // Buscar en el mapa por todas las claves que contengan el menuNombre
-    for (const [key, value] of this.padresMap.entries()) {
-      if (key.endsWith(`-${menuNombre}`)) {
-        parent = value;
-        break;
-      }
-    }
-
-    if (parent && parent.children) {
-      // Verificar si TODOS los SubMenus están seleccionados
-      const todosSubMenusSeleccionados = parent.children.every(subMenu => subMenu.estatus === 1);
-
-      // Verificar si TODOS los Privilegios de TODOS los SubMenus están seleccionados
-      const todosPrivilegiosSeleccionados = parent.children.every(subMenu => {
-        if (subMenu.children && subMenu.children.length > 0) {
-          return subMenu.children.every(priv => priv.estatus === 1);
-        }
-        return true; // Si no tiene privilegios, se considera como "todos seleccionados"
-      });
-
-      // Verificar si hay al menos un SubMenu o Privilegio seleccionado
-      const algunElementoSeleccionado = parent.children.some(subMenu => {
-        // Si el SubMenu está seleccionado
-        if (subMenu.estatus === 1) return true;
-        // O si tiene al menos un privilegio seleccionado
-        if (subMenu.children && subMenu.children.length > 0) {
-          return subMenu.children.some(priv => priv.estatus === 1);
-        }
-        return false;
-      });
-
-      // El padre se selecciona SOLO si TODOS los SubMenus Y TODOS los Privilegios están seleccionados
-      if (todosSubMenusSeleccionados && todosPrivilegiosSeleccionados) {
-        parent.estatus = 1;
-      }
-      // Si no hay ningún elemento seleccionado, deseleccionar el padre
-      else if (!algunElementoSeleccionado) {
-        parent.estatus = 0;
-      }
-      // Si hay selección parcial (algunos pero no todos), deseleccionar el padre
-      // El badge "Parcial" mostrará que hay selección parcial
-      else {
-        parent.estatus = 0;
-      }
-    }
+    this.recalcularTodosLosPadres();
   }
 
   /**
-   * Recalcula el estado de TODOS los padres en dataRolDetalles.
-   * Se llama después de cargar datos (por ejemplo, en editarRol).
+   * Recalcula el estado de TODOS los padres y submenús en dataRolDetalles.
+   * Lógica bottom-up: primero SubMenús a partir de Privilegios, luego Padres a partir de SubMenús.
    */
   recalcularTodosLosPadres(): void {
     if (!this.dataRolDetalles || this.dataRolDetalles.length === 0) {
@@ -732,36 +749,7 @@ export class ProfileComponent implements OnInit {
 
     this.dataRolDetalles.forEach(parent => {
       if (parent.children && parent.children.length > 0) {
-        // Verificar si TODOS los SubMenus están seleccionados
-        const todosSubMenusSeleccionados = parent.children.every(subMenu => subMenu.estatus === 1);
-
-        // Verificar si TODOS los Privilegios de TODOS los SubMenus están seleccionados
-        const todosPrivilegiosSeleccionados = parent.children.every(subMenu => {
-          if (subMenu.children && subMenu.children.length > 0) {
-            return subMenu.children.every(priv => priv.estatus === 1);
-          }
-          return true;
-        });
-
-        // Verificar si hay al menos un SubMenu o Privilegio seleccionado
-        const algunElementoSeleccionado = parent.children.some(subMenu => {
-          if (subMenu.estatus === 1) return true;
-          if (subMenu.children && subMenu.children.length > 0) {
-            return subMenu.children.some(priv => priv.estatus === 1);
-          }
-          return false;
-        });
-
-        // Actualizar el estado del padre
-        if (todosSubMenusSeleccionados && todosPrivilegiosSeleccionados) {
-          parent.estatus = 1;
-        } else if (!algunElementoSeleccionado) {
-          parent.estatus = 0;
-        } else {
-          parent.estatus = 0; // Parcial
-        }
-
-        // También recalcular el estado de cada SubMenu basado en sus privilegios
+        // 1. Recalcular cada SubMenu (Nivel 2) basado en sus Privilegios (Nivel 3)
         parent.children.forEach(subMenu => {
           if (subMenu.children && subMenu.children.length > 0) {
             const todosPrivilegios = subMenu.children.every(priv => priv.estatus === 1);
@@ -776,6 +764,30 @@ export class ProfileComponent implements OnInit {
             }
           }
         });
+
+        // 2. Recalcular el Padre (Nivel 1) basado en SubMenus y Privilegios
+        const todosSubMenusSeleccionados = parent.children.every(subMenu => {
+          if (subMenu.children && subMenu.children.length > 0) {
+            return subMenu.estatus === 1 && subMenu.children.every(priv => priv.estatus === 1);
+          }
+          return subMenu.estatus === 1;
+        });
+
+        const algunElementoSeleccionado = parent.children.some(subMenu => {
+          if (subMenu.estatus === 1) return true;
+          if (subMenu.children && subMenu.children.length > 0) {
+            return subMenu.children.some(priv => priv.estatus === 1);
+          }
+          return false;
+        });
+
+        if (todosSubMenusSeleccionados) {
+          parent.estatus = 1;
+        } else if (!algunElementoSeleccionado) {
+          parent.estatus = 0;
+        } else {
+          parent.estatus = 0; // Parcial
+        }
       }
     });
   }
@@ -1000,38 +1012,77 @@ export class ProfileComponent implements OnInit {
   }
 
   Cancelar() {
-    this.active = 1
-    this.selTab(1)
+    this.isEditing = false;
+    this.registrar = "Registrar nuevo perfil";
+    this.active = 1;
+    if (this.navWithIcons) {
+      this.navWithIcons.select(1);
+    }
+    this.selTab(1);
+    this.cdr.detectChanges();
   }
 
-  editarRol(row) {
-    // console.log(row.Rol.Menu)
-    this.blApp = false
-    this.desactivo = 'disabled'
-    this.selRol(row.aplicacion)
+  editarRol(row: any) {
+    Swal.fire({
+      title: "Modificar Perfil",
+      text: `¿Está seguro que desea editar el perfil "${row.nombre}"?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Sí, Editar",
+      cancelButtonText: "Cancelar",
+      reverseButtons: true,
+      customClass: {
+        confirmButton: 'btn btn-primary',
+        cancelButton: 'btn btn-outline-secondary mr-1'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          this.isEditing = true;
+          this.blApp = false;
+          this.desactivo = 'disabled';
+          this.registrar = "Modificar perfil";
 
-    this.perfilNombreCtrl.setValue(row.nombre)
-    this.perfilDescripcionCtrl.setValue(row.descripcion)
-    this.Perfil.estatus = row.estatus
-    this.Perfil.id = row.id
-    this.selRolDetalle(row)
+          this.selRol(row.aplicacion, row);
 
-    this.active = 2
+          this.perfilNombreCtrl.setValue(row.nombre, { emitEvent: false });
+          this.perfilDescripcionCtrl.setValue(row.descripcion, { emitEvent: false });
+          this.perfilAplicacionCtrl.setValue(this.aplicacion?.id || row.aplicacion, { emitEvent: false });
 
+          this.Perfil.id = row.id;
+          this.Perfil.nombre = row.nombre;
+          this.Perfil.descripcion = row.descripcion;
+          this.Perfil.estatus = row.estatus;
+          this.Perfil.aplicacion = row.aplicacion;
+
+          this.selRolDetalle(row);
+        } catch (err) {
+          console.error('Error al editar rol:', err);
+        } finally {
+          this.active = 2;
+          if (this.navWithIcons) {
+            this.navWithIcons.select(2);
+          }
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
 
 
   eliminarRol(row) {
-    console.log(row)
     Swal.fire({
-      title: "Alerta",
-      text: "¿Está seguro que desea eliminar perfil?",
-      icon: "question",
+      title: "Eliminar Perfil",
+      text: `¿Está seguro que desea eliminar el perfil "${row.nombre}"?`,
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#C81D11",
-      confirmButtonText: "Si, Aceptar",
+      confirmButtonText: "Sí, Eliminar",
       cancelButtonText: "Cancelar",
+      reverseButtons: true,
+      customClass: {
+        confirmButton: 'btn btn-primary',
+        cancelButton: 'btn btn-outline-danger mr-1'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         this.ok(row);
@@ -1261,19 +1312,26 @@ export class ProfileComponent implements OnInit {
   }
 
   limpiarPerfil() {
-    this.active = 1
-    this.dataRol = []
-    this.dataRolDetalles = []
-    this.dataPlana = []
-    this.dataJerarquica = []
-    this.xrol = ''
-    this.Perfil.id = ''
-    this.perfilNombreCtrl.setValue('')
-    this.perfilDescripcionCtrl.setValue('')
-    this.rolCtrl.setValue('')
-    this.selRol(this.aplicacion.id)
+    this.isEditing = false;
+    this.registrar = "Registrar nuevo perfil";
+    this.active = 1;
+    if (this.navWithIcons) {
+      this.navWithIcons.select(1);
+    }
+    this.dataRol = [];
+    this.dataRolDetalles = [];
+    this.dataPlana = [];
+    this.dataJerarquica = [];
+    this.xrol = '';
+    this.Perfil.id = '';
+    this.perfilNombreCtrl.setValue('');
+    this.perfilDescripcionCtrl.setValue('');
+    this.rolCtrl.setValue('');
+    if (this.aplicacion?.id) {
+      this.selRol(this.aplicacion.id);
+    }
 
-    this.listarPerfiles()
+    this.listarPerfiles();
   }
 
   // -----------------------------------------------------------

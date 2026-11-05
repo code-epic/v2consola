@@ -81,9 +81,15 @@
 
 
 .fondo-modal {
-  background-color: rgba(15, 23, 42, 0.35);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  z-index: 1055 !important;
+
+  .modal-dialog {
+    z-index: 1056 !important;
+    position: relative;
+  }
 
   &.modal-pastel-card {
     .modal-content {
@@ -94,6 +100,16 @@
       background-color: #ffffff;
     }
   }
+}
+
+// Asegurar que ningún backdrop se superponga sobre las ventanas modales
+.modal-backdrop {
+  z-index: 1040 !important;
+}
+
+.modal,
+ngb-modal-window {
+  z-index: 1055 !important;
 }
 
 

@@ -1,21 +1,1011 @@
-app-user-list .datatable-body-row.row-blocked {
-  background-color: #ffeff3 !important; // Un rojo pastel muy suave
+@import '@core/scss/base/bootstrap-extended/include';
+@import '@core/scss/base/components/include';
+
+// =========================================================================
+// PALETA DE COLORES PASTELES SOBRIOS Y CORPORATIVOS (SERIOUS PASTEL PALETTE)
+// =========================================================================
+$sage-bg: #e8f5ed;
+$sage-text: #2e694d;
+$sage-border: #c3e6d1;
+
+$sand-bg: #fef6ea;
+$sand-text: #7c5828;
+$sand-border: #f8dfbd;
+
+$slate-dark: #334155;
+$slate-muted: #64748b;
+$slate-light: #94a3b8;
+
+.text-slate {
+  color: $slate-dark !important;
+}
+
+.text-slate-muted {
+  color: $slate-muted !important;
+}
+
+.text-sage {
+  color: $sage-text !important;
+}
+
+.text-sage-muted {
+  color: rgba(46, 105, 77, 0.75) !important;
+}
+
+.text-sand {
+  color: $sand-text !important;
+}
+
+.text-sand-muted {
+  color: rgba(124, 88, 40, 0.75) !important;
+}
+
+// =========================================================================
+// TARJETAS KPI (ESTILO FORMAL Y SOBRIO CON CURVAS SUAVES)
+// =========================================================================
+.app-kpi-formal {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 18px;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   &:hover {
-    background-color: #ffeef0 !important; // Un poco más oscuro al pasar el mouse
+    border-color: rgba(115, 103, 240, 0.35);
+    box-shadow: 0 8px 24px rgba(115, 103, 240, 0.08);
+    transform: translateY(-2px);
   }
 
-  .font-weight-bold, .text-muted, .font-small-2 {
-    color: #7d5f5f !important; // Un rojo más oscuro para contraste y legibilidad
+  &.active-kpi {
+    border-color: #7367f0;
+    background: linear-gradient(135deg, rgba(115, 103, 240, 0.04) 0%, #ffffff 100%);
+    box-shadow: 0 6px 20px rgba(115, 103, 240, 0.12);
+  }
+
+  .kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $slate-muted;
+  }
+
+  .kpi-value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0.25rem 0 0.15rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-subtext {
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .kpi-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.kpi-box-neutral {
+      background: #f5f3ff;
+      color: #7367f0;
+      border: 1px solid #ede9fe;
+    }
+
+    &.kpi-box-sage {
+      background: $sage-bg;
+      color: $sage-text;
+      border: 1px solid $sage-border;
+    }
+
+    &.kpi-box-sand {
+      background: $sand-bg;
+      color: $sand-text;
+      border: 1px solid $sand-border;
+    }
   }
 }
 
+// =========================================================================
+// CONTENEDOR Y FILTROS DE TABLA (CURVAS SUAVES Y LILA CÁLIDO)
+// =========================================================================
+.card-table-formal {
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
 
-// Estilos para filas de usuarios inactivos (naranja claro)
-app-user-list .datatable-body-row.row-inactive {
-  background-color: #fff3e0 !important; // Naranja pastel muy suave (Amber 50)
+  .bg-slate-subtle {
+    background-color: #fbfbfe;
+  }
+
+  .form-label-formal {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $slate-dark;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-formal-outline {
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    color: #6366f1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 14px;
+    height: 42px;
+    padding: 0 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #c4b5fd;
+      color: #7367f0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-formal-ghost {
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    color: #64748b;
+    border-radius: 14px;
+    height: 42px;
+    width: 42px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #c4b5fd;
+      color: #7367f0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .input-group-formal {
+    height: 44px;
+
+    .input-group-prepend .input-group-text {
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-right: none;
+      border-top-left-radius: 14px;
+      border-bottom-left-radius: 14px;
+      color: #a78bfa;
+      padding-left: 1rem;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .form-control {
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-left: none;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+      font-size: 0.88rem;
+      padding: 0 1rem;
+      height: 44px;
+      color: #1e293b;
+      transition: all 0.2s ease;
+
+      &:focus {
+        background: #ffffff;
+        border-color: #7367f0;
+        box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
+      }
+    }
+
+    .input-group-append .btn {
+      height: 44px;
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-left: none;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+      color: #94a3b8;
+      padding: 0 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        color: #ef4444;
+      }
+    }
+  }
+
+  .custom-select-formal {
+    ::ng-deep .ng-select-container {
+      border: 1.5px solid #ede9fe;
+      border-radius: 14px;
+      height: 44px !important;
+      min-height: 44px !important;
+      background: #fafbfe;
+      font-size: 0.88rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        border-color: #d8b4fe;
+      }
+    }
+
+    ::ng-deep .ng-select-focused .ng-select-container {
+      background: #ffffff;
+      border-color: #7367f0;
+      box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
+    }
+  }
+
+  .formal-pill-group {
+    height: 44px !important;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1.5px solid #ede9fe;
+    background: #fafbfe;
+    display: inline-flex;
+    align-items: stretch;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    .btn {
+      height: 44px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+      padding: 0 1.35rem !important;
+      border: none !important;
+      border-radius: 0 !important;
+      line-height: 1 !important;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      &.btn-formal-active {
+        background: #7367f0 !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        box-shadow: 0 2px 10px rgba(115, 103, 240, 0.35) !important;
+      }
+
+      &.btn-formal-inactive {
+        background: transparent !important;
+        color: #64748b !important;
+        font-weight: 500 !important;
+
+        &:hover {
+          background: #f5f3ff !important;
+          color: #7367f0 !important;
+        }
+      }
+
+      &:not(:last-child) {
+        border-right: 1.5px solid #ede9fe !important;
+      }
+    }
+  }
+}
+
+// =========================================================================
+// TABLA FORMAL ENTERPRISE
+// =========================================================================
+.formal-enterprise-table {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+
+  .datatable-header {
+    border-bottom: 1px solid #e2e8f0;
+    background: #fbfbfe;
+
+    .datatable-header-cell {
+      padding: 0.75rem 1.25rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #64748b;
+      border: none;
+    }
+  }
+
+  .datatable-body {
+    .datatable-body-row {
+      border-bottom: 1px solid #f1f5f9;
+      transition: all 0.15s ease;
+
+      &:hover {
+        background-color: #fafbfe !important;
+      }
+
+      &.row-active {
+        background-color: #ffffff !important;
+        border-left: 4px solid #10b981 !important;
+
+        &:hover {
+          background-color: #fafbfe !important;
+        }
+      }
+
+      &.row-inactive-wine,
+      &.row-inactive,
+      &.row-blocked {
+        background-color: #fdf2f4 !important;
+        border-left: 4px solid #881337 !important;
+
+        &:hover {
+          background-color: #f7e6e9 !important;
+        }
+      }
+
+      .datatable-body-cell {
+        padding: 0.75rem 1.25rem;
+        vertical-align: middle;
+        font-size: 0.88rem;
+        color: #334155;
+        display: flex;
+        align-items: center;
+      }
+    }
+  }
+
+  .datatable-footer {
+    background: #fbfbfe;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+    font-size: 0.82rem;
+    padding: 0.5rem 1.25rem;
+  }
+
+  .user-row-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.35;
+  }
+
+  .avatar-formal {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 2px solid #ffffff;
+  }
+
+  .avatar-formal-initials {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f5f3ff;
+    color: #7367f0;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #ede9fe;
+
+    &.avatar-blocked,
+    &.avatar-inactive {
+      background: #fdf2f4;
+      color: #881337;
+      border-color: #fecdd3;
+    }
+  }
+
+  .badge-status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+
+    &.dot-active {
+      background-color: #10b981;
+    }
+
+    &.dot-blocked,
+    &.dot-inactive {
+      background-color: #881337;
+    }
+  }
+
+  .badge-pastel-mono {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.74rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-branch {
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    color: #7367f0;
+    font-size: 0.74rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-sage {
+    background: $sage-bg;
+    color: $sage-text;
+    border: 1px solid $sage-border;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-sand {
+    background: $sand-bg;
+    color: $sand-text;
+    border: 1px solid $sand-border;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .status-indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &.dot-sage {
+      background-color: $sage-text;
+    }
+
+    &.dot-sand {
+      background-color: $sand-text;
+    }
+
+    &.dot-danger {
+      background-color: #ef4444;
+    }
+  }
+
+  // Botones de Acción Redondos y Suaves
+  .btn-formal-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #ede9fe;
+    background: #ffffff;
+    color: #64748b;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &:hover {
+      border-color: #d8b4fe;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(115, 103, 240, 0.12);
+    }
+
+    &.btn-action-sage:hover {
+      background: $sage-bg;
+      color: $sage-text;
+      border-color: $sage-border;
+    }
+
+    &.btn-action-slate:hover {
+      background: #f5f3ff;
+      color: #7367f0;
+      border-color: #ddd6fe;
+    }
+
+    &.btn-action-more:hover {
+      background: #f8fafc;
+      color: #334155;
+      border-color: #cbd5e1;
+    }
+  }
+}
+
+// =========================================================================
+// MENÚ CONTEXTUAL FORMAL
+// =========================================================================
+.formal-context-menu {
+  border-radius: 16px;
+  border: 1px solid #ede9fe;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  background: #ffffff;
+  padding: 0.4rem;
+  min-width: 200px;
+
+  .context-menu-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #7367f0;
+    padding: 0.4rem 0.8rem;
+    background: #fafbfe;
+    border-bottom: 1px solid #ede9fe;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .dropdown-item {
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: #334155;
+    padding: 0.5rem 0.9rem;
+    border-radius: 10px;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: #f5f3ff;
+      color: #7367f0;
+    }
+  }
+}
+
+// =========================================================================
+// VENTANA MODAL (CURVAS SUAVES ESTILO SWEETALERT, 24PX, BOTONES UNIFORMES)
+// =========================================================================
+.modal-change-pass-enhanced {
+  z-index: 1055 !important;
+
+  .modal-dialog {
+    margin: 1.75rem auto;
+    z-index: 1056 !important;
+    position: relative;
+  }
+
+  .modal-content {
+    border-radius: 24px !important;
+    border: 1px solid rgba(115, 103, 240, 0.15) !important;
+    box-shadow: 0 25px 60px -15px rgba(115, 103, 240, 0.16), 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+}
+
+.modal-formal-dialog {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+
+  .formal-modal-header {
+    background: #fafbfe;
+    border-bottom: 1px solid #ede9fe;
+    padding: 1.25rem 1.5rem;
+
+    .formal-modal-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: #f5f3ff;
+      border: 1.5px solid #ede9fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7367f0;
+    }
+
+    .modal-title {
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+    }
+  }
+
+  .formal-alert {
+    background: #fbfbfe;
+    border: 1.5px solid #ede9fe;
+    border-radius: 14px;
+    padding: 0.85rem 1.15rem;
+  }
+
+  .formal-modal-footer {
+    background: #fafbfe;
+    border-top: 1px solid #ede9fe;
+    padding: 1.25rem 1.5rem;
+    gap: 0.75rem;
+  }
+}
+
+// BOTONES GLOBALES UNIFORMES Y ELEGANTES (ESTILO SWEETALERT LOGOUT)
+.btn-swal-neutral,
+.btn-swal-purple {
+  height: 44px !important;
+  min-width: 130px !important;
+  border-radius: 14px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.6rem !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-sizing: border-box !important;
+}
+
+.btn-swal-neutral {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
 
   &:hover {
-    background-color: #ffe0b2 !important; // Naranja pastel un poco más oscuro (Amber 100)
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+    transform: translateY(-1.5px) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.btn-swal-purple {
+  background-color: #7367f0 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(115, 103, 240, 0.35) !important;
+
+  &:hover {
+    background-color: #6355ee !important;
+    color: #ffffff !important;
+    transform: translateY(-1.5px) !important;
+    box-shadow: 0 6px 18px rgba(115, 103, 240, 0.45) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+
+  &:disabled {
+    opacity: 0.65 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.btn-swal-close-round {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #64748b !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #dc2626 !important;
+    transform: scale(1.05) !important;
+  }
+}
+
+// OTP Inputs con estilo elegante
+.otp-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.25rem 0;
+}
+
+.otp-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.otp-box {
+  width: 48px !important;
+  height: 52px !important;
+  text-align: center;
+  font-size: 1.3rem !important;
+  font-weight: 700 !important;
+  padding: 0;
+  border-radius: 12px !important;
+  border: 1.5px solid #ede9fe !important;
+  background: #fafbfe !important;
+  color: #1e293b !important;
+  transition: all 0.2s ease;
+
+  &:focus {
+    background: #ffffff !important;
+    border-color: #7367f0 !important;
+    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15) !important;
+  }
+}
+
+.otp-divider {
+  width: 12px;
+  height: 2px;
+  background-color: #cbd5e1;
+  margin: 0 4px;
+}
+
+.shake {
+  animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+// =========================================================================
+// SOPORTE PARA MODO OSCURO (DARK LAYOUT)
+// =========================================================================
+.dark-layout {
+  .app-kpi-formal {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    &:hover {
+      border-color: rgba(115, 103, 240, 0.35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    &.active-kpi {
+      border-color: #7367f0;
+      background: #232a3e;
+    }
+
+    .kpi-icon-box {
+      &.kpi-box-neutral {
+        background: rgba(115, 103, 240, 0.12);
+        border-color: rgba(115, 103, 240, 0.25);
+        color: #c4b5fd;
+      }
+
+      &.kpi-box-sage {
+        background: rgba(46, 105, 77, 0.2);
+        border-color: rgba(46, 105, 77, 0.4);
+        color: #56ca8e;
+      }
+
+      &.kpi-box-sand {
+        background: rgba(124, 88, 40, 0.2);
+        border-color: rgba(124, 88, 40, 0.4);
+        color: #e5a758;
+      }
+    }
+  }
+
+  .card-table-formal {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    .bg-slate-subtle,
+    .card-body {
+      background: #283046 !important;
+    }
+
+    .text-slate-800 {
+      color: #d0d2d6 !important;
+    }
+
+    .btn-formal-outline {
+      background: #283046;
+      border-color: rgba(115, 103, 240, 0.25);
+      color: #c4b5fd;
+
+      &:hover {
+        background: #343d55;
+        color: #ffffff;
+      }
+    }
+
+    .btn-formal-ghost {
+      background: #283046;
+      border-color: rgba(115, 103, 240, 0.25);
+      color: #b4b7bd;
+
+      &:hover {
+        background: #343d55;
+        color: #ffffff;
+      }
+    }
+
+    .input-group-formal {
+      .input-group-text,
+      .form-control {
+        background: #232a3e;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #d0d2d6;
+
+        &:focus {
+          border-color: #7367f0;
+        }
+      }
+    }
+
+    .formal-pill-group {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: #232a3e;
+
+      .btn {
+        &.btn-formal-active {
+          background: #7367f0;
+          color: #ffffff;
+        }
+
+        &.btn-formal-inactive {
+          background: transparent;
+          color: #b4b7bd;
+
+          &:hover {
+            background: #343d55;
+          }
+        }
+      }
+    }
+  }
+
+  .formal-enterprise-table {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    .ngx-datatable.bootstrap {
+      .datatable-header,
+      .datatable-header-cell {
+        background: #161d31 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+      }
+
+      .datatable-body-row {
+        background: #283046;
+        border-color: rgba(255, 255, 255, 0.05);
+
+        &:hover {
+          background: #232a3e !important;
+        }
+
+        &.row-blocked {
+          background-color: rgba(239, 68, 68, 0.1) !important;
+        }
+
+        &.row-inactive {
+          background-color: rgba(245, 158, 11, 0.1) !important;
+        }
+      }
+    }
+
+    .user-row-title {
+      color: #d0d2d6;
+    }
+
+    .avatar-formal-initials {
+      background: #161d31;
+      border-color: rgba(115, 103, 240, 0.25);
+      color: #c4b5fd;
+    }
+
+    .badge-pastel-mono,
+    .badge-pastel-branch {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #b4b7bd;
+    }
+
+    .btn-formal-icon {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #b4b7bd;
+
+      &:hover {
+        background: #283046;
+        border-color: rgba(115, 103, 240, 0.4);
+      }
+    }
+  }
+
+  .formal-context-menu {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    .context-menu-header {
+      color: #82868b;
+      border-color: rgba(255, 255, 255, 0.08);
+      background: #161d31;
+    }
+
+    .dropdown-item {
+      color: #b4b7bd;
+
+      &:hover {
+        background: #161d31;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .modal-formal-dialog {
+    background: #283046;
+
+    .formal-modal-header,
+    .formal-modal-footer {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .formal-modal-footer {
+      .btn-swal-neutral {
+        background: #161d31 !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        color: #d0d2d6 !important;
+
+        &:hover {
+          background: #232a3e !important;
+          color: #ffffff !important;
+        }
+      }
+
+      .btn-swal-purple {
+        background: #7367f0 !important;
+        color: #ffffff !important;
+      }
+    }
   }
 }

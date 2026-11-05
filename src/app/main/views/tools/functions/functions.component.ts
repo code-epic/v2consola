@@ -29,7 +29,7 @@ import { environment } from "environments/environment"
 import { TaskService } from "@services/apicore/task.service"
 
 import { CommonModule } from "@angular/common"
-import { ReactiveFormsModule } from "@angular/forms"
+import { FormsModule, ReactiveFormsModule } from "@angular/forms"
 import { RouterModule } from "@angular/router"
 import { CoreDirectivesModule } from "@core/directives/directives"
 import { CorePipesModule } from "@core/pipes/pipes.module"
@@ -48,6 +48,7 @@ import { ContentHeaderComponent } from "app/layout/components/content-header/con
     standalone: true,
     imports: [
         CommonModule,
+        FormsModule,
         ReactiveFormsModule,
         RouterModule,
         CoreDirectivesModule,
@@ -163,6 +164,46 @@ export class FunctionsComponent implements OnInit {
   public rowData = []
   private _isLoading = signal<boolean>(false);
   get isLoading() { return this._isLoading(); }
+
+  public selectedStatusFilter: string = 'all'; // 'all' | 'activas' | 'inactivas' | 'programadas'
+  public selectedLenguajeFilter: string = undefined;
+  public selectedTipoFilter: string = undefined;
+
+  /**
+   * Determina si una función está activa
+   */
+  isRowActive(row: any): boolean {
+    if (!row) return false;
+    const est = row.estatus;
+    return est == 1 || est === true || est === '1' || est === 'ACTIVO' || est === 'activo';
+  }
+
+  /**
+   * Aplica clases a la fila: borde verde esmeralda si activa, tono mate vino y borde vino si inactiva
+   */
+  getRowClass = (row: any) => {
+    const active = this.isRowActive(row);
+    return {
+      'row-active': active,
+      'row-inactive-wine': !active
+    };
+  };
+
+  get totalFunciones(): number {
+    return this.tempData ? this.tempData.length : 0;
+  }
+
+  get totalActivas(): number {
+    return this.tempData ? this.tempData.filter(f => this.isRowActive(f)).length : 0;
+  }
+
+  get totalInactivas(): number {
+    return this.tempData ? this.tempData.filter(f => !this.isRowActive(f)).length : 0;
+  }
+
+  get totalProgramadas(): number {
+    return this.tempData ? this.tempData.filter(f => f.categoria == 'PROGRAM' || (f.tiempo && f.tiempo !== '')).length : 0;
+  }
 
   public driver = undefined
   public drivers = []
@@ -296,7 +337,7 @@ export class FunctionsComponent implements OnInit {
     )
 
     this.contentHeader = {
-      headerTitle: "Herramientas",
+      headerTitle: "Gestión de Funciones",
       actionButton: true,
       breadcrumb: {
         type: "",
@@ -394,24 +435,92 @@ export class FunctionsComponent implements OnInit {
     return idioma
   }
 
+  applyCombinedFilters() {
+    const searchVal = (this.searchValueCtrl.value || '').toLowerCase().trim();
+    const lenguajeVal = this.selectedLenguajeFilter;
+    const tipoVal = this.selectedTipoFilter;
+    const statusVal = this.selectedStatusFilter;
+
+    this.rowData = this.tempData.filter(d => {
+      let matchSearch = true;
+      if (searchVal) {
+        const cadena = `${d.nombre || ''} ${d.descripcion || ''} ${d.lenguaje || ''} ${d.categoria || ''} ${d.tipo || ''} ${d.id || ''}`.toLowerCase();
+        matchSearch = cadena.includes(searchVal);
+      }
+
+      let matchLenguaje = true;
+      if (lenguajeVal) {
+        matchLenguaje = d.lenguaje === lenguajeVal;
+      }
+
+      let matchTipo = true;
+      if (tipoVal) {
+        matchTipo = d.tipo === tipoVal;
+      }
+
+      let matchStatus = true;
+      if (statusVal === 'activas') {
+        matchStatus = this.isRowActive(d);
+      } else if (statusVal === 'inactivas') {
+        matchStatus = !this.isRowActive(d);
+      } else if (statusVal === 'programadas') {
+        matchStatus = d.categoria === 'PROGRAM' || (d.tiempo && d.tiempo !== '');
+      }
+
+      return matchSearch && matchLenguaje && matchTipo && matchStatus;
+    });
+
+    this.count = this.rowData.length;
+    if (this.table) {
+      this.table.offset = 0;
+    }
+  }
+
+  setStatusFilter(status: string) {
+    this.selectedStatusFilter = status;
+    this.applyCombinedFilters();
+  }
+
+  filterLenguaje(event: any) {
+    this.selectedLenguajeFilter = event ? (event.name || event) : undefined;
+    this.applyCombinedFilters();
+  }
+
+  filterTipo(event: any) {
+    this.selectedTipoFilter = event ? (event.name || event) : undefined;
+    this.applyCombinedFilters();
+  }
+
+  clearSearch() {
+    this.searchValueCtrl.setValue('');
+    this.applyCombinedFilters();
+  }
+
+  verTodos() {
+    this.searchValueCtrl.setValue('');
+    this.selectedLenguajeFilter = undefined;
+    this.selectedTipoFilter = undefined;
+    this.selectedStatusFilter = 'all';
+    this.rowData = [...this.tempData];
+    this.count = this.rowData.length;
+    if (this.table) {
+      this.table.offset = 0;
+    }
+    this.utilservice.AlertMini('top-end', 'info', 'Mostrando todas las funciones', 1500);
+  }
+
+  recargar() {
+    this.CargarListaFunciones();
+    this.utilservice.AlertMini('top-end', 'info', 'Actualizando lista de funciones...', 1500);
+  }
+
   filterUpdate(event: any) {
-    const val = event.target.value.toLowerCase()
-    const temp = this.tempData.filter(function (d) {
-      return d.nombre.toLowerCase().indexOf(val) !== -1 || !val
-    })
-    this.rowData = temp
-    this.count = this.rowData.length
-    this.table.offset = 0
+    this.applyCombinedFilters();
   }
 
   filterStatus(event: any) {
-    const val = event.id ? event.id : ""
-    const temp = this.tempData.filter(function (d) {
-      return d.estatus.indexOf(val) !== -1 || !val
-    })
-    this.rowData = temp
-    this.count = this.rowData.length
-    this.table.offset = 0
+    this.selectedStatusFilter = event && event.id !== undefined ? (event.id === 1 ? 'activas' : 'inactivas') : 'all';
+    this.applyCombinedFilters();
   }
 
   LimpiarForm() {
@@ -449,8 +558,9 @@ export class FunctionsComponent implements OnInit {
           this.ListaFunciones.push(e)
         })
         this.rowData = this.ListaFunciones
+        this.tempData = [...this.rowData]
         this.count = this.rowData.length
-        this.tempData = this.rowData
+        this.applyCombinedFilters()
         this._isLoading.set(false);
       },
       (error) => {
@@ -482,8 +592,8 @@ export class FunctionsComponent implements OnInit {
       centered: true,
       size: "xl",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal modal-pastel-card",
+      keyboard: true,
+      windowClass: "fondo-modal modal-pastel-card modal-formal-enhanced",
     })
     modalRef.result.then(
       () => this.LimpiarForm(),
@@ -497,8 +607,8 @@ export class FunctionsComponent implements OnInit {
       centered: true,
       size: "xl",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal modal-pastel-card",
+      keyboard: true,
+      windowClass: "fondo-modal modal-pastel-card modal-formal-enhanced",
     })
     modalRef.result.then(
       () => this.LimpiarForm(),
@@ -594,8 +704,8 @@ export class FunctionsComponent implements OnInit {
       centered: true,
       size: "lg",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal modal-pastel-card",
+      keyboard: true,
+      windowClass: "fondo-modal modal-pastel-card modal-formal-enhanced",
     })
   }
 
@@ -604,8 +714,8 @@ export class FunctionsComponent implements OnInit {
       centered: true,
       size: "lg",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal modal-pastel-card",
+      keyboard: true,
+      windowClass: "fondo-modal modal-pastel-card modal-formal-enhanced",
     })
   }
 
@@ -628,8 +738,8 @@ export class FunctionsComponent implements OnInit {
       centered: true,
       size: "lg",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal modal-pastel-card",
+      keyboard: true,
+      windowClass: "fondo-modal modal-pastel-card modal-formal-enhanced",
     })
   }
 
@@ -685,8 +795,8 @@ export class FunctionsComponent implements OnInit {
       centered: true,
       size: "lg",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal modal-pastel-card",
+      keyboard: true,
+      windowClass: "fondo-modal modal-pastel-card modal-formal-enhanced",
     });
   }
 
@@ -699,8 +809,8 @@ export class FunctionsComponent implements OnInit {
       centered: true,
       size: "lg",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal modal-pastel-card",
+      keyboard: true,
+      windowClass: "fondo-modal modal-pastel-card modal-formal-enhanced",
     });
   }
 
@@ -787,14 +897,13 @@ export class FunctionsComponent implements OnInit {
       file_name: environment.colecciones.SYS_FNX_NAME,
     }
     await Swal.fire({
-      title: `Va a descargar la coleccion de Funciones `,
-      text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
+      title: "Exportar Colección de Funciones",
+      text: "¿Está seguro que desea descargar la colección completa de funciones del sistema?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Sí, descargar",
       cancelButtonText: "Cancelar",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Descargar!",
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         this.apiService.ExecFnx(this.fnx).subscribe(

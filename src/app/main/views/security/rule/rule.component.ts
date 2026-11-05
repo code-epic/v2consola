@@ -48,6 +48,12 @@ export class RuleComponent implements OnInit {
   public configuracion: IConfiguracion;
   public isLoadingApp = false;
   public isLoadingConfig = false;
+  public isSaving = false;
+
+  // Control del Stepper Híbrido (Pasos 1 al 4)
+  public pasoActual = 1;
+  public totalPasos = 4;
+  public showCertPass = false;
 
   public aplicacionSeleccionadaCtrl = new FormControl('');
   public configuracionEstatusCtrl = new FormControl(false);
@@ -140,12 +146,14 @@ export class RuleComponent implements OnInit {
       this.aplicacionSeleccionada = null;
       this.configuracion = null;
       this.isLoadingConfig = false;
+      this.pasoActual = 1;
       return;
     }
 
     this.aplicacionSeleccionada = event;
     this.isLoadingConfig = true;
     this.configuracion = null;
+    this.pasoActual = 1;
     const appId = event.id;
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP;
@@ -216,13 +224,43 @@ export class RuleComponent implements OnInit {
     } as any;
   }
 
+  // =========================================================================
+  // Control de Navegación del Stepper Híbrido
+  // =========================================================================
+  irAPaso(paso: number) {
+    if (paso >= 1 && paso <= this.totalPasos) {
+      this.pasoActual = paso;
+      this.cdr.detectChanges();
+    }
+  }
+
+  siguientePaso() {
+    if (this.pasoActual < this.totalPasos) {
+      this.pasoActual++;
+      this.cdr.detectChanges();
+    }
+  }
+
+  anteriorPaso() {
+    if (this.pasoActual > 1) {
+      this.pasoActual--;
+      this.cdr.detectChanges();
+    }
+  }
+
+  toggleCertPass() {
+    this.showCertPass = !this.showCertPass;
+  }
+
   /**
    * Guarda la configuración actual en la base de datos.
    */
   guardarConfiguracion() {
-    this.syncConfigFromFormControls()
+    if (this.isSaving) return;
+    this.isSaving = true;
+    this.syncConfigFromFormControls();
     this.configuracion.actualizado = new Date().toISOString();
-    this.configuracion.usuarioactualizado = this.token.Usuario.nombre;
+    this.configuracion.usuarioactualizado = this.token?.Usuario?.nombre ?? 'Administrador';
 
     const fnx = {
       coleccion: environment.colecciones.SYS_CONFIG,
@@ -234,32 +272,37 @@ export class RuleComponent implements OnInit {
 
     this.apiService.ExecColeccion(fnx).subscribe(
       () => {
-
         this.ActualizarTokens();
       },
       (error) => {
+        this.isSaving = false;
         console.error('Error al guardar la configuración:', error);
         this.utilService.AlertMini('top-end', 'error', 'Ocurrió un error al guardar.', 3000);
+        this.cdr.detectChanges();
       }
     );
   }
 
   ActualizarTokens() {
-    this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.ACTUALIZAR_TOKENS
-    let app = this.configuracion
-    this.xAPI.parametros = `${app.id},${this.convertirASegundos()},${this.convertirTraza(app.traza.nivel)},${app.traza.nivel}`
-    this.xAPI.valores = {}
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.ACTUALIZAR_TOKENS;
+    let app = this.configuracion;
+    this.xAPI.parametros = `${app.id},${this.convertirASegundos()},${this.convertirTraza(app.traza.nivel)},${app.traza.nivel}`;
+    this.xAPI.valores = {};
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       () => {
-        this.utilService.AlertMini('top-end', 'success', '¡Configuración guardada exitosamente!', 3000);
+        this.isSaving = false;
+        this.utilService.AlertMini('top-end', 'success', '¡Configuración de seguridad guardada exitosamente!', 3000);
+        this.cdr.detectChanges();
       },
       (error) => {
-        console.error('Error al guardar la configuración:', error)
-        this.utilService.AlertMini('top-end', 'error', 'Ocurrió un error al guardar.', 3000)
+        this.isSaving = false;
+        console.error('Error al actualizar tokens:', error);
+        this.utilService.AlertMini('top-end', 'error', 'Ocurrió un error al actualizar tokens.', 3000);
+        this.cdr.detectChanges();
       }
-    )
+    );
   }
 
 

@@ -103,6 +103,28 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   public lstPerfil = []; // Asegúrate de cargar esta lista, por ejemplo en ngOnInit
   public selectedProfile: string = undefined; // Propiedad para el ngModel del nuevo select
+  public selectedStatusFilter: string = 'all'; // 'all' | 'activos' | 'bloqueados'
+
+  /**
+   * Determina si un usuario está activo y no bloqueado
+   */
+  isUserActive(user: any): boolean {
+    if (!user) return false;
+    const isActiveStatus = user.estatus == '1' || user.estatus === 1 || user.estatus === true || user.estatus === 'ACTIVO';
+    return isActiveStatus && !user.bloqueo;
+  }
+
+  get totalUsers(): number {
+    return this.tempData ? this.tempData.length : 0;
+  }
+
+  get totalActivos(): number {
+    return this.tempData ? this.tempData.filter(u => this.isUserActive(u)).length : 0;
+  }
+
+  get totalBloqueados(): number {
+    return this.tempData ? this.tempData.filter(u => !this.isUserActive(u)).length : 0;
+  }
 
   // Propiedades para el manejo de bloqueos y contadores
   private countdownIntervals = new Map<string, number>();
@@ -129,7 +151,7 @@ export class UserListComponent implements OnInit, OnDestroy {
     await this.listarUsuarios();
 
     this.contentHeader = {
-      headerTitle: "Aplicaciones",
+      headerTitle: "Lista de Usuarios",
       actionButton: true,
       breadcrumb: {
         type: "",
@@ -168,63 +190,85 @@ export class UserListComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Nueva función para filtrar por el perfil seleccionado
-  filterByProfile() {
-    const profileId = this.selectedProfileCtrl.value;
+  applyCombinedFilters() {
+    const searchVal = (this.searchValueCtrl.value || '').toLowerCase().trim();
+    const profileVal = this.selectedProfileCtrl.value;
+    const statusVal = this.selectedStatusFilter;
 
-    // Primero, asegúrate de que la búsqueda por texto esté vacía para no mezclar filtros inicialmente
-    // this.searchValue = ''; 
+    this.rowData = this.tempData.filter(d => {
+      let matchSearch = true;
+      if (searchVal) {
+        const cadena = `${d.login || ''} ${d.nombre || ''} ${d.cedula || ''} ${d.correo || ''}`.toLowerCase();
+        matchSearch = cadena.includes(searchVal);
+      }
 
-    if (!profileId) {
-      // Si se selecciona "Todos", restaura la lista completa
-      this.rowData = [...this.tempData];
-    } else {
-      // Filtra la data original por el ID del perfil
-      const filteredData = this.tempData.filter(item => {
-        return item.Perfil && item.Perfil.descripcion === profileId;
-      });
-      this.rowData = filteredData;
-    }
-  }
+      let matchProfile = true;
+      if (profileVal) {
+        matchProfile = d.Perfil && (d.Perfil.descripcion === profileVal || d.Perfil.nombre === profileVal);
+      }
 
-  // Modifica tu función de búsqueda para que considere el filtro de perfil
-  filterUpdateProfile(event) {
-    console.log(event)
-    const val = event;
-    if (val == '' || val == null) {
-      this.filterByProfile();
-      return;
-    }
-    // Empieza con la data ya filtrada por perfil (o la completa si no hay filtro)
-    let dataToFilter = this.tempData;
-    if (this.selectedProfileCtrl.value) {
-      dataToFilter = this.tempData.filter(item => item.Perfil && item.Perfil.descripcion);
-    }
+      let matchStatus = true;
+      if (statusVal === 'activos') {
+        matchStatus = this.isUserActive(d);
+      } else if (statusVal === 'bloqueados') {
+        matchStatus = !this.isUserActive(d);
+      }
 
-    // Aplica el filtro de búsqueda de texto
-    const temp = dataToFilter.filter(function (d) {
-      return d.Perfil.descripcion.indexOf(val) !== -1 || !val;
+      return matchSearch && matchProfile && matchStatus;
     });
 
-    // Actualiza la tabla
-    this.rowData = temp;
-    // Vuelve a la primera página
-    this.table.offset = 0;
+    this.count = this.rowData.length;
+    if (this.table) {
+      this.table.offset = 0;
+    }
   }
 
+  filterByProfile() {
+    this.applyCombinedFilters();
+  }
 
+  filterUpdateProfile(event: any) {
+    this.applyCombinedFilters();
+  }
+
+  setStatusFilter(status: string) {
+    this.selectedStatusFilter = status;
+    this.applyCombinedFilters();
+  }
+
+  clearSearch() {
+    this.searchValueCtrl.setValue('');
+    this.applyCombinedFilters();
+  }
+
+  verTodos() {
+    this.searchValueCtrl.setValue('');
+    this.selectedProfileCtrl.setValue(null);
+    this.selectedStatusFilter = 'all';
+    this.rowData = [...this.tempData];
+    this.count = this.rowData.length;
+    if (this.table) {
+      this.table.offset = 0;
+    }
+    this.utilService.AlertMini('top-end', 'info', 'Mostrando todos los usuarios', 1500);
+  }
+
+  recargar() {
+    this.listarUsuarios();
+    this.utilService.AlertMini('top-end', 'info', 'Actualizando lista de usuarios...', 1500);
+  }
 
   async listarUsuarios() {
     this._isLoading.set(true);
-    this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.LISTAR_USUARIOS_BLOQUEADOS
-    this.xAPI.parametros = ''
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.LISTAR_USUARIOS_BLOQUEADOS;
+    this.xAPI.parametros = '';
     await this.apiService.Ejecutar(this.xAPI).subscribe({
       next: (data) => {
         // Limpiar contadores anteriores para evitar fugas de memoria
         this.clearAllCountdowns();
 
-        data.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''))
+        data.sort((a, b) => (a.nombre || '').localeCompare(b.nombre || ''));
 
         // Iniciar contadores para usuarios bloqueados
         data.forEach(user => {
@@ -234,104 +278,94 @@ export class UserListComponent implements OnInit, OnDestroy {
         });
 
         this.rowData = data;
-        this.tempData = this.rowData;
-        this.count = this.rowData.length
+        this.tempData = [...this.rowData];
+        this.count = this.rowData.length;
+        this.applyCombinedFilters();
         this._isLoading.set(false);
       },
       error: (error) => {
-        console.log(error);
+        console.error(error);
         this._isLoading.set(false);
       }
-    })
+    });
   }
 
-  getRowClass = (row) => {
-    if (row.bloqueo) {
-      return 'row-blocked';
-    }
-    if (row.estatus == 0) {
-      return 'row-inactive';
-    }
-    return '';
-  }
+  /**
+   * Aplica clases a la fila: borde verde esmeralda si activo, tono mate vino y borde vino si inactivo o bloqueado
+   */
+  getRowClass = (row: any) => {
+    const active = this.isUserActive(row);
+    return {
+      'row-active': active,
+      'row-inactive-wine': !active
+    };
+  };
 
   filterUpdate(event: any) {
-    const val = event.target.value ? event.target.value.toLowerCase() : '';
-    // filter our data
-    const temp = this.tempData.filter(function (d) {
-      let cadena = `${d.login} ${d.nombre} ${d.cedula} ${d.correo}`
-      return cadena.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length;
-    // Whenever the filter changes, always go back to the first page
-    if (this.table) {
-      this.table.offset = 0;
-    }
+    this.applyCombinedFilters();
   }
 
   EditarUser(usuario: any) {
-    window.sessionStorage.setItem('validator', JSON.stringify(usuario))
-    this.router.navigate(["security/user"])
+    window.sessionStorage.setItem('validator', JSON.stringify(usuario));
+    this.router.navigate(["security/user"]);
   }
 
   EliminarUser(usuario: any) {
     Swal.fire({
-      title: `Eliminar Usuario`,
+      title: 'Eliminar Usuario',
       text: `¿Está seguro que desea eliminar al usuario ${usuario.nombre}?`,
-      icon: 'question',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, Aceptar',
-      cancelButtonText: 'Cancelar'
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         this.ok(usuario);
       }
-    })
+    });
   }
 
   ok(usuario) {
-    this.xAPI = {} as IAPICore
-    this.xAPI.funcion = environment.functions.ELIMINAR_USUARIO
-    this.xAPI.parametros = `${usuario.cedula},${usuario.login}`
-    this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        this.listarUsuarios()
+    this.xAPI = {} as IAPICore;
+    this.xAPI.funcion = environment.functions.ELIMINAR_USUARIO;
+    this.xAPI.parametros = `${usuario.cedula},${usuario.login}`;
+    this.apiService.Ejecutar(this.xAPI).subscribe({
+      next: () => {
+        this.utilService.AlertMini('top-end', 'success', 'Usuario eliminado con éxito', 2500);
+        this.listarUsuarios();
       },
-      (error) => {
-        console.log(error)
+      error: (error) => {
+        console.error(error);
+        this.utilService.AlertMini('top-end', 'error', 'Error al eliminar el usuario', 3000);
       }
-    )
+    });
   }
 
   DesbloquearUser(usuario: any) {
     Swal.fire({
-      title: `Desbloquear Usuario`,
+      title: 'Desbloquear Usuario',
       text: `¿Está seguro que desea desbloquear al usuario ${usuario.nombre}?`,
-      icon: 'question',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, Aceptar',
-      cancelButtonText: 'Cancelar'
+      confirmButtonText: 'Sí, desbloquear',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         this.xAPI = {} as IAPICore;
-        this.xAPI.funcion = environment.functions.ELIMINAR_BLOQUEO_USUARIO; // Asegúrate que esta función exista en tu backend
+        this.xAPI.funcion = environment.functions.ELIMINAR_BLOQUEO_USUARIO;
         this.xAPI.parametros = usuario.login;
-        this.apiService.Ejecutar(this.xAPI).subscribe(
-          () => {
-            Swal.fire('¡Desbloqueado!', 'El usuario ha sido desbloqueado.', 'success');
-            this.listarUsuarios(); // Refrescar la lista
+        this.apiService.Ejecutar(this.xAPI).subscribe({
+          next: () => {
+            this.utilService.AlertMini('top-end', 'success', 'El usuario ha sido desbloqueado.', 2500);
+            this.listarUsuarios();
           },
-          (error) => {
+          error: (error) => {
             console.error(error);
-            Swal.fire('Error', 'No se pudo desbloquear al usuario.', 'error');
+            this.utilService.AlertMini('top-end', 'error', 'No se pudo desbloquear al usuario.', 3000);
           }
-        );
+        });
       }
     });
   }
@@ -352,7 +386,6 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.isOtpInvalid = false;
 
     // Paso 1: Verificar si el usuario tiene token (2FA)
-    // Si tiene token, activamos el paso de validación VTOP
     if (row.token && row.token.trim() !== '') {
       this.isTotpStep = true;
     } else {
@@ -360,9 +393,11 @@ export class UserListComponent implements OnInit, OnDestroy {
     }
 
     this.modalService.open(content, {
-      centered: true, backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal", size: 'md'
+      centered: true,
+      backdrop: false,
+      keyboard: true,
+      windowClass: "fondo-modal modal-change-pass-enhanced",
+      size: 'lg'
     });
   }
 

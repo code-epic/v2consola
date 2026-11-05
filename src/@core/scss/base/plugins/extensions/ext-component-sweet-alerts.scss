@@ -22,7 +22,7 @@
   // ==========================================
   .swal2-popup {
     pointer-events: auto !important;
-    border-radius: 18px !important;
+    border-radius: 24px !important;
     border: 1px solid rgba(226, 232, 240, 0.9) !important;
     background: #ffffff !important;
     box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.12), 0 8px 18px -4px rgba(15, 23, 42, 0.04) !important;
@@ -86,14 +86,19 @@
       justify-content: center !important;
     }
 
-    // Botones con estilo minimalista refinado
+    // Botones con estilo minimalista refinado (Uniforme, redondo y formal)
     .swal2-styled {
       pointer-events: auto !important;
       cursor: pointer !important;
       margin: 0 !important;
-      padding: 0.65rem 1.4rem !important;
-      border-radius: 10px !important;
-      font-size: 0.88rem !important;
+      padding: 0 1.6rem !important;
+      height: 44px !important;
+      min-width: 130px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border-radius: 14px !important;
+      font-size: 0.9rem !important;
       font-weight: 600 !important;
       letter-spacing: 0.01em !important;
       transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;

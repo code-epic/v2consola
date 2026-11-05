@@ -4,7 +4,7 @@ import { ApiService, IAPICore, ProcessID, RestoreAPI } from '@services/apicore/a
 import { PdfService } from '@services/pdf/pdf.service';
 
 import { NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
-import { FormControl, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { UtilService } from '@services/util/util.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import Swal from 'sweetalert2';
@@ -32,6 +32,7 @@ import { ContentHeaderComponent } from 'app/layout/components/content-header/con
     standalone: true,
     imports: [
         CommonModule,
+        FormsModule,
         ReactiveFormsModule,
         RouterModule,
         CoreDirectivesModule,
@@ -125,6 +126,27 @@ export class ApiComponent implements OnInit {
   public rowData = []
   private _isLoading = signal<boolean>(false);
   get isLoading() { return this._isLoading(); }
+
+  public selectedStatusFilter: string = 'all'; // 'all' | 'activas' | 'inactivas'
+  public selectedEntornoFilter: string = undefined;
+
+  public entornos = [
+    { id: 'calidad', name: 'CALIDAD' },
+    { id: 'desarrollo', name: 'DESARROLLO' },
+    { id: 'produccion', name: 'PRODUCCIÓN' },
+  ];
+
+  get totalApis(): number {
+    return this.tempData ? this.tempData.length : 0;
+  }
+
+  get totalActivas(): number {
+    return this.tempData ? this.tempData.filter(a => a.estatus === true || a.estatus == 1 || a.estatus === '1').length : 0;
+  }
+
+  get totalInactivas(): number {
+    return this.tempData ? this.tempData.filter(a => a.estatus === false || a.estatus == 0 || a.estatus === '0').length : 0;
+  }
 
   public sDispositivo
 
@@ -226,7 +248,7 @@ export class ApiComponent implements OnInit {
 
     // content header
     this.contentHeader = {
-      headerTitle: 'Herramientas',
+      headerTitle: 'Directorio de APIs',
       actionButton: true,
       breadcrumb: {
         type: '',
@@ -276,8 +298,9 @@ export class ApiComponent implements OnInit {
           this.developer.push(e)
         })
         this.rowData = this.developer;
-        this.count = this.rowData.length
+        this.count = this.rowData.length;
         this.tempData = this.rowData;
+        this.applyCombinedFilters();
         this._isLoading.set(false);
       },
       (error) => {
@@ -299,14 +322,17 @@ export class ApiComponent implements OnInit {
       'file_name': environment.colecciones.API_CORE_NAME
     };
     await Swal.fire({
-      title: `Va a descargar la coleccion de API `,
-      text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
-      icon: "warning",
+      title: 'Descargar Colección de APIs',
+      text: '¿Está seguro de generar y descargar la colección de endpoints? Esta operación puede demorar varios segundos.',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonText: "Cancelar",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Descargar!",
+      confirmButtonText: 'Sí, Descargar',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+      customClass: {
+        confirmButton: 'btn btn-primary',
+        cancelButton: 'btn btn-outline-danger mr-1'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         this.apiService.ExecFnx(this.fnx).subscribe(
@@ -586,41 +612,93 @@ export class ApiComponent implements OnInit {
     this.tableRowDetails.rowDetail.toggleExpandRow(row);
   }
 
+  setStatusFilter(filter: string) {
+    this.selectedStatusFilter = filter;
+    this.applyCombinedFilters();
+  }
+
+  filterEntorno(event: any) {
+    this.selectedEntornoFilter = event ? event.id : undefined;
+    this.applyCombinedFilters();
+  }
+
+  clearSearch() {
+    this.searchValueCtrl.setValue('');
+    this.applyCombinedFilters();
+  }
+
+  verTodos() {
+    this.searchValueCtrl.setValue('');
+    this.selectedStatusFilter = 'all';
+    this.selectedEntornoFilter = undefined;
+    this.applyCombinedFilters();
+  }
+
+  recargar() {
+    this.ListarApis(this.driversAPP);
+  }
+
   filterUpdate(event: any) {
-    const val = (event?.target?.value || '').toLowerCase().trim();
-    // filter our data by funcion, descripcion, entorno, version
-    const temp = this.tempData.filter(function (d) {
-      if (!val) return true;
-      const funcion = (d.funcion || '').toLowerCase();
-      const descripcion = (d.descripcion || '').toLowerCase();
-      const entorno = (d.entorno || '').toLowerCase();
-      const version = (d.version != null ? String(d.version) : '').toLowerCase();
-      return (
-        funcion.indexOf(val) !== -1 ||
-        descripcion.indexOf(val) !== -1 ||
-        entorno.indexOf(val) !== -1 ||
-        version.indexOf(val) !== -1
-      );
-    });
-    // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length;
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    this.applyCombinedFilters();
   }
 
   filterStatus(event: any) {
-    const val = event.id
-    // filter our data
-    const temp = this.tempData.filter(function (d) {
-      if (val === undefined || val === null || val === '') return true;
-      return String(d.estatus) === String(val);
+    if (event?.id === true) {
+      this.selectedStatusFilter = 'activas';
+    } else if (event?.id === false) {
+      this.selectedStatusFilter = 'inactivas';
+    } else {
+      this.selectedStatusFilter = 'all';
+    }
+    this.applyCombinedFilters();
+  }
+
+  applyCombinedFilters() {
+    const val = (this.searchValueCtrl.value || '').toLowerCase().trim();
+    const statusFilter = this.selectedStatusFilter;
+    const entornoFilter = this.selectedEntornoFilter;
+
+    const filtered = (this.tempData || []).filter(d => {
+      // 1. Live search filter
+      if (val) {
+        const funcion = (d.funcion || '').toLowerCase();
+        const descripcion = (d.descripcion || '').toLowerCase();
+        const entorno = (d.entorno || '').toLowerCase();
+        const version = (d.version != null ? String(d.version) : '').toLowerCase();
+        const matchesSearch =
+          funcion.indexOf(val) !== -1 ||
+          descripcion.indexOf(val) !== -1 ||
+          entorno.indexOf(val) !== -1 ||
+          version.indexOf(val) !== -1;
+        if (!matchesSearch) return false;
+      }
+
+      // 2. Entorno filter
+      if (entornoFilter) {
+        const ent = (d.entorno || '').toLowerCase();
+        if (ent !== entornoFilter.toLowerCase()) return false;
+      }
+
+      // 3. Status filter
+      if (statusFilter === 'activas') {
+        const isActive = d.estatus === true || d.estatus == 1 || d.estatus === '1';
+        if (!isActive) return false;
+      } else if (statusFilter === 'inactivas') {
+        const isInactive = d.estatus === false || d.estatus == 0 || d.estatus === '0';
+        if (!isInactive) return false;
+      }
+
+      return true;
     });
-    // update the rows
-    this.rowData = temp;
-    this.count = this.rowData.length
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+
+    this.rowData = filtered;
+    this.count = this.rowData.length;
+    if (this.table) {
+      this.table.offset = 0;
+    }
+    if (this.tableRowDetails) {
+      this.tableRowDetails.offset = 0;
+    }
   }
 
   LimpiarForm() {
@@ -658,8 +736,8 @@ export class ApiComponent implements OnInit {
       centered: true,
       size: 'lg',
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal modal-pastel-card',
+      keyboard: true,
+      windowClass: 'fondo-modal modal-pastel-card modal-formal-enhanced',
     });
   }
 
@@ -669,16 +747,16 @@ export class ApiComponent implements OnInit {
       centered: true,
       size: 'lg',
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal modal-pastel-card',
+      keyboard: true,
+      windowClass: 'fondo-modal modal-pastel-card modal-formal-enhanced',
     });
   }
 
 
-  fileSelected(e: any) {
+  fileSelected(e: any, fileInput?: HTMLInputElement) {
     const file: File = e?.target?.files?.[0];
     if (file) {
-      this.handleUploadFile(file);
+      this.handleUploadFile(file, fileInput);
     }
   }
 
@@ -891,8 +969,8 @@ export class ApiComponent implements OnInit {
       centered: true,
       size: 'xl',
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal modal-pastel-card',
+      keyboard: true,
+      windowClass: 'fondo-modal modal-pastel-card modal-formal-enhanced',
     });
   }
 
@@ -901,8 +979,8 @@ export class ApiComponent implements OnInit {
       centered: true,
       size: 'md',
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal modal-pastel-card',
+      keyboard: true,
+      windowClass: 'fondo-modal modal-pastel-card modal-formal-enhanced',
     });
   }
 
@@ -915,8 +993,8 @@ export class ApiComponent implements OnInit {
       centered: true,
       size: 'lg',
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal modal-pastel-card',
+      keyboard: true,
+      windowClass: 'fondo-modal modal-pastel-card modal-formal-enhanced',
     });
   }
 

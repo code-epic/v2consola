@@ -3,767 +3,697 @@
     <!-- content-header component -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-
-    <!-- Invoice List -->
-    <section class="invoice-list-wrapper">
-      <div class="card">
-
-        <!-- Invoice List Header -->
-        <div class="card-header-custom">
-
-          <!-- Top Section: Title & Search -->
-          <div class="d-flex justify-content-between align-items-center flex-wrap mb-2">
-            <div class="header-title-group">
-              <h4 class="content-header-title mb-0">Gestión de Conexiones</h4>
-              <small class="text-muted">Administración de bases de datos y drivers</small>
+    <!-- Summary KPI Header Cards (Tonos Pasteles Serios y Corporativos) -->
+    <div class="row match-height mb-2">
+      <!-- Total Conexiones -->
+      <div class="col-xl-4 col-md-4 col-sm-6">
+        <div class="card app-kpi-formal cursor-pointer"
+             [class.active-kpi]="selectedStatusFilter === 'all'"
+             (click)="setStatusFilter('all')"
+             ngbTooltip="Ver todas las conexiones registradas">
+          <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex flex-column">
+              <span class="kpi-label">Total de Conexiones</span>
+              <h3 class="kpi-value text-slate">{{ totalConexiones }}</h3>
+              <span class="kpi-subtext">Drivers y endpoints configurados</span>
             </div>
+            <div class="kpi-icon-box kpi-box-neutral">
+              <span [data-feather]="'database'" [size]="18"></span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <div class="header-search">
-              <div class="input-group input-group-merge">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'search'" [size]="16"></span></span>
-                </div>
-                <input type="text" class="form-control" placeholder="Buscar por driver, host o base de datos..."
-                  [formControl]="searchValueCtrl" (keyup)="filterUpdate($event)" (search)="filterUpdate($event)" />
-              </div>
+      <!-- Conexiones Activas -->
+      <div class="col-xl-4 col-md-4 col-sm-6">
+        <div class="card app-kpi-formal cursor-pointer"
+             [class.active-kpi]="selectedStatusFilter === 'activos'"
+             (click)="setStatusFilter('activos')"
+             ngbTooltip="Filtrar conexiones activas">
+          <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex flex-column">
+              <span class="kpi-label">Conexiones Activas</span>
+              <h3 class="kpi-value text-sage">{{ totalActivos }}</h3>
+              <span class="kpi-subtext">Endpoints operativos y en línea</span>
+            </div>
+            <div class="kpi-icon-box kpi-box-sage">
+              <span [data-feather]="'check-circle'" [size]="18"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Conexiones Inactivas -->
+      <div class="col-xl-4 col-md-4 col-sm-12">
+        <div class="card app-kpi-formal cursor-pointer"
+             [class.active-kpi]="selectedStatusFilter === 'inactivos'"
+             (click)="setStatusFilter('inactivos')"
+             ngbTooltip="Filtrar conexiones inactivas">
+          <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex flex-column">
+              <span class="kpi-label">Conexiones Inactivas</span>
+              <h3 class="kpi-value text-sand">{{ totalInactivos }}</h3>
+              <span class="kpi-subtext">Pausadas o fuera de servicio</span>
+            </div>
+            <div class="kpi-icon-box kpi-box-sand">
+              <span [data-feather]="'alert-circle'" [size]="18"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de Directorio y Tabla Formal -->
+    <section class="invoice-list-wrapper">
+      <div class="card card-table-formal">
+
+        <!-- Header con Título y Acción Primaria -->
+        <div class="card-header border-bottom py-1 px-2 bg-slate-subtle d-flex align-items-center justify-content-between flex-wrap gap-1">
+          <div class="d-flex align-items-center">
+            <span [data-feather]="'database'" class="text-slate mr-2" [size]="18"></span>
+            <div>
+              <h6 class="font-weight-bold mb-0 text-slate-800">Directorio de Conexiones y Bases de Datos</h6>
+              <span class="text-muted font-small-1">Administración de endpoints de bases de datos, hosts y drivers de red</span>
             </div>
           </div>
 
-          <!-- Bottom Section: Filters & Actions -->
-          <div class="d-flex justify-content-between align-items-center flex-wrap actions-bar">
+          <div class="d-flex align-items-center">
+            <button type="button" class="btn btn-swal-purple" (click)="ModalAdd(ModalAddDevice)">
+              Agregar Conexión
+            </button>
+          </div>
+        </div>
 
-            <!-- Left: Filters -->
-            <div class="d-flex align-items-center flex-wrap actions-left">
-              <div class="d-flex align-items-center mr-2 mb-1 mb-md-0">
-                <span class="text-muted mr-1">Mostrar</span>
-                <div class="pagination-select-wrapper">
-                  <select class="form-control form-control-sm" [formControl]="basicSelectedOptionCtrl">
-                    <option value="10">10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="100">100</option>
-                  </select>
-                </div>
-              </div>
+        <!-- Barra de Controles y Filtros Unificados a 44px -->
+        <div class="card-body p-2 border-bottom bg-slate-lightest">
+          <div class="row g-2 align-items-end">
 
-              <div class="status-filter mb-1 mb-md-0">
-                <ng-select [items]="drivers" bindLabel="nombre" bindValue="id"
-                  placeholder="Filtrar por Driver" (change)="filterDriver($event)" class="custom-select-soft">
-                  <ng-template ng-label-tmp let-item="item">
-                    <span [data-feather]="'filter'" [size]="14" class="mr-1"></span>
-                    {{ item.nombre }}
-                  </ng-template>
-                </ng-select>
+            <!-- Paginación: Mostrar -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <label class="form-label-formal">
+                <span [data-feather]="'hash'" [size]="12" class="mr-1 text-slate"></span>Mostrar
+              </label>
+              <div class="input-group-formal">
+                <select class="form-control" [formControl]="basicSelectedOptionCtrl">
+                  <option value="10">10 por página</option>
+                  <option value="25">25 por página</option>
+                  <option value="50">50 por página</option>
+                  <option value="100">100 por página</option>
+                </select>
               </div>
             </div>
 
-            <!-- Right: Action Buttons -->
-            <div class="actions-right mb-1 mb-md-0">
-              <button type="button" (click)="ModalAdd(ModalAddDevice)" class="btn btn-primary" rippleEffect>
-                <span [data-feather]="'plus'" [size]="16" class="mr-50"></span>
-                <span class="align-middle">Agregar</span>
-              </button>
+            <!-- Búsqueda en Vivo -->
+            <div class="col-lg-4 col-md-8 col-sm-12">
+              <label class="form-label-formal">
+                <span [data-feather]="'search'" [size]="12" class="mr-1 text-slate"></span>Buscar Conexión
+              </label>
+              <div class="input-group input-group-merge input-group-formal">
+                <div class="input-group-prepend">
+                  <span class="input-group-text"><span [data-feather]="'search'" [size]="14"></span></span>
+                </div>
+                <input [formControl]="searchValueCtrl"
+                  type="text"
+                  class="form-control"
+                  placeholder="Buscar por driver, host o base de datos..."
+                  (keyup)="filterUpdate($event)"
+                  (search)="filterUpdate($event)"
+                  ngbTooltip="Búsqueda instantánea en tiempo real"
+                  placement="top" />
+                @if (searchValueCtrl.value) {
+                  <div class="input-group-append">
+                    <button class="btn btn-link btn-sm text-muted p-1" type="button" (click)="clearSearch()" ngbTooltip="Limpiar texto">
+                      <span [data-feather]="'x'" [size]="13"></span>
+                    </button>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Filtro por Driver -->
+            <div class="col-lg-3 col-md-6 col-sm-12">
+              <label class="form-label-formal">
+                <span [data-feather]="'filter'" [size]="12" class="mr-1 text-slate"></span>Driver
+              </label>
+              <ng-select [items]="drivers"
+                         bindLabel="nombre"
+                         bindValue="id"
+                         placeholder="Todos los drivers"
+                         [formControl]="sDriverCtrl"
+                         (change)="filterDriver($event)"
+                         class="custom-select-formal">
+              </ng-select>
+            </div>
+
+            <!-- Botones de Píldoras de Estado -->
+            <div class="col-lg-3 col-md-6 col-sm-12 d-flex justify-content-lg-end mt-2 mt-lg-0">
+              <div class="btn-group w-100 w-lg-auto formal-pill-group" role="group">
+                <button type="button" class="btn"
+                  [ngClass]="selectedStatusFilter === 'all' ? 'btn-formal-active' : 'btn-formal-inactive'"
+                  (click)="setStatusFilter('all')">
+                  Todas ({{ totalConexiones }})
+                </button>
+                <button type="button" class="btn"
+                  [ngClass]="selectedStatusFilter === 'activos' ? 'btn-formal-active' : 'btn-formal-inactive'"
+                  (click)="setStatusFilter('activos')">
+                  Activos ({{ totalActivos }})
+                </button>
+                <button type="button" class="btn"
+                  [ngClass]="selectedStatusFilter === 'inactivos' ? 'btn-formal-active' : 'btn-formal-inactive'"
+                  (click)="setStatusFilter('inactivos')">
+                  Inactivos ({{ totalInactivos }})
+                </button>
+              </div>
             </div>
 
           </div>
         </div>
-        <!--/ Invoice List Header -->
 
-        <ngx-datatable [rows]="rowData" [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="10"
-          [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50" [scrollbarH]="true"
-          [limit]="basicSelectedOptionCtrl.value" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
+        <!-- Datatable Table (Tonos Pasteles Serios y Elegantes) -->
+        <ngx-datatable [rows]="rowData" [rowHeight]="64" class="bootstrap core-bootstrap formal-enterprise-table"
+          [columnMode]="ColumnMode.force" [headerHeight]="44" [footerHeight]="44"
+          [scrollbarH]="true" [limit]="basicSelectedOptionCtrl.value" [count]="rowData.length"
+          [class.loading]="isLoading" [loadingIndicator]="isLoading"
+          [rowClass]="getRowClass">
 
-
-          <ngx-datatable-column [width]="100">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'database'" [size]="14" class="mr-50"></span>
-              <span>DRIVER</span>
-            </ng-template>
-            <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+          <!-- Columna: Driver y Base de Datos -->
+          <ngx-datatable-column name="DRIVER" prop="driver" [width]="240">
+            <ng-template let-column="column" ngx-datatable-header-template>
               <div class="d-flex align-items-center">
-                @if (row.length > 0) {
-                  <div>
-                    <img class="rounded-circle mr-1" src="{{ row.avatar }}" height="32" width="32"
-                      alt="datatable-avatar" />
+                <span [data-feather]="'database'" class="mr-1 text-slate" [size]="13"></span>
+                <span class="table-header-title">Driver</span>
+              </div>
+            </ng-template>
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="d-flex align-items-center py-1">
+                <div class="position-relative mr-2 flex-shrink-0">
+                  <div class="avatar avatar-formal-initials" [ngClass]="{
+                    'avatar-inactive': !isRowActive(row)
+                  }">
+                    <span>{{ (row.driver || 'DB') | initials }}</span>
                   </div>
-                } @else {
-                  <div class="avatar mr-1 ml-0" [ngClass]="{
-                      'bg-light-success': row.estatus == true,
-                      'bg-light-danger': row.estatus == false
-                    }">
-                    <div class="avatar-content">{{ row.driver.toUpperCase() | initials }}</div>
-                  </div>
-                }
-                <div class="cell-line-height">
-                  <span class="font-weight-bold d-block text-nowrap font-medium-1">{{ row.driver.toUpperCase() }}</span>
-                  <span class="text-muted font-small-2"> &#64;{{ row.basedatos }}</span>
+                  <span class="badge-status-dot" [ngClass]="{
+                    'dot-active': isRowActive(row),
+                    'dot-inactive': !isRowActive(row)
+                  }" [ngbTooltip]="isRowActive(row) ? 'Conexión Activa' : 'Conexión Inactiva'">
+                  </span>
+                </div>
+                <div class="d-flex flex-column text-truncate">
+                  <span class="connection-row-title text-truncate font-weight-bold" [ngbTooltip]="row.driver">
+                    {{ (row.driver || 'DRIVER') | uppercase }}
+                  </span>
+                  <span class="text-muted font-small-2 text-truncate">
+                    &#64;{{ row.basedatos || 'N/A' }}
+                  </span>
                 </div>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-
-          <ngx-datatable-column prop="basedatos" [width]="150">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'server'" [size]="14" class="mr-50"></span>
-              <span>BASE DE DATOS</span>
-            </ng-template>
-            <ng-template let-basedatos="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">{{ basedatos.toUpperCase() }}</span>
+          <!-- Columna: Descripción -->
+          <ngx-datatable-column prop="descripcion" name="DESCRIPCIÓN" [width]="320" [cellClass]="'description-cell'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'file-text'" class="mr-1 text-slate" [size]="13"></span>
+                <span class="table-header-title">Descripción</span>
               </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-
-          <ngx-datatable-column prop="descripcion" [width]="150">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'file-text'" [size]="14" class="mr-50"></span>
-              <span>DESCRIPCIÓN</span>
             </ng-template>
             <ng-template let-descripcion="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">{{ descripcion.slice(0,25).toUpperCase() }} ...</span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column prop="host" [width]="30">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'globe'" [size]="14" class="mr-50"></span>
-              <span>HOST</span>
-            </ng-template>
-            <ng-template let-host="value" ngx-datatable-cell-template>
-              <div>
-                <span class="font-weight-bold">{{ host }}</span>
-              </div>
-            </ng-template>
-          </ngx-datatable-column>
-
-          <ngx-datatable-column prop="puerto" [width]="10">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'link'" [size]="14" class="mr-50"></span>
-              <span>PUERTO</span>
-            </ng-template>
-            <ng-template let-puerto="value" ngx-datatable-cell-template>
-              <div>
-                <span class="badge badge-light-warning d-flex align-items-center" style="padding: 6px 12px; border-radius: 6px; background: #fff3e0; color: #ff9800; font-weight: 500; display: inline-flex;">
-                  <span [data-feather]="'link-2'" [size]="14" class="mr-50"></span>
-                  {{ puerto }}
+              <div class="d-flex align-items-center w-100 min-w-0" style="flex: 1; min-width: 0;">
+                <span class="font-weight-bold text-slate text-truncate d-block w-100 font-small-2"
+                      style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                      [title]="(descripcion || 'SIN DESCRIPCIÓN') | uppercase">
+                  {{ descripcion ? ((descripcion.length > 60 ? (descripcion.slice(0, 60) + '...') : descripcion) | uppercase) : 'SIN DESCRIPCIÓN' }}
                 </span>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column prop="estatus" [width]="5">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'activity'" [size]="14" class="mr-50"></span>
-              <span>ESTATUS</span>
-            </ng-template>
-            <ng-template let-estatus="value" ngx-datatable-cell-template>
+          <!-- Columna: Host y Puerto -->
+          <ngx-datatable-column name="HOST / PUERTO" [width]="200" [cellClass]="'d-flex align-items-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
               <div class="d-flex align-items-center">
-                @if (estatus === true) {
-                  <span class="badge badge-light-success d-flex align-items-center" style="padding: 6px 12px; border-radius: 6px; background: #e8f5e9; color: #4caf50; font-weight: 500;">
-                    <span [data-feather]="'check-circle'" [size]="14" class="mr-50"></span>
-                    Activo
-                  </span>
-                }
-                @if (estatus === false) {
-                  <span class="badge badge-light-danger d-flex align-items-center" style="padding: 6px 12px; border-radius: 6px; background: #ffebee; color: #f44336; font-weight: 500;">
-                    <span [data-feather]="'x-circle'" [size]="14" class="mr-50"></span>
-                    Inactivo
-                  </span>
+                <span [data-feather]="'globe'" class="mr-1 text-slate" [size]="13"></span>
+                <span class="table-header-title">Host / Puerto</span>
+              </div>
+            </ng-template>
+            <ng-template let-row="row" ngx-datatable-cell-template>
+              <div class="d-flex align-items-center text-truncate">
+                <span class="font-weight-bold text-slate mr-1 text-truncate">{{ row.host || 'localhost' }}</span>
+                @if (row.puerto) {
+                  <span class="badge-pastel-mono font-small-1 flex-shrink-0">:{{ row.puerto }}</span>
                 }
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column [width]="20" [sortable]="false">
-            <ng-template ngx-datatable-header-template>
-              <span [data-feather]="'more-horizontal'" [size]="14"></span>
+          <!-- Columna: Usuario -->
+          <ngx-datatable-column name="USUARIO" prop="usuario" [width]="160" [cellClass]="'d-flex align-items-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'user'" class="mr-1 text-slate" [size]="13"></span>
+                <span class="table-header-title">Usuario</span>
+              </div>
+            </ng-template>
+            <ng-template let-usuario="value" ngx-datatable-cell-template>
+              <span class="text-muted font-small-2 font-weight-bold">{{ usuario || 'admin' }}</span>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Columna: Acciones -->
+          <ngx-datatable-column name="ACCIONES" [width]="110" [sortable]="false" [canAutoResize]="false"
+            [cellClass]="'d-flex align-items-center justify-content-center'">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="w-100 text-center d-flex align-items-center justify-content-center">
+                <span [data-feather]="'sliders'" class="mr-1 text-slate" [size]="13"></span>
+                <span class="table-header-title">Acciones</span>
+              </div>
             </ng-template>
             <ng-template ngx-datatable-cell-template let-row="row">
-              <div ngbDropdown container="body">
-                <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                  <span [data-feather]="'settings'" [class]="'cursor-pointer'"></span>
+              <div class="table-actions-cell">
+                <!-- Editar Conexión -->
+                <button type="button"
+                  class="btn btn-formal-icon btn-action-slate"
+                  (click)="ModalEdit(ModalEditDevice, row)"
+                  ngbTooltip="Editar Conexión">
+                  <span [data-feather]="'edit'" [size]="15"></span>
                 </button>
-                <div ngbDropdownMenu>
-                  <a (click)="ModalEdit(ModalEditDevice,row)" ngbDropdownItem><span [data-feather]="'edit'" [size]="16"
-                  [class]="'mr-50'"></span> Editar</a>
-                </div>
+
+                <!-- Diagnóstico / Socket Test -->
+                <button type="button"
+                  class="btn btn-formal-icon btn-action-terminal"
+                  (click)="ModalEscaneo(ModalEscaneoNmap, row)"
+                  ngbTooltip="Diagnóstico TCP / Nmap">
+                  <span [data-feather]="'terminal'" [size]="15"></span>
+                </button>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
         </ngx-datatable>
-        <!--/ Invoice List Table -->
 
       </div>
     </section>
-    <!--/ Invoice List -->
 
   </div>
 </div>
 
-
-
-
-
-
+<!-- ========================================================================= -->
+<!-- MODAL: AGREGAR CONEXIÓN                                                   -->
+<!-- ========================================================================= -->
 <ng-template #ModalAddDevice let-modal>
   <div class="modal-header modal-header-pastel">
     <div class="d-flex align-items-center">
-      <div class="modal-icon-badge modal-icon-primary mr-1">
-        <span [data-feather]="'link-2'" [size]="20"></span>
+      <div class="modal-icon-badge mr-1">
+        <span [data-feather]="'link-2'" [size]="18"></span>
       </div>
       <div>
-        <h5 class="modal-title mb-0" id="myModalLabel160">Agregar Conexión</h5>
+        <h5 class="modal-title mb-0">Agregar Conexión</h5>
         <small class="text-muted">Configure parámetros de conexión y credenciales de acceso</small>
       </div>
     </div>
-    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span [data-feather]="'x'" [size]="17"></span>
+    <button type="button" class="btn-swal-close-round" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      &times;
     </button>
   </div>
-  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="GuardarConexion()">
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-      <!-- Invoice -->
-      <div class="col-xl-12 col-md-12 col-12">
-        <!-- Header Starts -->
+  <form class="auth-login-form" [formGroup]="loginForm" (ngSubmit)="GuardarConexion()">
+    <div class="modal-body p-2" tabindex="0" ngbAutofocus>
+      <div class="row g-2">
 
+        <!-- Hostname -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-host" class="form-label-formal">Hostname</label>
+          <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion"
+            placeholder="Seleccione Hostname" bindValue="host" class="custom-select-formal">
+          </ng-select>
+        </div>
 
-        <div class="row">
+        <!-- Driver de Conexión -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-driver" class="form-label-formal">Driver de Conexión</label>
+          <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
+            bindValue="id" class="custom-select-formal">
+          </ng-select>
+        </div>
 
-          <div class="col-md-6 col-12 mb-1">
-            <label for="login-host" class="form-label">Hostname</label>
-            <div class="ng-select-group-pastel">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'server'" [size]="16"></span></span>
-              </div>
-              <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion"
-                placeholder="Seleccione Hostname" bindValue="host">
-              </ng-select>
-            </div>
-          </div>
-
-          <div class="col-md-6 col-12 mb-1">
-            <label for="login-driver" class="form-label">Driver de Conexión</label>
-            <div class="ng-select-group-pastel">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
-              </div>
-              <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
-                bindValue="id">
-              </ng-select>
-            </div>
-          </div>
-
-          <!-- Input Fijos -->
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-basedatos" class="form-label">{{lbd}}</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'folder'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="basedatos" class="form-control" placeholder="Base de Datos"
-                  aria-describedby="login-basedatos" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.basedatos.errors }" />
-              </div>
-              @if (submitted && f.basedatos.errors) {
-                <div class="invalid-feedback">
-                  @if (f.basedatos.errors.required) {
-                    <div>Base de Datos es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-puerto" class="form-label">Puerto</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="puerto" class="form-control" placeholder="Puerto"
-                  aria-describedby="login-puerto" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.puerto.errors }" />
-              </div>
-              @if (submitted && f.puerto.errors) {
-                <div class="invalid-feedback">
-                  @if (f.puerto.errors.required) {
-                    <div>Puerto es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-usuario" class="form-label">Usuario</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="usuario" class="form-control" placeholder="Usuario"
-                  aria-describedby="login-usuario" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.usuario.errors }" />
-              </div>
-              @if (submitted && f.usuario.errors) {
-                <div class="invalid-feedback">
-                  @if (f.usuario.errors.required) {
-                    <div>Usuario es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-clave" class="form-label">Clave</label>&nbsp;
-              <div class="badge badge-info" (click)="EvaluarConexion()">Escanear</div>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
-                </div>
-                <input [type]="passwordTextType ? 'text' : 'password'" formControlName="clave" class="form-control" placeholder="Clave"
-                  aria-describedby="login-clave" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.clave.errors }" />
-                <div class="input-group-append">
-                  <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()">
-                    <span [data-feather]="passwordTextType ? 'eye-off' : 'eye'" [size]="16"></span>
-                  </span>
-                </div>
-              </div>
-              @if (submitted && f.clave.errors) {
-                <div class="invalid-feedback">
-                  @if (f.clave.errors.required) {
-                    <div>Clave es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          <!-- Fin Input Fijos -->
-
-          <!-- Empieza el juego de input -->
-          <!-- input driver puente url -->
-          @if (showPuente == true) {
-            <div class="col-md-4 col-12 mb-1">
-              <label for="login-protocolo" formControlName="protocolo" class="form-label">Protocolo</label>
-              <div class="ng-select-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'shield'" [size]="16"></span></span>
-                </div>
-                <ng-select [items]="protocolo" bindLabel="name" placeholder="Seleccione Hostname" bindValue="name">
-                </ng-select>
-              </div>
-            </div>
-          }
-          @if (showPuente == true) {
-            <div class="col-md-8 col-12 mb-1">
-              <label for="login-url" class="form-label">URL Para establecer puente de conexión</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'link-2'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="url" class="form-control"
-                  placeholder="URL Para establecer puente de conexión" aria-describedby="login-url" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.url.errors }" />
-              </div>
-              @if (submitted && f.url.errors) {
-                <div class="invalid-feedback">
-                  @if (f.url.errors.required) {
-                    <div>Descripción es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          <!-- input driver puente url -->
-          <!-- Finaliza el juego de input -->
-          <div class="col-md-12 col-12 mb-1">
-            <label for="login-descripcion" class="form-label">Descripción</label>
+        <!-- Base de Datos (condicional) -->
+        @if (showBaseDatos == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-basedatos" class="form-label-formal">{{ lbd }}</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                <span class="input-group-text"><span [data-feather]="'folder'" [size]="14"></span></span>
               </div>
-              <input type="text" formControlName="descripcion" class="form-control" placeholder="Descripción"
-                aria-describedby="login-descripcion" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }" />
+              <input type="text" formControlName="basedatos" class="form-control" placeholder="Base de Datos"
+                [ngClass]="{ 'is-invalid': submitted && f.basedatos.errors }" />
             </div>
-            @if (submitted && f.descripcion.errors) {
-              <div class="invalid-feedback">
-                @if (f.descripcion.errors.required) {
-                  <div>Descripción es requerido</div>
-                }
-              </div>
+            @if (submitted && f.basedatos.errors) {
+              <div class="invalid-feedback d-block">Base de Datos es requerido</div>
             }
           </div>
+        }
 
-          <div class="col-md-4 col-12 mb-1">
-            <label for="login-id" class="form-label">Identificador</label>
+        <!-- Puerto (condicional) -->
+        @if (showBaseDatos == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-puerto" class="form-label-formal">Puerto</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
+                <span class="input-group-text"><span [data-feather]="'link'" [size]="14"></span></span>
               </div>
-              <input type="text" formControlName="id" class="form-control" placeholder="Identificador"
-                aria-describedby="login-id" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.id.errors }" />
+              <input type="text" formControlName="puerto" class="form-control" placeholder="Ej: 5432, 3306"
+                [ngClass]="{ 'is-invalid': submitted && f.puerto.errors }" />
             </div>
-            @if (submitted && f.id.errors) {
-              <div class="invalid-feedback">
-                @if (f.id.errors.required) {
-                  <div>Identificador es requerido</div>
-                }
-              </div>
+            @if (submitted && f.puerto.errors) {
+              <div class="invalid-feedback d-block">Puerto es requerido</div>
             }
           </div>
+        }
 
+        <!-- Protocolo (condicional puente) -->
+        @if (showPuente == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-protocolo" class="form-label-formal">Protocolo</label>
+            <ng-select [items]="protocolo" formControlName="protocolo" bindLabel="name"
+              placeholder="Seleccione Protocolo" bindValue="name" class="custom-select-formal">
+            </ng-select>
+          </div>
+        }
 
-          <div class="col-md-4 col-12 mb-1">
-            <label for="login-estatus" class="form-label">Seleccione Status</label>
-            <div class="ng-select-group-pastel">
+        <!-- URL (condicional puente) -->
+        @if (showPuente == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-url" class="form-label-formal">URL</label>
+            <div class="input-group-pastel">
               <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'activity'" [size]="16"></span></span>
+                <span class="input-group-text"><span [data-feather]="'globe'" [size]="14"></span></span>
               </div>
-              <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Status"
-                bindValue="id">
-              </ng-select>
+              <input type="text" formControlName="url" class="form-control" placeholder="https://api.dominio.com" />
             </div>
           </div>
+        }
 
-          <div class="col-md-4 col-12 mb-1">
-            <label class="form-label" for="login-aplicacion">Aplicación</label>
-            <div class="ng-select-group-pastel">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'package'" [size]="16"></span></span>
-              </div>
-              <ng-select [items]="ListaAplicaciones" formControlName="aplicacion"
-                aria-describedby="login-aplicacion" tabindex="1" autofocus class=""
-                bindLabel="name" bindId="id" bindValue="nombre"
-              placeholder="Seleccione Aplicación"></ng-select>
+        <!-- Usuario -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-usuario" class="form-label-formal">Usuario</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'user'" [size]="14"></span></span>
+            </div>
+            <input type="text" formControlName="usuario" class="form-control" placeholder="Usuario de la base de datos"
+              [ngClass]="{ 'is-invalid': submitted && f.usuario.errors }" />
+          </div>
+          @if (submitted && f.usuario.errors) {
+            <div class="invalid-feedback d-block">Usuario es requerido</div>
+          }
+        </div>
+
+        <!-- Clave -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-clave" class="form-label-formal">Clave</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'lock'" [size]="14"></span></span>
+            </div>
+            <input [type]="passwordTextType ? 'text' : 'password'" formControlName="clave" class="form-control"
+              placeholder="••••••••••••" [ngClass]="{ 'is-invalid': submitted && f.clave.errors }" />
+            <div class="input-group-append cursor-pointer" (click)="togglePasswordTextType()">
+              <span class="input-group-text">
+                <span [data-feather]="passwordTextType ? 'eye' : 'eye-off'" [size]="14"></span>
+              </span>
             </div>
           </div>
+          @if (submitted && f.clave.errors) {
+            <div class="invalid-feedback d-block">Clave es requerida</div>
+          }
+        </div>
 
+        <!-- Estatus -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-estatus" class="form-label-formal">Estatus</label>
+          <ng-select [items]="status" formControlName="estatus" bindLabel="name"
+            placeholder="Seleccione Estatus" bindValue="id" class="custom-select-formal">
+          </ng-select>
+        </div>
 
+        <!-- Aplicación -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-aplicacion" class="form-label-formal">Aplicación</label>
+          <ng-select [items]="ListaAplicaciones" formControlName="aplicacion" bindLabel="name"
+            placeholder="Seleccione Aplicación" bindValue="id" class="custom-select-formal">
+          </ng-select>
+        </div>
 
+        <!-- Descripción -->
+        <div class="col-12 form-group">
+          <label for="login-descripcion" class="form-label-formal">Descripción</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'file-text'" [size]="14"></span></span>
+            </div>
+            <input type="text" formControlName="descripcion" class="form-control"
+              placeholder="Descripción breve del propósito de la conexión"
+              [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }" />
+          </div>
+          @if (submitted && f.descripcion.errors) {
+            <div class="invalid-feedback d-block">Descripción es requerida</div>
+          }
         </div>
 
       </div>
-
     </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline-primary mr-auto" (click)="EvaluarConexion()" rippleEffect>
-        <span [data-feather]="'zap'" [size]="15" class="mr-50"></span> Probar Conexión
+    <div class="modal-footer justify-content-between p-2 border-top">
+      <button type="button" class="btn btn-swal-neutral" (click)="EvaluarConexion()">
+        Probar Conexión
       </button>
-      <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
-        <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cancelar
-      </button>
-      <button class="btn btn-primary" tabindex="4" rippleEffect>
-        <span [data-feather]="'save'" [size]="15" class="mr-50"></span> Guardar
-      </button>
+      <div class="d-flex align-items-center gap-1">
+        <button type="button" class="btn btn-swal-neutral mr-1" (click)="modal.dismiss('Cancel')">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-swal-purple">
+          Guardar Conexión
+        </button>
+      </div>
     </div>
   </form>
 </ng-template>
 
-
+<!-- ========================================================================= -->
+<!-- MODAL: EDITAR CONEXIÓN                                                    -->
+<!-- ========================================================================= -->
 <ng-template #ModalEditDevice let-modal>
   <div class="modal-header modal-header-pastel">
     <div class="d-flex align-items-center">
-      <div class="modal-icon-badge modal-icon-warning mr-1">
-        <span [data-feather]="'edit'" [size]="20"></span>
+      <div class="modal-icon-badge mr-1">
+        <span [data-feather]="'edit'" [size]="18"></span>
       </div>
       <div>
-        <h5 class="modal-title mb-0" id="myModalLabel160">Editar Conexión</h5>
-        <small class="text-muted">Modifique los parámetros del driver y base de datos</small>
+        <h5 class="modal-title mb-0">Editar Conexión</h5>
+        <small class="text-muted">Actualice parámetros de conexión y credenciales de acceso</small>
       </div>
     </div>
-    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span [data-feather]="'x'" [size]="17"></span>
+    <button type="button" class="btn-swal-close-round" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      &times;
     </button>
   </div>
-  <form class="auth-login-form mt-1" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
-    <div class="modal-body" tabindex="0" ngbAutofocus>
-      <!-- Invoice -->
-      <div class="col-xl-12 col-md-12 col-12">
-        <!-- Header Starts -->
-        <div class="row">
+  <form class="auth-login-form" [formGroup]="loginForm" (ngSubmit)="EditarDispositivo()">
+    <div class="modal-body p-2" tabindex="0" ngbAutofocus>
+      <div class="row g-2">
 
-          <div class="col-md-6 col-12 mb-1">
-            <label for="login-host" class="form-label">Hostname</label>
-            <div class="ng-select-group-pastel">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'server'" [size]="16"></span></span>
-              </div>
-              <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion" bindLabel="descripcion"
-                placeholder="Seleccione Hostname" bindValue="host">
-              </ng-select>
-            </div>
-          </div>
+        <!-- Hostname -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-host" class="form-label-formal">Hostname</label>
+          <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion"
+            placeholder="Seleccione Hostname" bindValue="host" class="custom-select-formal">
+          </ng-select>
+        </div>
 
-          <div class="col-md-6 col-12 mb-1">
-            <label for="login-driver" class="form-label">Driver de Conexión</label>
-            <div class="ng-select-group-pastel">
-              <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'database'" [size]="16"></span></span>
-              </div>
-              <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
-                bindValue="id">
-              </ng-select>
-            </div>
-          </div>
+        <!-- Driver de Conexión -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-driver" class="form-label-formal">Driver de Conexión</label>
+          <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
+            bindValue="id" class="custom-select-formal">
+          </ng-select>
+        </div>
 
-          <!-- Input Fijos -->
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-basedatos" class="form-label">{{lbd}}</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'folder'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="basedatos" class="form-control" placeholder="Base de Datos"
-                  aria-describedby="login-basedatos" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.basedatos.errors }" />
-              </div>
-              @if (submitted && f.basedatos.errors) {
-                <div class="invalid-feedback">
-                  @if (f.basedatos.errors.required) {
-                    <div>Base de Datos es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-puerto" class="form-label">Puerto</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'link'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="puerto" class="form-control" placeholder="Puerto"
-                  aria-describedby="login-puerto" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.puerto.errors }" />
-              </div>
-              @if (submitted && f.puerto.errors) {
-                <div class="invalid-feedback">
-                  @if (f.puerto.errors.required) {
-                    <div>Puerto es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-usuario" class="form-label">Usuario</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'user'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="usuario" class="form-control" placeholder="Usuario"
-                  aria-describedby="login-usuario" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.usuario.errors }" />
-              </div>
-              @if (submitted && f.usuario.errors) {
-                <div class="invalid-feedback">
-                  @if (f.usuario.errors.required) {
-                    <div>Usuario es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          @if (showBaseDatos == true) {
-            <div class="col-md-6 col-12 mb-1">
-              <label for="login-clave" class="form-label">Clave</label>&nbsp;
-              <div class="badge badge-info" (click)="EvaluarConexion()">Probar Conexión</div>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'lock'" [size]="16"></span></span>
-                </div>
-                <input [type]="passwordTextType ? 'text' : 'password'" formControlName="clave" class="form-control" placeholder="Clave"
-                  aria-describedby="login-clave" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.clave.errors }" />
-                <div class="input-group-append">
-                  <span class="input-group-text cursor-pointer" (click)="togglePasswordTextType()">
-                    <span [data-feather]="passwordTextType ? 'eye-off' : 'eye'" [size]="16"></span>
-                  </span>
-                </div>
-              </div>
-              @if (submitted && f.clave.errors) {
-                <div class="invalid-feedback">
-                  @if (f.clave.errors.required) {
-                    <div>Clave es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          <!-- Fin Input Fijos -->
-
-          <!-- Empieza el juego de input -->
-          <!-- input driver puente url -->
-          @if (showPuente == true) {
-            <div class="col-md-4 col-12 mb-1">
-              <label for="login-protocolo" formControlName="protocolo" class="form-label">Protocolo</label>
-              <div class="ng-select-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'shield'" [size]="16"></span></span>
-                </div>
-                <ng-select [items]="protocolo" bindLabel="name" placeholder="Seleccione Hostname" bindValue="name">
-                </ng-select>
-              </div>
-            </div>
-          }
-          @if (showPuente == true) {
-            <div class="col-md-8 col-12 mb-1">
-              <label for="login-url" class="form-label">URL Para establecer puente de conexión</label>
-              <div class="input-group-pastel">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><span [data-feather]="'link-2'" [size]="16"></span></span>
-                </div>
-                <input type="text" formControlName="url" class="form-control"
-                  placeholder="URL Para establecer puente de conexión" aria-describedby="login-url" tabindex="1" autofocus
-                  [ngClass]="{ 'is-invalid': submitted && f.url.errors }" />
-              </div>
-              @if (submitted && f.url.errors) {
-                <div class="invalid-feedback">
-                  @if (f.url.errors.required) {
-                    <div>Descripción es requerido</div>
-                  }
-                </div>
-              }
-            </div>
-          }
-          <!-- input driver puente url -->
-          <!-- Finaliza el juego de input -->
-          <div class="col-md-12 col-12 mb-1">
-            <label for="login-descripcion" class="form-label">Descripción</label>
+        <!-- Base de Datos (condicional) -->
+        @if (showBaseDatos == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-basedatos" class="form-label-formal">{{ lbd }}</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
+                <span class="input-group-text"><span [data-feather]="'folder'" [size]="14"></span></span>
               </div>
-              <input type="text" formControlName="descripcion" class="form-control" placeholder="Descripción"
-                aria-describedby="login-descripcion" tabindex="1" autofocus
-                [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }" />
+              <input type="text" formControlName="basedatos" class="form-control" placeholder="Base de Datos"
+                [ngClass]="{ 'is-invalid': submitted && f.basedatos.errors }" />
             </div>
-            @if (submitted && f.descripcion.errors) {
-              <div class="invalid-feedback">
-                @if (f.descripcion.errors.required) {
-                  <div>Descripción es requerido</div>
-                }
-              </div>
+            @if (submitted && f.basedatos.errors) {
+              <div class="invalid-feedback d-block">Base de Datos es requerido</div>
             }
           </div>
+        }
 
-          <div class="col-md-4 col-12 mb-1">
-            <label for="login-id" class="form-label">Identificador</label>
+        <!-- Puerto (condicional) -->
+        @if (showBaseDatos == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-puerto" class="form-label-formal">Puerto</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
+                <span class="input-group-text"><span [data-feather]="'link'" [size]="14"></span></span>
               </div>
-              <input type="text" [readOnly]="true" formControlName="id" class="form-control" placeholder="Identificador"
-                aria-describedby="login-id" tabindex="1" autofocus/>
+              <input type="text" formControlName="puerto" class="form-control" placeholder="Ej: 5432, 3306"
+                [ngClass]="{ 'is-invalid': submitted && f.puerto.errors }" />
             </div>
+            @if (submitted && f.puerto.errors) {
+              <div class="invalid-feedback d-block">Puerto es requerido</div>
+            }
           </div>
+        }
 
+        <!-- Protocolo (condicional puente) -->
+        @if (showPuente == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-protocolo" class="form-label-formal">Protocolo</label>
+            <ng-select [items]="protocolo" formControlName="protocolo" bindLabel="name"
+              placeholder="Seleccione Protocolo" bindValue="name" class="custom-select-formal">
+            </ng-select>
+          </div>
+        }
 
-          <div class="col-md-4 col-12 mb-1">
-            <label for="login-estatus" class="form-label">Seleccione Status</label>
-            <div class="ng-select-group-pastel">
+        <!-- URL (condicional puente) -->
+        @if (showPuente == true) {
+          <div class="col-md-6 col-12 form-group">
+            <label for="login-url" class="form-label-formal">URL</label>
+            <div class="input-group-pastel">
               <div class="input-group-prepend">
-                <span class="input-group-text"><span [data-feather]="'activity'" [size]="16"></span></span>
+                <span class="input-group-text"><span [data-feather]="'globe'" [size]="14"></span></span>
               </div>
-              <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Status"
-                bindValue="id">
-              </ng-select>
+              <input type="text" formControlName="url" class="form-control" placeholder="https://api.dominio.com" />
             </div>
-            <!-- <div *ngIf="submitted && f.estatus.errors" class="invalid-feedback">
-            <div *ngIf="f.estatus.errors.required">Estatus es requerido</div>
-          </div> -->
-        </div>
-
-        <div class="col-md-4 col-12 mb-1">
-          <label class="form-label" for="login-aplicacion">Aplicación</label>
-          <div class="ng-select-group-pastel">
-            <div class="input-group-prepend">
-              <span class="input-group-text"><span [data-feather]="'package'" [size]="16"></span></span>
-            </div>
-            <ng-select [items]="ListaAplicaciones" formControlName="aplicacion"
-              aria-describedby="login-aplicacion" tabindex="1" autofocus class=""
-              bindLabel="name" bindId="id" bindValue="nombre"
-            placeholder="Seleccione Aplicación"></ng-select>
           </div>
+        }
+
+        <!-- Usuario -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-usuario" class="form-label-formal">Usuario</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'user'" [size]="14"></span></span>
+            </div>
+            <input type="text" formControlName="usuario" class="form-control" placeholder="Usuario de la base de datos"
+              [ngClass]="{ 'is-invalid': submitted && f.usuario.errors }" />
+          </div>
+          @if (submitted && f.usuario.errors) {
+            <div class="invalid-feedback d-block">Usuario es requerido</div>
+          }
         </div>
 
+        <!-- Clave -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-clave" class="form-label-formal">Clave</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'lock'" [size]="14"></span></span>
+            </div>
+            <input [type]="passwordTextType ? 'text' : 'password'" formControlName="clave" class="form-control"
+              placeholder="••••••••••••" [ngClass]="{ 'is-invalid': submitted && f.clave.errors }" />
+            <div class="input-group-append cursor-pointer" (click)="togglePasswordTextType()">
+              <span class="input-group-text">
+                <span [data-feather]="passwordTextType ? 'eye' : 'eye-off'" [size]="14"></span>
+              </span>
+            </div>
+          </div>
+          @if (submitted && f.clave.errors) {
+            <div class="invalid-feedback d-block">Clave es requerida</div>
+          }
+        </div>
 
+        <!-- Estatus -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-estatus" class="form-label-formal">Estatus</label>
+          <ng-select [items]="status" formControlName="estatus" bindLabel="name"
+            placeholder="Seleccione Estatus" bindValue="id" class="custom-select-formal">
+          </ng-select>
+        </div>
+
+        <!-- Aplicación -->
+        <div class="col-md-6 col-12 form-group">
+          <label for="login-aplicacion" class="form-label-formal">Aplicación</label>
+          <ng-select [items]="ListaAplicaciones" formControlName="aplicacion" bindLabel="name"
+            placeholder="Seleccione Aplicación" bindValue="id" class="custom-select-formal">
+          </ng-select>
+        </div>
+
+        <!-- Descripción -->
+        <div class="col-12 form-group">
+          <label for="login-descripcion" class="form-label-formal">Descripción</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'file-text'" [size]="14"></span></span>
+            </div>
+            <input type="text" formControlName="descripcion" class="form-control"
+              placeholder="Descripción breve del propósito de la conexión"
+              [ngClass]="{ 'is-invalid': submitted && f.descripcion.errors }" />
+          </div>
+          @if (submitted && f.descripcion.errors) {
+            <div class="invalid-feedback d-block">Descripción es requerida</div>
+          }
+        </div>
 
       </div>
-
     </div>
-
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-primary mr-auto" (click)="EvaluarConexion()" rippleEffect>
-      <span [data-feather]="'zap'" [size]="15" class="mr-50"></span> Probar Conexión
-    </button>
-    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
-      <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cancelar
-    </button>
-    <button class="btn btn-warning" tabindex="4" rippleEffect>
-      <span [data-feather]="'check'" [size]="15" class="mr-50"></span> Actualizar
-    </button>
-  </div>
-</form>
-
+    <div class="modal-footer justify-content-between p-2 border-top">
+      <button type="button" class="btn btn-swal-neutral" (click)="EvaluarConexion()">
+        Probar Conexión
+      </button>
+      <div class="d-flex align-items-center gap-1">
+        <button type="button" class="btn btn-swal-neutral mr-1" (click)="modal.dismiss('Cancel')">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-swal-purple">
+          Actualizar
+        </button>
+      </div>
+    </div>
+  </form>
 </ng-template>
 
+<!-- ========================================================================= -->
+<!-- MODAL: DIAGNÓSTICO TCP / NMAP                                             -->
+<!-- ========================================================================= -->
 <ng-template #ModalEscaneoNmap let-modal>
   <div class="modal-header modal-header-pastel">
     <div class="d-flex align-items-center">
-      <div class="modal-icon-badge modal-icon-info mr-1">
-        <span [data-feather]="'terminal'" [size]="20"></span>
+      <div class="modal-icon-badge mr-1">
+        <span [data-feather]="'terminal'" [size]="18"></span>
       </div>
       <div>
-        <h5 class="modal-title mb-0" id="myModalLabel160">Diagnóstico: nmap -sT</h5>
-        <small class="text-muted">Escaneo de socket TCP y disponibilidad de conexión</small>
+        <h5 class="modal-title mb-0">Diagnóstico: Conexión TCP y Nmap</h5>
+        <small class="text-muted">Escaneo de socket TCP y disponibilidad del host remoto</small>
       </div>
     </div>
-    <button type="button" class="close btn-close-pastel" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span [data-feather]="'x'" [size]="17"></span>
+    <button type="button" class="btn-swal-close-round" (click)="modal.dismiss('Cross click')" aria-label="Close">
+      &times;
     </button>
   </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <!-- Invoice -->
-    <div class="col-xl-12 col-md-12 col-12">
-      <!-- Header Starts -->
-      <div class="row">
-
-        <div class="col-md-12">
-          <div class="form-group mb-0">
-            <label class="form-label">Resultado del Análisis</label>
-            <div style="width:100%; height:380px; overflow: auto; border: 1px solid #ebe9f1; border-radius: 8px; background: #1e1e2d; padding: 10px;">
-              <textarea id="xrs" style="font-family: 'Fira Code', 'Monaco', monospace; font-size:12px; width: 100%; height: 100%; background: transparent; color: #a6accd; border: none; resize: none; outline: none;"
-              [formControl]="xrsCtrl"></textarea>
-            </div>
+  <div class="modal-body p-2" tabindex="0" ngbAutofocus>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group mb-0">
+          <label class="form-label-formal">Salida de la Consola de Diagnóstico</label>
+          <div class="console-box-container">
+            <textarea id="xrs" class="console-textarea" [formControl]="xrsCtrl"></textarea>
           </div>
         </div>
-
       </div>
-
     </div>
-
   </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss('Cancel')" rippleEffect>
-      <span [data-feather]="'x'" [size]="15" class="mr-50"></span> Cerrar
+  <div class="modal-footer d-flex align-items-center justify-content-between p-2 border-top">
+    <button type="button" class="btn btn-swal-neutral" (click)="modal.dismiss('Cancel')">
+      Salir
     </button>
-    <button class="btn btn-primary" tabindex="4" (click)="ScanRed()" rippleEffect>
-      <span [data-feather]="'activity'" [size]="15" class="mr-50"></span> Iniciar Escaneo
+    <button type="button" class="btn btn-swal-purple" (click)="ScanRed()" [disabled]="!btnShow">
+      {{ btnShow ? 'Iniciar Escaneo' : 'Escaneando...' }}
     </button>
   </div>
-
 </ng-template>

@@ -65,10 +65,100 @@ export class CommunicationsComponent implements OnInit {
 
   searchValueCtrl = new FormControl('');
   basicSelectedOptionCtrl = new FormControl(10);
-  sDispositivoCtrl = new FormControl('');
+  sDispositivoCtrl = new FormControl(null);
   xrsCtrl = new FormControl({value: '', disabled: true});
 
+  public selectedStatusFilter: string = 'all'; // 'all' | 'activos' | 'inactivos'
+
+  get totalDispositivos(): number {
+    return this._tempData() ? this._tempData().length : 0;
+  }
+
+  get totalActivos(): number {
+    return this._tempData() ? this._tempData().filter(d => d.estatus === true || d.estatus == 1 || d.estatus === '1').length : 0;
+  }
+
+  get totalInactivos(): number {
+    return this._tempData() ? this._tempData().filter(d => d.estatus === false || d.estatus == 0 || d.estatus === '0').length : 0;
+  }
+
+  setStatusFilter(filter: string) {
+    this.selectedStatusFilter = filter;
+    this.applyCombinedFilters();
+  }
+
+  clearSearch() {
+    this.searchValueCtrl.setValue('');
+    this.applyCombinedFilters();
+  }
+
+  applyCombinedFilters() {
+    const val = (this.searchValueCtrl.value || '').toLowerCase().trim();
+    const statusFilter = this.selectedStatusFilter;
+    const tipo = this.sDispositivoCtrl.value;
+
+    const filtered = (this._tempData() || []).filter(d => {
+      // 1. Búsqueda en vivo
+      if (val) {
+        const host = (d.host || '').toLowerCase();
+        const mac = (d.mac || '').toLowerCase();
+        const desc = (d.descripcion || '').toLowerCase();
+        const id = (d.id || '').toLowerCase();
+        const matches = host.includes(val) || mac.includes(val) || desc.includes(val) || id.includes(val);
+        if (!matches) return false;
+      }
+
+      // 2. Filtro de estado
+      if (statusFilter === 'activos') {
+        const isActive = d.estatus === true || d.estatus == 1 || d.estatus === '1';
+        if (!isActive) return false;
+      } else if (statusFilter === 'inactivos') {
+        const isInactive = d.estatus === false || d.estatus == 0 || d.estatus === '0';
+        if (!isInactive) return false;
+      }
+
+      // 3. Filtro de tipo de dispositivo
+      if (tipo) {
+        if (d.tipo !== tipo) return false;
+      }
+
+      return true;
+    });
+
+    this._rowData.set(filtered);
+    this._count.set(filtered.length);
+    if (this.table) {
+      this.table.offset = 0;
+    }
+  }
+
   public searchValue = ''
+
+  /**
+   * Valida si una dirección MAC cumple con el formato estándar (XX:XX:XX:XX:XX:XX o XX-XX-XX-XX-XX-XX o XXXX.XXXX.XXXX)
+   */
+  isValidMac(mac: string | null | undefined): boolean {
+    if (!mac || typeof mac !== 'string') {
+      return false;
+    }
+    const cleanMac = mac.trim();
+    if (!cleanMac) {
+      return false;
+    }
+    const standardMac = /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/;
+    const ciscoMac = /^[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}$/;
+    return standardMac.test(cleanMac) || ciscoMac.test(cleanMac);
+  }
+
+  /**
+   * Aplica la clase de tono mate vino a las filas cuya dirección MAC carece de formato
+   */
+  getRowClass = (row: any) => {
+    return {
+      'row-invalid-mac': !this.isValidMac(row?.mac)
+    };
+  };
+
   // Private
   private _count = signal<any>(undefined);
   get count() { return this._count(); }
@@ -187,29 +277,11 @@ export class CommunicationsComponent implements OnInit {
 
 
   filterUpdate(event: any) {
-    const val = event.target.value.toLowerCase();
-    // filter our data
-    const temp = this._tempData().filter(function (d) {
-      return d.descripcion.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this._rowData.set(temp);
-    this._count.set(this._rowData().length)
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    this.applyCombinedFilters();
   }
 
   filterDispositivo(event: any) {
-    const val = event ? event : '';
-    // filter our data
-    const temp = this._tempData().filter(function (d) {
-      return d.tipo.indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this._rowData.set(temp);
-    this._count.set(this._rowData().length)
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    this.applyCombinedFilters();
   }
 
   LimpiarForm() {
@@ -230,21 +302,23 @@ export class CommunicationsComponent implements OnInit {
   }
 
   async CargarLista() {
+    this.isLoading = true;
     this.xAPI.funcion = "_SYS_LstComunicaciones";
-    this.xAPI.parametros = ''
-    this._ListaComunicaciones.set([])
-    this._count.set(0)
+    this.xAPI.parametros = '';
+    this._ListaComunicaciones.set([]);
+    this._count.set(0);
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         this._ListaComunicaciones.set([...this._ListaComunicaciones(), data]);
-        this._rowData.set(data);
-        this._count.set(this._rowData().length)
-        this._tempData.set(this._rowData());
+        this._tempData.set(data || []);
+        this.applyCombinedFilters();
+        this.isLoading = false;
       },
       (error) => {
-        console.log(error)
+        console.log(error);
+        this.isLoading = false;
       }
-    )
+    );
   }
 
   ModalEdit(modal, data) {

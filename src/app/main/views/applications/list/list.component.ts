@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from "@angular/core";
+import { Component, OnInit, ViewChild, ViewEncapsulation, signal, ChangeDetectorRef } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { RouterModule } from "@angular/router";
+import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 import {
   ColumnMode,
   DatatableComponent,
@@ -90,8 +91,8 @@ export class ListComponent implements OnInit {
 
   // Private
 
-  public xrs: string = ''
-  public xstatus: string = ''
+  public xrs: SafeHtml | string = ''
+  public xstatus: SafeHtml | string = ''
 
 
 
@@ -105,12 +106,34 @@ export class ListComponent implements OnInit {
   private _isLoading = signal<boolean>(false);
   get isLoading() { return this._isLoading(); }
   public lenguaje = [
+    { id: 0, name: "Todos los Lenguajes" },
     { id: 1, name: "PHP" },
-    { id: 0, name: "TSC" },
+    { id: 2, name: "TSC" },
   ];
 
   public fnx;
   public status = false;
+
+  // Estado adicional para UX
+  public selectedApp: any = null;
+  public selectedRamas: string[] = [];
+  public selectedLenguaje: string = null;
+  public selectedStatusFilter: string = 'all'; // 'all' | 'clonadas' | 'sin-clonar'
+  public isLogsLoading: boolean = false;
+  public isStatusLoading: boolean = false;
+
+  // Getters para KPIs
+  get totalApps(): number {
+    return this.ListaAplicaciones ? this.ListaAplicaciones.length : 0;
+  }
+
+  get totalClonadas(): number {
+    return this.ListaAplicaciones ? this.ListaAplicaciones.filter(a => a.status == '1').length : 0;
+  }
+
+  get totalPendientes(): number {
+    return this.ListaAplicaciones ? this.ListaAplicaciones.filter(a => a.status == '0').length : 0;
+  }
 
   // public
   public contentHeader: object;
@@ -134,7 +157,20 @@ export class ListComponent implements OnInit {
     private msjService: WsocketsService,
     private modalService: NgbModal,
     private utilservice: UtilService,
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer,
   ) { }
+
+  cleanLogHtml(raw: string): SafeHtml {
+    if (!raw) return this.sanitizer.bypassSecurityTrustHtml('');
+    let cleaned = raw
+      .replace(/<!DOCTYPE[^>]*>/gi, '')
+      .replace(/<\/?html[^>]*>/gi, '')
+      .replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '')
+      .replace(/<\/?body[^>]*>/gi, '')
+      .replace(/body\s*\{[^}]*\}/gi, '');
+    return this.sanitizer.bypassSecurityTrustHtml(cleaned);
+  }
 
   async ngOnInit() {
     await this.CargarListaAplicaciones();
@@ -165,36 +201,39 @@ export class ListComponent implements OnInit {
   }
 
   async ModalExePlay(modal: any, data: any) {
-    await this.verLogs(data)
-    this.proyecto = data.proyecto
+    this.selectedApp = data;
+    this.proyecto = data.proyecto;
+    this.verLogs(data);
     this.modalService.open(modal, {
       centered: true,
-      size: 'lg',
+      size: 'xl',
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
+      keyboard: true,
+      windowClass: 'fondo-modal modal-terminal-developer',
     });
   }
 
-
   async ModalExeStatus(modal: any, data: any) {
-    await this.verEstatus(data)
-    this.proyecto = data.proyecto
+    this.selectedApp = data;
+    this.proyecto = data.proyecto;
+    this.verEstatus(data);
     this.modalService.open(modal, {
       centered: true,
-      size: 'lg',
+      size: 'xl',
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal',
+      keyboard: true,
+      windowClass: 'fondo-modal modal-terminal-developer',
     });
   }
 
   async Clonar(app: any) {
     let nameFnx = "Fnx_GitCloneAll";
-    let ramas = ''
-    app.rama.split(',').forEach(e => {
-      ramas += `"${e}" `
-    });
+    let ramas = '';
+    if (app.rama) {
+      app.rama.split(',').forEach(e => {
+        if (e && e.trim()) ramas += `"${e.trim()}" `;
+      });
+    }
     this.fnx = {
       funcion: nameFnx,
       usuario: app.usuario,
@@ -207,95 +246,104 @@ export class ListComponent implements OnInit {
       servidor: app.origen
     };
 
-    // console.log(app)
-
-    // console.log(this.fnx)
     await Swal.fire({
-      title: `Va a clonar el proyecto <br> ${app.proyecto} `,
-      text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
+      title: `Clonar Repositorio`,
+      html: `¿Está seguro de clonar el proyecto <b>${app.proyecto}</b> en el servidor local?<br><small class="text-muted">Servidor: ${app.origen} | Ramas: ${app.rama || 'Todas'}</small>`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Sí, clonar",
       cancelButtonText: "Cancelar",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Clonar!",
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        this.apiService.ExecFnx(this.fnx).subscribe(
-          (data) => {
-            console.log(data);
-            this.pID.id = data.contenido.id;
-            this.pID.estatus = true;
-            this.msjService.lstpid$.emit(this.pID);
-            this.taskService
-              .set(data.contenido.id, nameFnx, app.proyecto)
-              .then((e) => {
-                this.apiService.ConsultarPidRecursivo(
-                  data.contenido.id,
-                  app.origen + "|" + app.proyecto
-                );
-              })
-              .catch((e) => console.log(e));
+        this.apiService.ExecFnx(this.fnx).subscribe({
+          next: (data) => {
+            if (data?.contenido?.id) {
+              this.pID.id = data.contenido.id;
+              this.pID.estatus = true;
+              this.msjService.lstpid$.emit(this.pID);
+              this.taskService
+                .set(data.contenido.id, nameFnx, app.proyecto)
+                .then(() => {
+                  this.apiService.ConsultarPidRecursivo(
+                    data.contenido.id,
+                    app.origen + "|" + app.proyecto
+                  );
+                })
+                .catch((e) => console.error(e));
+            }
 
             this.xAPI.funcion = "_SYS_U_Aplicaciones";
             this.xAPI.parametros = `${app.identificador},1`;
-            this.rowData.push(this.ListaAplicaciones);
-            this.apiService.Ejecutar(this.xAPI).subscribe(
-              (datax) => {
-                this.ListaAplicaciones = [];
+            this.apiService.Ejecutar(this.xAPI).subscribe({
+              next: () => {
+                this.utilservice.AlertMini('top-end', 'success', 'Clonación iniciada con éxito', 3000);
                 this.CargarListaAplicaciones();
               },
-              (error) => {
-                console.log(error);
-              }
-            );
-            //this.apiService.ConsultarPidRecursivo(data.contenido.id, this.fnx)
+              error: (err) => console.error(err)
+            });
           },
-          (error) => {
-            console.log(error);
+          error: (error) => {
+            console.error(error);
+            this.utilservice.AlertMini('top-end', 'error', 'Error al solicitar la clonación', 3000);
           }
-        );
+        });
       }
     });
   }
 
-
-
   async verLogs(app: any) {
-    this.xrs = this.msj
+    this.isLogsLoading = true;
+    this.xrs = this.sanitizer.bypassSecurityTrustHtml(
+      '<div class="py-4 text-center"><span class="spinner-border spinner-border-sm text-primary mr-2"></span><span class="text-slate font-small-2">Consultando historial de commits y logs...</span></div>'
+    );
+    this.cdr.detectChanges();
+
     let nameFnx = "Fnx_GitLog";
     this.fnx = {
       funcion: nameFnx,
       proyecto: app.proyecto,
     };
 
-    // console.log(this.fnx)
-    await this.apiService.ExecFnx(this.fnx).subscribe(
-      (data) => {
+    this.apiService.ExecFnx(this.fnx).subscribe({
+      next: (data) => {
         setTimeout(() => {
-          this.apiService.ExecFnxId(data.contenido.id).subscribe(
-            (data) => {
-              // console.log(data.rs)
-              this.xrs = data.rs
-            },
-            (error) => {
-              console.log(error)
-            }
-          )
-        }, 3000);
+          if (data?.contenido?.id) {
+            this.apiService.ExecFnxId(data.contenido.id).subscribe({
+              next: (dataRes) => {
+                this.xrs = this.cleanLogHtml(dataRes?.rs || '<div class="alert alert-light p-3 text-center text-muted">No se recibieron registros de log.</div>');
+                this.isLogsLoading = false;
+                this.cdr.detectChanges();
+              },
+              error: (err) => {
+                console.error(err);
+                this.xrs = this.sanitizer.bypassSecurityTrustHtml('<div class="alert alert-danger p-3 text-center">Error al obtener el historial de logs.</div>');
+                this.isLogsLoading = false;
+                this.cdr.detectChanges();
+              }
+            });
+          } else {
+            this.isLogsLoading = false;
+            this.cdr.detectChanges();
+          }
+        }, 1500);
       },
-      (error) => {
-        console.log(error);
+      error: (error) => {
+        console.error(error);
+        this.xrs = this.sanitizer.bypassSecurityTrustHtml('<div class="alert alert-danger p-3 text-center">Error al solicitar logs en el servidor.</div>');
+        this.isLogsLoading = false;
+        this.cdr.detectChanges();
       }
-    );
+    });
   }
 
-
   async Pull(app: any) {
-    let ramas = ''
-    app.rama.split(',').forEach(e => {
-      ramas += `"${e}" `
-    });
+    let ramas = '';
+    if (app.rama) {
+      app.rama.split(',').forEach(e => {
+        if (e && e.trim()) ramas += `"${e.trim()}" `;
+      });
+    }
     let nameFnx = "Fnx_Actualizar";
     this.fnx = {
       funcion: nameFnx,
@@ -304,149 +352,248 @@ export class ListComponent implements OnInit {
     };
 
     await Swal.fire({
-      title: `Va a actualizar el proyecto <br> ${app.proyecto} `,
-      text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
-      icon: "warning",
+      title: `Actualizar Proyecto`,
+      html: `Se descargarán los últimos cambios para <b>${app.proyecto}</b>.<br><small class="text-muted">Ramas a actualizar: ${app.rama || 'Todas'}</small>`,
+      icon: "info",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Sí, actualizar",
       cancelButtonText: "Cancelar",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Actualizar!",
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        this.apiService.ExecFnx(this.fnx).subscribe(
-          (data) => {
-            this.pID.id = data.contenido.id;
-            this.pID.estatus = true;
-            this.msjService.lstpid$.emit(this.pID);
-            let proyecto = `${app.origen}|${app.proyecto}`
-            this.taskService
-              .set(data.contenido.id, nameFnx, proyecto)
-              .then((e) => {
-                this.apiService.ConsultarPidRecursivo(
-                  data.contenido.id,
-                  proyecto
-                );
-              })
-              .catch((e) => console.log(e));
+        this.apiService.ExecFnx(this.fnx).subscribe({
+          next: (data) => {
+            if (data?.contenido?.id) {
+              this.pID.id = data.contenido.id;
+              this.pID.estatus = true;
+              this.msjService.lstpid$.emit(this.pID);
+              let proyecto = `${app.origen}|${app.proyecto}`;
+              this.taskService
+                .set(data.contenido.id, nameFnx, proyecto)
+                .then(() => {
+                  this.apiService.ConsultarPidRecursivo(
+                    data.contenido.id,
+                    proyecto
+                  );
+                  this.utilservice.AlertMini('top-end', 'success', 'Actualización enviada a ejecución', 3000);
+                })
+                .catch((e) => console.error(e));
+            }
           },
-          (error) => {
-            console.log(error);
+          error: (error) => {
+            console.error(error);
+            this.utilservice.AlertMini('top-end', 'error', 'Error al solicitar actualización', 3000);
           }
-        );
+        });
       }
     });
   }
 
-
   async Merge() {
-
-    if (this.mensajeCtrl.value == '' || this.destinoCtrl.value == '' || this.origenCtrl.value == '') {
-      this.utilservice.AlertMini('top-end', 'error', 'Debe verificar todos los campos', 3000)
+    if (!this.mensajeCtrl.value || !this.destinoCtrl.value || !this.origenCtrl.value) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Debe indicar rama origen, destino y comentario', 3000);
       return false;
     }
-    let nameFnx = "Fnx_Merge";
+    if (this.origenCtrl.value.trim() === this.destinoCtrl.value.trim()) {
+      this.utilservice.AlertMini('top-end', 'warning', 'La rama origen y destino deben ser distintas', 3000);
+      return false;
+    }
 
+    let nameFnx = "Fnx_Merge";
     this.fnx = {
       funcion: nameFnx,
       proyecto: this.proyecto,
-      mensaje: this.mensajeCtrl.value,
-      origen: this.origenCtrl.value,
-      destino: this.destinoCtrl.value
+      mensaje: this.mensajeCtrl.value.trim(),
+      origen: this.origenCtrl.value.trim(),
+      destino: this.destinoCtrl.value.trim()
     };
 
-    // console.log(this.fnx)
-
     await Swal.fire({
-      title: `Va a fusionar el proyecto <br> ${this.proyecto} `,
-      text: "Estó puede durar varios segundos, dependiendo de su conexión a internet!",
+      title: `Confirmar Fusión Git`,
+      html: `¿Está seguro de fusionar <code>${this.origenCtrl.value}</code> &rarr; <code>${this.destinoCtrl.value}</code> en <b>${this.proyecto}</b>?`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonText: "Sí, fusionar",
       cancelButtonText: "Cancelar",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Fusionar!",
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         this.modalService.dismissAll('Cerrando fusionar');
-        this.apiService.ExecFnx(this.fnx).subscribe(
-          (data) => {
-            this.pID.id = data.contenido.id;
-            this.pID.estatus = true;
-            this.msjService.lstpid$.emit(this.pID);
-            this.taskService
-              .set(data.contenido.id, nameFnx, this.proyecto)
-              .then((e) => {
-                this.apiService.ConsultarPidRecursivo(
-                  data.contenido.id,
-                  "Fusionando proyecto"
-                );
-              })
-              .catch((e) => console.log(e));
+        this.apiService.ExecFnx(this.fnx).subscribe({
+          next: (data) => {
+            if (data?.contenido?.id) {
+              this.pID.id = data.contenido.id;
+              this.pID.estatus = true;
+              this.msjService.lstpid$.emit(this.pID);
+              this.taskService
+                .set(data.contenido.id, nameFnx, this.proyecto)
+                .then(() => {
+                  this.apiService.ConsultarPidRecursivo(
+                    data.contenido.id,
+                    "Fusionando proyecto"
+                  );
+                  this.utilservice.AlertMini('top-end', 'success', 'Fusión de ramas en curso', 3000);
+                })
+                .catch((e) => console.error(e));
+            }
           },
-          (error) => {
-            console.log(error);
+          error: (error) => {
+            console.error(error);
+            this.utilservice.AlertMini('top-end', 'error', 'Error al ejecutar fusión', 3000);
           }
-        );
+        });
       }
     });
-
   }
 
-
   async verEstatus(app: any) {
-    this.xstatus = this.msj
+    this.isStatusLoading = true;
+    this.xstatus = this.sanitizer.bypassSecurityTrustHtml(
+      '<div class="py-4 text-center"><span class="spinner-border spinner-border-sm text-info mr-2"></span><span class="text-slate font-small-2">Consultando estado del repositorio local...</span></div>'
+    );
+    this.cdr.detectChanges();
+
     let nameFnx = "Fnx_GitStatus";
     this.fnx = {
       funcion: nameFnx,
       proyecto: app.proyecto,
     };
 
-    // console.log(this.fnx)
-    await this.apiService.ExecFnx(this.fnx).subscribe(
-      (data) => {
+    this.apiService.ExecFnx(this.fnx).subscribe({
+      next: (data) => {
         setTimeout(() => {
-          this.apiService.ExecFnxId(data.contenido.id).subscribe(
-            (data) => {
-              // console.log(data.rs)
-              this.xstatus = data.rs
-            },
-            (error) => {
-              console.log(error)
-            }
-          )
-        }, 3000);
+          if (data?.contenido?.id) {
+            this.apiService.ExecFnxId(data.contenido.id).subscribe({
+              next: (dataRes) => {
+                this.xstatus = this.cleanLogHtml(dataRes?.rs || '<div class="alert alert-light p-3 text-center text-muted">Árbol de trabajo limpio o sin cambios pendientes.</div>');
+                this.isStatusLoading = false;
+                this.cdr.detectChanges();
+              },
+              error: (err) => {
+                console.error(err);
+                this.xstatus = this.sanitizer.bypassSecurityTrustHtml('<div class="alert alert-danger p-3 text-center">Error al obtener estatus git.</div>');
+                this.isStatusLoading = false;
+                this.cdr.detectChanges();
+              }
+            });
+          } else {
+            this.isStatusLoading = false;
+            this.cdr.detectChanges();
+          }
+        }, 1500);
       },
-      (error) => {
-        console.log(error);
+      error: (error) => {
+        console.error(error);
+        this.xstatus = this.sanitizer.bypassSecurityTrustHtml('<div class="alert alert-danger p-3 text-center">Error al consultar estatus del repositorio.</div>');
+        this.isStatusLoading = false;
+        this.cdr.detectChanges();
       }
-    );
+    });
   }
 
+  applyCombinedFilters() {
+    const searchVal = (this.searchValueCtrl.value || '').toLowerCase().trim();
+    const langVal = (this.selectedLenguaje && this.selectedLenguaje !== 'Todos los Lenguajes') 
+      ? this.selectedLenguaje.toLowerCase() 
+      : '';
+    const statusVal = this.selectedStatusFilter;
 
+    this.rowData = this.tempData.filter(d => {
+      const matchSearch = !searchVal || 
+        (d.nombre && d.nombre.toLowerCase().includes(searchVal)) ||
+        (d.proyecto && d.proyecto.toLowerCase().includes(searchVal)) ||
+        (d.rama && d.rama.toLowerCase().includes(searchVal)) ||
+        (d.origen && d.origen.toLowerCase().includes(searchVal));
+
+      const matchLang = !langVal || (d.lenguaje && d.lenguaje.toLowerCase() === langVal);
+
+      let matchStatus = true;
+      if (statusVal === 'clonadas') {
+        matchStatus = d.status == '1';
+      } else if (statusVal === 'sin-clonar') {
+        matchStatus = d.status == '0';
+      }
+
+      return matchSearch && matchLang && matchStatus;
+    });
+
+    if (this.table) {
+      this.table.offset = 0;
+    }
+  }
 
   filterUpdate(event: any) {
-    const val = event.target.value.toLowerCase();
-    // filter our data
-    const temp = this.tempData.filter(function (d) {
-      return d.nombre.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this.rowData = temp;
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    this.applyCombinedFilters();
+  }
+
+  clearSearch() {
+    this.searchValueCtrl.setValue('');
+    this.applyCombinedFilters();
   }
 
   filterLenguaje(event: any) {
-    const val = event.name ? event.name : "";
-    // filter our data
-    const temp = this.tempData.filter(function (d) {
-      return d.lenguaje.indexOf(val) !== -1 || !val;
-    });
-    // update the rows
-    this.rowData = temp;
-    // Whenever the filter changes, always go back to the first page
-    this.table.offset = 0;
+    this.selectedLenguaje = event?.name || null;
+    this.applyCombinedFilters();
+  }
+
+  setStatusFilter(status: string) {
+    this.selectedStatusFilter = status;
+    this.applyCombinedFilters();
+  }
+
+  verTodos() {
+    this.searchValueCtrl.setValue('');
+    this.selectedLenguaje = null;
+    this.selectedStatusFilter = 'all';
+    this.rowData = [...this.tempData];
+    if (this.table) {
+      this.table.offset = 0;
+    }
+    this.utilservice.AlertMini('top-end', 'info', 'Mostrando todas las aplicaciones', 1500);
+  }
+
+  recargar() {
+    this.CargarListaAplicaciones();
+    this.utilservice.AlertMini('top-end', 'info', 'Actualizando lista de aplicaciones...', 1500);
+  }
+
+  selectOrigenRama(rama: string) {
+    this.origenCtrl.setValue(rama);
+    this.updateDefaultCommitMessage();
+  }
+
+  selectDestinoRama(rama: string) {
+    this.destinoCtrl.setValue(rama);
+    this.updateDefaultCommitMessage();
+  }
+
+  swapRamas() {
+    const orig = this.origenCtrl.value;
+    const dest = this.destinoCtrl.value;
+    this.origenCtrl.setValue(dest);
+    this.destinoCtrl.setValue(orig);
+    this.updateDefaultCommitMessage();
+  }
+
+  updateDefaultCommitMessage() {
+    const o = this.origenCtrl.value || 'rama';
+    const d = this.destinoCtrl.value || 'destino';
+    this.mensajeCtrl.setValue(`Merge ${o} en ${d}`);
+  }
+
+  copyTerminalContent(content: any) {
+    if (!content) return;
+    const raw = typeof content === 'string' ? content : (content?.changingThisBreaksApplicationSecurity || '');
+    const tempEl = document.createElement('div');
+    tempEl.innerHTML = raw;
+    const text = tempEl.textContent || tempEl.innerText || '';
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(text).then(() => {
+        this.utilservice.AlertMini('top-end', 'success', 'Copiado al portapapeles', 2000);
+      }).catch(() => {
+        this.utilservice.AlertMini('top-end', 'info', 'Seleccione el texto para copiar', 2000);
+      });
+    }
   }
 
   CargarListaAplicaciones() {
@@ -456,34 +603,59 @@ export class ListComponent implements OnInit {
     this.ListaAplicaciones = [];
     this.apiService.Ejecutar(this.xAPI).subscribe({
       next: (data) => {
-        data.Cuerpo.map((e) => {
-          this.ListaAplicaciones.push(e);
-        });
-        this.rowData = this.ListaAplicaciones;
-        this.tempData = this.rowData;
+        this.ListaAplicaciones = data?.Cuerpo || [];
+        this.rowData = [...this.ListaAplicaciones];
+        this.tempData = [...this.ListaAplicaciones];
+
+        // Extraer lenguajes únicos dinámicamente
+        const dynamicLanguages = Array.from(
+          new Set(this.ListaAplicaciones.map(a => a.lenguaje).filter(Boolean))
+        ).map((lang, idx) => ({ id: idx + 1, name: String(lang) }));
+
+        this.lenguaje = [
+          { id: 0, name: "Todos los Lenguajes" },
+          ...dynamicLanguages
+        ];
+
+        this.applyCombinedFilters();
         this._isLoading.set(false);
       },
       error: (error) => {
-        console.log(error);
+        console.error(error);
         this._isLoading.set(false);
       }
     });
   }
 
+  Modal(modal: any, app: any) {
+    this.selectedApp = app;
+    this.proyecto = app.proyecto;
+    this.selectedRamas = app.rama 
+      ? app.rama.split(',').map((r: string) => r.trim()).filter((r: string) => r.length > 0)
+      : [];
 
+    if (this.selectedRamas.length >= 2) {
+      this.origenCtrl.setValue(this.selectedRamas[1]);
+      this.destinoCtrl.setValue(this.selectedRamas[0]);
+    } else if (this.selectedRamas.length === 1) {
+      this.origenCtrl.setValue(this.selectedRamas[0]);
+      this.destinoCtrl.setValue('');
+    } else {
+      this.origenCtrl.setValue('');
+      this.destinoCtrl.setValue('');
+    }
+    this.updateDefaultCommitMessage();
 
-  Modal(modal, app: any) {
     this.modalService.open(modal, {
       centered: true,
-      size: "xl",
+      size: "lg",
       backdrop: false,
-      keyboard: false,
-      windowClass: "fondo-modal",
-    })
+      keyboard: true,
+      windowClass: "fondo-modal modal-merge-enhanced",
+    });
   }
 
   exportToPdf() {
-    // TODO: Implement PDF export functionality
     this.utilservice.AlertMini('top-end', 'info', 'Exportando a PDF...', 2000);
     console.log('Exporting to PDF:', this.rowData);
   }

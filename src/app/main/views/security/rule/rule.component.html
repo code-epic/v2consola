@@ -1,629 +1,797 @@
-<div class="content-wrapper container-xxl p-0">
+<div class="content-wrapper container-xxl p-0 security-rules-container">
   <div class="content-body">
-    <!-- Fondo Animado -->
-    <div class="background-shapes">
-      <div class="shape shape1"></div>
-      <div class="shape shape2"></div>
-      <div class="shape shape3"></div>
-    </div>
-
-    <!-- content-header component -->
+    <!-- Encabezado de contenido -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-
-    <!-- Invoice List -->
-    <!-- La clase 'position-relative' es necesaria para que el fondo animado no se superponga -->
-    <section class="invoice-list-wrapper position-relative">
-      <div class="card shadow-sm">
-        <div class="card-body">
-          <!-- Primer -->
-          <div class="row">
-            <div class="form-group col-md-12">
-              <label class="form-label" for="app-select">Seleccionar Aplicación</label>
-              <ng-select [items]="lstAplicaciones" [formControl]="aplicacionSeleccionadaCtrl" bindLabel="name" bindValue="id"
-                (change)="cargarConfiguracionApp($event)" [clearable]="false" appendTo="body"
-                [loading]="isLoadingApp" loadingText="Cargando aplicaciones…"
-                placeholder="Seleccione una aplicación para configurar sus reglas">
-              </ng-select>
-            </div>
+    <!-- Card Selector de Aplicación -->
+    <div class="card selector-card shadow-sm mb-2">
+      <div class="card-body p-2">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+          <div class="flex-grow-1 mr-md-2 mb-1 mb-md-0">
+            <label class="form-label font-weight-bold text-muted small text-uppercase mb-50" for="app-select">
+              Aplicación Destino
+            </label>
+            <ng-select
+              [items]="lstAplicaciones"
+              [formControl]="aplicacionSeleccionadaCtrl"
+              bindLabel="name"
+              bindValue="id"
+              (change)="cargarConfiguracionApp($event)"
+              [clearable]="false"
+              appendTo="body"
+              [loading]="isLoadingApp"
+              loadingText="Cargando aplicaciones…"
+              placeholder="Seleccione la aplicación a configurar...">
+            </ng-select>
           </div>
 
-          <!-- Placeholder de Bienvenida / Carga -->
-          @if (!aplicacionSeleccionada) {
-            <div class="text-center p-5 my-5">
-              @if (isLoadingApp) {
-                <!-- Spinner de carga de apps -->
-                <div class="loading-spinner-container mb-4">
-                  <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
-                    <span class="sr-only">Cargando...</span>
-                  </div>
-                  <p class="mt-3 text-muted font-weight-bold">Cargando aplicaciones…</p>
-                </div>
-              }
-              @if (!isLoadingApp) {
-                <!-- Animación de Candado de Seguridad Mejorada -->
-                <div class="animated-lock-container mb-4">
-                  <svg style="width: 120px; height: auto;"
-                    class="animated-lock"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 100 125"
-                    xml:space="preserve"
-                    >
-                    <g class="lock-body">
-                      <path fill="#7367F0" d="M82.1,48.4H78V35.3C78,20.8,65.2,8,50.7,8S23.4,20.8,23.4,35.3v13.1h-4.1c-3.3,0-6,2.7-6,6v34.5c0,3.3,2.7,6,6,6h62.8c3.3,0,6-2.7,6-6V54.4C88.1,51.1,85.4,48.4,82.1,48.4z M31.4,35.3c0-10.1,8.2-18.3,18.3-18.3s18.3,8.2,18.3,18.3v13.1H31.4V35.3z"/>
-                      <!-- Keyhole -->
-                      <circle class="keyhole" fill="#FFFFFF" cx="50.5" cy="70" r="5"/>
-                      <path class="keyhole" fill="#FFFFFF" d="M50.5,75c-1.1,0-2,0.9-2,2v8c0,1.1,0.9,2,2,2s2-0.9,2-2v-8C52.5,75.9,51.6,75,50.5,75z"/>
-                    </g>
-                    <g class="shackle">
-                      <path fill="#7367F0" d="M62.1,21.3c0-6.8-5.5-12.3-12.3-12.3S37.4,14.5,37.4,21.3v14h8V21.3c0-2.4,1.9-4.3,4.3-4.3s4.3,1.9,4.3,4.3v14h8V21.3z"/>
-                    </g>
-                  </svg>
-                </div>
-                <h2 class="font-weight-bold text-primary mb-2">Centro de Reglas de Seguridad</h2>
-                <p class="lead text-muted px-2" style="font-size: 1.1rem; letter-spacing: 0.2px; line-height: 1.6;">
-                  Selecciona una aplicación para definir sus políticas de sesión, encriptamiento y endpoints.
-                </p>
-              }
-            </div>
-          } @else if (isLoadingConfig) {
-            <!-- Spinner de carga de configuracion -->
-            <div class="text-center p-5 my-5">
-              <div class="loading-spinner-container mb-4">
-                <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">
-                  <span class="sr-only">Cargando...</span>
-                </div>
-                <p class="mt-3 text-muted font-weight-bold">Cargando configuración de seguridad…</p>
+          @if (aplicacionSeleccionada && configuracion) {
+            <div class="app-status-badge-wrap d-flex align-items-center mt-1 mt-md-0">
+              <div class="app-id-pill mr-1">
+                <span class="pill-label">ID:</span>
+                <span class="pill-value">{{ aplicacionSeleccionada.id }}</span>
+              </div>
+              <div class="status-pill" [class.status-active]="configuracionEstatusCtrl.value" [class.status-inactive]="!configuracionEstatusCtrl.value">
+                <span class="status-dot"></span>
+                <span>{{ configuracionEstatusCtrl.value ? 'Seguridad Activa' : 'Seguridad Inactiva' }}</span>
               </div>
             </div>
           }
-
-          <!-- Contenedor de las tarjetas de configuración -->
-          @if (aplicacionSeleccionada && configuracion) {
-            <div class="mt-4 animated-container" >
-              <div class="row" style="margin-top: -40px;">
-                <div class="col-md-12">
-                  <hr>
-                  </div>
-                  <!-- Card: Estatus y Sesión -->
-                  <div class="col-lg-6 col-md-12 mb-4">
-                    <div class="card h-100 shadow-sm">
-                      <div class="card-header d-flex justify-content-between align-items-center">
-                        <h4 class="card-title mb-0 d-flex align-items-center">
-                          <span [data-feather]="'sliders'" class="mr-1 text-primary"></span>
-                          Reglas Generales
-                        </h4>
-                        <div class="custom-control custom-switch custom-control-lg">
-                          <input type="checkbox" class="custom-control-input" id="appStatus"
-                            [formControl]="configuracionEstatusCtrl">
-                          <label class="custom-control-label" for="appStatus"></label>
-                        </div>
-                      </div>
-                      <div class="card-body">
-                        <p class="card-text text-muted">Activa o desactiva todas las reglas de seguridad
-                        para esta aplicación.</p>
-                        <hr>
-                          <label class="font-weight-bold">Duración de Sesión de Usuario</label>
-                          <div class="row">
-                            <div class="col-12">
-                              <div class="input-group input-group-lg">
-                                <input type="number" id="session-time"
-                                  class="form-control form-control-lg" placeholder="Ej: 30"
-                                  style="height: 38px;" [formControl]="configuracionSesionTiempoCtrl">
-                                <div class="input-group-append">
-                                  <ng-select class="custom-ng-select-units ng-select-lg"
-                                    [items]="unidadesTiempo"
-                                    [formControl]="configuracionSesionUnidadCtrl" bindLabel="name"
-                                    bindValue="id" [clearable]="false">
-                                    <ng-template ng-label-tmp let-item="item">
-                                      <span [data-feather]="item.icon" [size]="18"
-                                      class="mr-1"></span>
-                                      <span class="font-weight-bold">{{item.name}}</span>
-                                    </ng-template>
-                                    <ng-template ng-option-tmp let-item="item">
-                                      <span [data-feather]="item.icon" [size]="20"
-                                      class="mr-1"></span> {{item.name}}
-                                    </ng-template>
-                                  </ng-select>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="form-group mt-2">
-                            <label class="font-weight-bold">Tipo de Encriptamiento</label>
-                            <div class="input-group input-group-lg">
-                              <ng-select class="ng-select-lg w-100"
-                                [items]="tiposEncriptamiento"
-                                bindLabel="name"
-                                bindValue="id"
-                                [formControl]="configuracionEncriptamientoCtrl"
-                                [addTag]="true" [searchable]="false">
-                              </ng-select>
-                            </div>
-                          </div>
-                          <hr>
-                            <div class="row mt-2">
-                              <div class="col-md-6 mb-1 mb-md-0">
-                                <div class="d-flex align-items-center">
-                                  <span [data-feather]="'calendar'" class="mr-2 text-primary"
-                                  [size]="22"></span>
-                                  <div>
-                                    <small class="text-muted d-block">Creado</small>
-                                    <span class="font-weight-bold">{{ configuracion.creado | date:
-                                    'dd/MM/yyyy HH:mm:ss' }}</span>
-                                    <div class="d-flex align-items-center mt-25">
-                                      <span [data-feather]="'user'" class="mr-50"
-                                      [size]="14"></span>
-                                      <small class="font-weight-bold">{{
-                                      configuracion.usuariocreado }}</small>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-md-6">
-                                <div class="d-flex align-items-center">
-                                  <span [data-feather]="'check-circle'" class="mr-2 text-success"
-                                  [size]="22"></span>
-                                  <div>
-                                    <small class="text-muted d-block">Actualizado</small>
-                                    <span class="font-weight-bold">{{ configuracion.actualizado |
-                                    date: 'dd/MM/yyyy HH:mm:ss' }}</span>
-                                    <div class="d-flex align-items-center mt-25">
-                                      <span [data-feather]="'user'" class="mr-50"
-                                      [size]="14"></span>
-                                      <small class="font-weight-bold">{{
-                                      configuracion.usuarioactualizado }}</small>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Card: Endpoints -->
-                      <div class="col-lg-6 col-md-12 mb-4">
-                        <div class="card h-100 shadow-sm">
-                          <div class="card-header">
-                            <h4 class="card-title d-flex align-items-center">
-                              <span [data-feather]="'server'" class="mr-1 text-primary"></span>
-                              Endpoints de la Aplicación
-                            </h4>
-                          </div>
-                          <div class="card-body">
-                            <div class="form-group mb-2">
-                              <label for="login-url">URL de Login</label>
-                              <div class="input-group input-group-merge">
-                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                [data-feather]="'log-in'"></span></span></div>
-                                <input type="text" id="login-url" class="form-control"
-                                  placeholder="https://api.dominio.com/v1/login"
-                                  [formControl]="configuracionEndpointsLoginCtrl">
-                              </div>
-                            </div>
-                            <div class="form-group mb-2">
-                              <label for="offices-url">URL de Oficinas</label>
-                              <div class="input-group input-group-merge">
-                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                [data-feather]="'briefcase'"></span></span></div>
-                                <input type="text" id="offices-url" class="form-control"
-                                  placeholder="https://api.dominio.com/data/oficinas"
-                                  [formControl]="configuracionEndpointsOficinasCtrl">
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="states-url">URL de Estados</label>
-                              <div class="input-group input-group-merge">
-                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                [data-feather]="'map-pin'"></span></span></div>
-                                <input type="text" id="states-url" class="form-control"
-                                  placeholder="https://api.dominio.com/data/estados"
-                                  [formControl]="configuracionEndpointsEstadosCtrl">
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label for="ad-url">URL Directorio Activo</label>
-                              <div class="input-group input-group-merge">
-                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                [data-feather]="'users'"></span></span></div>
-                                <input type="text" id="ad-url" class="form-control"
-                                  placeholder="https://api.dominio.com/ad/users"
-                                  [formControl]="configuracionEndpointsDirectorioActivoCtrl">
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Card: Nivel de Traza -->
-                      <div class="col-12 mb-4">
-                        <div class="card shadow-sm">
-                          <div class="card-header">
-                            <h4 class="card-title d-flex align-items-center">
-                              <span [data-feather]="'bar-chart-2'" class="mr-1 text-primary"></span>
-                              Nivel de Traza
-                            </h4>
-                          </div>
-                          <div class="card-body">
-                            <p class="card-text">Define el nivel de detalle que se registrará en los logs
-                            para las acciones de esta aplicación.</p>
-                            <div class="btn-group d-flex">
-                              <button type="button" class="btn btn-outline-secondary flex-fill"
-                                [class.active]="configuracionTrazaNivelCtrl.value === 'BAJA'"
-                                (click)="configuracionTrazaNivelCtrl.setValue('BAJA')">
-                                <span [data-feather]="'shield'" class="mr-1"></span>Baja
-                              </button>
-                              <button type="button" class="btn btn-outline-warning flex-fill"
-                                [class.active]="configuracionTrazaNivelCtrl.value === 'MEDIA'"
-                                (click)="configuracionTrazaNivelCtrl.setValue('MEDIA')">
-                                <span [data-feather]="'activity'" class="mr-1"></span>Media
-                              </button>
-                              <button type="button" class="btn btn-outline-danger flex-fill"
-                                [class.active]="configuracionTrazaNivelCtrl.value === 'ALTA'"
-                                (click)="configuracionTrazaNivelCtrl.setValue('ALTA')">
-                                <span [data-feather]="'alert-triangle'" class="mr-1"></span>Alta
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Card: Configuración de Cauciones -->
-                      <div class="col-12 mb-4">
-                        <div class="card shadow-sm">
-                          <div class="card-header">
-                            <h4 class="card-title d-flex align-items-center">
-                              <span [data-feather]="'file-text'" class="mr-1 text-primary"></span>
-                              Configuración de Cauciones
-                            </h4>
-                          </div>
-                          <div class="card-body">
-                            <div class="row">
-                              <!-- Auditor -->
-                              <div class="col-md-6">
-                                <div class="form-group">
-                                  <label class="font-weight-bold">Datos del Auditor</label>
-                                  <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1 mr-2">
-                                      <div class="input-group input-group-merge">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text"><span [data-feather]="'user-check'"></span></span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Nombre y Grado" [formControl]="configuracionAuditorNombreCtrl">
-                                      </div>
-                                      <div class="input-group input-group-merge mt-1">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text p-0">
-                                            <select class="form-control border-0 bg-transparent h-100" [formControl]="configuracionAuditorNacionalidadCtrl">
-                                              <option value="V">V</option>
-                                              <option value="E">E</option>
-                                            </select>
-                                          </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Cédula de Identidad" [formControl]="configuracionAuditorCedulaCtrl">
-                                      </div>
-                                      <small class="text-muted">Ingrese el nombre, grado y cargo del auditor.</small>
-                                    </div>
-                                    <div class="upload-box-wrapper">
-                                      <div class="upload-box" (click)="auditorInput.click()" [class.has-image]="configuracion.auditor_firma">
-                                        <input type="file" #auditorInput hidden (change)="onFileChange($event, 'auditor_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
-                                        @if (!configuracion.auditor_firma) {
-                                          <div class="upload-placeholder">
-                                            <span [data-feather]="'upload'" class="text-muted"></span>
-                                            <div class="font-small-2 text-muted mt-1">Firma</div>
-                                          </div>
-                                        }
-                                        @if (configuracion.auditor_firma) {
-                                          <img [src]="configuracion.auditor_firma" alt="Firma">
-                                        }
-                                        @if (configuracion.auditor_firma) {
-                                          <div class="upload-overlay">
-                                            <a [href]="configuracion.auditor_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
-                                              <span [data-feather]="'eye'"></span>
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.auditor_firma = null; auditorInput.value = ''" title="Eliminar">
-                                              <span [data-feather]="'trash-2'"></span>
-                                            </button>
-                                          </div>
-                                        }
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <!-- Director -->
-                              <div class="col-md-6">
-                                <div class="form-group">
-                                  <label class="font-weight-bold">Datos del Director</label>
-                                  <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1 mr-2">
-                                      <div class="input-group input-group-merge">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text"><span [data-feather]="'user'"></span></span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Nombre y Grado" [formControl]="configuracionDirectorNombreCtrl">
-                                      </div>
-                                      <div class="input-group input-group-merge mt-1">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text p-0">
-                                            <select class="form-control border-0 bg-transparent h-100" [formControl]="configuracionDirectorNacionalidadCtrl">
-                                              <option value="V">V</option>
-                                              <option value="E">E</option>
-                                            </select>
-                                          </span>
-                                        </div>
-                                        <input type="text" class="form-control" placeholder="Cédula de Identidad" [formControl]="configuracionDirectorCedulaCtrl">
-                                      </div>
-                                      <small class="text-muted">Ingrese el nombre, grado y cargo del director.</small>
-                                    </div>
-                                    <div class="upload-box-wrapper">
-                                      <div class="upload-box" (click)="directorInput.click()" [class.has-image]="configuracion.director_firma">
-                                        <input type="file" #directorInput hidden (change)="onFileChange($event, 'director_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
-                                        @if (!configuracion.director_firma) {
-                                          <div class="upload-placeholder">
-                                            <span [data-feather]="'upload'" class="text-muted"></span>
-                                            <div class="font-small-2 text-muted mt-1">Firma</div>
-                                          </div>
-                                        }
-                                        @if (configuracion.director_firma) {
-                                          <img [src]="configuracion.director_firma" alt="Firma">
-                                        }
-                                        @if (configuracion.director_firma) {
-                                          <div class="upload-overlay">
-                                            <a [href]="configuracion.director_firma" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
-                                              <span [data-feather]="'eye'"></span>
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.director_firma = null; directorInput.value = ''" title="Eliminar">
-                                              <span [data-feather]="'trash-2'"></span>
-                                            </button>
-                                          </div>
-                                        }
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-12"><hr></div>
-                              <!-- Membrete -->
-                              <div class="col-md-12">
-                                <label class="font-weight-bold">Membrete Institucional</label>
-                                <div class="row">
-                                  <div class="col-md-3">
-                                    <div class="upload-box-wrapper h-100">
-                                      <div class="upload-box h-100" (click)="logoInput.click()" [class.has-image]="configuracion.logo_membrete" style="min-height: 120px;">
-                                        <input type="file" #logoInput hidden (change)="onFileChange($event, 'logo_membrete')" accept=".gif,.jpg,.jpeg,.png,.webp">
-                                        @if (!configuracion.logo_membrete) {
-                                          <div class="upload-placeholder">
-                                            <span [data-feather]="'image'" class="text-muted" [size]="32"></span>
-                                            <div class="font-small-2 text-muted mt-1">Cargar Logo</div>
-                                          </div>
-                                        }
-                                        @if (configuracion.logo_membrete) {
-                                          <img [src]="configuracion.logo_membrete" alt="Logo">
-                                        }
-                                        @if (configuracion.logo_membrete) {
-                                          <div class="upload-overlay">
-                                            <a [href]="configuracion.logo_membrete" target="_blank" class="btn btn-sm btn-icon btn-primary rounded-circle mr-1" (click)="$event.stopPropagation()" title="Ver">
-                                              <span [data-feather]="'eye'"></span>
-                                            </a>
-                                            <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.logo_membrete = null; logoInput.value = ''" title="Eliminar">
-                                              <span [data-feather]="'trash-2'"></span>
-                                            </button>
-                                          </div>
-                                        }
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-9">
-                                    <div class="input-group input-group-merge mb-1">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text"><span [data-feather]="'type'"></span></span>
-                                      </div>
-                                      <input type="text" class="form-control" placeholder="Línea 1 (Ej: República Bolivariana...)" [formControl]="configuracionMembreteL1Ctrl">
-                                    </div>
-                                    <div class="input-group input-group-merge mb-1">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
-                                      </div>
-                                      <input type="text" class="form-control" placeholder="Línea 2 (Ej: Ministerio...)" [formControl]="configuracionMembreteL2Ctrl">
-                                    </div>
-                                    <div class="input-group input-group-merge mb-1">
-                                      <div class="input-group-prepend">
-                                        <span class="input-group-text"><span [data-feather]="'align-left'"></span></span>
-                                      </div>
-                                      <input type="text" class="form-control" placeholder="Línea 3 (Ej: Dirección General...)" [formControl]="configuracionMembreteL3Ctrl">
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="col-12"><hr></div>
-                              <!-- Certificado Digital (Anti-Plagio) -->
-                              <div class="col-md-12">
-                                <div class="d-flex align-items-center mb-1">
-                                  <span [data-feather]="'shield'" class="mr-1 text-primary"></span>
-                                  <label class="font-weight-bold mb-0">Certificado Digital (Anti-Plagio)</label>
-                                </div>
-                                <div class="row">
-                                  <div class="col-md-6">
-                                    <div class="form-group">
-                                      <label>Archivo del Certificado (.p12 / .pfx)</label>
-                                      <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="certFile" (change)="onFileChange($event, 'certificado_digital')" accept=".p12,.pfx">
-                                        <label class="custom-file-label" for="certFile">
-                                          {{ configuracion.certificado_digital ? 'Certificado Cargado' : 'Seleccionar Archivo' }}
-                                        </label>
-                                      </div>
-                                      @if (configuracion.certificado_digital) {
-                                        <small class="text-muted mt-1 d-block">
-                                          <span class="text-success font-weight-bold"><span [data-feather]="'check'" [size]="10"></span> Archivo cargado correctamente</span>
-                                          <a href="javascript:void(0)" class="text-danger ml-1" (click)="configuracion.certificado_digital = null">Eliminar</a>
-                                        </small>
-                                      }
-                                    </div>
-                                  </div>
-                                  <div class="col-md-6">
-                                    <div class="form-group">
-                                      <label>Contraseña del Certificado</label>
-                                      <div class="input-group input-group-merge">
-                                        <div class="input-group-prepend">
-                                          <span class="input-group-text"><span [data-feather]="'key'"></span></span>
-                                        </div>
-                                        <input type="password" class="form-control" placeholder="Ingrese la contraseña del certificado" [formControl]="configuracionCertificadoPassCtrl">
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- Botón de Guardar -->
-                    <div class="row">
-                      <div class="col-12 text-right">
-                        <button type="button" class="btn btn-primary btn-lg shadow-lg" style="background: linear-gradient(to right, #7367F0, #CE9FFC); border: 0; border-radius: 50px; padding-left: 3rem; padding-right: 3rem;" (click)="guardarConfiguracion()">
-                          <span [data-feather]="'save'" class="mr-1"></span>
-                          Guardar Cambios
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                }
-              </div>
-            </div>
-          </section>
-
         </div>
       </div>
+    </div>
 
-      <!-- Estilos para la animación y el diseño -->
-      <style>
-        /* ─── Fondo animado ─── */
-        .content-body {
-          position: relative;
-        }
-        .background-shapes {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 0;
-          pointer-events: none;
-        }
-        .shape {
-          position: absolute;
-          border-radius: 50%;
-          background: rgba(115, 103, 240, 0.05);
-          animation: float 20s infinite linear;
-        }
-        .shape1 { width: 200px; height: 200px; top: 10%; left: 5%; animation-duration: 25s; }
-        .shape2 { width: 150px; height: 150px; top: 60%; left: 85%; animation-duration: 18s; }
-        .shape3 { width: 100px; height: 100px; top: 75%; left: 15%; animation-duration: 22s; }
+    <!-- Estado: Cargando Aplicaciones -->
+    @if (isLoadingApp) {
+      <div class="card shadow-sm text-center p-5">
+        <div class="spinner-border text-primary mx-auto mb-2" style="width: 3.5rem; height: 3.5rem;" role="status">
+          <span class="sr-only">Cargando...</span>
+        </div>
+        <h5 class="text-primary font-weight-bold">Cargando aplicaciones del sistema</h5>
+        <p class="text-muted small mb-0">Obteniendo catálogo de micro-servicios...</p>
+      </div>
+    }
 
-        @keyframes float {
-          0%   { transform: translateY(0px) translateX(0px) rotate(0deg); }
-          50%  { transform: translateY(-25px) translateX(15px) rotate(180deg); }
-          100% { transform: translateY(0px) translateX(0px) rotate(360deg); }
-        }
+    <!-- Estado: Sin Aplicación Seleccionada -->
+    @if (!aplicacionSeleccionada && !isLoadingApp) {
+      <div class="card shadow-sm text-center p-5 empty-state-card">
+        <div class="empty-state-icon mx-auto mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#7367f0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+        </div>
+        <h3 class="font-weight-bold text-dark mb-1">Centro de Políticas y Reglas de Seguridad</h3>
+        <p class="text-muted mx-auto" style="max-width: 520px; font-size: 0.95rem; line-height: 1.6;">
+          Seleccione una aplicación en el menú superior para configurar sus políticas de sesión, endpoints de autenticación, niveles de trazabilidad y firmas de caución.
+        </p>
+      </div>
+    }
 
-        .animated-illustration {
-          animation: float-illustration 6s ease-in-out infinite;
-        }
-        @keyframes float-illustration {
-          0%, 100% { transform: translateY(0); }
-          50%      { transform: translateY(-20px); }
-        }
+    <!-- Estado: Cargando Configuración de la App -->
+    @if (aplicacionSeleccionada && isLoadingConfig) {
+      <div class="card shadow-sm text-center p-5">
+        <div class="spinner-border text-primary mx-auto mb-2" style="width: 3.5rem; height: 3.5rem;" role="status">
+          <span class="sr-only">Cargando...</span>
+        </div>
+        <h5 class="text-primary font-weight-bold">Cargando reglas de seguridad</h5>
+        <p class="text-muted small mb-0">Descargando políticas de la aplicación {{ aplicacionSeleccionada.id }}...</p>
+      </div>
+    }
 
-        /* ─── Panel de configuración ─── */
-        .animated-container {
-          animation: fadeInSlideUp 0.6s ease-out forwards;
-        }
-        @keyframes fadeInSlideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
+    <!-- ============================================================ -->
+    <!-- ESCENARIO PRINCIPAL: STEPPER HÍBRIDO POR PASOS               -->
+    <!-- ============================================================ -->
+    @if (aplicacionSeleccionada && configuracion && !isLoadingConfig) {
+      <div class="rules-stepper-stage">
 
-        /* ─── Upload de firmas ─── */
-        .upload-box-wrapper {
-          width: 120px;
-          height: 100px;
-        }
-        .col-md-3 .upload-box-wrapper {
-          width: 100%;
-          height: 100%;
-        }
-        .upload-box {
-          width: 100%;
-          height: 100%;
-          border: 2px dashed #d9d9d9;
-          border-radius: 6px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          position: relative;
-          background-color: #fafafa;
-          transition: border-color 0.3s ease;
-          overflow: hidden;
-        }
-        .upload-box:hover {
-          border-color: #7367F0;
-          background-color: #f0f0f0;
-        }
-        .upload-box img {
-          max-width: 100%;
-          max-height: 100%;
-          object-fit: contain;
-          padding: 4px;
-        }
-        .upload-overlay {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background: rgba(0,0,0,0.5);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          opacity: 0;
-          transition: opacity 0.2s;
-        }
-        .upload-box:hover .upload-overlay {
-          opacity: 1;
-        }
-        .upload-box.has-image {
-          border-style: solid;
-          border-color: #e0e0e0;
-        }
+        <!-- Stepper Navigation Bar (Cabecera de Pasos) -->
+        <div class="card stepper-nav-card shadow-sm mb-2">
+          <div class="card-body p-1 p-md-2">
+            <div class="stepper-header-track">
+              <!-- Paso 1 -->
+              <div class="step-node" [class.active]="pasoActual === 1" [class.completed]="pasoActual > 1" (click)="irAPaso(1)">
+                <div class="step-circle">
+                  @if (pasoActual > 1) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  } @else {
+                    <span>1</span>
+                  }
+                </div>
+                <div class="step-info d-none d-md-flex">
+                  <span class="step-title">Sesión & Cripto</span>
+                  <span class="step-subtitle">Políticas base</span>
+                </div>
+              </div>
 
-        /* ─── Spinner de carga ─── */
-        .loading-spinner-container {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-        }
+              <div class="step-divider" [class.active]="pasoActual >= 2"></div>
 
-        /* ─── ng-select panel en body ─── */
-        .ng-dropdown-panel {
-          z-index: 9999 !important;
-        }
+              <!-- Paso 2 -->
+              <div class="step-node" [class.active]="pasoActual === 2" [class.completed]="pasoActual > 2" (click)="irAPaso(2)">
+                <div class="step-circle">
+                  @if (pasoActual > 2) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  } @else {
+                    <span>2</span>
+                  }
+                </div>
+                <div class="step-info d-none d-md-flex">
+                  <span class="step-title">Endpoints</span>
+                  <span class="step-subtitle">Conectividad API</span>
+                </div>
+              </div>
 
-        /* ─── Botones de nivel de traza: estado activo visible ─── */
-        .btn-group .btn-outline-secondary.active {
-          color: #fff !important;
-          background-color: #6c757d !important;
-          border-color: #6c757d !important;
-        }
-        .btn-group .btn-outline-warning.active {
-          color: #fff !important;
-          background-color: #ffc107 !important;
-          border-color: #ffc107 !important;
-        }
-        .btn-group .btn-outline-danger.active {
-          color: #fff !important;
-          background-color: #dc3545 !important;
-          border-color: #dc3545 !important;
-        }
-      </style>
+              <div class="step-divider" [class.active]="pasoActual >= 3"></div>
+
+              <!-- Paso 3 -->
+              <div class="step-node" [class.active]="pasoActual === 3" [class.completed]="pasoActual > 3" (click)="irAPaso(3)">
+                <div class="step-circle">
+                  @if (pasoActual > 3) {
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  } @else {
+                    <span>3</span>
+                  }
+                </div>
+                <div class="step-info d-none d-md-flex">
+                  <span class="step-title">Trazabilidad</span>
+                  <span class="step-subtitle">Nivel de auditoría</span>
+                </div>
+              </div>
+
+              <div class="step-divider" [class.active]="pasoActual >= 4"></div>
+
+              <!-- Paso 4 -->
+              <div class="step-node" [class.active]="pasoActual === 4" (click)="irAPaso(4)">
+                <div class="step-circle">
+                  <span>4</span>
+                </div>
+                <div class="step-info d-none d-md-flex">
+                  <span class="step-title">Cauciones</span>
+                  <span class="step-subtitle">Firmas & Certificado</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenedor del Paso Activo -->
+        <div class="step-content-card card shadow-sm mb-2">
+          <div class="card-body p-2 p-md-3">
+
+            <!-- ============================================================ -->
+            <!-- PASO 1: POLÍTICAS DE SESIÓN Y CRIPTOGRAFÍA                   -->
+            <!-- ============================================================ -->
+            @if (pasoActual === 1) {
+              <div class="step-panel animate-fade-in">
+                <div class="panel-header mb-3">
+                  <h4 class="font-weight-bold text-dark mb-50 d-flex align-items-center">
+                    <span class="panel-icon-wrap mr-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="4" y1="21" x2="4" y2="14"></line>
+                        <line x1="4" y1="10" x2="4" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12" y2="3"></line>
+                        <line x1="20" y1="21" x2="20" y2="16"></line>
+                        <line x1="20" y1="12" x2="20" y2="3"></line>
+                        <line x1="1" y1="14" x2="7" y2="14"></line>
+                        <line x1="9" y1="8" x2="15" y2="8"></line>
+                        <line x1="17" y1="16" x2="23" y2="16"></line>
+                      </svg>
+                    </span>
+                    Reglas Generales y Políticas de Sesión
+                  </h4>
+                  <p class="text-muted small mb-0">Configure el estado maestro de seguridad, expiración por inactividad y algoritmo de cifrado.</p>
+                </div>
+
+                <div class="row">
+                  <!-- Switch Maestro -->
+                  <div class="col-12 mb-3">
+                    <div class="master-switch-card d-flex align-items-center justify-content-between p-2">
+                      <div class="d-flex align-items-center">
+                        <div class="switch-status-indicator mr-2" [class.on]="configuracionEstatusCtrl.value">
+                          <span class="indicator-dot"></span>
+                        </div>
+                        <div>
+                          <h6 class="font-weight-bold mb-25 text-dark">Estatus Maestro de Seguridad</h6>
+                          <p class="text-muted small mb-0">Habilita o desactiva la aplicación de todas las reglas perimetrales para esta app.</p>
+                        </div>
+                      </div>
+                      <div class="custom-control custom-switch custom-control-lg">
+                        <input type="checkbox" class="custom-control-input" id="appStatusSwitch" [formControl]="configuracionEstatusCtrl">
+                        <label class="custom-control-label" for="appStatusSwitch"></label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Duración de Sesión -->
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label font-weight-bold text-dark" for="session-duration">
+                      Tiempo de Inactividad de Sesión
+                    </label>
+                    <div class="input-group">
+                      <input
+                        type="number"
+                        id="session-duration"
+                        class="form-control"
+                        placeholder="Ej: 300"
+                        [formControl]="configuracionSesionTiempoCtrl"
+                        min="1">
+                      <div class="input-group-append">
+                        <ng-select
+                          class="units-select"
+                          [items]="unidadesTiempo"
+                          [formControl]="configuracionSesionUnidadCtrl"
+                          bindLabel="name"
+                          bindValue="id"
+                          [clearable]="false">
+                        </ng-select>
+                      </div>
+                    </div>
+                    <small class="text-muted d-block mt-50">
+                      Tiempo tras el cual se invoca la verificación de inactividad de usuario.
+                    </small>
+                  </div>
+
+                  <!-- Algoritmo de Encriptamiento -->
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label font-weight-bold text-dark">
+                      Algoritmo de Cifrado
+                    </label>
+                    <ng-select
+                      [items]="tiposEncriptamiento"
+                      bindLabel="name"
+                      bindValue="id"
+                      [formControl]="configuracionEncriptamientoCtrl"
+                      [clearable]="false"
+                      placeholder="Seleccione algoritmo">
+                    </ng-select>
+                    <small class="text-muted d-block mt-50">
+                      Algoritmo criptográfico utilizado en el procesamiento de tokens y llaves.
+                    </small>
+                  </div>
+
+                  <!-- Metadatos de Auditoría -->
+                  <div class="col-12 mt-2">
+                    <div class="audit-meta-bar p-2">
+                      <div class="row">
+                        <div class="col-md-6 mb-1 mb-md-0 d-flex align-items-center">
+                          <span class="audit-badge-icon mr-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                              <line x1="16" y1="2" x2="16" y2="6"></line>
+                              <line x1="8" y1="2" x2="8" y2="6"></line>
+                              <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                          </span>
+                          <div>
+                            <span class="audit-label">Creado:</span>
+                            <span class="audit-val">{{ configuracion.creado | date:'dd/MM/yyyy HH:mm' }}</span>
+                            <span class="audit-user">({{ configuracion.usuariocreado || 'Sistema' }})</span>
+                          </div>
+                        </div>
+
+                        <div class="col-md-6 d-flex align-items-center">
+                          <span class="audit-badge-icon mr-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                          </span>
+                          <div>
+                            <span class="audit-label">Última Actualización:</span>
+                            <span class="audit-val">{{ configuracion.actualizado | date:'dd/MM/yyyy HH:mm' }}</span>
+                            <span class="audit-user">({{ configuracion.usuarioactualizado || 'Sistema' }})</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- ============================================================ -->
+            <!-- PASO 2: ENDPOINTS DE CONECTIVIDAD                            -->
+            <!-- ============================================================ -->
+            @if (pasoActual === 2) {
+              <div class="step-panel animate-fade-in">
+                <div class="panel-header mb-3">
+                  <h4 class="font-weight-bold text-dark mb-50 d-flex align-items-center">
+                    <span class="panel-icon-wrap mr-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                      </svg>
+                    </span>
+                    Endpoints de la Aplicación
+                  </h4>
+                  <p class="text-muted small mb-0">Rutas absolutas o relativas para comunicación con servicios del micro-kernel.</p>
+                </div>
+
+                <div class="row">
+                  <!-- Login URL -->
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label font-weight-bold text-dark" for="endpoint-login">
+                      URL del Endpoint de Login
+                    </label>
+                    <div class="input-group input-group-merge">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                          </svg>
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        id="endpoint-login"
+                        class="form-control"
+                        placeholder="https://api.dominio.com/v1/login"
+                        [formControl]="configuracionEndpointsLoginCtrl">
+                    </div>
+                  </div>
+
+                  <!-- Oficinas URL -->
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label font-weight-bold text-dark" for="endpoint-oficinas">
+                      URL del Endpoint de Oficinas
+                    </label>
+                    <div class="input-group input-group-merge">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                          </svg>
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        id="endpoint-oficinas"
+                        class="form-control"
+                        placeholder="https://api.dominio.com/data/oficinas"
+                        [formControl]="configuracionEndpointsOficinasCtrl">
+                    </div>
+                  </div>
+
+                  <!-- Estados URL -->
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label font-weight-bold text-dark" for="endpoint-estados">
+                      URL del Endpoint de Estados
+                    </label>
+                    <div class="input-group input-group-merge">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                          </svg>
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        id="endpoint-estados"
+                        class="form-control"
+                        placeholder="https://api.dominio.com/data/estados"
+                        [formControl]="configuracionEndpointsEstadosCtrl">
+                    </div>
+                  </div>
+
+                  <!-- Directorio Activo URL -->
+                  <div class="col-md-6 mb-2">
+                    <label class="form-label font-weight-bold text-dark" for="endpoint-ad">
+                      URL Directorio Activo (LDAP / AD)
+                    </label>
+                    <div class="input-group input-group-merge">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                          </svg>
+                        </span>
+                      </div>
+                      <input
+                        type="text"
+                        id="endpoint-ad"
+                        class="form-control"
+                        placeholder="https://api.dominio.com/ad/users"
+                        [formControl]="configuracionEndpointsDirectorioActivoCtrl">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- ============================================================ -->
+            <!-- PASO 3: NIVEL DE TRAZABILIDAD Y AUDITORÍA L7                 -->
+            <!-- ============================================================ -->
+            @if (pasoActual === 3) {
+              <div class="step-panel animate-fade-in">
+                <div class="panel-header mb-3">
+                  <h4 class="font-weight-bold text-dark mb-50 d-flex align-items-center">
+                    <span class="panel-icon-wrap mr-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                      </svg>
+                    </span>
+                    Nivel de Trazabilidad y Registro Forense
+                  </h4>
+                  <p class="text-muted small mb-0">Seleccione la profundidad de captura en la bitácora de eventos del sistema.</p>
+                </div>
+
+                <div class="row">
+                  <!-- Nivel BAJA -->
+                  <div class="col-md-4 mb-2">
+                    <div
+                      class="trace-card-option"
+                      [class.selected]="configuracionTrazaNivelCtrl.value === 'BAJA'"
+                      (click)="configuracionTrazaNivelCtrl.setValue('BAJA')">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="trace-badge badge-baja">NIVEL 1</span>
+                        <div class="trace-radio-dot"></div>
+                      </div>
+                      <h5 class="trace-title font-weight-bold">Trazabilidad Baja</h5>
+                      <p class="trace-desc">
+                        Registra únicamente conexiones, inicios y cierres de sesión e IPs de acceso.
+                      </p>
+                      <div class="trace-meta-tag">
+                        <span>Impacto de almacenamiento: Mínimo</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Nivel MEDIA -->
+                  <div class="col-md-4 mb-2">
+                    <div
+                      class="trace-card-option"
+                      [class.selected]="configuracionTrazaNivelCtrl.value === 'MEDIA'"
+                      (click)="configuracionTrazaNivelCtrl.setValue('MEDIA')">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="trace-badge badge-media">NIVEL 2</span>
+                        <div class="trace-radio-dot"></div>
+                      </div>
+                      <h5 class="trace-title font-weight-bold">Trazabilidad Media</h5>
+                      <p class="trace-desc">
+                        Registra conexiones y todas las acciones CRUD (Insert, Update, Read, Delete) en base de datos.
+                      </p>
+                      <div class="trace-meta-tag">
+                        <span>Recomendado para producción</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Nivel ALTA -->
+                  <div class="col-md-4 mb-2">
+                    <div
+                      class="trace-card-option"
+                      [class.selected]="configuracionTrazaNivelCtrl.value === 'ALTA'"
+                      (click)="configuracionTrazaNivelCtrl.setValue('ALTA')">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="trace-badge badge-alta">NIVEL 3</span>
+                        <div class="trace-radio-dot"></div>
+                      </div>
+                      <h5 class="trace-title font-weight-bold">Trazabilidad Alta</h5>
+                      <p class="trace-desc">
+                        Auditoría forense exhaustiva. Captura conexiones, acciones, parámetros, payloads y respuestas completas.
+                      </p>
+                      <div class="trace-meta-tag">
+                        <span>Máxima seguridad & auditoría</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- ============================================================ -->
+            <!-- PASO 4: CAUCIONES, MEMBRETE & CERTIFICADO DIGITAL            -->
+            <!-- ============================================================ -->
+            @if (pasoActual === 4) {
+              <div class="step-panel animate-fade-in">
+                <div class="panel-header mb-3">
+                  <h4 class="font-weight-bold text-dark mb-50 d-flex align-items-center">
+                    <span class="panel-icon-wrap mr-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                      </svg>
+                    </span>
+                    Cauciones, Membrete Oficial & Certificado
+                  </h4>
+                  <p class="text-muted small mb-0">Defina las firmas de autoridades, membrete oficial para reportes y certificado digital.</p>
+                </div>
+
+                <!-- Bloque 1: Autoridades de Caución -->
+                <div class="section-subcard mb-3 p-2">
+                  <h6 class="font-weight-bold text-primary mb-2 text-uppercase small letter-spacing-1">
+                    1. Autoridades Institucionales
+                  </h6>
+                  <div class="row">
+                    <!-- Auditor -->
+                    <div class="col-md-6 mb-2 mb-md-0">
+                      <div class="d-flex flex-column h-100">
+                        <label class="form-label font-weight-bold text-dark mb-50">Datos del Auditor</label>
+                        <div class="d-flex align-items-start">
+                          <div class="flex-grow-1 mr-2">
+                            <input
+                              type="text"
+                              class="form-control mb-1"
+                              placeholder="Nombre y Grado"
+                              [formControl]="configuracionAuditorNombreCtrl">
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <select class="form-control custom-select nationality-select" [formControl]="configuracionAuditorNacionalidadCtrl">
+                                  <option value="V">V</option>
+                                  <option value="E">E</option>
+                                </select>
+                              </div>
+                              <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Cédula de Identidad"
+                                [formControl]="configuracionAuditorCedulaCtrl">
+                            </div>
+                          </div>
+                          <!-- Dropzone Firma Auditor -->
+                          <div class="signature-upload-box" (click)="auditorFileInput.click()" [class.has-file]="configuracion.auditor_firma">
+                            <input type="file" #auditorFileInput hidden (change)="onFileChange($event, 'auditor_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                            @if (!configuracion.auditor_firma) {
+                              <div class="upload-empty-inner">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                  <polyline points="17 8 12 3 7 8"></polyline>
+                                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span class="upload-caption">Firma</span>
+                              </div>
+                            } @else {
+                              <img [src]="configuracion.auditor_firma" alt="Firma Auditor" class="signature-preview-img">
+                              <div class="upload-action-overlay">
+                                <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.auditor_firma = null; auditorFileInput.value = ''" title="Eliminar">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                  </svg>
+                                </button>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Director -->
+                    <div class="col-md-6">
+                      <div class="d-flex flex-column h-100">
+                        <label class="form-label font-weight-bold text-dark mb-50">Datos del Director</label>
+                        <div class="d-flex align-items-start">
+                          <div class="flex-grow-1 mr-2">
+                            <input
+                              type="text"
+                              class="form-control mb-1"
+                              placeholder="Nombre y Grado"
+                              [formControl]="configuracionDirectorNombreCtrl">
+                            <div class="input-group">
+                              <div class="input-group-prepend">
+                                <select class="form-control custom-select nationality-select" [formControl]="configuracionDirectorNacionalidadCtrl">
+                                  <option value="V">V</option>
+                                  <option value="E">E</option>
+                                </select>
+                              </div>
+                              <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Cédula de Identidad"
+                                [formControl]="configuracionDirectorCedulaCtrl">
+                            </div>
+                          </div>
+                          <!-- Dropzone Firma Director -->
+                          <div class="signature-upload-box" (click)="directorFileInput.click()" [class.has-file]="configuracion.director_firma">
+                            <input type="file" #directorFileInput hidden (change)="onFileChange($event, 'director_firma')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                            @if (!configuracion.director_firma) {
+                              <div class="upload-empty-inner">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                  <polyline points="17 8 12 3 7 8"></polyline>
+                                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                <span class="upload-caption">Firma</span>
+                              </div>
+                            } @else {
+                              <img [src]="configuracion.director_firma" alt="Firma Director" class="signature-preview-img">
+                              <div class="upload-action-overlay">
+                                <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.director_firma = null; directorFileInput.value = ''" title="Eliminar">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                  </svg>
+                                </button>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bloque 2: Membrete Institucional -->
+                <div class="section-subcard mb-3 p-2">
+                  <h6 class="font-weight-bold text-primary mb-2 text-uppercase small letter-spacing-1">
+                    2. Membrete Oficial
+                  </h6>
+                  <div class="row">
+                    <div class="col-md-3 mb-2 mb-md-0">
+                      <div class="logo-upload-box h-100" (click)="logoFileInput.click()" [class.has-file]="configuracion.logo_membrete">
+                        <input type="file" #logoFileInput hidden (change)="onFileChange($event, 'logo_membrete')" accept=".gif,.jpg,.jpeg,.png,.webp">
+                        @if (!configuracion.logo_membrete) {
+                          <div class="upload-empty-inner">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                              <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span class="upload-caption mt-50">Cargar Logo</span>
+                          </div>
+                        } @else {
+                          <img [src]="configuracion.logo_membrete" alt="Logo Membrete" class="logo-preview-img">
+                          <div class="upload-action-overlay">
+                            <button type="button" class="btn btn-sm btn-icon btn-danger rounded-circle" (click)="$event.stopPropagation(); configuracion.logo_membrete = null; logoFileInput.value = ''" title="Eliminar">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                              </svg>
+                            </button>
+                          </div>
+                        }
+                      </div>
+                    </div>
+                    <div class="col-md-9">
+                      <div class="form-group mb-1">
+                        <label class="form-label font-weight-bold text-dark small">Línea 1 (República / Órgano Superior)</label>
+                        <input type="text" class="form-control" placeholder="República Bolivariana de Venezuela" [formControl]="configuracionMembreteL1Ctrl">
+                      </div>
+                      <div class="form-group mb-1">
+                        <label class="form-label font-weight-bold text-dark small">Línea 2 (Ministerio / Ente)</label>
+                        <input type="text" class="form-control" placeholder="Ministerio del Poder Popular..." [formControl]="configuracionMembreteL2Ctrl">
+                      </div>
+                      <div class="form-group mb-0">
+                        <label class="form-label font-weight-bold text-dark small">Línea 3 (Dirección General / Oficina)</label>
+                        <input type="text" class="form-control" placeholder="Dirección de Tecnología y Seguridad..." [formControl]="configuracionMembreteL3Ctrl">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bloque 3: Certificado Digital Anti-Plagio -->
+                <div class="section-subcard p-2">
+                  <h6 class="font-weight-bold text-primary mb-2 text-uppercase small letter-spacing-1">
+                    3. Certificado Digital Anti-Plagio
+                  </h6>
+                  <div class="row">
+                    <div class="col-md-6 mb-2 mb-md-0">
+                      <label class="form-label font-weight-bold text-dark small">Archivo de Certificado (.p12 / .pfx)</label>
+                      <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="certFile" (change)="onFileChange($event, 'certificado_digital')" accept=".p12,.pfx">
+                        <label class="custom-file-label" for="certFile">
+                          {{ configuracion.certificado_digital ? 'Certificado Cargado' : 'Seleccionar archivo .p12 / .pfx' }}
+                        </label>
+                      </div>
+                      @if (configuracion.certificado_digital) {
+                        <div class="d-flex align-items-center mt-50">
+                          <span class="text-success small font-weight-bold mr-1">
+                            ✓ Certificado digital cargado correctamente
+                          </span>
+                          <a href="javascript:void(0)" class="text-danger small" (click)="configuracion.certificado_digital = null">Eliminar</a>
+                        </div>
+                      }
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label font-weight-bold text-dark small">Contraseña del Certificado</label>
+                      <div class="input-group input-group-merge">
+                        <div class="input-group-prepend">
+                          <span class="input-group-text">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                          </span>
+                        </div>
+                        <input
+                          [type]="showCertPass ? 'text' : 'password'"
+                          class="form-control"
+                          placeholder="Ingrese clave de descifrado del certificado"
+                          [formControl]="configuracionCertificadoPassCtrl">
+                        <div class="input-group-append">
+                          <span class="input-group-text cursor-pointer" (click)="toggleCertPass()">
+                            @if (showCertPass) {
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                              </svg>
+                            } @else {
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                              </svg>
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+
+          </div>
+
+          <!-- Barra de Navegación del Stepper (Botonera Inferior Mate) -->
+          <div class="card-footer stepper-footer-bar bg-transparent d-flex align-items-center justify-content-between p-2">
+            <div>
+              @if (pasoActual > 1) {
+                <button type="button" class="btn btn-pastel-secondary" (click)="anteriorPaso()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mr-50">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                  Anterior
+                </button>
+              }
+            </div>
+
+            <div class="d-flex align-items-center">
+              <span class="step-indicator-text mr-2 d-none d-sm-inline">
+                Paso {{ pasoActual }} de {{ totalPasos }}
+              </span>
+
+              @if (pasoActual < totalPasos) {
+                <button type="button" class="btn btn-pastel-primary mr-1" (click)="siguientePaso()">
+                  Siguiente
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="ml-50">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              }
+
+              <!-- Botón Guardar Cambios (Siempre accesible) -->
+              <button
+                type="button"
+                class="btn btn-pastel-success"
+                (click)="guardarConfiguracion()"
+                [disabled]="isSaving">
+                @if (isSaving) {
+                  <span class="spinner-border spinner-border-sm mr-50" role="status" aria-hidden="true"></span>
+                  Guardando...
+                } @else {
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="mr-50">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                  </svg>
+                  Guardar Reglas
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    }
+
+  </div>
+</div>

@@ -3,484 +3,566 @@
     <!-- content-header component -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
+    <!-- Summary KPI Header Cards (Tonos Pasteles Serios y Corporativos) -->
+    <div class="row match-height mb-2">
+      <!-- Total Perfiles -->
+      <div class="col-xl-4 col-md-4 col-sm-6">
+        <div class="card app-kpi-formal cursor-pointer"
+             [class.active-kpi]="selectedStatusFilter === 'all'"
+             (click)="setStatusFilter('all')"
+             ngbTooltip="Ver todos los perfiles registrados">
+          <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex flex-column">
+              <span class="kpi-label">Total de Perfiles</span>
+              <h3 class="kpi-value text-slate">{{ totalPerfiles }}</h3>
+              <span class="kpi-subtext">Perfiles de seguridad configurados</span>
+            </div>
+            <div class="kpi-icon-box kpi-box-neutral">
+              <span [data-feather]="'user-check'" [size]="18"></span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <!-- Invoice List -->
+      <!-- Perfiles Activos -->
+      <div class="col-xl-4 col-md-4 col-sm-6">
+        <div class="card app-kpi-formal cursor-pointer"
+             [class.active-kpi]="selectedStatusFilter === 'activos'"
+             (click)="setStatusFilter('activos')"
+             ngbTooltip="Filtrar perfiles con estatus activo">
+          <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex flex-column">
+              <span class="kpi-label">Perfiles Activos</span>
+              <h3 class="kpi-value text-sage">{{ totalActivos }}</h3>
+              <span class="kpi-subtext">Habilitados para asignación</span>
+            </div>
+            <div class="kpi-icon-box kpi-box-sage">
+              <span [data-feather]="'check-circle'" [size]="18"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Perfiles Inactivos -->
+      <div class="col-xl-4 col-md-4 col-sm-12">
+        <div class="card app-kpi-formal cursor-pointer"
+             [class.active-kpi]="selectedStatusFilter === 'inactivos'"
+             (click)="setStatusFilter('inactivos')"
+             ngbTooltip="Filtrar perfiles inactivos">
+          <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex flex-column">
+              <span class="kpi-label">Perfiles Inactivos</span>
+              <h3 class="kpi-value text-sand">{{ totalInactivos }}</h3>
+              <span class="kpi-subtext">Perfiles pausados o archivados</span>
+            </div>
+            <div class="kpi-icon-box kpi-box-sand">
+              <span [data-feather]="'alert-circle'" [size]="18"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navegación por Pestañas & Tablas -->
     <section class="invoice-list-wrapper">
-      <div class="card">
+      <div class="card card-table-formal">
 
-        <div class="col-md-12 ">
-          <br>
-            <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (activeIdChange)="selTab($event)"
-              class="nav-pills justify-content-center">
+        <!-- Tabs de Navegación Formales -->
+        <div class="card-header border-bottom py-1 px-2 bg-slate-subtle d-flex align-items-center justify-content-between flex-wrap gap-1">
+          <div class="d-flex align-items-center">
+            <span [data-feather]="'user-check'" class="text-slate mr-2" [size]="18"></span>
+            <div>
+              <h6 class="font-weight-bold mb-0 text-slate-800">Directorio de Perfiles y Asignación de Roles</h6>
+              <span class="text-muted font-small-1">Gestión de esquemas de autorización granular y privilegios de usuario</span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center">
+            <ul ngbNav [(activeId)]="active" #navWithIcons="ngbNav" (activeIdChange)="selTab($event)" class="nav-pills-formal">
               <li [ngbNavItem]="1">
-                <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'list'"
-                  class="mr-1"></span><span class="font-weight-bold">Listado de Perfiles</span></a>
-                  <ng-template ngbNavContent>
+                <a ngbNavLink class="d-flex align-items-center">
+                  <span [data-feather]="'list'" [size]="14" class="mr-1"></span>
+                  <span>Listado de Perfiles</span>
+                </a>
 
+                <!-- ========================================================= -->
+                <!-- PESTAÑA 1: LISTADO DE PERFILES                             -->
+                <!-- ========================================================= -->
+                <ng-template ngbNavContent>
+                  <div>
+                    <!-- Filter Controls Body (44px exactos) -->
+                    <div class="p-2 border-bottom bg-white">
+                      <div class="row align-items-end g-2">
 
-
-                    <div class="col-md-12">
-                      <div class="d-flex justify-content-between align-items-center mb-1">
-                        <div class="d-flex align-items-center">
-                          <span class="mr-50">Mostrar</span>
-                          <select class="form-control form-control-sm" [formControl]="basicSelectedOptionCtrl"
-                            style="width: 80px;">
-                            <option [value]="10">10</option>
-                            <option [value]="25">25</option>
-                            <option [value]="50">50</option>
-                            <option [value]="100">100</option>
-                          </select>
-                          <span class="ml-50 text-muted small">perfiles</span>
-                        </div>
-                        <div class="d-flex align-items-center" style="min-width: 320px;">
-                          <div class="premium-search-box w-100">
-                            <span class="mr-1" [data-feather]="'search'" [size]="18" style="color: #b9b9c3;"></span>
-                            <input type="text" class="form-control form-control-sm border-0 bg-transparent"
-                              placeholder="Filtrar por perfil, aplicación..."
-                              (keyup)="filterUpdate($event)">
+                        <!-- Cantidad por página -->
+                        <div class="col-lg-3 col-md-4 col-sm-6">
+                          <label class="form-label-formal">
+                            <span [data-feather]="'hash'" [size]="12" class="mr-1 text-slate"></span>Mostrar
+                          </label>
+                          <div class="input-group-formal">
+                            <select class="form-control" [formControl]="basicSelectedOptionCtrl">
+                              <option value="10">10 por página</option>
+                              <option value="25">25 por página</option>
+                              <option value="50">50 por página</option>
+                              <option value="100">100 por página</option>
+                            </select>
                           </div>
                         </div>
-                      </div>
 
-                      @if (isLoading) {
-                        <div class="d-flex justify-content-center align-items-center py-5">
-                          <div class="text-center">
-                            <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
-                              <span class="sr-only">Cargando...</span>
+                        <!-- Búsqueda en Vivo -->
+                        <div class="col-lg-5 col-md-8 col-sm-12">
+                          <label class="form-label-formal">
+                            <span [data-feather]="'search'" [size]="12" class="mr-1 text-slate"></span>Buscar Perfil
+                          </label>
+                          <div class="input-group input-group-merge input-group-formal">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'search'" [size]="14"></span></span>
                             </div>
-                            <p class="text-muted font-weight-bold mb-0">Cargando lista de perfiles…</p>
+                            <input [formControl]="searchValueCtrl"
+                              type="text"
+                              class="form-control"
+                              placeholder="Buscar por perfil, aplicación, descripción..."
+                              (keyup)="filterUpdate($event)"
+                              (search)="filterUpdate($event)"
+                              ngbTooltip="Búsqueda instantánea en tiempo real"
+                              placement="top" />
+                            @if (searchValueCtrl.value) {
+                              <div class="input-group-append">
+                                <button class="btn btn-link btn-sm text-muted p-1" type="button" (click)="clearSearch()" ngbTooltip="Limpiar texto">
+                                  <span [data-feather]="'x'" [size]="13"></span>
+                                </button>
+                              </div>
+                            }
+                          </div>
+                        </div>
+
+                        <!-- Botones de Píldoras de Estado -->
+                        <div class="col-lg-4 col-md-12 col-sm-12 d-flex justify-content-lg-end mt-2 mt-lg-0">
+                          <div class="btn-group w-100 w-lg-auto formal-pill-group" role="group">
+                            <button type="button" class="btn"
+                              [ngClass]="selectedStatusFilter === 'all' ? 'btn-formal-active' : 'btn-formal-inactive'"
+                              (click)="setStatusFilter('all')">
+                              Todas ({{ totalPerfiles }})
+                            </button>
+                            <button type="button" class="btn"
+                              [ngClass]="selectedStatusFilter === 'activos' ? 'btn-formal-active' : 'btn-formal-inactive'"
+                              (click)="setStatusFilter('activos')">
+                              Activos ({{ totalActivos }})
+                            </button>
+                            <button type="button" class="btn"
+                              [ngClass]="selectedStatusFilter === 'inactivos' ? 'btn-formal-active' : 'btn-formal-inactive'"
+                              (click)="setStatusFilter('inactivos')">
+                              Inactivos ({{ totalInactivos }})
+                            </button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <!-- Datatable Table (Tonos Pasteles Serios) -->
+                    <ngx-datatable [rows]="lstPerfil" [rowHeight]="64" class="bootstrap core-bootstrap formal-enterprise-table"
+                      [columnMode]="ColumnMode.force" [headerHeight]="44" [footerHeight]="44"
+                      [scrollbarH]="true" [limit]="basicSelectedOptionCtrl.value" [count]="lstPerfil.length"
+                      [class.loading]="isLoading" [loadingIndicator]="isLoading">
+
+                      <!-- Columna: Perfil con Estatus Simplificado como Detalle -->
+                      <ngx-datatable-column name="PERFIL" prop="nombre" [width]="300">
+                        <ng-template let-column="column" ngx-datatable-header-template>
+                          <div class="d-flex align-items-center">
+                            <span [data-feather]="'user-check'" class="mr-1 text-slate" [size]="13"></span>
+                            <span class="table-header-title">Perfil</span>
+                          </div>
+                        </ng-template>
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                          <div class="d-flex align-items-center py-1">
+                            <div class="position-relative mr-2 flex-shrink-0">
+                              <div class="avatar avatar-formal-initials" [ngClass]="{
+                                'avatar-inactive': row.estatus == 0 || row.estatus == false || row.estatus == '0'
+                              }">
+                                <span>{{ (row.nombre || 'PF') | initials }}</span>
+                              </div>
+                              <span class="badge-status-dot" [ngClass]="{
+                                'dot-active': row.estatus == 1 || row.estatus == true || row.estatus == '1',
+                                'dot-inactive': row.estatus == 0 || row.estatus == false || row.estatus == '0'
+                              }" [ngbTooltip]="(row.estatus == 1 || row.estatus == true || row.estatus == '1') ? 'Perfil Activo' : 'Perfil Inactivo'">
+                              </span>
+                            </div>
+                            <div class="d-flex flex-column text-truncate">
+                              <span class="profile-row-title text-truncate font-weight-bold" [ngbTooltip]="row.nombre">
+                                {{ row.nombre }}
+                              </span>
+                              <div class="d-flex align-items-center mt-25 flex-wrap gap-1">
+                                <span class="badge-pastel-mono">{{ row.llave || 'ROL' }}</span>
+                                @if (row.estatus == 1 || row.estatus == true || row.estatus == '1') {
+                                  <span class="badge-pastel-sage ml-1 font-small-1">
+                                    <span class="status-indicator-dot dot-sage mr-50"></span>Activo
+                                  </span>
+                                } @else {
+                                  <span class="badge-pastel-sand ml-1 font-small-1">
+                                    <span class="status-indicator-dot dot-sand mr-50"></span>Inactivo
+                                  </span>
+                                }
+                              </div>
+                            </div>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+
+                      <!-- Columna: Descripción (Picada y en Mayúsculas) -->
+                      <ngx-datatable-column prop="descripcion" name="DESCRIPCIÓN" [width]="380" [cellClass]="'description-cell'">
+                        <ng-template let-column="column" ngx-datatable-header-template>
+                          <div class="d-flex align-items-center">
+                            <span [data-feather]="'file-text'" class="mr-1 text-slate" [size]="13"></span>
+                            <span class="table-header-title">Descripción</span>
+                          </div>
+                        </ng-template>
+                        <ng-template let-descripcion="value" ngx-datatable-cell-template>
+                          <div class="d-flex align-items-center w-100 min-w-0" style="flex: 1; min-width: 0;">
+                            <span class="font-weight-bold text-slate text-truncate d-block w-100 font-small-2"
+                                  style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                  [title]="(descripcion || 'SIN DESCRIPCIÓN') | uppercase">
+                              {{ descripcion ? ((descripcion.length > 70 ? (descripcion.slice(0, 70) + '...') : descripcion) | uppercase) : 'SIN DESCRIPCIÓN' }}
+                            </span>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+
+                      <!-- Columna: Aplicación / Rol -->
+                      <ngx-datatable-column name="APLICACIÓN / ROL" prop="llave" [width]="200" [cellClass]="'d-flex align-items-center'">
+                        <ng-template let-column="column" ngx-datatable-header-template>
+                          <div class="d-flex align-items-center">
+                            <span [data-feather]="'box'" class="mr-1 text-slate" [size]="13"></span>
+                            <span class="table-header-title">Aplicación / Rol</span>
+                          </div>
+                        </ng-template>
+                        <ng-template let-row="row" ngx-datatable-cell-template>
+                          <div class="badge-pastel-branch text-truncate max-w-100">
+                            <span [data-feather]="'box'" [size]="11" class="mr-1 flex-shrink-0"></span>
+                            <span>{{ row.llave }}</span>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+
+                      <!-- Columna: Acciones (34px nítidos con bordes suaves) -->
+                      <ngx-datatable-column name="ACCIONES" [width]="100" [sortable]="false" [canAutoResize]="false"
+                        [cellClass]="'d-flex align-items-center justify-content-center'">
+                        <ng-template let-column="column" ngx-datatable-header-template>
+                          <div class="w-100 text-center d-flex align-items-center justify-content-center">
+                            <span [data-feather]="'sliders'" class="mr-1 text-slate" [size]="13"></span>
+                            <span class="table-header-title">Acciones</span>
+                          </div>
+                        </ng-template>
+                        <ng-template ngx-datatable-cell-template let-row="row">
+                          <div class="table-actions-cell">
+                            <!-- Editar Perfil -->
+                            <button type="button"
+                              class="btn btn-formal-icon btn-action-slate"
+                              (click)="editarRol(row)"
+                              ngbTooltip="Editar Perfil">
+                              <span [data-feather]="'edit'" [size]="15"></span>
+                            </button>
+
+                            <!-- Eliminar Perfil -->
+                            <button type="button"
+                              class="btn btn-formal-icon btn-action-danger"
+                              (click)="eliminarRol(row)"
+                              ngbTooltip="Eliminar Perfil">
+                              <span [data-feather]="'trash-2'" [size]="15"></span>
+                            </button>
+                          </div>
+                        </ng-template>
+                      </ngx-datatable-column>
+
+                    </ngx-datatable>
+                  </div>
+                </ng-template>
+              </li>
+
+              <!-- ========================================================= -->
+              <!-- PESTAÑA 2: REGISTRAR / MODIFICAR PERFIL                    -->
+              <!-- ========================================================= -->
+              <li [ngbNavItem]="2">
+                <a ngbNavLink class="d-flex align-items-center" (click)="nuevoPerfil()">
+                  <span [data-feather]="'user-plus'" [size]="14" class="mr-1"></span>
+                  <span>{{ registrar }}</span>
+                </a>
+                <ng-template ngbNavContent>
+                  <div class="p-3">
+                    <div class="row g-2 mb-2">
+                      @if (blApp) {
+                        <div class="col-md-6 form-group">
+                          <label class="form-label-formal">Seleccionar Aplicación</label>
+                          <ng-select [items]="lstAplicaciones" [formControl]="perfilAplicacionCtrl" bindLabel="nombre" bindValue="id"
+                            placeholder="Seleccione una Aplicación" class="custom-select-formal"></ng-select>
+                        </div>
+                      }
+
+                      @if (!blApp) {
+                        <div class="col-md-6 form-group">
+                          <label class="form-label-formal">Aplicación</label>
+                          <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'box'" [size]="14"></span></span>
+                            </div>
+                            <input [formControl]="xaplicacionCtrl" type="text" placeholder="Aplicación" class="form-control">
                           </div>
                         </div>
                       }
-                      <ngx-datatable [rows]="lstPerfil" [rowHeight]="58" class="bootstrap core-bootstrap"
-                        [columnMode]="ColumnMode.force" [headerHeight]="40" [footerHeight]="50"
-                        [scrollbarH]="true" [limit]="basicSelectedOptionCtrl.value" [count]="lstPerfil.length"
-                        [class.loading]="isLoading" [loadingIndicator]="isLoading" [hidden]="isLoading">
 
-                        <ngx-datatable-column name="APLICACION / ROL" prop="llave" [width]="10">
-                          <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                              <span [data-feather]="'box'" [size]="16"
-                              style="color: #5b8fc9;"></span>
-                              <span class="ml-1 font-weight-bolder text-uppercase">Aplicación /
-                              Rol</span>
+                      @if (blApp) {
+                        <div class="col-md-6 form-group">
+                          <label class="form-label-formal">Seleccionar Rol</label>
+                          <ng-select [items]="dataRol" [formControl]="rolCtrl" bindLabel="name" bindValue="id"
+                            placeholder="Seleccione un Rol" class="custom-select-formal"></ng-select>
+                        </div>
+                      }
+
+                      @if (!blApp) {
+                        <div class="col-md-6 form-group">
+                          <label class="form-label-formal">Rol</label>
+                          <div class="input-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'shield'" [size]="14"></span></span>
                             </div>
-                          </ng-template>
-                          <ng-template let-row="row" ngx-datatable-cell-template>
-                            <div class="d-flex align-items-center">
-                              <span [data-feather]="'box'" [size]="18"
-                              class="text-primary mr-1"></span>
-                              <span class="font-weight-bold">{{ row.llave }}</span>
-                            </div>
-                          </ng-template>
-                        </ngx-datatable-column>
+                            <input [formControl]="xrolCtrl" type="text" placeholder="Rol" class="form-control">
+                          </div>
+                        </div>
+                      }
 
-                        <ngx-datatable-column name="PERFIL" prop="nombre" [width]="10">
-                          <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                              <span [data-feather]="'user-check'" [size]="16"
-                              style="color: #6ba88e;"></span>
-                              <span class="ml-1 font-weight-bolder text-uppercase">Perfil</span>
-                            </div>
-                          </ng-template>
-                          <ng-template let-nombre="value" ngx-datatable-cell-template>
-                            <div>
-                              <span [data-feather]="'user-check'" [size]="16"
-                              class="text-secondary mr-1"></span>
-                              <span class="font-weight-bold">{{ nombre }}</span>
-                            </div>
-                          </ng-template>
-                        </ngx-datatable-column>
+                      <div class="col-md-6 form-group">
+                        <label class="form-label-formal">Nombre del Perfil</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'user-check'" [size]="14"></span></span>
+                          </div>
+                          <input [formControl]="perfilNombreCtrl" type="text" placeholder="Ej: Administrador de Ventas" class="form-control">
+                        </div>
+                      </div>
 
-                        <ngx-datatable-column name="DESCRIPCION" prop="descripcion" [width]="20">
-                          <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                              <span [data-feather]="'file-text'" [size]="16"
-                              style="color: #9e9e9e;"></span>
-                              <span
-                              class="ml-1 font-weight-bolder text-uppercase">Descripción</span>
-                            </div>
-                          </ng-template>
-                          <ng-template let-descripcion="value" ngx-datatable-cell-template>
-                            <div>
-                              <span class="text-muted">{{ descripcion }}</span>
-                            </div>
-                          </ng-template>
-                        </ngx-datatable-column>
-
-                        <ngx-datatable-column name="ESTATUS" prop="estatus" [width]="5">
-                          <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center">
-                              <span [data-feather]="'activity'" [size]="16"
-                              style="color: #d4a574;"></span>
-                              <span class="ml-1 font-weight-bolder text-uppercase">Estatus</span>
-                            </div>
-                          </ng-template>
-                          <ng-template let-estatus="value" ngx-datatable-cell-template>
-
-                            @if (estatus==0) {
-                              <div class="badge badge-light-danger">Inactivo</div>
-                            }
-                            @if (estatus==1) {
-                              <div class="badge badge-light-success">Activo</div>
-                            }
-                          </ng-template>
-                        </ngx-datatable-column>
-
-                        <ngx-datatable-column name="ACCIÓN" [width]="5" [sortable]="false">
-                          <ng-template ngx-datatable-header-template>
-                            <div class="d-flex align-items-center justify-content-center">
-                              <span [data-feather]="'settings'" [size]="16"
-                              style="color: #4fc3f7;"></span>
-                              <span class="ml-1 font-weight-bolder text-uppercase">Acción</span>
-                            </div>
-                          </ng-template>
-                          <ng-template ngx-datatable-cell-template let-row="row">
-                            <div ngbDropdown container="body">
-                              <button ngbDropdownToggle type="button"
-                                class="btn icon-btn btn-sm hide-arrow" rippleEffect>
-                                <span [data-feather]="'settings'"
-                                [class]="'cursor-pointer'"></span>
-                              </button>
-                              <div ngbDropdownMenu>
-                                <a (click)="editarRol(row)" ngbDropdownItem><span
-                                  [data-feather]="'edit'" [size]="16"
-                                [class]="'mr-50'"></span> Editar</a>
-
-                                <a (click)="eliminarRol(row)" ngbDropdownItem><span
-                                  [data-feather]="'trash'" [size]="16"
-                                [class]="'mr-50'"></span> Eliminar</a>
-                              </div>
-                            </div>
-                          </ng-template>
-                        </ngx-datatable-column>
-
-                        <!-- Custom Footer to ensure pager visibility -->
-                        <ngx-datatable-footer>
-                          <ng-template
-                            ngx-datatable-footer-template
-                            let-rowCount="rowCount"
-                            let-pageSize="pageSize"
-                            let-selectedCount="selectedCount"
-                            let-curPage="curPage"
-                            let-offset="offset">
-                            <div class="p-1 d-flex justify-content-between align-items-center w-100">
-                              <div class="text-muted small">
-                                Total: <strong>{{ rowCount }}</strong> perfiles
-                              </div>
-                              <ngb-pagination
-                                [collectionSize]="rowCount"
-                                [(page)]="page"
-                                [pageSize]="pageSize"
-                                [maxSize]="5"
-                                [rotate]="true"
-
-
-                                (pageChange)="table.offset = $event - 1"
-                                class="pagination-sm mb-0">
-                                <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
-                              </ngb-pagination>
-                            </div>
-                          </ng-template>
-                        </ngx-datatable-footer>
-
-                      </ngx-datatable>
-
-
+                      <div class="col-md-6 form-group">
+                        <label class="form-label-formal">Descripción del Perfil</label>
+                        <div class="input-group-pastel">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text"><span [data-feather]="'file-text'" [size]="14"></span></span>
+                          </div>
+                          <input [formControl]="perfilDescripcionCtrl" type="text" placeholder="Breve descripción de responsabilidades" class="form-control">
+                        </div>
+                      </div>
                     </div>
 
-                  </ng-template>
-                </li>
-                <li [ngbNavItem]="2">
-                  <a ngbNavLink class="d-flex align-items-center"><span [data-feather]="'user-plus'"
-                    class="mr-1"></span><span class="font-weight-bold">{{registrar}}</span></a>
-                    <ng-template ngbNavContent>
-
-                      <div class="col-md-12" style="margin-top: 25px;">
-
-                        <!-- Primer -->
-                        <div class="row">
-                          @if (blApp) {
-                            <div class="form-group col-md-6">
-                              <label class="form-label" for="app-select">Seleccionar Aplicación</label>
-                              <ng-select [items]="lstAplicaciones" [formControl]="perfilAplicacionCtrl" bindLabel="nombre" bindValue="id"
-                              placeholder="Seleccione una Aplicación"></ng-select>
-                            </div>
-                          }
-
-                          @if (!blApp) {
-                            <div class="form-group col-md-6">
-                              <label class="form-label">Aplicacion</label>
-                              <div class="input-group input-group-merge">
-                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                [data-feather]="'box'" style="color: #64B5F6;"></span></span></div>
-                                <input [formControl]="xaplicacionCtrl"
-                                  type="text" placeholder="Aplicacion" class="form-control">
-                              </div>
-                            </div>
-                          }
-
-                          @if (blApp) {
-                            <div class="form-group col-md-6">
-                              <label class="form-label" for="rol-select">Seleccionar Rol</label>
-                              <ng-select [items]="dataRol" [formControl]="rolCtrl"
-                                bindLabel="name" bindValue="id"
-                              placeholder="Seleccione un Rol"></ng-select>
-                            </div>
-                          }
-
-                          @if (!blApp) {
-                            <div class="form-group col-md-6">
-                              <label class="form-label">Rol</label>
-                              <div class="input-group input-group-merge">
-                                <div class="input-group-prepend"><span class="input-group-text"><span
-                                [data-feather]="'shield'" style="color: #BA68C8;"></span></span></div>
-                                <input [formControl]="xrolCtrl"
-                                  type="text" placeholder="Rol" class="form-control">
-                              </div>
-                            </div>
-                          }
-                        </div>
-
-                        <div class="row">
-                          <div class="form-group col-md-6">
-                            <label class="form-label" for="profile-name">Nombre del Perfil</label>
-                            <div class="input-group input-group-merge">
-                              <div class="input-group-prepend"><span class="input-group-text"><span
-                              [data-feather]="'user-check'" style="color: #81C784;"></span></span></div>
-                              <input [formControl]="perfilNombreCtrl"
-                                type="text" id="profile-name"
-                                placeholder="Ej: Administrador de Ventas" class="form-control">
-                            </div>
-                          </div>
-
-                          <div class="form-group col-md-6">
-                            <label class="form-label" for="profile-desc">Descripción del Perfil</label>
-                            <div class="input-group input-group-merge">
-                              <div class="input-group-prepend"><span class="input-group-text"><span
-                              [data-feather]="'file-text'" style="color: #90A4AE;"></span></span></div>
-                              <input [formControl]="perfilDescripcionCtrl"
-                                type="text" id="profile-desc"
-                                placeholder="Una breve descripción de las responsabilidades del perfil"
-                                class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                        <br>
-
-                        </div>
-
-
-                        <div class="col-md-12">
-
-                          @if (dataRolDetalles.length > 0) {
-                            <ngx-datatable [rows]="dataRolDetalles"
-                              [rowHeight]="58" class="bootstrap core-bootstrap" [limit]="basicSelectedOption"
-                              [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
-                              [headerHeight]="40" [footerHeight]="50" [scrollbarH]="false"
-                              (select)="onSelect($event)">
-                              <ngx-datatable-row-detail [rowHeight]="'auto'" #rowDetail>
-                                <ng-template let-row="row" ngx-datatable-row-detail-template>
-                                  <div class="p-2 border-top" style="background-color: #f8f9fa;">
-                                    <!-- Nivel 2: Sub-Menús -->
-                                    @for (subMenu of row.children; track subMenu; let i = $index) {
-                                      <div
-                                        class="py-1" style="margin-left: 30px;">
-                                        <div class="d-flex align-items-center mb-1">
-                                          <!-- Botón para expandir Privilegios -->
-                                          @if (subMenu.children && subMenu.children.length > 0) {
-                                            <button
-                                              class="btn btn-sm btn-link p-0 mr-2"
-                                              (click)="subMenu.isExpanded = !subMenu.isExpanded">
-                                              <!-- Solución definitiva: Usar [ngClass] para evitar la recreación del elemento y el conflicto con la directiva -->
-                                              <span
-                                                [ngClass]="{'icon-plus': !subMenu.isExpanded, 'icon-minus': subMenu.isExpanded}"
-                                              [size]="16"></span>
-                                            </button>
+                    <!-- Árbol de Permisos Granulares y Check List -->
+                    @if (dataRolDetalles.length > 0) {
+                      <div class="mt-2 mb-3">
+                        <ngx-datatable #tablePermissions [rows]="dataRolDetalles"
+                          [rowHeight]="58" class="bootstrap core-bootstrap formal-enterprise-table permissions-tree-table" [limit]="basicSelectedOption"
+                          [columnMode]="ColumnMode.force" [selectionType]="SelectionType.checkbox"
+                          [headerHeight]="48" [footerHeight]="50" [scrollbarH]="false"
+                          (select)="onSelect($event)">
+                          <ngx-datatable-row-detail [rowHeight]="'auto'" #rowDetail>
+                            <ng-template let-row="row" let-rowIndex="rowIndex" ngx-datatable-row-detail-template>
+                              <div class="p-2 border-top" style="background-color: #fbfbfe;">
+                                <!-- Nivel 2: Sub-Menús -->
+                                @for (subMenu of row.children; track subMenu; let i = $index) {
+                                  <div class="py-1" style="margin-left: 20px;">
+                                    <div class="submenu-item-row">
+                                      <!-- Botón para expandir Privilegios (+ / -) a la izquierda -->
+                                      @if (subMenu.children && subMenu.children.length > 0) {
+                                        <button class="btn-tree-toggle mr-2"
+                                          type="button"
+                                          (click)="subMenu.isExpanded = !subMenu.isExpanded"
+                                          [title]="subMenu.isExpanded ? 'Contraer privilegios' : 'Expandir privilegios'">
+                                          @if (!subMenu.isExpanded) {
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                              <line x1="12" y1="5" x2="12" y2="19"></line>
+                                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                          } @else {
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
                                           }
-                                          <!-- Checkbox del Sub-Menú -->
-                                          <div class="custom-control custom-checkbox"
-                                            [style.margin-left]="(!subMenu.children || subMenu.children.length === 0) ? '24px' : '0'">
-                                            <input type="checkbox" class="custom-control-input"
-                                              [checked]="subMenu.estatus === 1"
-                                              [indeterminate]="hasSelectedPrivileges(subMenu) && subMenu.estatus !== 1"
-                                              (change)="onSubMenuCheckboxChange(subMenu, $event)"
-                                              id="subMenuChkbxRef{{ row.menu + i }}" />
-                                            <label class="custom-control-label"
-                                              for="subMenuChkbxRef{{ row.menu + i }}">
-                                              <span class="ml-2 font-weight-bolder"
-                                                style="color: #5e5873;">{{ subMenu.accion }}
-                                                @if (subMenu.children?.length) {
-                                                  <span class="text-muted font-small-3">({{ subMenu.children.length }})</span>
-                                                }
-                                              </span>
-                                            </label>
-                                          </div>
-                                        </div>
-                                        <!-- Nivel 3: Privilegios (si está expandido) -->
-                                        <div class="privileges-container"
-                                          [class.show]="subMenu.isExpanded">
-                                          @for (privilegio of subMenu.children; track privilegio; let j = $index) {
-                                            <div
-                                              class="custom-control custom-checkbox mr-3 mb-1">
-                                              <input type="checkbox" class="custom-control-input"
-                                                [checked]="privilegio.estatus === 1"
-                                                (change)="onPrivilegeCheckboxChange(privilegio, subMenu, $event)"
-                                                id="privChkbxRef{{ row.menu + i + j }}" />
-                                              <label class="custom-control-label"
-                                                for="privChkbxRef{{ row.menu + i + j }}">
-                                                <span class="ml-2 font-weight-normal"
-                                                  style="color: #6e6b7b;">{{ privilegio.accion
-                                                }}</span>
-                                              </label>
-                                            </div>
+                                        </button>
+                                      } @else {
+                                        <div class="btn-tree-spacer mr-2"></div>
+                                      }
+
+                                      <!-- Checkbox del Sub-Menú -->
+                                      <label class="tree-checkbox-wrap" [for]="'sm_' + row.modulo + '_' + i">
+                                        <input type="checkbox" class="tree-check-input"
+                                          [checked]="subMenu.estatus === 1"
+                                          [indeterminate]="hasSelectedPrivileges(subMenu) && subMenu.estatus !== 1"
+                                          (change)="onSubMenuCheckboxChange(subMenu, $event)"
+                                          [id]="'sm_' + row.modulo + '_' + i" />
+                                        <span class="tree-check-custom"></span>
+                                        <span class="tree-check-text font-weight-bolder text-slate-800">
+                                          {{ subMenu.accion }}
+                                          @if (subMenu.children?.length) {
+                                            <span class="badge-count">({{ subMenu.children.length }})</span>
                                           }
-                                        </div>
+                                        </span>
+                                      </label>
+                                    </div>
+
+                                    <!-- Nivel 3: Privilegios (si está expandido) -->
+                                    <div class="privileges-container" [class.show]="subMenu.isExpanded">
+                                      <div class="privileges-grid">
+                                        @for (privilegio of subMenu.children; track privilegio; let j = $index) {
+                                          <label class="tree-checkbox-wrap privilege-item" [for]="'priv_' + row.modulo + '_' + i + '_' + j">
+                                            <input type="checkbox" class="tree-check-input"
+                                              [checked]="privilegio.estatus === 1"
+                                              (change)="onPrivilegeCheckboxChange(privilegio, subMenu, $event)"
+                                              [id]="'priv_' + row.modulo + '_' + i + '_' + j" />
+                                            <span class="tree-check-custom"></span>
+                                            <span class="tree-check-text">{{ privilegio.accion }}</span>
+                                          </label>
+                                        }
                                       </div>
+                                    </div>
+                                  </div>
+                                }
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-row-detail>
+
+                          <!-- Columna 1: Checkbox Maestro / Padre -->
+                          <ngx-datatable-column [width]="60" [sortable]="false" [canAutoResize]="false"
+                            [draggable]="false" [resizeable]="false"
+                            headerClass="table-check-col"
+                            cellClass="table-check-col">
+                            <ng-template ngx-datatable-header-template let-selectFn="selectFn">
+                              <div class="table-check-cell">
+                                <label class="tree-checkbox-wrap" title="Seleccionar todos los módulos">
+                                  <input type="checkbox" class="tree-check-input"
+                                    [checked]="isMasterChecked()"
+                                    [indeterminate]="isMasterIndeterminate()"
+                                    id="headerChkbxRef" (change)="onMasterCheckboxChange($event)" />
+                                  <span class="tree-check-custom"></span>
+                                </label>
+                              </div>
+                            </ng-template>
+                            <ng-template ngx-datatable-cell-template let-row="row" let-rowIndex="rowIndex">
+                              <div class="table-check-cell">
+                                <label class="tree-checkbox-wrap" [title]="'Seleccionar módulo ' + row.modulo">
+                                  <input type="checkbox" class="tree-check-input"
+                                    [checked]="row.estatus === 1"
+                                    [indeterminate]="hasSelectedChildren(row) && row.estatus !== 1"
+                                    (change)="onParentCheckboxChange(row, $event)"
+                                    id="rowChkbxRef{{ rowIndex }}" />
+                                  <span class="tree-check-custom"></span>
+                                </label>
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-column>
+
+                          <!-- Columna 2: Módulo (con botón +/- alineado antes del icono) -->
+                          <ngx-datatable-column name="MÓDULO" [width]="280" prop="modulo">
+                            <ng-template ngx-datatable-header-template>
+                              <div class="d-flex align-items-center">
+                                <span [data-feather]="'grid'" [size]="16" style="color: #7367f0;"></span>
+                                <span class="ml-1 font-weight-bolder text-uppercase">Módulo</span>
+                              </div>
+                            </ng-template>
+                            <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+                              <div class="d-flex align-items-center">
+                                @if (row.children && row.children.length > 0) {
+                                  <button class="btn-tree-toggle mr-2" type="button"
+                                    (click)="tablePermissions.rowDetail.toggleExpandRow(row); row.isExpanded = !row.isExpanded"
+                                    [title]="row.isExpanded ? 'Contraer módulo' : 'Expandir módulo'">
+                                    @if (!row.isExpanded) {
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                      </svg>
+                                    } @else {
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                      </svg>
                                     }
-                                  </div>
-                                </ng-template>
-                              </ngx-datatable-row-detail>
-                              <ngx-datatable-column [width]="50" [sortable]="false" [canAutoResize]="false"
-                                [draggable]="false" [resizeable]="false">
-                                <ng-template ngx-datatable-header-template let-selectFn="selectFn">
-                                  <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input"
-                                      id="headerChkbxRef" (change)="onMasterCheckboxChange($event)" />
-                                    <label class="custom-control-label" for="headerChkbxRef"></label>
-                                  </div>
-                                </ng-template>
-                                <ng-template ngx-datatable-cell-template let-row="row"
-                                  let-rowIndex="rowIndex">
-                                  <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input"
-                                      [checked]="row.estatus === 1"
-                                      [indeterminate]="hasSelectedChildren(row) && row.estatus !== 1" (change)="onParentCheckboxChange(row, $event)"
-                                      id="rowChkbxRef{{ rowIndex }}" />
-                                    <label class="custom-control-label"
-                                    for="rowChkbxRef{{ rowIndex }}"></label>
-                                  </div>
-                                </ng-template>
-                              </ngx-datatable-column>
-                              <ngx-datatable-column name="MÓDULO" [width]="250" prop="modulo">
-                                <ng-template ngx-datatable-header-template>
-                                  <div class="d-flex align-items-center">
-                                    <span [data-feather]="'grid'" [size]="16"
-                                    style="color: #5b8fc9;"></span>
-                                    <span class="ml-1 font-weight-bolder text-uppercase">Módulo</span>
-                                  </div>
-                                </ng-template>
-                                <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
-                                  <div class="d-flex align-items-center">
-                                    <span [data-feather]="'grid'" [size]="18"
-                                    class="text-primary mr-1"></span>
-                                    <span class="font-weight-bold">{{ row.modulo }}</span>
-                                    &nbsp;&nbsp;
-                                    @if (row.children && row.children.length > 0) {
-                                      <button
-                                        class="btn btn-sm btn-link p-0 mr-2" title="Expandir/Contraer"
-                                        (click)="table?.rowDetail.toggleExpandRow(row)">
-                                        <span [data-feather]="row.isExpanded ? 'minus' : 'plus'"></span>
-                                      </button>
-                                    }
-                                  </div>
-                                </ng-template>
-                              </ngx-datatable-column>
-                              <ngx-datatable-column name="MENÚ" [width]="200" prop="menu">
-                                <ng-template ngx-datatable-header-template>
-                                  <div class="d-flex align-items-center">
-                                    <span [data-feather]="'menu'" [size]="16"
-                                    style="color: #6ba88e;"></span>
-                                    <span class="ml-1 font-weight-bolder text-uppercase">Menú</span>
-                                  </div>
-                                </ng-template>
-                                <ng-template let-menu="value" ngx-datatable-cell-template>
-                                  <span class="font-weight-normal text-info">{{ menu }}</span>
-                                </ng-template>
-                              </ngx-datatable-column>
-                              <ngx-datatable-column name="GENERAL" [width]="100" prop="accion">
-                                <ng-template ngx-datatable-header-template>
-                                  <div class="d-flex align-items-center">
-                                    <span [data-feather]="'zap'" [size]="16"
-                                    style="color: #d4a574;"></span>
-                                    <span class="ml-1 font-weight-bolder text-uppercase">Acción</span>
-                                  </div>
-                                </ng-template>
-                                <ng-template let-accion="value" ngx-datatable-cell-template>
-                                  <div>
-                                    @if (accion === '-') {
-                                      <span
-                                        class="badge badge-pill badge-light-secondary">Grupo de
-                                      Permisos</span>
-                                    }
-                                    @if (accion !== '-') {
-                                      <span
-                                        class="font-weight-bold text-secondary">{{ accion
-                                      }}</span>
-                                    }
-                                  </div>
-                                </ng-template>
-                              </ngx-datatable-column>
-                            </ngx-datatable>
-                          }
+                                  </button>
+                                } @else {
+                                  <div class="btn-tree-spacer mr-2"></div>
+                                }
+                                <span [data-feather]="'grid'" [size]="18" class="text-primary mr-1 flex-shrink-0"></span>
+                                <span class="font-weight-bold text-slate-800">{{ row.modulo }}</span>
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-column>
 
+                          <!-- Columna 3: Menú -->
+                          <ngx-datatable-column name="MENÚ" [width]="200" prop="menu">
+                            <ng-template ngx-datatable-header-template>
+                              <div class="d-flex align-items-center">
+                                <span [data-feather]="'menu'" [size]="16" style="color: #6ba88e;"></span>
+                                <span class="ml-1 font-weight-bolder text-uppercase">Menú</span>
+                              </div>
+                            </ng-template>
+                            <ng-template let-menu="value" ngx-datatable-cell-template>
+                              <span class="font-weight-normal text-info">{{ menu }}</span>
+                            </ng-template>
+                          </ngx-datatable-column>
 
+                          <!-- Columna 4: General -->
+                          <ngx-datatable-column name="GENERAL" [width]="100" prop="accion">
+                            <ng-template ngx-datatable-header-template>
+                              <div class="d-flex align-items-center">
+                                <span [data-feather]="'zap'" [size]="16" style="color: #d4a574;"></span>
+                                <span class="ml-1 font-weight-bolder text-uppercase">Acción</span>
+                              </div>
+                            </ng-template>
+                            <ng-template let-accion="value" ngx-datatable-cell-template>
+                              <div>
+                                @if (accion === '-') {
+                                  <span class="badge badge-pill badge-light-secondary">Grupo de Permisos</span>
+                                }
+                                @if (accion !== '-') {
+                                  <span class="font-weight-bold text-secondary">{{ accion }}</span>
+                                }
+                              </div>
+                            </ng-template>
+                          </ngx-datatable-column>
+                        </ngx-datatable>
+                      </div>
+                    }
 
+                    <!-- Botones de Acción del Formulario (Fluidos, 44px, 14px curvas, SIN ICONOS) -->
+                    <div class="form-actions-bar">
+                      <div class="action-group-primary">
+                        @if (Perfil.nombre && Perfil.nombre.trim() !== '' && Perfil.descripcion && Perfil.descripcion.trim() !== '' && blApp) {
+                          <button type="button" class="btn btn-swal-purple" (click)="guardarPerfiles()">
+                            Guardar Perfil
+                          </button>
+                        }
+                        @if (Perfil.nombre && Perfil.nombre.trim() !== '' && Perfil.descripcion && Perfil.descripcion.trim() !== '' && !blApp) {
+                          <button type="button" class="btn btn-swal-purple" (click)="guardarPerfiles()" [disabled]="!hasProfileChanged()">
+                            Modificar Perfil
+                          </button>
+                        }
+                      </div>
 
-                        </div>
-
-                        <div class="col-md-12">
-                          <hr style="padding-bottom: 20px;">
-                        </div>
-
-                        <div class="row">
-                          <div class="col-md-6" align="left">
-                            @if (Perfil.nombre && Perfil.nombre.trim() !== '' && Perfil.descripcion && Perfil.descripcion.trim() !== '' && blApp) {
-                              <button type="button" class="btn shadow-none" (click)="guardarPerfiles()"
-                                style="background-color: #40a671; color: #ffffff; border: none; font-weight: 400; min-width: 150px; border-radius: 6px;">
-                                <span [data-feather]="'check'" class="mr-1"></span>Guardar Perfil
-                              </button>
-                            }
-                            @if (Perfil.nombre && Perfil.nombre.trim() !== '' && Perfil.descripcion && Perfil.descripcion.trim() !== '' && !blApp) {
-                              <button type="button" class="btn shadow-none" (click)="guardarPerfiles()"
-                                [disabled]="!hasProfileChanged()"
-                                style="background-color: #b49448; color: #ffffff; border: none; font-weight: 400; min-width: 150px; border-radius: 6px;">
-                                <span [data-feather]="'check'" class="mr-1"></span>Modificar Perfil
-                              </button>
-                            }
-                          </div>
-                          <div class="col-md-6" align="right">
-                            @if (!blApp) {
-                              <button type="button" class="btn mr-1 shadow-none"
-                                (click)="exportarPDF()"
-                                style="background-color: #6f42c1; color: #ffffff; border: none; font-weight: 400; min-width: 150px; border-radius: 6px;">
-                                <span [data-feather]="'download'" class="mr-1"></span>Generar PDF
-                              </button>
-                            }
-                            <button type="button" class="btn mr-1 shadow-none" (click)="Cancelar()"
-                              style="background-color: #b06d4e; color: #ffffff; border: none; font-weight: 400; min-width: 150px; border-radius: 6px;">
-                              <span [data-feather]="'arrow-left'" class="mr-1"></span>Cancelar
-                            </button>
-
-                          </div>
-                        </div>
-                        <br><br>
-                      </ng-template>
-                    </li>
-                  </ul>
-                  <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
-                </div>
-
-
-
-
-
-
-
-
-
-              </div>
-            </section>
-
+                      <div class="action-group-secondary">
+                        @if (!blApp) {
+                          <button type="button" class="btn btn-swal-neutral" (click)="exportarPDF()">
+                            Generar PDF
+                          </button>
+                        }
+                        <button type="button" class="btn btn-swal-neutral" (click)="Cancelar()">
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-template>
+              </li>
+            </ul>
           </div>
         </div>
+
+        <!-- Renderizado de la pestaña activa -->
+        <div [ngbNavOutlet]="navWithIcons" class="mt-0"></div>
+
+      </div>
+    </section>
+
+  </div>
+</div>

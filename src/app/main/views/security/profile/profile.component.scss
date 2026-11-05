@@ -1,435 +1,999 @@
-// ========================================
-// Pastel Theme Variables
-// ========================================
-$primary-soft: #e8f0fe;
-$primary-text: #5b8fc9;
-$success-soft: #e6f4ea;
-$success-text: #6ba88e;
-$warning-soft: #fef7e0;
-$warning-text: #d4a574;
-$danger-soft: #fce8e6;
-$danger-text: #d18a9a;
-$info-soft: #e1f5fe;
-$info-text: #4fc3f7;
-$secondary-soft: #f5f5f5;
-$secondary-text: #9e9e9e;
+@import '@core/scss/base/bootstrap-extended/include';
+@import '@core/scss/base/components/include';
 
-$soft-bg: #f8f9fa;
-$border-color: #e0e0e0;
-$text-primary: #2c3e50;
-$text-secondary: #7f8c8d;
+// =========================================================================
+// PALETA DE COLORES PASTELES SOBRIOS Y CORPORATIVOS (SERIOUS PASTEL PALETTE)
+// =========================================================================
+$sage-bg: #e8f5ed;
+$sage-text: #2e694d;
+$sage-border: #c3e6d1;
 
-// ========================================
-// General Styling
-// ========================================
-input {
-  font-size: 14px;
-  font-family: 'Inter', sans-serif;
+$sand-bg: #fef6ea;
+$sand-text: #7c5828;
+$sand-border: #f8dfbd;
+
+$slate-dark: #334155;
+$slate-muted: #64748b;
+$slate-light: #94a3b8;
+
+.text-slate {
+  color: $slate-dark !important;
 }
 
-button {
-  height: 38px;
-  font-family: 'Inter', sans-serif;
+.text-slate-muted {
+  color: $slate-muted !important;
 }
 
-// ========================================
-// Datatable Enhanced Styling
-// ========================================
-::ng-deep {
-  .ngx-datatable.bootstrap {
-    box-shadow: none;
-    
-    // Header Styling
-    .datatable-header {
-      background: linear-gradient(135deg, $soft-bg 0%, lighten($primary-soft, 5%) 100%);
-      border-bottom: 2px solid $border-color;
-      
-      .datatable-header-cell {
-        padding: 1rem;
-        font-weight: 700;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-        color: $text-primary;
-        text-transform: uppercase;
-        font-family: 'Inter', sans-serif;
+.text-sage {
+  color: $sage-text !important;
+}
+
+.text-sand {
+  color: $sand-text !important;
+}
+
+// =========================================================================
+// TARJETAS KPI (ESTILO FORMAL Y SOBRIO CON CURVAS SUAVES)
+// =========================================================================
+.app-kpi-formal {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 18px;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    border-color: rgba(115, 103, 240, 0.35);
+    box-shadow: 0 8px 24px rgba(115, 103, 240, 0.08);
+    transform: translateY(-2px);
+  }
+
+  &.active-kpi {
+    border-color: #7367f0;
+    background: linear-gradient(135deg, rgba(115, 103, 240, 0.04) 0%, #ffffff 100%);
+    box-shadow: 0 6px 20px rgba(115, 103, 240, 0.12);
+  }
+
+  .kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $slate-muted;
+  }
+
+  .kpi-value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0.25rem 0 0.15rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-subtext {
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .kpi-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.kpi-box-neutral {
+      background: #f5f3ff;
+      color: #7367f0;
+      border: 1px solid #ede9fe;
+    }
+
+    &.kpi-box-sage {
+      background: $sage-bg;
+      color: $sage-text;
+      border: 1px solid $sage-border;
+    }
+
+    &.kpi-box-sand {
+      background: $sand-bg;
+      color: $sand-text;
+      border: 1px solid $sand-border;
+    }
+  }
+}
+
+// =========================================================================
+// CONTENEDOR Y FILTROS DE TABLA (44PX EXACTOS, CURVAS SUAVES 14PX)
+// =========================================================================
+.card-table-formal {
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+
+  .bg-slate-subtle {
+    background-color: #fbfbfe;
+  }
+
+  .form-label-formal {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $slate-dark;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-formal-outline {
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    color: #6366f1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 14px;
+    height: 42px;
+    padding: 0 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #c4b5fd;
+      color: #7367f0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-formal-ghost {
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    color: #64748b;
+    border-radius: 14px;
+    height: 42px;
+    width: 42px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #c4b5fd;
+      color: #7367f0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .input-group-formal {
+    height: 44px;
+
+    .input-group-prepend .input-group-text {
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-right: none;
+      border-top-left-radius: 14px;
+      border-bottom-left-radius: 14px;
+      color: #a78bfa;
+      padding-left: 1rem;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .form-control {
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-left: none;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+      font-size: 0.88rem;
+      padding: 0 1rem;
+      height: 44px;
+      color: #1e293b;
+      transition: all 0.2s ease;
+
+      &:focus {
+        background: #ffffff;
+        border-color: #7367f0;
+        box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
       }
     }
-    
-    // Body Styling
-    .datatable-body {
-      .datatable-body-row {
-        border-bottom: 1px solid lighten($border-color, 3%);
-        transition: all 0.2s ease;
-        cursor: pointer;
-        
+
+    .input-group-append .btn {
+      height: 44px;
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-left: none;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+      color: #94a3b8;
+      padding: 0 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        color: #ef4444;
+      }
+    }
+  }
+
+  .custom-select-formal {
+    ::ng-deep .ng-select-container {
+      border: 1.5px solid #ede9fe;
+      border-radius: 14px;
+      height: 44px !important;
+      min-height: 44px !important;
+      background: #fafbfe;
+      font-size: 0.88rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        border-color: #d8b4fe;
+      }
+    }
+
+    ::ng-deep .ng-select-focused .ng-select-container {
+      background: #ffffff;
+      border-color: #7367f0;
+      box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
+    }
+  }
+
+  .formal-pill-group {
+    height: 44px !important;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1.5px solid #ede9fe;
+    background: #fafbfe;
+    display: inline-flex;
+    align-items: stretch;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    .btn {
+      height: 44px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+      padding: 0 1.25rem !important;
+      border: none !important;
+      border-radius: 0 !important;
+      line-height: 1 !important;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      &.btn-formal-active {
+        background: #7367f0 !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        box-shadow: 0 2px 10px rgba(115, 103, 240, 0.35) !important;
+      }
+
+      &.btn-formal-inactive {
+        background: transparent !important;
+        color: #64748b !important;
+        font-weight: 500 !important;
+
         &:hover {
-          background-color: lighten($primary-soft, 5%) !important;
-          transform: scale(1.002);
-          box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        .datatable-body-cell {
-          padding: 1rem;
-          vertical-align: middle;
-          
-          .font-weight-bold {
-            font-weight: 600;
-            color: $text-primary;
-          }
+          background: #f5f3ff !important;
+          color: #7367f0 !important;
         }
       }
-      
-      // Row Detail (Expanded Content)
-      .datatable-row-detail {
-        background: linear-gradient(135deg, $soft-bg 0%, lighten($secondary-soft, 2%) 100%);
-        border-top: 1px solid $border-color;
-        border-bottom: 1px solid $border-color;
-        padding: 1.5rem;
+
+      &:not(:last-child) {
+        border-right: 1.5px solid #ede9fe !important;
       }
     }
   }
 }
 
-// ========================================
-// Expansion Button Styling
-// ========================================
-.btn-expansion,
-.btn-sm.btn-link {
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0.25rem;
-  margin-right: 0.5rem;
+// =========================================================================
+// TABLA FORMAL ENTERPRISE
+// =========================================================================
+.formal-enterprise-table {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+
+  .ngx-datatable.bootstrap {
+    .datatable-header {
+      border-bottom: 1px solid #e2e8f0;
+      background: #fbfbfe;
+
+      .datatable-header-cell {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        border: none;
+      }
+    }
+
+    .datatable-body {
+      .datatable-body-row {
+        border-bottom: 1px solid #f1f5f9;
+        transition: all 0.15s ease;
+
+        &:hover {
+          background-color: #fafbfe !important;
+        }
+
+        .datatable-body-cell {
+          padding: 0.75rem 1.25rem;
+          vertical-align: middle;
+          font-size: 0.88rem;
+          color: #334155;
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+
+    .datatable-footer {
+      background: #fbfbfe;
+      border-top: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 0.82rem;
+      padding: 0.5rem 1.25rem;
+    }
+  }
+
+  .profile-row-title {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #1e293b;
+    line-height: 1.35;
+  }
+
+  .avatar-formal-initials {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f5f3ff;
+    color: #7367f0;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #ede9fe;
+
+    &.avatar-inactive {
+      background: #fef3c7;
+      color: #d97706;
+      border-color: #fde68a;
+    }
+  }
+
+  .badge-status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+
+    &.dot-active {
+      background-color: #10b981;
+    }
+
+    &.dot-inactive {
+      background-color: #f59e0b;
+    }
+  }
+
+  .badge-pastel-mono {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.74rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 8px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-branch {
+    background: #f5f3ff;
+    border: 1px solid #ddd6fe;
+    color: #7367f0;
+    font-size: 0.74rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 10px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-sage {
+    background: $sage-bg;
+    color: $sage-text;
+    border: 1px solid $sage-border;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-sand {
+    background: $sand-bg;
+    color: $sand-text;
+    border: 1px solid $sand-border;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .status-indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &.dot-sage {
+      background-color: #10b981;
+    }
+
+    &.dot-sand {
+      background-color: #f59e0b;
+    }
+  }
+
+  .btn-formal-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    max-width: 34px !important;
+    border-radius: 10px !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: 1.5px solid #ede9fe !important;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+    background: #ffffff !important;
+    color: #6366f1 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+
+    svg, [data-feather], i {
+      width: 15px !important;
+      height: 15px !important;
+      min-width: 15px !important;
+      min-height: 15px !important;
+      stroke: currentColor !important;
+      stroke-width: 2 !important;
+      display: inline-block !important;
+      vertical-align: middle !important;
+    }
+
+    &:hover {
+      background: #f5f3ff !important;
+      border-color: #c4b5fd !important;
+      color: #7367f0 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 10px rgba(115, 103, 240, 0.14) !important;
+    }
+
+    &.btn-action-slate {
+      color: #6366f1 !important;
+      border-color: #ede9fe !important;
+      &:hover {
+        background: #f5f3ff !important;
+        color: #7367f0 !important;
+        border-color: #c4b5fd !important;
+      }
+    }
+
+    &.btn-action-danger {
+      color: #ef4444 !important;
+      border-color: #fee2e2 !important;
+      &:hover {
+        background: #fef2f2 !important;
+        color: #dc2626 !important;
+        border-color: #fca5a5 !important;
+      }
+    }
+  }
+
+  ::ng-deep .datatable-body-cell.description-cell .datatable-body-cell-label {
+    display: block !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+// =========================================================================
+// NAV PILLS Y FORMULARIOS DE REGISTRO
+// =========================================================================
+.nav-pills-formal {
+  border: 1.5px solid #ede9fe;
+  background: #fafbfe;
+  border-radius: 16px;
+  padding: 5px;
+  display: inline-flex;
+  gap: 8px;
+
+  .nav-item .nav-link {
+    height: 42px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #64748b;
+    padding: 0 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.2s ease;
+
+    &.active {
+      background: #7367f0;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(115, 103, 240, 0.35);
+    }
+
+    &:hover:not(.active) {
+      background: #f5f3ff;
+      color: #7367f0;
+    }
+  }
+}
+
+.input-group-pastel {
+  border: 1.5px solid #ede9fe !important;
+  border-radius: 12px !important;
+  background-color: #fafbfe;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  height: 44px;
+
+  &:focus-within {
+    border-color: #7367f0 !important;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15) !important;
+  }
+
+  .input-group-prepend .input-group-text,
+  .input-group-append .input-group-text {
+    background-color: transparent !important;
+    border: none !important;
+    color: #a78bfa !important;
+    padding: 0 0.65rem 0 0.85rem !important;
+    display: flex;
+    align-items: center;
+  }
+
+  .form-control {
+    border: none !important;
+    background-color: transparent !important;
+    font-size: 0.88rem;
+    color: #334155;
+    padding: 0.45rem 0.75rem !important;
+    height: 44px;
+
+    &:focus {
+      box-shadow: none !important;
+    }
+  }
+}
+
+// BOTONES GLOBALES UNIFORMES Y ELEGANTES (ESTILO SWEETALERT LOGOUT - 44PX, 14PX, SIN ICONOS)
+.btn-swal-neutral,
+.btn-swal-purple {
+  height: 44px !important;
+  min-width: 130px !important;
+  border-radius: 14px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.6rem !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-sizing: border-box !important;
+}
+
+.btn-swal-neutral {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+
+  &:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+    transform: translateY(-1.5px) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.btn-swal-purple {
+  background-color: #7367f0 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(115, 103, 240, 0.35) !important;
+
+  &:hover {
+    background-color: #6355ee !important;
+    color: #ffffff !important;
+    transform: translateY(-1.5px) !important;
+    box-shadow: 0 6px 18px rgba(115, 103, 240, 0.45) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+
+  &:disabled {
+    opacity: 0.65 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.btn-swal-close-round {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #64748b !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #dc2626 !important;
+    transform: scale(1.05) !important;
+  }
+}
+
+// =========================================================================
+// ESPACIADO FLUIDO ENTRE BOTONES Y BARRAS DE ACCIÓN
+// =========================================================================
+.table-actions-cell {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  color: $text-secondary;
-  transition: all 0.2s ease;
-  border-radius: 6px;
-
-  &:hover {
-    color: $primary-text;
-    background-color: $primary-soft;
-    transform: scale(1.1);
-  }
-  
-  &:active {
-    transform: scale(0.95);
-  }
+  gap: 0.65rem;
+  width: 100%;
 }
 
-// ========================================
-// Icon Styling (Plus/Minus)
-// ========================================
-.icon-plus::before,
-.icon-minus::before {
-  content: '' !important;
-}
-
-.icon-plus {
-  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
-}
-
-.icon-minus {
-  content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-minus"><line x1="5" y1="12" x2="19" y2="12"></line></svg>');
-}
-
-// ========================================
-// Enhanced Checkbox Styling
-// ========================================
-.custom-control-input {
-  &:checked ~ .custom-control-label::before {
-    background-color: $success-text !important;
-    border-color: $success-text !important;
-    box-shadow: 0 2px 4px rgba($success-text, 0.3);
-  }
-}
-
-.custom-control-label {
-  &::before {
-    border-radius: 0.35rem;
-    border: 2px solid $border-color;
-    transition: all 0.2s ease;
-  }
-  
-  &:hover::before {
-    border-color: $primary-text;
-    box-shadow: 0 0 0 0.2rem rgba($primary-text, 0.1);
-  }
-}
-
-// ========================================
-// Sub-Menu and Privileges Container
-// ========================================
-.sub-menu-item {
-  padding: 0.75rem 1rem;
-  margin: 0.5rem 0;
-  background: white;
-  border-radius: 8px;
-  border-left: 3px solid $info-text;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background: lighten($info-soft, 3%);
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
-  
-  .custom-control-label {
-    display: flex;
-    align-items: center;
-    font-weight: 600;
-    color: $text-primary;
-  }
-}
-
-.privileges-container {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-out, padding 0.3s ease-out;
-  background: linear-gradient(135deg, white 0%, lighten($success-soft, 5%) 100%);
-  border-radius: 8px;
-  border: 1px solid lighten($border-color, 2%);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-  padding: 0;
-  margin-left: 48px;
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-
-  &.show {
-    max-height: 500px;
-    padding: 1.5rem;
-    overflow-y: auto; // Habilitar scroll para listas largas
-    transition: max-height 0.4s ease-in, padding 0.3s ease-in;
-  }
-}
-
-.privilege-item {
-  margin: 0.4rem 0;
-  font-size: 0.9rem;
-  margin-left: 20px;
+.form-actions-bar {
   display: flex;
   align-items: center;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  
-  &:hover {
-    background: lighten($success-soft, 2%);
-    transform: translateX(2px);
-  }
-  
-  .custom-control-label {
-    color: $text-secondary;
-    font-weight: 400;
-  }
-}
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding-top: 1.5rem;
+  margin-top: 1.75rem;
+  border-top: 1.5px solid #edf2f7;
 
-// ========================================
-// Badge Styling
-// ========================================
-.badge {
-  font-family: 'Inter', sans-serif;
-  font-weight: 600;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  
-  &.badge-pill {
-    border-radius: 50rem;
-  }
-  
-  &.badge-light-secondary {
-    background: linear-gradient(135deg, $secondary-soft 0%, lighten($secondary-soft, 2%) 100%);
-    color: $text-secondary;
-    border: 1px solid lighten($border-color, 2%);
-  }
-  
-  &.badge-light-success {
-    background: linear-gradient(135deg, $success-soft 0%, lighten($success-soft, 2%) 100%);
-    color: $success-text;
-    border: 1px solid lighten($success-text, 30%);
-  }
-  
-  &.badge-light-danger {
-    background: linear-gradient(135deg, $danger-soft 0%, lighten($danger-soft, 2%) 100%);
-    color: $danger-text;
-    border: 1px solid lighten($danger-text, 30%);
-  }
-  
-  &.badge-light-warning {
-    background: linear-gradient(135deg, $warning-soft 0%, lighten($warning-soft, 2%) 100%);
-    color: $warning-text;
-    border: 1px solid lighten($warning-text, 30%);
-  }
-}
-
-// ========================================
-// Tab Navigation Styling
-// ========================================
-::ng-deep {
-  .nav-pills {
-    .nav-link {
-      border-radius: 8px;
-      padding: 0.75rem 1.5rem;
-      font-weight: 600;
-      transition: all 0.2s ease;
-      color: $text-secondary;
-      
-      &:hover {
-        background: $primary-soft;
-        color: $primary-text;
-        transform: translateY(-2px);
-      }
-      
-      &.active {
-        background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
-        color: white;
-        box-shadow: 0 4px 12px rgba($primary-text, 0.3);
-      }
-    }
-  }
-}
-
-// ========================================
-// Button Styling
-// ========================================
-.btn {
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  font-family: 'Inter', sans-serif;
-  
-  &.btn-primary {
-    background: linear-gradient(135deg, $primary-text 0%, darken($primary-text, 10%) 100%);
-    border: none;
-    box-shadow: 0 4px 12px rgba($primary-text, 0.3);
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba($primary-text, 0.4);
-    }
-  }
-  
-  &.btn-warning {
-    background: linear-gradient(135deg, $warning-text 0%, darken($warning-text, 10%) 100%);
-    border: none;
-    box-shadow: 0 4px 12px rgba($warning-text, 0.3);
-    color: white;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba($warning-text, 0.4);
-    }
-  }
-}
-
-// ========================================
-// Dropdown Menu Styling
-// ========================================
-::ng-deep {
-  .dropdown-menu {
-    border-radius: 8px;
-    border: 1px solid $border-color;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-    padding: 0.5rem 0;
-    
-    .dropdown-item {
-      padding: 0.75rem 1.5rem;
-      transition: all 0.2s ease;
-      font-weight: 500;
-      
-      &:hover {
-        background: $primary-soft;
-        color: $primary-text;
-        transform: translateX(4px);
-        
-        span[data-feather] {
-          color: $primary-text;
-        }
-      }
-    }
-  }
-}
-
-/* Premium Search Box Styling */
-.premium-search-box {
-    display: flex;
+  .action-group-primary,
+  .action-group-secondary {
+    display: inline-flex;
     align-items: center;
-    background: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ebe9f1;
-    border-radius: 50rem;
-    padding: 0.4rem 1rem;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-
-    &:focus-within {
-        border-color: #7367f0;
-        box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
-        background: #fff;
-        transform: translateY(-1px);
-    }
-
-    input {
-        flex: 1;
-        outline: none !important;
-        font-size: 0.9rem;
-        color: #6e6b7b;
-        border: none !important;
-        background: transparent !important;
-
-        &::placeholder {
-            color: #b9b9c3;
-            font-weight: 400;
-        }
-    }
+    flex-wrap: wrap;
+    gap: 0.95rem; // Espaciado fluido y respirable de 15px entre botones
+  }
 }
 
-/* Fix Pagination sr-only & visually-hidden */
-::ng-deep {
-    .pagination {
-        .sr-only, 
-        .visually-hidden,
-        span[aria-hidden="true"] + span,
-        .page-link span:not(.material-symbols-outlined) {
-            display: none !important;
-            visibility: hidden !important;
-            width: 0 !important;
-            height: 0 !important;
-            padding: 0 !important;
-            position: absolute !important;
-        }
+// =========================================================================
+// ÁRBOL DE PERMISOS, TOGGLES (+/-) Y CHECKBOXES CORPORATIVOS UNIFICADOS
+// =========================================================================
 
-        .page-link {
-            border: none !important;
-            background: transparent !important;
-            color: #7367f0 !important;
-            font-size: 0.95rem !important;
-            padding: 0.6rem 1rem !important;
-            border-radius: 50% !important;
-            margin: 0 2px !important;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            min-width: 40px;
-            height: 40px;
-            
-            &:hover {
-                background: rgba(115, 103, 240, 0.15) !important;
-            }
-        }
+// Botón de alternancia Expandir / Contraer (+ / -) moderno y perfectamente alineado
+.btn-tree-toggle {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  border-radius: 7px !important;
+  border: 1.5px solid #ddd6fe !important;
+  background: #f5f3ff !important;
+  color: #7367f0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  flex-shrink: 0 !important;
+  line-height: 1 !important;
+  outline: none !important;
+  box-sizing: border-box !important;
 
-        .page-item.active .page-link {
-            background: #7367f0 !important;
-            color: white !important;
-            box-shadow: 0 4px 10px rgba(115, 103, 240, 0.4) !important;
-        }
+  svg {
+    display: block !important;
+    width: 12px !important;
+    height: 12px !important;
+    stroke: #7367f0 !important;
+  }
 
-        .page-item.disabled .page-link {
-            color: #b9b9c3 !important;
-            opacity: 0.5;
-        }
+  &:hover {
+    background: #ede9fe !important;
+    border-color: #c4b5fd !important;
+    color: #6355ee !important;
+    transform: scale(1.08) !important;
+    box-shadow: 0 2px 6px rgba(115, 103, 240, 0.2) !important;
+
+    svg {
+      stroke: #6355ee !important;
     }
+  }
+
+  &:active {
+    transform: scale(0.95) !important;
+  }
+}
+
+.btn-tree-spacer {
+  width: 24px !important;
+  min-width: 24px !important;
+  height: 24px !important;
+  flex-shrink: 0 !important;
+}
+
+// Checkbox Moderno Unificado (Paleta Corporativa Púrpura #7367f0 para Todos los Niveles)
+.tree-checkbox-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+  cursor: pointer !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  user-select: none !important;
+  position: relative !important;
+  box-sizing: border-box !important;
+
+  .tree-check-input {
+    position: absolute !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    height: 0 !important;
+    pointer-events: none !important;
+
+    &:checked ~ .tree-check-custom {
+      background-color: #7367f0 !important;
+      border-color: #7367f0 !important;
+      box-shadow: 0 2px 6px rgba(115, 103, 240, 0.35) !important;
+
+      &::after {
+        opacity: 1 !important;
+        transform: rotate(45deg) scale(1) !important;
+      }
+    }
+
+    &:indeterminate ~ .tree-check-custom {
+      background-color: #7367f0 !important;
+      border-color: #7367f0 !important;
+      box-shadow: 0 2px 6px rgba(115, 103, 240, 0.35) !important;
+
+      &::before {
+        opacity: 1 !important;
+        transform: scale(1) !important;
+      }
+    }
+
+    &:focus ~ .tree-check-custom {
+      border-color: #7367f0 !important;
+      box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15) !important;
+    }
+  }
+
+  .tree-check-custom {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    border-radius: 6px !important;
+    border: 2px solid #cbd5e1 !important;
+    background-color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    // Tilde de Check (blanco)
+    &::after {
+      content: '' !important;
+      position: absolute !important;
+      width: 5px !important;
+      height: 9px !important;
+      border: solid #ffffff !important;
+      border-width: 0 2px 2px 0 !important;
+      transform: rotate(45deg) scale(0) !important;
+      margin-top: -2px !important;
+      opacity: 0 !important;
+      transition: all 0.15s ease !important;
+    }
+
+    // Guión de Indeterminate (blanco)
+    &::before {
+      content: '' !important;
+      position: absolute !important;
+      width: 10px !important;
+      height: 2px !important;
+      background-color: #ffffff !important;
+      border-radius: 1px !important;
+      opacity: 0 !important;
+      transform: scale(0) !important;
+      transition: all 0.15s ease !important;
+    }
+  }
+
+  &:hover .tree-check-custom {
+    border-color: #a78bfa !important;
+    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.12) !important;
+  }
+
+  .tree-check-text {
+    line-height: 1.25 !important;
+    color: #334155 !important;
+    font-size: 0.88rem !important;
+    transition: color 0.15s ease !important;
+  }
+}
+
+// Estilos de la tabla de permisos
+::ng-deep .permissions-tree-table {
+  .datatable-header-cell.table-check-col,
+  .datatable-body-cell.table-check-col {
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    overflow: visible !important;
+  }
+
+  .table-check-cell {
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+// Nivel 2: Fila del SubMenú
+.submenu-item-row {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.45rem 0.85rem !important;
+  border-radius: 12px !important;
+  background: #ffffff !important;
+  border: 1.5px solid #ede9fe !important;
+  box-shadow: 0 1px 4px rgba(115, 103, 240, 0.04) !important;
+  transition: all 0.18s ease !important;
+
+  &:hover {
+    background-color: #f8fafc !important;
+    border-color: #c4b5fd !important;
+    box-shadow: 0 2px 8px rgba(115, 103, 240, 0.1) !important;
+  }
+
+  .badge-count {
+    font-size: 0.75rem !important;
+    color: #7367f0 !important;
+    background: #f5f3ff !important;
+    border: 1px solid #ede9fe !important;
+    padding: 1px 7px !important;
+    border-radius: 20px !important;
+    font-weight: 600 !important;
+    margin-left: 0.35rem !important;
+    display: inline-block !important;
+  }
+}
+
+// Nivel 3: Contenedor de Privilegios (Card Blanca limpia con espaciado perfecto sin corte)
+.privileges-container {
+  max-height: 0 !important;
+  overflow: hidden !important;
+  transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1), padding 0.25s ease !important;
+  background: #ffffff !important;
+  border-radius: 14px !important;
+  border: 1.5px solid #ede9fe !important;
+  box-shadow: 0 4px 16px rgba(115, 103, 240, 0.04) !important;
+  padding: 0 1.5rem !important;
+  margin-left: 36px !important;
+  margin-top: 8px !important;
+  margin-bottom: 12px !important;
+  box-sizing: border-box !important;
+
+  &.show {
+    max-height: 600px !important;
+    padding: 1rem 1.5rem !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  .privileges-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    padding: 4px 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .privilege-item {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0.45rem 0.75rem !important;
+    border-radius: 8px !important;
+    transition: background-color 0.15s ease !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    &:hover {
+      background-color: #f8fafc !important;
+    }
+
+    .tree-check-custom {
+      width: 18px !important;
+      height: 18px !important;
+      min-width: 18px !important;
+      min-height: 18px !important;
+      border-radius: 5px !important;
+    }
+
+    .tree-check-text {
+      font-size: 0.85rem !important;
+      font-weight: 500 !important;
+      color: #475569 !important;
+    }
+
+    .tree-check-input:checked ~ .tree-check-text {
+      color: #1e293b !important;
+      font-weight: 600 !important;
+    }
+  }
 }

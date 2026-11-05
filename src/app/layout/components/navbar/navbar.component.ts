@@ -5,6 +5,7 @@ import {
   HostBinding,
   HostListener,
   ViewEncapsulation,
+  ChangeDetectorRef,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -30,7 +31,7 @@ import { environment } from "environments/environment";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
 import { Sha256Service } from "@services/util/sha256";
-import { IdleService } from '@services/seguridad/idle.service';
+import { IdleService, IIdleState } from '@services/seguridad/idle.service';
 import { WsSandraService } from "@services/seguridad/ws-sandra.service";
 
 
@@ -136,6 +137,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   public appTime: string = '';
   public formattedDateTime: string = '';
 
+  // Propiedades para Vigencia de Firma Digital en Navbar (Glassmorphic Discreto)
+  public vigenciaDias: number | null = null;
+  public vigenciaTooltip: string = '';
+  public vigenciaStatusClass: string = 'vigencia-normal';
+
+  // Estado y cuenta regresiva de inactividad de sesión (Navbar Glassmorphic)
+  public idleState: IIdleState = null;
+
   // Agrega estas propiedades a tu clase NavbarComponent
   public showTotpSection: boolean = false;
   public totpQrCodeUrl: string = '';
@@ -175,7 +184,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private sha256: Sha256Service,
     private router: Router,
     private idleService: IdleService,
-    private ws: WsSandraService
+    private ws: WsSandraService,
+    private cdr: ChangeDetectorRef
   ) {
     this.languageOptions = {
       en: {
@@ -204,8 +214,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.accionesGenerales()
 
 
-    // Initialize Idle Service
+    // Initialize Idle Service & subscribe to inactivity countdown
     this.idleService.init();
+    this.idleService.idleState$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((state) => {
+        this.idleState = state;
+        this.cdr.detectChanges();
+      });
 
     this.bDirectorioActivo =
       this.usuario.startsWith("NM") || this.usuario.startsWith("CT");
@@ -307,6 +323,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
         });
         // console.log(this.token.Usuario)
         this.ws.Run(this.token.usuario);
+
+        // Inicializar indicador de vigencia de firma digital
+        this.initVigencia(this.token);
 
 
 
@@ -765,6 +784,73 @@ export class NavbarComponent implements OnInit, OnDestroy {
     } catch {
       this.formattedDateTime = environment.fecha || '';
       this.appDate = environment.fecha || '';
+    }
+  }
+
+  /**
+   * Inicializa el contador de vigencia en días a partir del JWT de firma digital
+   */
+  private initVigencia(tokenDecoded: any): void {
+    try {
+      const usuario = tokenDecoded?.Usuario || tokenDecoded;
+      const firma = usuario?.FirmaDigital || usuario?.firmadigital;
+
+      let diasRestantes: number | null = null;
+      let fechaFin: Date | null = null;
+
+      if (firma) {
+        const rawTiempo = firma.tiempo?.$date || firma.tiempo;
+        const diasVigencia = Number(firma.vigencia || 180);
+
+        if (rawTiempo) {
+          const fechaInicio = new Date(rawTiempo);
+          if (!isNaN(fechaInicio.getTime())) {
+            fechaFin = new Date(fechaInicio.getTime() + diasVigencia * 24 * 60 * 60 * 1000);
+            const diffMs = fechaFin.getTime() - Date.now();
+            diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+          }
+        }
+
+        if (diasRestantes === null && !isNaN(diasVigencia) && diasVigencia > 0) {
+          diasRestantes = diasVigencia;
+        }
+      }
+
+      // Fallback si viene en standard JWT claim exp
+      if (diasRestantes === null && tokenDecoded?.exp) {
+        const expDate = new Date(tokenDecoded.exp * 1000);
+        const diffMs = expDate.getTime() - Date.now();
+        diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        fechaFin = expDate;
+      }
+
+      // Si no hay datos específicos de firma, valor por defecto prudencial
+      if (diasRestantes === null) {
+        diasRestantes = 180;
+      }
+
+      this.vigenciaDias = Math.max(0, diasRestantes);
+
+      if (this.vigenciaDias <= 0) {
+        this.vigenciaStatusClass = 'vigencia-danger';
+        this.vigenciaTooltip = 'Certificado digital vencido o por renovar hoy';
+      } else if (this.vigenciaDias <= 15) {
+        this.vigenciaStatusClass = 'vigencia-warning';
+        this.vigenciaTooltip = `Vigencia próxima a expirar (${this.vigenciaDias} días restantes)`;
+      } else {
+        this.vigenciaStatusClass = 'vigencia-normal';
+        this.vigenciaTooltip = `Vigencia de Firma Digital activa (${this.vigenciaDias} días restantes)`;
+      }
+
+      if (fechaFin && !isNaN(fechaFin.getTime())) {
+        const dd = String(fechaFin.getDate()).padStart(2, '0');
+        const mm = String(fechaFin.getMonth() + 1).padStart(2, '0');
+        const yy = fechaFin.getFullYear();
+        this.vigenciaTooltip += ` • Vence: ${dd}/${mm}/${yy}`;
+      }
+    } catch (e) {
+      console.warn('Error calculando vigencia en navbar:', e);
+      this.vigenciaDias = null;
     }
   }
 }

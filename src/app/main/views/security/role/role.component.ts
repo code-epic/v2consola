@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation, signal } from '@angular/core';
-
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModal, NgbActiveModal, NgbModalConfig, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AccionMenu, AddModulo, AddSubMenu, AgregarAccion, ApiService, DefinirMenu, IAPICore } from '@services/apicore/api.service';
 import { IRol } from '@services/seguridad/rol.service';
@@ -24,6 +24,8 @@ import { CorePipesModule } from '@core/pipes/pipes.module';
     providers: [NgbModalConfig, NgbModal],
     standalone: true,
     imports: [
+    CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     NgbModule,
     NgxDatatableModule,
@@ -337,6 +339,77 @@ export class RoleComponent implements OnInit {
 
   }
 
+  public selectedStatusFilter: string = 'all'; // 'all' | 'activos' | 'inactivos'
+  searchValueCtrl = new FormControl('');
+
+  get totalRoles(): number {
+    return this.tempRoles ? this.tempRoles.length : 0;
+  }
+
+  get totalActivos(): number {
+    return this.tempRoles ? this.tempRoles.filter(r => r.estatus == 1 || r.estatus === true || r.estatus === '1').length : 0;
+  }
+
+  get totalInactivos(): number {
+    return this.tempRoles ? this.tempRoles.filter(r => r.estatus == 0 || r.estatus === false || r.estatus === '0').length : 0;
+  }
+
+  setStatusFilter(filter: string) {
+    this.selectedStatusFilter = filter;
+    this.applyCombinedFilters();
+  }
+
+  clearSearch() {
+    this.searchValueCtrl.setValue('');
+    this.applyCombinedFilters();
+  }
+
+  verTodos() {
+    this.searchValueCtrl.setValue('');
+    this.selectedStatusFilter = 'all';
+    this.applyCombinedFilters();
+  }
+
+  recargar() {
+    this.listarRoles();
+  }
+
+  applyCombinedFilters() {
+    const val = (this.searchValueCtrl.value || '').toLowerCase().trim();
+    const statusFilter = this.selectedStatusFilter;
+
+    const filtered = (this.tempRoles || []).filter(d => {
+      // 1. Search filter
+      if (val) {
+        const rol = (d.rol || '').toLowerCase();
+        const observacion = (d.observacion || '').toLowerCase();
+        const app = (d.app || '').toLowerCase();
+        const matchesSearch =
+          rol.indexOf(val) !== -1 ||
+          observacion.indexOf(val) !== -1 ||
+          app.indexOf(val) !== -1;
+        if (!matchesSearch) return false;
+      }
+
+      // 2. Status filter
+      if (statusFilter === 'activos') {
+        const isActive = d.estatus == 1 || d.estatus === true || d.estatus === '1';
+        if (!isActive) return false;
+      } else if (statusFilter === 'inactivos') {
+        const isInactive = d.estatus == 0 || d.estatus === false || d.estatus === '0';
+        if (!isInactive) return false;
+      }
+
+      return true;
+    });
+
+    this.lstRoles = filtered;
+    this.page = 1;
+    if (this.table) {
+      this.table.offset = 0;
+    }
+  }
+
   listarRoles() {
     this.xAPI = {} as IAPICore
     this.xAPI.funcion = environment.functions.CONSULTAR_SCHEMA_APP
@@ -363,6 +436,7 @@ export class RoleComponent implements OnInit {
 
         this.lstRoles = lst
         this.tempRoles = lst
+        this.applyCombinedFilters();
         this._isLoading.set(false);
       },
       (error) => {
@@ -373,18 +447,7 @@ export class RoleComponent implements OnInit {
   }
 
   filterUpdate(event) {
-    const val = event.target.value.toLowerCase();
-
-    // filter our data
-    const temp = this.tempRoles.filter(function (d) {
-      return d.rol.toLowerCase().indexOf(val) !== -1 || d.observacion.toLowerCase().indexOf(val) !== -1 || d.app.toLowerCase().indexOf(val) !== -1 || !val;
-    });
-
-    // update the rows
-    this.lstRoles = temp;
-    // Whenever the filter changes, always go back to the first page
-    this.page = 1; 
-    this.table.offset = 0;
+    this.applyCombinedFilters();
   }
 
   LimpiarMenu() {

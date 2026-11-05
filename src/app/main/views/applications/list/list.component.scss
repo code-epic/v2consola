@@ -587,3 +587,1320 @@ $border-radius-lg: 0.75rem;
   line-height: 1.6;
   font-size: 0.9rem;
 }
+
+// =========================================================================
+// DISEÑO FORMAL Y SERIO EN TONOS PASTELES (ENTERPRISE GRADE)
+// =========================================================================
+
+// Paleta Pasteles Serios & Neutros Corporativos
+$slate-primary: #334155;
+$slate-dark: #1e293b;
+$slate-muted: #64748b;
+$slate-border: #e2e8f0;
+$slate-subtle: #f8fafc;
+
+$sage-text: #2e694d;
+$sage-bg: #f0f7f3;
+$sage-border: #d2e7db;
+
+$sand-text: #7c5828;
+$sand-bg: #fbf6ee;
+$sand-border: #faebd5;
+
+.gap-1 {
+  gap: 0.5rem;
+}
+
+.text-slate {
+  color: $slate-muted !important;
+}
+
+.text-slate-800 {
+  color: $slate-dark !important;
+}
+
+.text-sage {
+  color: $sage-text !important;
+}
+
+.text-sage-muted {
+  color: rgba(46, 105, 77, 0.75) !important;
+}
+
+.text-sand {
+  color: $sand-text !important;
+}
+
+.text-sand-muted {
+  color: rgba(124, 88, 40, 0.75) !important;
+}
+
+// =========================================================================
+// TARJETAS KPI (ESTILO FORMAL Y SOBRIO CON CURVAS SUAVES)
+// =========================================================================
+.app-kpi-formal {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 18px;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+  &:hover {
+    border-color: rgba(115, 103, 240, 0.35);
+    box-shadow: 0 8px 24px rgba(115, 103, 240, 0.08);
+    transform: translateY(-2px);
+  }
+
+  &.active-kpi {
+    border-color: #7367f0;
+    background: linear-gradient(135deg, rgba(115, 103, 240, 0.04) 0%, #ffffff 100%);
+    box-shadow: 0 6px 20px rgba(115, 103, 240, 0.12);
+  }
+
+  .kpi-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $slate-muted;
+  }
+
+  .kpi-value {
+    font-size: 1.65rem;
+    font-weight: 700;
+    margin: 0.25rem 0 0.15rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .kpi-subtext {
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .kpi-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.kpi-box-neutral {
+      background: #f5f3ff;
+      color: #7367f0;
+      border: 1px solid #ede9fe;
+    }
+
+    &.kpi-box-sage {
+      background: $sage-bg;
+      color: $sage-text;
+      border: 1px solid $sage-border;
+    }
+
+    &.kpi-box-sand {
+      background: $sand-bg;
+      color: $sand-text;
+      border: 1px solid $sand-border;
+    }
+  }
+}
+
+// =========================================================================
+// CONTENEDOR Y FILTROS DE TABLA (CURVAS SUAVES Y LILA CÁLIDO)
+// =========================================================================
+.card-table-formal {
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+
+  .bg-slate-subtle {
+    background-color: #fbfbfe;
+  }
+
+  .form-label-formal {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $slate-dark;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-formal-outline {
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    color: #6366f1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 14px;
+    height: 42px;
+    padding: 0 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #c4b5fd;
+      color: #7367f0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .btn-formal-ghost {
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    color: #64748b;
+    border-radius: 14px;
+    height: 42px;
+    width: 42px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #c4b5fd;
+      color: #7367f0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .input-group-formal {
+    height: 44px;
+
+    .input-group-prepend .input-group-text {
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-right: none;
+      border-top-left-radius: 14px;
+      border-bottom-left-radius: 14px;
+      color: #a78bfa;
+      padding-left: 1rem;
+      height: 44px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .form-control {
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-left: none;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+      font-size: 0.88rem;
+      padding: 0 1rem;
+      height: 44px;
+      color: #1e293b;
+      transition: all 0.2s ease;
+
+      &:focus {
+        background: #ffffff;
+        border-color: #7367f0;
+        box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
+      }
+    }
+
+    .input-group-append .btn {
+      height: 44px;
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-left: none;
+      border-top-right-radius: 14px;
+      border-bottom-right-radius: 14px;
+      color: #94a3b8;
+      padding: 0 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        color: #ef4444;
+      }
+    }
+  }
+
+  .custom-select-formal {
+    ::ng-deep .ng-select-container {
+      border: 1.5px solid #ede9fe;
+      border-radius: 14px;
+      height: 44px !important;
+      min-height: 44px !important;
+      background: #fafbfe;
+      font-size: 0.88rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+
+      &:hover {
+        border-color: #d8b4fe;
+      }
+    }
+
+    ::ng-deep .ng-select-focused .ng-select-container {
+      background: #ffffff;
+      border-color: #7367f0;
+      box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
+    }
+  }
+
+  .formal-pill-group {
+    height: 44px !important;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1.5px solid #ede9fe;
+    background: #fafbfe;
+    display: inline-flex;
+    align-items: stretch;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    .btn {
+      height: 44px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 0.85rem !important;
+      font-weight: 600 !important;
+      padding: 0 1.35rem !important;
+      border: none !important;
+      border-radius: 0 !important;
+      line-height: 1 !important;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      &.btn-formal-active {
+        background: #7367f0 !important;
+        color: #ffffff !important;
+        font-weight: 600 !important;
+        box-shadow: 0 2px 10px rgba(115, 103, 240, 0.35) !important;
+      }
+
+      &.btn-formal-inactive {
+        background: transparent !important;
+        color: #64748b !important;
+        font-weight: 500 !important;
+
+        &:hover {
+          background: #f5f3ff !important;
+          color: #7367f0 !important;
+        }
+      }
+
+      &:not(:last-child) {
+        border-right: 1.5px solid #ede9fe !important;
+      }
+    }
+  }
+}
+
+// =========================================================================
+// TABLA FORMAL ENTERPRISE
+// =========================================================================
+.formal-enterprise-table {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+
+  .ngx-datatable.bootstrap {
+    .datatable-header {
+      border-bottom: 1px solid #e2e8f0;
+      background: #fbfbfe;
+
+      .datatable-header-cell {
+        padding: 0.75rem 1rem;
+        background: #fbfbfe;
+
+        .table-header-title {
+          font-size: 0.72rem;
+          font-weight: 600;
+          color: #475569;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+        }
+      }
+    }
+
+    .datatable-body {
+      .datatable-body-row {
+        border-bottom: 1px solid #f1f5f9;
+        transition: background-color 0.15s ease;
+
+        &:hover {
+          background-color: #fbfbfe;
+        }
+
+        .datatable-body-cell {
+          padding: 0.65rem 1rem;
+        }
+      }
+    }
+  }
+
+  // Elementos de Fila
+  .avatar-formal {
+    border: 1.5px solid #ede9fe;
+    box-shadow: 0 2px 6px rgba(115, 103, 240, 0.12);
+  }
+
+  .avatar-formal-initials {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f5f3ff;
+    border: 1.5px solid #ede9fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #7367f0;
+  }
+
+  .badge-status-dot {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid #ffffff;
+
+    &.status-online {
+      background-color: #2e694d;
+    }
+
+    &.status-offline {
+      background-color: #7c5828;
+    }
+  }
+
+  .app-row-title {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: -0.01em;
+  }
+
+  .app-row-meta {
+    font-size: 0.72rem;
+    color: #64748b;
+
+    .badge-origin-subtle {
+      background: #f5f3ff;
+      border: 1px solid #ede9fe;
+      color: #7367f0;
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 500;
+    }
+  }
+
+  // Badges Pasteles Serios con Bordes Suaves
+  .badge-pastel-branch {
+    background: #f5f3ff;
+    color: #5b549e;
+    border: 1px solid #ede9fe;
+    border-radius: 8px;
+    padding: 0.25rem 0.65rem;
+    font-size: 0.76rem;
+    font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+
+    .badge-count-pill {
+      background: #ede9fe;
+      color: #7367f0;
+      border-radius: 6px;
+      padding: 0 5px;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+  }
+
+  .badge-pastel-mono {
+    background: #fafbfe;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.22rem 0.55rem;
+    font-size: 0.74rem;
+    font-family: 'SFMono-Regular', Consolas, Menlo, monospace;
+    font-weight: 500;
+  }
+
+  .badge-pastel-lang {
+    background: #f5f3ff;
+    color: #6b21a8;
+    border: 1px solid #ede9fe;
+    border-radius: 8px;
+    padding: 0.22rem 0.6rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+  }
+
+  .badge-pastel-sage {
+    background: $sage-bg;
+    color: $sage-text;
+    border: 1px solid $sage-border;
+    border-radius: 8px;
+    padding: 0.22rem 0.6rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .badge-pastel-sand {
+    background: $sand-bg;
+    color: $sand-text;
+    border: 1px solid $sand-border;
+    border-radius: 8px;
+    padding: 0.22rem 0.6rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .status-indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    display: inline-block;
+
+    &.dot-sage {
+      background-color: $sage-text;
+    }
+
+    &.dot-sand {
+      background-color: $sand-text;
+    }
+  }
+
+  // Botones de Acción Redondos y Suaves
+  .btn-formal-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid #ede9fe;
+    background: #ffffff;
+    color: #64748b;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &:hover {
+      border-color: #d8b4fe;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(115, 103, 240, 0.12);
+    }
+
+    &.btn-action-sage:hover {
+      background: $sage-bg;
+      color: $sage-text;
+      border-color: $sage-border;
+    }
+
+    &.btn-action-sand:hover {
+      background: $sand-bg;
+      color: $sand-text;
+      border-color: $sand-border;
+    }
+
+    &.btn-action-slate:hover {
+      background: #f5f3ff;
+      color: #7367f0;
+      border-color: #d8b4fe;
+    }
+
+    &.btn-action-more:hover {
+      background: #fbfbfe;
+      color: #1e293b;
+      border-color: #cbd5e1;
+    }
+  }
+}
+
+// Menú Contextual Redondo
+.formal-context-menu {
+  border-radius: 14px;
+  border: 1.5px solid #ede9fe;
+  box-shadow: 0 10px 30px rgba(115, 103, 240, 0.1);
+  min-width: 200px;
+  overflow: hidden;
+
+  .context-menu-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #a78bfa;
+    background: #fafbfe;
+    border-bottom: 1px solid #ede9fe;
+  }
+
+  .dropdown-item {
+    font-size: 0.82rem;
+    color: #334155;
+    padding: 0.5rem 1rem;
+    transition: all 0.15s ease;
+
+    &:hover {
+      background-color: #f5f3ff;
+      color: #7367f0;
+    }
+  }
+}
+
+// =========================================================================
+// VENTANA FORMAL DE LOGS / REPORTE GIT (ESTILO LIMPIO, PASTEL Y PLATAFORMA)
+// =========================================================================
+.formal-console-window {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(115, 103, 240, 0.12), 0 8px 24px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(115, 103, 240, 0.15);
+
+  .console-header {
+    background: #fafbfe;
+    border-bottom: 1px solid #ede9fe;
+    padding: 1rem 1.4rem;
+
+    .console-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e293b;
+      letter-spacing: -0.01em;
+    }
+
+    .console-branch-pill {
+      background: #f5f3ff;
+      color: #7367f0;
+      border: 1px solid #ddd6fe;
+      border-radius: 12px;
+      padding: 0.2rem 0.65rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      font-family: monospace;
+    }
+
+    .btn-swal-tool {
+      background: #ffffff;
+      border: 1.5px solid #ede9fe;
+      color: #475569;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 12px;
+      padding: 0.4rem 1rem;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+      &:hover {
+        background: #f5f3ff;
+        border-color: #c4b5fd;
+        color: #7367f0;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(115, 103, 240, 0.12);
+      }
+    }
+
+    .btn-swal-close-round {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid #e2e8f0;
+      background: #ffffff;
+      color: #64748b;
+      font-size: 1.25rem;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #dc2626;
+        transform: scale(1.06);
+      }
+    }
+  }
+
+  .console-body {
+    background: #ffffff;
+    min-height: 380px;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 1.25rem !important;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #fafbfe;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+
+      &:hover {
+        background: #7367f0;
+      }
+    }
+
+    .console-screen {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #334155;
+      word-break: break-word;
+
+      // Compatibilidad con reporte HTML de Git Log limpio
+      .git-log-clean {
+        width: 100%;
+      }
+
+      // Estilo de respaldo si el backend envía HTML de terminal clásica (convirtiéndola a tonos limpios de la plataforma)
+      .term-window {
+        background: #fafbfe !important;
+        border: 1px solid #ede9fe !important;
+        border-radius: 14px !important;
+        box-shadow: none !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+      }
+
+      .term-titlebar {
+        background: #f5f3ff !important;
+        border-bottom: 1px solid #ede9fe !important;
+        color: #7367f0 !important;
+        padding: 8px 14px !important;
+
+        .term-title {
+          color: #7367f0 !important;
+          font-weight: 600 !important;
+        }
+      }
+
+      .term-body {
+        background: #ffffff !important;
+        padding: 14px !important;
+      }
+
+      .term-prompt {
+        color: #64748b !important;
+        font-weight: 500 !important;
+        padding-bottom: 8px !important;
+        border-bottom: 1px solid #f1f5f9 !important;
+        margin-bottom: 10px !important;
+
+        .branch {
+          color: #7367f0 !important;
+          background: #f5f3ff !important;
+          padding: 2px 8px !important;
+          border-radius: 8px !important;
+        }
+      }
+
+      .commit-row {
+        border-bottom: 1px solid #f1f5f9 !important;
+        padding: 8px 8px !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+        align-items: center !important;
+        transition: background 0.15s ease !important;
+
+        &:hover {
+          background-color: #fafbfe !important;
+        }
+
+        .commit-hash {
+          color: #7367f0 !important;
+          background: #f5f3ff !important;
+          border: 1px solid #ede9fe !important;
+          padding: 2px 8px !important;
+          border-radius: 6px !important;
+          font-weight: 700 !important;
+        }
+
+        .commit-author {
+          color: #475569 !important;
+          font-weight: 600 !important;
+          min-width: auto !important;
+        }
+
+        .commit-date {
+          color: #94a3b8 !important;
+          min-width: auto !important;
+          font-size: 0.78rem !important;
+        }
+
+        .commit-msg {
+          color: #1e293b !important;
+          font-weight: 500 !important;
+          flex: 1 1 100% !important;
+          word-break: break-word !important;
+          line-height: 1.4 !important;
+        }
+      }
+    }
+  }
+
+  .console-footer {
+    background: #fafbfe;
+    border-top: 1px solid #ede9fe;
+    padding: 0.85rem 1.4rem !important;
+
+    .console-meta-info {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+  }
+}
+
+// =========================================================================
+// VENTANAS MODALES ENTERPRISE (CURVAS SUAVES ESTILO SWEETALERT)
+// =========================================================================
+.modal-merge-enhanced,
+.modal-terminal-developer {
+  z-index: 1055 !important;
+
+  .modal-dialog {
+    margin: 1.75rem auto;
+    z-index: 1056 !important;
+    position: relative;
+  }
+
+  .modal-content {
+    border-radius: 24px !important;
+    border: 1px solid rgba(115, 103, 240, 0.15) !important;
+    box-shadow: 0 25px 60px -15px rgba(115, 103, 240, 0.16), 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+}
+
+// BOTONES GLOBALES UNIFORMES Y ELEGANTES (ESTILO SWEETALERT LOGOUT)
+.btn-swal-neutral,
+.btn-swal-purple {
+  height: 44px !important;
+  min-width: 130px !important;
+  border-radius: 14px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.6rem !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-sizing: border-box !important;
+}
+
+.btn-swal-neutral {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+
+  &:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+    transform: translateY(-1.5px) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.btn-swal-purple {
+  background-color: #7367f0 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(115, 103, 240, 0.35) !important;
+
+  &:hover {
+    background-color: #6355ee !important;
+    color: #ffffff !important;
+    transform: translateY(-1.5px) !important;
+    box-shadow: 0 6px 18px rgba(115, 103, 240, 0.45) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.btn-swal-close-round {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #64748b !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+    transform: scale(1.05) !important;
+  }
+}
+
+// =========================================================================
+// MODAL DE FUSIÓN (FORMAL, SOBRIO, CURVAS SWEETALERT Y SIN ICONOS EN BOTONES)
+// =========================================================================
+.modal-formal-dialog {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+
+  .formal-modal-header {
+    background: #ffffff;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1.25rem 1.5rem;
+
+    .formal-modal-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: #f5f3ff;
+      border: 1.5px solid #ede9fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7367f0;
+    }
+  }
+
+  .formal-alert {
+    background: #fbfbfe;
+    border: 1.5px solid #ede9fe;
+    border-radius: 14px;
+    padding: 0.85rem 1.15rem;
+  }
+
+  .formal-chips-container {
+    background: #fafbfe;
+    border: 1.5px solid #ede9fe;
+    border-radius: 16px;
+
+    .chips-section-title {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #7367f0;
+    }
+
+    .chips-counter-tag {
+      background: #ede9fe;
+      border: 1px solid rgba(115, 103, 240, 0.2);
+      color: #6b21a8;
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .formal-branch-btn-group {
+      border: 1.5px solid #ede9fe;
+      border-radius: 10px;
+      overflow: hidden;
+
+      .btn-branch-chip {
+        background: #ffffff;
+        color: #334155;
+        font-size: 0.74rem;
+        font-family: monospace;
+        font-weight: 500;
+        border: none;
+        padding: 0.3rem 0.75rem;
+
+        &.active-origin {
+          background: #7367f0;
+          color: #ffffff;
+          font-weight: 600;
+        }
+
+        &:hover:not(.active-origin) {
+          background: #f5f3ff;
+        }
+      }
+
+      .btn-branch-assign {
+        background: #fafbfe;
+        border: none;
+        border-left: 1.5px solid #ede9fe;
+        color: #7367f0;
+
+        &.active-target {
+          background: #2e694d;
+          color: #ffffff;
+        }
+
+        &:hover:not(.active-target) {
+          background: #f5f3ff;
+        }
+      }
+    }
+  }
+
+  .btn-formal-swap {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #ede9fe;
+    background: #fafbfe;
+    color: #7367f0;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #d8b4fe;
+      transform: rotate(180deg);
+    }
+  }
+
+  .swap-direction-text {
+    font-size: 0.75rem;
+    color: #a78bfa;
+    margin-top: 3px;
+    font-weight: 600;
+  }
+
+  .formal-textarea {
+    border-radius: 16px;
+    border: 1.5px solid #ede9fe;
+    background: #fafbfe;
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
+    color: #1e293b;
+    transition: all 0.2s ease;
+
+    &:focus {
+      background: #ffffff;
+      border-color: #7367f0;
+      box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
+    }
+  }
+
+  // BOTONES FORMALES INSPIRADOS EN SWEETALERT (SIN ICONOS, REDONDOS Y ELEGANTES)
+  .formal-modal-footer {
+    background: #ffffff;
+    border-top: 1px solid #f1f5f9;
+    padding: 1.25rem 1.5rem;
+  }
+}
+
+// =========================================================================
+// SOPORTE PARA MODO OSCURO (DARK LAYOUT)
+// =========================================================================
+.dark-layout {
+  .app-kpi-formal {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    &:hover {
+      border-color: rgba(115, 103, 240, 0.35);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    &.active-kpi {
+      border-color: #7367f0;
+      background: #232a3e;
+    }
+
+    .kpi-icon-box {
+      &.kpi-box-neutral {
+        background: rgba(115, 103, 240, 0.12);
+        border-color: rgba(115, 103, 240, 0.25);
+        color: #c4b5fd;
+      }
+
+      &.kpi-box-sage {
+        background: rgba(46, 105, 77, 0.2);
+        border-color: rgba(46, 105, 77, 0.4);
+        color: #56ca8e;
+      }
+
+      &.kpi-box-sand {
+        background: rgba(124, 88, 40, 0.2);
+        border-color: rgba(124, 88, 40, 0.4);
+        color: #e5a758;
+      }
+    }
+  }
+
+  .card-table-formal {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    .bg-slate-subtle,
+    .card-body {
+      background: #283046 !important;
+    }
+
+    .text-slate-800 {
+      color: #d0d2d6 !important;
+    }
+
+    .btn-formal-outline {
+      background: #283046;
+      border-color: rgba(115, 103, 240, 0.25);
+      color: #c4b5fd;
+
+      &:hover {
+        background: #343d55;
+        color: #ffffff;
+      }
+    }
+
+    .btn-formal-ghost {
+      background: #283046;
+      border-color: rgba(115, 103, 240, 0.25);
+      color: #b4b7bd;
+
+      &:hover {
+        background: #343d55;
+        color: #ffffff;
+      }
+    }
+
+    .input-group-formal {
+      .input-group-text,
+      .form-control {
+        background: #232a3e;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #d0d2d6;
+
+        &:focus {
+          border-color: #7367f0;
+        }
+      }
+    }
+
+    .formal-pill-group {
+      border-color: rgba(255, 255, 255, 0.1);
+      background: #232a3e;
+
+      .btn {
+        &.btn-formal-active {
+          background: #7367f0;
+          color: #ffffff;
+        }
+
+        &.btn-formal-inactive {
+          background: transparent;
+          color: #b4b7bd;
+
+          &:hover {
+            background: #343d55;
+          }
+        }
+      }
+    }
+  }
+
+  .formal-enterprise-table {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    .ngx-datatable.bootstrap {
+      .datatable-header,
+      .datatable-header-cell {
+        background: #161d31 !important;
+        border-color: rgba(255, 255, 255, 0.08) !important;
+
+        .table-header-title {
+          color: #82868b;
+        }
+      }
+
+      .datatable-body-row {
+        background: #283046;
+        border-color: rgba(255, 255, 255, 0.05);
+
+        &:hover {
+          background: #232a3e !important;
+        }
+      }
+    }
+
+    .app-row-title {
+      color: #d0d2d6;
+    }
+
+    .avatar-formal-initials {
+      background: #161d31;
+      border-color: rgba(115, 103, 240, 0.25);
+      color: #c4b5fd;
+    }
+
+    .badge-status-dot {
+      border-color: #283046;
+    }
+
+    .badge-pastel-branch,
+    .badge-pastel-mono,
+    .badge-pastel-lang {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #b4b7bd;
+    }
+
+    .badge-pastel-sage {
+      background: rgba(46, 105, 77, 0.2);
+      border-color: rgba(46, 105, 77, 0.35);
+      color: #56ca8e;
+    }
+
+    .badge-pastel-sand {
+      background: rgba(124, 88, 40, 0.2);
+      border-color: rgba(124, 88, 40, 0.35);
+      color: #e5a758;
+    }
+
+    .btn-formal-icon {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #b4b7bd;
+
+      &:hover {
+        background: #283046;
+        border-color: rgba(115, 103, 240, 0.4);
+      }
+    }
+  }
+
+  .formal-context-menu {
+    background: #283046;
+    border-color: rgba(255, 255, 255, 0.08);
+
+    .context-menu-header {
+      color: #82868b;
+      border-color: rgba(255, 255, 255, 0.08);
+      background: #161d31;
+    }
+
+    .dropdown-item {
+      color: #b4b7bd;
+
+      &:hover {
+        background: #161d31;
+        color: #ffffff;
+      }
+    }
+  }
+
+  .modal-formal-dialog {
+    background: #283046;
+    border-color: rgba(115, 103, 240, 0.25);
+
+    .formal-modal-header,
+    .formal-modal-footer {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .text-slate-900 {
+      color: #d0d2d6 !important;
+    }
+
+    .formal-alert,
+    .formal-chips-container {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .formal-branch-btn-group {
+      border-color: rgba(255, 255, 255, 0.12);
+
+      .btn-branch-chip {
+        background: #283046;
+        color: #b4b7bd;
+
+        &.active-origin {
+          background: #7367f0;
+          color: #ffffff;
+        }
+      }
+
+      .btn-branch-assign {
+        background: #161d31;
+        color: #82868b;
+        border-color: rgba(255, 255, 255, 0.12);
+      }
+    }
+
+    .btn-formal-swap {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #b4b7bd;
+    }
+
+    .formal-textarea {
+      background: #283046;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #d0d2d6;
+    }
+
+    .formal-modal-footer {
+      .btn-swal-neutral {
+        background: #161d31 !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        color: #d0d2d6 !important;
+
+        &:hover {
+          background: #232a3e !important;
+          color: #ffffff !important;
+        }
+      }
+
+      .btn-swal-purple {
+        background: #7367f0 !important;
+        color: #ffffff !important;
+      }
+    }
+  }
+}
+
+
