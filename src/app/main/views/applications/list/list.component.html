@@ -285,8 +285,8 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <!-- Actions Column with Formal Quick Buttons + Context Menu -->
-          <ngx-datatable-column name="ACCIONES" [width]="150" [sortable]="false" [canAutoResize]="false"
+          <!-- Actions Column with Context Menu (Tres Puntos) -->
+          <ngx-datatable-column name="ACCIONES" [width]="90" [sortable]="false" [canAutoResize]="false"
             [cellClass]="'d-flex align-items-center justify-content-center'">
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="w-100 text-center d-flex align-items-center justify-content-center">
@@ -295,45 +295,15 @@
               </div>
             </ng-template>
             <ng-template ngx-datatable-cell-template let-row="row">
-              <div class="d-flex align-items-center justify-content-center gap-1 w-100">
+              <div class="d-flex align-items-center justify-content-center w-100">
 
-                <!-- Quick Action 1: Actualizar (Pull) if cloned -->
-                @if (row.status == '1') {
-                  <button type="button"
-                    class="btn btn-formal-icon btn-action-sage"
-                    (click)="Pull(row)"
-                    ngbTooltip="Actualizar cambios (Pull)">
-                    <span [data-feather]="'git-pull-request'" [size]="13"></span>
-                  </button>
-                }
-
-                <!-- Quick Action 1.1: Clonar if not cloned -->
-                @if (row.status == '0') {
-                  <button type="button"
-                    class="btn btn-formal-icon btn-action-sand"
-                    (click)="Clonar(row)"
-                    ngbTooltip="Clonar en servidor">
-                    <span [data-feather]="'download-cloud'" [size]="13"></span>
-                  </button>
-                }
-
-                <!-- Quick Action 2: Ver Logs Console if cloned -->
-                @if (row.status != '0') {
-                  <button type="button"
-                    class="btn btn-formal-icon btn-action-slate"
-                    (click)="ModalExePlay(ModalPlay, row)"
-                    ngbTooltip="Ver Consola de Logs">
-                    <span [data-feather]="'terminal'" [size]="13"></span>
-                  </button>
-                }
-
-                <!-- Contextual Menu Dropdown -->
+                <!-- Contextual Menu Dropdown (Solo Tres Puntos) -->
                 <div ngbDropdown container="body" class="d-inline-block">
                   <button ngbDropdownToggle type="button"
                     class="btn btn-formal-icon btn-action-more hide-arrow"
                     rippleEffect
-                    ngbTooltip="Opciones avanzadas">
-                    <span [data-feather]="'more-vertical'" [size]="13"></span>
+                    ngbTooltip="Opciones">
+                    <span [data-feather]="'more-vertical'" [size]="14"></span>
                   </button>
                   <div ngbDropdownMenu class="dropdown-menu-right formal-context-menu py-1">
                     <div class="context-menu-header px-2 py-1">
@@ -342,7 +312,7 @@
 
                     @if (row.origen && row.proyecto) {
                       <a [href]="'https://' + row.origen + '/' + row.proyecto" target="_blank"
-                        ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center">
+                        ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center cursor-pointer">
                         <span [data-feather]="'external-link'" [size]="14" class="mr-2 text-slate"></span>
                         <span>Abrir Repositorio</span>
                       </a>
@@ -351,21 +321,21 @@
                     <div class="dropdown-divider my-1"></div>
 
                     @if (row.status == '1') {
-                      <a (click)="Pull(row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center">
+                      <a (click)="Pull(row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center cursor-pointer">
                         <span [data-feather]="'git-pull-request'" [size]="14" class="mr-2 text-sage"></span>
                         <span>Actualizar (Git Pull)</span>
                       </a>
                     }
 
                     @if (row.status == '0') {
-                      <a (click)="Clonar(row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center">
+                      <a (click)="Clonar(row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center cursor-pointer">
                         <span [data-feather]="'download-cloud'" [size]="14" class="mr-2 text-sand"></span>
                         <span>Clonar en Servidor</span>
                       </a>
                     }
 
                     @if (row.rama && row.rama.split(',').length > 1 && row.status != '0') {
-                      <a (click)="Modal(ModalMerge, row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center">
+                      <a (click)="Modal(ModalMerge, row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center cursor-pointer">
                         <span [data-feather]="'git-merge'" [size]="14" class="mr-2 text-slate"></span>
                         <span>Fusionar Ramas (Merge)</span>
                       </a>
@@ -374,14 +344,14 @@
                     <div class="dropdown-divider my-1"></div>
 
                     @if (row.status != '0') {
-                      <a (click)="ModalExePlay(ModalPlay, row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center">
+                      <a (click)="ModalExePlay(ModalPlay, row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center cursor-pointer">
                         <span [data-feather]="'terminal'" [size]="14" class="mr-2 text-slate"></span>
                         <span>Consola de Logs</span>
                       </a>
                     }
 
                     @if (row.status != '0') {
-                      <a (click)="ModalExeStatus(ModalStatus, row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center">
+                      <a (click)="ModalExeStatus(ModalStatus, row)" ngbDropdownItem class="dropdown-item py-1 d-flex align-items-center cursor-pointer">
                         <span [data-feather]="'activity'" [size]="14" class="mr-2 text-slate"></span>
                         <span>Estatus Git Local</span>
                       </a>

@@ -136,7 +136,13 @@ export class ApplicationsComponent implements OnInit {
     this.ListaAplicaciones = [];
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this.ListaAplicaciones = data.Cuerpo ? [...data.Cuerpo] : [];
+        const raw = data.Cuerpo ? [...data.Cuerpo] : [];
+        this.ListaAplicaciones = raw.filter((a: any) => {
+          const nombre = (a?.nombre || '').toLowerCase().trim();
+          const proyecto = (a?.proyecto || '').toLowerCase().trim();
+          const aplicacion = (a?.aplicacion || '').toLowerCase().trim();
+          return nombre !== 'consola' && proyecto !== 'consola' && aplicacion !== 'consola';
+        });
         this.cdr.detectChanges();
       },
       (error) => {

@@ -214,7 +214,7 @@
       color: #28c76f !important;
 
       .swal2-success-ring {
-        border-color: rgba(40, 199, 111, 0.3) !important;
+        display: none !important;
       }
 
       .swal2-success-line-tip,
@@ -226,7 +226,7 @@
       .swal2-success-circular-line-left,
       .swal2-success-circular-line-right,
       .swal2-success-fix {
-        background-color: transparent !important;
+        display: none !important;
       }
     }
 
@@ -337,6 +337,16 @@
         }
 
         &.swal2-success {
+          .swal2-success-ring {
+            display: none !important;
+          }
+
+          .swal2-success-circular-line-left,
+          .swal2-success-circular-line-right,
+          .swal2-success-fix {
+            display: none !important;
+          }
+
           .swal2-success-line-tip,
           .swal2-success-line-long {
             height: 2px !important;

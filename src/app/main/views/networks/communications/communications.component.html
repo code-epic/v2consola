@@ -333,7 +333,7 @@
         <!-- Host / IP con opción de escaneo -->
         <div class="col-md-6 col-12 form-group">
           <div class="d-flex align-items-center justify-content-between mb-25">
-            <label for="login-host" class="form-label-formal mb-0">Dirección Host/IP</label>
+            <label class="form-label-formal mb-0">Dirección Host/IP</label>
             @if (btnShowScan) {
               <span class="badge badge-scan-pastel badge-warning cursor-pointer" (click)="ScanRedMac()">
                 <span [data-feather]="'search'" [size]="11" class="mr-25"></span> Escanear
@@ -359,7 +359,7 @@
 
         <!-- MAC Address -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-mac" class="form-label-formal">Dirección MAC</label>
+          <label class="form-label-formal">Dirección MAC</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'cpu'" [size]="14"></span></span>
@@ -374,7 +374,7 @@
 
         <!-- Descripción -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-descripcion" class="form-label-formal">Descripción</label>
+          <label class="form-label-formal">Descripción</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'file-text'" [size]="14"></span></span>
@@ -389,7 +389,7 @@
 
         <!-- Identificador -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-id" class="form-label-formal">Identificador</label>
+          <label class="form-label-formal">Identificador</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'hash'" [size]="14"></span></span>
@@ -404,7 +404,7 @@
 
         <!-- Tipo de Dispositivo -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-tipo" class="form-label-formal">Tipo de Dispositivo</label>
+          <label class="form-label-formal">Tipo de Dispositivo</label>
           <ng-select [items]="dispositivos" bindLabel="descripcion" formControlName="tipo"
             placeholder="Seleccione Dispositivo" bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -412,7 +412,7 @@
 
         <!-- Estado -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-estatus" class="form-label-formal">Estado</label>
+          <label class="form-label-formal">Estado</label>
           <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Estado"
             bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -454,7 +454,7 @@
       <div class="row g-2">
 
         <div class="col-md-6 col-12 form-group">
-          <label for="login-host" class="form-label-formal">Dirección Host/IP</label>
+          <label class="form-label-formal">Dirección Host/IP</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'globe'" [size]="14"></span></span>
@@ -468,7 +468,7 @@
         </div>
 
         <div class="col-md-6 col-12 form-group">
-          <label for="login-mac" class="form-label-formal">Dirección MAC</label>
+          <label class="form-label-formal">Dirección MAC</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'cpu'" [size]="14"></span></span>
@@ -482,7 +482,7 @@
         </div>
 
         <div class="col-md-6 col-12 form-group">
-          <label for="login-descripcion" class="form-label-formal">Descripción</label>
+          <label class="form-label-formal">Descripción</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'file-text'" [size]="14"></span></span>
@@ -496,7 +496,7 @@
         </div>
 
         <div class="col-md-6 col-12 form-group">
-          <label for="login-id" class="form-label-formal">Identificador</label>
+          <label class="form-label-formal">Identificador</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'hash'" [size]="14"></span></span>
@@ -510,14 +510,14 @@
         </div>
 
         <div class="col-md-6 col-12 form-group">
-          <label for="login-tipo" class="form-label-formal">Tipo de Dispositivo</label>
+          <label class="form-label-formal">Tipo de Dispositivo</label>
           <ng-select [items]="dispositivos" bindLabel="descripcion" formControlName="tipo"
             placeholder="Seleccione Dispositivo" bindValue="id" class="custom-select-formal">
           </ng-select>
         </div>
 
         <div class="col-md-6 col-12 form-group">
-          <label for="login-estatus" class="form-label-formal">Estado</label>
+          <label class="form-label-formal">Estado</label>
           <ng-select [items]="status" formControlName="estatus" bindLabel="name" placeholder="Seleccione Estado"
             bindValue="id" class="custom-select-formal">
           </ng-select>

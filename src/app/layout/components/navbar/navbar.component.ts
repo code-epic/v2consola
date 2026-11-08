@@ -583,10 +583,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.Change.usuario = this.usuario;
     this.modalService.open(modal, {
       centered: true,
-      size: "md",
+      size: "lg",
       backdrop: false,
-      keyboard: false,
-      windowClass: 'fondo-modal'
+      keyboard: true,
+      windowClass: 'fondo-modal modal-change-pass-enhanced'
     });
   }
 

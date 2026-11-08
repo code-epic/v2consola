@@ -491,6 +491,14 @@ export class ListComponent implements OnInit {
     });
   }
 
+  isConsola(app: any): boolean {
+    if (!app) return false;
+    const nombre = (app.nombre || '').toLowerCase().trim();
+    const proyecto = (app.proyecto || '').toLowerCase().trim();
+    const aplicacion = (app.aplicacion || '').toLowerCase().trim();
+    return nombre === 'consola' || proyecto === 'consola' || aplicacion === 'consola';
+  }
+
   applyCombinedFilters() {
     const searchVal = (this.searchValueCtrl.value || '').toLowerCase().trim();
     const langVal = (this.selectedLenguaje && this.selectedLenguaje !== 'Todos los Lenguajes') 
@@ -499,6 +507,8 @@ export class ListComponent implements OnInit {
     const statusVal = this.selectedStatusFilter;
 
     this.rowData = this.tempData.filter(d => {
+      if (this.isConsola(d)) return false;
+
       const matchSearch = !searchVal || 
         (d.nombre && d.nombre.toLowerCase().includes(searchVal)) ||
         (d.proyecto && d.proyecto.toLowerCase().includes(searchVal)) ||
@@ -545,7 +555,7 @@ export class ListComponent implements OnInit {
     this.searchValueCtrl.setValue('');
     this.selectedLenguaje = null;
     this.selectedStatusFilter = 'all';
-    this.rowData = [...this.tempData];
+    this.rowData = this.tempData.filter(d => !this.isConsola(d));
     if (this.table) {
       this.table.offset = 0;
     }
@@ -603,7 +613,8 @@ export class ListComponent implements OnInit {
     this.ListaAplicaciones = [];
     this.apiService.Ejecutar(this.xAPI).subscribe({
       next: (data) => {
-        this.ListaAplicaciones = data?.Cuerpo || [];
+        const raw = Array.isArray(data?.Cuerpo) ? data.Cuerpo : [];
+        this.ListaAplicaciones = raw.filter((a: any) => !this.isConsola(a));
         this.rowData = [...this.ListaAplicaciones];
         this.tempData = [...this.ListaAplicaciones];
 

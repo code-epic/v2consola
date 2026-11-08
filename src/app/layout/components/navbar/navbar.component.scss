@@ -901,3 +901,371 @@ app-navbar-bookmark {
     }
   }
 }
+
+// =========================================================================
+// MODAL DE CAMBIO DE CLAVE (ESTILO FORMAL ENTERPRISE / SWEETALERT HARMONY)
+// =========================================================================
+::ng-deep .modal-change-pass-enhanced {
+  z-index: 1055 !important;
+
+  .modal-dialog {
+    margin: 1.75rem auto;
+    z-index: 1056 !important;
+    position: relative;
+  }
+
+  .modal-content {
+    border-radius: 24px !important;
+    border: 1px solid rgba(115, 103, 240, 0.15) !important;
+    box-shadow: 0 25px 60px -15px rgba(115, 103, 240, 0.16), 0 10px 25px -5px rgba(15, 23, 42, 0.08) !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+  }
+}
+
+.modal-formal-dialog {
+  background: #ffffff;
+  border-radius: 24px;
+  overflow: hidden;
+
+  .formal-modal-header {
+    background: #fafbfe;
+    border-bottom: 1px solid #ede9fe;
+    padding: 1.25rem 1.5rem;
+
+    .formal-modal-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: #f5f3ff;
+      border: 1.5px solid #ede9fe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7367f0;
+    }
+
+    .modal-title {
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      color: #1e293b;
+    }
+  }
+
+  .formal-alert {
+    background: #fbfbfe;
+    border: 1.5px solid #ede9fe;
+    border-radius: 14px;
+    padding: 0.85rem 1.15rem;
+  }
+
+  .form-label-formal {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-group-formal {
+    height: 44px;
+
+    .form-control {
+      background: #fafbfe;
+      border: 1.5px solid #ede9fe;
+      border-radius: 14px;
+      font-size: 0.88rem;
+      padding: 0 1rem;
+      height: 44px;
+      color: #1e293b;
+      transition: all 0.2s ease;
+
+      &:focus {
+        background: #ffffff;
+        border-color: #7367f0;
+        box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.15);
+      }
+    }
+
+    &.input-group-merge {
+      .form-control {
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .input-group-append .btn,
+      .input-group-append .input-group-text {
+        height: 44px;
+        background: #fafbfe;
+        border: 1.5px solid #ede9fe;
+        border-left: none;
+        border-top-right-radius: 14px;
+        border-bottom-right-radius: 14px;
+        color: #94a3b8;
+        padding: 0 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: #7367f0;
+        }
+      }
+    }
+  }
+
+  .totp-card-wrapper {
+    background: #fbfbfe;
+    border: 1.5px solid #ede9fe;
+    border-radius: 16px;
+
+    .totp-icon-box {
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: #ede9fe;
+      color: #6366f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-image-styled {
+      border: 1.5px solid #ede9fe;
+      border-radius: 12px;
+      padding: 4px;
+      background: #ffffff;
+      max-width: 130px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .qr-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 12px;
+    }
+  }
+
+  .btn-formal-outline {
+    background: #ffffff;
+    border: 1.5px solid #ede9fe;
+    color: #6366f1;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 14px;
+    height: 44px;
+    padding: 0 1.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      background: #f5f3ff;
+      border-color: #d8b4fe;
+      color: #4f46e5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(115, 103, 240, 0.12);
+    }
+  }
+
+  .formal-modal-footer {
+    background: #fafbfe;
+    border-top: 1px solid #ede9fe;
+    padding: 1.25rem 1.5rem;
+    gap: 0.75rem;
+  }
+}
+
+// Botones estándar
+.btn-swal-neutral,
+.btn-swal-purple {
+  height: 44px !important;
+  min-width: 130px !important;
+  border-radius: 14px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 1.6rem !important;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-sizing: border-box !important;
+}
+
+.btn-swal-neutral {
+  background-color: #f8fafc !important;
+  color: #475569 !important;
+  border: 1.5px solid #e2e8f0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+
+  &:hover {
+    background-color: #f1f5f9 !important;
+    color: #1e293b !important;
+    border-color: #cbd5e1 !important;
+    transform: translateY(-1.5px) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+.btn-swal-purple {
+  background-color: #7367f0 !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(115, 103, 240, 0.35) !important;
+
+  &:hover {
+    background-color: #6355ee !important;
+    color: #ffffff !important;
+    transform: translateY(-1.5px) !important;
+    box-shadow: 0 6px 18px rgba(115, 103, 240, 0.45) !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+  }
+
+  &:disabled {
+    opacity: 0.65 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+}
+
+.btn-swal-close-round {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  color: #64748b !important;
+  font-size: 1.25rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
+    background: #fee2e2 !important;
+    border-color: #fca5a5 !important;
+    color: #dc2626 !important;
+    transform: scale(1.05) !important;
+  }
+}
+
+// Soporte Dark Layout
+.dark-layout {
+  ::ng-deep .modal-change-pass-enhanced {
+    .modal-content {
+      background: #283046 !important;
+      border-color: rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.5) !important;
+    }
+  }
+
+  .modal-formal-dialog {
+    background: #283046;
+
+    .formal-modal-header,
+    .formal-modal-footer {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+
+      .modal-title {
+        color: #d0d2d6;
+      }
+    }
+
+    .formal-modal-header .formal-modal-icon-box {
+      background: #283046;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-swal-close-round {
+      background: #283046 !important;
+      border-color: rgba(255, 255, 255, 0.15) !important;
+      color: #b4b7bd !important;
+
+      &:hover {
+        background: #ea5455 !important;
+        border-color: #ea5455 !important;
+        color: #ffffff !important;
+      }
+    }
+
+    .formal-alert {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+      .text-slate-700 {
+        color: #b4b7bd !important;
+      }
+    }
+
+    .form-label-formal {
+      color: #b4b7bd;
+    }
+
+    .input-group-formal {
+      .form-control {
+        background: #161d31;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #d0d2d6;
+
+        &:focus {
+          border-color: #7367f0;
+          background: #283046;
+        }
+      }
+
+      &.input-group-merge .input-group-append .btn {
+        background: #161d31;
+        border-color: rgba(255, 255, 255, 0.1);
+        color: #82868b;
+      }
+    }
+
+    .totp-card-wrapper {
+      background: #161d31;
+      border-color: rgba(255, 255, 255, 0.08);
+
+      .totp-icon-box {
+        background: #283046;
+        color: #7367f0;
+      }
+
+      .qr-image-styled {
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    .formal-modal-footer {
+      .btn-swal-neutral {
+        background: #161d31 !important;
+        border-color: rgba(255, 255, 255, 0.15) !important;
+        color: #d0d2d6 !important;
+
+        &:hover {
+          background: #232a3e !important;
+          color: #ffffff !important;
+        }
+      }
+    }
+  }
+}

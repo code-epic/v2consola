@@ -132,166 +132,185 @@
 
 
 <ng-template #ChangePassword let-modal>
-  <div class="modal-header bg-light-primary">
-    <div class="d-flex align-items-center">
-      <span [data-feather]="'lock'" class="mr-1 text-primary"></span>
-      <h5 class="modal-title text-primary font-weight-bolder" id="myModalLabel160">Seguridad: Cambiar Clave</h5>
-    </div>
-    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body" tabindex="0" ngbAutofocus>
-    <div class="alert alert-primary p-1 mb-2" role="alert">
+  <div class="modal-formal-dialog">
+    <!-- Header -->
+    <div class="modal-header formal-modal-header py-2 px-3 d-flex align-items-center justify-content-between">
       <div class="d-flex align-items-center">
-        <i [data-feather]="'info'" class="mr-1"></i>
-        <small>La contraseña debe tener entre 8-16 caracteres, incluir mayúsculas, minúsculas, números y caracteres
-        especiales (&#64;$!%*?&).</small>
+        <div class="formal-modal-icon-box mr-2">
+          <span [data-feather]="'key'" [size]="16"></span>
+        </div>
+        <div>
+          <h6 class="modal-title font-weight-bold mb-0 text-slate-900">Seguridad: Cambiar Clave</h6>
+          <span class="text-muted font-small-1">Usuario: <b>{{ tipo || usuario }}</b> (@{{ usuario }})</span>
+        </div>
       </div>
+      <button type="button" class="btn-swal-close-round" (click)="modal.dismiss('Cross click')" aria-label="Close">
+        &times;
+      </button>
     </div>
 
-    <form method="post" id="frmChange" name="frmChange">
-      <div class="form-group">
-        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'unlock'" class="mr-50"
-        [size]="14"></i>Contraseña Actual</label>
-        <div class="input-group input-group-merge">
-          <input [type]="showClave ? 'text' : 'password'" [formControl]="changeClaveCtrl"
-            class="form-control" placeholder="Ingrese su clave actual" />
-          <div class="input-group-append">
-            <span class="input-group-text cursor-pointer" (click)="showClave = !showClave">
-              <i class="feather" [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i>
-            </span>
-          </div>
+    <!-- Body -->
+    <div class="modal-body p-3" tabindex="0" ngbAutofocus>
+      <!-- Indicación de Requisitos -->
+      <div class="formal-alert mb-2" role="alert">
+        <div class="d-flex align-items-center">
+          <span [data-feather]="'info'" [size]="15" class="text-slate mr-2 flex-shrink-0"></span>
+          <span class="font-small-2 text-slate-700">
+            La contraseña debe tener entre 8 y 16 caracteres, e incluir mayúsculas, minúsculas, números y caracteres especiales (&#64;$!%*?&).
+          </span>
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'key'" class="mr-50"
-        [size]="14"></i>Nueva Contraseña</label>
-        <div class="input-group input-group-merge">
-          <input [type]="showNueva ? 'text' : 'password'" [formControl]="changeNuevaCtrl"
-            class="form-control"
-            placeholder="Ingrese su nueva clave"
-            [class.is-invalid]="passwordsMatch" />
-          <div class="input-group-append">
-            <span class="input-group-text cursor-pointer" (click)="showNueva = !showNueva">
-              <i class="feather" [ngClass]="showNueva ? 'icon-eye-off' : 'icon-eye'"></i>
-            </span>
+      <form method="post" id="frmChange" name="frmChange">
+        <!-- Contraseña Actual -->
+        <div class="form-group mb-2">
+          <label class="form-label-formal" for="nav-clave-actual">
+            <span [data-feather]="'unlock'" class="mr-1 text-slate" [size]="12"></span>Contraseña Actual
+          </label>
+          <div class="input-group input-group-merge input-group-formal">
+            <input [type]="showClave ? 'text' : 'password'" [formControl]="changeClaveCtrl"
+              id="nav-clave-actual" class="form-control" placeholder="Ingrese su clave actual" />
+            <div class="input-group-append">
+              <button class="btn btn-link btn-sm text-muted p-1" type="button" (click)="showClave = !showClave">
+                <i class="feather font-small-4" [ngClass]="showClave ? 'icon-eye-off' : 'icon-eye'"></i>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Password Strength Indicator -->
-        @if (changeNuevaLength > 0) {
-          <div class="mt-1">
-            <div class="d-flex justify-content-between align-items-center mb-50">
-              <small class="font-weight-bold"
-                [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
-                Nivel de seguridad: {{ passwordStrengthLabel }}
-              </small>
-              <small class="text-muted">{{ passwordStrengthWidth }}%</small>
-            </div>
-            <div class="progress progress-bar-primary" style="height: 6px;">
-              <div class="progress-bar" role="progressbar" [ngClass]="passwordStrengthColor"
-              [style.width.%]="passwordStrengthWidth" aria-valuemin="0" aria-valuemax="100"></div>
+        <!-- Nueva Contraseña -->
+        <div class="form-group mb-2">
+          <label class="form-label-formal" for="nav-clave-nueva">
+            <span [data-feather]="'key'" class="mr-1 text-slate" [size]="12"></span>Nueva Contraseña
+          </label>
+          <div class="input-group input-group-merge input-group-formal">
+            <input [type]="showNueva ? 'text' : 'password'" [formControl]="changeNuevaCtrl"
+              id="nav-clave-nueva" class="form-control" placeholder="Ingrese su nueva clave"
+              [class.is-invalid]="passwordsMatch" />
+            <div class="input-group-append">
+              <button class="btn btn-link btn-sm text-muted p-1" type="button" (click)="showNueva = !showNueva">
+                <i class="feather font-small-4" [ngClass]="showNueva ? 'icon-eye-off' : 'icon-eye'"></i>
+              </button>
             </div>
           </div>
-        }
 
-      </div>
-
-      <div class="form-group">
-        <label class="form-label font-weight-bold text-muted"><i [data-feather]="'shield'" class="mr-50"
-        [size]="14"></i>Repetir Contraseña</label>
-        <div class="input-group input-group-merge">
-          <input [type]="showRepite ? 'text' : 'password'" [formControl]="changeRepiteCtrl"
-            class="form-control" placeholder="Confirme su nueva clave"
-            [class.is-invalid]="passwordsMatch" />
-          <div class="input-group-append">
-            <span class="input-group-text cursor-pointer" (click)="showRepite = !showRepite">
-              <i class="feather" [ngClass]="showRepite ? 'icon-eye-off' : 'icon-eye'"></i>
-            </span>
-          </div>
+          <!-- Password Strength Indicator -->
+          @if (changeNuevaLength > 0) {
+            <div class="mt-1">
+              <div class="d-flex justify-content-between align-items-center mb-50">
+                <small class="font-weight-bold"
+                  [ngClass]="{'text-danger': passwordStrengthWidth < 40, 'text-warning': passwordStrengthWidth >= 40 && passwordStrengthWidth < 80, 'text-success': passwordStrengthWidth >= 80}">
+                  Nivel de seguridad: {{ passwordStrengthLabel }}
+                </small>
+                <small class="text-muted">{{ passwordStrengthWidth }}%</small>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 4px; background: #e2e8f0;">
+                <div class="progress-bar" role="progressbar" [ngClass]="passwordStrengthColor"
+                  [style.width.%]="passwordStrengthWidth" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+          }
         </div>
+
+        <!-- Repetir Contraseña -->
+        <div class="form-group mb-2">
+          <label class="form-label-formal" for="nav-clave-repite">
+            <span [data-feather]="'shield'" class="mr-1 text-slate" [size]="12"></span>Repetir Contraseña
+          </label>
+          <div class="input-group input-group-merge input-group-formal">
+            <input [type]="showRepite ? 'text' : 'password'" [formControl]="changeRepiteCtrl"
+              id="nav-clave-repite" class="form-control" placeholder="Confirme su nueva clave"
+              [class.is-invalid]="passwordsMatch" />
+            <div class="input-group-append">
+              <button class="btn btn-link btn-sm text-muted p-1" type="button" (click)="showRepite = !showRepite">
+                <i class="feather font-small-4" [ngClass]="showRepite ? 'icon-eye-off' : 'icon-eye'"></i>
+              </button>
+            </div>
+          </div>
           @if (passwordsMatch) {
-          <small class="text-danger">
-            <i [data-feather]="'alert-circle'" [size]="10" class="mr-50"></i>Las contraseñas no coinciden
-          </small>
+            <small class="text-danger mt-25 d-block">
+              Las contraseñas no coinciden
+            </small>
+          }
+        </div>
+      </form>
+
+      <!-- Sección TOTP (Tarjeta refinada) -->
+      <div class="totp-card-wrapper p-2 mt-2">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div class="totp-icon-box mr-2">
+              <span [data-feather]="'smartphone'" [size]="16"></span>
+            </div>
+            <div>
+              <h6 class="mb-0 font-weight-bold text-slate">Autenticación de Dos Factores (TOTP)</h6>
+              <span class="text-muted font-small-1">Capa adicional de protección para su cuenta</span>
+            </div>
+          </div>
+          <div class="custom-control custom-switch custom-switch-primary">
+            <input type="checkbox"
+              class="custom-control-input"
+              id="totp-switch"
+              (change)="toggleTotp($event)"
+              [checked]="isTotpActive"
+              />
+            <label class="custom-control-label" for="totp-switch"></label>
+          </div>
+        </div>
+
+        @if (showTotpSection) {
+          <div class="mt-2 pt-2 border-top">
+            <div class="formal-alert mb-2" role="alert">
+              <div class="d-flex align-items-center">
+                <span [data-feather]="'help-circle'" [size]="15" class="text-slate mr-2 flex-shrink-0"></span>
+                <span class="font-small-2 text-slate-700">
+                  Escanee el código QR con una app como Google Authenticator o ingrese la clave manualmente.
+                </span>
+              </div>
+            </div>
+            <div class="row align-items-center g-2">
+              <div class="col-md-4 text-center">
+                @if (totpQrCodeUrl) {
+                  <img [src]="totpQrCodeUrl" alt="Código QR TOTP" class="img-fluid rounded qr-image-styled">
+                }
+                @if (!totpQrCodeUrl) {
+                  <div class="qr-placeholder">
+                    <span [data-feather]="'loader'" class="spinner"></span>
+                    <small class="d-block mt-1 text-muted">Generando código...</small>
+                  </div>
+                }
+              </div>
+              <div class="col-md-8">
+                <p class="font-small-2 text-muted mb-1">Clave secreta para configuración manual:</p>
+                <div class="input-group input-group-formal">
+                  <input type="text" class="form-control" [value]="totpSecret" readonly
+                    placeholder="Clave secreta...">
+                  <div class="input-group-append">
+                    <button class="btn btn-formal-outline px-2" type="button" (click)="copyTotpSecret()"
+                      [disabled]="isTotpSecretCopied" ngbTooltip="Copiar al portapapeles">
+                      <span [data-feather]="isTotpSecretCopied ? 'check' : 'copy'" [size]="14"></span>
+                    </button>
+                  </div>
+                </div>
+                @if (isTotpSecretCopied) {
+                  <small class="text-success font-weight-bold mt-50 d-block">¡Clave copiada exitosamente!</small>
+                }
+              </div>
+            </div>
+          </div>
         }
-      </div>
-    </form>
-
-    <!-- Sección TOTP -->
-    <hr class="my-2">
-
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <span [data-feather]="'smartphone'" class="mr-1 text-secondary"></span>
-        <h6 class="m-0 font-weight-bolder text-secondary">Autenticación de Dos Factores (TOTP)</h6>
-      </div>
-      <div class="custom-control custom-switch">
-        <input type="checkbox"
-          class="custom-control-input"
-          id="totp-switch"
-          (change)="toggleTotp($event)"
-          [checked]="isTotpActive"
-          />
-        <label class="custom-control-label" for="totp-switch"></label>
       </div>
     </div>
 
-    @if (showTotpSection) {
-      <div class="mt-2 animated-section">
-        <div class="alert alert-light-info p-1" role="alert">
-          <div class="d-flex align-items-center">
-            <span [data-feather]="'help-circle'" class="mr-1"></span>
-            <small>
-              Para mayor seguridad, active la autenticación de dos factores. Escanee el código QR con una aplicación como
-              Google Authenticator, Authy o similar.
-            </small>
-          </div>
-        </div>
-        <div class="row align-items-center">
-          <div class="col-md-4 text-center">
-            @if (totpQrCodeUrl) {
-              <img [src]="totpQrCodeUrl" alt="Código QR TOTP" class="img-fluid rounded"
-                style="border: 1px solid #dfe3e7;">
-            }
-            @if (!totpQrCodeUrl) {
-              <div class="qr-placeholder">
-                <span [data-feather]="'loader'" class="spinner"></span>
-                <small class="d-block mt-1 text-muted">Generando código...</small>
-              </div>
-            }
-          </div>
-          <div class="col-md-8">
-            <p class="font-small-2 text-muted mb-1">Si no puede escanear el código, ingrese manualmente la siguiente clave
-            en su aplicación de autenticación:</p>
-            <div class="input-group">
-              <input type="text" class="form-control form-control-sm" [value]="totpSecret" readonly
-                placeholder="Clave secreta...">
-              <div class="input-group-append">
-                <button class="btn btn-sm btn-outline-secondary" type="button" (click)="copyTotpSecret()"
-                  [disabled]="isTotpSecretCopied">
-                  <span [data-feather]="isTotpSecretCopied ? 'check' : 'copy'" [size]="14"></span>
-                </button>
-              </div>
-            </div>
-            @if (isTotpSecretCopied) {
-              <small class="text-success font-weight-bold mt-1">¡Clave copiada!</small>
-            }
-          </div>
-        </div>
-      </div>
-    }
-  </div>
-  <div class="modal-footer bg-light-secondary navbar-shadow">
-    <button type="button" class="btn btn-primary btn-icon-text" (click)="ChangesPassword()" rippleEffect
-      [disabled]="passwordStrengthWidth < 80 || changeNuevaCtrl.value !== changeRepiteCtrl.value">
-      <span [data-feather]="'save'" class="mr-50"></span> Cambiar Clave
-    </button>
-    <button type="button" class="btn btn-outline-danger btn-icon-text" (click)="modal.close('Accept click')"
-      rippleEffect>
-      <span [data-feather]="'x'" class="mr-50"></span> Cancelar
-    </button>
+    <!-- Footer con botones estilo SweetAlert / Formal (sin iconos, 44px, bordes 14px) -->
+    <div class="modal-footer formal-modal-footer d-flex align-items-center justify-content-end">
+      <button type="button" class="btn btn-swal-neutral" (click)="modal.close('Accept click')">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-swal-purple" (click)="ChangesPassword()"
+        [disabled]="passwordStrengthWidth < 80 || changeNuevaCtrl.value !== changeRepiteCtrl.value || !changeClaveCtrl.value">
+        Cambiar Clave
+      </button>
+    </div>
   </div>
 </ng-template>

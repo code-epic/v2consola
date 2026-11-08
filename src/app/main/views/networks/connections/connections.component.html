@@ -322,7 +322,7 @@
 
         <!-- Hostname -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-host" class="form-label-formal">Hostname</label>
+          <label class="form-label-formal">Hostname</label>
           <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion"
             placeholder="Seleccione Hostname" bindValue="host" class="custom-select-formal">
           </ng-select>
@@ -330,7 +330,7 @@
 
         <!-- Driver de Conexión -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-driver" class="form-label-formal">Driver de Conexión</label>
+          <label class="form-label-formal">Driver de Conexión</label>
           <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
             bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -339,7 +339,7 @@
         <!-- Base de Datos (condicional) -->
         @if (showBaseDatos == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-basedatos" class="form-label-formal">{{ lbd }}</label>
+            <label class="form-label-formal">{{ lbd }}</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'folder'" [size]="14"></span></span>
@@ -356,7 +356,7 @@
         <!-- Puerto (condicional) -->
         @if (showBaseDatos == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-puerto" class="form-label-formal">Puerto</label>
+            <label class="form-label-formal">Puerto</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'link'" [size]="14"></span></span>
@@ -373,7 +373,7 @@
         <!-- Protocolo (condicional puente) -->
         @if (showPuente == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-protocolo" class="form-label-formal">Protocolo</label>
+            <label class="form-label-formal">Protocolo</label>
             <ng-select [items]="protocolo" formControlName="protocolo" bindLabel="name"
               placeholder="Seleccione Protocolo" bindValue="name" class="custom-select-formal">
             </ng-select>
@@ -383,7 +383,7 @@
         <!-- URL (condicional puente) -->
         @if (showPuente == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-url" class="form-label-formal">URL</label>
+            <label class="form-label-formal">URL</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'globe'" [size]="14"></span></span>
@@ -395,7 +395,7 @@
 
         <!-- Usuario -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-usuario" class="form-label-formal">Usuario</label>
+          <label class="form-label-formal">Usuario</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'user'" [size]="14"></span></span>
@@ -410,7 +410,7 @@
 
         <!-- Clave -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-clave" class="form-label-formal">Clave</label>
+          <label class="form-label-formal">Clave</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'lock'" [size]="14"></span></span>
@@ -430,7 +430,7 @@
 
         <!-- Estatus -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-estatus" class="form-label-formal">Estatus</label>
+          <label class="form-label-formal">Estatus</label>
           <ng-select [items]="status" formControlName="estatus" bindLabel="name"
             placeholder="Seleccione Estatus" bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -438,7 +438,7 @@
 
         <!-- Aplicación -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-aplicacion" class="form-label-formal">Aplicación</label>
+          <label class="form-label-formal">Aplicación</label>
           <ng-select [items]="ListaAplicaciones" formControlName="aplicacion" bindLabel="name"
             placeholder="Seleccione Aplicación" bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -446,7 +446,7 @@
 
         <!-- Descripción -->
         <div class="col-12 form-group">
-          <label for="login-descripcion" class="form-label-formal">Descripción</label>
+          <label class="form-label-formal">Descripción</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'file-text'" [size]="14"></span></span>
@@ -502,7 +502,7 @@
 
         <!-- Hostname -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-host" class="form-label-formal">Hostname</label>
+          <label class="form-label-formal">Hostname</label>
           <ng-select [items]="hosts" formControlName="host" bindLabel="descripcion"
             placeholder="Seleccione Hostname" bindValue="host" class="custom-select-formal">
           </ng-select>
@@ -510,7 +510,7 @@
 
         <!-- Driver de Conexión -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-driver" class="form-label-formal">Driver de Conexión</label>
+          <label class="form-label-formal">Driver de Conexión</label>
           <ng-select [items]="drivers" formControlName="driver" bindLabel="nombre" placeholder="Seleccione Driver"
             bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -519,7 +519,7 @@
         <!-- Base de Datos (condicional) -->
         @if (showBaseDatos == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-basedatos" class="form-label-formal">{{ lbd }}</label>
+            <label class="form-label-formal">{{ lbd }}</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'folder'" [size]="14"></span></span>
@@ -536,7 +536,7 @@
         <!-- Puerto (condicional) -->
         @if (showBaseDatos == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-puerto" class="form-label-formal">Puerto</label>
+            <label class="form-label-formal">Puerto</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'link'" [size]="14"></span></span>
@@ -553,7 +553,7 @@
         <!-- Protocolo (condicional puente) -->
         @if (showPuente == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-protocolo" class="form-label-formal">Protocolo</label>
+            <label class="form-label-formal">Protocolo</label>
             <ng-select [items]="protocolo" formControlName="protocolo" bindLabel="name"
               placeholder="Seleccione Protocolo" bindValue="name" class="custom-select-formal">
             </ng-select>
@@ -563,7 +563,7 @@
         <!-- URL (condicional puente) -->
         @if (showPuente == true) {
           <div class="col-md-6 col-12 form-group">
-            <label for="login-url" class="form-label-formal">URL</label>
+            <label class="form-label-formal">URL</label>
             <div class="input-group-pastel">
               <div class="input-group-prepend">
                 <span class="input-group-text"><span [data-feather]="'globe'" [size]="14"></span></span>
@@ -575,7 +575,7 @@
 
         <!-- Usuario -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-usuario" class="form-label-formal">Usuario</label>
+          <label class="form-label-formal">Usuario</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'user'" [size]="14"></span></span>
@@ -590,7 +590,7 @@
 
         <!-- Clave -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-clave" class="form-label-formal">Clave</label>
+          <label class="form-label-formal">Clave</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'lock'" [size]="14"></span></span>
@@ -610,7 +610,7 @@
 
         <!-- Estatus -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-estatus" class="form-label-formal">Estatus</label>
+          <label class="form-label-formal">Estatus</label>
           <ng-select [items]="status" formControlName="estatus" bindLabel="name"
             placeholder="Seleccione Estatus" bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -618,7 +618,7 @@
 
         <!-- Aplicación -->
         <div class="col-md-6 col-12 form-group">
-          <label for="login-aplicacion" class="form-label-formal">Aplicación</label>
+          <label class="form-label-formal">Aplicación</label>
           <ng-select [items]="ListaAplicaciones" formControlName="aplicacion" bindLabel="name"
             placeholder="Seleccione Aplicación" bindValue="id" class="custom-select-formal">
           </ng-select>
@@ -626,7 +626,7 @@
 
         <!-- Descripción -->
         <div class="col-12 form-group">
-          <label for="login-descripcion" class="form-label-formal">Descripción</label>
+          <label class="form-label-formal">Descripción</label>
           <div class="input-group-pastel">
             <div class="input-group-prepend">
               <span class="input-group-text"><span [data-feather]="'file-text'" [size]="14"></span></span>
