@@ -168,24 +168,26 @@ $soft-bg: #f8fafc;
 
   .card-actions {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
     padding-top: 0.85rem;
     border-top: 1px solid #f1f5f9;
     margin-top: auto;
 
     .btn-card-action {
-      flex: 1;
+      flex: 1 1 auto;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 0.45rem 0.75rem;
-      font-size: 0.82rem;
+      gap: 5px;
+      padding: 0.45rem 0.55rem;
+      font-size: 0.8rem;
       font-weight: 500;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
 
       &.primary {
         background: rgba(115, 103, 240, 0.08);
@@ -207,6 +209,18 @@ $soft-bg: #f8fafc;
         &:hover {
           background: #e2e8f0;
           color: $text-primary;
+        }
+      }
+
+      &.info {
+        background: rgba(0, 207, 232, 0.09);
+        color: #009bb0;
+        border: 1px solid rgba(0, 207, 232, 0.25);
+
+        &:hover {
+          background: #00cfe8;
+          color: #ffffff;
+          border-color: #00cfe8;
         }
       }
     }

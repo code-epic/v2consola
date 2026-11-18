@@ -213,11 +213,22 @@ export class EventComponent implements OnInit, OnDestroy {
   };
 
   public parsedOutput: {
-    kind: "EMPTY" | "ARRAY" | "OBJECT" | "TEXT";
+    kind: "EMPTY" | "MESSAGE" | "SINGLE_RECORD" | "ARRAY" | "TEXT";
     totalRows: number;
     columns: string[];
     rows: Record<string, string>[];
-    entries: { key: string; value: string }[];
+    entries: {
+      key: string;
+      value: string;
+      kind: "scalar" | "bool" | "empty" | "nested";
+      nestedPreview?: string;
+      nestedPretty?: string;
+      expanded?: boolean;
+    }[];
+    messageTitle?: string;
+    messageTone?: "success" | "info" | "warning" | "danger";
+    messageMeta?: { key: string; value: string }[];
+    plainText?: string;
     summaryText: string;
   } = {
     kind: "EMPTY",
@@ -1408,13 +1419,36 @@ export class EventComponent implements OnInit, OnDestroy {
           };
           return;
         }
+        // Si es 1 solo objeto en el array, mostrarlo como Ficha Estructurada (SINGLE_RECORD) en vez de tabla horizontal truncada
+        if (arr.length === 1 && typeof arr[0] === "object" && arr[0] !== null) {
+          const single = arr[0];
+          const entries = this.buildRichEntries(single);
+          this.parsedOutput = {
+            kind: "SINGLE_RECORD",
+            totalRows: 1,
+            columns: [],
+            rows: [],
+            entries,
+            summaryText: "1 registro • Ficha",
+          };
+          return;
+        }
         if (typeof arr[0] === "object" && arr[0] !== null) {
           const cols = Object.keys(arr[0]).slice(0, 6);
           const rows = arr.slice(0, 50).map((r: any) => {
             const rowObj: Record<string, string> = {};
             cols.forEach((c) => {
-              const v = this.formatHumanValue(r[c]);
-              rowObj[c] = v.length > 70 ? v.slice(0, 70) + "..." : v;
+              const rawVal = r[c];
+              if (rawVal === null || rawVal === undefined || rawVal === "") {
+                rowObj[c] = "—";
+              } else if (Array.isArray(rawVal)) {
+                rowObj[c] = `[${rawVal.length} elem.]`;
+              } else if (typeof rawVal === "object") {
+                rowObj[c] = `{${Object.keys(rawVal).length} campos}`;
+              } else {
+                const s = rawVal.toString();
+                rowObj[c] = s.length > 60 ? s.slice(0, 60) + "..." : s;
+              }
             });
             return rowObj;
           });
@@ -1424,15 +1458,29 @@ export class EventComponent implements OnInit, OnDestroy {
             columns: cols,
             rows,
             entries: [],
-            summaryText: `${arr.length} registro(s) en respuesta`,
+            summaryText: `${arr.length} registros (Tabla)`,
           };
           return;
         }
+        // Array de primitivos (strings/números)
+        this.parsedOutput = {
+          kind: "SINGLE_RECORD",
+          totalRows: arr.length,
+          columns: [],
+          rows: [],
+          entries: arr.map((v: any, idx: number) => ({
+            key: `#${idx + 1}`,
+            value: this.formatHumanValue(v),
+            kind: "scalar" as const,
+          })),
+          summaryText: `${arr.length} elemento(s)`,
+        };
+        return;
       }
 
       if (parsed && typeof parsed === "object") {
-        const entries = this.objectToEntries(parsed);
-        if (entries.length === 0) {
+        const keys = Object.keys(parsed);
+        if (keys.length === 0) {
           this.parsedOutput = {
             kind: "EMPTY",
             totalRows: 0,
@@ -1443,13 +1491,58 @@ export class EventComponent implements OnInit, OnDestroy {
           };
           return;
         }
+
+        // Detectar si es un mensaje de estado/confirmación (msj, mensaje, message, error)
+        const msgKey = keys.find((k) =>
+          /^(msj|mensaje|message|msg|error|respuesta)$/i.test(k),
+        );
+        if (msgKey && keys.length <= 5 && typeof parsed[msgKey] === "string") {
+          const msgText = parsed[msgKey];
+          const isErr =
+            msgKey.toLowerCase() === "error" ||
+            parsed.tipo === 0 ||
+            parsed.ok === false ||
+            /error|fallo|inválid/i.test(msgText);
+          const meta = keys
+            .filter((k) => k !== msgKey)
+            .map((k) => ({ key: k, value: this.formatHumanValue(parsed[k]) }));
+          this.parsedOutput = {
+            kind: "MESSAGE",
+            totalRows: 1,
+            columns: [],
+            rows: [],
+            entries: [],
+            messageTitle: msgText,
+            messageTone: isErr ? "danger" : "success",
+            messageMeta: meta,
+            summaryText: "Mensaje de respuesta",
+          };
+          return;
+        }
+
+        const entries = this.buildRichEntries(parsed);
         this.parsedOutput = {
-          kind: "OBJECT",
+          kind: "SINGLE_RECORD",
           totalRows: 1,
           columns: [],
           rows: [],
           entries,
-          summaryText: `${entries.length} propiedad(es) devuelta(s)`,
+          summaryText: `${entries.length} campo(s)`,
+        };
+        return;
+      }
+
+      if (typeof parsed === "string" || typeof parsed === "number" || typeof parsed === "boolean") {
+        this.parsedOutput = {
+          kind: "MESSAGE",
+          totalRows: 1,
+          columns: [],
+          rows: [],
+          entries: [],
+          messageTitle: String(parsed),
+          messageTone: "info",
+          messageMeta: [],
+          summaryText: "Valor de respuesta",
         };
         return;
       }
@@ -1460,9 +1553,55 @@ export class EventComponent implements OnInit, OnDestroy {
       totalRows: 1,
       columns: [],
       rows: [],
-      entries: [{ key: "Respuesta", value: text }],
-      summaryText: "Respuesta de texto",
+      entries: [],
+      plainText: text,
+      summaryText: "Texto plano",
     };
+  }
+
+  private buildRichEntries(obj: Record<string, any>) {
+    return Object.entries(obj).map(([key, val]) => {
+      if (val === null || val === undefined || val === "") {
+        return { key, value: "—", kind: "empty" as const };
+      }
+      if (typeof val === "boolean") {
+        return { key, value: val ? "true" : "false", kind: "bool" as const };
+      }
+      if (Array.isArray(val)) {
+        const preview =
+          val.length === 0
+            ? "0 elementos"
+            : val.length === 1 && val[0]?.id
+              ? `1 elemento (${val[0].id})`
+              : `${val.length} elemento(s)`;
+        return {
+          key,
+          value: preview,
+          kind: "nested" as const,
+          nestedPreview: preview,
+          nestedPretty: JSON.stringify(val, null, 2),
+          expanded: false,
+        };
+      }
+      if (typeof val === "object") {
+        const preview = `{${Object.keys(val).length} campos}`;
+        return {
+          key,
+          value: preview,
+          kind: "nested" as const,
+          nestedPreview: preview,
+          nestedPretty: JSON.stringify(val, null, 2),
+          expanded: false,
+        };
+      }
+      return { key, value: String(val), kind: "scalar" as const };
+    });
+  }
+
+  toggleOutputEntry(entry: any) {
+    if (entry.kind === "nested") {
+      entry.expanded = !entry.expanded;
+    }
   }
 
   reopenPrevious() {

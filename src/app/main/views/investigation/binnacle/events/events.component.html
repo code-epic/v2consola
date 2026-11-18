@@ -628,13 +628,15 @@
       <!-- INPUT PANEL (Expande a col-12 cuando Output está vacío) -->
       <div [ngClass]="parsedOutput.kind === 'EMPTY' ? 'col-12' : 'col-lg-6'" class="mb-1">
         <div class="traza-panel p-0 overflow-hidden h-100 d-flex flex-column">
-          <div class="py-75 px-150 border-bottom d-flex align-items-center justify-content-between bg-white">
-            <div class="d-flex align-items-center" style="gap: 0.5rem;">
-              <i data-feather="log-in" [size]="'15'" class="text-secondary"></i>
+          <div class="panel-sub-header">
+            <div class="sub-header-title">
+              <span class="sub-header-icon sub-icon-slate">
+                <i data-feather="log-in" [size]="'14'"></i>
+              </span>
               <h6 class="mb-0 font-weight-bold small text-dark">INPUT (ENTRADA)</h6>
               <span class="badge font-small-1" [ngClass]="parsedInput.badgeClass">{{ parsedInput.typeLabel }}</span>
             </div>
-            <button type="button" class="btn-icon-minimal" style="width: 28px; height: 28px;"
+            <button type="button" class="btn-icon-minimal" style="width: 30px; height: 30px;"
               (click)="copyToClipboard(decodedConsulta)" title="Copiar Input">
               <i data-feather="copy" [size]="'13'"></i>
             </button>
@@ -701,13 +703,15 @@
       @if (parsedOutput.kind !== 'EMPTY') {
         <div class="col-lg-6 mb-1">
           <div class="traza-panel p-0 overflow-hidden h-100 d-flex flex-column">
-            <div class="py-75 px-150 border-bottom d-flex align-items-center justify-content-between bg-white">
-              <div class="d-flex align-items-center" style="gap: 0.5rem;">
-                <i data-feather="log-out" [size]="'15'" class="text-primary"></i>
+            <div class="panel-sub-header">
+              <div class="sub-header-title">
+                <span class="sub-header-icon sub-icon-primary">
+                  <i data-feather="log-out" [size]="'14'"></i>
+                </span>
                 <h6 class="mb-0 font-weight-bold small text-primary">OUTPUT (RESPUESTA JSON)</h6>
                 <span class="badge badge-light-info font-small-1">{{ parsedOutput.summaryText }}</span>
               </div>
-              <button type="button" class="btn-icon-minimal" style="width: 28px; height: 28px;"
+              <button type="button" class="btn-icon-minimal" style="width: 30px; height: 30px;"
                 (click)="copyToClipboard(decodedContenido)" title="Copiar Output">
                 <i data-feather="copy" [size]="'13'"></i>
               </button>
@@ -715,7 +719,66 @@
 
             <div class="detail-scroll-pane">
               @if (detailViewMode === 'report') {
-                @if (parsedOutput.kind === 'ARRAY') {
+                @if (parsedOutput.kind === 'MESSAGE') {
+                  <div class="p-150">
+                    <div class="output-message-card" [ngClass]="'msg-' + (parsedOutput.messageTone || 'info')">
+                      <div class="msg-icon">
+                        <i [data-feather]="parsedOutput.messageTone === 'danger' ? 'alert-circle' : (parsedOutput.messageTone === 'success' ? 'check-circle' : 'info')" [size]="'20'"></i>
+                      </div>
+                      <div class="flex-grow-1 min-width-0">
+                        <small class="text-uppercase font-weight-bold d-block mb-25 opacity-75">Respuesta del Servicio</small>
+                        <div class="msg-title">{{ parsedOutput.messageTitle }}</div>
+                        @if (parsedOutput.messageMeta?.length) {
+                          <div class="d-flex flex-wrap mt-75" style="gap: 0.4rem;">
+                            @for (m of parsedOutput.messageMeta; track m.key) {
+                              <span class="projection-chip">
+                                <span class="chip-key">{{ m.key }}:</span>
+                                <span class="chip-tag text-dark">{{ m.value }}</span>
+                              </span>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </div>
+                  </div>
+                } @else if (parsedOutput.kind === 'SINGLE_RECORD') {
+                  <div class="p-150">
+                    <div class="report-block">
+                      <div class="report-block-title">Ficha de Respuesta</div>
+                      <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 report-kv-table">
+                          <tbody>
+                            @for (kv of parsedOutput.entries; track kv.key) {
+                              <tr>
+                                <td class="kv-key">{{ kv.key }}</td>
+                                <td class="kv-val">
+                                  @if (kv.kind === 'empty') {
+                                    <span class="text-muted">—</span>
+                                  } @else if (kv.kind === 'bool') {
+                                    <span class="badge font-small-1"
+                                      [ngClass]="kv.value === 'true' ? 'badge-light-success' : 'badge-light-secondary'">
+                                      {{ kv.value }}
+                                    </span>
+                                  } @else if (kv.kind === 'nested') {
+                                    <button type="button" class="btn-nested-toggle" (click)="toggleOutputEntry(kv)">
+                                      <i [data-feather]="kv.expanded ? 'chevron-down' : 'chevron-right'" [size]="'12'"></i>
+                                      <span>{{ kv.nestedPreview }}</span>
+                                    </button>
+                                    @if (kv.expanded) {
+                                      <pre class="nested-json-pre mt-50 mb-0"><code>{{ kv.nestedPretty }}</code></pre>
+                                    }
+                                  } @else {
+                                    <span>{{ kv.value }}</span>
+                                  }
+                                </td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                } @else if (parsedOutput.kind === 'ARRAY') {
                   <div class="table-responsive">
                     <table class="table table-sm table-hover mb-0 report-kv-table">
                       <thead>
@@ -738,19 +801,8 @@
                   </div>
                 } @else {
                   <div class="p-150">
-                    <div class="report-block">
-                      <div class="table-responsive">
-                        <table class="table table-sm table-hover mb-0 report-kv-table">
-                          <tbody>
-                            @for (kv of parsedOutput.entries; track kv.key) {
-                              <tr>
-                                <td class="kv-key">{{ kv.key }}</td>
-                                <td class="kv-val">{{ kv.value }}</td>
-                              </tr>
-                            }
-                          </tbody>
-                        </table>
-                      </div>
+                    <div class="output-text-box">
+                      <pre class="m-0 font-small-2 text-dark" style="white-space: pre-wrap; word-break: break-word;">{{ parsedOutput.plainText }}</pre>
                     </div>
                   </div>
                 }

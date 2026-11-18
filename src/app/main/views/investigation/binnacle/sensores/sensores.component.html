@@ -1,0 +1,318 @@
+<div class="content-wrapper">
+  <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <div class="sensores-shell">
+      <!-- Header / Toolbar Card -->
+      <div class="toolbar-card">
+        <div class="toolbar-left">
+          <a class="btn-back" [routerLink]="['/investigation/binnacle']" title="Volver a Bitácora">
+            <i data-feather="arrow-left" [size]="'16'"></i>
+          </a>
+          <div class="title-block">
+            <div class="title-row">
+              <h2 class="page-title">
+                {{ activeApp ? activeApp.aplicacion : 'Telemetría de Sensores' }}
+              </h2>
+              @if (activeApp?.codigo_app) {
+                <span class="badge-code">{{ activeApp?.codigo_app }}</span>
+              }
+            </div>
+            <p class="page-subtitle">
+              Análisis SRE de latencia y tiempos de respuesta · <code>sys-sensors</code>
+            </p>
+          </div>
+        </div>
+
+        <div class="toolbar-actions">
+          @if (telemetriaApps.length > 1) {
+            <div class="app-selector">
+              @for (app of telemetriaApps; track app.codigo_app; let i = $index) {
+                <button type="button"
+                  class="app-pill"
+                  [class.active]="selectedAppIdx === i"
+                  (click)="selectAppIndex(i)">
+                  {{ app.aplicacion || app.codigo_app }}
+                </button>
+              }
+            </div>
+          }
+
+          <button type="button" class="btn-tool" (click)="cargarSensores()" [disabled]="loading">
+            <i data-feather="refresh-cw" [size]="'14'"></i>
+            <span>Actualizar</span>
+          </button>
+
+          <button type="button" class="btn-tool" (click)="exportCSV()" [disabled]="!activeApp || loading">
+            <i data-feather="download" [size]="'14'"></i>
+            <span>CSV</span>
+          </button>
+
+          <button type="button" class="btn-tool primary" (click)="exportPDF()" [disabled]="!activeApp || loading">
+            <i data-feather="file-text" [size]="'14'"></i>
+            <span>Reporte SRE PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Loading State -->
+      @if (loading) {
+        <div class="state-card">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="state-text">Cargando métricas de sensores...</p>
+        </div>
+      }
+
+      <!-- Empty State -->
+      @if (!loading && !activeApp) {
+        <div class="state-card">
+          <div class="empty-icon-wrap">
+            <i data-feather="cpu" [size]="'28'"></i>
+          </div>
+          <h4>Sin datos de telemetría</h4>
+          <p class="state-text">No se encontraron registros en <code>_SYS_CSensors</code> para esta aplicación.</p>
+          <button type="button" class="btn-tool primary" (click)="cargarSensores()">
+            <i data-feather="refresh-cw" [size]="'14'"></i>
+            <span>Reintentar</span>
+          </button>
+        </div>
+      }
+
+      <!-- Dashboard Content -->
+      @if (!loading && activeApp) {
+        <!-- KPI Cards (Enfoque en Latencia y Cuellos de Botella) -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon rose">
+              <i data-feather="alert-triangle" [size]="'18'"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">Cuello de Botella (Más Lenta)</span>
+              <strong class="kpi-value">{{ formatLatency(kpiMetrics.latenciaMaxima) }}</strong>
+              <span class="kpi-meta truncate-meta" [title]="kpiMetrics.funcionMasLenta">
+                {{ kpiMetrics.funcionMasLenta }}
+              </span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon amber">
+              <i data-feather="clock" [size]="'18'"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">Latencia Global Prom.</span>
+              <strong class="kpi-value">{{ formatLatency(kpiMetrics.latenciaGlobalAvg) }}</strong>
+              <span class="kpi-meta">
+                {{ kpiMetrics.criticas }} críticas · {{ kpiMetrics.moderadas }} moderadas
+              </span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon cyan">
+              <i data-feather="zap" [size]="'18'"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">Total Invocaciones</span>
+              <strong class="kpi-value">{{ kpiMetrics.totalInvocaciones | number }}</strong>
+              <span class="kpi-meta">
+                Tiempo acum: {{ formatTotalTime(kpiMetrics.tiempoTotalAcumulado) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon indigo">
+              <i data-feather="layers" [size]="'18'"></i>
+            </div>
+            <div class="kpi-body">
+              <span class="kpi-label">APIs / Funciones</span>
+              <strong class="kpi-value">{{ kpiMetrics.totalFunciones }}</strong>
+              <span class="kpi-meta">{{ kpiMetrics.totalEventos | number }} eventos en sensores</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid (Latencia + Distribución de Invocaciones) -->
+        <div class="charts-grid">
+          <div class="chart-card wide">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Top 10 Funciones con Mayor Latencia</h3>
+                <p class="chart-sub">Ordenadas de mayor a menor duración para identificar cuellos de botella (segundos)</p>
+              </div>
+              <span class="chart-pill">Latencia &amp; Picos</span>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas baseChart
+                [type]="'bar'"
+                [data]="latencyChartData"
+                [options]="latencyChartOptions">
+              </canvas>
+            </div>
+          </div>
+
+          <div class="chart-card">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Distribución de Invocaciones</h3>
+                <p class="chart-sub">Top 6 APIs con mayor tráfico</p>
+              </div>
+              <span class="chart-pill cyan">Tráfico</span>
+            </div>
+            <div class="chart-canvas-wrap doughnut">
+              <canvas baseChart
+                [type]="'doughnut'"
+                [data]="invocationsChartData"
+                [options]="invocationsChartOptions">
+              </canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Functions Filter & List Card -->
+        <div class="functions-card">
+          <div class="functions-toolbar">
+            <div class="filter-pills">
+              <button type="button" class="pill-btn" [class.active]="latencyFilter === 'ALL'" (click)="setLatencyFilter('ALL')">
+                Todas <span class="pill-count">{{ activeApp.estadisticas_funciones?.length || 0 }}</span>
+              </button>
+              <button type="button" class="pill-btn slow" [class.active]="latencyFilter === 'CRITICAL'" (click)="setLatencyFilter('CRITICAL')">
+                Críticas (&ge;2s) <span class="pill-count">{{ kpiMetrics.criticas }}</span>
+              </button>
+              <button type="button" class="pill-btn medium" [class.active]="latencyFilter === 'SLOW'" (click)="setLatencyFilter('SLOW')">
+                Moderadas (0.5s-2s) <span class="pill-count">{{ kpiMetrics.moderadas }}</span>
+              </button>
+              <button type="button" class="pill-btn fast" [class.active]="latencyFilter === 'FAST'" (click)="setLatencyFilter('FAST')">
+                Rápidas (&lt;0.5s) <span class="pill-count">{{ kpiMetrics.rapidas }}</span>
+              </button>
+            </div>
+
+            <div class="filter-controls">
+              <div class="search-box">
+                <i data-feather="search" [size]="'14'"></i>
+                <input type="text" [formControl]="searchTextCtrl" placeholder="Buscar función, API o versión..." />
+              </div>
+
+              <div class="sort-group">
+                <span class="sort-label">Ordenar por:</span>
+                <button type="button" class="sort-btn" [class.active]="sortBy === 'latencia'" (click)="setSortBy('latencia')">
+                  Mayor Latencia
+                </button>
+                <button type="button" class="sort-btn" [class.active]="sortBy === 'tiempoTotal'" (click)="setSortBy('tiempoTotal')">
+                  Tiempo Acumulado
+                </button>
+                <button type="button" class="sort-btn" [class.active]="sortBy === 'invocaciones'" (click)="setSortBy('invocaciones')">
+                  Invocaciones
+                </button>
+                <button type="button" class="sort-btn" [class.active]="sortBy === 'nombre'" (click)="setSortBy('nombre')">
+                  Nombre
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Functions List -->
+          <div class="functions-list">
+            @for (fn of filteredFunciones; track fn.nombre_funcion) {
+              <div class="fn-row-wrap">
+                <div class="fn-row" (click)="toggleFunctionExpand(fn)">
+                  <div class="fn-main">
+                    <span class="fn-expand-icon" [class.open]="fn.expanded">
+                      <i data-feather="chevron-right" [size]="'15'"></i>
+                    </span>
+                    <div class="fn-name-col">
+                      <span class="fn-name">{{ fn.nombre_funcion }}</span>
+                      <div class="fn-sub-row">
+                        <span class="fn-versions-count">
+                          {{ fn.desglose_versiones?.length || 0 }} versión(es)
+                        </span>
+                        <div class="latency-bar-track" [title]="'Proporción respecto a la función más lenta'">
+                          <div class="latency-bar-fill"
+                            [ngClass]="getLatencyBadgeClass(fn.latencia_global_s)"
+                            [style.width.%]="getLatencyBarPercent(fn.latencia_global_s)">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="fn-metrics">
+                    <div class="metric-chip">
+                      <span class="m-label">Latencia Prom.</span>
+                      <span class="latency-badge" [ngClass]="getLatencyBadgeClass(fn.latencia_global_s)">
+                        {{ formatLatency(fn.latencia_global_s) }}
+                      </span>
+                    </div>
+
+                    <div class="metric-chip hide-sm">
+                      <span class="m-label">Rango Mín / Máx</span>
+                      <span class="m-val muted">
+                        {{ formatLatency(getFuncMinLat(fn)) }} / {{ formatLatency(getFuncMaxLat(fn)) }}
+                      </span>
+                    </div>
+
+                    <div class="metric-chip hide-md">
+                      <span class="m-label">Tiempo Acum.</span>
+                      <span class="m-val">{{ formatTotalTime(getFuncTotalTime(fn)) }}</span>
+                    </div>
+
+                    <div class="metric-chip">
+                      <span class="m-label">Invocaciones</span>
+                      <span class="m-val">{{ fn.total_invocaciones | number }}</span>
+                    </div>
+                  </div>
+                </div>
+
+                @if (fn.expanded) {
+                  <div class="versions-panel">
+                    @if (!fn.desglose_versiones || fn.desglose_versiones.length === 0) {
+                      <p class="no-versions">Sin desglose de versiones disponible.</p>
+                    } @else {
+                      <div class="table-responsive">
+                        <table class="versions-table">
+                          <thead>
+                            <tr>
+                              <th>Versión</th>
+                              <th>Ejecuciones</th>
+                              <th>Latencia Prom</th>
+                              <th>Mín</th>
+                              <th>Máx</th>
+                              <th>Usuarios</th>
+                              <th>Última Ejecución</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (v of fn.desglose_versiones; track v.version) {
+                              <tr>
+                                <td><span class="version-tag">{{ v.version }}</span></td>
+                                <td>{{ v.ejecuciones | number }}</td>
+                                <td>
+                                  <span class="latency-badge" [ngClass]="getLatencyBadgeClass(v.latencia_avg_s)">
+                                    {{ formatLatency(v.latencia_avg_s) }}
+                                  </span>
+                                </td>
+                                <td class="mono-cell">{{ formatLatency(v.latencia_min_s) }}</td>
+                                <td class="mono-cell">{{ formatLatency(v.latencia_max_s) }}</td>
+                                <td class="mono-cell">{{ v.total_usuarios | number }}</td>
+                                <td class="date-cell">{{ v.ultima_ejecucion | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            } @empty {
+              <div class="empty-filter">
+                <p>No hay funciones que coincidan con el filtro seleccionado.</p>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

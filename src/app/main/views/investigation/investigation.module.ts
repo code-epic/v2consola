@@ -18,6 +18,7 @@ import { BinnacleComponent } from './binnacle/binnacle.component';
 import { BinnacleApplicationsComponent } from './binnacle-applications/binnacle-applications.component';
 import { TrazaComponent } from './binnacle/traza/traza.component';
 import { EventComponent } from './binnacle/events/events.component';
+import { SensoresComponent } from './binnacle/sensores/sensores.component';
 import { QueryLogComponent } from './query-log/query-log.component';
 const routes = [
   {
@@ -45,6 +46,11 @@ const routes = [
     component: EventComponent,
     canActivate: [AuthGuardGuard],
   },
+  {
+    path: 'investigation/binnacle/sensores/:id',
+    component: SensoresComponent,
+    canActivate: [AuthGuardGuard],
+  },
 ];
 
 @NgModule({
@@ -56,7 +62,8 @@ const routes = [
     BinnacleComponent,
     BinnacleApplicationsComponent,
     TrazaComponent,
-    EventComponent
+    EventComponent,
+    SensoresComponent
   ],
   schemas: [NO_ERRORS_SCHEMA]
 })
