@@ -2,8 +2,8 @@
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
 
-    <!-- Stepper Navigation Minimalista -->
-    <div class="traza-panel mb-2 p-1">
+    <!-- Stepper Navigation Compacta -->
+    <div class="traza-panel traza-stepper-compact mb-1">
       <div class="d-flex justify-content-center align-items-center traza-stepper">
         <div class="step-item" [class.active]="currentStep >= 1" (click)="goToStep(1)">
           <div class="step-circle">1</div>
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <!-- Phase 1: User Selection (Patrón Minimalista Logs) -->
+    <!-- Phase 1: User Selection -->
     @if (currentStep === 1) {
       <section class="traza-panel slide-up-fade">
         <div class="panel-header">
@@ -83,84 +83,264 @@
       </section>
     }
 
-    <!-- Phase 2: Patrones de Actividad -->
+    <!-- Phase 2: Patrones de Actividad con Filtros y Scroll Infinito -->
     @if (currentStep === 2) {
-      <section class="slide-up-fade">
-        <div class="traza-panel mb-2 py-1 px-2 d-flex align-items-center justify-content-between flex-wrap">
+      <section class="traza-panel p-0 overflow-hidden position-relative slide-up-fade">
+        @if (loading) {
+          <div class="svelte-progress-container">
+            <div class="svelte-progress-bar"></div>
+          </div>
+        }
+
+        <!-- Header -->
+        <div class="panel-header py-1 px-2 border-bottom mb-0">
           <div class="d-flex align-items-center">
             <button type="button" class="btn-icon-minimal mr-1" (click)="goToStep(1)" title="Volver a usuarios">
               <i data-feather="arrow-left" [size]="'16'"></i>
             </button>
             <div>
               <h4 class="panel-title">Patrones de {{ selectedUser?.nombre }}</h4>
-              <small class="text-muted">Análisis de invocaciones por método y función</small>
+              <small class="text-muted">
+                {{ filteredBitacora.length | number }} métodos • {{ totalInvocations | number }} invocaciones
+                @if (loading) {
+                  <span class="text-primary ml-50">• Cargando stream...</span>
+                }
+              </small>
             </div>
           </div>
-          <button type="button" class="btn-minimal-primary" (click)="goToStep(3)">
-            <span>Generar Análisis</span>
-            <i data-feather="bar-chart-2" [size]="'15'"></i>
-          </button>
+
+          <div class="header-actions-group">
+            <div class="view-mode-switch" title="Modo de visualización">
+              <button type="button" class="switch-pill" [class.active]="viewMode === 'log'" (click)="setViewMode('log')">
+                <i data-feather="terminal" [size]="'13'"></i>
+                <span>Vista Log</span>
+              </button>
+              <button type="button" class="switch-pill" [class.active]="viewMode === 'patterns'" (click)="setViewMode('patterns')">
+                <i data-feather="layers" [size]="'13'"></i>
+                <span>Agrupado</span>
+              </button>
+            </div>
+            <button type="button" class="btn-minimal-outline" (click)="exportLOG()" [disabled]="ListarBitacora.length === 0" title="Descargar archivo .LOG">
+              <i data-feather="file-text" [size]="'14'"></i>
+              <span>.LOG</span>
+            </button>
+            <button type="button" class="btn-minimal-outline" (click)="exportCSV()" [disabled]="ListarBitacora.length === 0" title="Descargar CSV">
+              <i data-feather="download" [size]="'14'"></i>
+              <span>CSV</span>
+            </button>
+            <button type="button" class="btn-minimal-outline" (click)="exportPDF()" [disabled]="ListarBitacora.length === 0" title="Generar PDF">
+              <i data-feather="printer" [size]="'14'"></i>
+              <span>PDF</span>
+            </button>
+            <button type="button" class="btn-minimal-primary" (click)="goToStep(3)">
+              <i data-feather="bar-chart-2" [size]="'15'"></i>
+              <span>Análisis</span>
+            </button>
+          </div>
         </div>
 
-        <div class="position-relative">
-          @if (loading) {
-            <div class="svelte-progress-container mb-1">
-              <div class="svelte-progress-bar"></div>
+        <!-- Filters Toolbar -->
+        <div class="log-filter-toolbar px-2 py-75 border-bottom">
+          <div class="log-level-pills">
+            <button type="button" class="level-pill" [class.active]="levelFilter === 'ALL'" (click)="setLevelFilter('ALL')">
+              Todos <span class="pill-count">{{ (viewMode === 'log' ? eventLevelCounts.ALL : levelCounts.ALL) | number }}</span>
+            </button>
+            <button type="button" class="level-pill pill-info" [class.active]="levelFilter === 'INFO'" (click)="setLevelFilter('INFO')">
+              INFO <span class="pill-count">{{ (viewMode === 'log' ? eventLevelCounts.INFO : levelCounts.INFO) | number }}</span>
+            </button>
+            <button type="button" class="level-pill pill-warning" [class.active]="levelFilter === 'WARNING'" (click)="setLevelFilter('WARNING')">
+              WARNING <span class="pill-count">{{ (viewMode === 'log' ? eventLevelCounts.WARNING : levelCounts.WARNING) | number }}</span>
+            </button>
+            <button type="button" class="level-pill pill-alert" [class.active]="levelFilter === 'ALERT'" (click)="setLevelFilter('ALERT')">
+              ALERT <span class="pill-count">{{ (viewMode === 'log' ? eventLevelCounts.ALERT : levelCounts.ALERT) | number }}</span>
+            </button>
+          </div>
+
+          <div class="log-filter-controls">
+            <div class="minimal-search-box minimal-search-sm">
+              <i data-feather="search" [size]="'14'"></i>
+              <input type="text" [formControl]="searchEventsCtrl" placeholder="Buscar método, función o versión...">
             </div>
-          }
 
-          @for (methodBlock of ListarBitacora; track methodBlock.metodo || $index) {
-            <div class="traza-panel p-0 overflow-hidden mb-1">
-              <div class="method-card-header">
-                <div class="d-flex align-items-center">
-                  <div class="row-icon mr-75" [class.warning]="methodBlock.metodo === 'OTRAS OPERACIONES'">
-                    <i [data-feather]="methodBlock.metodo === 'OTRAS OPERACIONES' ? 'grid' : 'layers'" [size]="'16'"></i>
-                  </div>
-                  <h5 class="mb-0 font-weight-bold text-dark">{{ methodBlock.metodo || 'SIN MÉTODO' }}</h5>
-                </div>
-                <span class="invocation-badge">{{ methodBlock.total_invocaciones }} invocaciones</span>
+            <div class="log-date-group">
+              <input type="date" class="log-date-input" [formControl]="fechaDesdeCtrl" title="Fecha desde">
+              <span class="text-muted small px-25">→</span>
+              <input type="date" class="log-date-input" [formControl]="fechaHastaCtrl" title="Fecha hasta">
+            </div>
+
+            @if (hasActiveEventFilters) {
+              <button type="button" class="btn-clear-filters" (click)="clearEventFilters()" title="Limpiar filtros">
+                <i data-feather="x" [size]="'14'"></i>
+                <span>Limpiar</span>
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Scrollable Container (Vista Log o Patrones Agrupados) -->
+        <div #eventsScrollContainer class="events-stream-container" [class.p-1]="viewMode === 'patterns'" (scroll)="onEventsScroll($event)">
+          @if (viewMode === 'log') {
+            @if (visibleFlatLogs.length === 0 && !loading) {
+              <div class="empty-minimal py-4">
+                <i data-feather="file-text" [size]="'34'"></i>
+                <p class="mb-0 mt-1">No hay eventos que coincidan con los filtros aplicados.</p>
               </div>
+            }
 
-              <div class="table-responsive">
-                <table class="table table-hover mb-0 minimal-table">
-                  <thead>
-                    <tr>
-                      <th>Función / Operación</th>
-                      <th>Último Acceso</th>
-                      <th class="text-center">Ejecuciones</th>
-                      <th class="text-right">Detalle</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (func of methodBlock.funciones; track func.nombre_funcion || $index) {
-                      <tr>
-                        <td>
-                          <div class="d-flex flex-column">
-                            <span class="font-weight-bold text-dark">{{ func.nombre_funcion }}</span>
-                            <small class="text-muted">Versión: {{ func.v }}</small>
-                          </div>
-                        </td>
-                        <td>
-                          <div class="d-flex align-items-center text-muted small">
-                            <i data-feather="calendar" [size]="'13'" class="mr-50"></i>
-                            {{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}
-                          </div>
-                        </td>
-                        <td class="text-center">
-                          <span class="action-pill">{{ func.ejecuciones }}</span>
-                        </td>
-                        <td class="text-right">
-                          <button type="button" class="btn-icon-minimal" (click)="ModalExePlay(ModalPlay, func)" title="Ver ejecuciones">
-                            <i data-feather="eye" [size]="'15'"></i>
-                          </button>
-                        </td>
-                      </tr>
+            @for (item of visibleFlatLogs; track item.hash || $index) {
+              <div class="log-entry-wrapper">
+                <div class="log-entry-row" (click)="inspectFlatLog(item, ModalDetalle)" title="Clic para ver Input / Output">
+                  <span class="log-ts">
+                    {{ item.fecha | date:'dd/MM/yyyy HH:mm:ss' }}
+                  </span>
+
+                  <span class="log-level-badge"
+                    [ngClass]="{
+                      'lvl-info': item.level === 'INFO',
+                      'lvl-warning': item.level === 'WARNING',
+                      'lvl-alert': item.level === 'ALERT'
+                    }">
+                    {{ item.level }}
+                  </span>
+
+                  <span class="log-action-tag">{{ item.metodo }}</span>
+
+                  <span class="log-doc-preview">
+                    <span class="log-method">{{ item.nombre_funcion }}</span>
+                    @if (item.hash) {
+                      <span class="mx-25 text-muted">•</span>
+                      <span class="text-muted">{{ item.hash }}</span>
                     }
-                  </tbody>
-                </table>
+                  </span>
+
+                  <span class="log-duration-chip">
+                    {{ item.formattedDuration }}
+                  </span>
+
+                  <span class="log-expand-chevron text-primary">
+                    <i data-feather="eye" [size]="'14'"></i>
+                  </span>
+                </div>
               </div>
-            </div>
+            }
+          } @else {
+            @if (visibleBitacora.length === 0 && !loading) {
+              <div class="empty-minimal py-4">
+                <i data-feather="layers" [size]="'34'"></i>
+                <p class="mb-0 mt-1">No hay patrones de eventos que coincidan con los filtros aplicados.</p>
+              </div>
+            }
+
+            @for (methodBlock of visibleBitacora; track methodBlock.metodo || $index) {
+              <div class="traza-panel p-0 overflow-hidden mb-1 shadow-none">
+                <div class="method-card-header">
+                  <div class="d-flex align-items-center flex-wrap" style="gap: 0.5rem;">
+                    <div class="row-icon" [class.warning]="methodBlock.level === 'WARNING'" [class.alert-icon]="methodBlock.level === 'ALERT'">
+                      <i [data-feather]="methodBlock.metodo === 'OTRAS OPERACIONES' ? 'grid' : 'layers'" [size]="'15'"></i>
+                    </div>
+                    <span class="log-level-badge"
+                      [ngClass]="{
+                        'lvl-info': methodBlock.level === 'INFO',
+                        'lvl-warning': methodBlock.level === 'WARNING',
+                        'lvl-alert': methodBlock.level === 'ALERT'
+                      }">
+                      {{ methodBlock.level }}
+                    </span>
+                    <h5 class="mb-0 font-weight-bold text-dark">{{ methodBlock.metodo || 'SIN MÉTODO' }}</h5>
+                  </div>
+                  <span class="invocation-badge">{{ methodBlock.total_invocaciones | number }} invocaciones</span>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0 minimal-table">
+                    <thead>
+                      <tr>
+                        <th>Función / Operación</th>
+                        <th>Último Acceso</th>
+                        <th class="text-center">Ejecuciones</th>
+                        <th class="text-right">Detalle</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (func of methodBlock.funciones; track func.nombre_funcion || $index) {
+                        <tr>
+                          <td>
+                            <div class="d-flex flex-column">
+                              <span class="font-weight-bold text-dark">{{ func.nombre_funcion }}</span>
+                              <small class="text-muted">Versión: {{ func.v }}</small>
+                            </div>
+                          </td>
+                          <td>
+                            <div class="d-flex align-items-center text-muted small">
+                              <i data-feather="calendar" [size]="'13'" class="mr-50"></i>
+                              {{ func.ultimaFecha | date:'dd/MM/yyyy HH:mm:ss' }}
+                            </div>
+                          </td>
+                          <td class="text-center">
+                            <span class="action-pill">{{ func.ejecuciones | number }}</span>
+                          </td>
+                          <td class="text-right">
+                            <button type="button" class="btn-icon-minimal" (click)="ModalExePlay(ModalPlay, func)" title="Ver ejecuciones">
+                              <i data-feather="eye" [size]="'15'"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
           }
+        </div>
+
+        <!-- Infinite Scroll Footer -->
+        <div class="log-stream-footer px-2 py-75 border-top">
+          <div class="log-footer-left">
+            @if (viewMode === 'log') {
+              <span class="text-muted small">
+                Mostrando <strong>{{ visibleFlatLogs.length | number }}</strong> de <strong>{{ flattenedLogs.length | number }}</strong> eventos
+              </span>
+            } @else {
+              <span class="text-muted small">
+                Mostrando <strong>{{ visibleBitacora.length | number }}</strong> de <strong>{{ filteredBitacora.length | number }}</strong> métodos
+                @if (filteredBitacora.length !== ListarBitacora.length) {
+                  <span class="ml-25">(Total: {{ ListarBitacora.length | number }})</span>
+                }
+              </span>
+            }
+
+            <div class="log-progress-wrap" [title]="loadedPercent + '% cargado en vista'">
+              <div class="log-progress-track">
+                <div class="log-progress-fill" [style.width.%]="loadedPercent"></div>
+              </div>
+              <span class="log-progress-pct">{{ loadedPercent }}%</span>
+            </div>
+          </div>
+
+          <div class="log-footer-right">
+            <div class="batch-size-pills" title="Registros por lote">
+              @for (opt of batchOptions; track opt) {
+                <button type="button" class="batch-pill" [class.active]="BATCH_SIZE === opt" (click)="setBatchSize(opt)">
+                  {{ opt }}
+                </button>
+              }
+            </div>
+
+            @if ((viewMode === 'log' && visibleFlatLogs.length < flattenedLogs.length) || (viewMode === 'patterns' && visibleBitacora.length < filteredBitacora.length)) {
+              <button type="button" class="btn-load-more" (click)="loadMoreEvents()">
+                Cargar +{{ BATCH_SIZE }}
+              </button>
+            } @else if ((viewMode === 'log' && flattenedLogs.length > 0) || (viewMode === 'patterns' && filteredBitacora.length > 0)) {
+              <span class="badge badge-light-success font-small-1">Todo cargado</span>
+            }
+
+            @if ((viewMode === 'log' && visibleFlatLogs.length > BATCH_SIZE) || (viewMode === 'patterns' && visibleBitacora.length > BATCH_SIZE)) {
+              <button type="button" class="btn-scroll-top" (click)="scrollToTopEvents()" title="Volver arriba">
+                <i data-feather="arrow-up" [size]="'14'"></i>
+              </button>
+            }
+          </div>
         </div>
       </section>
     }
@@ -168,14 +348,14 @@
     <!-- Phase 3: SRE Analysis & Reports -->
     @if (currentStep === 3) {
       <section class="slide-up-fade">
-        <!-- SRE Key Metrics Grid (Patrón Tarjetas Minimalistas) -->
+        <!-- SRE Key Metrics Grid -->
         <div class="metrics-selection-grid mb-2">
           <div class="metric-option-card primary">
             <div class="card-icon">
               <i data-feather="activity"></i>
             </div>
             <div class="card-content">
-              <h3>{{ totalInvocations }}</h3>
+              <h3>{{ totalInvocations | number }}</h3>
               <p>Total Invocaciones</p>
             </div>
           </div>
@@ -195,7 +375,7 @@
               <i data-feather="alert-triangle"></i>
             </div>
             <div class="card-content">
-              <h3>{{ sreMetrics.criticalCount }}</h3>
+              <h3>{{ sreMetrics.criticalCount | number }}</h3>
               <p>Eventos Críticos</p>
             </div>
           </div>
@@ -226,7 +406,7 @@
                 <div class="analysis-chart-item">
                   <div class="chart-label">
                     <span>{{ stat.name }}</span>
-                    <span class="text-muted">{{ stat.count }} inyectados ({{ stat.percent | number:'1.0-1' }}%)</span>
+                    <span class="text-muted">{{ stat.count | number }} inyectados ({{ stat.percent | number:'1.0-1' }}%)</span>
                   </div>
                   <div class="analysis-bar-wrapper">
                     <div class="bar-filled" [style.width.%]="stat.percent"></div>
@@ -237,7 +417,7 @@
               <div class="info-note-box mt-2">
                 <i data-feather="info" [size]="'16'"></i>
                 <p class="mb-0">
-                  Análisis SRE: La distribución refleja los servicios con mayor impacto en el rendimiento.
+                  Análisis SRE: INFO: {{ eventLevelCounts.INFO | number }} • WARNING: {{ eventLevelCounts.WARNING | number }} • ALERT: {{ eventLevelCounts.ALERT | number }}.
                   Los eventos críticos corresponden a latencias superiores a 2.0s.
                 </p>
               </div>
@@ -255,6 +435,10 @@
 
               <div class="w-100 border-top pt-1 mt-50">
                 <small class="text-uppercase text-muted font-weight-bold d-block mb-1">Generar Reportes</small>
+                <button type="button" class="btn-export-minimal mb-75" (click)="exportLOG()">
+                  <i data-feather="terminal" [size]="'16'"></i>
+                  <span>Descargar Archivo .LOG</span>
+                </button>
                 <button type="button" class="btn-export-minimal mb-75" (click)="exportCSV()">
                   <i data-feather="download" [size]="'16'"></i>
                   <span>Descargar CSV</span>
@@ -283,7 +467,7 @@
   </div>
 </div>
 
-<!-- Modal: Logs List -->
+<!-- Modal: Logs List (Con Scroll Progresivo) -->
 <ng-template #ModalPlay let-modal>
   <div class="modal-header bg-white border-bottom py-1 px-2">
     <h5 class="modal-title d-flex align-items-center font-weight-bold text-dark mb-0">
@@ -296,10 +480,11 @@
   </div>
 
   <div class="modal-body p-0">
-    <div class="bg-light py-75 px-2 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-50">
+    <div class="bg-light py-75 px-2 border-bottom d-flex justify-content-between align-items-center flex-wrap" style="gap: 0.5rem;">
       <div>
-        <span class="text-muted small">Total registros: </span>
-        <span class="font-weight-bold text-primary">{{ filteredRegistros.length }}</span>
+        <span class="text-muted small">Mostrando </span>
+        <span class="font-weight-bold text-primary">{{ visibleModalRegistros.length | number }}</span>
+        <span class="text-muted small"> de {{ filteredRegistros.length | number }} registros</span>
       </div>
       <div class="minimal-search-box" style="min-width: 240px; height: 34px; background: #fff;">
         <i data-feather="search" [size]="'14'"></i>
@@ -307,7 +492,7 @@
       </div>
     </div>
 
-    <div class="table-responsive" style="max-height: 450px;">
+    <div class="table-responsive" style="max-height: 450px; overflow-y: auto;" (scroll)="onModalScroll($event)">
       <table class="table table-hover mb-0 minimal-table">
         <thead class="sticky-top">
           <tr>
@@ -318,7 +503,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (log of filteredRegistros; track log.hash || $index) {
+          @for (log of visibleModalRegistros; track log.hash || $index) {
             <tr>
               <td class="text-dark small">{{ log.fecha | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
               <td>
@@ -346,10 +531,27 @@
         </tbody>
       </table>
     </div>
+
+    <div class="log-stream-footer px-2 py-75 border-top">
+      <div class="log-footer-left">
+        <span class="text-muted small">
+          Mostrando <strong>{{ visibleModalRegistros.length | number }}</strong> de <strong>{{ filteredRegistros.length | number }}</strong> ejecuciones
+        </span>
+      </div>
+      <div class="log-footer-right">
+        @if (visibleModalRegistros.length < filteredRegistros.length) {
+          <button type="button" class="btn-load-more" (click)="loadMoreModal()">
+            Cargar +50
+          </button>
+        } @else if (filteredRegistros.length > 0) {
+          <span class="badge badge-light-success font-small-1">Todo cargado</span>
+        }
+      </div>
+    </div>
   </div>
 </ng-template>
 
-<!-- Modal: JSON Detail with Decompression -->
+<!-- Modal: Detalle de Transacción (Vista Reporte + Vista JSON) -->
 <ng-template #ModalDetalle let-modal>
   <div class="modal-header bg-white border-bottom py-1 px-2">
     <h5 class="modal-title d-flex align-items-center font-weight-bold text-dark mb-0">
@@ -358,49 +560,208 @@
       </div>
       Detalle de Transacción
     </h5>
-    <button type="button" class="close text-secondary" (click)="modal.dismiss()">&times;</button>
+
+    <div class="d-flex align-items-center" style="gap: 0.75rem;">
+      <div class="view-mode-switch" title="Cambiar vista de detalle">
+        <button type="button" class="switch-pill" [class.active]="detailViewMode === 'report'" (click)="detailViewMode = 'report'">
+          <i data-feather="file-text" [size]="'13'"></i>
+          <span>Vista Reporte</span>
+        </button>
+        <button type="button" class="switch-pill" [class.active]="detailViewMode === 'json'" (click)="detailViewMode = 'json'">
+          <i data-feather="code" [size]="'13'"></i>
+          <span>Vista JSON</span>
+        </button>
+      </div>
+      <button type="button" class="close text-secondary" (click)="modal.dismiss()">&times;</button>
+    </div>
   </div>
 
   <div class="modal-body bg-light p-2">
-    <!-- Header Info Card -->
-    <div class="traza-panel p-1 mb-1">
-      <div class="row align-items-center">
-        <div class="col-md-4 border-right">
-          <small class="text-muted d-block text-uppercase font-weight-bold">Operación</small>
-          <span class="text-dark font-weight-bold text-truncate d-block">{{ currentFunctionData?.nombre_funcion }}</span>
+    <!-- Metadata Bar: Operación • Fecha y Hora • Procesamiento -->
+    <div class="tx-meta-bar mb-150">
+      <div class="tx-meta-item">
+        <div class="tx-meta-icon tx-icon-primary">
+          <i data-feather="terminal" [size]="'15'"></i>
         </div>
-        <div class="col-md-4 border-right px-1 text-center">
-          <small class="text-muted d-block text-uppercase font-weight-bold">Fecha y Hora</small>
-          <span class="text-dark font-weight-bold d-block">{{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</span>
-        </div>
-        <div class="col-md-4 px-1 text-center">
-          <small class="text-muted d-block text-uppercase font-weight-bold">Procesamiento</small>
-          <span class="text-primary font-weight-bold d-block">{{ selectedLog?.formattedDuration }}</span>
+        <div class="min-width-0">
+          <small class="tx-meta-label">OPERACIÓN</small>
+          <span class="tx-meta-value text-truncate d-block" [title]="currentFunctionData?.nombre_funcion">
+            {{ currentFunctionData?.nombre_funcion || '---' }}
+          </span>
         </div>
       </div>
+
+      <div class="tx-meta-item">
+        <div class="tx-meta-icon tx-icon-info">
+          <i data-feather="calendar" [size]="'15'"></i>
+        </div>
+        <div>
+          <small class="tx-meta-label">FECHA Y HORA</small>
+          <span class="tx-meta-value d-block">
+            {{ selectedLog?.fecha | date:'dd/MM/yyyy HH:mm:ss' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="tx-meta-item">
+        <div class="tx-meta-icon tx-icon-success">
+          <i data-feather="zap" [size]="'15'"></i>
+        </div>
+        <div>
+          <small class="tx-meta-label">PROCESAMIENTO</small>
+          <span class="tx-meta-value text-primary d-block">
+            {{ selectedLog?.formattedDuration }}
+          </span>
+        </div>
+      </div>
+
+      @if (parsedOutput.kind === 'EMPTY') {
+        <div class="tx-meta-item tx-meta-status">
+          <span class="badge badge-light-secondary px-1 py-50 font-small-2">
+            Output: {{ parsedOutput.summaryText }}
+          </span>
+        </div>
+      }
     </div>
 
     <div class="row match-height">
-      <div class="col-md-6 mb-1">
-        <div class="traza-panel p-0 overflow-hidden h-100">
-          <div class="py-75 px-1 border-bottom d-flex align-items-center">
-            <i data-feather="log-in" [size]="'15'" class="text-secondary mr-50"></i>
-            <h6 class="mb-0 font-weight-bold small text-dark">INPUT (DECODIFICADO)</h6>
+      <!-- INPUT PANEL (Expande a col-12 cuando Output está vacío) -->
+      <div [ngClass]="parsedOutput.kind === 'EMPTY' ? 'col-12' : 'col-lg-6'" class="mb-1">
+        <div class="traza-panel p-0 overflow-hidden h-100 d-flex flex-column">
+          <div class="py-75 px-150 border-bottom d-flex align-items-center justify-content-between bg-white">
+            <div class="d-flex align-items-center" style="gap: 0.5rem;">
+              <i data-feather="log-in" [size]="'15'" class="text-secondary"></i>
+              <h6 class="mb-0 font-weight-bold small text-dark">INPUT (ENTRADA)</h6>
+              <span class="badge font-small-1" [ngClass]="parsedInput.badgeClass">{{ parsedInput.typeLabel }}</span>
+            </div>
+            <button type="button" class="btn-icon-minimal" style="width: 28px; height: 28px;"
+              (click)="copyToClipboard(decodedConsulta)" title="Copiar Input">
+              <i data-feather="copy" [size]="'13'"></i>
+            </button>
           </div>
-          <pre class="m-0 p-1 font-small-2 border-0"
-            style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
+
+          <div class="detail-scroll-pane">
+            @if (detailViewMode === 'report') {
+              @if (parsedInput.type === 'SQL') {
+                <div class="p-150">
+                  <div class="sql-report-box">
+                    <div class="sql-report-header">
+                      <span class="text-uppercase font-weight-bold">Consulta SQL</span>
+                      <span class="text-muted">Formateado</span>
+                    </div>
+                    <pre class="sql-code-pre" [innerHTML]="parsedInput.sqlHtml"></pre>
+                  </div>
+                </div>
+              } @else if (parsedInput.blocks.length === 0) {
+                <div class="empty-minimal py-4">
+                  <p class="mb-0 small text-muted">Sin parámetros de entrada ({{ '{' }}{{ '}' }})</p>
+                </div>
+              } @else {
+                <div class="p-150">
+                  @for (blk of parsedInput.blocks; track blk.title) {
+                    <div class="report-block mb-1">
+                      <div class="report-block-title">{{ blk.title }}</div>
+                      @if (blk.isProjection) {
+                        <div class="projection-chips-grid">
+                          @for (kv of blk.entries; track kv.key) {
+                            <span class="projection-chip" [class.chip-hidden]="kv.isZero">
+                              <span class="chip-dot"></span>
+                              <span class="chip-key">{{ kv.key }}</span>
+                              <span class="chip-tag">{{ kv.isZero ? 'oculto' : 'visible' }}</span>
+                            </span>
+                          }
+                        </div>
+                      } @else {
+                        <div class="table-responsive">
+                          <table class="table table-sm table-hover mb-0 report-kv-table">
+                            <tbody>
+                              @for (kv of blk.entries; track kv.key) {
+                                <tr>
+                                  <td class="kv-key">{{ kv.key }}</td>
+                                  <td class="kv-val">{{ kv.value }}</td>
+                                </tr>
+                              }
+                            </tbody>
+                          </table>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            } @else {
+              <pre class="m-0 p-150 font-small-2 border-0"
+                style="white-space: pre-wrap; word-break: break-all;"><code>{{ decodedConsulta }}</code></pre>
+            }
+          </div>
         </div>
       </div>
-      <div class="col-md-6 mb-1">
-        <div class="traza-panel p-0 overflow-hidden h-100">
-          <div class="py-75 px-1 border-bottom d-flex align-items-center">
-            <i data-feather="log-out" [size]="'15'" class="text-primary mr-50"></i>
-            <h6 class="mb-0 font-weight-bold small text-primary">OUTPUT (DESCOMPRIMIDO)</h6>
+
+      <!-- OUTPUT PANEL (Solo se muestra cuando hay datos de respuesta) -->
+      @if (parsedOutput.kind !== 'EMPTY') {
+        <div class="col-lg-6 mb-1">
+          <div class="traza-panel p-0 overflow-hidden h-100 d-flex flex-column">
+            <div class="py-75 px-150 border-bottom d-flex align-items-center justify-content-between bg-white">
+              <div class="d-flex align-items-center" style="gap: 0.5rem;">
+                <i data-feather="log-out" [size]="'15'" class="text-primary"></i>
+                <h6 class="mb-0 font-weight-bold small text-primary">OUTPUT (RESPUESTA JSON)</h6>
+                <span class="badge badge-light-info font-small-1">{{ parsedOutput.summaryText }}</span>
+              </div>
+              <button type="button" class="btn-icon-minimal" style="width: 28px; height: 28px;"
+                (click)="copyToClipboard(decodedContenido)" title="Copiar Output">
+                <i data-feather="copy" [size]="'13'"></i>
+              </button>
+            </div>
+
+            <div class="detail-scroll-pane">
+              @if (detailViewMode === 'report') {
+                @if (parsedOutput.kind === 'ARRAY') {
+                  <div class="table-responsive">
+                    <table class="table table-sm table-hover mb-0 report-kv-table">
+                      <thead>
+                        <tr>
+                          @for (col of parsedOutput.columns; track col) {
+                            <th>{{ col }}</th>
+                          }
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (r of parsedOutput.rows; track $index) {
+                          <tr>
+                            @for (col of parsedOutput.columns; track col) {
+                              <td class="kv-val">{{ r[col] }}</td>
+                            }
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                } @else {
+                  <div class="p-150">
+                    <div class="report-block">
+                      <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0 report-kv-table">
+                          <tbody>
+                            @for (kv of parsedOutput.entries; track kv.key) {
+                              <tr>
+                                <td class="kv-key">{{ kv.key }}</td>
+                                <td class="kv-val">{{ kv.value }}</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                }
+              } @else {
+                <pre class="m-0 p-150 font-small-2 border-0"
+                  style="white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
+              }
+            </div>
           </div>
-          <pre class="m-0 p-1 font-small-2 border-0"
-            style="height: 350px; overflow-y: auto; white-space: pre-wrap; word-break: break-all;"><code>{{ decodedContenido }}</code></pre>
         </div>
-      </div>
+      }
     </div>
   </div>
 

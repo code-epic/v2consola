@@ -536,12 +536,20 @@ $primary-color: #7367f0;
 /* ========================================================================= */
 /* FLUID LOG-FILE VIEWER, FILTERS & INFINITE SCROLL                          */
 /* ========================================================================= */
+.header-actions-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .btn-minimal-outline {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
+  gap: 0.38rem;
   height: 36px;
-  padding: 0 0.75rem;
+  padding: 0 0.85rem;
   border-radius: 8px;
   border: 1px solid $border-color;
   background: #ffffff;
@@ -549,18 +557,27 @@ $primary-color: #7367f0;
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
+  outline: none;
   transition: all 0.18s ease;
 
   &:hover:not(:disabled) {
     border-color: $primary-color;
     color: $primary-color;
-    background: rgba(115, 103, 240, 0.04);
+    background: rgba(115, 103, 240, 0.05);
   }
 
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
   }
+}
+
+.btn-minimal-primary {
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
 }
 
 .traza-stepper-compact {
