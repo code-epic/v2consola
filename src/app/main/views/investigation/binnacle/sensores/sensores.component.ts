@@ -336,11 +336,17 @@ export class SensoresComponent implements OnInit {
 
   cargarSensores() {
     const appParam =
-      this.appData?.id || this.appData?.nombre || this.appData?.aplicacion || "";
+      this.appData?.id ||
+      this.appData?.codigo_app ||
+      this.appData?.codigo ||
+      this.appData?.nombre ||
+      this.appData?.aplicacion ||
+      "";
     this._loading.set(true);
     this.xAPI = {} as IAPICore;
     this.xAPI.funcion = "_SYS_CSensors";
     this.xAPI.parametros = appParam;
+    this.xAPI.aplicacion = appParam;
     this.xAPI.valores = {};
 
     this.apiService.Ejecutar(this.xAPI).subscribe({
@@ -362,8 +368,57 @@ export class SensoresComponent implements OnInit {
           })),
         }));
 
-        this._telemetriaApps.set(normalized);
-        this._selectedAppIdx.set(0);
+        const targetId = (
+          this.appData?.id ||
+          this.appData?.codigo_app ||
+          this.appData?.codigo ||
+          ""
+        )
+          .toString()
+          .trim()
+          .toLowerCase();
+        const targetName = (
+          this.appData?.nombre ||
+          this.appData?.aplicacion ||
+          ""
+        )
+          .toString()
+          .trim()
+          .toLowerCase();
+
+        let matchedIdx = -1;
+        if (normalized.length > 0 && (targetId || targetName)) {
+          matchedIdx = normalized.findIndex((app) => {
+            const code = (app.codigo_app || "").toString().trim().toLowerCase();
+            const name = (app.aplicacion || "").toString().trim().toLowerCase();
+            return (
+              (targetId && (code === targetId || name === targetId)) ||
+              (targetName && (name === targetName || code === targetName))
+            );
+          });
+
+          if (matchedIdx === -1) {
+            matchedIdx = normalized.findIndex((app) => {
+              const code = (app.codigo_app || "").toString().trim().toLowerCase();
+              const name = (app.aplicacion || "").toString().trim().toLowerCase();
+              return (
+                (targetId &&
+                  (code.includes(targetId) || targetId.includes(code))) ||
+                (targetName &&
+                  (name.includes(targetName) || targetName.includes(name)))
+              );
+            });
+          }
+        }
+
+        if (normalized.length > 1 && (targetId || targetName) && matchedIdx === -1) {
+          this._telemetriaApps.set([]);
+          this._selectedAppIdx.set(0);
+        } else {
+          this._telemetriaApps.set(normalized);
+          this._selectedAppIdx.set(matchedIdx >= 0 ? matchedIdx : 0);
+        }
+
         this.rebuildCharts();
         this.cdr.markForCheck();
       },

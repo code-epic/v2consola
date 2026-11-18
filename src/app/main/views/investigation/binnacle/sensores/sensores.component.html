@@ -12,10 +12,10 @@
           <div class="title-block">
             <div class="title-row">
               <h2 class="page-title">
-                {{ activeApp ? activeApp.aplicacion : 'Telemetría de Sensores' }}
+                {{ activeApp ? activeApp.aplicacion : (appData?.nombre || appData?.id || 'Telemetría de Sensores') }}
               </h2>
-              @if (activeApp?.codigo_app) {
-                <span class="badge-code">{{ activeApp?.codigo_app }}</span>
+              @if (activeApp?.codigo_app || appData?.id) {
+                <span class="badge-code">{{ activeApp?.codigo_app || appData?.id }}</span>
               }
             </div>
             <p class="page-subtitle">
@@ -25,19 +25,6 @@
         </div>
 
         <div class="toolbar-actions">
-          @if (telemetriaApps.length > 1) {
-            <div class="app-selector">
-              @for (app of telemetriaApps; track app.codigo_app; let i = $index) {
-                <button type="button"
-                  class="app-pill"
-                  [class.active]="selectedAppIdx === i"
-                  (click)="selectAppIndex(i)">
-                  {{ app.aplicacion || app.codigo_app }}
-                </button>
-              }
-            </div>
-          }
-
           <button type="button" class="btn-tool" (click)="cargarSensores()" [disabled]="loading">
             <i data-feather="refresh-cw" [size]="'14'"></i>
             <span>Actualizar</span>
