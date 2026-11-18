@@ -102,9 +102,17 @@
   }
 }
 
-// Asegurar que ningún backdrop se superponga sobre las ventanas modales
+// Asegurar que ningún backdrop se superponga sobre las ventanas modales y aplicar efecto blur translúcido
 .modal-backdrop {
   z-index: 1040 !important;
+  background-color: rgba(15, 23, 42, 0.24) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  transition: backdrop-filter 0.25s ease, background-color 0.25s ease !important;
+
+  &.show {
+    opacity: 1 !important;
+  }
 }
 
 .modal,

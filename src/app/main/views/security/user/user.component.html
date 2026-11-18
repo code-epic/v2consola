@@ -40,7 +40,7 @@
                   <div class="input-group-prepend"><span class="input-group-text"><span
                   [data-feather]="'shield'"></span></span></div>
                   <ng-select [items]="tipoacceso" [formControl]="iUserTipoaccesoCtrl"
-                    (change)="selTipoAcceso(iUserTipoaccesoCtrl.value)" bindLabel="name" bindValue="id" [clearable]="false"
+                    (change)="onTipoAccesoChange(iUserTipoaccesoCtrl.value)" bindLabel="name" bindValue="id" [clearable]="false"
                     placeholder="Seleccione acceso" appendTo="body" class="flex-grow-1"></ng-select>
                 </div>
               </div>
@@ -58,11 +58,18 @@
 
               @if (ldap) {
                 <div class="form-group col-md-4">
-                  <label class="form-label" for="descripcion">End Point</label>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <label class="form-label" for="descripcion">End Point</label>
+                    <button type="button" class="btn btn-link btn-sm p-0 text-primary font-small-2"
+                      (click)="abrirModalReglasApp()" title="Seleccionar aplicación para cargar reglas">
+                      <span [data-feather]="'sliders'" [size]="12" class="mr-25"></span>
+                      Regla: {{ reglaActivaAppId }}
+                    </button>
+                  </div>
                   <div class="input-group input-group-pastel">
                     <div class="input-group-prepend"><span class="input-group-text"><span
                     [data-feather]="'server'"></span></span></div>
-                    <input [formControl]="iUserEndpointCtrl" type="text" placeholder="End Point" disabled
+                    <input [formControl]="iUserEndpointCtrl" type="text" placeholder="End Point"
                       class="form-control">
                   </div>
                 </div>
@@ -82,7 +89,7 @@
                     <div class="input-group-prepend"><span class="input-group-text"><span
                     [data-feather]="'user'"></span></span></div>
                     <input [formControl]="iUserLoginCtrl" type="text" placeholder="Login" class="form-control"
-                      (input)="onLoginInput()" (blur)="SearchLoginLDAP();consultarLogin()" [disabled]="blockEdit === 'disabled'">
+                      (input)="onLoginInput()" (blur)="SearchLoginLDAP();consultarLogin()">
                   </div>
                 </div>
               }
@@ -170,32 +177,37 @@
 
             <!-- Fila 3: Estatus, Vigencia de:, Correo del usuario y Nivel de trazabilidad -->
             <div class="row">
-              <div class="form-group col-md-2">
-                <label class="form-label" for="estatus">Estatus</label>
+              <div class="form-group col-lg-2 col-md-4">
+                <label class="form-label mb-50" for="estatus">Estatus</label>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
                   [data-feather]="'activity'" [style.color]="iUserEstatusCtrl.value == 1 ? '#28c76f' : (iUserEstatusCtrl.value == 0 ? '#ea5455' : '#6e6b7b')"></span></span></div>
-                  <ng-select [items]="estatus" [formControl]="iUserEstatusCtrl" bindLabel="name" bindValue="id"
+                  <ng-select id="estatus" [items]="estatus" [formControl]="iUserEstatusCtrl" bindLabel="name" bindValue="id"
                   placeholder="Estatus" appendTo="body" class="flex-grow-1"></ng-select>
                 </div>
               </div>
 
-              <div class="form-group col-md-2">
-                <label class="form-label" for="tipoduracion">Vigencia de:</label>
+              <div class="form-group col-lg-3 col-md-4">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="form-label mb-50" for="vigencia">Vigencia de:</label>
+                  <span class="ux-counter-pill ux-counter-info" title="Fecha estimada de vencimiento">
+                    {{ iUserVigenciaCtrl.value || 180 }}d • {{ vigenciaFechaEstimada | date:'dd/MM/yy' }}
+                  </span>
+                </div>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
-                  [data-feather]="'clock'"></span></span></div>
-                  <ng-select [items]="sesion" [formControl]="iUserVigenciaCtrl" bindLabel="name" bindValue="id"
-                  [disabled]="ldap" placeholder="Vigencia en" appendTo="body" class="flex-grow-1"></ng-select>
+                  [data-feather]="'calendar'"></span></span></div>
+                  <ng-select id="vigencia" [items]="sesion" [formControl]="iUserVigenciaCtrl" bindLabel="name" bindValue="id"
+                  [clearable]="false" placeholder="Vigencia en" appendTo="body" class="flex-grow-1"></ng-select>
                 </div>
               </div>
 
-              <div class="form-group col-md-4">
-                <label class="form-label">Correo del usuario</label>
+              <div class="form-group col-lg-3 col-md-4">
+                <label class="form-label mb-50" for="correoUsuario">Correo del usuario</label>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
                   [data-feather]="'mail'"></span></span></div>
-                  <input [formControl]="iUserCorreoCtrl" type="text"
+                  <input id="correoUsuario" [formControl]="iUserCorreoCtrl" type="email"
                     placeholder="Correo del usuario" class="form-control" (blur)="validateEmail()" [class.border-danger]="isEmailInvalid">
                   @if (isEmailInvalid) {
                     <div class="input-group-append" title="Formato de correo inválido">
@@ -207,7 +219,7 @@
                 </div>
               </div>
 
-              <div class="form-group col-md-4">
+              <div class="form-group col-lg-4 col-md-12">
                 <div class="d-flex justify-content-between align-items-center">
                   <label class="form-label mb-50" for="nivelTrazabilidad">Nivel de trazabilidad</label>
                   <button type="button" class="btn-traza-help" (click)="showTrazaHelp = !showTrazaHelp"
@@ -223,6 +235,7 @@
                     </span>
                   </div>
                   <ng-select [items]="nivelesTrazabilidad" [formControl]="iUserNivelCtrl"
+                    (change)="onNivelTrazabilidadChange($event)"
                     bindLabel="name" bindValue="id" [clearable]="false"
                     placeholder="Seleccione nivel" appendTo="body" class="flex-grow-1">
                     <ng-template ng-option-tmp let-item="item">
@@ -271,24 +284,47 @@
               </div>
             }
 
-            <!-- Fila 4: Descripción general alineada con Múltiple Sesión -->
+            <!-- Fila 4: Descripción general, Duración de Sesión (min) y Múltiple Sesión -->
             <div class="row">
-              <div class="form-group" [ngClass]="!ldap ? 'col-md-9' : 'col-md-12'">
-                <label class="form-label">Descripcion general</label>
+              <div class="form-group" [ngClass]="!ldap ? 'col-md-6' : 'col-md-9'">
+                <label class="form-label mb-50" for="descripcionGeneral">Descripcion general</label>
                 <div class="input-group input-group-pastel">
                   <div class="input-group-prepend"><span class="input-group-text"><span
                   [data-feather]="'file-text'"></span></span></div>
-                  <input [formControl]="descripcionCtrl" type="text"
+                  <input id="descripcionGeneral" [formControl]="descripcionCtrl" type="text"
                     placeholder="Descripcion general" class="form-control">
+                </div>
+              </div>
+              <div class="form-group col-md-3">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="form-label mb-50" for="tiempoduracion">Duración sesión</label>
+                  <span class="ux-counter-pill ux-counter-primary">{{ duracionFormattedHelper }}</span>
+                </div>
+                <div class="input-group input-group-pastel duration-stepper-group">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text"><span [data-feather]="'clock'"></span></span>
+                  </div>
+                  <button type="button" class="btn-stepper-step" (click)="adjustDuracion(-1)"
+                    title="Disminuir 1 minuto" aria-label="Disminuir minutos">
+                    &minus;
+                  </button>
+                  <input id="tiempoduracion" type="number" min="1" max="1440"
+                    [formControl]="iUserDuraciontiempoCtrl" (blur)="onDuracionInput()"
+                    placeholder="5" class="form-control duration-stepper-input text-center">
+                  <span class="duration-unit-tag">min</span>
+                  <button type="button" class="btn-stepper-step" (click)="adjustDuracion(1)"
+                    title="Aumentar 1 minuto" aria-label="Aumentar minutos">
+                    +
+                  </button>
                 </div>
               </div>
               @if (!ldap) {
                 <div class="form-group col-md-3">
-                  <label class="form-label" for="origen">Multiple Sesión</label>
+                  <label class="form-label mb-50" for="multiplesesion">Multiple Sesión</label>
                   <div class="input-group input-group-pastel">
                     <div class="input-group-prepend"><span class="input-group-text"><span
                     [data-feather]="'users'"></span></span></div>
-                    <ng-select [items]="lstmultiplesesion" [addTag]="true" [formControl]="multiplesesionCtrl"
+                    <ng-select id="multiplesesion" [items]="lstmultiplesesion" [addTag]="true" [formControl]="multiplesesionCtrl"
                       bindValue="id" bindLabel="name" placeholder="Multiple Sesión"
                     appendTo="body" class="flex-grow-1"></ng-select>
                   </div>
@@ -305,13 +341,16 @@
                   (change)="selDuracion(iUserDuraciontextoCtrl.value)"
                   bindLabel="name" bindValue="id" placeholder="Tipo Duración" appendTo="body"></ng-select>
                 </div>
-                <div class="form-group col-md-2" style="display: none;">
-                  <label class="form-label" for="tiempoduracion">Tiempo sesión</label>
-                  <input type="number" [formControl]="iUserDuraciontiempoCtrl"
-                    placeholder="Tiempo" class="form-control">
-                </div>
-                <div class="form-group col-md-3">
-                  <label class="form-label" for="telefono">Teléfono</label>
+                <div class="form-group col-lg-3 col-md-4">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <label class="form-label mb-50" for="telefonoNumero">Teléfono</label>
+                    @if (phoneDigitsCount > 0) {
+                      <span class="ux-counter-pill"
+                        [ngClass]="phoneDigitsCount === 7 ? 'ux-counter-success' : 'ux-counter-warning'">
+                        {{ phoneDigitsCount }}/7 {{ phoneDigitsCount === 7 ? '✓' : '' }}
+                      </span>
+                    }
+                  </div>
                   <div class="input-group input-group-pastel phone-input-group">
                     <div class="input-group-prepend">
                       <span class="input-group-text">
@@ -322,24 +361,25 @@
                       bindLabel="name" bindValue="id" [clearable]="false" [searchable]="false"
                       (change)="onPhoneInput()" appendTo="body" class="phone-code-select">
                     </ng-select>
-                    <input type="text" [formControl]="iUserTelNumeroCtrl"
+                    <input id="telefonoNumero" type="text" inputmode="numeric" autocomplete="tel-national"
+                      [formControl]="iUserTelNumeroCtrl"
                       (input)="onPhoneInput($event)" maxlength="8"
                       placeholder="000-0000" class="form-control phone-number-input" />
                   </div>
                 </div>
-                <div class="form-group col-md-4">
-                  <label class="form-label" for="origen">Regional / Sucursal</label>
+                <div class="form-group col-lg-4 col-md-4">
+                  <label class="form-label mb-50" for="regionalSelect">Regional / Sucursal</label>
                   <div class="input-group input-group-pastel">
                     <div class="input-group-prepend"><span class="input-group-text"><span
                     [data-feather]="'map-pin'"></span></span></div>
-                    <ng-select [items]="dataRegional" [addTag]="true" [formControl]="xregionalCtrl"
+                    <ng-select id="regionalSelect" [items]="dataRegional" [addTag]="true" [formControl]="xregionalCtrl"
                       (change)="consultarOficinas(xregionalCtrl.value)"
                       (input)='onFocusedRegional($event)' bindId="id" bindLabel="name" placeholder="Regional"
                     appendTo="body" class="flex-grow-1"></ng-select>
                   </div>
                 </div>
-                <div class="form-group col-md-5">
-                  <label class="form-label" for="origen">Oficina / Departamento</label>
+                <div class="form-group col-lg-5 col-md-4">
+                  <label class="form-label mb-50" for="oficinaSelect">Oficina / Departamento</label>
                   <div class="input-group input-group-pastel align-items-start">
                     <div class="input-group-prepend"><span class="input-group-text"><span
                     [data-feather]="'map'"></span></span></div>
@@ -388,7 +428,7 @@
                       <div class="input-group-prepend"><span class="input-group-text"><span
                       [data-feather]="'box'"></span></span></div>
                       <ng-select [items]="lstAplicacion" [formControl]="xaplicacionCtrl"
-                        bindLabel="nombre" (change)="selPerfil(xaplicacionCtrl.value)" bindValue="id" [disabled]="blockEditApp === 'disabled'"
+                        bindLabel="nombre" (change)="selPerfil(xaplicacionCtrl.value)" bindValue="id"
                       placeholder="Aplicación" appendTo="body" class="flex-grow-1"></ng-select>
                     </div>
                   </div>
@@ -460,7 +500,7 @@
                           <tr>
                           </thead>
                           <tbody>
-                            @for (e of dataUsers; track e; let i = $index) {
+                            @for (e of dataUsers; track (e.id || '') + '-' + (e.perfil || '') + '-' + $index; let i = $index) {
                               <tr>
                                 <td>
                                   <span class="font-weight-bold text-primary">{{e.nombre}}</span>
@@ -496,15 +536,14 @@
                                 }
                                 @if (e.id != null) {
                                   <td class="text-center">
-                                    <div ngbDropdown container="body">
-                                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm btn-flat-primary hide-arrow"
-                                        rippleEffect>
+                                    <div ngbDropdown container="body" [autoClose]="true">
+                                      <button ngbDropdownToggle type="button" class="btn icon-btn btn-sm btn-flat-primary hide-arrow">
                                         <span [data-feather]="'more-vertical'" [class]="'cursor-pointer'"></span>
                                       </button>
                                       <div ngbDropdownMenu>
-                                        <a (click)="verPerfil(e, ProfileDetail)" ngbDropdownItem><span [data-feather]="'eye'"
+                                        <a (click)="verPerfil(e, ProfileDetail)" ngbDropdownItem class="cursor-pointer"><span [data-feather]="'eye'"
                                         [class]="'mr-50'"></span> Ver detalles </a>
-                                        <a (click)="quitarElemento(i)" ngbDropdownItem><span [data-feather]="'trash'"
+                                        <a (click)="quitarElemento(i)" ngbDropdownItem class="cursor-pointer text-danger"><span [data-feather]="'trash'"
                                         [class]="'mr-50'"></span> Quitar</a>
                                       </div>
                                     </div>
@@ -521,12 +560,23 @@
                   </div>
                 }
 
+                @if (hasUnsavedChanges) {
+                  <div class="alert alert-light-warning d-flex align-items-center justify-content-between mt-2 mb-0 px-2 py-1" style="border-radius: 12px;">
+                    <div class="d-flex align-items-center">
+                      <span [data-feather]="'alert-triangle'" [size]="16" class="text-warning mr-1"></span>
+                      <span class="font-small-3 text-dark">
+                        <strong>Cambios pendientes:</strong> Ha modificado los perfiles en pantalla. Guarde los cambios para que surtan efecto.
+                      </span>
+                    </div>
+                  </div>
+                }
+
                 @if (usuarioSave) {
                   <div class="row mt-3">
                     <div class="form-group col-md-8">
                     </div>
                     <div class="form-group col-md-4 text-right">
-                      <button type="button" [disabled]="dataUsers.length > 0? '': 'disabled'" class="btn btn-warning"
+                      <button type="button" [disabled]="dataUsers.length === 0 && !hasUnsavedChanges" class="btn btn-warning"
                         (click)="agregarUsuario(2)">
                         <span [data-feather]="'edit'"></span>&nbsp;&nbsp;Modificar Usuario
                       </button>
@@ -612,3 +662,121 @@
           </div>
 
         </ng-template>
+
+      <!-- ========================================================================= -->
+      <!-- MODAL: SELECTOR DE REGLAS POR APLICACIÓN (ACCESO LDAP / ACTIVE DIRECTORY) -->
+      <!-- ========================================================================= -->
+      <ng-template #ModalReglasApp let-modal>
+        <div class="modal-header border-bottom bg-light-secondary py-1">
+          <div class="d-flex align-items-center">
+            <div class="avatar bg-light-primary mr-1 p-50">
+              <span [data-feather]="'shield'" [size]="18" class="text-primary"></span>
+            </div>
+            <div>
+              <h5 class="modal-title font-weight-bold mb-0">Configuración de Reglas de Acceso</h5>
+              <small class="text-muted">Seleccione la aplicación para cargar endpoint, LDAP/AD, traza y segmentos</small>
+            </div>
+          </div>
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body p-2">
+          <div class="form-group mb-2">
+            <label class="form-label font-weight-bold mb-50" for="selectorReglaApp">
+              Aplicación origen de reglas
+            </label>
+            <ng-select id="selectorReglaApp"
+              [items]="lstAppsParaReglas"
+              bindLabel="name"
+              bindValue="id"
+              [clearable]="false"
+              [searchable]="true"
+              [formControl]="reglaPreviewAppCtrl"
+              (change)="onPreviewReglaAppChange($event)"
+              placeholder="Seleccione una aplicación">
+            </ng-select>
+          </div>
+
+          @if (isLoadingRegla) {
+            <div class="text-center py-3">
+              <div class="spinner-border text-primary spinner-border-sm mr-50" role="status"></div>
+              <span class="text-muted">Cargando reglas de {{ reglaPreviewAppId }}...</span>
+            </div>
+          } @else if (reglaPreviewConfig) {
+            <div class="card border shadow-none mb-0" style="border-radius: 14px; background: #fafbfc;">
+              <div class="card-body p-150">
+                <div class="d-flex justify-content-between align-items-center mb-1 pb-50 border-bottom">
+                  <span class="font-weight-bold text-dark">Parámetros detectados</span>
+                  <span class="badge badge-light-primary">{{ reglaPreviewAppId }}</span>
+                </div>
+
+                <div class="mb-75">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">End Point (Login / Active Directory)</small>
+                    @if (iUser.tipoacceso === 3) {
+                      <span class="badge badge-light-success font-small-1">Se aplicará</span>
+                    }
+                  </div>
+                  <code class="text-dark font-small-3">{{ reglaPreviewConfig.endpoints?.login || 'No configurado' }}</code>
+                </div>
+
+                <div class="mb-75">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">Protocolo Ligero (LDAP)</small>
+                    @if (iUser.tipoacceso === 2) {
+                      <span class="badge badge-light-success font-small-1">Se aplicará</span>
+                    }
+                  </div>
+                  <code class="text-dark font-small-3">{{ reglaPreviewConfig.endpoints?.directorioActivo || 'No configurado' }}</code>
+                </div>
+
+                <div class="row mt-1">
+                  <div class="col-6">
+                    <small class="text-muted d-block">Nivel de Trazabilidad</small>
+                    <span class="badge badge-light-info mt-25">
+                      {{ normalizeTrazaLabel(reglaPreviewConfig.traza?.nivel) }} (Nivel {{ getTraza(reglaPreviewConfig.traza?.nivel) }})
+                    </span>
+                  </div>
+                  <div class="col-6">
+                    <small class="text-muted d-block">Duración de Sesión</small>
+                    <span class="font-weight-bold text-dark font-small-3">
+                      {{ convertirSesionAMinutos(reglaPreviewConfig.sesion?.tiempo, reglaPreviewConfig.sesion?.unidad) }} min
+                    </span>
+                    <small class="text-muted ml-25">
+                      ({{ reglaPreviewConfig.sesion?.tiempo || 300 }} {{ reglaPreviewConfig.sesion?.unidad || 'segundos' }})
+                    </small>
+                  </div>
+                </div>
+
+                <div class="row mt-1 pt-75 border-top">
+                  <div class="col-6">
+                    <small class="text-muted d-block">Segmento Oficinas</small>
+                    <span class="font-small-2 text-secondary text-truncate d-block">
+                      {{ reglaPreviewConfig.endpoints?.oficinas || 'TODAS (Por defecto)' }}
+                    </span>
+                  </div>
+                  <div class="col-6">
+                    <small class="text-muted d-block">Segmento Estados</small>
+                    <span class="font-small-2 text-secondary text-truncate d-block">
+                      {{ reglaPreviewConfig.endpoints?.estados || 'TODAS (Por defecto)' }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          } @else {
+            <div class="alert alert-light-warning mb-0 p-1" style="border-radius: 14px;">
+              <span class="font-small-3">
+                La aplicación <strong>{{ reglaPreviewAppId }}</strong> no tiene reglas personalizadas registradas. Se mantendrá la configuración base.
+              </span>
+            </div>
+          }
+        </div>
+
+        <div class="modal-footer border-top py-1">
+          <button type="button" class="btn btn-swal-neutral" (click)="modal.dismiss('cancel')">Cancelar</button>
+          <button type="button" class="btn btn-swal-purple" (click)="aplicarReglaSeleccionada(modal)">Aplicar Reglas</button>
+        </div>
+      </ng-template>

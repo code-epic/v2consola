@@ -567,19 +567,39 @@ $info-text: #00bcd4;
 // ========================================
 // Phone Input Group (Code Selector + Mask)
 // ========================================
-.phone-input-group {
+.input-group.input-group-pastel.phone-input-group {
+  border: 1px solid $border-color !important;
+  border-radius: 14px !important;
+  height: 44px;
+  overflow: hidden;
+  background: #ffffff;
+  flex-wrap: nowrap;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: #7367f0 !important;
+    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.12) !important;
+  }
+
+  .input-group-prepend .input-group-text {
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    height: 100%;
+  }
+
   ::ng-deep .ng-select.phone-code-select {
-    width: 88px;
-    min-width: 88px;
-    flex: 0 0 88px;
+    width: 84px;
+    min-width: 84px;
+    flex: 0 0 84px;
 
     .ng-select-container {
       background: #f8fafc !important;
-      border: 1px solid $border-color !important;
-      border-left: none !important;
-      border-right: 1px solid $border-color !important;
-      min-height: 44px;
-      height: 44px;
+      border: none !important;
+      border-left: 1px solid #edf2f7 !important;
+      border-right: 1px solid #edf2f7 !important;
+      min-height: 42px !important;
+      height: 42px !important;
       border-radius: 0 !important;
       box-shadow: none !important;
 
@@ -602,16 +622,25 @@ $info-text: #00bcd4;
 
     &.ng-select-opened > .ng-select-container,
     &.ng-select-focused > .ng-select-container {
-      border-color: $border-color !important;
+      border-color: #edf2f7 !important;
       box-shadow: none !important;
     }
   }
 
   .phone-number-input {
-    border-left: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    height: 100% !important;
     font-family: 'Inter', sans-serif;
     letter-spacing: 0.5px;
     font-weight: 500;
+
+    &:focus {
+      border: none !important;
+      box-shadow: none !important;
+    }
   }
 }
 
@@ -838,5 +867,143 @@ $info-text: #00bcd4;
   .btn {
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
+  }
+}
+
+// ========================================
+// UX Counter Pills & Minutes Stepper
+// ========================================
+.ux-counter-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  margin-bottom: 0.35rem;
+  line-height: 1.3;
+
+  &.ux-counter-info {
+    background: rgba(0, 207, 232, 0.12);
+    color: #0097a7;
+  }
+
+  &.ux-counter-primary {
+    background: rgba(115, 103, 240, 0.12);
+    color: #5e50ee;
+  }
+
+  &.ux-counter-success {
+    background: rgba(40, 199, 111, 0.12);
+    color: #1f9d55;
+  }
+
+  &.ux-counter-warning {
+    background: rgba(255, 159, 67, 0.14);
+    color: #d97706;
+  }
+}
+
+.input-group.input-group-pastel.duration-stepper-group {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: nowrap;
+  height: 44px;
+  border: 1px solid $border-color !important;
+  border-radius: 14px !important;
+  overflow: hidden;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: #7367f0 !important;
+    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.12) !important;
+  }
+
+  .input-group-prepend .input-group-text {
+    border: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    height: 100%;
+  }
+
+  .duration-stepper-input {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    height: 100% !important;
+    font-weight: 600;
+    color: $text-primary;
+    padding: 0 0.25rem !important;
+    min-width: 40px;
+    -moz-appearance: textfield;
+
+    &:focus {
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  .duration-unit-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0 0.5rem 0 0;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #64748b;
+    background: #ffffff;
+    border: none !important;
+    height: 100%;
+    user-select: none;
+  }
+
+  .btn-stepper-step {
+    width: 34px;
+    min-width: 34px;
+    height: 100%;
+    border: none !important;
+    border-left: 1px solid #edf2f7 !important;
+    border-radius: 0 !important;
+    background: #f8fafc;
+    color: #475569;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    outline: none !important;
+    box-shadow: none !important;
+    transition: background-color 0.18s ease, color 0.18s ease;
+    padding: 0;
+
+    &:first-of-type {
+      border-right: 1px solid #edf2f7 !important;
+    }
+
+    &:hover {
+      background: rgba(115, 103, 240, 0.1);
+      color: #7367f0;
+    }
+
+    &:focus,
+    &:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+      background: rgba(115, 103, 240, 0.08);
+    }
+
+    &:active {
+      background: rgba(115, 103, 240, 0.16);
+    }
   }
 }

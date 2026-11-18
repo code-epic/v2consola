@@ -1,7 +1,11 @@
 import {
+  ChangeDetectorRef,
   Component,
+  HostListener,
+  NgZone,
   OnDestroy,
   OnInit,
+  TemplateRef,
   ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
@@ -130,7 +134,7 @@ export class UserComponent implements OnInit, OnDestroy {
     regional: "",
     multiplesesion: false,
     cargo: "",
-    nivel: 0,
+    nivel: 1,
     telefono: "",
   };
 
@@ -174,18 +178,19 @@ export class UserComponent implements OnInit, OnDestroy {
     { id: 60, name: "60 días" },
     { id: 90, name: "90 días" },
     { id: 180, name: "180 días" },
+    { id: 365, name: "365 días" },
   ];
 
   public traza = [
-    { id: "1|BAJA", name: "BAJA" }, //CONEXIONES
-    { id: "2|MEDIA", name: "MEDIA" }, //CONEXION - PETIONES ACCIONES I,U,R,D
-    { id: "3|ALTA", name: "ALTA" }, //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
+    { id: "BAJA", name: "BAJA" }, //CONEXIONES
+    { id: "MEDIA", name: "MEDIA" }, //CONEXION - PETIONES ACCIONES I,U,R,D
+    { id: "ALTA", name: "ALTA" }, //CONEXION - PETIONES ACCIONES I,U,R,D / SELECT CAPTURAR
   ];
 
   public nivelesTrazabilidad = [
     {
-      id: 0,
-      name: "0: Bajo",
+      id: 1,
+      name: "1: Bajo",
       shortLabel: "Bajo",
       badgeClass: "badge-light-info",
       color: "#00cfe8",
@@ -193,22 +198,22 @@ export class UserComponent implements OnInit, OnDestroy {
       example: "Ej: Usuario, IP, Fecha y Endpoint (/api/consulta).",
     },
     {
-      id: 1,
-      name: "1: Medio",
+      id: 2,
+      name: "2: Medio",
       shortLabel: "Medio",
       badgeClass: "badge-light-warning",
       color: "#ff9f43",
       desc: "Guarda la API consultada más el Query utilizado.",
-      example: "Ej: Nivel 0 + Parámetros / Query ejecutado (SELECT / Payload).",
+      example: "Ej: Nivel 1 + Parámetros / Query ejecutado (SELECT / Payload).",
     },
     {
-      id: 2,
-      name: "2: Alto",
+      id: 3,
+      name: "3: Alto",
       shortLabel: "Alto",
       badgeClass: "badge-light-danger",
       color: "#ea5455",
       desc: "Guarda todas las anteriores más las respuestas.",
-      example: "Ej: Nivel 1 + Respuesta completa devuelta por el servidor.",
+      example: "Ej: Nivel 2 + Respuesta completa devuelta por el servidor.",
     },
   ];
 
@@ -298,9 +303,9 @@ export class UserComponent implements OnInit, OnDestroy {
   public xaplicacion = "";
   public xperfil = "";
   public xtraza = "BAJA";
-  public ntraza = 0;
+  public ntraza = 1;
 
-  public xoficina: any = "TODAS";
+  public xoficina: any = [{ id: "TODAS", name: "TODAS" }];
   public xregional: any = "TODAS";
 
   public bEndPoint = false;
@@ -309,10 +314,44 @@ export class UserComponent implements OnInit, OnDestroy {
   public blockEdit: string = "false";
   public blockEditApp: string = "false";
   public bEliminarAllProfile: boolean = false;
+  public hasUnsavedChanges: boolean = false;
 
   public isBDV: boolean = false;
 
   public configuracion: IConfiguracion;
+  public reglasMemoria: Record<string, IConfiguracion> = {};
+  public reglaActivaAppId: string = environment.ID;
+  public isLoadingRegla: boolean = false;
+  @ViewChild("ModalReglasApp") modalReglasAppRef?: TemplateRef<any>;
+  public reglaPreviewAppId: string = environment.ID;
+  public reglaPreviewAppCtrl = new FormControl(environment.ID);
+  public reglaPreviewConfig: IConfiguracion | null = null;
+  public lstAppsParaReglas: any[] = [
+    {
+      id: environment.ID,
+      nombre: "Sandra Server - UI Consola (Por defecto)",
+      name: `${environment.ID}  (Por defecto)`,
+    },
+  ];
+
+  private actualizarAppsParaReglas(): void {
+    const lista = Array.isArray(this.lstAplicacion)
+      ? [...this.lstAplicacion]
+      : [];
+    const idx = lista.findIndex((a) => a.id === environment.ID);
+    if (idx > 0) {
+      const [consola] = lista.splice(idx, 1);
+      lista.unshift(consola);
+    } else if (idx === -1) {
+      lista.unshift({
+        id: environment.ID,
+        nombre: "Sandra Server - UI Consola (Por defecto)",
+        name: `${environment.ID}  (Por defecto)`,
+      } as any);
+    }
+    this.lstAppsParaReglas = lista;
+  }
+
   public profileData: any;
   public usuarioSave: boolean = false;
   public isEmailInvalid: boolean = false;
@@ -332,7 +371,7 @@ export class UserComponent implements OnInit, OnDestroy {
   // Reactive Form Controls
   public iUserTipoaccesoCtrl = new FormControl(1);
   public iUserRespaldoCtrl = new FormControl(0);
-  public iUserEndpointCtrl = new FormControl("");
+  public iUserEndpointCtrl = new FormControl({ value: "", disabled: true });
   public iUserLoginCtrl = new FormControl("");
   public iUserClaveCtrl = new FormControl("");
   public iUserEncriptamientoCtrl = new FormControl("");
@@ -342,11 +381,11 @@ export class UserComponent implements OnInit, OnDestroy {
   public iUserEstatusCtrl = new FormControl(1);
   public iUserVigenciaCtrl = new FormControl(180);
   public iUserCorreoCtrl = new FormControl("");
-  public iUserNivelCtrl = new FormControl(0);
+  public iUserNivelCtrl = new FormControl(1);
   public showTrazaHelp: boolean = false;
 
   get selectedNivelInfo() {
-    const val = Number(this.iUserNivelCtrl.value ?? this.iUser.nivel ?? 0);
+    const val = Number(this.iUserNivelCtrl.value ?? this.iUser.nivel ?? 1);
     return (
       this.nivelesTrazabilidad.find((n) => n.id === val) ||
       this.nivelesTrazabilidad[0]
@@ -366,16 +405,22 @@ export class UserComponent implements OnInit, OnDestroy {
     if (isNaN(fechaInicio.getTime())) return null;
 
     const diasVigencia = Number(
-      this.iUserVigenciaCtrl.value ?? firma.vigencia ?? this.iUser.vigencia ?? 180
+      this.iUserVigenciaCtrl.value ??
+        firma.vigencia ??
+        this.iUser.vigencia ??
+        180,
     );
     const fechaVencimiento = new Date(
-      fechaInicio.getTime() + diasVigencia * 24 * 60 * 60 * 1000
+      fechaInicio.getTime() + diasVigencia * 24 * 60 * 60 * 1000,
     );
     const diffMs = fechaVencimiento.getTime() - Date.now();
     const diasRestantes = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     const porcentaje =
       diasVigencia > 0
-        ? Math.min(100, Math.max(0, Math.round((diasRestantes / diasVigencia) * 100)))
+        ? Math.min(
+            100,
+            Math.max(0, Math.round((diasRestantes / diasVigencia) * 100)),
+          )
         : 0;
 
     let statusClass = "life-success";
@@ -406,7 +451,9 @@ export class UserComponent implements OnInit, OnDestroy {
   public iUserDuraciontextoCtrl = new FormControl(60);
   public iUserDuraciontiempoCtrl = new FormControl(5);
   public xregionalCtrl = new FormControl("TODAS");
-  public xoficinaCtrl = new FormControl("TODAS");
+  public xoficinaCtrl = new FormControl<any[]>([
+    { id: "TODAS", name: "TODAS" },
+  ]);
   public iUserTelCodigoCtrl = new FormControl("0412");
   public iUserTelNumeroCtrl = new FormControl("");
   public multiplesesionCtrl = new FormControl(false);
@@ -414,12 +461,16 @@ export class UserComponent implements OnInit, OnDestroy {
   public xperfilCtrl = new FormControl("");
   public xtrazaCtrl = new FormControl("BAJA");
 
+  public lstReglasApp: any[] = [];
+
   constructor(
     private apiService: ApiService,
     private utilservice: UtilService,
     private userService: UserService,
     private sha256: Sha256Service,
     private modalService: NgbModal,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
   ) {
     this.userService.iniciarObjeto();
     this.CargarListaEndPoint();
@@ -461,36 +512,18 @@ export class UserComponent implements OnInit, OnDestroy {
     await this.cargarConfiguracionApp();
   }
 
-  cargarConfiguracionApp() {
+  cargaReglasGenerale() {
     this.xAPI = {} as IAPICore;
-    this.xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP; // Asumiendo que esta es tu función de backend
-    this.xAPI.parametros = environment.ID;
+    this.xAPI.funcion = "_SYS_CSchemaApp"; // Asumiendo que esta es tu función de backend
+    this.xAPI.parametros = "";
     this.xAPI.valores = {};
 
     this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
         if (data != null) {
           if (data.length > 0) {
-            // console.log(data)
-            this.configuracion = data[0];
-            this.iUser.endpoint = this.configuracion.endpoints.login;
-            this.iUserEndpointCtrl.setValue(this.iUser.endpoint ?? "");
-            this.iUser.duraciontiempo =
-              this.configuracion.sesion.tiempo *
-              this.exportTime(this.configuracion.sesion.unidad);
-            this.endpointOficinas = this.configuracion.endpoints.oficinas;
-            this.endpointEstados = this.configuracion.endpoints.estados;
-
-            let usuario: any = window.sessionStorage.getItem("validator");
-
-            if (usuario == undefined) {
-              this.ntraza = this.getTraza(this.configuracion.traza?.nivel);
-              this.xtraza = this.configuracion.traza?.nivel;
-              this.iUser.nivel = this.ntraza;
-              this.iUserNivelCtrl.setValue(this.ntraza);
-            }
+            this.lstReglasApp = data;
           }
-          this.consultarRegionales();
         }
       },
       (error) => {
@@ -500,6 +533,130 @@ export class UserComponent implements OnInit, OnDestroy {
         );
       },
     );
+  }
+
+  cargarConfiguracionApp(
+    appId: string = environment.ID,
+    forzarAplicarTrazas: boolean = false,
+  ) {
+    const targetAppId = appId || environment.ID;
+
+    if (this.reglasMemoria[targetAppId]) {
+      this.aplicarReglaAConfiguracion(
+        this.reglasMemoria[targetAppId],
+        targetAppId,
+        forzarAplicarTrazas,
+      );
+      return;
+    }
+
+    this.isLoadingRegla = true;
+    const xAPI = {} as IAPICore;
+    xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP;
+    xAPI.parametros = targetAppId;
+    xAPI.valores = {};
+
+    this.apiService.Ejecutar(xAPI).subscribe(
+      (data) => {
+        this.isLoadingRegla = false;
+        if (data != null && data.length > 0) {
+          this.reglasMemoria[targetAppId] = data[0];
+          this.aplicarReglaAConfiguracion(
+            data[0],
+            targetAppId,
+            forzarAplicarTrazas,
+          );
+        } else {
+          this.consultarRegionales();
+        }
+      },
+      (error) => {
+        this.isLoadingRegla = false;
+        console.error(
+          "Error al cargar la configuración de la aplicación:",
+          error,
+        );
+      },
+    );
+  }
+
+  aplicarReglaAConfiguracion(
+    config: IConfiguracion,
+    appId: string = environment.ID,
+    forzarAplicarTrazas: boolean = false,
+  ) {
+    if (!config) return;
+    this.configuracion = config;
+    this.reglaActivaAppId = appId;
+
+    const epSelected =
+      this.iUser.tipoacceso === 2
+        ? config.endpoints?.directorioActivo || config.endpoints?.login || ""
+        : config.endpoints?.login || "";
+    this.iUser.endpoint = epSelected;
+    this.iUserEndpointCtrl.setValue(epSelected);
+
+    if (config.sesion) {
+      this.iUser.duraciontiempo = this.convertirSesionAMinutos(
+        config.sesion.tiempo,
+        config.sesion.unidad,
+      );
+      this.iUserDuraciontiempoCtrl.setValue(this.iUser.duraciontiempo);
+    }
+
+    this.endpointOficinas = config.endpoints?.oficinas || "";
+    this.endpointEstados = config.endpoints?.estados || "";
+
+    const usuario: any = window.sessionStorage.getItem("validator");
+    if (forzarAplicarTrazas || usuario == undefined) {
+      this.ntraza = this.getTraza(config.traza?.nivel);
+      this.xtraza = this.normalizeTrazaLabel(config.traza?.nivel);
+      this.iUser.nivel = this.ntraza;
+      this.iUserNivelCtrl.setValue(this.ntraza);
+      this.xtrazaCtrl.setValue(this.xtraza);
+    }
+
+    this.consultarRegionales();
+  }
+
+  precargarReglasEnMemoria() {
+    const apps = this.lstAppsParaReglas;
+    apps.forEach((app) => {
+      const appId = app?.id;
+      if (!appId || this.reglasMemoria[appId]) return;
+
+      const xAPI = {} as IAPICore;
+      xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP;
+      xAPI.parametros = appId;
+      xAPI.valores = {};
+
+      this.apiService.Ejecutar(xAPI).subscribe({
+        next: (data) => {
+          if (data && data.length > 0) {
+            this.reglasMemoria[appId] = data[0];
+          }
+        },
+        error: () => {},
+      });
+    });
+  }
+
+  convertirSesionAMinutos(tiempo: any, unidad?: string): number {
+    const val = Number(tiempo);
+    if (isNaN(val) || val <= 0) return 5;
+    const unit = (unidad || "segundos").toString().toLowerCase().trim();
+    switch (unit) {
+      case "horas":
+      case "hora":
+        return Math.max(1, Math.round(val * 60));
+      case "minutos":
+      case "minuto":
+        return Math.max(1, Math.round(val));
+      case "segundos":
+      case "segundo":
+      default:
+        return Math.max(1, Math.round(val / 60));
+    }
   }
 
   exportTime(tiemp: string): number {
@@ -538,20 +695,32 @@ export class UserComponent implements OnInit, OnDestroy {
       usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
 
     this.xregional = usuario.direccion;
-    this.xoficina = usuario.sucursal;
+    this.xoficina = this.normalizeOficinaArray(usuario.sucursal);
     this.multiplesesion =
       usuario.multiplesesion != undefined ? usuario.multiplesesion : false;
+
+    // Selección automática de tipo de acceso según el prefijo del endpoint
+    const ep = (usuario.endpoint || "").toString().trim().toLowerCase();
+    if (ep.startsWith("sdr-ldaps") || ep.startsWith("sdr-ldap")) {
+      this.selTipoAcceso(2);
+    } else if (ep.startsWith("https") || ep.startsWith("http")) {
+      this.selTipoAcceso(3);
+    } else {
+      this.selTipoAcceso(1);
+    }
 
     // Mapeo de propiedades anidadas en 'firmadigital'
     if (usuario.firmadigital) {
       this.iUser.vigencia = usuario.firmadigital.vigencia;
+      this.iUser.duraciontiempo = Number(usuario.firmadigital.duracion ?? 5);
       this.xsesion = usuario.firmadigital.sesion;
       const rawNivel = usuario.firmadigital.nivel;
-      this.iUser.nivel =
-        rawNivel !== undefined && rawNivel !== null ? Number(rawNivel) : 0;
+      this.iUser.nivel = this.getTraza(rawNivel);
       this.ntraza = this.iUser.nivel;
     } else {
-      this.iUser.nivel = 0;
+      this.iUser.duraciontiempo = 5;
+      this.iUser.nivel = 1;
+      this.ntraza = 1;
     }
 
     // No se mapea la clave para evitar mostrar el hash. Se debe ingresar una nueva si se desea cambiar.
@@ -610,6 +779,89 @@ export class UserComponent implements OnInit, OnDestroy {
     }
   }
 
+  onNivelTrazabilidadChange(e: any) {
+    const val = typeof e === "object" && e !== null ? e.id : e;
+    const nivel = this.getTraza(val);
+    this.iUser.nivel = nivel;
+    this.ntraza = nivel;
+    this.xtraza = this.normalizeTrazaLabel(nivel);
+    this.xtrazaCtrl.setValue(this.xtraza);
+  }
+
+  onTipoAccesoChange(e: any) {
+    const val = typeof e === "object" && e !== null ? e.id : e;
+    this.selTipoAcceso(val);
+    if (val !== 1) {
+      this.abrirModalReglasApp();
+    }
+  }
+
+  abrirModalReglasApp() {
+    if (!this.modalReglasAppRef) return;
+    this.actualizarAppsParaReglas();
+    this.reglaPreviewAppId = this.reglaActivaAppId || environment.ID;
+    this.reglaPreviewAppCtrl.setValue(this.reglaPreviewAppId, {
+      emitEvent: false,
+    });
+    this.onPreviewReglaAppChange(this.reglaPreviewAppId);
+    this.modalService.open(this.modalReglasAppRef, {
+      centered: true,
+      size: "md",
+      backdrop: "static",
+    });
+  }
+
+  onPreviewReglaAppChange(appOrId: any) {
+    const rawId =
+      typeof appOrId === "object" && appOrId !== null ? appOrId.id : appOrId;
+    const targetId = rawId || environment.ID;
+    this.reglaPreviewAppId = targetId;
+
+    if (this.reglasMemoria[targetId]) {
+      this.reglaPreviewConfig = this.reglasMemoria[targetId];
+      return;
+    }
+
+    this.reglaPreviewConfig = null;
+    this.isLoadingRegla = true;
+    const xAPI = {} as IAPICore;
+    xAPI.funcion = environment.functions.CONSULTAR_CONFIGURACION_APP;
+    xAPI.parametros = targetId;
+    xAPI.valores = {};
+
+    this.apiService.Ejecutar(xAPI).subscribe({
+      next: (data) => {
+        this.isLoadingRegla = false;
+        if (data && data.length > 0) {
+          this.reglasMemoria[targetId] = data[0];
+          this.reglaPreviewConfig = data[0];
+        }
+      },
+      error: () => {
+        this.isLoadingRegla = false;
+      },
+    });
+  }
+
+  aplicarReglaSeleccionada(modal: any) {
+    if (this.reglaPreviewConfig) {
+      this.aplicarReglaAConfiguracion(
+        this.reglaPreviewConfig,
+        this.reglaPreviewAppId,
+        true,
+      );
+      this.utilservice.AlertMini(
+        "top-end",
+        "success",
+        `Reglas cargadas desde ${this.reglaPreviewAppId}`,
+        2500,
+      );
+    } else {
+      this.cargarConfiguracionApp(this.reglaPreviewAppId, true);
+    }
+    modal.close();
+  }
+
   selTipoAcceso(e) {
     const val = typeof e === "object" && e !== null ? e.id : e;
     this.iUser.tipoacceso = val;
@@ -635,6 +887,7 @@ export class UserComponent implements OnInit, OnDestroy {
         this.activedirectory = false;
         break;
     }
+    this.syncDisabledStates();
   }
 
   onFocusedRegional(item) {}
@@ -677,10 +930,12 @@ export class UserComponent implements OnInit, OnDestroy {
     this.xAPI.parametros = "";
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       async (data) => {
-        this.lstAplicacion = data.map((e) => {
+        this.lstAplicacion = (Array.isArray(data) ? data : []).map((e) => {
           e.name = `${e.id}  (${e.nombre})`;
           return e;
         });
+        this.actualizarAppsParaReglas();
+        this.precargarReglasEnMemoria();
 
         let usuario: any = window.sessionStorage.getItem("validator");
 
@@ -702,7 +957,7 @@ export class UserComponent implements OnInit, OnDestroy {
       const codPerfil =
         typeof e === "object" && e !== null
           ? e.id
-          : e ?? this.xaplicacionCtrl.value;
+          : (e ?? this.xaplicacionCtrl.value);
       this.xaplicacion = codPerfil || "";
 
       if (!isInitialLoad) {
@@ -728,6 +983,7 @@ export class UserComponent implements OnInit, OnDestroy {
             this.cargarUsuario(this.usuario);
           } else {
             this.blockEditApp = "false";
+            this.syncDisabledStates();
           }
         }
         return;
@@ -757,6 +1013,7 @@ export class UserComponent implements OnInit, OnDestroy {
               this.cargarUsuario(this.usuario);
             } else {
               this.blockEditApp = "false";
+              this.syncDisabledStates();
             }
           }
         },
@@ -797,7 +1054,9 @@ export class UserComponent implements OnInit, OnDestroy {
         version: appx.idapp.version,
         url: appx.idapp.url,
         perfil: appx.perfil,
-        traza: appx.XPerfil == undefined ? appx.traza : appx.XPerfil.traza,
+        traza: this.normalizeTrazaLabel(
+          appx.XPerfil == undefined ? appx.traza : appx.XPerfil.traza,
+        ),
         estatus: appx.estatus,
         comentario: "Generado por sistema",
         tiempo: appx.tiempo,
@@ -806,9 +1065,12 @@ export class UserComponent implements OnInit, OnDestroy {
       lstApp.push(xapps);
     });
 
+    const nivelSeleccionado = this.getTraza(this.iUser.nivel);
     this.usuario.Perfil.id = apps.idper == undefined ? "" : apps.idper.id;
     this.usuario.Perfil.descripcion = apps.perfil;
-    this.usuario.Perfil.traza = apps.traza;
+    this.usuario.Perfil.traza = this.normalizeTrazaLabel(
+      apps.traza || nivelSeleccionado,
+    );
     this.usuario.cedula = this.iUser.cedula;
     this.usuario.login = this.iUser.login;
     this.usuario.nombre = this.iUser.nombre;
@@ -821,8 +1083,19 @@ export class UserComponent implements OnInit, OnDestroy {
       this.iUser.tipoacceso == 3 || this.iUser.tipoacceso == 2
         ? this.iUser.endpoint
         : "";
-    this.usuario.sucursal =
-      this.xoficina.name != undefined ? this.xoficina.name : this.xoficina;
+    if (Array.isArray(this.xoficina)) {
+      this.usuario.sucursal = this.xoficina
+        .map((x: any) =>
+          typeof x === "object" && x !== null ? x.name || x.id : x,
+        )
+        .filter(Boolean)
+        .join(", ");
+    } else {
+      this.usuario.sucursal =
+        this.xoficina?.name != undefined
+          ? this.xoficina.name
+          : this.xoficina || "";
+    }
     this.usuario.direccion =
       this.xregional.name != undefined ? this.xregional.name : this.xregional;
     this.usuario.estatus = this.iUser.estatus;
@@ -834,7 +1107,11 @@ export class UserComponent implements OnInit, OnDestroy {
 
     let usuario = window.sessionStorage.getItem("validator");
 
-    if (usuario == undefined && !this.usuarioSave && this.blockEdit !== "disabled") {
+    if (
+      usuario == undefined &&
+      !this.usuarioSave &&
+      this.blockEdit !== "disabled"
+    ) {
       if (this.iUser.clave != "") {
         await this.sha256.hash(this.iUser.clave).then((hash) => {
           this.usuario.clave = hash;
@@ -848,14 +1125,13 @@ export class UserComponent implements OnInit, OnDestroy {
         this.xsesion = xhash;
       });
 
-    const nivelSeleccionado = Number(this.iUser.nivel ?? 0);
     let firma: Firmadigital = {
       vigencia: Number(this.iUser.vigencia),
       duracion: Number(this.iUser.duraciontiempo),
       direccionmac: "",
       direccionip: "",
       tiempo: new Date().toISOString(),
-      nivel: isNaN(nivelSeleccionado) ? 0 : nivelSeleccionado,
+      nivel: nivelSeleccionado,
       sesion: this.xsesion,
     };
 
@@ -873,7 +1149,9 @@ export class UserComponent implements OnInit, OnDestroy {
     let app = {};
     this.xaplicacion = this.xaplicacionCtrl.value || "";
     this.xperfil = this.xperfilCtrl.value || "";
-    this.xtraza = this.xtrazaCtrl.value || this.xtraza || "BAJA";
+    this.xtraza = this.normalizeTrazaLabel(
+      this.xtrazaCtrl.value || this.xtraza || "BAJA",
+    );
 
     if (!this.xaplicacion || !this.xperfil || !this.xtraza) {
       this.utilservice.AlertMini(
@@ -912,7 +1190,7 @@ export class UserComponent implements OnInit, OnDestroy {
       idapp: appSel,
       idper: perfSel,
       traza: this.xtraza,
-      idtra: this.ntraza,
+      idtra: this.getTraza(this.xtraza),
       nombre: appSel.nombre,
       url: appSel.url,
       tiempo: new Date().toISOString(),
@@ -920,11 +1198,13 @@ export class UserComponent implements OnInit, OnDestroy {
       estatus: 1,
     };
 
-    this.lstUsersApp.push(app);
-    this.dataUsers = this.lstUsersApp;
+    this.lstUsersApp = [...this.lstUsersApp, app];
+    this.dataUsers = [...this.lstUsersApp];
+    this.hasUnsavedChanges = true;
     this.rebuildStatusArray();
     this.xperfil = "";
     this.xperfilCtrl.setValue(null);
+    this.cdr.detectChanges();
   }
 
   /**
@@ -953,6 +1233,7 @@ export class UserComponent implements OnInit, OnDestroy {
     });
     this.userStatusSub = this.userStatusArray.valueChanges.subscribe(
       (values) => {
+        this.hasUnsavedChanges = true;
         values.forEach((val, i) => {
           const numVal = val ? 1 : 0;
           const now = new Date().toISOString();
@@ -983,21 +1264,36 @@ export class UserComponent implements OnInit, OnDestroy {
   quitarElemento(i: number) {
     Swal.fire({
       title: "Eliminar",
-      text: "¿Está seguro que desea eliminar perfil?",
+      text: "¿Está seguro que desea quitar este perfil de la lista? Recuerde guardar los cambios para que surtan efecto.",
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#C81D11",
-      confirmButtonText: "Si, Aceptar",
+      confirmButtonText: "Si, Quitar",
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-        this.dataUsers.splice(i, 1);
-        this.userStatusArray.removeAt(i);
-        if (this.dataUsers.length == 0) {
-          this.blockEditApp = "false";
-          this.bEliminarAllProfile = true;
-        }
+        this.ngZone.run(() => {
+          this.lstUsersApp = this.lstUsersApp.filter((_, idx) => idx !== i);
+          this.dataUsers = [...this.lstUsersApp];
+          this.rebuildStatusArray();
+          this.hasUnsavedChanges = true;
+
+          if (this.dataUsers.length === 0) {
+            this.blockEditApp = "false";
+            this.bEliminarAllProfile = true;
+            this.syncDisabledStates();
+          }
+
+          this.cdr.markForCheck();
+          this.cdr.detectChanges();
+          this.utilservice.AlertMini(
+            "top-end",
+            "info",
+            "Perfil quitado en pantalla. Guarde los cambios para aplicar en el servidor.",
+            3500,
+          );
+        });
       }
     });
   }
@@ -1076,6 +1372,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
     this.apiService.ExecColeccion(fnx).subscribe(
       (data) => {
+        this.hasUnsavedChanges = false;
         if (tipo == 2) {
           this.xaplicacion = null;
           this.xperfil = null;
@@ -1111,7 +1408,7 @@ export class UserComponent implements OnInit, OnDestroy {
         } else {
           this.usuarioSave = true;
           this.blockEdit = "disabled";
-          this.iUserClaveCtrl.disable({ emitEvent: false });
+          this.syncDisabledStates();
         }
       }
     });
@@ -1139,16 +1436,18 @@ export class UserComponent implements OnInit, OnDestroy {
       regional: "TODAS",
       multiplesesion: false,
       cargo: "",
-      nivel: 0,
+      nivel: 1,
       telefono: "",
     };
-    this.xoficina = "TODAS";
+    this.xoficina = [{ id: "TODAS", name: "TODAS" }];
     this.xregional = "TODAS";
     this.descripcion = "";
     this.dataUsers = [];
     this.lstUsersApp = [];
 
     this.blockEdit = "false";
+    this.hasUnsavedChanges = false;
+    this.bEliminarAllProfile = false;
     this.userService.iniciarObjeto();
     await this.CargarListaEndPoint();
 
@@ -1276,15 +1575,22 @@ export class UserComponent implements OnInit, OnDestroy {
 
       this.apiService.Ejecutar(this.xAPI).subscribe(
         (data) => {
-          this.dataRegional = data.Cuerpo;
+          this.dataRegional =
+            data?.Cuerpo && data.Cuerpo.length > 0
+              ? data.Cuerpo
+              : [{ id: "TODAS", name: "TODAS" }];
         },
         (error) => {
+          this.dataRegional = [{ id: "TODAS", name: "TODAS" }];
           console.error(
             "Error al cargar la configuración de la aplicación:",
             error,
           );
         },
       );
+    } else {
+      this.dataRegional = [{ id: "TODAS", name: "TODAS" }];
+      this.dataOficina = [{ id: "TODAS", name: "TODAS" }];
     }
   }
 
@@ -1493,27 +1799,131 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   getTraza(id: any): number {
-    if (typeof id === "number") return id;
-    switch ((id || "").toString().toUpperCase().trim()) {
-      case "BAJO":
-      case "BAJA":
-      case "0":
-        return 0;
-      case "MEDIO":
-      case "MEDIA":
-      case "1":
-        return 1;
-      case "ALTO":
-      case "ALTA":
-      case "2":
-        return 2;
-      default:
-        return 0;
+    if (typeof id === "number") {
+      if (id >= 1 && id <= 3) return id;
+      return 1;
+    }
+    const raw = (id || "").toString().toUpperCase().trim();
+    if (raw.includes("ALTO") || raw.includes("ALTA") || raw === "3") return 3;
+    if (raw.includes("MEDIO") || raw.includes("MEDIA") || raw === "2") return 2;
+    return 1;
+  }
+
+  normalizeTrazaLabel(val: any): string {
+    const raw = (val || "").toString().toUpperCase().trim();
+    if (raw.includes("ALTA") || raw.includes("ALTO") || raw === "3")
+      return "ALTA";
+    if (raw.includes("MEDIA") || raw.includes("MEDIO") || raw === "2")
+      return "MEDIA";
+    return "BAJA";
+  }
+
+  private normalizeOficinaArray(val: any): any[] {
+    if (!val) return [];
+    if (Array.isArray(val)) {
+      return val.map((item) =>
+        typeof item === "string" ? { id: item, name: item } : item,
+      );
+    }
+    if (typeof val === "string") {
+      return val
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((s) => ({ id: s, name: s }));
+    }
+    if (typeof val === "object") {
+      return [val];
+    }
+    return [];
+  }
+
+  private syncDisabledStates(): void {
+    const isEditing =
+      this.blockEdit === "disabled" ||
+      this.usuarioSave ||
+      window.sessionStorage.getItem("validator") != undefined;
+
+    if (isEditing) {
+      this.iUserClaveCtrl.disable({ emitEvent: false });
+      this.iUserLoginCtrl.disable({ emitEvent: false });
+      this.iUserTipoaccesoCtrl.disable({ emitEvent: false });
+    } else {
+      this.iUserClaveCtrl.enable({ emitEvent: false });
+      this.iUserLoginCtrl.enable({ emitEvent: false });
+      this.iUserTipoaccesoCtrl.enable({ emitEvent: false });
+    }
+
+    if (this.ldap) {
+      this.iUserVigenciaCtrl.disable({ emitEvent: false });
+    } else {
+      this.iUserVigenciaCtrl.enable({ emitEvent: false });
+    }
+
+    if (this.blockEditApp === "disabled") {
+      this.xaplicacionCtrl.disable({ emitEvent: false });
+    } else {
+      this.xaplicacionCtrl.enable({ emitEvent: false });
+    }
+
+    this.iUserEndpointCtrl.disable({ emitEvent: false });
+  }
+
+  adjustDuracion(delta: number): void {
+    const current = Number(this.iUserDuraciontiempoCtrl.value || 5);
+    const next = Math.max(1, Math.min(1440, current + delta));
+    this.iUserDuraciontiempoCtrl.setValue(next);
+    this.iUser.duraciontiempo = next;
+  }
+
+  onDuracionInput(): void {
+    const raw = Number(this.iUserDuraciontiempoCtrl.value);
+    if (isNaN(raw) || raw < 1) {
+      this.iUserDuraciontiempoCtrl.setValue(1, { emitEvent: false });
+      this.iUser.duraciontiempo = 1;
+    } else if (raw > 1440) {
+      this.iUserDuraciontiempoCtrl.setValue(1440, { emitEvent: false });
+      this.iUser.duraciontiempo = 1440;
+    } else {
+      this.iUser.duraciontiempo = Math.round(raw);
     }
   }
 
+  get duracionFormattedHelper(): string {
+    const mins = Number(this.iUserDuraciontiempoCtrl.value || 0);
+    if (mins <= 0) return "0 min";
+    if (mins < 60) return `${mins} min`;
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  }
+
+  get vigenciaFechaEstimada(): Date {
+    const days = Number(this.iUserVigenciaCtrl.value || 180);
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+
+  get phoneDigitsCount(): number {
+    return (this.iUserTelNumeroCtrl.value || "").replace(/\D/g, "").length;
+  }
+
   onPhoneInput(event?: any): void {
-    const raw = (this.iUserTelNumeroCtrl.value || "").replace(/\D/g, "").slice(0, 7);
+    let digits = (this.iUserTelNumeroCtrl.value || "").replace(/\D/g, "");
+    if (digits.length === 11 && digits.startsWith("0")) {
+      const pastedCode = digits.slice(0, 4);
+      const exists = this.codigosTelefono.some((c) => c.id === pastedCode);
+      if (!exists) {
+        this.codigosTelefono = [
+          ...this.codigosTelefono,
+          { id: pastedCode, name: pastedCode },
+        ];
+      }
+      this.iUserTelCodigoCtrl.setValue(pastedCode, { emitEvent: false });
+      digits = digits.slice(4);
+    }
+    const raw = digits.slice(0, 7);
     let formatted = raw;
     if (raw.length > 3) {
       formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
@@ -1543,20 +1953,7 @@ export class UserComponent implements OnInit, OnDestroy {
     this.iUserLoginCtrl.setValue(this.iUser.login ?? "");
     this.iUserClaveCtrl.setValue(this.iUser.clave ?? "");
 
-    const isEditing =
-      this.blockEdit === "disabled" ||
-      this.usuarioSave ||
-      window.sessionStorage.getItem("validator") != undefined;
-
-    if (isEditing) {
-      this.iUserClaveCtrl.disable({ emitEvent: false });
-      this.iUserLoginCtrl.disable({ emitEvent: false });
-      this.iUserTipoaccesoCtrl.disable({ emitEvent: false });
-    } else {
-      this.iUserClaveCtrl.enable({ emitEvent: false });
-      this.iUserLoginCtrl.enable({ emitEvent: false });
-      this.iUserTipoaccesoCtrl.enable({ emitEvent: false });
-    }
+    this.syncDisabledStates();
 
     this.iUserEncriptamientoCtrl.setValue(this.iUser.encriptamiento ?? "");
     this.iUserCedulaCtrl.setValue(this.iUser.cedula ?? "");
@@ -1567,12 +1964,12 @@ export class UserComponent implements OnInit, OnDestroy {
     this.iUserEstatusCtrl.setValue(this.iUser.estatus);
     this.iUserVigenciaCtrl.setValue(this.iUser.vigencia);
     this.iUserCorreoCtrl.setValue(this.iUser.correo ?? "");
-    this.iUserNivelCtrl.setValue(this.iUser.nivel ?? 0);
+    this.iUserNivelCtrl.setValue(this.getTraza(this.iUser.nivel));
     this.descripcionCtrl.setValue(this.descripcion ?? "");
     this.iUserDuraciontextoCtrl.setValue(this.iUser.duraciontexto);
     this.iUserDuraciontiempoCtrl.setValue(this.iUser.duraciontiempo);
     this.xregionalCtrl.setValue(this.xregional);
-    this.xoficinaCtrl.setValue(this.xoficina);
+    this.xoficinaCtrl.setValue(this.normalizeOficinaArray(this.xoficina));
 
     const parsedTel = this.parseTelefono(this.iUser.telefono ?? "");
     this.iUserTelCodigoCtrl.setValue(parsedTel.codigo);
@@ -1581,7 +1978,7 @@ export class UserComponent implements OnInit, OnDestroy {
     this.multiplesesionCtrl.setValue(this.multiplesesion);
     this.xaplicacionCtrl.setValue(this.xaplicacion);
     this.xperfilCtrl.setValue(this.xperfil);
-    this.xtrazaCtrl.setValue(this.xtraza);
+    this.xtrazaCtrl.setValue(this.normalizeTrazaLabel(this.xtraza));
   }
 
   syncUserFromFormControls(): void {
@@ -1597,13 +1994,13 @@ export class UserComponent implements OnInit, OnDestroy {
     this.iUser.estatus = this.iUserEstatusCtrl.value;
     this.iUser.vigencia = this.iUserVigenciaCtrl.value;
     this.iUser.correo = this.iUserCorreoCtrl.value;
-    this.iUser.nivel = Number(this.iUserNivelCtrl.value ?? 0);
+    this.iUser.nivel = this.getTraza(this.iUserNivelCtrl.value);
     this.ntraza = this.iUser.nivel;
     this.descripcion = this.descripcionCtrl.value;
     this.iUser.duraciontexto = this.iUserDuraciontextoCtrl.value;
     this.iUser.duraciontiempo = this.iUserDuraciontiempoCtrl.value;
     this.xregional = this.xregionalCtrl.value;
-    this.xoficina = this.xoficinaCtrl.value;
+    this.xoficina = this.normalizeOficinaArray(this.xoficinaCtrl.value);
 
     const telNum = (this.iUserTelNumeroCtrl.value || "").trim();
     const telCodRaw: any = this.iUserTelCodigoCtrl.value;
@@ -1616,7 +2013,72 @@ export class UserComponent implements OnInit, OnDestroy {
     this.multiplesesion = this.multiplesesionCtrl.value;
     this.xaplicacion = this.xaplicacionCtrl.value;
     this.xperfil = this.xperfilCtrl.value;
-    this.xtraza = this.xtrazaCtrl.value;
+    this.xtraza = this.normalizeTrazaLabel(this.xtrazaCtrl.value);
+  }
+
+  @HostListener("window:beforeunload", ["$event"])
+  onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.hasUnsavedChanges) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  }
+
+  async canDeactivate(): Promise<boolean> {
+    if (!this.hasUnsavedChanges) {
+      return true;
+    }
+
+    const result = await Swal.fire({
+      title: "Cambios sin guardar",
+      text: "Ha realizado cambios en los perfiles en pantalla. ¿Desea guardar los cambios antes de salir para que surtan efecto?",
+      icon: "warning",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Guardar y salir",
+      denyButtonText: "Salir sin guardar",
+    });
+
+    if (result.isConfirmed) {
+      await this.getUserApp();
+      return await new Promise<boolean>((resolve) => {
+        const fnx = {
+          coleccion: environment.colecciones.USUARIO,
+          objeto: this.usuario,
+          donde: JSON.stringify({ cedula: this.usuario.cedula }),
+          driver: environment.driver.PRINCIPAL,
+          upsert: true,
+        };
+        this.apiService.ExecColeccion(fnx).subscribe({
+          next: () => {
+            this.hasUnsavedChanges = false;
+            this.utilservice.AlertMini(
+              "top-end",
+              "success",
+              "Cambios guardados exitosamente",
+              2500,
+            );
+            resolve(true);
+          },
+          error: () => {
+            this.utilservice.AlertMini(
+              "top-end",
+              "error",
+              "Error al guardar los cambios",
+              3000,
+            );
+            resolve(false);
+          },
+        });
+      });
+    }
+
+    if (result.isDenied) {
+      this.hasUnsavedChanges = false;
+      return true;
+    }
+
+    return false;
   }
 
   ngOnDestroy(): void {

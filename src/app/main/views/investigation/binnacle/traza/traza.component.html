@@ -2,8 +2,8 @@
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
 
-    <!-- Stepper Navigation Minimalista -->
-    <div class="traza-panel mb-2 p-1">
+    <!-- Stepper Navigation Compacta -->
+    <div class="traza-panel traza-stepper-compact mb-1">
       <div class="d-flex justify-content-center align-items-center traza-stepper">
         <div class="step-item" [class.active]="currentStep >= 1" (click)="goToStep(1)">
           <div class="step-circle">1</div>
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <!-- Phase 1: User Selection (Patrón Minimalista Logs) -->
+    <!-- Phase 1: User Selection -->
     @if (currentStep === 1) {
       <section class="traza-panel slide-up-fade">
         <div class="panel-header">
@@ -83,7 +83,7 @@
       </section>
     }
 
-    <!-- Phase 2: Logs Table -->
+    <!-- Phase 2: Fluid Log Viewer + Infinite Scroll -->
     @if (currentStep === 2) {
       <section class="traza-panel p-0 overflow-hidden position-relative slide-up-fade">
         @if (loadingLogs) {
@@ -92,80 +92,193 @@
           </div>
         }
 
-        <div class="panel-header p-2 border-bottom mb-0">
+        <!-- Header -->
+        <div class="panel-header py-1 px-2 border-bottom mb-0">
           <div class="d-flex align-items-center">
             <button type="button" class="btn-icon-minimal mr-1" (click)="goToStep(1)" title="Volver a usuarios">
               <i data-feather="arrow-left" [size]="'16'"></i>
             </button>
             <div>
-              <h4 class="panel-title">Actividad de {{ selectedUser?.nombre }}</h4>
-              <small class="text-muted">{{ filteredLogs.length }} de {{ logs.length }} registros</small>
+              <h4 class="panel-title">Traza de {{ selectedUser?.nombre }}</h4>
+              <small class="text-muted">
+                {{ filteredLogs.length | number }} coincidencias de {{ logs.length | number }} eventos en stream
+                @if (loadingLogs) {
+                  <span class="text-primary ml-50">• Cargando...</span>
+                }
+              </small>
             </div>
           </div>
 
           <div class="d-flex align-items-center gap-50 flex-wrap">
-            <div class="minimal-search-box">
-              <i data-feather="filter" [size]="'15'"></i>
-              <input type="text" [formControl]="searchTextCtrl" placeholder="Acción, login o documento...">
-            </div>
-            <button type="button" class="btn-minimal-primary ml-1" (click)="goToStep(3)">
+            <button type="button" class="btn-minimal-outline mr-50" (click)="exportLOG()" [disabled]="logs.length === 0" title="Descargar archivo .LOG">
+              <i data-feather="terminal" [size]="'14'"></i>
+              <span>.LOG</span>
+            </button>
+            <button type="button" class="btn-minimal-outline mr-50" (click)="exportCSV()" [disabled]="logs.length === 0" title="Descargar CSV">
+              <i data-feather="download" [size]="'14'"></i>
+              <span>CSV</span>
+            </button>
+            <button type="button" class="btn-minimal-outline mr-50" (click)="exportPDF()" [disabled]="logs.length === 0" title="Generar PDF">
+              <i data-feather="printer" [size]="'14'"></i>
+              <span>PDF</span>
+            </button>
+            <button type="button" class="btn-minimal-primary" (click)="goToStep(3)">
               <span>Análisis</span>
               <i data-feather="bar-chart-2" [size]="'15'"></i>
             </button>
           </div>
         </div>
 
-        <div class="table-responsive">
-          <table class="table table-hover mb-0 minimal-table">
-            <thead>
-              <tr>
-                <th>Fecha y Hora</th>
-                <th>Acción</th>
-                <th>Duración</th>
-                <th>Documento</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (log of filteredLogs | slice: (page - 1) * pageSize : page * pageSize; track $index) {
-                <tr>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <div class="row-icon mr-1">
-                        <i data-feather="clock" [size]="'14'"></i>
-                      </div>
-                      <div class="d-flex flex-column">
-                        <span class="font-weight-bold text-dark">{{ (log.fecha?.$date || log.fecha) | date:'dd/MM/yyyy' }}</span>
-                        <small class="text-muted">{{ (log.fecha?.$date || log.fecha) | date:'HH:mm:ss' }}</small>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="action-pill">{{ (log.accion || log.metodo || 'SIN ACCIÓN') | uppercase }}</span>
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center text-muted small">
-                      <i data-feather="activity" [size]="'13'" class="mr-50"></i>
-                      {{ formatDuration(log.Duracion?.segundos || log.segundos || 0) }}s
-                    </div>
-                  </td>
-                  <td>
-                    <span class="text-secondary small">{{ log.documento || '---' }}</span>
-                  </td>
-                </tr>
+        <!-- Log Filters Toolbar -->
+        <div class="log-filter-toolbar px-2 py-75 border-bottom">
+          <!-- Level Filter Pills -->
+          <div class="log-level-pills">
+            <button type="button" class="level-pill" [class.active]="levelFilter === 'ALL'" (click)="setLevelFilter('ALL')">
+              Todos <span class="pill-count">{{ levelCounts.ALL | number }}</span>
+            </button>
+            <button type="button" class="level-pill pill-info" [class.active]="levelFilter === 'INFO'" (click)="setLevelFilter('INFO')">
+              INFO <span class="pill-count">{{ levelCounts.INFO | number }}</span>
+            </button>
+            <button type="button" class="level-pill pill-warning" [class.active]="levelFilter === 'WARNING'" (click)="setLevelFilter('WARNING')">
+              WARNING <span class="pill-count">{{ levelCounts.WARNING | number }}</span>
+            </button>
+            <button type="button" class="level-pill pill-alert" [class.active]="levelFilter === 'ALERT'" (click)="setLevelFilter('ALERT')">
+              ALERT <span class="pill-count">{{ levelCounts.ALERT | number }}</span>
+            </button>
+          </div>
+
+          <!-- Search, Action & Date Range -->
+          <div class="log-filter-controls">
+            <div class="minimal-search-box minimal-search-sm">
+              <i data-feather="search" [size]="'14'"></i>
+              <input type="text" [formControl]="searchTextCtrl" placeholder="Buscar acción, documento, método...">
+            </div>
+
+            <select class="log-filter-select" [formControl]="accionFilterCtrl" title="Filtrar por acción">
+              <option value="ALL">Todas las acciones</option>
+              @for (acc of availableActions; track acc) {
+                <option [value]="acc">{{ acc }}</option>
               }
-            </tbody>
-          </table>
+            </select>
+
+            <div class="log-date-group">
+              <input type="date" class="log-date-input" [formControl]="fechaDesdeCtrl" title="Fecha desde">
+              <span class="text-muted small px-25">→</span>
+              <input type="date" class="log-date-input" [formControl]="fechaHastaCtrl" title="Fecha hasta">
+            </div>
+
+            @if (hasActiveFilters) {
+              <button type="button" class="btn-clear-filters" (click)="clearLogFilters()" title="Limpiar filtros">
+                <i data-feather="x" [size]="'14'"></i>
+                <span>Limpiar</span>
+              </button>
+            }
+          </div>
         </div>
 
-        <div class="d-flex flex-wrap justify-content-between align-items-center p-1 border-top">
-          <div class="text-muted small">
-            Mostrando registros del {{ (page - 1) * pageSize + 1 }} al
-            {{ (page * pageSize) > filteredLogs.length ? filteredLogs.length : (page * pageSize) }}
+        <!-- Fluid Log-File Stream Container (Infinite Scroll) -->
+        <div #logScrollContainer class="log-stream-container" (scroll)="onLogScroll($event)">
+          @if (visibleLogs.length === 0 && !loadingLogs) {
+            <div class="empty-minimal py-4">
+              <i data-feather="file-text" [size]="'34'"></i>
+              <p class="mb-0 mt-1">No hay registros de traza que coincidan con los filtros aplicados.</p>
+            </div>
+          }
+
+          @for (item of visibleLogs; track $index) {
+            <div class="log-entry-wrapper" [class.expanded]="item.expanded">
+              <div class="log-entry-row" (click)="toggleLogExpand(item)">
+                <span class="log-ts">
+                  {{ (item.fecha) | date:'dd/MM/yyyy HH:mm:ss' }}
+                </span>
+
+                <span class="log-level-badge"
+                  [ngClass]="{
+                    'lvl-info': item.level === 'INFO',
+                    'lvl-warning': item.level === 'WARNING',
+                    'lvl-alert': item.level === 'ALERT'
+                  }">
+                  {{ item.level }}
+                </span>
+
+                <span class="log-action-tag">{{ item.accion }}</span>
+
+                <span class="log-doc-preview" [title]="item.documento">
+                  @if (item.metodo) {
+                    <span class="log-method">{{ item.metodo }}</span>
+                    <span class="mx-25 text-muted">•</span>
+                  }
+                  <span>{{ item.documento }}</span>
+                </span>
+
+                <span class="log-duration-chip">
+                  {{ formatDuration(item.duracionSeg) }}s
+                </span>
+
+                <span class="log-expand-chevron">
+                  <i data-feather="chevron-down" [size]="'14'"></i>
+                </span>
+              </div>
+
+              @if (item.expanded) {
+                <div class="log-entry-detail">
+                  <div class="detail-grid">
+                    <div><small>Acción:</small> <strong>{{ item.accion }}</strong></div>
+                    <div><small>Método:</small> <code>{{ item.metodo || '---' }}</code></div>
+                    <div><small>Login:</small> <span>{{ item.login || selectedUser?.login || '---' }}</span></div>
+                    <div><small>Duración:</small> <span>{{ formatDuration(item.duracionSeg) }}s</span></div>
+                    <div class="detail-full"><small>Documento:</small> <span>{{ item.documento }}</span></div>
+                    @if (item.hash) {
+                      <div class="detail-full"><small>Hash:</small> <code>{{ item.hash }}</code></div>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Infinite Scroll Footer / Paginador Progresivo -->
+        <div class="log-stream-footer px-2 py-75 border-top">
+          <div class="log-footer-left">
+            <span class="text-muted small">
+              Mostrando <strong>{{ visibleLogs.length | number }}</strong> de <strong>{{ filteredLogs.length | number }}</strong>
+              @if (filteredLogs.length !== logs.length) {
+                <span class="ml-25">(Stream: {{ logs.length | number }})</span>
+              }
+            </span>
+
+            <div class="log-progress-wrap" [title]="loadedPercent + '% cargado en vista'">
+              <div class="log-progress-track">
+                <div class="log-progress-fill" [style.width.%]="loadedPercent"></div>
+              </div>
+              <span class="log-progress-pct">{{ loadedPercent }}%</span>
+            </div>
           </div>
-          <ngb-pagination [collectionSize]="filteredLogs.length" [(page)]="page" [pageSize]="pageSize"
-            [maxSize]="5" [rotate]="true" class="pagination-sm mb-0">
-            <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
-          </ngb-pagination>
+
+          <div class="log-footer-right">
+            <div class="batch-size-pills" title="Registros por lote">
+              @for (opt of batchOptions; track opt) {
+                <button type="button" class="batch-pill" [class.active]="BATCH_SIZE === opt" (click)="setBatchSize(opt)">
+                  {{ opt }}
+                </button>
+              }
+            </div>
+
+            @if (visibleLogs.length < filteredLogs.length) {
+              <button type="button" class="btn-load-more" (click)="loadMoreLogs()">
+                Cargar +{{ BATCH_SIZE }}
+              </button>
+            } @else if (filteredLogs.length > 0) {
+              <span class="badge badge-light-success font-small-1">Todo cargado</span>
+            }
+
+            @if (visibleLogs.length > BATCH_SIZE) {
+              <button type="button" class="btn-scroll-top" (click)="scrollToTopLogs()" title="Volver arriba">
+                <i data-feather="arrow-up" [size]="'14'"></i>
+              </button>
+            }
+          </div>
         </div>
       </section>
     }
@@ -173,14 +286,14 @@
     <!-- Phase 3: Analysis & Export -->
     @if (currentStep === 3) {
       <section class="slide-up-fade">
-        <!-- Key Metrics Grid (Patrón Tarjetas Minimalistas) -->
+        <!-- Key Metrics Grid -->
         <div class="metrics-selection-grid mb-2">
           <div class="metric-option-card primary">
             <div class="card-icon">
               <i data-feather="activity"></i>
             </div>
             <div class="card-content">
-              <h3>{{ logs.length }}</h3>
+              <h3>{{ logs.length | number }}</h3>
               <p>Eventos Totales</p>
             </div>
           </div>
@@ -221,7 +334,7 @@
                 <div class="analysis-chart-item">
                   <div class="chart-label">
                     <span>{{ stat.name }}</span>
-                    <span class="text-muted">{{ stat.count }} ops ({{ stat.percent | number:'1.0-1' }}%)</span>
+                    <span class="text-muted">{{ stat.count | number }} ops ({{ stat.percent | number:'1.0-1' }}%)</span>
                   </div>
                   <div class="analysis-bar-wrapper">
                     <div class="bar-filled" [style.width.%]="stat.percent"></div>
@@ -233,7 +346,7 @@
                 <i data-feather="info" [size]="'16'"></i>
                 <p class="mb-0">
                   Análisis detallado para <strong>{{ selectedUser?.nombre }}</strong>.
-                  Los patrones auditados confirman una operación íntegra.
+                  INFO: {{ levelCounts.INFO | number }} • WARNING: {{ levelCounts.WARNING | number }} • ALERT: {{ levelCounts.ALERT | number }}.
                 </p>
               </div>
             </div>
@@ -249,6 +362,10 @@
               <p class="text-muted small mb-2">Selecciona el formato de exportación</p>
 
               <div class="w-100">
+                <button type="button" class="btn-export-minimal mb-75" (click)="exportLOG()">
+                  <i data-feather="terminal" [size]="'16'"></i>
+                  <span>Descargar Archivo .LOG</span>
+                </button>
                 <button type="button" class="btn-export-minimal mb-75" (click)="exportCSV()">
                   <i data-feather="download" [size]="'16'"></i>
                   <span>Descargar CSV</span>

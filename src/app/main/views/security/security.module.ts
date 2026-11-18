@@ -28,11 +28,13 @@ const routes = [
     path: 'security/user',
     component: UserComponent,
     canActivate: [AuthGuardGuard],
+    canDeactivate: [(component: UserComponent) => component.canDeactivate()],
   },
   {
     path: 'security/user/:id',
     component: UserComponent,
     canActivate: [AuthGuardGuard],
+    canDeactivate: [(component: UserComponent) => component.canDeactivate()],
   },
   {
     path: 'security/user-list',

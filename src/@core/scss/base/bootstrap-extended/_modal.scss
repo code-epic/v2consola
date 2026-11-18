@@ -6,41 +6,80 @@
   .modal-header {
     background-color: $body-bg;
     border-bottom: none;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     // close button
 
     .close {
-      padding: 0.2rem 0.62rem;
-      box-shadow: 0 5px 20px 0 rgba($black, 0.1);
-      border-radius: $border-radius;
-      background: $white;
+      margin: 0 0 0 auto;
+      padding: 0;
+      width: 34px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06);
+      border-radius: 50%;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      color: #64748b;
+      font-size: 1.3rem;
+      line-height: 1;
       opacity: 1;
-      transition: all 0.23s ease 0.1s;
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background-color 0.2s ease,
+                  color 0.2s ease,
+                  border-color 0.2s ease,
+                  box-shadow 0.2s ease;
       position: relative;
-      transform: translate(8px, -2px);
+      transform: rotate(0deg) scale(1);
+
+      span {
+        line-height: 1;
+        display: block;
+        margin-top: -1px;
+      }
 
       // For hover effect of close btn
-      &:hover,
-      &:focus,
-      &:active {
+      &:hover {
         opacity: 1;
         outline: none;
-        transform: translate(5px, 3px);
-        box-shadow: none;
+        transform: rotate(90deg) scale(1.08);
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+        color: #1e293b;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+      }
+
+      &:focus {
+        opacity: 1;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.18);
+      }
+
+      &:active {
+        transform: rotate(90deg) scale(0.95);
       }
     }
   }
   // Modal Content
   .modal-content {
     border: none;
+    border-radius: 16px;
     // overflow: unset; updated to "visible" as close icon is not visible in IE
     overflow: visible;
-    box-shadow: 0 5px 20px 0 rgba($black, 0.1);
+    box-shadow: 0 20px 45px rgba(15, 23, 42, 0.15), 0 8px 18px rgba(15, 23, 42, 0.05);
   }
 
   .modal-footer {
     padding: $modal-inner-padding;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
   }
 
   // modal sticky for apps
