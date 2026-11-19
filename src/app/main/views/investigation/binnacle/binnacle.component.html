@@ -1,274 +1,159 @@
 <div class="content-wrapper container-xxl p-0">
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body position-relative">
-    <!-- Svelte Progress Bar - Sutil pero visible -->
     @if (loadingStreaming) {
       <div class="svelte-progress-container">
         <div class="svelte-progress-bar"></div>
       </div>
     }
 
-    <!-- Enhanced Search Bar -->
-    <section id="ecommerce-searchbar" class="ecommerce-searchbar">
-      <div class="row">
-        <div class="col-12 mb-2">
-          <div class="d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Centered System Search & Help Toggle -->
+    <section class="binnacle-search-hero">
+      <div class="search-hero-inner">
+        <div class="search-input-wrap">
+          <i data-feather="search" class="search-icon" [size]="'16'"></i>
+          <input
+            type="text"
+            class="search-input"
+            id="shop-search"
+            placeholder="Buscar sistema o aplicación por nombre o código..."
+            [formControl]="searchTextCtrl"
+            aria-label="Buscar sistema" />
+          @if (searchText) {
+            <button type="button" class="btn-clear-search" (click)="clearSearch()" title="Limpiar búsqueda">
+              <i data-feather="x" [size]="'14'"></i>
+            </button>
+          }
+          <span class="systems-count-pill">
+            {{ filteredBitacora.length }} {{ filteredBitacora.length === 1 ? 'sistema' : 'sistemas' }}
+          </span>
+        </div>
 
-            <!-- Barra de Búsqueda -->
-            <div class="d-flex align-items-center flex-grow-1 mr-2 mb-1 mb-md-0" style="max-width: 800px;">
-              <div class="input-group input-group-merge mr-1" style="max-width: 400px;">
-                <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar..."
-                  [formControl]="searchTextCtrl" aria-label="Search..." aria-describedby="shop-search" />
-                <div class="input-group-append">
-                  <span class="input-group-text">
-                    <i data-feather="search" class="text-muted"></i>
-                  </span>
-                </div>
-              </div>
+        <button type="button" class="btn-help-toggle" [class.active]="showHelp" (click)="toggleHelp()" title="Guía de módulos">
+          <i data-feather="help-circle" [size]="'15'"></i>
+          <span>{{ showHelp ? 'Ocultar guía' : '¿Qué es cada módulo?' }}</span>
+        </button>
+      </div>
 
-              <!-- Filtro de Actividad (Solo en Listado) -->
-              @if (isListView) {
-                <div class="ml-1" style="min-width: 180px;">
-                  <select class="form-control" [formControl]="filterActividadCtrl" (change)="page = 1">
-                    <option value="">Todas las Actividades</option>
-                    <option value="LOGOUT">LOGOUT</option>
-                    <option value="LOGIN">LOGIN</option>
-                    <option value="CONSULTAR">CONSULTAR</option>
-                    <option value="INCLUIR">INCLUIR</option>
-                    <option value="MODIFICAR">MODIFICAR</option>
-                    <option value="ELIMINAR">ELIMINAR</option>
-                  </select>
-                </div>
-              }
+      <!-- Guía rápida en Cards: Traza, Eventos, Sensores -->
+      @if (showHelp) {
+        <div class="help-cards-grid">
+          <div class="help-card traza">
+            <div class="help-icon primary">
+              <i data-feather="activity" [size]="'16'"></i>
             </div>
-
-            <!-- Botones de Acción -->
-            <div class="d-flex align-items-center">
-              @if (isListView) {
-                <button class="btn btn-outline-info mr-1 d-flex align-items-center"
-                  (click)="showSchema = !showSchema" rippleEffect title="Ver Esquema de Datos">
-                  <span data-feather="info" class="mr-50" style="width: 16px; height: 16px;"></span>
-                  <span class="d-none d-sm-inline">{{ showSchema ? 'Ocultar Esquema' : 'Esquema' }}</span>
-                </button>
-              }
-              <button class="btn btn-outline-secondary mr-1 d-flex align-items-center"
-                (click)="CargarReporteAuditoriaLogs()" rippleEffect title="Imprimir Reporte CSV">
-                <span data-feather="printer" class="mr-50" style="width: 16px; height: 16px;"></span>
-                <span class="d-none d-sm-inline">Imprimir Reporte</span>
-              </button>
-              <button class="btn btn-primary d-flex align-items-center" (click)="MostrarListadoGlobal()" rippleEffect
-                title="Ver Listado Global">
-                <span data-feather="list" class="mr-50" style="width: 16px; height: 16px;"></span>
-                <span class="d-none d-sm-inline">Listado Global</span>
-              </button>
+            <div class="help-text">
+              <h4>Traza</h4>
+              <p>Auditoría cronológica por usuario. Permite inspeccionar peticiones, parámetros SQL/JSON, tiempos y exportar <code>.LOG</code>, <code>CSV</code> o <code>PDF</code>.</p>
             </div>
+          </div>
 
+          <div class="help-card eventos">
+            <div class="help-icon secondary">
+              <i data-feather="file-text" [size]="'16'"></i>
+            </div>
+            <div class="help-text">
+              <h4>Eventos</h4>
+              <p>Patrones de ejecución agrupados por método o función. Ideal para revisar frecuencia de uso, respuestas y comportamiento por versión.</p>
+            </div>
+          </div>
+
+          <div class="help-card sensores">
+            <div class="help-icon info">
+              <i data-feather="cpu" [size]="'16'"></i>
+            </div>
+            <div class="help-text">
+              <h4>Sensores</h4>
+              <p>Telemetría APM enfocada en latencias, detección de cuellos de botella por API y generación de reporte técnico <strong>SRE en PDF</strong>.</p>
+            </div>
           </div>
         </div>
-        <!-- API Search Dropdown (if needed) -->
-        @if (searchType === 'api') {
-          <div class="col-12 mt-3">
-            <ng-select [items]="rowData" [formControl]="selectCustomSelectedCtrl" bindLabel="nombre" bindValue="id"
-              [searchable]="true" placeholder="Seleccione API específica" [hideSelected]="false"
-              (change)="LinkRuta($event)" appendTo="body">
-              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                <div class="card">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ item.nombre }}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">{{ item.comentario }}</h6>
-                    <p class="card-text">
-                      {{ item.autor }} • {{ item.version }}
-                    </p>
-                  </div>
-                </div>
-              </ng-template>
-            </ng-select>
+      }
+    </section>
+
+    <!-- Application Cards Grid -->
+    <section class="binnacle-selection-section">
+      <div class="binnacle-selection-grid">
+        @for (product of filteredBitacora | slice: (page - 1) * pageSize : page * pageSize; track product.id || product.nombre || $index) {
+          <div class="binnacle-option-card" [ngClass]="product._colorClass || 'primary'">
+            <div class="card-top-row">
+              <div class="card-icon-badge" [ngClass]="product._colorClass || 'primary'">
+                <i [data-feather]="product._icon || 'grid'" [size]="'18'"></i>
+              </div>
+              <span class="version-pill">
+                <i data-feather="tag" [size]="'11'"></i>
+                {{ product.version || 'v1.0.0' }}
+              </span>
+            </div>
+
+            <div class="card-content">
+              <h3 [title]="product.nombre">{{ product.nombre || 'Aplicación' }}</h3>
+              <p [title]="product.comentario">{{ product.comentario || 'Sin descripción disponible.' }}</p>
+              @if (product.id) {
+                <span class="app-code-tag" [title]="product.id">{{ product.id }}</span>
+              }
+            </div>
+
+            <div class="card-actions">
+              <button type="button" class="btn-card-action primary"
+                (click)="irA('/investigation/binnacle/traza/', product)" title="Auditar traza por usuario">
+                <i data-feather="activity" [size]="'14'"></i>
+                <span>Traza</span>
+              </button>
+              <button type="button" class="btn-card-action secondary"
+                (click)="irA('/investigation/binnacle/events/', product)" title="Analizar patrones de eventos">
+                <i data-feather="file-text" [size]="'14'"></i>
+                <span>Eventos</span>
+              </button>
+              <button type="button" class="btn-card-action info"
+                (click)="irA('/investigation/binnacle/sensores/', product)" title="Ver telemetría y latencias APM">
+                <i data-feather="cpu" [size]="'14'"></i>
+                <span>Sensores</span>
+              </button>
+            </div>
           </div>
         }
       </div>
     </section>
 
-    <!-- Application Cards Grid (Default Vista - Patrón Minimalista de Logs) -->
-    @if (!isListView) {
-      <section class="binnacle-selection-section">
-        <div class="binnacle-selection-grid">
-          @for (product of filteredBitacora | slice: (page - 1) * pageSize : page * pageSize; track product.id || product.nombre || $index) {
-            <div class="binnacle-option-card" [ngClass]="product._colorClass || 'primary'">
-              <div class="card-header-row">
-                <div class="card-icon">
-                  <i [data-feather]="product._icon || 'grid'"></i>
-                </div>
-                <span class="version-badge">
-                  <i data-feather="tag" [size]="'12'"></i>
-                  {{ product.version || 'v1.0.0' }}
-                </span>
-              </div>
-
-              <div class="card-content">
-                <h3 [title]="product.nombre">{{ product.nombre || 'Aplicación' }}</h3>
-                <p [title]="product.comentario">{{ product.comentario || 'Sin descripción disponible.' }}</p>
-              </div>
-
-              <div class="card-actions">
-                <button type="button" class="btn-card-action primary"
-                  (click)="irA('/investigation/binnacle/traza/', product)">
-                  <i data-feather="activity" [size]="'14'"></i>
-                  <span>Traza</span>
-                </button>
-                <button type="button" class="btn-card-action secondary"
-                  (click)="irA('/investigation/binnacle/events/', product)">
-                  <i data-feather="file-text" [size]="'14'"></i>
-                  <span>Eventos</span>
-                </button>
-                <button type="button" class="btn-card-action info"
-                  (click)="irA('/investigation/binnacle/sensores/', product)">
-                  <i data-feather="cpu" [size]="'14'"></i>
-                  <span>Sensores</span>
-                </button>
-              </div>
-            </div>
-          }
-        </div>
-      </section>
-    }
-
-    <!-- Global List View (Activo cuando isListView es true) -->
-    @if (isListView) {
-      <section class="global-list-view">
-        <div class="row">
-          <!-- Tarjeta de Esquema (JSON) -->
-          @if (showSchema) {
-            <div class="col-md-4 animate__animated animate__fadeInLeft">
-              <div class="card card-pastel">
-                <div class="card-header-pastel-primary">
-                  <span data-feather="terminal" class="header-icon-white mr-50"></span>
-                  <h5 class="mb-0 text-white">Esquema de Auditoría</h5>
-                  <button type="button" class="close text-white ml-auto" (click)="showSchema = false">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="card-body p-0 custom-scroll" style="max-height: 480px; overflow-y: auto;">
-                  <pre class="m-0 p-1 bg-light-analysis font-small-2"
-                  style="font-family: 'JetBrains Mono', monospace; color: #5e5873;">{{ jsonEstructura | json }}</pre>
-                </div>
-              </div>
-            </div>
-          }
-          <!-- Tabla Lógica Global -->
-          <div [ngClass]="showSchema ? 'col-md-8' : 'col-12'" class="animate__animated animate__fadeIn">
-            <div class="card">
-              <div class="card-header d-flex justify-content-between align-items-center border-bottom p-1">
-                <h5 class="mb-0 d-flex align-items-center">
-                  <span data-feather="database" class="mr-50 text-secondary"></span>
-                  Estructura Base para CSV
-                </h5>
-              </div>
-              <div class="table-responsive custom-scroll" style="max-height: 480px; overflow-y: auto;">
-                <table class="table table-hover table-sm font-small-2">
-                  <thead class="thead-light">
-                    <tr>
-                      <th>Usuario</th>
-                      <th>Fecha / Hora</th>
-                      <th>IP / Host</th>
-                      <th>MAC</th>
-                      <th>Actividad</th>
-                      <th>Resultado</th>
-                      <!-- <th>Resultado Host</th> -->
-                      <th>Otros</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @for (item of filteredAuditoriaLogs | slice: (page - 1) * pageSize : page * pageSize; track $index) {
-                      <tr>
-                        <td>
-                          <span class="font-weight-bold">{{ item.usuario }}</span><br>
-                          @if (item.usuarioSo) {
-                            <small class="text-muted">{{ item.usuarioSo }}</small>
-                          }
-                        </td>
-                        <td>
-                          <span class="text-muted">{{ item.fecha }}</span><br>
-                          <small>{{ item.hora }}</small>
-                        </td>
-                        <td>
-                          {{ item.ip }}<br>
-                          <small class="text-secondary">{{ item.computerName }}</small>
-                        </td>
-                        <td>{{ item.mac }}</td>
-                        <td>
-                          <span class="badge badge-light-info text-uppercase">{{ item.tipo }}</span>
-                        </td>
-                        <td>
-                          <span class="badge"
-                            [ngClass]="item.resultado == '0' ? 'badge-light-success' : 'badge-light-danger'">
-                            {{ item.resultado == '0' ? 'Exitoso' : 'Fallido' }}
-                          </span>
-                        </td>
-                        <!-- <td>{{ item.resultadoHost }}</td> -->
-                        <td>
-                          <small class="text-truncate d-inline-block" style="max-width: 300px;" [title]="item.libre">{{
-                          item.libre }}</small>
-                        </td>
-                      </tr>
-                    }
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    }
-
-    <!-- Empty State (when no results) -->
-    @if ((!isListView && filteredBitacora.length === 0) || (isListView && filteredAuditoriaLogs.length === 0)) {
-      <section
-        class="empty-state">
+    <!-- Empty State -->
+    @if (!loadingStreaming && filteredBitacora.length === 0) {
+      <section class="empty-state">
         <div class="empty-icon">
-          <span data-feather="inbox" style="width: 64px; height: 64px;"></span>
+          <span data-feather="inbox" style="width: 48px; height: 48px;"></span>
         </div>
-        <h4>No se encontraron aplicaciones</h4>
-        <p>Intenta ajustar tu búsqueda o filtros</p>
+        <h4>No se encontraron sistemas</h4>
+        <p>Intenta ajustar el término de búsqueda.</p>
       </section>
     }
 
     <!-- Pagination -->
-    @if ((!isListView && filteredBitacora.length > 0) || (isListView && filteredAuditoriaLogs.length > 0)) {
-      <section id="ecommerce-pagination">
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="d-flex justify-content-center">
-              <ngb-pagination
-                [collectionSize]="!isListView ? filteredBitacora.length : filteredAuditoriaLogs.length"
-                [(page)]="page" [pageSize]="pageSize" [maxSize]="5" [rotate]="true"
-                aria-label="Pagination">
-                <!-- First Page -->
-                <ng-template ngbPaginationFirst>
-                  <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-                <!-- Previous Page -->
-                <ng-template ngbPaginationPrevious>
-                  <span data-feather="chevron-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-                <!-- Page Numbers -->
-                <ng-template ngbPaginationNumber let-page>
-                  {{ page }}
-                </ng-template>
-                <!-- Next Page -->
-                <ng-template ngbPaginationNext>
-                  <span data-feather="chevron-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-                <!-- Last Page -->
-                <ng-template ngbPaginationLast>
-                  <span data-feather="chevrons-right" class="font-weight-bolder"
-                  style="width: 18px; height: 18px;"></span>
-                </ng-template>
-              </ngb-pagination>
-            </div>
-          </div>
+    @if (filteredBitacora.length > pageSize) {
+      <section id="ecommerce-pagination" class="mt-2">
+        <div class="d-flex justify-content-center">
+          <ngb-pagination
+            [collectionSize]="filteredBitacora.length"
+            [(page)]="page"
+            [pageSize]="pageSize"
+            [maxSize]="5"
+            [rotate]="true"
+            aria-label="Pagination">
+            <ng-template ngbPaginationFirst>
+              <span data-feather="chevrons-left" style="width: 16px; height: 16px;"></span>
+            </ng-template>
+            <ng-template ngbPaginationPrevious>
+              <span data-feather="chevron-left" style="width: 16px; height: 16px;"></span>
+            </ng-template>
+            <ng-template ngbPaginationNumber let-page>{{ page }}</ng-template>
+            <ng-template ngbPaginationNext>
+              <span data-feather="chevron-right" style="width: 16px; height: 16px;"></span>
+            </ng-template>
+            <ng-template ngbPaginationLast>
+              <span data-feather="chevrons-right" style="width: 16px; height: 16px;"></span>
+            </ng-template>
+          </ngb-pagination>
         </div>
       </section>
     }
-
   </div>
 </div>

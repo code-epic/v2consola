@@ -297,3 +297,48 @@ h2 {
   color: #fff;
   border-color: #7367f0;
 }
+
+/* Smooth Scroll & Nav Tabs Polish for Customizer Drawer */
+.customizer-nav-tabs {
+  gap: 0.25rem;
+  border-bottom: 1px solid #ebe9f1;
+  padding: 0 0.5rem;
+
+  .nav-link {
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px 8px 0 0;
+    color: #6e6b7b;
+    transition: all 0.15s ease;
+
+    &:hover {
+      color: #7367f0;
+      background: rgba(115, 103, 240, 0.05);
+    }
+
+    &.active {
+      color: #7367f0;
+      border-bottom: 2px solid #7367f0;
+    }
+  }
+}
+
+.customizer-scroll-outlet {
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 1rem;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f4f5f8;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc8da;
+    border-radius: 6px;
+    &:hover {
+      background: #a8a3be;
+    }
+  }
+}

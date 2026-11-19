@@ -2,25 +2,38 @@
   <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
 
-    <!-- Stepper Navigation Compacta -->
-    <div class="traza-panel traza-stepper-compact mb-1">
-      <div class="d-flex justify-content-center align-items-center traza-stepper">
-        <div class="step-item" [class.active]="currentStep >= 1" (click)="goToStep(1)">
-          <div class="step-circle">1</div>
-          <span class="step-label">Usuarios</span>
-        </div>
-        <div class="step-line" [class.active]="currentStep >= 2"></div>
-        <div class="step-item" [class.active]="currentStep >= 2"
-          (click)="currentStep >= 2 ? goToStep(2) : null">
-          <div class="step-circle">2</div>
-          <span class="step-label">Registros</span>
-        </div>
-        <div class="step-line" [class.active]="currentStep >= 3"></div>
-        <div class="step-item" [class.active]="currentStep >= 3"
-          (click)="currentStep >= 3 ? goToStep(3) : null">
-          <div class="step-circle">3</div>
-          <span class="step-label">Análisis</span>
-        </div>
+    <!-- Compact Flow Topbar: Volver a Bitácora + Pasos 1, 2, 3 -->
+    <div class="flow-topbar mb-1">
+      <div class="flow-left">
+        <a class="btn-back-binnacle" [routerLink]="['/investigation/binnacle']" title="Volver al inicio de Bitácora">
+          <i data-feather="arrow-left" [size]="'14'"></i>
+          <span>Bitácora</span>
+        </a>
+        @if (appData?.nombre || appData?.id) {
+          <span class="flow-app-pill" [title]="appData?.nombre || appData?.id">
+            {{ appData?.nombre || appData?.id }}
+          </span>
+        }
+      </div>
+
+      <div class="flow-steps">
+        <button type="button" class="flow-step-pill" [class.active]="currentStep === 1" [class.done]="currentStep > 1"
+          (click)="goToStep(1)">
+          <span class="step-num">1</span>
+          <span>Usuarios</span>
+        </button>
+        <span class="flow-sep">›</span>
+        <button type="button" class="flow-step-pill" [class.active]="currentStep === 2" [class.done]="currentStep > 2"
+          [disabled]="currentStep < 2" (click)="currentStep >= 2 ? goToStep(2) : null">
+          <span class="step-num">2</span>
+          <span>Registros</span>
+        </button>
+        <span class="flow-sep">›</span>
+        <button type="button" class="flow-step-pill" [class.active]="currentStep === 3"
+          [disabled]="currentStep < 2" (click)="currentStep >= 2 ? goToStep(3) : null">
+          <span class="step-num">3</span>
+          <span>Análisis</span>
+        </button>
       </div>
     </div>
 

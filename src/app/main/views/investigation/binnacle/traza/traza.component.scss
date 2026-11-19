@@ -1004,3 +1004,124 @@ $primary-color: #7367f0;
     }
   }
 }
+
+/* Compact Flow Topbar (Back to Binnacle + Inline Stepper) */
+.flow-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  background: #ffffff;
+  border: 1px solid #ebe9f1;
+  border-radius: 10px;
+  padding: 0.45rem 0.9rem;
+  box-shadow: 0 1px 4px rgba(34, 41, 47, 0.03);
+}
+
+.flow-left {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.btn-back-binnacle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.32rem 0.68rem;
+  border-radius: 7px;
+  border: 1px solid #ebe9f1;
+  background: #f8f8fb;
+  color: #5e5873;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: rgba(115, 103, 240, 0.08);
+    border-color: rgba(115, 103, 240, 0.35);
+    color: #7367f0;
+  }
+}
+
+.flow-app-pill {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #4b465c;
+  background: #f3f2f7;
+  padding: 0.28rem 0.65rem;
+  border-radius: 7px;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.flow-steps {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.flow-step-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #82868b;
+  font-size: 0.78rem;
+  font-weight: 500;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  .step-num {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ebe9f1;
+    color: #5e5873;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.done {
+    color: #5e5873;
+    .step-num {
+      background: rgba(40, 199, 111, 0.15);
+      color: #24b463;
+    }
+  }
+
+  &.active {
+    background: rgba(115, 103, 240, 0.1);
+    border-color: rgba(115, 103, 240, 0.25);
+    color: #7367f0;
+    font-weight: 600;
+
+    .step-num {
+      background: #7367f0;
+      color: #ffffff;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.flow-sep {
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  user-select: none;
+}

@@ -312,6 +312,110 @@ export interface IConfiguracion {
   certificado_pass?: string;
 }
 
+export interface ProcesoActivoInfo {
+  pid: number;
+  ppid: number;
+  usuario_so: string;
+  cpu_porcentaje: number;
+  mem_porcentaje: number;
+  mem_rss_kb: number;
+  mem_humana: string;
+  tiempo_activo: string;
+  tiempo_activo_seg?: number;
+  inicio_aproximado?: string;
+  estado: string;
+  comando: string;
+}
+
+export interface FuncionVinculadaInfo {
+  nombre: string;
+  lenguaje: string;
+  aplicacion: string;
+  categoria: string;
+  autor: string;
+  descripcion: string;
+  estatus: number;
+}
+
+export interface BinarioToolInfo {
+  nombre: string;
+  ruta: string;
+  tamano_bytes: number;
+  tamano_humano: string;
+  permisos: string;
+  ejecutable: boolean;
+  fecha_modificacion: string;
+  activo: boolean;
+  instancias_activas: number;
+  cpu_total_porcentaje: number;
+  mem_total_kb: number;
+  mem_total_humana: string;
+  tiempo_activo_max?: string;
+  tiempo_activo_max_seg?: number;
+  tiempo_activo_total_seg?: number;
+  procesos: ProcesoActivoInfo[];
+  funciones_plataforma: FuncionVinculadaInfo[];
+}
+
+export interface ResumenRecognitionTools {
+  directorio: string;
+  existe: boolean;
+  timestamp: string;
+  uptime_servidor_seg?: number;
+  uptime_servidor_humano?: string;
+  total_binarios: number;
+  activos: number;
+  inactivos: number;
+  cpu_total_porcentaje: number;
+  mem_total_kb: number;
+  mem_total_humana: string;
+  herramientas: BinarioToolInfo[];
+}
+
+export interface AccesoUsuarioResumen {
+  usuario: string;
+  ultima_ip: string;
+  total_accesos: number;
+  tiempo_total_seg: number;
+  tiempo_promedio_seg: number;
+  ultimo_acceso: string;
+}
+
+export interface EjecucionHistorialInfo {
+  id: string;
+  usuario: string;
+  ip: string;
+  documento: string;
+  inicio: string;
+  fin: string;
+  segundos: number;
+  estatus: number;
+  estatus_texto: string;
+  peso_humano: string;
+}
+
+export interface AnalisisUsoTool {
+  herramienta: string;
+  timestamp: string;
+  total_invocaciones: number;
+  en_proceso: number;
+  exitosas: number;
+  fallidas: number;
+  tiempo_total_seg?: number;
+  tiempo_total_humano?: string;
+  tiempo_promedio_seg: number;
+  tiempo_max_seg: number;
+  tiempo_min_seg: number;
+  funciones_asociadas: FuncionVinculadaInfo[];
+  accesos_por_usuario: AccesoUsuarioResumen[];
+  ultimas_ejecuciones: EjecucionHistorialInfo[];
+}
+
+export interface RecognitionToolDetailResponse {
+  herramienta: BinarioToolInfo;
+  uso: AnalisisUsoTool;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -832,5 +936,54 @@ export class ApiService {
     }
 
     return url;
+  }
+
+  private getAuthHttpOptions() {
+    return {
+      headers: new HttpHeaders({
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + (sessionStorage.getItem("token") || ""),
+      }),
+    };
+  }
+
+  /**
+   * Lista las herramientas disponibles en ./bin de Sandra (recognition/tools)
+   */
+  GetRecognitionTools(params?: {
+    activo?: boolean;
+    q?: string;
+  }): Observable<any> {
+    const query: string[] = [];
+    if (params?.activo) {
+      query.push("activo=true");
+    }
+    if (params?.q && params.q.trim()) {
+      query.push(`q=${encodeURIComponent(params.q.trim())}`);
+    }
+    const qs = query.length > 0 ? `?${query.join("&")}` : "";
+    const url = `${this._resolveUrl("recognition/tools")}${qs}`;
+    return this.http.get<any>(url, this.getAuthHttpOptions());
+  }
+
+  /**
+   * Obtiene el detalle en vivo y uso de una herramienta específica en ./bin
+   */
+  GetRecognitionToolDetail(nombre: string): Observable<any> {
+    const url = this._resolveUrl(
+      `recognition/tools/${encodeURIComponent(nombre)}`,
+    );
+    return this.http.get<any>(url, this.getAuthHttpOptions());
+  }
+
+  /**
+   * Analiza invocaciones, tiempos y usuarios de una herramienta (o "all")
+   */
+  GetRecognitionToolUsage(
+    nombre: string = "all",
+    limite: number = 50,
+  ): Observable<any> {
+    const url = `${this._resolveUrl(`recognition/tools/${encodeURIComponent(nombre)}/usage`)}?limite=${limite}`;
+    return this.http.get<any>(url, this.getAuthHttpOptions());
   }
 }

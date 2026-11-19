@@ -12,157 +12,280 @@ $soft-bg: #f8fafc;
 }
 
 // ========================================
-// Search Bar Section
+// Centered Search Hero & Module Guide
 // ========================================
-.ecommerce-searchbar {
-  padding: 1.25rem 1.5rem;
+.binnacle-search-hero {
   background: #ffffff;
-  border-radius: 12px;
   border: 1px solid $border-color;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  margin-bottom: 1.5rem;
+  border-radius: 14px;
+  padding: 1.15rem 1.35rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 2px 8px rgba(34, 41, 47, 0.03);
+}
 
-  .input-group-merge {
-    border-radius: 8px;
-    overflow: hidden;
+.search-hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
 
-    .form-control {
-      border: 1px solid $border-color;
-      border-right: none;
-      padding: 0.65rem 1rem;
+.search-input-wrap {
+  flex: 1 1 360px;
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  background: $soft-bg;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  padding: 0.45rem 0.75rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    background: #ffffff;
+    border-color: #7367f0;
+    box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.12);
+  }
+
+  .search-icon {
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+
+  .search-input {
+    border: none;
+    outline: none;
+    background: transparent;
+    width: 100%;
+    font-size: 0.9rem;
+    color: $text-primary;
+    font-weight: 500;
+
+    &::placeholder {
+      color: #94a3b8;
+      font-weight: 400;
+    }
+  }
+
+  .btn-clear-search {
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    padding: 0.15rem;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
       color: $text-primary;
-      font-weight: 500;
-      height: 40px;
+    }
+  }
 
-      &::placeholder {
-        color: #94a3b8;
-        font-weight: 400;
-      }
+  .systems-count-pill {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #7367f0;
+    background: rgba(115, 103, 240, 0.1);
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+}
 
-      &:focus {
-        box-shadow: none;
-        border-color: #7367f0;
-      }
+.btn-help-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.52rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid $border-color;
+  background: #ffffff;
+  color: $text-secondary;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover,
+  &.active {
+    border-color: rgba(115, 103, 240, 0.35);
+    background: rgba(115, 103, 240, 0.06);
+    color: #7367f0;
+  }
+}
+
+.help-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.85rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed #e2e8f0;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.help-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 0.95rem;
+  border-radius: 10px;
+  background: #fafafc;
+  border: 1px solid #eef2f6;
+
+  .help-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &.primary {
+      background: rgba(115, 103, 240, 0.12);
+      color: #7367f0;
     }
 
-    .input-group-append .input-group-text {
-      background: $soft-bg;
-      border: 1px solid $border-color;
-      border-left: none;
-      height: 40px;
-      padding: 0.65rem 0.85rem;
+    &.secondary {
+      background: rgba(100, 116, 139, 0.12);
+      color: #475569;
+    }
+
+    &.info {
+      background: rgba(0, 207, 232, 0.12);
+      color: #009bb0;
+    }
+  }
+
+  .help-text {
+    h4 {
+      margin: 0 0 0.2rem;
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: $text-primary;
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.78rem;
+      line-height: 1.45;
       color: $text-secondary;
     }
   }
 }
 
 // ========================================
-// Application Cards Grid (Patrón Logs)
+// Application Cards Grid (Patrón Minimalista)
 // ========================================
 .binnacle-selection-section {
-  padding: 1.5rem;
+  padding: 1.25rem;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 14px;
   border: 1px solid $border-color;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 8px rgba(34, 41, 47, 0.03);
 }
 
 .binnacle-selection-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.15rem;
 }
 
 .binnacle-option-card {
   background: #ffffff;
   border-radius: 12px;
-  padding: 1.5rem;
-  transition: transform 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
-              box-shadow 0.25s cubic-bezier(0.25, 0.8, 0.25, 1),
-              border-color 0.25s ease;
+  padding: 1.15rem 1.2rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   border: 1px solid $border-color;
-  position: relative;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  gap: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 
   &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px -4px rgba(30, 41, 59, 0.08);
     border-color: #cbd5e1;
-
-    .card-icon {
-      transform: scale(1.08);
-    }
   }
 
-  .card-header-row {
+  .card-top-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
   }
 
-  .card-icon {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
+  .card-icon-badge {
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.25s ease;
+    flex-shrink: 0;
 
-    svg {
-      width: 22px;
-      height: 22px;
-    }
+    &.primary { background-color: rgba(115, 103, 240, 0.1); color: #7367f0; }
+    &.success { background-color: rgba(40, 199, 111, 0.1); color: #28c76f; }
+    &.warning { background-color: rgba(255, 159, 67, 0.12); color: #f08a24; }
+    &.info    { background-color: rgba(0, 207, 232, 0.12); color: #00a8c0; }
   }
 
-  &.primary .card-icon { background-color: rgba(115, 103, 240, 0.1); color: #7367f0; }
-  &.success .card-icon { background-color: rgba(40, 199, 111, 0.1); color: #28c76f; }
-  &.warning .card-icon { background-color: rgba(255, 159, 67, 0.1); color: #ff9f43; }
-  &.info .card-icon    { background-color: rgba(0, 207, 232, 0.1); color: #00cfe8; }
-
-  .version-badge {
+  .version-pill {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 500;
     color: $text-secondary;
     background: $soft-bg;
     border: 1px solid $border-color;
-    padding: 0.25rem 0.6rem;
-    border-radius: 6px;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
     white-space: nowrap;
   }
 
   .card-content {
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 
     h3 {
-      font-size: 1.05rem;
+      font-size: 0.98rem;
       font-weight: 600;
       color: $text-primary;
-      margin-bottom: 0.4rem;
+      margin: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
 
     p {
-      font-size: 0.875rem;
+      font-size: 0.82rem;
       color: $text-secondary;
-      line-height: 1.5;
+      line-height: 1.4;
       margin: 0;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+    }
+
+    .app-code-tag {
+      margin-top: 0.25rem;
+      font-size: 0.72rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      color: #94a3b8;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

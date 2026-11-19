@@ -189,6 +189,9 @@ export class FunctionsComponent implements OnInit {
     };
   };
 
+  public totalPluginsActivos: number = 0;
+  public totalPluginsDisponibles: number = 0;
+
   get totalFunciones(): number {
     return this.tempData ? this.tempData.length : 0;
   }
@@ -313,6 +316,7 @@ export class FunctionsComponent implements OnInit {
 
     await this.CargarListaFunciones()
     this.CargarListaAplicaciones()
+    this.cargarPluginsResumen()
 
     this.loginForm = this._formBuilder.group({
       id: [this.utilservice.GenerarUnicId(), [Validators.required]],
@@ -511,7 +515,25 @@ export class FunctionsComponent implements OnInit {
 
   recargar() {
     this.CargarListaFunciones();
+    this.cargarPluginsResumen();
     this.utilservice.AlertMini('top-end', 'info', 'Actualizando lista de funciones...', 1500);
+  }
+
+  cargarPluginsResumen() {
+    this.apiService.GetRecognitionTools().subscribe({
+      next: (res: any) => {
+        const payload = res?.contenido ?? res?.Contenido ?? res;
+        const list = Array.isArray(payload?.herramientas) ? payload.herramientas : [];
+        const ejecutables = list.filter((h: any) => h.ejecutable);
+        this.totalPluginsDisponibles = ejecutables.length || list.length;
+        this.totalPluginsActivos = list.filter((h: any) => h.activo).length;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.totalPluginsActivos = 0;
+        this.totalPluginsDisponibles = 0;
+      }
+    });
   }
 
   filterUpdate(event: any) {

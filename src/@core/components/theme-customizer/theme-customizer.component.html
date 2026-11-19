@@ -10,23 +10,27 @@
   <hr />
 
 
-  <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+  <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center customizer-nav-tabs">
     <li ngbNavItem>
-      <a ngbNavLink><span data-feather="monitor"></span></a>
+      <a ngbNavLink title="Procesos en Ejecución"><span data-feather="monitor"></span></a>
       <ng-template ngbNavContent>
         <app-task-monitor></app-task-monitor>
       </ng-template>
     </li>
     <li ngbNavItem>
-      <a ngbNavLink><span data-feather="settings"></span></a>
+      <a ngbNavLink title="Herramientas Sandra (./bin)"><span data-feather="terminal"></span></a>
       <ng-template ngbNavContent>
-
-        <app-system-info></app-system-info>
-
+        <app-recognition-tools></app-recognition-tools>
       </ng-template>
     </li>
     <li ngbNavItem>
-      <a ngbNavLink><span data-feather="award"></span></a>
+      <a ngbNavLink title="Información del Sistema"><span data-feather="settings"></span></a>
+      <ng-template ngbNavContent>
+        <app-system-info></app-system-info>
+      </ng-template>
+    </li>
+    <li ngbNavItem>
+      <a ngbNavLink title="Subir Certificados SSL"><span data-feather="award"></span></a>
       <ng-template ngbNavContent>
 
         <div class="certificate-upload-container">
@@ -95,7 +99,7 @@
       </ng-template>
     </li>
     <li ngbNavItem>
-      <a ngbNavLink><span data-feather="download"></span></a>
+      <a ngbNavLink title="Certificados Almacenados"><span data-feather="download"></span></a>
       <ng-template ngbNavContent>
         <div class="certificates-list-container">
           <div class="d-flex align-items-center justify-content-between mb-1">
@@ -151,7 +155,7 @@
     </li>
   </ul>
 
-  <div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+  <div [ngbNavOutlet]="navWithIcons" class="mt-1 customizer-scroll-outlet"></div>
 
 
 

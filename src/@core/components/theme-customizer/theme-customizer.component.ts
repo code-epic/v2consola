@@ -5,6 +5,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CoreDirectivesModule } from '@core/directives/directives';
 import { TaskMonitorComponent } from '@core/components/task-monitor/task-monitor.component';
 import { SystemInfoComponent } from '@core/components/system-info/system-info.component';
+import { RecognitionToolsComponent } from '@core/components/recognition-tools/recognition-tools.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CoreConfigService } from '@core/services/config.service';
@@ -21,7 +22,7 @@ import { ColumnMode, DatatableComponent, SelectionType } from '@swimlane/ngx-dat
     styleUrls: ['./theme-customizer.component.scss'],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbModule, CoreDirectivesModule, TaskMonitorComponent, SystemInfoComponent]
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbModule, CoreDirectivesModule, TaskMonitorComponent, SystemInfoComponent, RecognitionToolsComponent]
 })
 export class CoreThemeCustomizerComponent implements OnInit, OnDestroy {
 

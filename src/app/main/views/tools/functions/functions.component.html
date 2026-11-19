@@ -6,7 +6,7 @@
     <!-- Summary KPI Header Cards (Tonos Pasteles Serios y Corporativos) -->
     <div class="row match-height mb-2">
       <!-- Total Funciones -->
-      <div class="col-xl-4 col-md-4 col-sm-6">
+      <div class="col-xl-3 col-md-6 col-sm-6">
         <div class="card app-kpi-formal cursor-pointer"
              [class.active-kpi]="selectedStatusFilter === 'all'"
              (click)="setStatusFilter('all')"
@@ -25,7 +25,7 @@
       </div>
 
       <!-- Funciones Activas -->
-      <div class="col-xl-4 col-md-4 col-sm-6">
+      <div class="col-xl-3 col-md-6 col-sm-6">
         <div class="card app-kpi-formal cursor-pointer"
              [class.active-kpi]="selectedStatusFilter === 'activas'"
              (click)="setStatusFilter('activas')"
@@ -44,7 +44,7 @@
       </div>
 
       <!-- Tareas Programadas / Inactivas -->
-      <div class="col-xl-4 col-md-4 col-sm-12">
+      <div class="col-xl-3 col-md-6 col-sm-6">
         <div class="card app-kpi-formal cursor-pointer"
              [class.active-kpi]="selectedStatusFilter === 'programadas'"
              (click)="setStatusFilter('programadas')"
@@ -60,6 +60,28 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Plugins & Herramientas Activas (Link a task-monitor) -->
+      <div class="col-xl-3 col-md-6 col-sm-6">
+        <a class="card app-kpi-formal cursor-pointer text-decoration-none"
+           [routerLink]="['/task/task-monitor']"
+           [queryParams]="{ tab: 'herramientas' }"
+           ngbTooltip="Ir al Monitor de Procesos y Plugins de Sandra (./bin)">
+          <div class="card-body d-flex align-items-center justify-content-between p-2">
+            <div class="d-flex flex-column">
+              <span class="kpi-label">Plugins Disponibles</span>
+              <h3 class="kpi-value text-slate">
+                {{ totalPluginsDisponibles }}
+                <small class="font-small-2 text-muted">({{ totalPluginsActivos }} act.)</small>
+              </h3>
+              <span class="kpi-subtext">Ver herramientas en Monitor →</span>
+            </div>
+            <div class="kpi-icon-box kpi-box-sage">
+              <span [data-feather]="'cpu'" [size]="18"></span>
+            </div>
+          </div>
+        </a>
       </div>
     </div>
 
@@ -77,6 +99,9 @@
           </div>
           <!-- Action Buttons in Card Header -->
           <div class="d-flex align-items-center gap-1">
+            <a class="btn btn-formal-outline" [routerLink]="['/task/task-monitor']" [queryParams]="{ tab: 'herramientas' }" ngbTooltip="Ver plugins y herramientas activas en Monitor de Procesos">
+              <span [data-feather]="'cpu'" [size]="14" class="mr-1"></span> Plugins Activos
+            </a>
             <button type="button" class="btn btn-formal-outline" (click)="ModalAdd(ModalAddFunction)" ngbTooltip="Registrar nueva función">
               <span [data-feather]="'plus'" [size]="14" class="mr-1"></span> Nueva Función
             </button>

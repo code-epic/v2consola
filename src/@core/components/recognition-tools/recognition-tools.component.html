@@ -1,0 +1,223 @@
+<div class="rt-shell">
+  <!-- Header Actions -->
+  <div class="rt-header">
+    <div>
+      <h5 class="rt-title">Herramientas Sandra</h5>
+      <span class="rt-sub">
+        <code>./bin</code>
+        @if (resumen?.uptime_servidor_humano) {
+          · Uptime: <strong>{{ resumen?.uptime_servidor_humano }}</strong>
+        }
+      </span>
+    </div>
+    <div class="rt-actions">
+      <button type="button" class="rt-btn" (click)="verUsoGlobal()" [disabled]="loadingDetail" title="Análisis de uso global">
+        Uso Global
+      </button>
+      <button type="button" class="rt-btn primary" (click)="cargarHerramientas()" [disabled]="loading" title="Escanear ./bin">
+        {{ loading ? '...' : 'Escanear' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  @if (loading) {
+    <div class="rt-state">
+      <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+      <span>Escaneando herramientas en Sandra...</span>
+    </div>
+  }
+
+  <!-- Error -->
+  @if (!loading && error) {
+    <div class="rt-state error">
+      <span>{{ error }}</span>
+      <button type="button" class="rt-btn primary" (click)="cargarHerramientas()">Reintentar</button>
+    </div>
+  }
+
+  <!-- Drill-down Detail View -->
+  @if (!loading && (selectedTool || selectedUsage || loadingDetail)) {
+    <div class="rt-detail-view">
+      <div class="rt-detail-top">
+        <button type="button" class="rt-back" (click)="volverLista()">← Volver</button>
+        <strong class="rt-detail-name">
+          {{ selectedTool ? selectedTool.nombre : 'Uso Global (all)' }}
+        </strong>
+        <button type="button" class="rt-btn primary ml-auto" (click)="refrescarDetalle()" [disabled]="loadingDetail" title="Refrescar progreso en vivo">
+          {{ loadingDetail ? '...' : '↻ Refrescar' }}
+        </button>
+      </div>
+      @if (lastSync) {
+        <div class="rt-sub mb-1">
+          Última actualización: {{ lastSync | date:'HH:mm:ss' }}
+          @if (selectedTool?.activo && selectedTool?.tiempo_activo_max) {
+            · Activo: <strong>{{ selectedTool?.tiempo_activo_max }}</strong>
+          }
+        </div>
+      }
+
+      @if (loadingDetail) {
+        <div class="rt-state">
+          <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+          <span>Cargando detalle...</span>
+        </div>
+      } @else {
+        <div class="rt-subtabs">
+          @if (selectedTool) {
+            <button type="button" class="rt-subtab" [class.active]="detailTab === 'procesos'" (click)="setDetailTab('procesos')">
+              SO ({{ selectedTool.procesos?.length || 0 }})
+            </button>
+            <button type="button" class="rt-subtab" [class.active]="detailTab === 'funciones'" (click)="setDetailTab('funciones')">
+              Fnx ({{ selectedTool.funciones_plataforma?.length || 0 }})
+            </button>
+          }
+          <button type="button" class="rt-subtab" [class.active]="detailTab === 'uso'" (click)="setDetailTab('uso')">
+            Uso ({{ selectedUsage?.total_invocaciones || 0 }})
+          </button>
+        </div>
+
+        <div class="rt-scroll-area">
+          @if (detailTab === 'procesos' && selectedTool) {
+            @for (p of selectedTool.procesos; track p.pid) {
+              <div class="rt-mini-card">
+                <div class="rt-mc-row">
+                  <strong class="mono">PID {{ p.pid }}</strong>
+                  <span class="rt-pill-ok">{{ p.estado }}</span>
+                </div>
+                <div class="rt-mc-meta">
+                  <span>Usuario: {{ p.usuario_so }}</span>
+                  <span>CPU: {{ p.cpu_porcentaje }}%</span>
+                  <span>Mem: {{ p.mem_humana }}</span>
+                  <span>Tiempo: {{ p.tiempo_activo }}</span>
+                  @if (p.inicio_aproximado) {
+                    <span>Inicio: {{ p.inicio_aproximado | date:'HH:mm:ss' }}</span>
+                  }
+                </div>
+                <div class="rt-cmd" [title]="p.comando">{{ p.comando }}</div>
+              </div>
+            } @empty {
+              <div class="rt-empty">Sin procesos activos en SO.</div>
+            }
+          }
+
+          @if (detailTab === 'funciones' && selectedTool) {
+            @for (fn of selectedTool.funciones_plataforma; track fn.nombre) {
+              <div class="rt-mini-card">
+                <div class="rt-mc-row">
+                  <strong>{{ fn.nombre }}</strong>
+                  <span class="rt-pill-info">{{ fn.lenguaje }}</span>
+                </div>
+                <p class="rt-fn-desc">{{ fn.descripcion || 'Sin descripción.' }}</p>
+                <div class="rt-mc-meta">
+                  <span>App: {{ fn.aplicacion || 'N/A' }}</span>
+                  <span>Cat: {{ fn.categoria || 'N/A' }}</span>
+                </div>
+              </div>
+            } @empty {
+              <div class="rt-empty">Sin funciones SHELL/BASH vinculadas.</div>
+            }
+          }
+
+          @if (detailTab === 'uso' && selectedUsage) {
+            <div class="rt-usage-grid">
+              <div class="u-box"><span>Total</span><strong>{{ selectedUsage.total_invocaciones }}</strong></div>
+              <div class="u-box ok"><span>Exitosas</span><strong>{{ selectedUsage.exitosas }}</strong></div>
+              <div class="u-box warn"><span>Proceso</span><strong>{{ selectedUsage.en_proceso }}</strong></div>
+              <div class="u-box err"><span>Fallidas</span><strong>{{ selectedUsage.fallidas }}</strong></div>
+            </div>
+
+            <div class="rt-usage-times">
+              <span>Total: <strong>{{ selectedUsage.tiempo_total_humano || ((selectedUsage.tiempo_total_seg || 0) + 's') }}</strong></span>
+              <span>Prom: <strong>{{ selectedUsage.tiempo_promedio_seg }}s</strong></span>
+              <span>Máx: <strong>{{ selectedUsage.tiempo_max_seg }}s</strong></span>
+            </div>
+
+            @if (selectedUsage.accesos_por_usuario?.length) {
+              <div class="rt-sec-title">Accesos por Usuario</div>
+              @for (u of selectedUsage.accesos_por_usuario; track u.usuario) {
+                <div class="rt-mini-card">
+                  <div class="rt-mc-row">
+                    <strong>{{ u.usuario }}</strong>
+                    <span class="mono">{{ u.total_accesos }} acc.</span>
+                  </div>
+                  <div class="rt-mc-meta">
+                    <span>IP: {{ u.ultima_ip || '---' }}</span>
+                    <span>Prom: {{ u.tiempo_promedio_seg }}s</span>
+                    <span>Total: {{ u.tiempo_total_seg }}s</span>
+                  </div>
+                </div>
+              }
+            }
+
+            @if (selectedUsage.ultimas_ejecuciones?.length) {
+              <div class="rt-sec-title">Últimas Ejecuciones</div>
+              @for (ex of selectedUsage.ultimas_ejecuciones; track ex.id) {
+                <div class="rt-mini-card">
+                  <div class="rt-mc-row">
+                    <strong>{{ ex.usuario || 'sistema' }}</strong>
+                    <span class="mono">{{ ex.segundos }}s · {{ ex.estatus_texto }}</span>
+                  </div>
+                  <div class="rt-cmd" [title]="ex.documento">{{ ex.documento || '---' }}</div>
+                </div>
+              }
+            }
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Main Tools List -->
+  @if (!loading && !error && resumen && !selectedTool && !selectedUsage && !loadingDetail) {
+    <div class="rt-kpis">
+      <div class="rt-kpi">
+        <span>Binarios</span>
+        <strong>{{ resumen.total_binarios }}</strong>
+        <small>{{ resumen.activos }} act. · {{ resumen.inactivos }} inact.</small>
+      </div>
+      <div class="rt-kpi">
+        <span>CPU / Mem Viva</span>
+        <strong>{{ resumen.cpu_total_porcentaje | number:'1.1-1' }}%</strong>
+        <small>{{ resumen.mem_total_humana }}</small>
+      </div>
+    </div>
+
+    <div class="rt-filter-row">
+      <input type="search" [formControl]="searchCtrl" placeholder="Buscar binario o función..." />
+      <button type="button" class="rt-pill-filter" [class.active]="onlyExecutable" (click)="toggleOnlyExecutable()" title="Mostrar solo binarios ejecutables">
+        Binarios
+      </button>
+      <button type="button" class="rt-pill-filter" [class.active]="onlyActive" (click)="toggleOnlyActive()" title="Mostrar solo activos">
+        Activos
+      </button>
+    </div>
+
+    <div class="rt-scroll-area">
+      @for (tool of filteredTools; track tool.nombre) {
+        <div class="rt-tool-card" (click)="verDetalle(tool)">
+          <div class="rt-mc-row">
+            <div class="rt-name-line">
+              <span class="dot" [class.active]="tool.activo"></span>
+              <strong class="mono">{{ tool.nombre }}</strong>
+            </div>
+            <span [class]="tool.activo ? 'rt-pill-ok' : 'rt-pill-idle'">
+              {{ tool.activo ? tool.instancias_activas + ' act.' : 'Inactivo' }}
+            </span>
+          </div>
+          <div class="rt-mc-meta">
+            <span>{{ tool.tamano_humano }}</span>
+            <span>CPU {{ tool.cpu_total_porcentaje | number:'1.1-1' }}%</span>
+            <span>{{ tool.mem_total_humana }}</span>
+            @if (tool.activo && tool.tiempo_activo_max) {
+              <span class="text-success">En uso: {{ tool.tiempo_activo_max }}</span>
+            }
+            <span>Fnx: {{ tool.funciones_plataforma?.length || 0 }}</span>
+          </div>
+        </div>
+      } @empty {
+        <div class="rt-empty">No hay herramientas que coincidan.</div>
+      }
+    </div>
+  }
+</div>

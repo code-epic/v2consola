@@ -1,28 +1,155 @@
-/* Contenedor con scroll */
-.table-responsive {
-    max-height: 100%;  /* Altura máxima antes de aparecer el scroll vertical */
-    overflow: auto;     /* Habilita scroll vertical y horizontal si es necesario */
-    
-    /* Estilo opcional para el scroll (funciona en Chrome/Edge/Safari) */
-    &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    &::-webkit-scrollbar-thumb {
-      background: #ccc;
-      border-radius: 4px;
+.drawer-task-monitor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0 0.75rem 0.75rem;
+}
+
+.tm-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+}
+
+.tm-kpi {
+  background: #f8f8fb;
+  border: 1px solid #ebe9f1;
+  border-radius: 8px;
+  padding: 0.45rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+
+  span {
+    font-size: 0.68rem;
+    color: #82868b;
+  }
+  strong {
+    font-size: 0.95rem;
+    color: #3b3749;
+  }
+
+  &.warn strong { color: #e08220; }
+  &.ok strong { color: #24b463; }
+}
+
+.tm-controls {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.tm-search {
+  flex: 1;
+  input {
+    width: 100%;
+    border: 1px solid #ebe9f1;
+    border-radius: 7px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.78rem;
+    color: #3b3749;
+    background: #fcfcfd;
+    outline: none;
+
+    &:focus {
+      border-color: #7367f0;
+      background: #ffffff;
     }
   }
-  
-  /* Fija el encabezado al hacer scroll vertical (opcional) */
+}
+
+.tm-refresh {
+  border: 1px solid #ebe9f1;
+  background: #ffffff;
+  color: #5e5873;
+  border-radius: 7px;
+  width: 32px;
+  height: 31px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    border-color: #7367f0;
+    color: #7367f0;
+  }
+}
+
+.tm-filters {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.tm-pill {
+  border: 1px solid #ebe9f1;
+  background: #f8f8fb;
+  color: #5e5873;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  &.active {
+    background: #7367f0;
+    border-color: #7367f0;
+    color: #ffffff;
+  }
+}
+
+.tm-scroll {
+  max-height: calc(100vh - 320px);
+  overflow: auto;
+  border: 1px solid #ebe9f1;
+  border-radius: 8px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f4f5f8;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ccc8da;
+    border-radius: 6px;
+  }
+
   table {
     width: 100%;
-    border-collapse: collapse;
+    font-size: 0.75rem;
   }
-  
+
   thead {
     position: sticky;
     top: 0;
-    background: white;  /* Fondo para que el texto no se superponga */
-    z-index: 10;       /* Asegura que el encabezado esté por encima */
+    background: #f8f8fb;
+    z-index: 5;
+    th {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      color: #6e6b7b;
+      border-bottom: 1px solid #ebe9f1;
+    }
   }
+
+  .mono-cell {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    color: #7367f0;
+    font-weight: 600;
+  }
+
+  .fw-600 {
+    font-weight: 600;
+    color: #3b3749;
+  }
+
+  .arg-cell {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
