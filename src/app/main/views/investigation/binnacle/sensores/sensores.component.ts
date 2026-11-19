@@ -97,9 +97,9 @@ export class SensoresComponent implements OnInit {
     return this._latencyFilter();
   }
 
-  private _sortBy = signal<"latencia" | "tiempoTotal" | "invocaciones" | "nombre">(
-    "latencia",
-  );
+  private _sortBy = signal<
+    "latencia" | "memoria" | "cpu" | "tiempoTotal" | "invocaciones" | "nombre"
+  >("latencia");
   get sortBy() {
     return this._sortBy();
   }
@@ -157,6 +157,12 @@ export class SensoresComponent implements OnInit {
       if (sortKey === "latencia") {
         return (b.latencia_global_s || 0) - (a.latencia_global_s || 0);
       }
+      if (sortKey === "memoria") {
+        return this.getFuncAvgMem(b) - this.getFuncAvgMem(a);
+      }
+      if (sortKey === "cpu") {
+        return this.getFuncAvgCpu(b) - this.getFuncAvgCpu(a);
+      }
       if (sortKey === "tiempoTotal") {
         return this.getFuncTotalTime(b) - this.getFuncTotalTime(a);
       }
@@ -171,7 +177,7 @@ export class SensoresComponent implements OnInit {
     return this.filteredFuncionesSignal();
   }
 
-  // Summary KPIs (SRE Latency & Bottleneck Focus)
+  // Summary KPIs (SRE Latency, Memory & CPU Evaluation)
   public kpiMetricsSignal = computed(() => {
     const app = this.activeAppSignal();
     if (!app || !app.estadisticas_funciones?.length) {
@@ -183,6 +189,10 @@ export class SensoresComponent implements OnInit {
         latenciaMaxima: 0,
         funcionMasLenta: "N/A",
         tiempoTotalAcumulado: 0,
+        memPromedioKB: 0,
+        memMaximaKB: 0,
+        funcionMayorMemoria: "N/A",
+        cpuPromedio: 0,
         rapidas: 0,
         moderadas: 0,
         criticas: 0,
@@ -194,6 +204,11 @@ export class SensoresComponent implements OnInit {
     let tiempoTotalAcumulado = 0;
     let latenciaMaxima = 0;
     let funcionMasLenta = "N/A";
+    let memSum = 0;
+    let memMaximaKB = 0;
+    let funcionMayorMemoria = "N/A";
+    let cpuSum = 0;
+    let verCount = 0;
     let rapidas = 0;
     let moderadas = 0;
     let criticas = 0;
@@ -210,6 +225,18 @@ export class SensoresComponent implements OnInit {
         funcionMasLenta = f.nombre_funcion || "N/A";
       }
 
+      const fnMem = this.getFuncAvgMem(f);
+      if (fnMem > memMaximaKB) {
+        memMaximaKB = fnMem;
+        funcionMayorMemoria = f.nombre_funcion || "N/A";
+      }
+
+      (f.desglose_versiones || []).forEach((v) => {
+        memSum += v.memoria_avg || 0;
+        cpuSum += v.cpu_avg || 0;
+        verCount++;
+      });
+
       if (lat < 0.5) rapidas++;
       else if (lat < 2) moderadas++;
       else criticas++;
@@ -224,6 +251,10 @@ export class SensoresComponent implements OnInit {
       latenciaMaxima,
       funcionMasLenta,
       tiempoTotalAcumulado,
+      memPromedioKB: verCount > 0 ? memSum / verCount : 0,
+      memMaximaKB,
+      funcionMayorMemoria,
+      cpuPromedio: verCount > 0 ? cpuSum / verCount : 0,
       rapidas,
       moderadas,
       criticas,
@@ -439,8 +470,32 @@ export class SensoresComponent implements OnInit {
     this._latencyFilter.set(filter);
   }
 
-  setSortBy(sort: "latencia" | "tiempoTotal" | "invocaciones" | "nombre") {
+  setSortBy(
+    sort:
+      | "latencia"
+      | "memoria"
+      | "cpu"
+      | "tiempoTotal"
+      | "invocaciones"
+      | "nombre",
+  ) {
     this._sortBy.set(sort);
+  }
+
+  formatMemory(kb: number): string {
+    if (!kb || kb <= 0) return "0 KB";
+    if (kb < 1024) return `${kb.toFixed(0)} KB`;
+    if (kb < 1024 * 1024) return `${(kb / 1024).toFixed(2)} MB`;
+    return `${(kb / (1024 * 1024)).toFixed(2)} GB`;
+  }
+
+  formatCpu(cpu: number): string {
+    if (!cpu || cpu <= 0) return "Mínimo (~0%)";
+    return `${cpu.toFixed(1)}%`;
+  }
+
+  isCpuMinimal(cpu: number): boolean {
+    return !cpu || cpu <= 0;
   }
 
   toggleFunctionExpand(fn: FuncionEstadistica) {
@@ -571,6 +626,37 @@ export class SensoresComponent implements OnInit {
         },
       ],
     };
+
+    // Gráfica 3: Top 10 funciones por consumo de Memoria (MB) y CPU (%)
+    const topMemFuncs = [...allFuncs]
+      .sort((a, b) => this.getFuncAvgMem(b) - this.getFuncAvgMem(a))
+      .slice(0, 10);
+
+    const memLabels = topMemFuncs.map((f) =>
+      (f.nombre_funcion || "").length > 20
+        ? f.nombre_funcion.slice(0, 20) + "…"
+        : f.nombre_funcion,
+    );
+
+    this.resourceChartData = {
+      labels: memLabels,
+      datasets: [
+        {
+          label: "Memoria Prom. (MB)",
+          data: topMemFuncs.map((f) =>
+            Number((this.getFuncAvgMem(f) / 1024).toFixed(2)),
+          ),
+          backgroundColor: "rgba(0, 207, 232, 0.78)",
+          borderRadius: 6,
+        },
+        {
+          label: "CPU Prom. (%)",
+          data: topMemFuncs.map((f) => Number(this.getFuncAvgCpu(f).toFixed(2))),
+          backgroundColor: "rgba(40, 199, 111, 0.75)",
+          borderRadius: 6,
+        },
+      ],
+    };
   }
 
   exportCSV() {
@@ -690,6 +776,11 @@ export class SensoresComponent implements OnInit {
           this.formatLatency(kpi.latenciaMaxima),
           `Función más lenta: ${kpi.funcionMasLenta}`,
         ],
+        [
+          "Consumo de Memoria / CPU",
+          `${this.formatMemory(kpi.memPromedioKB)} · ${this.formatCpu(kpi.cpuPromedio)}`,
+          `Pico Mem: ${this.formatMemory(kpi.memMaximaKB)} (${kpi.funcionMayorMemoria}). Nota: CPU 0% indica tarea mínima sin carga relevante.`,
+        ],
       ],
       theme: "grid",
       styles: {
@@ -720,9 +811,9 @@ export class SensoresComponent implements OnInit {
       f.nombre_funcion,
       (f.total_invocaciones || 0).toLocaleString(),
       this.formatLatency(f.latencia_global_s),
-      this.formatLatency(this.getFuncMinLat(f)),
       this.formatLatency(this.getFuncMaxLat(f)),
-      this.formatTotalTime(this.getFuncTotalTime(f)),
+      this.formatMemory(this.getFuncAvgMem(f)),
+      this.formatCpu(this.getFuncAvgCpu(f)),
       this.getSlaStatus(f.latencia_global_s),
     ]);
 
@@ -732,11 +823,11 @@ export class SensoresComponent implements OnInit {
         [
           "#",
           "FUNCIÓN / API",
-          "INVOCACIONES",
+          "INVOC.",
           "LAT. PROM",
-          "MÍN",
-          "MÁX",
-          "TIEMPO ACUM.",
+          "PICO MÁX",
+          "MEM. PROM",
+          "CPU",
           "ESTADO SLA",
         ],
       ],
@@ -789,9 +880,9 @@ export class SensoresComponent implements OnInit {
             v.version || "---",
             String(v.ejecuciones || 0),
             this.formatLatency(v.latencia_avg_s),
-            this.formatLatency(v.latencia_min_s),
             this.formatLatency(v.latencia_max_s),
-            String(v.total_usuarios || 0),
+            this.formatMemory(v.memoria_avg),
+            this.formatCpu(v.cpu_avg),
             fecha,
             this.getSlaStatus(v.latencia_avg_s),
           ]);
@@ -807,9 +898,9 @@ export class SensoresComponent implements OnInit {
           "VERSIÓN",
           "EJEC.",
           "LAT. PROM",
-          "MÍN",
           "MÁX",
-          "USUARIOS",
+          "MEMORIA",
+          "CPU",
           "ÚLT. EJECUCIÓN",
           "SLA",
         ],

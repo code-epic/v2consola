@@ -97,14 +97,15 @@
           </div>
 
           <div class="kpi-card">
-            <div class="kpi-icon cyan">
-              <i data-feather="zap" [size]="'18'"></i>
+            <div class="kpi-icon emerald">
+              <i data-feather="cpu" [size]="'18'"></i>
             </div>
             <div class="kpi-body">
-              <span class="kpi-label">Total Invocaciones</span>
-              <strong class="kpi-value">{{ kpiMetrics.totalInvocaciones | number }}</strong>
-              <span class="kpi-meta">
-                Tiempo acum: {{ formatTotalTime(kpiMetrics.tiempoTotalAcumulado) }}
+              <span class="kpi-label">Memoria &amp; CPU Prom.</span>
+              <strong class="kpi-value">{{ formatMemory(kpiMetrics.memPromedioKB) }}</strong>
+              <span class="kpi-meta truncate-meta"
+                [title]="'Pico Mem: ' + formatMemory(kpiMetrics.memMaximaKB) + ' (' + kpiMetrics.funcionMayorMemoria + ') · CPU: ' + formatCpu(kpiMetrics.cpuPromedio)">
+                Pico: {{ formatMemory(kpiMetrics.memMaximaKB) }} · CPU {{ formatCpu(kpiMetrics.cpuPromedio) }}
               </span>
             </div>
           </div>
@@ -114,9 +115,11 @@
               <i data-feather="layers" [size]="'18'"></i>
             </div>
             <div class="kpi-body">
-              <span class="kpi-label">APIs / Funciones</span>
-              <strong class="kpi-value">{{ kpiMetrics.totalFunciones }}</strong>
-              <span class="kpi-meta">{{ kpiMetrics.totalEventos | number }} eventos en sensores</span>
+              <span class="kpi-label">Invocaciones &amp; APIs</span>
+              <strong class="kpi-value">{{ kpiMetrics.totalInvocaciones | number }}</strong>
+              <span class="kpi-meta">
+                {{ kpiMetrics.totalFunciones }} APIs · Acum: {{ formatTotalTime(kpiMetrics.tiempoTotalAcumulado) }}
+              </span>
             </div>
           </div>
         </div>
@@ -156,6 +159,23 @@
               </canvas>
             </div>
           </div>
+
+          <div class="chart-card full">
+            <div class="chart-header">
+              <div>
+                <h3 class="chart-title">Evaluación de Memoria (MB) y CPU (%) — Top 10</h3>
+                <p class="chart-sub">Consumo promedio por función. Un valor de CPU 0% indica tareas ligeras sin carga relevante de procesador.</p>
+              </div>
+              <span class="chart-pill emerald">Recursos</span>
+            </div>
+            <div class="chart-canvas-wrap">
+              <canvas baseChart
+                [type]="'bar'"
+                [data]="resourceChartData"
+                [options]="resourceChartOptions">
+              </canvas>
+            </div>
+          </div>
         </div>
 
         <!-- Functions Filter & List Card -->
@@ -185,10 +205,16 @@
               <div class="sort-group">
                 <span class="sort-label">Ordenar por:</span>
                 <button type="button" class="sort-btn" [class.active]="sortBy === 'latencia'" (click)="setSortBy('latencia')">
-                  Mayor Latencia
+                  Latencia
+                </button>
+                <button type="button" class="sort-btn" [class.active]="sortBy === 'memoria'" (click)="setSortBy('memoria')">
+                  Memoria
+                </button>
+                <button type="button" class="sort-btn" [class.active]="sortBy === 'cpu'" (click)="setSortBy('cpu')">
+                  CPU
                 </button>
                 <button type="button" class="sort-btn" [class.active]="sortBy === 'tiempoTotal'" (click)="setSortBy('tiempoTotal')">
-                  Tiempo Acumulado
+                  Tiempo Acum.
                 </button>
                 <button type="button" class="sort-btn" [class.active]="sortBy === 'invocaciones'" (click)="setSortBy('invocaciones')">
                   Invocaciones
@@ -241,8 +267,17 @@
                     </div>
 
                     <div class="metric-chip hide-md">
-                      <span class="m-label">Tiempo Acum.</span>
-                      <span class="m-val">{{ formatTotalTime(getFuncTotalTime(fn)) }}</span>
+                      <span class="m-label">Memoria Prom.</span>
+                      <span class="m-val">{{ formatMemory(getFuncAvgMem(fn)) }}</span>
+                    </div>
+
+                    <div class="metric-chip hide-md">
+                      <span class="m-label">CPU Prom.</span>
+                      <span
+                        [class]="isCpuMinimal(getFuncAvgCpu(fn)) ? 'cpu-minimal-badge' : 'm-val'"
+                        [title]="isCpuMinimal(getFuncAvgCpu(fn)) ? 'Tarea mínima: no demanda carga relevante de CPU' : 'Consumo promedio de CPU'">
+                        {{ formatCpu(getFuncAvgCpu(fn)) }}
+                      </span>
                     </div>
 
                     <div class="metric-chip">
@@ -266,6 +301,8 @@
                               <th>Latencia Prom</th>
                               <th>Mín</th>
                               <th>Máx</th>
+                              <th>Memoria Prom</th>
+                              <th>CPU Prom</th>
                               <th>Usuarios</th>
                               <th>Última Ejecución</th>
                             </tr>
@@ -282,6 +319,14 @@
                                 </td>
                                 <td class="mono-cell">{{ formatLatency(v.latencia_min_s) }}</td>
                                 <td class="mono-cell">{{ formatLatency(v.latencia_max_s) }}</td>
+                                <td class="mono-cell">{{ formatMemory(v.memoria_avg) }}</td>
+                                <td>
+                                  <span
+                                    [class]="isCpuMinimal(v.cpu_avg) ? 'cpu-minimal-badge' : 'mono-cell'"
+                                    [title]="isCpuMinimal(v.cpu_avg) ? 'Tarea mínima: consumo de CPU despreciable' : ''">
+                                    {{ formatCpu(v.cpu_avg) }}
+                                  </span>
+                                </td>
                                 <td class="mono-cell">{{ v.total_usuarios | number }}</td>
                                 <td class="date-cell">{{ v.ultima_ejecucion | date:'dd/MM/yyyy HH:mm:ss' }}</td>
                               </tr>
