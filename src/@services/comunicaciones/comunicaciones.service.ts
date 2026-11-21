@@ -1,83 +1,65 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { catchError } from 'rxjs/operators';
+import { IAPICore, getHttpOptions } from '../apicore/api.service';
 
-
-
-export interface Comunicaciones{
-  id ?: string
-  host ?: string
-  mac ?: string
-  tipo ?: string
-  descripcion ?: string
-  estatus ?: boolean
-}
-export interface IComunicaciones{
-  coleccion ?: string
-  objeto ?: Comunicaciones
+export interface IComunicaciones {
+  id?: string;
+  host?: string;
+  mac?: string;
+  descripcion?: string;
+  tipo?: number;
+  estatus?: boolean;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ComunicacionesService {
-   //Dirección Get para servicios en la página WEB
-   URL =  environment.API
+  URL = environment.API;
+  hash = environment.Hash;
 
-   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + sessionStorage.getItem('token') })
-  };
+  constructor(protected router: Router, protected http: HttpClient) {}
 
-  constructor(private http : HttpClient) { 
-
+  Guardar(xCOM: IComunicaciones, sApi: string): Observable<any> {
+    const url = this.URL + sApi;
+    return this.http.post<any>(url, xCOM, getHttpOptions());
   }
 
-  Guardar(xCon : IComunicaciones, sApi : string) : Observable<any>{
-    
-    var url = this.URL + sApi;
-    return this.http.post<any>(url, xCon, this.httpOptions);
+  Listar(): Observable<any> {
+    const url = this.URL + 'lcoleccion/sys-conection';
+    return this.http.get<any>(url, getHttpOptions()).pipe(
+      catchError(() => {
+        const crudUrl = `${this.URL}crud:${this.hash}`;
+        const xAPI = {
+          funcion: environment.functions.LISTAR_COMUNICACIONES,
+          parametros: ''
+        };
+        return this.http.post<any>(crudUrl, xAPI, getHttpOptions());
+      })
+    );
   }
 
-  Listar() : Observable<any>{
-    //console.log("Entrando en la funcion" + this.httpOptions)
-    var url = this.URL + 'lcoleccion/sys-conection';
-    return this.http.get<any>(url, this.httpOptions);
+  ListarDrivers(): Observable<any> {
+    const url = this.URL + 'drivers';
+    return this.http.get<any>(url, getHttpOptions());
   }
 
-  ListarDrivers() : Observable<any>{
-    var url = this.URL + 'drivers';
-    return this.http.get<any>(url, this.httpOptions);
+  ListarConexiones(xAPI: IAPICore): Observable<any> {
+    const url = `${this.URL}crud:${this.hash}`;
+    return this.http.post<any>(url, xAPI, getHttpOptions());
   }
 
-  ListarConexiones() : Observable<any>{
-    var url = this.URL + 'conexiones';
-    return this.http.get<any>(url, this.httpOptions);
+  ScanMac(ip: string): Observable<any> {
+    const url = this.URL + 'scanmac/' + ip;
+    return this.http.get<any>(url, getHttpOptions());
   }
 
-  ScanMac(sip : string) : Observable<any>{
-    var url = this.URL + 'sh';
-    var xCon = {
-      script: "getmac.sh",
-      flag: "",
-      ip: sip
-    }
-    console.log(xCon, url);
-    return this.http.post<any>(url, xCon, this.httpOptions);
+  ScanNmap(ip: string): Observable<any> {
+    const url = this.URL + 'nmap/' + ip;
+    return this.http.get<any>(url, getHttpOptions());
   }
-
-  ScanNmap(sip : string) : Observable<any>{
-    var url = this.URL + 'sh';
-    var xCon = {
-      script: "getscan.sh",
-      flag: "",
-      ip: sip
-    }
-    return this.http.post<any>(url, xCon, this.httpOptions);
-  }
-
-  
-
 }

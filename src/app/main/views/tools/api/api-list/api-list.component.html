@@ -1,64 +1,172 @@
 <div class="content-wrapper container-xxl p-0">
-  <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-    <section id="ecommerce-searchbar" class="ecommerce-searchbar">
-      <div class="row mt-1">
-        <!-- Search Bar -->
-        <div class="col-md-4 col-sm-6 mb-12">
-          <div class="input-group">
-            <input type="text"
-              class="form-control search-product w-100"
-              id="shop-search"
-              placeholder="Buscar"
-              [formControl]="searchTextCtrl"
-              aria-label="Buscar..."
-              aria-describedby="shop-search"
-              style="height: 40px; padding: 8px 12px; border: 1px solid #ccc; border-radius: 4px;" />
-          </div>
+    <!-- Barra Superior Compacta: Flujo + Contadores en Barra + Acciones -->
+    <div class="tools-flow-strip mb-150">
+      <div class="flow-steps-group">
+        <a routerLink="/tools/applications" class="flow-step-item done clickable" ngbTooltip="Volver al listado de aplicaciones">
+          <span class="step-num">01</span>
+          <span class="step-label">Aplicaciones</span>
+        </a>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <div class="flow-step-item active">
+          <span class="step-num">02</span>
+          <span class="step-label">Drivers: {{ id }}</span>
+        </div>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <div class="flow-step-item">
+          <span class="step-num">03</span>
+          <span class="step-label">Catálogo de APIs</span>
+        </div>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <div class="flow-step-item">
+          <span class="step-num">04</span>
+          <span class="step-label">Laboratorio & Ejecución</span>
+        </div>
+      </div>
+
+      <!-- Contadores Compactos en la Barra -->
+      <div class="flow-actions-group">
+        <div class="inline-metrics-bar">
+          <button type="button" class="metric-chip chip-total"
+            [class.active]="selectedStatusFilter === 'all'"
+            (click)="setStatusFilter('all')"
+            ngbTooltip="Todos los drivers de la aplicación">
+            <span class="chip-dot"></span>
+            <span class="chip-label">Drivers</span>
+            <strong class="chip-val">{{ totalDrivers }}</strong>
+          </button>
+          <button type="button" class="metric-chip chip-active"
+            [class.active]="selectedStatusFilter === 'activos'"
+            (click)="setStatusFilter('activos')"
+            ngbTooltip="Filtrar drivers activos">
+            <span class="chip-dot"></span>
+            <span class="chip-label">Activos</span>
+            <strong class="chip-val">{{ totalActivos }}</strong>
+          </button>
+          <button type="button" class="metric-chip chip-inactive"
+            [class.active]="selectedStatusFilter === 'inactivos'"
+            (click)="setStatusFilter('inactivos')"
+            ngbTooltip="Filtrar drivers inactivos">
+            <span class="chip-dot"></span>
+            <span class="chip-label">Inactivos</span>
+            <strong class="chip-val">{{ totalInactivos }}</strong>
+          </button>
+          <span class="metric-chip chip-apis" ngbTooltip="Endpoints registrados en esta aplicación">
+            <span [data-feather]="'terminal'" [size]="12"></span>
+            <span class="chip-label">APIs</span>
+            <strong class="chip-val">{{ rowData.length }}</strong>
+          </span>
         </div>
 
-        <!-- Select Dropdown -->
-        <div class="col-md-8 col-sm-6 mb-12">
-          <div class="input-group">
-            <ng-select class="w-100"
-              [items]="rowData"
+        <a routerLink="/tools/applications" class="btn-flow-link">
+          <span [data-feather]="'arrow-left'" [size]="13" class="mr-50"></span>
+          Aplicaciones
+        </a>
+        <button type="button" class="btn-flow-refresh" (click)="recargar()" [disabled]="isLoadingDrivers || isLoadingApis"
+          ngbTooltip="Recargar drivers y endpoints">
+          <span [data-feather]="'refresh-cw'" [size]="13"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra Unificada en 1 Sola Fila: Filtro de Drivers + Combo Motor BD + Autocomplete APIs -->
+    <div class="card matte-filter-card mb-2">
+      <div class="card-body p-150">
+        <div class="row g-2 align-items-end">
+          <!-- Búsqueda de Drivers -->
+          <div class="col-lg-4 col-md-6 col-sm-12">
+            <label class="form-label-matte">
+              <span [data-feather]="'search'" [size]="12" class="mr-25"></span>
+              Filtrar Drivers / Conexiones
+            </label>
+            <div class="matte-input-wrapper">
+              <span class="input-icon-left"><span [data-feather]="'search'" [size]="14"></span></span>
+              <input type="text"
+                class="form-control matte-input"
+                placeholder="Descripción, base de datos, ID o host..."
+                [formControl]="searchTextCtrl" />
+              @if (searchText) {
+                <button type="button" class="btn-input-clear" (click)="searchTextCtrl.setValue('')" title="Limpiar">
+                  <span [data-feather]="'x'" [size]="13"></span>
+                </button>
+              }
+            </div>
+          </div>
+
+          <!-- Combo Motor de Base de Datos con Iconos Locales -->
+          <div class="col-lg-3 col-md-6 col-sm-12">
+            <label class="form-label-matte d-flex align-items-center justify-content-between">
+              <span><span [data-feather]="'database'" [size]="12" class="mr-25"></span>Motor Base de Datos</span>
+              @if (hasActiveFilters()) {
+                <a href="javascript:void(0)" class="text-danger font-small-1 font-weight-bold" (click)="clearFilters()">Limpiar</a>
+              }
+            </label>
+            <ng-select [items]="dbEnginesFilter"
+              [formControl]="selectedEngineCtrl"
+              bindLabel="descripcion"
+              bindValue="id"
+              [clearable]="true"
+              placeholder="Todos los motores"
+              class="ng-select-matte">
+              <ng-template ng-option-tmp let-item="item">
+                <div class="d-flex align-items-center">
+                  <span class="db-icon-holder db-icon-sm mr-50" [ngClass]="item.matteClass">
+                    <img [src]="item.icon" [alt]="item.descripcion" class="db-svg-icon" />
+                  </span>
+                  <span class="font-small-2 font-weight-bold text-slate">{{ item.descripcion }}</span>
+                </div>
+              </ng-template>
+              <ng-template ng-label-tmp let-item="item">
+                <div class="d-inline-flex align-items-center">
+                  <span class="db-icon-holder db-icon-xs mr-50" [ngClass]="item.matteClass">
+                    <img [src]="item.icon" [alt]="item.descripcion" class="db-svg-icon" />
+                  </span>
+                  <span class="font-small-2 font-weight-bold text-slate">{{ item.descripcion }}</span>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+
+          <!-- Autocomplete Directo a APIs de la Aplicación -->
+          <div class="col-lg-5 col-md-12 col-sm-12">
+            <label class="form-label-matte d-flex align-items-center justify-content-between">
+              <span>
+                <span [data-feather]="'zap'" [size]="12" class="mr-25"></span>
+                Salto Directo a API de {{ id }}
+              </span>
+              <span class="text-muted font-small-1">{{ rowData.length }} endpoints</span>
+            </label>
+            <ng-select [items]="rowData"
               [formControl]="selectCustomSelectedCtrl"
               bindLabel="funcion"
-              bindValue="id"
               [searchable]="true"
-              placeholder="Seleccione API"
-              [hideSelected]="false"
+              [clearable]="true"
+              [virtualScroll]="true"
+              [loading]="isLoadingApis"
+              [searchFn]="customApiSearchFn"
               (change)="onSelectChange($event)"
-              style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
-              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                <div class="search-result-card-pastel">
-                  <!-- Header: Function Name and Type Badge -->
-                  <div class="search-result-header">
-                    <h5 class="search-result-title">
-                      <span [data-feather]="'code'" [size]="16" class="pastel-icon icon-lg"></span>
-                      {{ item.funcion }}
-                    </h5>
-                    <span class="pastel-badge">
-                      <span [data-feather]="'grid'" [size]="12"></span>
-                      {{ item.tipo }}
-                    </span>
-                  </div>
-
-                  <!-- Body: Description -->
-                  <div class="search-result-body">
-                    <p class="search-result-description">
-                      <span [data-feather]="'file-text'" [size]="14" class="pastel-icon icon-sm"></span>
-                      {{ item.descripcion }}
-                    </p>
-                  </div>
-
-                  <!-- Footer: Application and other details -->
-                  <div class="search-result-footer">
-                    <div class="footer-item">
-                      <span [data-feather]="'box'" [size]="14" class="pastel-icon icon-sm"></span>
-                      App: <strong>{{ item.aplicacion }}</strong>
+              placeholder="Escriba una función o descripción para abrir su detalle..."
+              class="ng-select-matte">
+              <ng-template ng-option-tmp let-item="item">
+                <div class="api-autocomplete-item">
+                  <div class="d-flex align-items-center justify-content-between mb-25">
+                    <div class="d-flex align-items-center">
+                      <span class="db-icon-holder db-icon-xs mr-50" [ngClass]="getDbMatteClass(item.driver)">
+                        <img [src]="getDbIcon(item.driver)" alt="DB" class="db-svg-icon" />
+                      </span>
+                      <span class="api-fn-title">{{ item.funcion }}</span>
+                      @if (item.driver) {
+                        <span class="db-engine-pill ml-50" [ngClass]="getDbMatteClass(item.driver)">
+                          {{ item.driver | uppercase }}
+                        </span>
+                      }
                     </div>
+                    <span class="api-type-chip">{{ item.tipo || 'API' }}</span>
+                  </div>
+                  <div class="api-fn-desc">
+                    {{ item.descripcion || 'Sin descripción registrada' }}
                   </div>
                 </div>
               </ng-template>
@@ -66,104 +174,168 @@
           </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <br>
+    <!-- Estado Cargando Drivers -->
+    @if (isLoadingDrivers) {
+      <div class="matte-loading-box text-center py-3 my-2">
+        <span class="spinner-border spinner-border-sm text-primary mr-50" role="status"></span>
+        <span class="text-muted font-weight-bold font-small-3">Cargando drivers de {{ id }}...</span>
+      </div>
+    }
 
+    <!-- Estado Vacío -->
+    @if (!isLoadingDrivers && filteredDrivers.length === 0) {
+      <div class="matte-empty-box text-center py-3 my-2">
+        <div class="empty-icon-circle mb-1 mx-auto">
+          <span [data-feather]="'database'" [size]="24"></span>
+        </div>
+        <h6 class="font-weight-bold text-slate mb-25">No se encontraron drivers configurados</h6>
+        <p class="text-muted font-small-2 mb-1">
+          No hay drivers asociados a <strong>{{ id }}</strong> que coincidan con el filtro actual.
+        </p>
+        @if (hasActiveFilters()) {
+          <button type="button" class="btn-pill-matte active" (click)="clearFilters()">
+            Restablecer filtros
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Grid de Tarjetas de Drivers con Vida (Acentos Pastel Mates e Iconos Locales) -->
+    @if (!isLoadingDrivers && filteredDrivers.length > 0) {
       <section id="wishlist" class="grid-view wishlist-items">
-        @for (product of drivers  | filter: searchText:'descripcion'  | slice: (page - 1) * pageSize:(page - 1) * pageSize + pageSize; track product) {
-          <!-- Vivid API Card -->
-          <div class="card ecommerce-card app-card-minimal">
-            <a [routerLink]="'/tools/applications/api-list/'+getUrl(product.id)" class="card-link-minimal">
-              <!-- Minimal Header with Database Icon -->
-              <div class="minimal-header" [ngClass]="{'header-active': product.estatus === true, 'header-inactive': product.estatus === false}">
-                <div class="icon-container-minimal">
-                  <span [data-feather]="'database'" [size]="32" class="app-icon-minimal"></span>
+        @for (product of pagedDrivers; track product.id || product._id) {
+          <div class="card app-card-matte" [ngClass]="getDbMatteClass(product.driver)">
+            <div class="card-accent-bar"></div>
+            <a [routerLink]="['/tools/applications/api-list', getUrl(product.id)]" class="card-link-matte">
+              <!-- Cabecera con Icono Local del Motor BD y Estado -->
+              <div class="card-header-matte">
+                <div class="d-flex align-items-center min-w-0">
+                  <div class="db-icon-holder db-icon-card mr-75" [ngClass]="getDbMatteClass(product.driver)">
+                    <img [src]="getDbIcon(product.driver)" [alt]="product.driver || 'DB'" class="db-svg-icon" />
+                  </div>
+                  <div class="min-w-0">
+                    <span class="app-project-tag">DRIVER ID: {{ product.id }}</span>
+                    <h4 class="app-title-matte text-truncate" [title]="product.descripcion">
+                      {{ product.descripcion || product.id }}
+                    </h4>
+                  </div>
+                </div>
+
+                <span class="status-pill-matte" [ngClass]="isDriverActive(product) ? 'status-active' : 'status-inactive'">
+                  <span class="status-dot"></span>
+                  {{ isDriverActive(product) ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+
+              <!-- Cuerpo con Metadatos Técnicos del Driver -->
+              <div class="card-body-matte">
+                <div class="meta-grid-matte">
+                  <div class="meta-row">
+                    <span class="meta-label">
+                      <span [data-feather]="'layers'" [size]="13" class="mr-50"></span>
+                      Motor / Conector
+                    </span>
+                    <span class="db-engine-pill" [ngClass]="getDbMatteClass(product.driver)">
+                      {{ (product.driver || 'DB') | uppercase }}
+                    </span>
+                  </div>
+
+                  <div class="meta-row">
+                    <span class="meta-label">
+                      <span [data-feather]="'database'" [size]="13" class="mr-50"></span>
+                      Base de Datos
+                    </span>
+                    <span class="meta-value-mono">{{ product.basedatos || 'N/A' }}</span>
+                  </div>
+
+                  <div class="meta-row">
+                    <span class="meta-label">
+                      <span [data-feather]="'server'" [size]="13" class="mr-50"></span>
+                      Host / Puerto
+                    </span>
+                    <span class="meta-value">
+                      {{ product.host || 'localhost' }}
+                      @if (product.puerto) {
+                        <span class="lang-chip ml-25">:{{ product.puerto }}</span>
+                      }
+                    </span>
+                  </div>
                 </div>
               </div>
-              <!-- Card Content -->
-              <div class="card-body-minimal">
-                <!-- Status Badge Minimal -->
-                <div class="status-row">
-                  <span class="status-dot" [ngClass]="{'dot-active': product.estatus === true, 'dot-inactive': product.estatus === false}"></span>
-                  <span class="status-text">{{ product.estatus === true ? 'Active' : 'Inactive' }}</span>
-                </div>
-                <!-- Driver Name -->
-                <h3 class="app-title-minimal">{{ product.descripcion }}</h3>
-                <!-- Details List -->
-                <div class="details-list">
-                  <div class="detail-item">
-                    <span [data-feather]="'file-text'" [size]="14" class="detail-icon"></span>
-                    <span class="detail-label">Descripción:</span>
-                    <span class="detail-value">{{ product.basedatos }}</span>
-                  </div>
-                  <div class="detail-item">
-                    <span [data-feather]="'server'" [size]="14" class="detail-icon"></span>
-                    <span class="detail-label">Tipo:</span>
-                    <span class="detail-value">{{ product.driver }}</span>
-                  </div>
-                  <div class="detail-item">
-                    <span [data-feather]="'activity'" [size]="14" class="detail-icon"></span>
-                    <span class="detail-label">Estatus:</span>
-                    <span class="detail-value">{{ product.estatus ? 'Running' : 'Stopped' }}</span>
-                  </div>
-                </div>
-                <!-- Action Footer -->
-                <div class="card-footer-minimal">
-                  <span class="view-link">Ver Detalles</span>
-                  <span [data-feather]="'arrow-right'" [size]="16" class="arrow-icon"></span>
+
+              <!-- Pie de Acción Directa -->
+              <div class="card-footer-matte">
+                <span class="footer-action-text">Ver Catálogo de APIs</span>
+                <div class="d-flex align-items-center gap-1">
+                  <a [routerLink]="['/tools/applications/register-api/Registrar', getUrl(product.id)]"
+                    (click)="$event.stopPropagation()"
+                    class="footer-btn-secondary"
+                    ngbTooltip="Registrar nueva API en este driver">
+                    + Nueva API
+                  </a>
+                  <span class="footer-arrow-box">
+                    <span [data-feather]="'arrow-right'" [size]="15"></span>
+                  </span>
                 </div>
               </div>
             </a>
           </div>
-          <!--/ Vivid API Card -->
         }
       </section>
 
-
-      <section id="ecommerce-pagination">
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="d-flex justify-content-center">
-              <ngb-pagination
-                [collectionSize]="(drivers | filter: searchText:'descripcion').length"
-                [(page)]="page"
-                [pageSize]="pageSize"
-                [maxSize]="5"
-                [rotate]="true"
-
-
-                aria-label="Pagination">
-
-                <!-- Primer página -->
-                <ng-template ngbPaginationFirst>
-                  <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-
-                <!-- Página anterior -->
-                <ng-template ngbPaginationPrevious>
-                  <span data-feather="chevron-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-
-                <!-- Números de página (personalizado para quitar "current") -->
-                <ng-template ngbPaginationNumber let-page>
-                  {{ page }}
-                </ng-template>
-
-                <!-- Página siguiente -->
-                <ng-template ngbPaginationNext>
-                  <span data-feather="chevron-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-
-                <!-- Última página -->
-                <ng-template ngbPaginationLast>
-                  <span data-feather="chevrons-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-              </ngb-pagination>
-            </div>
-          </div>
+      <!-- Barra Inferior de Resumen y Paginación -->
+      <div class="matte-summary-footer mt-2">
+        <div class="summary-stats-group">
+          <span class="summary-title">
+            <span [data-feather]="'database'" [size]="14" class="mr-50"></span>
+            Resumen de {{ id }}:
+          </span>
+          <span class="summary-item">
+            <strong>{{ filteredDrivers.length }}</strong> Drivers
+          </span>
+          <span class="summary-sep">•</span>
+          <span class="summary-item text-sage">
+            <strong>{{ totalActivos }}</strong> Activos
+          </span>
+          <span class="summary-sep">•</span>
+          <span class="summary-item text-sand">
+            <strong>{{ totalInactivos }}</strong> Inactivos
+          </span>
+          <span class="summary-sep">•</span>
+          <span class="summary-item">
+            <strong>{{ rowData.length }}</strong> APIs registradas
+          </span>
         </div>
-      </section>
 
-    </div>
+        @if (filteredDrivers.length > pageSize) {
+          <ngb-pagination
+            [collectionSize]="filteredDrivers.length"
+            [(page)]="page"
+            [pageSize]="pageSize"
+            [maxSize]="5"
+            [rotate]="true"
+            size="sm"
+            class="mb-0"
+            aria-label="Pagination">
+            <ng-template ngbPaginationFirst>
+              <span data-feather="chevrons-left" style="width: 14px; height: 14px;"></span>
+            </ng-template>
+            <ng-template ngbPaginationPrevious>
+              <span data-feather="chevron-left" style="width: 14px; height: 14px;"></span>
+            </ng-template>
+            <ng-template ngbPaginationNumber let-p>{{ p }}</ng-template>
+            <ng-template ngbPaginationNext>
+              <span data-feather="chevron-right" style="width: 14px; height: 14px;"></span>
+            </ng-template>
+            <ng-template ngbPaginationLast>
+              <span data-feather="chevrons-right" style="width: 14px; height: 14px;"></span>
+            </ng-template>
+          </ngb-pagination>
+        }
+      </div>
+    }
+
   </div>
+</div>

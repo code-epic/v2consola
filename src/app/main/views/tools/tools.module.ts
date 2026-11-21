@@ -1,67 +1,59 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 import { AuthGuardGuard } from '@services/seguridad/auth-guard.guard';
-import { FunctionsComponent } from './functions/functions.component';
-import { ApiComponent } from './api/api-collection/api.component';
-import { WorkflowComponent } from './workflow/workflow.component';
-import { ApiListComponent } from './api/api-list/api-list.component';
-import { ApiDetailsComponent } from './api/api-details/api-details.component';
-import { RegisterApiComponent } from './api/register-api/register-api.component';
-import { ApplicationsComponent } from './applications/applications.component';
 
-const routes = [
+const routes: Routes = [
   {
     path: 'tools/functions',
-    component: FunctionsComponent,
+    loadComponent: () =>
+      import('./functions/functions.component').then((m) => m.FunctionsComponent),
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'tools/applications/:id',
-    component: ApiListComponent,
+    loadComponent: () =>
+      import('./api/api-list/api-list.component').then((m) => m.ApiListComponent),
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'tools/applications',
-    component: ApplicationsComponent,
+    loadComponent: () =>
+      import('./applications/applications.component').then((m) => m.ApplicationsComponent),
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'tools/applications/api-list/:id',
-    component: ApiComponent,
+    loadComponent: () =>
+      import('./api/api-collection/api.component').then((m) => m.ApiComponent),
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'tools/applications/api-details/:id/:ruta',
-    component: ApiDetailsComponent,
+    loadComponent: () =>
+      import('./api/api-details/api-details.component').then((m) => m.ApiDetailsComponent),
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'tools/workflow',
-    component: WorkflowComponent,
+    loadComponent: () =>
+      import('./workflow/workflow.component').then((m) => m.WorkflowComponent),
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'tools/applications/register-api/:id/:ruta',
-    component: RegisterApiComponent,
+    loadComponent: () =>
+      import('./api/register-api/register-api.component').then((m) => m.RegisterApiComponent),
     canActivate: [AuthGuardGuard],
   },
   {
     path: 'tools/applications/update-api/:id/:ruta',
-    component: RegisterApiComponent,
+    loadComponent: () =>
+      import('./api/register-api/register-api.component').then((m) => m.RegisterApiComponent),
     canActivate: [AuthGuardGuard],
-  }
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes),
-    FunctionsComponent,
-    ApiComponent,
-    WorkflowComponent,
-    ApiListComponent,
-    ApiDetailsComponent,
-    RegisterApiComponent,
-    ApplicationsComponent,
-  ],
+  imports: [RouterModule.forChild(routes)],
 })
-export class ToolsModule { }
+export class ToolsModule {}

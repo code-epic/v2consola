@@ -221,7 +221,8 @@ export interface WkfDescripcionRed {
   nombre: string;
   descripcion: string;
   tipo: number; // Tipologia de la REd
-  estatus: number;
+  usuario: string;
+  fecha: string;
 }
 
 export interface WkfZRed {
@@ -416,6 +417,21 @@ export interface RecognitionToolDetailResponse {
   uso: AnalisisUsoTool;
 }
 
+export function getHttpOptions(
+  includeContentType: boolean = true,
+  extraHeaders: Record<string, string> = {},
+): { headers: HttpHeaders } {
+  const token = sessionStorage.getItem("token") || "";
+  const headers: Record<string, string> = {
+    ...(includeContentType ? { "Content-Type": "application/json" } : {}),
+    Authorization: "Bearer " + token,
+    ...extraHeaders,
+  };
+  return {
+    headers: new HttpHeaders(headers),
+  };
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -425,12 +441,9 @@ export class ApiService {
 
   hash: string = environment.Hash;
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + sessionStorage.getItem("token"),
-    }),
-  };
+  get httpOptions() {
+    return getHttpOptions();
+  }
 
   public pID: ProcessID = {
     id: "",
@@ -441,6 +454,7 @@ export class ApiService {
   };
 
   private _url = environment.API;
+  private _recentDownloads = new Map<string, number>();
 
   constructor(
     private taskService: TaskService,
@@ -453,12 +467,11 @@ export class ApiService {
 
   //EnviarArchivos generales
   EnviarArchivos(frm: FormData): Observable<any> {
-    var httpOptions = {
-      headers: new HttpHeaders({
-        Authorization: "Bearer " + sessionStorage.getItem("token"),
-      }),
-    };
-    return this.http.post<any>(this.URL + "subirarchivos", frm, httpOptions);
+    return this.http.post<any>(
+      this.URL + "subirarchivos",
+      frm,
+      getHttpOptions(false),
+    );
   }
 
   Guardar(xAPI: IAPICore, sApi: string): Observable<any> {
@@ -478,14 +491,8 @@ export class ApiService {
 
   //Ejecutar Api generales
   Ejecutar(xAPI: IAPICore): Observable<any> {
-    let hOpt = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + sessionStorage.getItem("token"),
-      }),
-    };
     var url = this.URL + "crud:" + this.hash;
-    return this.http.post<any>(url, xAPI, hOpt);
+    return this.http.post<any>(url, xAPI, this.httpOptions);
   }
 
   //Ejecutar Api generales
@@ -559,27 +566,45 @@ export class ApiService {
     });
   }
 
-  DwsCdn(peticion: string, tipo: string, filename: string) {
+  DwsCdn(
+    peticion: string,
+    tipo: string,
+    filename: string,
+    onComplete?: () => void,
+  ) {
+    const now = Date.now();
+    const lastDownloadAt = this._recentDownloads.get(peticion) || 0;
+    if (now - lastDownloadAt < 5000) {
+      if (onComplete) onComplete();
+      return;
+    }
+    this._recentDownloads.set(peticion, now);
+
     let ruta = this.URL + "dwsother/" + peticion;
 
     const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + sessionStorage.getItem("token"),
-      }),
+      ...this.httpOptions,
       responseType: "blob" as "json",
     };
 
-    this.http.get(ruta, httpOptions).subscribe((response: any) => {
-      const blob = new Blob([response], { type: tipo });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename === "" ? Md5.hashStr(peticion) : filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+    this.http.get(ruta, httpOptions).subscribe({
+      next: (response: any) => {
+        const blob = new Blob([response], { type: tipo });
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename === "" ? Md5.hashStr(peticion) : filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+        if (onComplete) onComplete();
+      },
+      error: (err) => {
+        console.error("Error descargando archivo DwsCdn:", err);
+        this._recentDownloads.delete(peticion);
+        if (onComplete) onComplete();
+      },
     });
   }
 
@@ -587,10 +612,7 @@ export class ApiService {
     let ruta = this.URL + "dwscdn";
 
     const httpOptions = {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + sessionStorage.getItem("token"),
-      }),
+      ...this.httpOptions,
       responseType: "blob" as "json",
     };
 
@@ -838,9 +860,7 @@ export class ApiService {
     var body: any = { path: path };
     if (format) body.format = format;
     const opts = {
-      headers: new HttpHeaders({
-        Authorization: "Bearer " + sessionStorage.getItem("token"),
-      }),
+      ...getHttpOptions(false),
       responseType: "blob" as "json",
     };
     return this.http.post<any>(url, body, opts);
@@ -938,15 +958,6 @@ export class ApiService {
     return url;
   }
 
-  private getAuthHttpOptions() {
-    return {
-      headers: new HttpHeaders({
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + (sessionStorage.getItem("token") || ""),
-      }),
-    };
-  }
-
   /**
    * Lista las herramientas disponibles en ./bin de Sandra (recognition/tools)
    */
@@ -963,7 +974,7 @@ export class ApiService {
     }
     const qs = query.length > 0 ? `?${query.join("&")}` : "";
     const url = `${this._resolveUrl("recognition/tools")}${qs}`;
-    return this.http.get<any>(url, this.getAuthHttpOptions());
+    return this.http.get<any>(url, this.httpOptions);
   }
 
   /**
@@ -973,7 +984,7 @@ export class ApiService {
     const url = this._resolveUrl(
       `recognition/tools/${encodeURIComponent(nombre)}`,
     );
-    return this.http.get<any>(url, this.getAuthHttpOptions());
+    return this.http.get<any>(url, this.httpOptions);
   }
 
   /**
@@ -984,6 +995,6 @@ export class ApiService {
     limite: number = 50,
   ): Observable<any> {
     const url = `${this._resolveUrl(`recognition/tools/${encodeURIComponent(nombre)}/usage`)}?limite=${limite}`;
-    return this.http.get<any>(url, this.getAuthHttpOptions());
+    return this.http.get<any>(url, this.httpOptions);
   }
 }

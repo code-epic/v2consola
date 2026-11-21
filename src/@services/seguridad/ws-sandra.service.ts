@@ -41,6 +41,8 @@ export class WsSandraService {
     private wsMessagesSubscription!: Subscription;
     private wsStatusSubscription!: Subscription;
     private isErrorModalOpen = false;
+    private lastExecPipeFinishKey = '';
+    private lastExecPipeFinishTime = 0;
 
     // Propiedades para enviar mensajes directos a IDs de cliente (si aún las usas)
     msjx: string = '';
@@ -66,6 +68,15 @@ export class WsSandraService {
         }
 
         this.loadHistory(); // Carga el historial al iniciar
+
+        // Evitar suscripciones duplicadas si Run() se invoca más de una vez
+        if (this.wsMessagesSubscription) {
+            this.wsMessagesSubscription.unsubscribe();
+        }
+        if (this.wsStatusSubscription) {
+            this.wsStatusSubscription.unsubscribe();
+        }
+
         // 1. Suscribirse a los mensajes del sessionService
         this.wsMessagesSubscription = this.sessionService.messages$.subscribe(
             (dataAsString) => {
@@ -75,6 +86,16 @@ export class WsSandraService {
                     // console.log('ChatComponent: Mensaje WebSocket recibido y parseado:', data);
 
                     if (data && data.from === 'exec-pipe') {
+                        if (data.type === 'dump_finished' || data.type === 'restore_finished') {
+                            const finishKey = `${data.type}:${data.message?.file || ''}`;
+                            const now = Date.now();
+                            if (this.lastExecPipeFinishKey === finishKey && (now - this.lastExecPipeFinishTime) < 4000) {
+                                return;
+                            }
+                            this.lastExecPipeFinishKey = finishKey;
+                            this.lastExecPipeFinishTime = now;
+                        }
+
                         let msj = data.message !== undefined ? data.message : ''
                         if (msj && msj.error !== undefined && msj.error !== '') {
                             this.ErrorMessage(msj.error)

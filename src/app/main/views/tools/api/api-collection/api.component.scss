@@ -1,20 +1,21 @@
 @import '@core/scss/base/bootstrap-extended/include';
 @import '@core/scss/base/components/include';
+@import '../../applications/applications.component.scss';
 
 // =========================================================================
-// PALETA DE COLORES PASTELES SOBRIOS Y CORPORATIVOS (SERIOUS PASTEL PALETTE)
+// PALETA SECO PASTEL SIN BRILLO & VERDES MATES (DRY MATTE PASTEL PALETTE)
 // =========================================================================
-$sage-bg: #e8f5ed;
-$sage-text: #2e694d;
-$sage-border: #c3e6d1;
+$sage-bg: #e8f0ec;
+$sage-text: #3b6350;
+$sage-border: #c8dad0;
 
-$sand-bg: #fef6ea;
-$sand-text: #7c5828;
-$sand-border: #f8dfbd;
+$sand-bg: #f3eee8;
+$sand-text: #786046;
+$sand-border: #dfd4c6;
 
-$slate-dark: #334155;
-$slate-muted: #64748b;
-$slate-light: #94a3b8;
+$slate-dark: #334152;
+$slate-muted: #5a687a;
+$slate-light: #8290a2;
 
 .text-slate {
   color: $slate-dark !important;

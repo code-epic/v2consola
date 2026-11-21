@@ -383,15 +383,36 @@
                     <div class="row">
                       <div class="form-group col-md-5">
                         <label class="form-label" for="bdatos">Base de Datos</label>
-                        <div class="ng-select-group-pastel">
+                        <div class="ng-select-group-pastel db-select-matte">
                           <div class="input-group-prepend">
                             <span class="input-group-text"><span [data-feather]="'database'"
                             [size]="16"></span></span>
                           </div>
                           <ng-select [items]="basesDatos" [formControl]="iAppBasedatosCtrl"
-                            [class.error]="accountDetailsForm.submitted"
+                            [class.error]="accountDetailsForm.submitted && iAppBasedatosCtrl.invalid"
                             bindLabel="descripcion" name="bdatos" id="bdatos"
-                            placeholder="Seleccione" bindValue="id">
+                            placeholder="Seleccione motor de base de datos" bindValue="id">
+                            <ng-template ng-option-tmp let-item="item">
+                              <div class="db-combo-option d-flex align-items-center justify-content-between w-100">
+                                <div class="d-flex align-items-center">
+                                  <span class="db-icon-holder mr-75" [ngClass]="item.matteClass || getDriverBadgeClass(item.id)">
+                                    <img [src]="item.icon || getDbIcon(item.id)" [alt]="item.descripcion" class="db-svg-icon" />
+                                  </span>
+                                  <span class="db-option-title">{{ item.descripcion }}</span>
+                                </div>
+                                @if (item.motor) {
+                                  <span class="db-matte-tag">{{ item.motor }}</span>
+                                }
+                              </div>
+                            </ng-template>
+                            <ng-template ng-label-tmp let-item="item">
+                              <div class="db-combo-selected d-inline-flex align-items-center">
+                                <span class="db-icon-holder db-icon-sm mr-50" [ngClass]="item.matteClass || getDriverBadgeClass(item.id)">
+                                  <img [src]="item.icon || getDbIcon(item.id)" [alt]="item.descripcion || item.id" class="db-svg-icon" />
+                                </span>
+                                <span class="db-selected-text">{{ item.descripcion || item.id }}</span>
+                              </div>
+                            </ng-template>
                           </ng-select>
                         </div>
                         @if (accountDetailsForm.submitted && iAppBasedatosCtrl.invalid) {
@@ -514,11 +535,11 @@
                     <!-- Driver & Backup Action Row (Pixel-stable, matching top baselines) -->
                     <div class="row align-items-start">
                       <!-- Driver selector column -->
-                      <div class="form-group col-lg-8 col-md-7 col-12 mb-1">
+                      <div class="form-group mb-1" [ngClass]="isRestoring ? 'col-12' : 'col-lg-8 col-md-7 col-12'">
                         <label class="form-label font-weight-bold" for="driver">
                           Seleccione el driver <span class="text-danger">*</span>
                         </label>
-                        <div class="ng-select-group-pastel">
+                        <div class="ng-select-group-pastel db-select-matte">
                           <div class="input-group-prepend">
                             <span class="input-group-text">
                               <span [data-feather]="'layers'" [size]="16"></span>
@@ -530,6 +551,7 @@
                             bindLabel="name"
                             name="driver"
                             id="driver"
+                            [readonly]="!bDescarga || isRestoring"
                             placeholder="Seleccione driver de base de datos..."
                             [class.error]="accountDetailsForm.submitted && driverCtrl.invalid">
                             
@@ -537,25 +559,33 @@
                             <ng-template ng-option-tmp let-item="item">
                               <div class="driver-option-item d-flex align-items-center justify-content-between py-25">
                                 <div class="d-flex align-items-center">
-                                  <span class="badge badge-pill font-small-1 mr-1 px-1" [ngClass]="getDriverBadgeClass(item.driver)">
-                                    {{ (item.driver || 'DB') | uppercase }}
+                                  <span class="db-icon-holder mr-75" [ngClass]="getDriverBadgeClass(item.driver)">
+                                    <img [src]="getDbIcon(item.driver)" [alt]="item.driver" class="db-svg-icon" />
                                   </span>
                                   <div>
-                                    <div class="font-weight-bold text-dark font-small-3">{{ item.descripcion || item.name }}</div>
-                                    <small class="text-muted font-small-2">BD: {{ item.basedatos || 'N/A' }}</small>
+                                    <div class="d-flex align-items-center">
+                                      <span class="db-engine-pill mr-50" [ngClass]="getDriverBadgeClass(item.driver)">
+                                        {{ (item.driver || 'DB') | uppercase }}
+                                      </span>
+                                      <span class="font-weight-bold text-slate-matte font-small-3">{{ item.descripcion || item.name }}</span>
+                                    </div>
+                                    <small class="text-muted font-small-2">Esquema / BD: <strong>{{ item.basedatos || 'N/A' }}</strong></small>
                                   </div>
                                 </div>
-                                <span class="badge badge-light-secondary font-small-1">{{ item.id }}</span>
+                                <span class="db-matte-tag">{{ item.id }}</span>
                               </div>
                             </ng-template>
 
                             <!-- Custom Selected Label Template -->
                             <ng-template ng-label-tmp let-item="item">
                               <div class="d-flex align-items-center">
-                                <span class="badge badge-pill font-small-1 mr-75 px-75" [ngClass]="getDriverBadgeClass(item.driver)">
+                                <span class="db-icon-holder db-icon-sm mr-50" [ngClass]="getDriverBadgeClass(item.driver)">
+                                  <img [src]="getDbIcon(item.driver)" [alt]="item.driver" class="db-svg-icon" />
+                                </span>
+                                <span class="db-engine-pill mr-50" [ngClass]="getDriverBadgeClass(item.driver)">
                                   {{ (item.driver || 'DB') | uppercase }}
                                 </span>
-                                <span class="font-weight-bolder text-dark font-small-3 mr-50">
+                                <span class="font-weight-bold text-slate-matte font-small-3 mr-50">
                                   {{ item.descripcion || item.name }}
                                 </span>
                                 <span class="text-muted font-small-2">({{ item.basedatos || 'BD' }})</span>
@@ -571,32 +601,34 @@
                         }
                       </div>
 
-                      <!-- Backup button column with explicit label for equal baseline -->
-                      <div class="form-group col-lg-4 col-md-5 col-12 mb-1">
-                        <label class="form-label font-weight-bold text-muted d-flex align-items-center justify-content-between">
-                          <span>Acción de Respaldo</span>
-                          <small class="text-primary font-small-2">Dump seguro</small>
-                        </label>
-                        <button type="button"
-                          class="btn btn-primary backup-action-btn w-100 d-flex align-items-center justify-content-center"
-                          rippleEffect
-                          (click)="backupDatabase()"
-                          [disabled]="!bDescarga || driverCtrl.invalid"
-                          [title]="driverCtrl.invalid ? 'Seleccione un driver primero' : 'Crear y descargar respaldo'">
-                          @if (bDescarga) {
-                            <div class="d-flex align-items-center">
-                              <i data-feather="archive" class="mr-75"></i>
-                              <span class="font-weight-bolder">Crear Respaldo</span>
-                            </div>
-                          }
-                          @if (!bDescarga) {
-                            <div class="d-flex align-items-center">
-                              <span class="spinner-border spinner-border-sm mr-75" role="status"></span>
-                              <span>Procesando...</span>
-                            </div>
-                          }
-                        </button>
-                      </div>
+                      <!-- Backup button column (Oculto mientras se ejecuta la restauración) -->
+                      @if (!isRestoring) {
+                        <div class="form-group col-lg-4 col-md-5 col-12 mb-1">
+                          <label class="form-label font-weight-bold text-muted d-flex align-items-center justify-content-between">
+                            <span>Acción de Respaldo</span>
+                            <small class="text-primary font-small-2">Dump seguro</small>
+                          </label>
+                          <button type="button"
+                            class="btn btn-primary backup-action-btn w-100 d-flex align-items-center justify-content-center"
+                            rippleEffect
+                            (click)="backupDatabase()"
+                            [disabled]="!bDescarga || driverCtrl.invalid"
+                            [title]="driverCtrl.invalid ? 'Seleccione un driver primero' : 'Crear y descargar respaldo'">
+                            @if (bDescarga) {
+                              <div class="d-flex align-items-center">
+                                <i data-feather="archive" class="mr-75"></i>
+                                <span class="font-weight-bolder">Crear Respaldo</span>
+                              </div>
+                            }
+                            @if (!bDescarga) {
+                              <div class="d-flex align-items-center">
+                                <span class="spinner-border spinner-border-sm mr-75" role="status"></span>
+                                <span>Procesando...</span>
+                              </div>
+                            }
+                          </button>
+                        </div>
+                      }
                     </div>
 
                     <!-- Active Driver Summary Chip -->
@@ -605,141 +637,250 @@
                         <div class="d-flex align-items-center flex-wrap">
                           <span class="pulse-indicator-dot mr-75"></span>
                           <span class="font-small-2 text-muted mr-50">Conexión activa:</span>
-                          <span class="badge badge-pill mr-75" [ngClass]="getDriverBadgeClass(driver?.driver || driverCtrl.value?.driver)">
+                          <span class="db-icon-holder db-icon-sm mr-50" [ngClass]="getDriverBadgeClass(driver?.driver || driverCtrl.value?.driver)">
+                            <img [src]="getDbIcon(driver?.driver || driverCtrl.value?.driver)" alt="DB" class="db-svg-icon" />
+                          </span>
+                          <span class="db-engine-pill mr-75" [ngClass]="getDriverBadgeClass(driver?.driver || driverCtrl.value?.driver)">
                             {{ (driver?.driver || driverCtrl.value?.driver || 'DB') | uppercase }}
                           </span>
-                          <strong class="font-small-3 text-dark mr-75">{{ driver?.descripcion || driverCtrl.value?.descripcion || driver?.name || driverCtrl.value?.name }}</strong>
-                          <span class="badge badge-light-primary font-small-1">BD: {{ driver?.basedatos || driverCtrl.value?.basedatos || 'N/A' }}</span>
+                          <strong class="font-small-3 text-slate-matte mr-75">{{ driver?.descripcion || driverCtrl.value?.descripcion || driver?.name || driverCtrl.value?.name }}</strong>
+                          <span class="db-matte-tag">BD: {{ driver?.basedatos || driverCtrl.value?.basedatos || 'N/A' }}</span>
                         </div>
                         <div class="font-small-1 text-muted d-none d-sm-block">
-                          ID: <code class="text-primary font-weight-bold">{{ driver?.id || driverCtrl.value?.id }}</code>
+                          ID: <code class="text-slate-matte font-weight-bold">{{ driver?.id || driverCtrl.value?.id }}</code>
                         </div>
                       </div>
                     }
 
-                    <div class="row mt-2">
-                      <div class="form-group col-md-12">
-                        <form method="post" enctype="multipart/form-data" id="forma" name="forma">
-                          <label class="form-label font-weight-bold" for="sql-file-upload">
-                            Script de Base de Datos (.sql, .dump, .zip)
-                          </label>
+                    <!-- MODO RESPALDO O RESTAURACIÓN EN CURSO: Animación Digital Elegante con Logo de Sandra -->
+                    @if (!bDescarga || isRestoring) {
+                      <div class="row mt-2">
+                        <div class="col-md-12">
+                          <div class="sandra-backup-telemetry-card">
+                            <div class="sandra-cyber-grid"></div>
+                            <div class="sandra-scanline"></div>
 
-                          <!-- File Upload Wrapper (Controlled by Driver Selection) -->
-                          <div class="file-upload-wrapper-pastel"
-                            (click)="triggerFileInput(fileInput)"
-                            (dragover)="onDragOver($event)"
-                            (dragleave)="onDragLeave($event)"
-                            (drop)="onDrop($event)"
-                            [class.drag-over]="isDragOver"
-                            [class.disabled-dropzone]="!isDriverSelected()">
-
-                            <!-- Hidden Input -->
-                            <input name="archivos"
-                              type="file" #fileInput hidden
-                              (change)="onFileSelected($event)" accept=".sql,.dump,.zip" />
-
-                            <!-- State 1: Locked Dropzone (No driver selected yet) -->
-                            @if (!isDriverSelected()) {
-                              <div class="upload-prompt locked-prompt py-1 text-center">
-                                <div class="upload-icon locked-icon mb-1">
-                                  <i [data-feather]="'lock'" [size]="42"></i>
-                                </div>
-                                <h6 class="font-weight-bolder text-muted mb-50">Carga de Script Bloqueada</h6>
-                                <p class="upload-subtext text-muted mb-75">
-                                  Debe seleccionar un <strong>Driver de Base de Datos</strong> en el campo superior antes de adjuntar el script.
-                                </p>
-                                <span class="badge badge-light-warning font-small-2 py-50 px-1">
-                                  <i [data-feather]="'alert-circle'" [size]="12" class="mr-25"></i> Seleccione el driver primero
-                                </span>
-                              </div>
-                            }
-
-                            <!-- State 2: Active Dropzone Prompt (Driver selected, awaiting file) -->
-                            @if (isDriverSelected() && !selectedFile) {
-                              <div class="upload-prompt">
-                                <div class="upload-icon">
-                                  <i [data-feather]="'upload-cloud'" [size]="48"></i>
-                                </div>
-                                <p class="upload-text">Arrastra y suelta tu archivo <strong>.sql</strong>, <strong>.zip</strong>, <strong>.dump</strong> aquí</p>
-                                <p class="upload-subtext">o haz clic para buscar en tu equipo</p>
-                                <small class="upload-limit">Límite de 1.2 GB</small>
-                              </div>
-                            }
-
-                            <!-- State 3: File Selected State (Uploading or Ready to Restore) -->
-                            @if (selectedFile) {
-                              <div class="file-details">
-                                <div class="file-info d-flex align-items-center justify-content-between">
-                                  <div class="d-flex align-items-center">
-                                    <div class="file-icon bg-light-primary mr-1">
-                                      <i [data-feather]="'database'" [size]="24" class="text-primary"></i>
-                                    </div>
-                                    <div class="file-meta">
-                                      <span class="file-name font-weight-bold" [title]="selectedFile.name">{{ selectedFile.name }}</span>
-                                      <span class="file-size text-muted font-small-2">{{ fileSize }}</span>
-                                    </div>
+                            <div class="sandra-telemetry-content">
+                              <!-- Nodos Digitales: Sandra Core <---> Motor BD -->
+                              <div class="sandra-digital-nodes">
+                                <!-- Nodo Sandra Core -->
+                                <div class="sandra-core-hub">
+                                  <div class="orbital-ring ring-outer"></div>
+                                  <div class="orbital-ring ring-inner"></div>
+                                  <div class="sandra-logo-emblem">
+                                    <img src="assets/images/logo/sandra.png" alt="Sandra Core"
+                                      onerror="this.src='assets/images/logo/logo.svg'" />
                                   </div>
-                                  @if (!isUploading) {
-                                    <button (click)="removeFile($event)" type="button" class="btn btn-icon btn-sm btn-outline-danger btn-round remove-file-btn" title="Eliminar archivo">
-                                      <i [data-feather]="'x'" [size]="16"></i>
-                                    </button>
+                                  <span class="hub-caption">SANDRA CORE</span>
+                                </div>
+
+                                <!-- Canal Digital de Flujo de Datos -->
+                                <div class="sandra-data-stream">
+                                  <div class="stream-track">
+                                    <span class="data-packet pkt-1"></span>
+                                    <span class="data-packet pkt-2"></span>
+                                    <span class="data-packet pkt-3"></span>
+                                  </div>
+                                  <div class="stream-metrics">
+                                    <span class="metric-pill">{{ backupBytesText }}</span>
+                                    <span class="metric-sep">•</span>
+                                    <span class="metric-rate">{{ backupSpeedText }}</span>
+                                  </div>
+                                </div>
+
+                                <!-- Nodo Motor de Base de Datos -->
+                                <div class="sandra-db-hub">
+                                  <div class="db-hub-ring" [ngClass]="getDriverBadgeClass(driver?.driver || driverCtrl.value?.driver)">
+                                    <img [src]="getDbIcon(driver?.driver || driverCtrl.value?.driver)" alt="Database Engine" />
+                                  </div>
+                                  <span class="hub-caption">{{ (driver?.basedatos || driverCtrl.value?.basedatos || 'BASE DE DATOS') | uppercase }}</span>
+                                </div>
+                              </div>
+
+                              <!-- Estado y Telemetría del Respaldo / Restauración -->
+                              <div class="sandra-telemetry-status text-center mt-1">
+                                <div class="status-badge-pill mb-50">
+                                  <span class="status-dot"></span>
+                                  <span>
+                                    {{ isRestoring ? 'RESTAURACIÓN DIGITAL SINCRONIZADA' : 'RESPALDO DIGITAL SINCRONIZADO' }} · {{ backupElapsedSeconds }}s
+                                  </span>
+                                </div>
+                                <h6 class="telemetry-title mb-25">{{ backupStatusLabel }}</h6>
+                                <p class="telemetry-subtitle mb-1">
+                                  @if (isRestoring) {
+                                    Inyectando script <code>{{ backupFileName || 'SQL/DUMP' }}</code> hacia <strong>{{ driver?.descripcion || driverCtrl.value?.descripcion || 'motor activo' }}</strong>
+                                  } @else if (backupFileName) {
+                                    Archivo generado: <code>{{ backupFileName }}</code>
+                                  } @else {
+                                    Volcando estructura y registros desde <strong>{{ driver?.descripcion || driverCtrl.value?.descripcion || 'motor activo' }}</strong> sin duplicar descargas
                                   }
-                                </div>
+                                </p>
 
-                                <!-- Progress Bar while file is loading/validating -->
-                                @if (isUploading) {
-                                  <div class="upload-progress-wrapper mt-1">
-                                    <div class="d-flex align-items-center justify-content-between mb-50">
-                                      <small class="text-primary font-weight-bold d-flex align-items-center">
-                                        <span class="spinner-border spinner-border-sm mr-50" role="status"></span>
-                                        Cargando y procesando archivo...
-                                      </small>
-                                      <span class="progress-percentage font-weight-bold text-primary">{{ uploadProgress }}%</span>
-                                    </div>
-                                    <div class="progress progress-bar-primary" style="height: 8px;">
-                                      <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                        role="progressbar"
-                                        [style.width.%]="uploadProgress"
-                                        aria-valuemin="0"
-                                        aria-valuemax="100"></div>
-                                    </div>
+                                <!-- Etapas del Ciclo (Respaldo vs Restauración) -->
+                                <div class="sandra-backup-stages">
+                                  <div class="stage-step"
+                                    [class.active]="backupPhase === 'connecting'"
+                                    [class.done]="backupPhase === 'dumping' || backupPhase === 'packaging' || backupPhase === 'completed'">
+                                    <span class="stage-index">01</span>
+                                    <span class="stage-name">{{ isRestoring ? 'Subida Script' : 'Conexión Motor' }}</span>
                                   </div>
-                                }
+                                  <div class="stage-connector"></div>
+                                  <div class="stage-step"
+                                    [class.active]="backupPhase === 'dumping'"
+                                    [class.done]="backupPhase === 'packaging' || backupPhase === 'completed'">
+                                    <span class="stage-index">02</span>
+                                    <span class="stage-name">{{ isRestoring ? 'Verificación Hash' : 'Extracción Bloques' }}</span>
+                                  </div>
+                                  <div class="stage-connector"></div>
+                                  <div class="stage-step"
+                                    [class.active]="backupPhase === 'packaging'"
+                                    [class.done]="backupPhase === 'completed'">
+                                    <span class="stage-index">03</span>
+                                    <span class="stage-name">{{ isRestoring ? 'Inyección Motor' : 'Empaquetado .ZIP' }}</span>
+                                  </div>
+                                  <div class="stage-connector"></div>
+                                  <div class="stage-step"
+                                    [class.active]="backupPhase === 'completed'"
+                                    [class.done]="backupPhase === 'completed'">
+                                    <span class="stage-index">04</span>
+                                    <span class="stage-name">{{ isRestoring ? 'Base Sincronizada' : 'Descarga Única' }}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    }
 
-                                <!-- Ready State when upload finishes -->
-                                @if (!isUploading) {
-                                  <div class="file-ready-banner mt-1 p-75 rounded d-flex align-items-center justify-content-between">
+                    <!-- MODO NORMAL: Sección de Arrastrar y Soltar Script (Oculta durante el respaldo o restauración) -->
+                    @if (bDescarga && !isRestoring) {
+                      <div class="row mt-2">
+                        <div class="form-group col-md-12">
+                          <form method="post" enctype="multipart/form-data" id="forma" name="forma">
+                            <label class="form-label font-weight-bold" for="sql-file-upload">
+                              Script de Base de Datos (.sql, .dump, .zip)
+                            </label>
+
+                            <!-- File Upload Wrapper (Controlled by Driver Selection) -->
+                            <div class="file-upload-wrapper-pastel"
+                              (click)="triggerFileInput(fileInput)"
+                              (dragover)="onDragOver($event)"
+                              (dragleave)="onDragLeave($event)"
+                              (drop)="onDrop($event)"
+                              [class.drag-over]="isDragOver"
+                              [class.disabled-dropzone]="!isDriverSelected()">
+
+                              <!-- Hidden Input -->
+                              <input name="archivos"
+                                type="file" #fileInput hidden
+                                (change)="onFileSelected($event)" accept=".sql,.dump,.zip" />
+
+                              <!-- State 1: Locked Dropzone (No driver selected yet) -->
+                              @if (!isDriverSelected()) {
+                                <div class="upload-prompt locked-prompt py-1 text-center">
+                                  <div class="upload-icon locked-icon mb-1">
+                                    <i [data-feather]="'lock'" [size]="42"></i>
+                                  </div>
+                                  <h6 class="font-weight-bolder text-muted mb-50">Carga de Script Bloqueada</h6>
+                                  <p class="upload-subtext text-muted mb-75">
+                                    Debe seleccionar un <strong>Driver de Base de Datos</strong> en el campo superior antes de adjuntar el script.
+                                  </p>
+                                  <span class="badge badge-light-warning font-small-2 py-50 px-1">
+                                    <i [data-feather]="'alert-circle'" [size]="12" class="mr-25"></i> Seleccione el driver primero
+                                  </span>
+                                </div>
+                              }
+
+                              <!-- State 2: Active Dropzone Prompt (Driver selected, awaiting file) -->
+                              @if (isDriverSelected() && !selectedFile) {
+                                <div class="upload-prompt">
+                                  <div class="upload-icon">
+                                    <i [data-feather]="'upload-cloud'" [size]="48"></i>
+                                  </div>
+                                  <p class="upload-text">Arrastra y suelta tu archivo <strong>.sql</strong>, <strong>.zip</strong>, <strong>.dump</strong> aquí</p>
+                                  <p class="upload-subtext">o haz clic para buscar en tu equipo</p>
+                                  <small class="upload-limit">Límite de 1.2 GB</small>
+                                </div>
+                              }
+
+                              <!-- State 3: File Selected State (Uploading or Ready to Restore) -->
+                              @if (selectedFile) {
+                                <div class="file-details">
+                                  <div class="file-info d-flex align-items-center justify-content-between">
                                     <div class="d-flex align-items-center">
-                                      <i [data-feather]="'check-circle'" [size]="18" class="text-success mr-75"></i>
-                                      <div>
-                                        <strong class="text-success font-small-3 d-block">Archivo verificado y listo</strong>
-                                        <small class="text-muted">El botón Restaurar ahora se encuentra activo</small>
+                                      <div class="file-icon bg-light-primary mr-1">
+                                        <i [data-feather]="'database'" [size]="24" class="text-primary"></i>
+                                      </div>
+                                      <div class="file-meta">
+                                        <span class="file-name font-weight-bold" [title]="selectedFile.name">{{ selectedFile.name }}</span>
+                                        <span class="file-size text-muted font-small-2">{{ fileSize }}</span>
                                       </div>
                                     </div>
-                                    <span class="badge badge-light-success font-small-2 px-1 py-50">100% Listo</span>
+                                    @if (!isUploading) {
+                                      <button (click)="removeFile($event)" type="button" class="btn btn-icon btn-sm btn-outline-danger btn-round remove-file-btn" title="Eliminar archivo">
+                                        <i [data-feather]="'x'" [size]="16"></i>
+                                      </button>
+                                    }
                                   </div>
-                                }
-                              </div>
-                            }
-                          </div>
-                        </form>
+
+                                  <!-- Progress Bar while file is loading/validating -->
+                                  @if (isUploading) {
+                                    <div class="upload-progress-wrapper mt-1">
+                                      <div class="d-flex align-items-center justify-content-between mb-50">
+                                        <small class="text-primary font-weight-bold d-flex align-items-center">
+                                          <span class="spinner-border spinner-border-sm mr-50" role="status"></span>
+                                          Cargando y procesando archivo...
+                                        </small>
+                                        <span class="progress-percentage font-weight-bold text-primary">{{ formatPercentage(uploadProgress) }}%</span>
+                                      </div>
+                                      <div class="progress progress-bar-primary" style="height: 8px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                          role="progressbar"
+                                          [style.width.%]="uploadProgress"
+                                          aria-valuemin="0"
+                                          aria-valuemax="100"></div>
+                                      </div>
+                                    </div>
+                                  }
+
+                                  <!-- Ready State when upload finishes -->
+                                  @if (!isUploading) {
+                                    <div class="file-ready-banner mt-1 p-75 rounded d-flex align-items-center justify-content-between">
+                                      <div class="d-flex align-items-center">
+                                        <i [data-feather]="'check-circle'" [size]="18" class="text-success mr-75"></i>
+                                        <div>
+                                          <strong class="text-success font-small-3 d-block">Archivo verificado y listo</strong>
+                                          <small class="text-muted">El botón Restaurar ahora se encuentra activo</small>
+                                        </div>
+                                      </div>
+                                      <span class="badge badge-light-success font-small-2 px-1 py-50">100% Listo</span>
+                                    </div>
+                                  }
+                                </div>
+                              }
+                            </div>
+                          </form>
+                        </div>
                       </div>
-                    </div>
+                    }
 
                     <div class="d-flex justify-content-between mt-2">
                       <button type="button" (click)="horizontalWizardStepperPrevious()"
-                        [disabled]="!bDescarga"
+                        [disabled]="!bDescarga || isRestoring"
                         class="btn btn-primary btn-prev" rippleEffect>
                         <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
                         <span class="align-middle d-sm-inline-block d-none">Atrás</span>
                       </button>
-                      <button (click)="ProcesarDB()"
-                        [disabled]="bRestaurar || !isDriverSelected() || !selectedFile"
-                        [class.btn-restaurar-active]="!bRestaurar && isDriverSelected() && selectedFile"
-                        class="btn btn-primary btn-next" rippleEffect>
-                        <span class="align-middle d-sm-inline-block d-none">Restaurar &nbsp;</span>
-                        <i data-feather="database" class="align-middle ml-sm-25 ml-0"></i>
-                      </button>
+                      @if (bDescarga && !isRestoring) {
+                        <button type="button" (click)="ProcesarDB()"
+                          [disabled]="bRestaurar || !isDriverSelected() || !selectedFile"
+                          [class.btn-restaurar-active]="!bRestaurar && isDriverSelected() && selectedFile"
+                          class="btn btn-primary btn-next" rippleEffect>
+                          <span class="align-middle d-sm-inline-block d-none">Restaurar &nbsp;</span>
+                          <i data-feather="database" class="align-middle ml-sm-25 ml-0"></i>
+                        </button>
+                      }
                     </div>
                 </form>
               </div>

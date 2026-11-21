@@ -470,7 +470,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
    * @param percentage El nuevo porcentaje (0-100)
    */
   private updateProgress(percentage: number): void {
-    this.progressPercentage = Math.round(percentage);
+    const num = Number(percentage ?? 0);
+    this.progressPercentage = Number.isFinite(num) ? parseFloat(num.toFixed(3)) : 0;
     const offset = this.circumference - (this.progressPercentage / 100) * this.circumference;
     this.strokeOffset = offset;
   }

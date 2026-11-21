@@ -2,22 +2,22 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  OnDestroy,
   ViewEncapsulation,
 } from "@angular/core";
-import { UntypedFormBuilder } from "@angular/forms";
-import { ActivatedRoute, Router } from "@angular/router";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
+import { NgbModal, NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { ApiService, IAPICore } from "@services/apicore/api.service";
 import { UtilService } from "@services/util/util.service";
 import JSONFormatter from "json-formatter-js";
 import Swal from "sweetalert2";
-
 import { CommonModule } from "@angular/common";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { RouterModule } from "@angular/router";
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
 import { CoreDirectivesModule } from "@core/directives/directives";
 import { CorePipesModule } from "@core/pipes/pipes.module";
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgSelectModule } from "@ng-select/ng-select";
 import { CodemirrorModule } from "@ctrl/ngx-codemirror";
 import { ContentHeaderComponent } from "app/layout/components/content-header/content-header.component";
 import { environment } from "environments/environment";
@@ -31,16 +31,20 @@ import { environment } from "environments/environment";
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     RouterModule,
     CoreDirectivesModule,
     CorePipesModule,
     NgbModule,
+    NgSelectModule,
     CodemirrorModule,
     ContentHeaderComponent,
   ],
 })
-export class ApiDetailsComponent implements OnInit {
+export class ApiDetailsComponent implements OnInit, OnDestroy {
+  private _unsubscribeAll = new Subject<void>();
+
   public xAPI: IAPICore = {
     funcion: "",
     parametros: "",
@@ -75,25 +79,36 @@ export class ApiDetailsComponent implements OnInit {
     entorno: "",
   };
 
-  // public
   public contentHeader: object;
+  public rutaURL: string = "";
+  public xentorno: string = "";
+  public resultado: any;
+  public xresultado: any;
 
-  public rutaURL;
+  public activeSection: "resumen" | "esquema" | "laboratorio" | "codigo" = "resumen";
+  public isLoadingApi: boolean = false;
+  public isExecuting: boolean = false;
+  public executionTimeMs: number | null = null;
 
-  public xentorno;
-  resultado: any;
-  xresultado: any;
-  codeTypeJsCtrl = new FormControl("");
-  get codeTypeJs() {
-    return this.codeTypeJsCtrl.value;
+  // Lazy Autocomplete Switcher for Driver APIs
+  public driverApis: any[] = [];
+  public isLoadingDriverApis: boolean = false;
+  public driverApisLoaded: boolean = false;
+  public quickSwitchApiCtrl = new FormControl<any>(null);
+
+  public codeTypeJsCtrl = new FormControl("");
+  get codeTypeJs(): string {
+    return this.codeTypeJsCtrl.value || "";
   }
-  xparametroCtrl = new FormControl("");
-  get xparametro() {
-    return this.xparametroCtrl.value;
+
+  public xparametroCtrl = new FormControl("");
+  get xparametro(): string {
+    return this.xparametroCtrl.value || "";
   }
-  valoresCtrl = new FormControl("");
-  get valores() {
-    return this.valoresCtrl.value;
+
+  public valoresCtrl = new FormControl("{\n  \n}");
+  get valores(): string {
+    return this.valoresCtrl.value || "";
   }
 
   public codeMirrorOptions: any = {
@@ -103,46 +118,51 @@ export class ApiDetailsComponent implements OnInit {
     lineWrapping: true,
   };
 
-  public data;
+  public data: any;
   public urlControl = "";
-  public driversAPP;
+  public driversAPP = "";
   public url = "";
+  public parsedEntradas: any = null;
 
   public UpdateAPI = {};
 
-  public api = {
-    funcion: "",
-    estatus: undefined,
-    descripcion: "",
-    version: 0,
-    driver: "",
-    hash: "",
-    entorno: "",
-  };
-
   constructor(
     private rutaActiva: ActivatedRoute,
+    private router: Router,
     private apiService: ApiService,
     private modalService: NgbModal,
     private utilservice: UtilService,
     private cdr: ChangeDetectorRef,
   ) {}
 
-  async ngOnInit() {
-    this.rutaURL = this.rutaActiva.snapshot.params.id;
-    this.urlControl = this.rutaActiva.snapshot.params.ruta;
-    let url = "";
+  ngOnInit(): void {
+    this.rutaActiva.params
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((params) => {
+        this.rutaURL = params["id"] || "";
+        this.urlControl = params["ruta"] || "";
+        this.initRouteContext();
+      });
+  }
 
-    if (this.urlControl != undefined) {
-      let valor = atob(this.urlControl).split("|");
-      this.driversAPP = valor[0];
-      this.url = valor[1];
-      url = "/" + this.url;
-      // console.log(valor)
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
+  }
+
+  private initRouteContext(): void {
+    let urlPath = "";
+    if (this.urlControl) {
+      try {
+        const valor = atob(this.urlControl).split("|");
+        this.driversAPP = valor[0] || "";
+        this.url = valor[1] || "";
+        urlPath = "/" + this.url;
+      } catch (e) {
+        urlPath = "";
+      }
     }
 
-    await this.ConsultarAPI(this.rutaURL);
-    // content header
     this.contentHeader = {
       headerTitle: "Detalle API REST",
       actionButton: true,
@@ -160,12 +180,12 @@ export class ApiDetailsComponent implements OnInit {
             link: "/tools/applications",
           },
           {
-            name: "Api",
+            name: this.url || "Api",
             isLink: true,
-            link: "/tools/applications" + url,
+            link: "/tools/applications" + urlPath,
           },
           {
-            name: "Detalle",
+            name: this.driversAPP || "Catálogo",
             isLink: true,
             link: "/tools/applications/api-list/" + this.urlControl,
           },
@@ -176,52 +196,218 @@ export class ApiDetailsComponent implements OnInit {
         ],
       },
     };
+
+    this.ConsultarAPI(this.rutaURL);
   }
 
-  async ConsultarAPI(api: string) {
+  setSection(sec: "resumen" | "esquema" | "laboratorio" | "codigo"): void {
+    this.activeSection = sec;
+    this.cdr.detectChanges();
+
+    if (sec === "resumen" || sec === "esquema") {
+      setTimeout(() => this.renderEntradasJson(), 50);
+    } else if (sec === "laboratorio") {
+      this.prepareLabContext();
+      if (this.xresultado) {
+        setTimeout(() => this.renderResultadoJson("xrs-inline"), 50);
+      }
+    } else if (sec === "codigo") {
+      this.generateCodeSnippet();
+    }
+  }
+
+  ConsultarAPI(api: string): void {
+    if (!api) return;
+    this.isLoadingApi = true;
     const apiConnect = {
-      funcion: environment.functions.LISTAR_APIS_ID, // "_SYS_R_ListarApisID",
+      funcion: environment.functions.LISTAR_APIS_ID,
       parametros: api,
     };
-    await this.apiService.Ejecutar(apiConnect).subscribe(
-      (data) => {
+    this.apiService.Ejecutar(apiConnect).subscribe({
+      next: (data) => {
+        this.isLoadingApi = false;
         if (Array.isArray(data) && data.length > 0) {
           this.xAPI = data[0];
         }
-        // console.log(this.xAPI);
+
+        const apiPrefix = this.xAPI?.entorno === "produccion" ? "/v1/" : "/devel/";
+        const endpointHash = this.xAPI?.id || (this.xAPI as any)?.hash || environment.Hash;
+        this.xentorno = `${apiPrefix}api/crud:${endpointHash}`;
+        this.data = this.xAPI;
 
         // Parse JSON string if needed
-        let entradasData: any = this.xAPI.entradas;
-        if (typeof entradasData === "string") {
+        let entradasData: any = this.xAPI?.entradas;
+        if (typeof entradasData === "string" && entradasData.trim()) {
           try {
             entradasData = JSON.parse(entradasData);
           } catch (e) {
-            // console.error('Error parsing entradas JSON:', e);
-            entradasData = { error: "Invalid JSON format" };
+            entradasData = { raw: this.xAPI.entradas };
           }
+        } else if (!entradasData) {
+          entradasData = { info: "Esta API no define parámetros de entrada estructurados." };
         }
+        this.parsedEntradas = entradasData;
 
-        // Clear previous content
-        const container = document.getElementById("xrsx");
-        if (container) {
-          container.innerHTML = "";
-          const formatter = new JSONFormatter(entradasData, 2, {
-            theme: "dark",
-          });
-          container.appendChild(formatter.render());
+        this.generateCodeSnippet();
+        this.cdr.detectChanges();
+
+        setTimeout(() => {
+          this.renderEntradasJson();
+        }, 60);
+      },
+      error: (error) => {
+        this.isLoadingApi = false;
+        console.log(error);
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private renderEntradasJson(): void {
+    const targets = ["xrsx", "xrsx-schema"];
+    targets.forEach((id) => {
+      const container = document.getElementById(id);
+      if (container && this.parsedEntradas) {
+        container.innerHTML = "";
+        const formatter = new JSONFormatter(this.parsedEntradas, 2, {
+          theme: "dark",
+        });
+        container.appendChild(formatter.render());
+      }
+    });
+  }
+
+  private renderResultadoJson(targetId: string): void {
+    const container = document.getElementById(targetId);
+    if (container && this.xresultado !== undefined) {
+      container.innerHTML = "";
+      const formatter = new JSONFormatter(this.xresultado, 2);
+      container.appendChild(formatter.render());
+    }
+  }
+
+  private prepareLabContext(): void {
+    const apiPrefix = this.xAPI?.entorno === "produccion" ? "/v1/" : "/devel/";
+    const endpointHash = this.xAPI?.id || (this.xAPI as any)?.hash || environment.Hash;
+    this.xentorno = `${apiPrefix}api/crud:${endpointHash}`;
+    this.data = this.xAPI;
+  }
+
+  limpiarResultadoLab(): void {
+    this.xresultado = null;
+    this.executionTimeMs = null;
+    ["xrs", "xrs-inline"].forEach((id) => {
+      const container = document.getElementById(id);
+      if (container) container.innerHTML = "";
+    });
+    this.cdr.detectChanges();
+  }
+
+  private generateCodeSnippet(): void {
+    const fn = this.xAPI?.funcion || this.rutaURL;
+    const drv = this.xAPI?.driver || this.driversAPP || "MGDBA";
+    const col = this.xAPI?.coleccion || "";
+    const snippet = `// Ejemplo de invocación en Angular con ApiService (Sandra Core)
+const xAPI: IAPICore = {
+  funcion: '${fn}',
+  parametros: '${this.xparametro || ""}',
+  valores: ${this.valores && this.valores.trim() !== "{\n  \n}" ? this.valores : "{}"},
+  driver: '${drv}',${col ? `\n  coleccion: '${col}',` : ""}
+  retorna: ${Boolean(this.xAPI?.retorna)}
+};
+
+this.apiService.Ejecutar(xAPI).subscribe({
+  next: (data) => {
+    console.log('Respuesta ${fn}:', data);
+  },
+  error: (err) => {
+    console.error('Error ejecutando ${fn}:', err);
+  }
+});`;
+    this.codeTypeJsCtrl.setValue(snippet, { emitEvent: false });
+  }
+
+  cargarPlantillaEntrada(): void {
+    if (!this.parsedEntradas) return;
+    try {
+      const formatted = JSON.stringify(this.parsedEntradas, null, 2);
+      this.valoresCtrl.setValue(formatted);
+      this.utilservice.AlertMini("top-end", "info", "Mapa de entrada cargado en el editor", 2000);
+    } catch (e) {
+      // ignore
+    }
+  }
+
+  formatearPayloadJson(): void {
+    const raw = (this.valores || "").trim();
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      this.valoresCtrl.setValue(JSON.stringify(parsed, null, 2));
+    } catch (e) {
+      this.utilservice.AlertMini("top-end", "warning", "El JSON ingresado no tiene un formato válido", 2500);
+    }
+  }
+
+  /**
+   * Carga lazy de las APIs del mismo driver solo cuando el usuario abre el selector de salto rápido
+   */
+  ensureDriverApisLoaded(): void {
+    if (this.driverApisLoaded || this.isLoadingDriverApis || !this.driversAPP) {
+      return;
+    }
+    this.isLoadingDriverApis = true;
+    const req: IAPICore = {
+      funcion: "_SYS_R_ListarApis",
+      parametros: this.driversAPP,
+      valores: "",
+    };
+    this.apiService.Ejecutar(req).subscribe({
+      next: (data) => {
+        this.isLoadingDriverApis = false;
+        this.driverApisLoaded = true;
+        if (Array.isArray(data)) {
+          this.driverApis = data.map((e: any) => ({
+            ...e,
+            descripcion: e.descripcion ?? "",
+            searchKey: `${e.funcion || ""} ${e.descripcion || ""} ${e.tipo || ""} ${e.entorno || ""}`.toLowerCase(),
+          }));
+        } else {
+          this.driverApis = [];
         }
         this.cdr.detectChanges();
       },
-      (error) => {
-        console.log(error);
+      error: () => {
+        this.isLoadingDriverApis = false;
+        this.cdr.detectChanges();
       },
-    );
+    });
   }
 
-  ModalProbar(modal, data) {
-    var api = data.entorno == "produccion" ? "/v1/" : "/devel/";
-    this.xentorno = api + "api/crud:" + data.id;
-    this.data = data;
+  customApiSearchFn = (term: string, item: any): boolean => {
+    if (!term) return true;
+    const q = term.toLowerCase().trim();
+    if (item.searchKey) return item.searchKey.includes(q);
+    return (
+      (item.funcion || "").toLowerCase().includes(q) ||
+      (item.descripcion || "").toLowerCase().includes(q)
+    );
+  };
+
+  onQuickSwitchApi(item: any): void {
+    if (!item || !item.funcion) return;
+    this.quickSwitchApiCtrl.setValue(null, { emitEvent: false });
+    this.router.navigate([
+      "/tools/applications/api-details",
+      item.funcion,
+      this.urlControl,
+    ]);
+  }
+
+  ModalProbar(modal: any, data: any): void {
+    this.prepareLabContext();
+    this.data = data || this.xAPI;
+    this.generateCodeSnippet();
     this.modalService.open(modal, {
       centered: true,
       size: "xl",
@@ -231,15 +417,15 @@ export class ApiDetailsComponent implements OnInit {
     });
   }
 
-  async promover(entorno: string, funcion: string) {
+  async promover(entorno: string, funcion: string, _accion?: string) {
     await Swal.fire({
-      title: "Esta Seguro de Promover API?",
-      html: `<font color="red"><strong>${funcion}</strong></font> <br> a Entorno de <strong>${entorno.toUpperCase()}</strong>`,
+      title: "¿Está seguro de promover esta API?",
+      html: `<strong class="text-danger">${funcion}</strong><br>Pasará al entorno de <strong>${entorno.toUpperCase()}</strong>`,
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Si, Promover!",
+      confirmButtonColor: "#334155",
+      cancelButtonColor: "#94a3b8",
+      confirmButtonText: "Sí, Promover",
       cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -248,100 +434,85 @@ export class ApiDetailsComponent implements OnInit {
     });
   }
 
-  async ejecutarApi() {
-    this.xAPI = this.data;
-    this.xAPI.parametros = this.xparametro;
-    this.xAPI.valores = this.valores;
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
-      (data) => {
-        if (data !== null) {
-          this.utilservice.AlertMini(
-            "top-end",
-            "success",
-            "Consulta Exitosa!",
-            3000,
-          );
-          this.xresultado = data; // Almacenamos el resultado para exportación
+  ejecutarApi(): void {
+    this.isExecuting = true;
+    this.executionTimeMs = null;
+    const startTime = performance.now();
 
-          const container = document.getElementById("xrs");
-          if (container) {
-            container.innerHTML = ""; // Limpiar antes de mostrar nuevo resultado
-            const formatter = new JSONFormatter(data);
-            container.appendChild(formatter.render());
-          }
+    const payloadReq: IAPICore = {
+      ...(this.data || this.xAPI),
+      parametros: this.xparametro,
+      valores: this.valores,
+    };
+
+    this.generateCodeSnippet();
+
+    this.apiService.Ejecutar(payloadReq).subscribe({
+      next: (data) => {
+        this.isExecuting = false;
+        this.executionTimeMs = Math.round(performance.now() - startTime);
+        if (data !== null) {
+          this.utilservice.AlertMini("top-end", "success", "Consulta ejecutada con éxito", 2500);
+          this.xresultado = data;
+          this.cdr.detectChanges();
+          setTimeout(() => {
+            this.renderResultadoJson("xrs");
+            this.renderResultadoJson("xrs-inline");
+          }, 30);
         } else {
           this.xresultado = null;
-          this.utilservice.AlertMini(
-            "top-end",
-            "error",
-            "La API respondio NULL",
-            3000,
-          );
+          this.utilservice.AlertMini("top-end", "warning", "La API respondió NULL", 3000);
+          this.cdr.detectChanges();
         }
       },
-      (error) => {
+      error: (error) => {
+        this.isExecuting = false;
+        this.executionTimeMs = Math.round(performance.now() - startTime);
         this.xresultado = error;
+        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.renderResultadoJson("xrs");
+          this.renderResultadoJson("xrs-inline");
+        }, 30);
       },
-    );
+    });
   }
 
-  async PromoverAPI(funcion: string, entorno: string) {
+  PromoverAPI(funcion: string, entorno: string): void {
     this.apiPromover.entorno = entorno;
     this.apiPromover.funcion = funcion;
-    let jsonG = {
+    const jsonG: any = {
       coleccion: "apicore",
       relacional: false,
       tipo: "INSERTAR",
       entorno: entorno,
       valores: this.apiPromover,
     };
-    let sApi = "crud";
-    this.xAPI = {};
-    await this.apiService.Guardar(jsonG, sApi).subscribe(
-      (data) => {
+    const sApi = "crud";
+    this.apiService.Guardar(jsonG, sApi).subscribe({
+      next: (data) => {
         this.ConsultarAPI(this.rutaURL);
-        let id =
-          data.UpsertedID != null
-            ? "registrada codigo: " + data.UpsertedID
-            : "actualizada ";
-        this.utilservice.AlertMini(
-          "top-end",
-          "success",
-          `Tu (API) ha sido  ${id}`,
-          3000,
-        );
+        const id =
+          data?.UpsertedID != null
+            ? "registrada código: " + data.UpsertedID
+            : "actualizada";
+        this.utilservice.AlertMini("top-end", "success", `Tu API ha sido ${id}`, 3000);
       },
-      (errot) => {
-        this.utilservice.AlertMini(
-          "top-end",
-          "error",
-          "Fallo la conexión, con el API",
-          3000,
-        );
+      error: () => {
+        this.utilservice.AlertMini("top-end", "error", "Falló la conexión con el API", 3000);
       },
-    );
+    });
   }
 
-  getContent() {
-    // const formatter = new JSONFormatter(this.xAPI.entradas);
-    // document.getElementById("xrsx").appendChild(formatter.render());
-  }
-
-  exportResultadoJSON() {
+  exportResultadoJSON(): void {
     if (!this.xresultado) {
-      this.utilservice.AlertMini(
-        "top-end",
-        "warning",
-        "No hay datos para exportar",
-        3000,
-      );
+      this.utilservice.AlertMini("top-end", "warning", "No hay datos para exportar", 3000);
       return;
     }
 
-    const filename = `export_api_${this.xAPI.id}_${new Date().getTime()}.json`;
+    const filename = `export_api_${this.xAPI.funcion || this.xAPI.id}_${new Date().getTime()}.json`;
     const jsonContent = JSON.stringify(this.xresultado, null, 2);
-    const dataUri =
-      "data:application/json;charset=utf-8," + encodeURIComponent(jsonContent);
+    const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(jsonContent);
 
     if (window.parent && window !== window.parent) {
       window.parent.postMessage(
@@ -354,14 +525,8 @@ export class ApiDetailsComponent implements OnInit {
         },
         "*",
       );
-      this.utilservice.AlertMini(
-        "top-end",
-        "info",
-        "Exportando JSON via Puente...",
-        2000,
-      );
+      this.utilservice.AlertMini("top-end", "info", "Exportando JSON vía Puente...", 2000);
     } else {
-      // Fallback descarga directa
       const blob = new Blob([jsonContent], { type: "application/json" });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -372,7 +537,14 @@ export class ApiDetailsComponent implements OnInit {
     }
   }
 
-  copyToClipboard(text?: string) {
+  copiarEntradasJson(): void {
+    const content = this.parsedEntradas
+      ? JSON.stringify(this.parsedEntradas, null, 2)
+      : "";
+    this.copyToClipboard(content);
+  }
+
+  copyToClipboard(text?: string): void {
     const content =
       text || (this.xresultado ? JSON.stringify(this.xresultado, null, 2) : "");
     if (!content) {
@@ -383,16 +555,40 @@ export class ApiDetailsComponent implements OnInit {
     navigator.clipboard
       .writeText(content)
       .then(() => {
-        this.utilservice.AlertMini(
-          "top-end",
-          "success",
-          "Copiado al portapapeles",
-          2000,
-        );
+        this.utilservice.AlertMini("top-end", "success", "Copiado al portapapeles", 2000);
       })
       .catch((err) => {
         console.error("Error al copiar:", err);
         this.utilservice.AlertMini("top-end", "error", "Error al copiar", 2000);
       });
+  }
+
+  getDbIcon(engine: string): string {
+    const d = (engine || "").toLowerCase();
+    if (d.includes("mariadb")) return "assets/images/icons/db/mariadb.svg";
+    if (d.includes("mysql")) return "assets/images/icons/db/mysql.svg";
+    if (d.includes("postgres") || d.includes("pgsql"))
+      return "assets/images/icons/db/postgres.svg";
+    if (d.includes("mongo") || d.includes("mgdba"))
+      return "assets/images/icons/db/mongodb.svg";
+    if (d.includes("couch")) return "assets/images/icons/db/couchdb.svg";
+    if (d.includes("rethink")) return "assets/images/icons/db/rethinkdb.svg";
+    if (d.includes("sqlserver") || d.includes("mssql"))
+      return "assets/images/icons/db/sqlserver.svg";
+    return "assets/images/icons/db/database.svg";
+  }
+
+  getDbMatteClass(engine: string): string {
+    const d = (engine || "").toLowerCase();
+    if (d.includes("mariadb")) return "db-matte-mariadb";
+    if (d.includes("mysql")) return "db-matte-mysql";
+    if (d.includes("postgres") || d.includes("pgsql"))
+      return "db-matte-postgres";
+    if (d.includes("mongo") || d.includes("mgdba")) return "db-matte-mongodb";
+    if (d.includes("couch")) return "db-matte-couchdb";
+    if (d.includes("rethink")) return "db-matte-rethinkdb";
+    if (d.includes("sqlserver") || d.includes("mssql"))
+      return "db-matte-sqlserver";
+    return "db-matte-neutral";
   }
 }

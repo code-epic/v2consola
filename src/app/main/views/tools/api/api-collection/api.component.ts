@@ -185,6 +185,7 @@ export class ApiComponent implements OnInit {
   public SelectionType = SelectionType;
 
   public driversAPP
+  public appName: string = ''
 
 
   public xentorno
@@ -234,6 +235,7 @@ export class ApiComponent implements OnInit {
 
     this.driversAPP = id[0]
     let url = id[1]
+    this.appName = url || ''
     await this.ListarApis(this.driversAPP)
 
 

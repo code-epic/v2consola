@@ -268,29 +268,29 @@ textarea.form-control {
   }
 
   &.is-valid-pastel {
-    border-color: #10b981 !important;
-    background-color: #f0fdf4 !important;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    border-color: #b7a9e0 !important;
+    background-color: #f8f7fc !important;
+    box-shadow: 0 0 0 3px rgba(110, 95, 168, 0.1) !important;
 
     .input-group-prepend .input-group-text {
-      background-color: #ecfdf5 !important;
-      color: #059669 !important;
-      border-right-color: #a7f3d0 !important;
+      background-color: #f0ecf9 !important;
+      color: #63549c !important;
+      border-right-color: #dcd5f2 !important;
     }
 
     .form-control {
-      color: #065f46 !important;
-      font-weight: 500;
+      color: #463a75 !important;
+      font-weight: 600;
     }
 
     .input-group-append .btn-validation-pastel {
-      background-color: #ecfdf5 !important;
-      color: #059669 !important;
-      border-left-color: #a7f3d0 !important;
+      background-color: #f0ecf9 !important;
+      color: #63549c !important;
+      border-left-color: #dcd5f2 !important;
 
       &:hover:not(:disabled) {
-        background-color: #d1fae5 !important;
-        color: #047857 !important;
+        background-color: #e4ddf5 !important;
+        color: #4c3e80 !important;
       }
     }
   }
@@ -435,107 +435,423 @@ textarea.form-control {
   }
 }
 
-/* Buttons Pastel Refined */
-.btn {
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: 10px;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: 0.3px;
-  
-  i, svg {
-    flex-shrink: 0;
-    transition: transform 0.3s ease;
-  }
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    
-    i, svg {
-      transform: scale(1.1);
-    }
-  }
-  
-  &:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  &.btn-primary {
-    background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-    color: #ffffff;
-    border: none;
-    box-shadow: 0 4px 6px rgba(124, 58, 237, 0.2);
-    
-    &:hover {
-      background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-      box-shadow: 0 6px 15px rgba(124, 58, 237, 0.3);
-    }
-    
-    &.btn-prev {
-      background: #ffffff;
-      color: #7c3aed;
-      border: 1px solid #e8e0ff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      
-      &:hover {
-        background: #fcfaff;
-        border-color: #d4c5ff;
-      }
-    }
-  }
-  
-  &.btn-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: #ffffff;
-    border: none;
-    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
-    
-    &:hover {
-      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
-      box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
-    }
-  }
-  
-  &.btn-outline-secondary {
-    background: #ffffff;
-    color: #6b7280;
-    border: 1px solid #e5e7eb;
-    
-    &:hover {
-      background: #f9fafb;
-      color: #374151;
-      border-color: #d1d5db;
-    }
+/* Buttons Pastel Refined (Seco Pastel sin Brillo - Paleta Lavanda/Pizarra Mate) */
+.btn-wizard-prev,
+.btn-wizard-next,
+.btn-wizard-save-soft,
+.btn-wizard-save-primary,
+.btn-wizard-add {
+  padding: 0.56rem 1.15rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  transition: all 0.18s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.45rem !important;
+  letter-spacing: 0.2px !important;
+  box-shadow: none !important;
+
+  &:disabled {
+    opacity: 0.55 !important;
+    cursor: not-allowed !important;
   }
 }
 
-/* Stepper Refinements */
+/* Botón Atrás (Pizarra Lavanda Suave Mate) */
+.btn-wizard-prev {
+  background-color: #f6f5fa !important;
+  color: #5c6479 !important;
+  border: 1px solid #dcd8ea !important;
+
+  &:hover:not(:disabled) {
+    background-color: #edeaf6 !important;
+    color: #433a6b !important;
+    border-color: #c8c1e0 !important;
+  }
+}
+
+/* Botón Siguiente (Lavanda Pizarra Mate) */
+.btn-wizard-next {
+  background-color: #6b5ca5 !important;
+  color: #ffffff !important;
+  border: 1px solid #5c4e94 !important;
+
+  &:hover:not(:disabled) {
+    background-color: #5c4d94 !important;
+    border-color: #4e4082 !important;
+  }
+}
+
+/* Botón Actualizar en Pasos Intermedios (Lavanda Suave Mate sin Verde) */
+.btn-wizard-save-soft {
+  background-color: #efeif9 !important;
+  background: #f0ecf9 !important;
+  color: #56478c !important;
+  border: 1px solid #d1c8ec !important;
+
+  &:hover:not(:disabled) {
+    background: #e4ddf5 !important;
+    color: #423573 !important;
+    border-color: #bfb3e3 !important;
+  }
+}
+
+/* Botón Agregar Campo al Esquema (Lavanda Suave Mate) */
+.btn-wizard-add {
+  height: 38px !important;
+  padding: 0 0.85rem !important;
+  background: #f0ecf9 !important;
+  color: #56478c !important;
+  border: 1px solid #d1c8ec !important;
+
+  &:hover:not(:disabled) {
+    background: #e4ddf5 !important;
+    color: #423573 !important;
+    border-color: #bfb3e3 !important;
+  }
+}
+
+/* Botón Final Guardar / Actualizar en Paso 3 (Índigo Pizarra Mate Profundo) */
+.btn-wizard-save-primary {
+  background-color: #554888 !important;
+  color: #ffffff !important;
+  border: 1px solid #483c75 !important;
+
+  &:hover:not(:disabled) {
+    background-color: #473b75 !important;
+    border-color: #3b3063 !important;
+  }
+}
+
+/* Stepper Refinements (Matte Lavender-Slate) */
 .bs-stepper.horizontal-wizard-example {
+  border: 1px solid #e4e1f0;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(45, 55, 72, 0.03);
+
   .bs-stepper-header {
+    padding: 1rem 1.35rem;
+    background: #f9f8fd;
+    border-bottom: 1px solid #eae6f5;
+
     .step {
       .step-trigger {
+        padding: 0.55rem 1rem;
+        border-radius: 9px;
+
         .bs-stepper-box {
-          width: 42px;
-          height: 42px;
-          font-size: 1rem;
+          width: 36px;
+          height: 36px;
+          font-size: 0.9rem;
+          background: #efeif9;
+          background-color: #f0ecf9;
+          color: #63549c;
+          border: 1px solid #dcd5f2;
+          box-shadow: none;
+        }
+
+        .bs-stepper-label {
+          .bs-stepper-title {
+            font-size: 0.86rem;
+            font-weight: 700;
+            color: #475569;
+          }
+          .bs-stepper-subtitle {
+            font-size: 0.74rem;
+            color: #7c8ba1;
+          }
         }
       }
       
       &.active {
         .step-trigger {
+          background: #f3f0fb;
+          border: 1px solid #dfd8f5;
+
           .bs-stepper-box {
-            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
-            box-shadow: 0 4px 10px rgba(124, 58, 237, 0.3);
+            background: #6e5fa8;
+            color: #ffffff;
+            border-color: #5f5096;
+            box-shadow: 0 2px 6px rgba(110, 95, 168, 0.22);
+          }
+
+          .bs-stepper-label {
+            .bs-stepper-title {
+              color: #56478c;
+            }
+            .bs-stepper-subtitle {
+              color: #6e5fa8;
+            }
           }
         }
       }
     }
+  }
+
+  .bs-stepper-content {
+    padding: 1.35rem 1.5rem;
+  }
+}
+
+/* Banner Contextual del Wizard (Modo Edición / Registro) */
+.wizard-context-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  background: #f7f6fb;
+  border: 1px solid #e4e0f2;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+
+  .context-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
+  .mode-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+
+    &.mode-edit {
+      background: #ede9f8;
+      color: #5b4c91;
+      border: 1px solid #d5cdf0;
+    }
+
+    &.mode-create {
+      background: #e8f0ec;
+      color: #3b6350;
+      border: 1px solid #c8dad0;
+    }
+  }
+
+  .context-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.26rem 0.65rem;
+    background: #ffffff;
+    border: 1px solid #e2e7ee;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    color: #526071;
+
+    .meta-label {
+      color: #8492a6;
+      font-weight: 600;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+    }
+
+    strong {
+      color: #2d3748;
+      font-weight: 700;
+    }
+
+    img.driver-mini-icon {
+      width: 14px;
+      height: 14px;
+      object-fit: contain;
+    }
+  }
+
+  .context-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+}
+
+/* Bloques de Sección Seco Pastel dentro de cada Paso */
+.wizard-section-card {
+  background: #fcfcfe;
+  border: 1px solid #eae8f3;
+  border-radius: 10px;
+  padding: 1.15rem 1.25rem 0.5rem;
+  margin-bottom: 1.15rem;
+
+  .wizard-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-bottom: 0.65rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eeebf7;
+
+    .section-title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+
+      .section-icon-box {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        background: #f2effa;
+        border: 1px solid #dcd5f2;
+        color: #63549c;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      h6 {
+        margin: 0;
+        font-size: 0.86rem;
+        font-weight: 700;
+        color: #3b4656;
+        letter-spacing: 0.15px;
+      }
+
+      .section-hint {
+        font-size: 0.75rem;
+        color: #7c8ba1;
+      }
+    }
+  }
+}
+
+/* Estado de Validación de Función en Etiqueta */
+.fn-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.12rem 0.5rem;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-left: auto;
+
+  &.status-ok {
+    background: #f0ecf9;
+    color: #56478c;
+    border: 1px solid #d5cdf0;
+  }
+
+  &.status-pending {
+    background: #f4f6f9;
+    color: #5a687a;
+    border: 1px solid #dce2ea;
+  }
+
+  &.status-locked {
+    background: #f2effa;
+    color: #63549c;
+    border: 1px solid #dcd5f2;
+  }
+}
+
+/* Paneles de Editores CodeMirror en Paso 2 */
+.editor-panel-card {
+  background: #ffffff;
+  border: 1px solid #e4e1f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1.15rem;
+
+  .editor-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.65rem 1rem;
+    background: #f8f7fc;
+    border-bottom: 1px solid #eae6f5;
+
+    .editor-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #475569;
+
+      .editor-badge {
+        font-size: 0.68rem;
+        font-weight: 700;
+        padding: 0.12rem 0.45rem;
+        border-radius: 4px;
+        background: #ede9f8;
+        color: #63549c;
+        border: 1px solid #dcd5f2;
+        text-transform: uppercase;
+      }
+    }
+
+    .editor-toolbar {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  .editor-panel-body {
+    padding: 0.65rem;
+    background: #ffffff;
+
+    .form-group {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.btn-editor-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 28px;
+  padding: 0 0.6rem;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #4e5d6c;
+  background: #ffffff;
+  border: 1px solid #d8e0e8;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover {
+    background: #f4f2fb;
+    color: #5b4c91;
+    border-color: #c9bfe8;
+  }
+}
+
+/* Pie de Navegación por Paso */
+.wizard-step-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid #eceaf5;
+
+  .footer-right-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
   }
 }
 
@@ -546,7 +862,7 @@ textarea.form-control {
   
   .form-text.text-danger {
     font-size: 0.75rem;
-    color: #f87171;
+    color: #dc2626;
     display: flex;
     align-items: center;
     
@@ -571,7 +887,7 @@ textarea.form-control {
   
   svg {
     margin-right: 0.75rem;
-    color: #9f7aea;
+    color: #6e5fa8;
     flex-shrink: 0;
   }
 }
@@ -598,7 +914,6 @@ textarea.form-control {
 .swal2-popup.swal2-toast.toast-api-alerta-elegante {
   box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.08) !important;
   border-radius: 12px !important;
-  border: 1px solid #fef3c7 !important;
   border-left: 4px solid #f59e0b !important;
   padding: 0.85rem 1rem !important;
   max-width: 440px !important;

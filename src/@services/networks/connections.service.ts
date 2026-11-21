@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { IAPICore } from '../apicore/api.service';
+import { IAPICore, getHttpOptions } from '../apicore/api.service';
 
 
 
@@ -28,12 +28,6 @@ export interface IConexiones {
 export class ConexionesService {
    //Dirección Get para servicios en la página WEB
    URL =  '/v1/api/';
-   
-
-   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + sessionStorage.getItem('token') })
-  };
 
   constructor(private router: Router, private http : HttpClient) {
    
@@ -41,28 +35,28 @@ export class ConexionesService {
   
   Guardar(xDRI : IConexiones, sApi : string) : Observable<any>{
     var url = this.URL + sApi;
-    return this.http.post<any>(url, xDRI, this.httpOptions);
+    return this.http.post<any>(url, xDRI, getHttpOptions());
   }
 
   Listar(APICORE : IAPICore) : Observable<any>{
     var url = this.URL + 'crud';
-    return this.http.post<any>(url, APICORE, this.httpOptions );
+    return this.http.post<any>(url, APICORE, getHttpOptions());
   }
 
   EvaluarConexion(xDRI : IConexiones, sApi : string) : Observable<any>{
     var url = this.URL + sApi;
-    return this.http.post<any>(url, xDRI, this.httpOptions);
+    return this.http.post<any>(url, xDRI, getHttpOptions());
   }
   
   EstablecerConexion(xDRI : IConexiones, sApi : string) : Observable<any>{
     
     var url = this.URL + sApi;
-    return this.http.post<any>(url, xDRI, this.httpOptions);
+    return this.http.post<any>(url, xDRI, getHttpOptions());
   }
   
   EvaluarPuente(sApi : string) : Observable<any>{
     var url = this.URL + sApi;
-    return this.http.post<any>(url, {}, this.httpOptions);
+    return this.http.post<any>(url, {}, getHttpOptions());
   }
   
 }

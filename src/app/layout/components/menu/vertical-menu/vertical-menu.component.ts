@@ -188,16 +188,22 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
         );
         break;
       case "dump_finished":
-        // console.log(progreso.message)
         this.finishProgress("Respaldo Completado");
         if (progreso.message?.file) {
           this.apiService.DwsCdn(
             "bck-export/" + progreso.message.file,
             "application/zip",
             progreso.message.file,
+            () => {
+              this.mensajeService.finalizacion$.emit({
+                estatus: true,
+                file: progreso.message.file,
+              });
+            },
           );
+        } else {
+          this.mensajeService.finalizacion$.emit({ estatus: true });
         }
-        this.mensajeService.finalizacion$.emit({ estatus: true });
         break;
       case "restore":
         this.progressMode = "determinate";
@@ -227,7 +233,7 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
           progreso.progress < 99
             ? "Subiendo Archivo..."
             : "Procesando en servidor...";
-        this.progressPercentage = progreso.progress;
+        this.progressPercentage = this.formatPercentage(progreso.progress);
         this.progressText = `${this.formatBytes(progreso.loaded)} de ${this.formatBytes(progreso.total)}`;
         break;
       case "finished":
@@ -237,13 +243,19 @@ export class VerticalMenuComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
+  private formatPercentage(value: any): number {
+    const num = Number(value ?? 0);
+    if (!Number.isFinite(num)) return 0;
+    return parseFloat(num.toFixed(3));
+  }
+
   /**
    * Actualiza los valores del indicador de progreso.
    * @param percentage El progreso en porcentaje (0-100).
    * @param totalSize El tamaño total de la descarga/proceso.
    */
   actualizarProgreso(percentage: number, totalSizeInBytes: number): void {
-    this.progressPercentage = Math.round(percentage);
+    this.progressPercentage = this.formatPercentage(percentage);
     const totalSizeInMB = totalSizeInBytes / (1024 * 1024);
     const downloadedInMB = totalSizeInMB * (this.progressPercentage / 100);
 

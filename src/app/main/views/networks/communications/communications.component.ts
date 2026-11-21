@@ -303,14 +303,13 @@ export class CommunicationsComponent implements OnInit {
 
   async CargarLista() {
     this.isLoading = true;
-    this.xAPI.funcion = "_SYS_LstComunicaciones";
-    this.xAPI.parametros = '';
     this._ListaComunicaciones.set([]);
     this._count.set(0);
-    await this.apiService.Ejecutar(this.xAPI).subscribe(
+    await this.comunicacionesService.Listar().subscribe(
       (data) => {
-        this._ListaComunicaciones.set([...this._ListaComunicaciones(), data]);
-        this._tempData.set(data || []);
+        const list = Array.isArray(data) ? data : (Array.isArray(data?.Cuerpo) ? data.Cuerpo : []);
+        this._ListaComunicaciones.set(list);
+        this._tempData.set(list);
         this.applyCombinedFilters();
         this.isLoading = false;
       },
@@ -491,7 +490,6 @@ export class CommunicationsComponent implements OnInit {
         "driver": "MGDBA",
         "upsert": true
       }
-      this._rowData.set([...this._rowData(), this._ListaComunicaciones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
           this._ListaComunicaciones.set([])
@@ -520,7 +518,6 @@ export class CommunicationsComponent implements OnInit {
         "driver": "MGDBA",
         "upsert": true
       }
-      this._rowData.set([...this._rowData(), this._ListaComunicaciones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
           this._ListaComunicaciones.set([])

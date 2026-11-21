@@ -31,11 +31,14 @@ export class AuthInterceptorService implements HttpInterceptor {
       return next.handle(cleanReq); 
     }
 
+    const token: string = sessionStorage.getItem("token");
+
     if (!req.body || req.method === 'GET') {
-      return this.procesarPeticion(req, next);
+      const authReq = token
+        ? req.clone({ setHeaders: { 'Authorization': `Bearer ${token}` } })
+        : req;
+      return this.procesarPeticion(authReq, next);
     }
-    
-    const token: string = sessionStorage.getItem("token")
     
     const timestamp = new Date().getTime().toString();
     const payload = JSON.stringify(req.body) + timestamp;

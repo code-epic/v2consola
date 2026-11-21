@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChildren, QueryList, ChangeDetectorRef } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import {
   FormsModule,
   ReactiveFormsModule,
@@ -28,6 +29,8 @@ import { ContentHeaderComponent } from "app/layout/components/content-header/con
   styleUrls: ["./register-api.component.scss"],
   standalone: true,
   imports: [
+    CommonModule,
+    RouterModule,
     FormsModule,
     ReactiveFormsModule,
     CoreDirectivesModule,
@@ -414,6 +417,8 @@ export class RegisterApiComponent implements OnInit {
   ) {}
 
   private horizontalWizardStepper: Stepper;
+  public currentStepIndex: number = 0;
+  public isGuardando: boolean = false;
 
   horizontalWizardStepperNext(data) {
     if (data.form.valid === true) {
@@ -434,6 +439,24 @@ export class RegisterApiComponent implements OnInit {
     this.horizontalWizardStepper.previous();
   }
 
+  irAPaso(stepNumber: number) {
+    if (!this.horizontalWizardStepper) return;
+    if (
+      this.getURL !== "update-api" &&
+      stepNumber > 1 &&
+      !this.isFuncionDisponible
+    ) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "warning",
+        "Valide primero la disponibilidad de la función en el Paso 1",
+        3500,
+      );
+      return;
+    }
+    this.horizontalWizardStepper.to(stepNumber);
+  }
+
   async ngOnInit() {
     this.CargarDrivers();
 
@@ -449,11 +472,23 @@ export class RegisterApiComponent implements OnInit {
       url = "/" + this.url;
     }
 
-    this.LeerAPI(this.rutaURL);
-
     this.getURL = this.rutaActiva.snapshot.url[2].path;
     if (this.getURL === "update-api") {
       this.funcionCtrl.disable();
+      this.isFuncionDisponible = true;
+      this.LeerAPI(this.rutaURL);
+    } else {
+      // Modo Registro: pre-asignar aplicación y driver del contexto de navegación
+      if (this.url) {
+        this.xAPIDB.aplicacion = this.url;
+        this.aplicacionCtrl.setValue(this.url, { emitEvent: false });
+      }
+      if (this.driversAPP) {
+        this.xAPIDB.driver = this.driversAPP as any;
+        this.driverCtrl.setValue(this.driversAPP, { emitEvent: false });
+      }
+      this.syncFromModel(this.xAPIDB);
+      this.resolverAplicacion();
     }
     let funcion = this.rutaActiva.snapshot.url[3].path;
 
@@ -467,12 +502,14 @@ export class RegisterApiComponent implements OnInit {
     document
       .querySelector("#stepper1")
       .addEventListener("shown.bs-stepper", (event: any) => {
+        this.currentStepIndex = event.detail.to;
         // El paso de configuración de código suele ser el índice 1 (Paso 2)
         if (event.detail.to === 1) {
           setTimeout(() => {
             this.clickRefresh(null); // Esto fuerza la redibujada de ngx-codemirror
           }, 100); // Delay necesario para esperar que la animación del stepper finalice
         }
+        this.cdr.detectChanges();
       });
 
     this.contentHeader = {
@@ -1479,5 +1516,125 @@ export class RegisterApiComponent implements OnInit {
         this.queryCtrl.setValue(`SELECT * FROM `);
         break;
     }
+  }
+
+  formatearEntradasJson(): void {
+    const raw = (this.entradasCtrl.value || "").toString().trim();
+    if (!raw) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "info",
+        "El esquema de entrada está vacío",
+        2000,
+      );
+      return;
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      this.entradasCtrl.setValue(JSON.stringify(parsed, null, 2));
+      this.clickRefresh(null);
+      this.utilservice.AlertMini(
+        "top-end",
+        "success",
+        "Esquema JSON formateado correctamente",
+        2000,
+      );
+    } catch (e) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "warning",
+        "El esquema actual no tiene un formato JSON válido",
+        3000,
+      );
+    }
+  }
+
+  cargarPlantillaEntradas(): void {
+    const plantilla = [
+      {
+        dml: "$values",
+        entradas: [
+          {
+            campo: "id",
+            defecto: "",
+            alias: "id",
+            tipo: "string",
+          },
+        ],
+      },
+    ];
+    this.entradasCtrl.setValue(JSON.stringify(plantilla, null, 2));
+    this.clickRefresh(null);
+    this.utilservice.AlertMini(
+      "top-end",
+      "info",
+      "Plantilla de esquema JSON cargada",
+      2000,
+    );
+  }
+
+  limpiarEntradasJson(): void {
+    this.entradasCtrl.setValue("");
+    this.IEntrada = [];
+    this.IEntradas = { $values: [], $set: [], $where: [] };
+    this.clickRefresh(null);
+  }
+
+  limpiarQuerySql(): void {
+    this.queryCtrl.setValue("");
+    this.clickRefresh(null);
+  }
+
+  copiarTexto(texto: string, etiqueta: string = "Contenido"): void {
+    const val = (texto || "").toString();
+    if (!val.trim()) {
+      this.utilservice.AlertMini(
+        "top-end",
+        "info",
+        `No hay ${etiqueta.toLowerCase()} para copiar`,
+        2000,
+      );
+      return;
+    }
+    navigator.clipboard.writeText(val).then(() => {
+      this.utilservice.AlertMini(
+        "top-end",
+        "success",
+        `${etiqueta} copiado al portapapeles`,
+        2000,
+      );
+    });
+  }
+
+  getEndpointUrlPreview(): string {
+    const fn = (
+      this.funcionCtrl.value ||
+      (this.rutaURL !== "Registrar" ? this.rutaURL : "") ||
+      "<funcion>"
+    )
+      .toString()
+      .trim();
+    return `${this.ruta} → ${fn}`;
+  }
+
+  getDriverIcon(driverItem: any): string {
+    if (!driverItem) return "assets/images/icons/db/database.svg";
+    const raw = (
+      typeof driverItem === "object"
+        ? `${driverItem.driver || ""} ${driverItem.name || ""} ${driverItem.id || ""}`
+        : String(driverItem)
+    ).toLowerCase();
+    if (raw.includes("mariadb")) return "assets/images/icons/db/mariadb.svg";
+    if (raw.includes("mysql") || raw.includes("mycf"))
+      return "assets/images/icons/db/mysql.svg";
+    if (raw.includes("postgres") || raw.includes("pg"))
+      return "assets/images/icons/db/postgres.svg";
+    if (raw.includes("mongo") || raw.includes("mgdba"))
+      return "assets/images/icons/db/mongodb.svg";
+    if (raw.includes("couch")) return "assets/images/icons/db/couchdb.svg";
+    if (raw.includes("rethink")) return "assets/images/icons/db/rethinkdb.svg";
+    if (raw.includes("sqlserver") || raw.includes("mssql"))
+      return "assets/images/icons/db/sqlserver.svg";
+    return "assets/images/icons/db/database.svg";
   }
 }

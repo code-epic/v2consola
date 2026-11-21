@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpEventType, HttpEvent, HttpResponse } from 
 import { Injectable } from "@angular/core";
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
+import { getHttpOptions } from './api.service';
 
 
 import { map, tap } from 'rxjs/operators'
@@ -24,13 +25,9 @@ interface UploadProgressEvent {
 })
 export class FileService {
 
-
-httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-    })
-  };
+  get httpOptions() {
+    return getHttpOptions();
+  }
 
   constructor(private http: HttpClient) {
 
@@ -40,9 +37,7 @@ httpOptions = {
     // EnviarArchivos generales
     EnviarArchivosProgress(frm: FormData):  Observable<UploadProgressEvent> {
       const httpOptions = {
-        headers: new HttpHeaders({
-          'Authorization': 'Bearer ' + sessionStorage.getItem('token')
-        }),
+        ...getHttpOptions(false),
         reportProgress: true, // ¡Importante! Habilita el reporte de progreso
         observe: 'events' // Observa todos los eventos, no solo la respuesta final
       };

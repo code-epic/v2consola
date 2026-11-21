@@ -1,6 +1,7 @@
 @import '@core/scss/base/pages/app-ecommerce-details.scss';
 @import '@core/scss/angular/libs/swiper.component.scss';
 @import '@core/scss/angular/libs/ratings.component.scss';
+@import '../../applications/applications.component.scss';
 @import './api-details-pastel.scss';
 @import './api-details-modal-pastel.scss';
 
@@ -737,3 +738,733 @@
 .font-small-3 { font-size: 0.9rem !important; }
 .font-small-2 { font-size: 0.8rem !important; }
 .p-50 { padding: 0.5rem !important; }
+
+/* ========================================================
+   API DETAILS - SECO PASTEL SIN BRILLO & VERDES MATES
+   ======================================================== */
+.border-top-matte {
+  border-top: 1px solid #e3e8ee;
+}
+
+.mt-125 { margin-top: 0.9rem !important; }
+.pt-125 { padding-top: 0.95rem !important; }
+.mb-125 { margin-bottom: 0.95rem !important; }
+.mb-150 { margin-bottom: 1.15rem !important; }
+.mr-125 { margin-right: 1.1rem !important; }
+.text-indigo { color: #63549c !important; }
+
+/* Hero API Banner Card (Equilibrio con update-api: Lavanda-Pizarra Mate Seco + Verde solo en Estatus) */
+.api-hero-card {
+  position: relative;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2ddf0;
+  box-shadow: none;
+  overflow: hidden;
+
+  .api-hero-accent {
+    height: 3px;
+    width: 100%;
+    background: #dcd5f2;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -35%;
+      width: 35%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, #7868b8, #4d7a64, transparent);
+      animation: digitalFlowSweep 4.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+  }
+
+  .api-hero-body {
+    padding: 1.35rem 1.5rem;
+    background: #faf9fd;
+  }
+
+  .hero-db-emblem {
+    width: 58px;
+    height: 58px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #ffffff;
+    border: 1px solid #dcd5f2;
+    box-shadow: none;
+
+    img {
+      width: 30px;
+      height: 30px;
+      object-fit: contain;
+    }
+  }
+
+  .hero-eyebrow {
+    font-size: 0.69rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #63549c;
+    text-transform: uppercase;
+  }
+
+  .hero-api-title {
+    font-size: 1.32rem;
+    font-weight: 800;
+    color: #334152;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-meta-strip {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-top: 0.35rem;
+
+    .meta-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.76rem;
+      font-weight: 500;
+      color: #5a687a;
+      background: #ffffff;
+      padding: 0.2rem 0.65rem;
+      border-radius: 6px;
+      border: 1px solid #e5e2f0;
+
+      code {
+        color: #63549c;
+        font-weight: 700;
+        font-size: 0.73rem;
+      }
+    }
+  }
+
+  .hero-switcher-box {
+    background: #ffffff;
+    border: 1px solid #e2ddf0;
+    border-radius: 10px;
+    padding: 0.8rem 0.95rem;
+    box-shadow: none;
+
+    .badge-count-indigo {
+      background: #f4f2fb;
+      color: #63549c;
+      padding: 0.08rem 0.48rem;
+      border-radius: 999px;
+      font-size: 0.67rem;
+      font-weight: 700;
+      border: 1px solid #dcd5f2;
+    }
+  }
+
+  .hero-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e2f0;
+  }
+
+  .hero-tabs-group {
+    display: inline-flex;
+    flex-wrap: wrap;
+    background: #f0eef8;
+    padding: 3px;
+    border-radius: 9px;
+    border: 1px solid #dcd5f2;
+    gap: 4px;
+
+    .hero-tab-btn {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid transparent;
+      background: transparent;
+      color: #5a687a;
+      font-size: 0.79rem;
+      font-weight: 600;
+      padding: 0.44rem 0.95rem;
+      border-radius: 7px;
+      cursor: pointer;
+      outline: none !important;
+      transition: all 0.16s ease;
+
+      &:hover:not(.active) {
+        color: #52438a;
+        background: rgba(255, 255, 255, 0.65);
+      }
+
+      &.active {
+        background: #ffffff;
+        color: #52438a;
+        border-color: #cfc6ee;
+        font-weight: 700;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.16rem 0.58rem;
+  border-radius: 6px;
+  font-size: 0.69rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+
+  &.badge-violet {
+    background: #f4f2fb;
+    color: #63549c;
+    border: 1px solid #dcd5f2;
+  }
+  &.badge-sky {
+    background: #eaf1f5;
+    color: #3f667d;
+    border: 1px solid #cddde6;
+  }
+  &.badge-emerald {
+    background: #e8f0ec;
+    color: #3b6350;
+    border: 1px solid #c8dad0;
+  }
+  &.badge-amber {
+    background: #f3eee8;
+    color: #786046;
+    border: 1px solid #dfd4c6;
+  }
+}
+
+.btn-hero-primary {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0.4rem 0.95rem;
+  border-radius: 7px;
+  font-size: 0.77rem;
+  font-weight: 700;
+  background: #6e5fa8;
+  color: #ffffff !important;
+  border: 1px solid #5f5096;
+  box-shadow: none !important;
+  cursor: pointer;
+  outline: none !important;
+  text-decoration: none !important;
+  transition: background-color 0.16s ease, border-color 0.16s ease;
+
+  &:hover:not(:disabled) {
+    background: #5c4d94;
+    border-color: #4f4182;
+  }
+}
+
+.btn-hero-outline {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  height: 34px;
+  padding: 0.4rem 0.9rem;
+  border-radius: 7px;
+  font-size: 0.77rem;
+  font-weight: 600;
+  background: #ffffff;
+  color: #544982 !important;
+  border: 1px solid #d5d0e8;
+  box-shadow: none !important;
+  cursor: pointer;
+  outline: none !important;
+  text-decoration: none !important;
+  transition: all 0.16s ease;
+
+  &:hover {
+    background: #f4f2fb;
+    border-color: #c2b8e3;
+    color: #463a75 !important;
+  }
+}
+
+/* Botones y Controles del Laboratorio en Vivo */
+.lab-endpoint-pill {
+  font-family: 'Fira Code', 'Monaco', monospace;
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: #63549c;
+  background: #f4f2fb;
+  border: 1px solid #dcd5f2;
+  padding: 0.1rem 0.55rem;
+  border-radius: 5px;
+}
+
+.btn-lab-tool {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.38rem;
+  height: 34px;
+  padding: 0.3rem 0.78rem !important;
+  border-radius: 7px !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  line-height: 1.2 !important;
+  background: #ffffff !important;
+  color: #46556b !important;
+  border: 1px solid #cfd7e2 !important;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: all 0.16s ease;
+
+  &:hover:not(:disabled),
+  &:focus:not(:disabled) {
+    background: #f4f2fb !important;
+    color: #544982 !important;
+    border-color: #c8bef0 !important;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-lab-execute {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem;
+  height: 34px;
+  padding: 0.32rem 0.95rem !important;
+  border-radius: 7px !important;
+  font-size: 0.76rem !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  background: #4d7a64 !important;
+  color: #ffffff !important;
+  border: 1px solid #426b57 !important;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: background-color 0.16s ease;
+
+  &:hover:not(:disabled) {
+    background: #3b6350 !important;
+    border-color: #335746 !important;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.lab-response-console {
+  min-height: 305px;
+  border: 1px solid #dfe5ec;
+  border-radius: 10px;
+  padding: 1rem;
+  background: #fafbfc;
+  overflow: auto;
+
+  .lab-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3.5rem 1rem;
+
+    .lab-empty-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      background: #f4f2fb;
+      border: 1px solid #dcd5f2;
+      color: #63549c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .lab-empty-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #334152;
+      margin-bottom: 0.25rem;
+    }
+
+    .lab-empty-sub {
+      font-size: 0.78rem;
+      color: #6b7a8c;
+    }
+  }
+}
+
+/* Section Cards (Seco Pastel Sin Brillo & Padding Cómodo) */
+.api-section-card {
+  border: 1px solid #dfe5ec;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: none;
+  overflow: hidden;
+
+  .section-card-header {
+    padding: 0.95rem 1.35rem;
+    background: #f8fafb;
+    border-bottom: 1px solid #e3e8ee;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+
+    .section-icon-box {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      &.box-violet { background: #edf1f6; color: #46556b; border: 1px solid #d0d9e4; }
+      &.box-sky { background: #eaf1f5; color: #3f667d; border: 1px solid #cddde6; }
+      &.box-emerald { background: #e8f0ec; color: #3b6350; border: 1px solid #c8dad0; }
+      &.box-amber { background: #f3eee8; color: #786046; border: 1px solid #dfd4c6; }
+    }
+
+    .section-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #334152;
+    }
+
+    .section-subtitle {
+      font-size: 0.74rem;
+      color: #6b7a8c;
+      display: block;
+    }
+  }
+
+  .section-card-body {
+    padding: 1.25rem 1.35rem;
+  }
+
+  .api-description-callout {
+    font-size: 0.87rem;
+    line-height: 1.6;
+    color: #334152;
+    background: #faf9fd;
+    border: 1px solid #e2ddf0;
+    border-left: 3px solid #6e5fa8;
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+  }
+}
+
+/* Lista Técnica Seco Pastel */
+.lively-spec-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.3rem;
+    border-bottom: 1px solid #f0f3f7;
+    transition: background-color 0.14s ease;
+
+    &:hover {
+      background-color: #fafbfc;
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .spec-left {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .spec-mini-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      &.icon-violet { background: #edf1f6; color: #46556b; }
+      &.icon-sky { background: #eaf1f5; color: #3f667d; }
+      &.icon-emerald { background: #e8f0ec; color: #3b6350; }
+      &.icon-amber { background: #f3eee8; color: #786046; }
+      &.icon-rose { background: #f4ebeb; color: #824e4e; }
+    }
+
+    .spec-name {
+      font-size: 0.81rem;
+      font-weight: 600;
+      color: #4f5e71;
+    }
+
+    .spec-badge-neutral {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #334152;
+      background: #f3f6f9;
+      padding: 0.16rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid #dfe5ec;
+    }
+
+    .spec-mono-chip {
+      font-family: 'Fira Code', 'Monaco', monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #3b6350;
+      background: #e8f0ec;
+      padding: 0.16rem 0.55rem;
+      border-radius: 6px;
+      border: 1px solid #c8dad0;
+    }
+
+    .policy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.71rem;
+      font-weight: 700;
+
+      .pill-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+      }
+
+      &.pill-on {
+        background: #e8f0ec;
+        color: #3b6350;
+        border: 1px solid #c8dad0;
+        .pill-dot { background: #4d7a64; }
+      }
+
+      &.pill-off {
+        background: #f4f6f8;
+        color: #6b7a8c;
+        border: 1px solid #dfe5ec;
+        .pill-dot { background: #98a6b5; }
+      }
+    }
+  }
+}
+
+/* Consola Mate Oscura para Mapa JSON y Código */
+.dark-json-console {
+  border-radius: 10px;
+  background: #1c2430;
+  border: 1px solid #2b3646;
+  overflow: hidden;
+  box-shadow: none;
+
+  .console-topbar {
+    padding: 0.55rem 1rem;
+    background: #232d3b;
+    border-bottom: 1px solid #313e50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .console-dots {
+      display: inline-flex;
+      gap: 6px;
+
+      .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        &.dot-red { background: #b86b6b; }
+        &.dot-yellow { background: #bfa065; }
+        &.dot-green { background: #5e8f76; }
+      }
+    }
+
+    .console-label {
+      font-family: 'Fira Code', 'Monaco', monospace;
+      font-size: 0.72rem;
+      color: #96a4b5;
+    }
+  }
+
+  .console-body {
+    padding: 1.1rem 1.25rem;
+    min-height: 120px;
+  }
+}
+
+/* Panel de Control Lateral (Seco Pastel Sin Brillo + Verdes Mates) */
+.control-panel-card {
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #dfe5ec;
+  box-shadow: none;
+  overflow: hidden;
+
+  .control-panel-header {
+    padding: 1rem 1.25rem;
+    background: #5b537d;
+    border-bottom: 1px solid #4d466b;
+    color: #ffffff;
+
+    .control-header-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .control-panel-body {
+    padding: 1.25rem;
+  }
+
+  .control-group-title {
+    display: flex;
+    align-items: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #5a687a;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.btn-control-lively {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.72rem 0.9rem;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  text-align: left;
+  cursor: pointer;
+  outline: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+  transition: background-color 0.16s ease, border-color 0.16s ease, transform 0.16s ease;
+
+  .btn-icon-box {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  .btn-text-box {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+
+    .btn-main-text {
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .btn-sub-text {
+      font-size: 0.7rem;
+      opacity: 0.82;
+      margin-top: 2px;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Verde Mate Seco */
+  &.btn-lively-emerald {
+    background: #e8f0ec;
+    color: #3b6350;
+    border-color: #c8dad0;
+    .btn-icon-box { color: #3b6350; }
+    &:hover { background: #dce8e2; border-color: #b3cbbd; }
+  }
+
+  /* Pizarra Mate Seco */
+  &.btn-lively-violet {
+    background: #edf1f6;
+    color: #46556b;
+    border-color: #d0d9e4;
+    .btn-icon-box { color: #46556b; }
+    &:hover { background: #e2e8f0; border-color: #bcc8d6; }
+  }
+
+  /* Azul Petróleo Mate Seco */
+  &.btn-lively-sky {
+    background: #eaf1f5;
+    color: #3f667d;
+    border-color: #cddde6;
+    .btn-icon-box { color: #3f667d; }
+    &:hover { background: #dee9ef; border-color: #b7cedb; }
+  }
+
+  /* Arena Mate Seco */
+  &.btn-lively-amber {
+    background: #f3eee8;
+    color: #786046;
+    border-color: #dfd4c6;
+    .btn-icon-box { color: #786046; }
+    &:hover { background: #ebe3da; border-color: #cfc0ae; }
+  }
+
+  /* Terracota Mate Seco */
+  &.btn-lively-rose {
+    background: #f4ebeb;
+    color: #824e4e;
+    border-color: #e2cfcf;
+    .btn-icon-box { color: #824e4e; }
+    &:hover { background: #ebdcdc; border-color: #d1b6b6; }
+  }
+
+  /* Gris Neutro Mate Seco */
+  &.btn-lively-slate {
+    background: #f6f8fa;
+    color: #46556b;
+    border-color: #d5dde7;
+    .btn-icon-box { color: #5a687a; }
+    &:hover { background: #edf1f6; border-color: #bcc8d6; }
+  }
+}
+

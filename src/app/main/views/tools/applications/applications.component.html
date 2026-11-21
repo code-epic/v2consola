@@ -1,158 +1,397 @@
 <div class="content-wrapper container-xxl p-0">
-  <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-    <section id="ecommerce-searchbar" class="ecommerce-searchbar">
-      <div class="row mt-1">
-        <div class="col-sm-3">
-          <select class="form-control" [formControl]="searchTypeCtrl" style="height: 40px;">
-            <option value="conexiones">Buscar por Conexiones</option>
-            <option value="api">Buscar por API</option>
-          </select>
+    <!-- Barra Superior Compacta: Flujo + Contadores en Barra + Acciones -->
+    <div class="tools-flow-strip mb-150">
+      <div class="flow-steps-group">
+        <div class="flow-step-item active">
+          <span class="step-num">01</span>
+          <span class="step-label">Aplicaciones</span>
         </div>
-        @if (searchType === 'conexiones') {
-          <div class="col-sm-9">
-            <div class="input-group input-group-merge">
-              <input type="text" class="form-control search-product" id="shop-search" placeholder="Buscar"
-                [formControl]="searchTextCtrl" aria-label="Search..." aria-describedby="shop-search" style="height: 40px;" />
-              <div class="input-group-append">
-                <span class="input-group-text" style="height: 40px;"><i data-feather="search"
-                class="text-muted"></i></span>
-              </div>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <div class="flow-step-item">
+          <span class="step-num">02</span>
+          <span class="step-label">Drivers & Conexiones</span>
+        </div>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <div class="flow-step-item">
+          <span class="step-num">03</span>
+          <span class="step-label">Catálogo de APIs</span>
+        </div>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <div class="flow-step-item">
+          <span class="step-num">04</span>
+          <span class="step-label">Laboratorio & Ejecución</span>
+        </div>
+      </div>
+
+      <!-- Métricas Compactas en la Barra (sin ocupar espacio con tarjetas gigantes arriba) -->
+      <div class="flow-actions-group">
+        <div class="inline-metrics-bar">
+          <button type="button" class="metric-chip chip-total"
+            [class.active]="selectedStatusFilter === 'all'"
+            (click)="setStatusFilter('all')"
+            ngbTooltip="Mostrar todas las aplicaciones">
+            <span class="chip-dot"></span>
+            <span class="chip-label">Total</span>
+            <strong class="chip-val">{{ totalAplicaciones }}</strong>
+          </button>
+          <button type="button" class="metric-chip chip-active"
+            [class.active]="selectedStatusFilter === 'activas'"
+            (click)="setStatusFilter('activas')"
+            ngbTooltip="Filtrar aplicaciones activas">
+            <span class="chip-dot"></span>
+            <span class="chip-label">Activas</span>
+            <strong class="chip-val">{{ totalActivas }}</strong>
+          </button>
+          <button type="button" class="metric-chip chip-inactive"
+            [class.active]="selectedStatusFilter === 'inactivas'"
+            (click)="setStatusFilter('inactivas')"
+            ngbTooltip="Filtrar aplicaciones inactivas">
+            <span class="chip-dot"></span>
+            <span class="chip-label">Inactivas</span>
+            <strong class="chip-val">{{ totalInactivas }}</strong>
+          </button>
+        </div>
+
+        <a routerLink="/applications/list" class="btn-flow-link" ngbTooltip="Ir al gestor de repositorios">
+          <span [data-feather]="'grid'" [size]="13" class="mr-50"></span>
+          Proyectos
+        </a>
+        <button type="button" class="btn-flow-refresh" (click)="recargar()" [disabled]="isLoadingApps || isLoadingApis"
+          ngbTooltip="Actualizar listado">
+          <span [data-feather]="'refresh-cw'" [size]="13"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra Unificada de Filtros, Combos Mates con Iconos Locales y Autocomplete Lazy -->
+    <div class="card matte-filter-card mb-2">
+      <div class="card-body p-150">
+        <div class="row g-2 align-items-end">
+          <!-- Selector de Modo (Aplicaciones vs Autocomplete Global de APIs) -->
+          <div class="col-lg-3 col-md-5 col-sm-12">
+            <label class="form-label-matte">
+              <span [data-feather]="'compass'" [size]="12" class="mr-25"></span>
+              Modo de Exploración
+            </label>
+            <div class="mode-switch-pills w-100">
+              <button type="button" class="btn-mode-matte flex-fill justify-content-center"
+                [class.active]="searchType === 'conexiones'"
+                (click)="setSearchMode('conexiones')">
+                <span [data-feather]="'layers'" [size]="13" class="mr-50"></span>
+                Aplicaciones
+                <span class="count-chip ml-50">{{ filteredAplicaciones.length }}</span>
+              </button>
+              <button type="button" class="btn-mode-matte flex-fill justify-content-center"
+                [class.active]="searchType === 'api'"
+                (click)="setSearchMode('api')">
+                <span [data-feather]="'zap'" [size]="13" class="mr-50"></span>
+                Buscar API
+                @if (apisLoaded) {
+                  <span class="count-chip ml-50">{{ rowData.length }}</span>
+                }
+              </button>
             </div>
           </div>
-        }
-        @if (searchType === 'api') {
-          <div class="col-sm-9">
-            <ng-select [items]="rowData" [formControl]="selectCustomSelectedCtrl" bindLabel="funcion" bindValue="id"
-              [searchable]="true" placeholder="Seleccione API" [hideSelected]="false" (change)="LinkRuta($event)"
-              style="height: 40px; border: 1px solid #ccc; border-radius: 4px;">
-              <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
-                <div class="search-result-card-pastel">
-                  <!-- Header: Function Name and Type Badge -->
-                  <div class="search-result-header">
-                    <h5 class="search-result-title">
-                      <span [data-feather]="'code'" [size]="16" class="pastel-icon icon-lg"></span>
-                      {{ item.funcion }}
-                    </h5>
-                    <span class="pastel-badge">
-                      <span [data-feather]="'grid'" [size]="12"></span>
-                      {{ item.tipo }}
+
+          <!-- MODO 1: Controles de Filtro de Aplicaciones -->
+          @if (searchType === 'conexiones') {
+            <!-- Búsqueda Instantánea -->
+            <div class="col-lg-4 col-md-7 col-sm-12">
+              <label class="form-label-matte">
+                <span [data-feather]="'search'" [size]="12" class="mr-25"></span>
+                Buscar Aplicación
+              </label>
+              <div class="matte-input-wrapper">
+                <span class="input-icon-left"><span [data-feather]="'search'" [size]="14"></span></span>
+                <input type="text"
+                  class="form-control matte-input"
+                  placeholder="Nombre, proyecto, rama o base de datos..."
+                  [formControl]="searchTextCtrl" />
+                @if (searchText) {
+                  <button type="button" class="btn-input-clear" (click)="searchTextCtrl.setValue('')" title="Limpiar">
+                    <span [data-feather]="'x'" [size]="13"></span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Combo Motor BD con Iconos Locales -->
+            <div class="col-lg-3 col-md-5 col-sm-6">
+              <label class="form-label-matte">
+                <span [data-feather]="'database'" [size]="12" class="mr-25"></span>
+                Motor Base de Datos
+              </label>
+              <ng-select [items]="dbEnginesFilter"
+                [formControl]="selectedDbCtrl"
+                bindLabel="descripcion"
+                bindValue="id"
+                [clearable]="true"
+                placeholder="Todos los motores"
+                class="ng-select-matte">
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="d-flex align-items-center">
+                    <span class="db-icon-holder db-icon-sm mr-50" [ngClass]="item.matteClass">
+                      <img [src]="item.icon" [alt]="item.descripcion" class="db-svg-icon" />
                     </span>
+                    <span class="font-small-2 font-weight-bold text-slate">{{ item.descripcion }}</span>
                   </div>
-                  <!-- Body: Description -->
-                  <div class="search-result-body">
-                    <p class="search-result-description">
-                      <span [data-feather]="'file-text'" [size]="14" class="pastel-icon icon-sm"></span>
-                      {{ item.descripcion }}
-                    </p>
+                </ng-template>
+                <ng-template ng-label-tmp let-item="item">
+                  <div class="d-inline-flex align-items-center">
+                    <span class="db-icon-holder db-icon-xs mr-50" [ngClass]="item.matteClass">
+                      <img [src]="item.icon" [alt]="item.descripcion" class="db-svg-icon" />
+                    </span>
+                    <span class="font-small-2 font-weight-bold text-slate">{{ item.descripcion }}</span>
                   </div>
-                  <!-- Footer: Application and other details -->
-                  <div class="search-result-footer">
-                    <div class="footer-item">
-                      <span [data-feather]="'box'" [size]="14" class="pastel-icon icon-sm"></span>
-                      App: <strong>{{ item.aplicacion }}</strong>
+                </ng-template>
+              </ng-select>
+            </div>
+
+            <!-- Combo Lenguaje -->
+            <div class="col-lg-2 col-md-4 col-sm-6">
+              <label class="form-label-matte d-flex align-items-center justify-content-between">
+                <span><span [data-feather]="'code'" [size]="12" class="mr-25"></span>Lenguaje</span>
+                @if (hasActiveFilters()) {
+                  <a href="javascript:void(0)" class="text-danger font-small-1 font-weight-bold" (click)="clearFilters()">Limpiar</a>
+                }
+              </label>
+              <ng-select [items]="languageFilters"
+                [formControl]="selectedLangCtrl"
+                bindLabel="descripcion"
+                bindValue="id"
+                [clearable]="true"
+                placeholder="Todos"
+                class="ng-select-matte">
+              </ng-select>
+            </div>
+          }
+
+          <!-- MODO 2: Autocomplete Global de APIs con Virtual Scroll y Carga Lazy -->
+          @if (searchType === 'api') {
+            <div class="col-lg-9 col-md-7 col-sm-12">
+              <label class="form-label-matte d-flex align-items-center justify-content-between">
+                <span>
+                  <span [data-feather]="'terminal'" [size]="12" class="mr-25"></span>
+                  Salto Directo al Laboratorio API (Busca por función, descripción, aplicación o driver)
+                </span>
+                @if (isLoadingApis) {
+                  <span class="text-primary font-small-1 font-weight-bold">Indexando endpoints...</span>
+                } @else {
+                  <span class="text-muted font-small-1">{{ rowData.length }} APIs listas</span>
+                }
+              </label>
+              <ng-select [items]="rowData"
+                [formControl]="selectCustomSelectedCtrl"
+                bindLabel="funcion"
+                [searchable]="true"
+                [clearable]="true"
+                [virtualScroll]="true"
+                [loading]="isLoadingApis"
+                [searchFn]="customApiSearchFn"
+                (open)="ensureApisLoaded()"
+                (change)="LinkRuta($event)"
+                placeholder="Escriba el nombre de la función, descripción o aplicación para abrir su detalle..."
+                class="ng-select-matte">
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="api-autocomplete-item">
+                    <div class="d-flex align-items-center justify-content-between mb-25">
+                      <div class="d-flex align-items-center">
+                        <span class="db-icon-holder db-icon-xs mr-50" [ngClass]="getDbMatteClass(item.driver)">
+                          <img [src]="getDbIcon(item.driver)" alt="DB" class="db-svg-icon" />
+                        </span>
+                        <span class="api-fn-title">{{ item.funcion }}</span>
+                        @if (item.driver) {
+                          <span class="db-engine-pill ml-50" [ngClass]="getDbMatteClass(item.driver)">
+                            {{ item.driver | uppercase }}
+                          </span>
+                        }
+                      </div>
+                      <div class="d-flex align-items-center gap-1">
+                        @if (item.aplicacion) {
+                          <span class="api-app-chip">App: {{ item.aplicacion }}</span>
+                        }
+                        <span class="api-type-chip">{{ item.tipo || 'API' }}</span>
+                      </div>
+                    </div>
+                    <div class="api-fn-desc">
+                      {{ item.descripcion || 'Sin descripción registrada' }}
                     </div>
                   </div>
-                </div>
-              </ng-template>
-            </ng-select>
-          </div>
+                </ng-template>
+              </ng-select>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Estado de Carga -->
+    @if (isLoadingApps) {
+      <div class="matte-loading-box text-center py-3 my-2">
+        <span class="spinner-border spinner-border-sm text-primary mr-50" role="status"></span>
+        <span class="text-muted font-weight-bold font-small-3">Cargando aplicaciones...</span>
+      </div>
+    }
+
+    <!-- Estado Vacío -->
+    @if (!isLoadingApps && filteredAplicaciones.length === 0) {
+      <div class="matte-empty-box text-center py-3 my-2">
+        <div class="empty-icon-circle mb-1 mx-auto">
+          <span [data-feather]="'inbox'" [size]="24"></span>
+        </div>
+        <h6 class="font-weight-bold text-slate mb-25">No se encontraron aplicaciones</h6>
+        <p class="text-muted font-small-2 mb-1">
+          No hay aplicaciones que coincidan con los filtros seleccionados.
+        </p>
+        @if (hasActiveFilters()) {
+          <button type="button" class="btn-pill-matte active" (click)="clearFilters()">
+            Restablecer filtros
+          </button>
         }
       </div>
-    </section>
+    }
 
-    <br>
-
+    <!-- Grid de Tarjetas de Aplicaciones con Vida (Acentos Pastel Mates e Iconos Locales) -->
+    @if (!isLoadingApps && filteredAplicaciones.length > 0) {
       <section id="wishlist" class="grid-view wishlist-items">
-        @for (product of ListaAplicaciones | filter: searchText:'nombre' | slice: (page - 1) * pageSize : page * pageSize; track product) {
-          <div
-            class="card ecommerce-card app-card-minimal">
-            <a [routerLink]="'/tools/applications/' + product.nombre" class="card-link-minimal">
-              <!-- Minimal Header with Icon -->
-              <div class="minimal-header" [ngClass]="{'header-active': product.status === '1', 'header-inactive': product.status === '0'}">
-                <div class="icon-container-minimal">
-                  <span [data-feather]="'package'" [size]="32" class="app-icon-minimal"></span>
+        @for (product of pagedAplicaciones; track product.identificador || product.nombre) {
+          <div class="card app-card-matte" [ngClass]="getDbMatteClass(product.basedatos)">
+            <div class="card-accent-bar"></div>
+            <a [routerLink]="['/tools/applications', product.nombre]" class="card-link-matte">
+              <!-- Cabecera con Vida y Color Mate Suave -->
+              <div class="card-header-matte">
+                <div class="d-flex align-items-center min-w-0">
+                  <div class="db-icon-holder db-icon-card mr-75" [ngClass]="getDbMatteClass(product.basedatos)">
+                    <img [src]="getDbIcon(product.basedatos)" [alt]="product.basedatos || 'DB'" class="db-svg-icon" />
+                  </div>
+                  <div class="min-w-0">
+                    <span class="app-project-tag">{{ product.proyecto || 'APLICACIÓN CORE' }}</span>
+                    <h4 class="app-title-matte text-truncate" [title]="product.nombre">
+                      {{ product.nombre }}
+                    </h4>
+                  </div>
+                </div>
+
+                <span class="status-pill-matte" [ngClass]="isAppActive(product) ? 'status-active' : 'status-inactive'">
+                  <span class="status-dot"></span>
+                  {{ isAppActive(product) ? 'Activa' : 'Inactiva' }}
+                </span>
+              </div>
+
+              <!-- Cuerpo con Metadatos Técnicos -->
+              <div class="card-body-matte">
+                <div class="meta-grid-matte">
+                  <div class="meta-row">
+                    <span class="meta-label">
+                      <span [data-feather]="'database'" [size]="13" class="mr-50"></span>
+                      Motor Base de Datos
+                    </span>
+                    <span class="db-engine-pill" [ngClass]="getDbMatteClass(product.basedatos)">
+                      {{ (product.basedatos || 'N/A') | uppercase }}
+                    </span>
+                  </div>
+
+                  <div class="meta-row">
+                    <span class="meta-label">
+                      <span [data-feather]="'git-branch'" [size]="13" class="mr-50"></span>
+                      Rama / Versión
+                    </span>
+                    <span class="meta-value-mono">
+                      {{ (product.rama || 'main').split(',')[0] }}
+                      @if (product.version || product.VERSION) {
+                        <small class="text-primary font-weight-bold ml-25">v{{ product.version || product.VERSION }}</small>
+                      }
+                    </span>
+                  </div>
+
+                  <div class="meta-row">
+                    <span class="meta-label">
+                      <span [data-feather]="'calendar'" [size]="13" class="mr-50"></span>
+                      Lenguaje / Registro
+                    </span>
+                    <span class="meta-value">
+                      @if (product.lenguaje) {
+                        <span class="lang-chip mr-50">{{ product.lenguaje }}</span>
+                      }
+                      <span>{{ product.fecha | date:'dd MMM yyyy' }}</span>
+                    </span>
+                  </div>
                 </div>
               </div>
-              <!-- Card Content -->
-              <div class="card-body-minimal">
-                <!-- Status Badge Minimal -->
-                <div class="status-row">
-                  <span class="status-dot" [ngClass]="{'dot-active': product.status === '1', 'dot-inactive': product.status === '0'}"></span>
-                  <span class="status-text">{{ product.status === '1' ? 'Active' : 'Inactive' }}</span>
-                </div>
-                <!-- App Name -->
-                <h3 class="app-title-minimal">{{ product.nombre }}</h3>
-                <!-- Details List -->
-                <div class="details-list">
-                  <div class="detail-item">
-                    <span [data-feather]="'database'" [size]="14" class="detail-icon"></span>
-                    <span class="detail-label">Database:</span>
-                    <span class="detail-value">{{ product.basedatos }}</span>
-                  </div>
-                  <div class="detail-item">
-                    <span [data-feather]="'calendar'" [size]="14" class="detail-icon"></span>
-                    <span class="detail-label">Creado:</span>
-                    <span class="detail-value">{{ product.fecha | date:'MMM dd, yyyy' }}</span>
-                  </div>
-                  <div class="detail-item">
-                    <span [data-feather]="'git-branch'" [size]="14" class="detail-icon"></span>
-                    <span class="detail-label">Versión:</span>
-                    <span class="detail-value">{{ product.rama || 'main' }}</span>
-                  </div>
-                </div>
-                <!-- Action Footer -->
-                <div class="card-footer-minimal">
-                  <span class="view-link">View Details</span>
-                  <span [data-feather]="'arrow-right'" [size]="16" class="arrow-icon"></span>
-                </div>
+
+              <!-- Pie de Acción Directa -->
+              <div class="card-footer-matte">
+                <span class="footer-action-text">Explorar Drivers y APIs</span>
+                <span class="footer-arrow-box">
+                  <span [data-feather]="'arrow-right'" [size]="15"></span>
+                </span>
               </div>
             </a>
           </div>
         }
       </section>
 
-      <br><br>
-
-      <section id="ecommerce-pagination">
-        <div class="row">
-          <div class="col-sm-12">
-            <div class="d-flex justify-content-center">
-              <ngb-pagination [collectionSize]="(ListaAplicaciones | filter: searchText:'nombre').length" [(page)]="page"
-                [pageSize]="pageSize" [maxSize]="5" [rotate]="true"
-                aria-label="Pagination">
-
-                <!-- Primer página -->
-                <ng-template ngbPaginationFirst>
-                  <span data-feather="chevrons-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-
-                <!-- Página anterior -->
-                <ng-template ngbPaginationPrevious>
-                  <span data-feather="chevron-left" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-
-                <!-- Números de página (personalizado para quitar "current") -->
-                <ng-template ngbPaginationNumber let-page>
-                  {{ page }}
-                </ng-template>
-
-                <!-- Página siguiente -->
-                <ng-template ngbPaginationNext>
-                  <span data-feather="chevron-right" class="font-weight-bolder" style="width: 18px; height: 18px;"></span>
-                </ng-template>
-
-                <!-- Última página -->
-                <ng-template ngbPaginationLast>
-                  <span data-feather="chevrons-right" class="font-weight-bolder"
-                  style="width: 18px; height: 18px;"></span>
-                </ng-template>
-              </ngb-pagination>
-            </div>
-          </div>
+      <!-- Barra Inferior de Paginación y Resumen Compacto al Final -->
+      <div class="matte-summary-footer mt-2">
+        <div class="summary-stats-group">
+          <span class="summary-title">
+            <span [data-feather]="'bar-chart-2'" [size]="14" class="mr-50"></span>
+            Resumen del Ecosistema:
+          </span>
+          <span class="summary-item">
+            Mostrando <strong>{{ pagedAplicaciones.length }}</strong> de <strong>{{ filteredAplicaciones.length }}</strong> filtradas
+          </span>
+          <span class="summary-sep">•</span>
+          <span class="summary-item text-sage">
+            <strong>{{ totalActivas }}</strong> Activas
+          </span>
+          <span class="summary-sep">•</span>
+          <span class="summary-item text-sand">
+            <strong>{{ totalInactivas }}</strong> Inactivas
+          </span>
+          <span class="summary-sep">•</span>
+          <span class="summary-item">
+            Total: <strong>{{ totalAplicaciones }}</strong>
+          </span>
         </div>
-      </section>
 
-    </div>
+        <div class="d-flex align-items-center gap-1">
+          <select class="form-control matte-select-native py-0" style="width: 115px; height: 32px !important;" [formControl]="pageSizeCtrl">
+            <option [ngValue]="8">8 / pág</option>
+            <option [ngValue]="12">12 / pág</option>
+            <option [ngValue]="24">24 / pág</option>
+          </select>
+
+          @if (filteredAplicaciones.length > pageSize) {
+            <ngb-pagination [collectionSize]="filteredAplicaciones.length"
+              [(page)]="page"
+              [pageSize]="pageSize"
+              [maxSize]="5"
+              [rotate]="true"
+              size="sm"
+              class="mb-0"
+              aria-label="Pagination">
+              <ng-template ngbPaginationFirst>
+                <span data-feather="chevrons-left" style="width: 14px; height: 14px;"></span>
+              </ng-template>
+              <ng-template ngbPaginationPrevious>
+                <span data-feather="chevron-left" style="width: 14px; height: 14px;"></span>
+              </ng-template>
+              <ng-template ngbPaginationNumber let-p>{{ p }}</ng-template>
+              <ng-template ngbPaginationNext>
+                <span data-feather="chevron-right" style="width: 14px; height: 14px;"></span>
+              </ng-template>
+              <ng-template ngbPaginationLast>
+                <span data-feather="chevrons-right" style="width: 14px; height: 14px;"></span>
+              </ng-template>
+            </ngb-pagination>
+          }
+        </div>
+      </div>
+    }
+
   </div>
+</div>

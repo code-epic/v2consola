@@ -1,437 +1,784 @@
 <div class="content-wrapper container-xxl p-0">
-  <app-content-header [contentHeader]="contentHeader"></app-content-header>
   <div class="content-body">
-    <section class="app-ecommerce-details">
-      <div class="card">
-        <div class="card-body">
-          <!-- Header Section -->
-          <div class="row mb-3">
-            <div class="col-12">
-              <div class="api-header-pastel">
-                <div class="api-icon-container-pastel">
-                  <span [data-feather]="'cpu'" [size]="20" class="api-icon"></span>
+    <app-content-header [contentHeader]="contentHeader"></app-content-header>
+
+    <!-- Barra Superior Compacta: Flujo Transversal + Indicadores en Barra + Acciones -->
+    <div class="tools-flow-strip mb-150">
+      <div class="flow-steps-group">
+        <a routerLink="/tools/applications" class="flow-step-item done clickable" ngbTooltip="Volver a Aplicaciones">
+          <span class="step-num">01</span>
+          <span class="step-label">Aplicaciones</span>
+        </a>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <a [routerLink]="['/tools/applications', url]" class="flow-step-item done clickable" ngbTooltip="Volver a Drivers de {{ url }}">
+          <span class="step-num">02</span>
+          <span class="step-label">Drivers: {{ url || 'App' }}</span>
+        </a>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <a [routerLink]="['/tools/applications/api-list', urlControl]" class="flow-step-item done clickable" ngbTooltip="Volver al Catálogo de APIs">
+          <span class="step-num">03</span>
+          <span class="step-label">Catálogo ({{ driversAPP }})</span>
+        </a>
+        <span class="flow-chevron"><span [data-feather]="'chevron-right'" [size]="14"></span></span>
+        <div class="flow-step-item active">
+          <span class="step-num">04</span>
+          <span class="step-label">{{ xAPI.funcion || rutaURL }}</span>
+        </div>
+      </div>
+
+      <!-- Indicadores Compactos en la Barra Superior -->
+      <div class="flow-actions-group">
+        <div class="inline-metrics-bar">
+          <span class="metric-chip" [ngClass]="xAPI.estatus ? 'chip-active active' : 'chip-inactive active'">
+            <span class="chip-dot"></span>
+            <strong class="chip-val">{{ xAPI.estatus ? 'ACTIVO' : 'INACTIVO' }}</strong>
+          </span>
+          <span class="metric-chip chip-total active">
+            <span class="chip-label">Entorno</span>
+            <strong class="chip-val">{{ (xAPI.entorno || 'CALIDAD') | uppercase }}</strong>
+          </span>
+          <span class="metric-chip chip-apis">
+            <span class="chip-label">Ver</span>
+            <strong class="chip-val">v{{ xAPI.version || '1.0.0' }}</strong>
+          </span>
+        </div>
+
+        <a [routerLink]="['/tools/applications/api-list', urlControl]" class="btn-flow-link">
+          <span [data-feather]="'arrow-left'" [size]="13" class="mr-50"></span>
+          Catálogo
+        </a>
+        <button type="button" class="btn-flow-refresh" (click)="ConsultarAPI(rutaURL)" [disabled]="isLoadingApi"
+          ngbTooltip="Actualizar datos de la API">
+          <span [data-feather]="'refresh-cw'" [size]="13"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hero Banner con Vida, Espaciado Amplio, Icono Local BD y Autocomplete Lazy -->
+    <div class="api-hero-card mb-2">
+      <div class="api-hero-accent"></div>
+      <div class="api-hero-body">
+        <div class="row align-items-center g-3">
+          <!-- Identidad del Endpoint -->
+          <div class="col-lg-7 col-md-12">
+            <div class="d-flex align-items-start">
+              <div class="hero-db-emblem mr-125" [ngClass]="getDbMatteClass(xAPI.driver || driversAPP)">
+                <img [src]="getDbIcon(xAPI.driver || driversAPP)" alt="Database Engine" />
+              </div>
+
+              <div class="min-w-0 flex-grow-1">
+                <div class="d-flex align-items-center flex-wrap gap-1 mb-50">
+                  <span class="hero-eyebrow">{{ url || 'APLICACIÓN' }} · {{ (xAPI.driver || driversAPP || 'DRIVER') | uppercase }}</span>
+                  @if (xAPI.categoria || xAPI.tipo) {
+                    <span class="hero-badge badge-violet">{{ xAPI.categoria || xAPI.tipo }}</span>
+                  }
+                  @if (xAPI.metodo) {
+                    <span class="hero-badge badge-sky">{{ xAPI.metodo | uppercase }}</span>
+                  }
+                  <span class="hero-badge" [ngClass]="xAPI.estatus ? 'badge-emerald' : 'badge-amber'">
+                    {{ xAPI.estatus ? '● En Línea' : '○ Pausado' }}
+                  </span>
                 </div>
-                <div class="api-title-container">
-                  <div class="d-flex align-items-center flex-wrap mb-1">
-                    <h2 class="api-title mb-0 mr-2">{{ xAPI.funcion }}</h2>
-                    <div class="badge badge-pastel-primary mr-1">{{ xAPI.categoria }}</div>
-                    @if (xAPI.metodo) {
-                      <div class="badge badge-pastel-info">{{ xAPI.metodo }}</div>
-                    }
-                  </div>
-                  <p class="api-subtitle mb-1">{{ xAPI.descripcion || xAPI.driver }}</p>
-                  <div class="api-meta d-flex align-items-center text-muted flex-wrap">
-                    <span class="d-flex align-items-center mr-3 mb-1">
-                      <span [data-feather]="'user'" [size]="12" class="mr-1"></span>
-                      <small>{{ xAPI.autor?.split('|')[1] || xAPI.autor }}</small>
-                    </span>
-                    <span class="d-flex align-items-center mb-1">
-                      <span [data-feather]="'calendar'" [size]="12" class="mr-1"></span>
-                      <small>{{ xAPI.fecha | date:'medium' }}</small>
-                    </span>
-                  </div>
+
+                <div class="d-flex align-items-center flex-wrap gap-1 mb-50">
+                  <h2 class="hero-api-title mb-0">{{ xAPI.funcion || rutaURL }}</h2>
+                  <button type="button" class="btn-matte-copy"
+                    (click)="copyToClipboard(xAPI.funcion || rutaURL)" ngbTooltip="Copiar nombre de función">
+                    <span [data-feather]="'copy'" [size]="12"></span>
+                    <span>Copiar</span>
+                  </button>
+                </div>
+
+                <div class="hero-meta-strip">
+                  <span class="meta-pill">
+                    <span [data-feather]="'user'" [size]="12" class="mr-25 text-indigo"></span>
+                    {{ xAPI.autor?.split('|')[1] || xAPI.autor || 'Sandra Core' }}
+                  </span>
+                  <span class="meta-pill">
+                    <span [data-feather]="'calendar'" [size]="12" class="mr-25 text-indigo"></span>
+                    {{ (xAPI.fecha | date:'dd MMM yyyy, HH:mm') || 'Registro activo' }}
+                  </span>
+                  <span class="meta-pill">
+                    <span [data-feather]="'terminal'" [size]="12" class="mr-25 text-indigo"></span>
+                    <code>{{ xentorno || '/devel/api/crud' }}</code>
+                  </span>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Main Content Row -->
-          <div class="row">
-            <!-- Left Column: Details & Config -->
-            <div class="col-lg-8">
-              <!-- Status Cards Row -->
-              <div class="row mb-3">
-                <div class="col-md-4 mb-2">
-                  <div class="stat-card-pastel stat-card-status-pastel"
-                    [ngClass]="{'active': xAPI.estatus, 'inactive': !xAPI.estatus}">
-                    <div class="stat-icon-pastel">
-                      <span [data-feather]="'check-circle'" [size]="20"></span>
+          <!-- Buscador Autocomplete Lazy para Cambiar de API en 1 Clic -->
+          <div class="col-lg-5 col-md-12 mt-1 mt-lg-0">
+            <div class="hero-switcher-box">
+              <label class="form-label-matte d-flex align-items-center justify-content-between mb-50">
+                <span>
+                  <span [data-feather]="'zap'" [size]="12" class="mr-25 text-indigo"></span>
+                  Cambio Rápido de API ({{ driversAPP }})
+                </span>
+                @if (driverApisLoaded) {
+                  <span class="badge-count-indigo">{{ driverApis.length }} endpoints</span>
+                }
+              </label>
+              <ng-select [items]="driverApis"
+                [formControl]="quickSwitchApiCtrl"
+                bindLabel="funcion"
+                [searchable]="true"
+                [clearable]="true"
+                [virtualScroll]="true"
+                [loading]="isLoadingDriverApis"
+                [searchFn]="customApiSearchFn"
+                (open)="ensureDriverApisLoaded()"
+                (change)="onQuickSwitchApi($event)"
+                placeholder="Buscar y saltar a otra API de este driver..."
+                class="ng-select-matte">
+                <ng-template ng-option-tmp let-item="item">
+                  <div class="api-autocomplete-item">
+                    <div class="d-flex align-items-center justify-content-between mb-25">
+                      <span class="api-fn-title">{{ item.funcion }}</span>
+                      <span class="api-app-chip">{{ (item.entorno || 'CALIDAD') | uppercase }}</span>
                     </div>
-                    <div class="stat-info">
-                      <small>Estatus</small>
-                      <strong>{{ xAPI.estatus ? 'ACTIVO' : 'INACTIVO' }}</strong>
-                    </div>
+                    <div class="api-fn-desc">{{ item.descripcion || 'Sin descripción' }}</div>
                   </div>
-                </div>
-                <div class="col-md-4 mb-2">
-                  <div class="stat-card-pastel stat-card-version-pastel">
-                    <div class="stat-icon-pastel">
-                      <span [data-feather]="'git-branch'" [size]="20"></span>
-                    </div>
-                    <div class="stat-info">
-                      <small>Versión</small>
-                      <strong>{{ xAPI.version }}</strong>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-4 mb-2">
-                  <div class="stat-card-pastel stat-card-env-pastel">
-                    <div class="stat-icon-pastel">
-                      <span [data-feather]="'server'" [size]="20"></span>
-                    </div>
-                    <div class="stat-info">
-                      <small>Entorno</small>
-                      <strong>{{ xAPI.entorno | uppercase }}</strong>
-                    </div>
-                  </div>
+                </ng-template>
+              </ng-select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Barra de Navegación por Secciones (Lazy Tabs con Espaciado Cómodo) -->
+        <div class="hero-nav-bar">
+          <div class="hero-tabs-group">
+            <button type="button" class="hero-tab-btn"
+              [class.active]="activeSection === 'resumen'"
+              (click)="setSection('resumen')">
+              <span [data-feather]="'layers'" [size]="15" class="mr-50"></span>
+              Resumen & Arquitectura
+            </button>
+            <button type="button" class="hero-tab-btn"
+              [class.active]="activeSection === 'esquema'"
+              (click)="setSection('esquema')">
+              <span [data-feather]="'map'" [size]="15" class="mr-50"></span>
+              Mapa de Entrada JSON
+            </button>
+            <button type="button" class="hero-tab-btn"
+              [class.active]="activeSection === 'laboratorio'"
+              (click)="setSection('laboratorio')">
+              <span [data-feather]="'terminal'" [size]="15" class="mr-50"></span>
+              Laboratorio en Vivo
+            </button>
+            <button type="button" class="hero-tab-btn"
+              [class.active]="activeSection === 'codigo'"
+              (click)="setSection('codigo')">
+              <span [data-feather]="'code'" [size]="15" class="mr-50"></span>
+              Código TypeScript / JS
+            </button>
+          </div>
+
+          <div class="d-flex align-items-center flex-wrap gap-1">
+            @if (xAPI.entorno != 'produccion') {
+              <a [routerLink]="['/tools/applications/update-api', xAPI.funcion, urlControl]"
+                class="btn-hero-outline">
+                <span [data-feather]="'edit-3'" [size]="14" class="mr-50"></span>
+                Editar Configuración
+              </a>
+            }
+            <button type="button" class="btn-hero-primary"
+              (click)="ModalProbar(ModalProbarApi, xAPI)">
+              <span [data-feather]="'play-circle'" [size]="14" class="mr-50"></span>
+              Modal de Pruebas
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- SECCIÓN 1 (LAZY): RESUMEN, ARQUITECTURA Y PANEL DE CONTROL          -->
+    <!-- =================================================================== -->
+    @if (activeSection === 'resumen') {
+      <div class="row">
+        <!-- Columna Principal (8 cols) -->
+        <div class="col-lg-8">
+          <!-- Descripción Funcional con Acento Violeta -->
+          <div class="api-section-card mb-2">
+            <div class="section-card-header">
+              <div class="d-flex align-items-center">
+                <span class="section-icon-box box-violet mr-75">
+                  <span [data-feather]="'file-text'" [size]="16"></span>
+                </span>
+                <div>
+                  <h6 class="section-title mb-0">Descripción Funcional</h6>
+                  <small class="section-subtitle">Propósito y alcance operativo del endpoint</small>
                 </div>
               </div>
-
-              <!-- Description -->
-              <div class="description-panel-pastel card-pastel mb-3">
-                <div class="card-header-pastel">
-                  <span [data-feather]="'file-text'" [size]="18" class="header-icon"></span>
-                  <h5 class="mb-0">Descripción</h5>
-                </div>
-                <div class="card-body-pastel">
-                  <div class="markdown-container">
-                    <div [innerHTML]="xAPI.descripcion || '*No hay descripción disponible para esta API.*'"></div>
-                  </div>
-                </div>
+              <span class="hero-badge badge-violet">v{{ xAPI.version || '1.0.0' }}</span>
+            </div>
+            <div class="section-card-body">
+              <div class="api-description-callout"
+                [innerHTML]="xAPI.descripcion || 'No hay descripción funcional registrada para este endpoint.'">
               </div>
+            </div>
+          </div>
 
-              <!-- Technical Details & Configuration Row -->
-              <div class="row">
-                <!-- Technical Details -->
-                <div class="col-md-6 mb-3">
-                  <div class="card-pastel h-100">
-                    <div class="card-header-pastel">
-                      <span [data-feather]="'settings'" [size]="18" class="header-icon"></span>
-                      <h5 class="mb-0">Detalles Técnicos</h5>
-                    </div>
-                    <div class="card-body-pastel p-0">
-                      <ul class="config-list-pastel">
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'hard-drive'" [size]="16" class="icon-pastel-purple"></span>
-                            <span>Driver</span>
-                          </span>
-                          <span class="item-value">{{ xAPI.driver }}</span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'globe'" [size]="16" class="icon-pastel-blue"></span>
-                            <span>Protocolo</span>
-                          </span>
-                          <span class="item-value">{{ xAPI.protocolo }}</span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'anchor'" [size]="16" class="icon-pastel-orange"></span>
-                            <span>Puertos</span>
-                          </span>
-                          <span class="item-value">{{ xAPI.puertohttp }} / {{ xAPI.puertohttps }}</span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'users'" [size]="16" class="icon-pastel-green"></span>
-                            <span>Consumidores</span>
-                          </span>
-                          <span class="item-value">{{ xAPI.consumidores }}</span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'alert-circle'" [size]="16" class="icon-pastel-red"></span>
-                            <span>Prioridad</span>
-                          </span>
-                          <span class="item-value">{{ xAPI.prioridad }}</span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'clock'" [size]="16" class="icon-pastel-orange"></span>
-                            <span>Duración</span>
-                          </span>
-                          <span class="item-value">{{ xAPI.tiempoduracion }}ms</span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'tool'" [size]="16" class="icon-pastel-purple"></span>
-                            <span>Funcionalidad</span>
-                          </span>
-                          <span class="item-value">{{ xAPI.funcionalidad }}</span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'zap'" [size]="16" class="icon-pastel-yellow"></span>
-                            <span>Cache</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.cache === 1 ? 'active' : 'inactive'">
-                            @if (xAPI.cache === 1) {
-                              <span [data-feather]="'check'" [size]="16"></span>
-                            }
-                            @if (xAPI.cache !== 1) {
-                              <span [data-feather]="'x'" [size]="16"></span>
-                            }
-                          </span>
-                        </li>
-                      </ul>
+          <!-- Especificaciones Técnicas & Políticas SRE (2 Columnas Espaciosas) -->
+          <div class="row match-height">
+            <!-- Especificaciones de Red y Motor -->
+            <div class="col-md-6 mb-2">
+              <div class="api-section-card h-100">
+                <div class="section-card-header">
+                  <div class="d-flex align-items-center">
+                    <span class="section-icon-box box-sky mr-75">
+                      <span [data-feather]="'cpu'" [size]="16"></span>
+                    </span>
+                    <div>
+                      <h6 class="section-title mb-0">Arquitectura & Red</h6>
+                      <small class="section-subtitle">Parámetros de conexión y transporte</small>
                     </div>
                   </div>
                 </div>
-
-                <!-- Configuration -->
-                <div class="col-md-6 mb-3">
-                  <div class="card-pastel h-100">
-                    <div class="card-header-pastel">
-                      <span [data-feather]="'sliders'" [size]="18" class="header-icon"></span>
-                      <h5 class="mb-0">Configuración</h5>
-                    </div>
-                    <div class="card-body-pastel p-0">
-                      <ul class="config-list-pastel">
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'file-text'" [size]="16" class="icon-pastel-blue"></span>
-                            <span>Logs</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.logs ? 'active' : 'inactive'">
-                            @if (xAPI.logs) {
-                              <div>
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                            }
-                            @if (!xAPI.logs) {
-                              <div>
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            }
-                          </span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'activity'" [size]="16" class="icon-pastel-green"></span>
-                            <span>Traza</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.traza ? 'active' : 'inactive'">
-                            @if (xAPI.traza) {
-                              <div>
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                            }
-                            @if (!xAPI.traza) {
-                              <div>
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            }
-                          </span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'layers'" [size]="16" class="icon-pastel-purple"></span>
-                            <span>Concurrencia</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.concurrencia ? 'active' : 'inactive'">
-                            @if (xAPI.concurrencia) {
-                              <div>
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                            }
-                            @if (!xAPI.concurrencia) {
-                              <div>
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            }
-                            <!-- <span *ngIf="xAPI.concurrencia" [data-feather]="'check'" [size]="16"></span>
-                            <span *ngIf="!xAPI.concurrencia" [data-feather]="'x'" [size]="16"></span> -->
-                          </span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'arrow-right-circle'" [size]="16" class="icon-pastel-orange"></span>
-                            <span>Migrar</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.migrar ? 'active' : 'inactive'">
-                            @if (xAPI.migrar) {
-                              <div>
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                            }
-                            @if (!xAPI.migrar) {
-                              <div>
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            }
-                            <!-- <span *ngIf="xAPI.migrar" [data-feather]="'check'" [size]="16"></span>
-                            <span *ngIf="!xAPI.migrar" [data-feather]="'x'" [size]="16"></span> -->
-                          </span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'database'" [size]="16" class="icon-pastel-purple"></span>
-                            <span>Relacional</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.relacional ? 'active' : 'inactive'">
-                            @if (xAPI.relacional) {
-                              <div>
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                            }
-                            @if (!xAPI.relacional) {
-                              <div>
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            }
-                            <!-- <span *ngIf="xAPI.relacional" [data-feather]="'check'" [size]="16"></span>
-                            <span *ngIf="!xAPI.relacional" [data-feather]="'x'" [size]="16"></span> -->
-                          </span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'corner-down-left'" [size]="16" class="icon-pastel-blue"></span>
-                            <span>Retorna</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.retorna ? 'active' : 'inactive'">
-                            @if (xAPI.retorna) {
-                              <div>
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                            }
-                            @if (!xAPI.retorna) {
-                              <div>
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            }
-                          </span>
-                        </li>
-                        <li class="config-item-pastel">
-                          <span class="item-label-pastel">
-                            <span [data-feather]="'command'" [size]="16" class="icon-pastel-pink"></span>
-                            <span>Totalizar</span>
-                          </span>
-                          <span class="item-status-pastel" [ngClass]="xAPI.totalizar === 'S' ? 'active' : 'inactive'">
-                            @if (xAPI.totalizar === 'S') {
-                              <div>
-                                <span [data-feather]="'check'" [size]="16"></span>
-                              </div>
-                            }
-                            @if (xAPI.totalizar !== 'S') {
-                              <div>
-                                <span [data-feather]="'x'" [size]="16"></span>
-                              </div>
-                            }
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                <div class="section-card-body p-0">
+                  <ul class="lively-spec-list">
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-violet"><span [data-feather]="'hard-drive'" [size]="14"></span></span>
+                        <span class="spec-name">Motor / Driver</span>
+                      </div>
+                      <span class="db-engine-pill" [ngClass]="getDbMatteClass(xAPI.driver || driversAPP)">
+                        {{ (xAPI.driver || driversAPP || 'DB') | uppercase }}
+                      </span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-sky"><span [data-feather]="'globe'" [size]="14"></span></span>
+                        <span class="spec-name">Protocolo</span>
+                      </div>
+                      <span class="spec-badge-neutral">{{ xAPI.protocolo || 'HTTPS' }}</span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-amber"><span [data-feather]="'anchor'" [size]="14"></span></span>
+                        <span class="spec-name">Puertos (HTTP / HTTPS)</span>
+                      </div>
+                      <span class="spec-mono-chip">{{ xAPI.puertohttp || 80 }} / {{ xAPI.puertohttps || 443 }}</span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-emerald"><span [data-feather]="'users'" [size]="14"></span></span>
+                        <span class="spec-name">Consumidores Concurrentes</span>
+                      </div>
+                      <span class="spec-badge-neutral">{{ xAPI.consumidores ?? 0 }}</span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-rose"><span [data-feather]="'alert-circle'" [size]="14"></span></span>
+                        <span class="spec-name">Nivel de Prioridad</span>
+                      </div>
+                      <span class="spec-badge-neutral">{{ xAPI.prioridad || 'Estándar' }}</span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-amber"><span [data-feather]="'clock'" [size]="14"></span></span>
+                        <span class="spec-name">Tiempo de Duración</span>
+                      </div>
+                      <span class="spec-mono-chip">{{ xAPI.tiempoduracion || 0 }} ms</span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-violet"><span [data-feather]="'tool'" [size]="14"></span></span>
+                        <span class="spec-name">Funcionalidad</span>
+                      </div>
+                      <span class="spec-badge-neutral">{{ xAPI.funcionalidad || 'General' }}</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
 
-            <!-- Right Column: Control Panel -->
-            <div class="col-lg-4">
-              <div class="control-panel-pastel-sticky">
-                <div class="card-pastel">
-                  <div class="card-header-pastel-primary">
-                    <span [data-feather]="'command'" [size]="18" class="header-icon-white"></span>
-                    <h5 class="mb-0">Panel de Control</h5>
-                  </div>
-                  <div class="card-body-pastel">
-                    <!-- Lifecycle Actions -->
-                    <div class="action-section-pastel mb-3">
-                      <div class="section-label-pastel">
-                        <span [data-feather]="'git-merge'" [size]="14"></span>
-                        <span>Ciclo de Vida</span>
-                      </div>
-                      <div class="action-buttons-pastel">
-                        @if (xAPI.entorno == 'desarrollo') {
-                          <button type="button" class="btn-pastel btn-pastel-primary"
-                            (click)="promover('calidad', xAPI.funcion, 'promover')"
-                            rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'chevrons-up'" [size]="18"></span>
-                            </span>
-                            <span>Promover a Calidad</span>
-                          </button>
-                        }
-                        @if (xAPI.entorno == 'calidad') {
-                          <button type="button" class="btn-pastel btn-pastel-success"
-                            (click)="promover('produccion', xAPI.funcion, 'instalar')" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'upload-cloud'" [size]="18"></span>
-                            </span>
-                            <span>Instalar en Producción</span>
-                          </button>
-                        }
-                        @if (xAPI.entorno != 'desarrollo') {
-                          <button type="button" class="btn-pastel btn-pastel-danger"
-                            (click)="promover('desarrollo', xAPI.funcion, 'reversar')" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'rotate-ccw'" [size]="18"></span>
-                            </span>
-                            <span>Reversar a Desarrollo</span>
-                          </button>
-                        }
-                      </div>
-                    </div>
-
-                    <!-- Operations -->
-                    <div class="action-section-pastel mb-3">
-                      <div class="section-label-pastel">
-                        <span [data-feather]="'tool'" [size]="14"></span>
-                        <span>Operaciones</span>
-                      </div>
-                      <div class="action-buttons-pastel">
-                        @if (xAPI.entorno != 'produccion') {
-                          <button type="button" class="btn-pastel btn-pastel-warning"
-                            [routerLink]="'/tools/applications/update-api/'+xAPI.funcion+ '/' + urlControl" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'edit'" [size]="18"></span>
-                            </span>
-                            <span>Modificar API</span>
-                          </button>
-                        }
-                        @if (xAPI.entorno != 'produccion') {
-                          <button type="button" class="btn-pastel btn-pastel-info"
-                            (click)="ModalProbar(ModalProbarApi,xAPI)" rippleEffect>
-                            <span class="btn-icon-pastel">
-                              <span [data-feather]="'play-circle'" [size]="18"></span>
-                            </span>
-                            <span>{{xAPI.entorno == 'calidad' ? 'Probar Versión' : 'Probar API'}}</span>
-                          </button>
-                        }
-                      </div>
-                    </div>
-
-                    <!-- Navigation -->
-                    <div class="action-section-pastel">
-                      <div class="action-buttons-pastel">
-                        <button [routerLink]="'/tools/applications/api-list/' + urlControl"
-                          class="btn-pastel btn-pastel-secondary" rippleEffect>
-                          <span class="btn-icon-pastel">
-                            <span [data-feather]="'arrow-left'" [size]="18"></span>
-                          </span>
-                          <span>Volver al Listado</span>
-                        </button>
-                      </div>
+            <!-- Políticas de Ejecución SRE -->
+            <div class="col-md-6 mb-2">
+              <div class="api-section-card h-100">
+                <div class="section-card-header">
+                  <div class="d-flex align-items-center">
+                    <span class="section-icon-box box-emerald mr-75">
+                      <span [data-feather]="'sliders'" [size]="16"></span>
+                    </span>
+                    <div>
+                      <h6 class="section-title mb-0">Políticas & Capacidades</h6>
+                      <small class="section-subtitle">Comportamiento en tiempo de ejecución</small>
                     </div>
                   </div>
+                </div>
+                <div class="section-card-body p-0">
+                  <ul class="lively-spec-list">
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-amber"><span [data-feather]="'zap'" [size]="14"></span></span>
+                        <span class="spec-name">Caché de Respuesta</span>
+                      </div>
+                      <span class="policy-pill" [ngClass]="xAPI.cache === 1 ? 'pill-on' : 'pill-off'">
+                        <span class="pill-dot"></span>
+                        {{ xAPI.cache === 1 ? 'Habilitado' : 'Inactivo' }}
+                      </span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-sky"><span [data-feather]="'file-text'" [size]="14"></span></span>
+                        <span class="spec-name">Logs de Auditoría</span>
+                      </div>
+                      <span class="policy-pill" [ngClass]="xAPI.logs ? 'pill-on' : 'pill-off'">
+                        <span class="pill-dot"></span>
+                        {{ xAPI.logs ? 'Habilitado' : 'Inactivo' }}
+                      </span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-emerald"><span [data-feather]="'activity'" [size]="14"></span></span>
+                        <span class="spec-name">Traza SRE</span>
+                      </div>
+                      <span class="policy-pill" [ngClass]="xAPI.traza ? 'pill-on' : 'pill-off'">
+                        <span class="pill-dot"></span>
+                        {{ xAPI.traza ? 'Habilitado' : 'Inactivo' }}
+                      </span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-violet"><span [data-feather]="'layers'" [size]="14"></span></span>
+                        <span class="spec-name">Concurrencia</span>
+                      </div>
+                      <span class="policy-pill" [ngClass]="xAPI.concurrencia ? 'pill-on' : 'pill-off'">
+                        <span class="pill-dot"></span>
+                        {{ xAPI.concurrencia ? 'Habilitado' : 'Inactivo' }}
+                      </span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-amber"><span [data-feather]="'arrow-right-circle'" [size]="14"></span></span>
+                        <span class="spec-name">Migración Activa</span>
+                      </div>
+                      <span class="policy-pill" [ngClass]="xAPI.migrar ? 'pill-on' : 'pill-off'">
+                        <span class="pill-dot"></span>
+                        {{ xAPI.migrar ? 'Habilitado' : 'Inactivo' }}
+                      </span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-violet"><span [data-feather]="'database'" [size]="14"></span></span>
+                        <span class="spec-name">Modelo Relacional</span>
+                      </div>
+                      <span class="policy-pill" [ngClass]="xAPI.relacional ? 'pill-on' : 'pill-off'">
+                        <span class="pill-dot"></span>
+                        {{ xAPI.relacional ? 'Relacional SQL' : 'NoSQL / Colección' }}
+                      </span>
+                    </li>
+                    <li>
+                      <div class="spec-left">
+                        <span class="spec-mini-icon icon-sky"><span [data-feather]="'corner-down-left'" [size]="14"></span></span>
+                        <span class="spec-name">Retorna Payload</span>
+                      </div>
+                      <span class="policy-pill" [ngClass]="xAPI.retorna ? 'pill-on' : 'pill-off'">
+                        <span class="pill-dot"></span>
+                        {{ xAPI.retorna ? 'Sí Retorna' : 'Sin Retorno' }}
+                      </span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Full Width Input Map Section -->
-          <div class="row mt-3">
-            <div class="col-12">
-              <div class="input-map-panel-pastel card-pastel">
-                <div class="card-header-pastel">
-                  <span [data-feather]="'map'" [size]="18" class="header-icon"></span>
-                  <h5 class="mb-0">Mapa de Entrada</h5>
+          <!-- Mapa de Entrada con Cabecera Estilo Editor -->
+          <div class="api-section-card mb-2">
+            <div class="section-card-header">
+              <div class="d-flex align-items-center">
+                <span class="section-icon-box box-amber mr-75">
+                  <span [data-feather]="'map'" [size]="16"></span>
+                </span>
+                <div>
+                  <h6 class="section-title mb-0">Mapa de Entrada (Esquema JSON)</h6>
+                  <small class="section-subtitle">Estructura de parámetros esperados por el endpoint</small>
                 </div>
-                <div class="card-body-pastel">
-                  <div class="json-viewer-container">
-                    <div id="xrsx"></div>
+              </div>
+              <div class="d-flex align-items-center gap-1">
+                <button type="button" class="btn-matte-copy" (click)="copiarEntradasJson()">
+                  <span [data-feather]="'copy'" [size]="12"></span>
+                  <span>Copiar JSON</span>
+                </button>
+                <button type="button" class="btn-hero-primary py-25 px-75"
+                  (click)="setSection('laboratorio'); cargarPlantillaEntrada()">
+                  <span [data-feather]="'play'" [size]="12" class="mr-25"></span>
+                  Probar en Laboratorio
+                </button>
+              </div>
+            </div>
+            <div class="section-card-body">
+              <div class="dark-json-console">
+                <div class="console-topbar">
+                  <div class="console-dots">
+                    <span class="dot dot-red"></span>
+                    <span class="dot dot-yellow"></span>
+                    <span class="dot dot-green"></span>
                   </div>
+                  <span class="console-label">schema://{{ xAPI.funcion || rutaURL }}/entradas.json</span>
+                </div>
+                <div class="console-body">
+                  <div id="xrsx"></div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Columna Derecha: Panel de Control & Ciclo de Vida (4 cols) -->
+        <div class="col-lg-4">
+          <div class="control-panel-card mb-2">
+            <div class="control-panel-header">
+              <div class="d-flex align-items-center">
+                <div class="control-header-icon mr-75">
+                  <span [data-feather]="'command'" [size]="18"></span>
+                </div>
+                <div>
+                  <h6 class="mb-0 text-white font-weight-bolder">Panel de Control</h6>
+                  <small class="text-white-50">Ciclo de vida y pruebas del servicio</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="control-panel-body">
+              <!-- Ciclo de Vida -->
+              <div class="control-group mb-150">
+                <div class="control-group-title">
+                  <span [data-feather]="'git-merge'" [size]="13" class="mr-50 text-indigo"></span>
+                  <span>Ciclo de Vida ({{ (xAPI.entorno || 'calidad') | uppercase }})</span>
+                </div>
+
+                <div class="vertical-btn-stack">
+                  @if (xAPI.entorno == 'desarrollo') {
+                    <button type="button" class="btn-control-lively btn-lively-violet"
+                      (click)="promover('calidad', xAPI.funcion, 'promover')">
+                      <span class="btn-icon-box"><span [data-feather]="'chevrons-up'" [size]="16"></span></span>
+                      <div class="btn-text-box">
+                        <span class="btn-main-text">Promover a Calidad</span>
+                        <small class="btn-sub-text">Enviar para pruebas QA</small>
+                      </div>
+                    </button>
+                  }
+                  @if (xAPI.entorno == 'calidad') {
+                    <button type="button" class="btn-control-lively btn-lively-emerald"
+                      (click)="promover('produccion', xAPI.funcion, 'instalar')">
+                      <span class="btn-icon-box"><span [data-feather]="'upload-cloud'" [size]="16"></span></span>
+                      <div class="btn-text-box">
+                        <span class="btn-main-text">Instalar en Producción</span>
+                        <small class="btn-sub-text">Publicar en entorno /v1/api</small>
+                      </div>
+                    </button>
+                  }
+                  @if (xAPI.entorno != 'desarrollo') {
+                    <button type="button" class="btn-control-lively btn-lively-rose"
+                      (click)="promover('desarrollo', xAPI.funcion, 'reversar')">
+                      <span class="btn-icon-box"><span [data-feather]="'rotate-ccw'" [size]="16"></span></span>
+                      <div class="btn-text-box">
+                        <span class="btn-main-text">Reversar a Desarrollo</span>
+                        <small class="btn-sub-text">Retornar a edición /devel/</small>
+                      </div>
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <!-- Operaciones y Pruebas -->
+              <div class="control-group mb-150 pt-125 border-top-matte">
+                <div class="control-group-title">
+                  <span [data-feather]="'tool'" [size]="13" class="mr-50 text-indigo"></span>
+                  <span>Operaciones & Laboratorio</span>
+                </div>
+
+                <div class="vertical-btn-stack">
+                  <button type="button" class="btn-control-lively btn-lively-sky"
+                    (click)="setSection('laboratorio')">
+                    <span class="btn-icon-box"><span [data-feather]="'terminal'" [size]="16"></span></span>
+                    <div class="btn-text-box">
+                      <span class="btn-main-text">Laboratorio en Vivo (Inline)</span>
+                      <small class="btn-sub-text">Ejecutar payload en esta vista</small>
+                    </div>
+                  </button>
+
+                  <button type="button" class="btn-control-lively btn-lively-emerald"
+                    (click)="ModalProbar(ModalProbarApi, xAPI)">
+                    <span class="btn-icon-box"><span [data-feather]="'play-circle'" [size]="16"></span></span>
+                    <div class="btn-text-box">
+                      <span class="btn-main-text">{{ xAPI.entorno == 'calidad' ? 'Probar Versión (Modal)' : 'Probar API (Modal)' }}</span>
+                      <small class="btn-sub-text">Abrir consola en pantalla amplia</small>
+                    </div>
+                  </button>
+
+                  @if (xAPI.entorno != 'produccion') {
+                    <a [routerLink]="['/tools/applications/update-api', xAPI.funcion, urlControl]"
+                      class="btn-control-lively btn-lively-amber">
+                      <span class="btn-icon-box"><span [data-feather]="'edit'" [size]="16"></span></span>
+                      <div class="btn-text-box">
+                        <span class="btn-main-text">Modificar API</span>
+                        <small class="btn-sub-text">Editar consulta, driver o parámetros</small>
+                      </div>
+                    </a>
+                  }
+                </div>
+              </div>
+
+              <!-- Navegación -->
+              <div class="pt-125 border-top-matte">
+                <a [routerLink]="['/tools/applications/api-list', urlControl]"
+                  class="btn-control-lively btn-lively-slate">
+                  <span class="btn-icon-box"><span [data-feather]="'arrow-left'" [size]="16"></span></span>
+                  <div class="btn-text-box">
+                    <span class="btn-main-text">Volver al Listado de APIs</span>
+                    <small class="btn-sub-text">Catálogo de {{ driversAPP }}</small>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </section>
+    }
 
+    <!-- =================================================================== -->
+    <!-- SECCIÓN 2 (LAZY): MAPA DE ENTRADA & ESQUEMA                         -->
+    <!-- =================================================================== -->
+    @if (activeSection === 'esquema') {
+      <div class="api-section-card mb-2">
+        <div class="section-card-header">
+          <div class="d-flex align-items-center">
+            <span class="section-icon-box box-amber mr-75">
+              <span [data-feather]="'map'" [size]="16"></span>
+            </span>
+            <div>
+              <h6 class="section-title mb-0">Esquema y Mapa de Entrada ({{ xAPI.funcion }})</h6>
+              <small class="section-subtitle">Inspección interactiva del árbol JSON de entrada</small>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-1">
+            <button type="button" class="btn-matte-copy" (click)="copiarEntradasJson()">
+              <span [data-feather]="'copy'" [size]="12"></span>
+              <span>Copiar JSON</span>
+            </button>
+            <button type="button" class="btn-hero-primary" (click)="setSection('laboratorio'); cargarPlantillaEntrada()">
+              <span [data-feather]="'play'" [size]="13" class="mr-25"></span>
+              Usar en Laboratorio →
+            </button>
+          </div>
+        </div>
+        <div class="section-card-body">
+          <div class="dark-json-console">
+            <div class="console-topbar">
+              <div class="console-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <span class="console-label">schema://{{ xAPI.funcion || rutaURL }}/entradas.json</span>
+            </div>
+            <div class="console-body">
+              <div id="xrsx-schema"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
 
+    <!-- =================================================================== -->
+    <!-- SECCIÓN 3 (LAZY): LABORATORIO DE EJECUCIÓN EN VIVO (INLINE)         -->
+    <!-- =================================================================== -->
+    @if (activeSection === 'laboratorio') {
+      <div class="api-section-card mb-2">
+        <div class="section-card-header">
+          <div class="d-flex align-items-center">
+            <span class="section-icon-box box-violet mr-75">
+              <span [data-feather]="'terminal'" [size]="16"></span>
+            </span>
+            <div>
+              <h6 class="section-title mb-0">Laboratorio de Pruebas en Vivo · {{ xAPI.funcion || rutaURL }}</h6>
+              <div class="d-flex align-items-center flex-wrap gap-1 mt-25">
+                <span class="section-subtitle mb-0">Endpoint:</span>
+                <span class="lab-endpoint-pill">{{ xentorno }}</span>
+                @if (xAPI.metodo) {
+                  <span class="hero-badge badge-sky">{{ xAPI.metodo | uppercase }}</span>
+                }
+              </div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center flex-wrap gap-1">
+            <button type="button" class="btn-lab-tool" (click)="cargarPlantillaEntrada()"
+              ngbTooltip="Cargar estructura JSON desde el Mapa de Entrada">
+              <span [data-feather]="'download-cloud'" [size]="13"></span>
+              <span>Cargar Mapa Entrada</span>
+            </button>
+            <button type="button" class="btn-lab-tool" (click)="formatearPayloadJson()"
+              ngbTooltip="Indentar y validar sintaxis JSON">
+              <span [data-feather]="'align-left'" [size]="13"></span>
+              <span>Formatear JSON</span>
+            </button>
+            <button type="button" class="btn-lab-execute"
+              (click)="ejecutarApi()" [disabled]="isExecuting">
+              <span [data-feather]="'play'" [size]="13"></span>
+              <span>{{ isExecuting ? 'Ejecutando...' : 'Ejecutar Consulta' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="section-card-body">
+          <div class="row match-height">
+            <!-- Entrada -->
+            <div class="col-lg-6 mb-2 mb-lg-0">
+              <div class="form-group mb-125">
+                <label class="form-label-matte d-flex align-items-center justify-content-between">
+                  <span>
+                    <span [data-feather]="'sliders'" [size]="12" class="mr-25 text-indigo"></span>
+                    Parámetros (Query / Posicionales separados por coma)
+                  </span>
+                  @if (xparametro) {
+                    <a href="javascript:void(0)" class="text-muted font-small-1" (click)="xparametroCtrl.setValue('')">Limpiar</a>
+                  }
+                </label>
+                <div class="matte-input-wrapper">
+                  <span class="input-icon-left"><span [data-feather]="'hash'" [size]="14"></span></span>
+                  <input type="text" class="form-control matte-input"
+                    [formControl]="xparametroCtrl"
+                    placeholder="Ej: parametro1,parametro2 o ?id=001"
+                    (keydown.enter)="ejecutarApi()" />
+                </div>
+              </div>
+
+              <div class="form-group mb-0">
+                <label class="form-label-matte d-flex align-items-center justify-content-between">
+                  <span>
+                    <span [data-feather]="'code'" [size]="12" class="mr-25 text-indigo"></span>
+                    Valores JSON (Payload)
+                  </span>
+                  <small class="text-muted font-small-1">Formato JSON estructurado</small>
+                </label>
+                <div class="code-editor-premium shadow-none">
+                  <ngx-codemirror [formControl]="valoresCtrl" [options]="codeMirrorOptions"></ngx-codemirror>
+                </div>
+              </div>
+            </div>
+
+            <!-- Salida -->
+            <div class="col-lg-6">
+              <div class="d-flex align-items-center justify-content-between mb-50">
+                <label class="form-label-matte mb-0 d-flex align-items-center">
+                  <span [data-feather]="'activity'" [size]="12" class="mr-25 text-indigo"></span>
+                  <span>Respuesta del Servidor</span>
+                  @if (executionTimeMs !== null) {
+                    <span class="hero-badge badge-emerald ml-50">{{ executionTimeMs }} ms</span>
+                  }
+                </label>
+                <div class="d-flex align-items-center gap-1">
+                  <button type="button" class="btn-matte-copy" (click)="copyToClipboard()"
+                    [disabled]="!xresultado" title="Copiar respuesta JSON">
+                    <span [data-feather]="'copy'" [size]="12"></span>
+                    <span>Copiar</span>
+                  </button>
+                  <button type="button" class="btn-lab-tool" (click)="exportResultadoJSON()"
+                    [disabled]="!xresultado" title="Descargar respuesta en archivo .json">
+                    <span [data-feather]="'download'" [size]="12"></span>
+                    <span>Exportar</span>
+                  </button>
+                  @if (xresultado) {
+                    <button type="button" class="btn-lab-tool" (click)="limpiarResultadoLab()" title="Limpiar consola">
+                      <span [data-feather]="'trash-2'" [size]="12"></span>
+                    </button>
+                  }
+                </div>
+              </div>
+              <div id="xrs-inline" class="lab-response-console">
+                @if (!xresultado && !isExecuting) {
+                  <div class="lab-empty-state">
+                    <div class="lab-empty-icon">
+                      <span [data-feather]="'terminal'" [size]="22"></span>
+                    </div>
+                    <span class="lab-empty-title">Consola lista para ejecución</span>
+                    <span class="lab-empty-sub">Presione <strong>Ejecutar Consulta</strong> para enviar la petición a Sandra Server.</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- =================================================================== -->
+    <!-- SECCIÓN 4 (LAZY): FRAGMENTO DE CÓDIGO (TYPESCRIPT / ANGULAR)        -->
+    <!-- =================================================================== -->
+    @if (activeSection === 'codigo') {
+      <div class="api-section-card mb-2">
+        <div class="section-card-header">
+          <div class="d-flex align-items-center">
+            <span class="section-icon-box box-violet mr-75">
+              <span [data-feather]="'code'" [size]="16"></span>
+            </span>
+            <div>
+              <h6 class="section-title mb-0">Ejemplo de Implementación (Angular / ApiService)</h6>
+              <small class="section-subtitle">Fragmento autogenerado con los parámetros actuales de {{ xAPI.funcion }}</small>
+            </div>
+          </div>
+          <button type="button" class="btn-matte-copy" (click)="copyToClipboard(codeTypeJs)">
+            <span [data-feather]="'copy'" [size]="13"></span>
+            <span>Copiar Código</span>
+          </button>
+        </div>
+        <div class="section-card-body">
+          <div class="dark-json-console">
+            <div class="console-topbar">
+              <div class="console-dots">
+                <span class="dot dot-red"></span>
+                <span class="dot dot-yellow"></span>
+                <span class="dot dot-green"></span>
+              </div>
+              <span class="console-label">{{ xAPI.funcion || 'api' }}.service.ts</span>
+            </div>
+            <textarea [formControl]="codeTypeJsCtrl"
+              class="form-control border-0 font-small-2"
+              rows="16"
+              style="font-family: 'Fira Code', 'JetBrains Mono', monospace; font-size: 0.8rem !important; background: transparent; color: #e2e8f0; padding: 1.25rem;"
+              readonly></textarea>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Barra Inferior de Resumen Técnico al Final -->
+    <div class="matte-summary-footer mt-1">
+      <div class="summary-stats-group">
+        <span class="summary-title">
+          <span [data-feather]="'cpu'" [size]="14" class="mr-50"></span>
+          Resumen del Endpoint:
+        </span>
+        <span class="summary-item">
+          Función: <strong>{{ xAPI.funcion || rutaURL }}</strong>
+        </span>
+        <span class="summary-sep">•</span>
+        <span class="summary-item">
+          Driver: <strong>{{ (xAPI.driver || driversAPP || 'N/A') | uppercase }}</strong>
+        </span>
+        <span class="summary-sep">•</span>
+        <span class="summary-item">
+          Entorno: <strong>{{ (xAPI.entorno || 'CALIDAD') | uppercase }}</strong>
+        </span>
+        <span class="summary-sep">•</span>
+        <span class="summary-item" [ngClass]="xAPI.estatus ? 'text-sage' : 'text-sand'">
+          <strong>{{ xAPI.estatus ? 'Activo' : 'Inactivo' }}</strong>
+        </span>
+      </div>
+
+      <div class="d-flex align-items-center gap-1">
+        <span class="text-muted font-small-2">Versión: <strong>v{{ xAPI.version || '1.0.0' }}</strong></span>
+      </div>
+    </div>
+
+    <!-- =================================================================== -->
+    <!-- MODAL DE PRUEBAS API                                                -->
+    <!-- =================================================================== -->
     <ng-template #ModalProbarApi let-modal>
       <div class="modal-header modal-header-pastel">
         <div class="d-flex align-items-center">
@@ -452,13 +799,11 @@
             <div class="row align-items-center">
               <div class="col-md-5 border-right">
                 <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Servicio API</small>
-                <span class="text-dark font-weight-bolder text-truncate d-block" [title]="xAPI?.funcion">{{
-                xAPI?.funcion }}</span>
+                <span class="text-dark font-weight-bolder text-truncate d-block" [title]="xAPI?.funcion">{{ xAPI?.funcion }}</span>
               </div>
               <div class="col-md-5 border-right px-1">
                 <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">URL / Entorno</small>
-                <span class="text-primary font-weight-bolder text-truncate d-block" [title]="xentorno">{{ xentorno
-                }}</span>
+                <span class="text-primary font-weight-bolder text-truncate d-block" [title]="xentorno">{{ xentorno }}</span>
               </div>
               <div class="col-md-2 px-1 text-center">
                 <small class="text-muted d-block text-uppercase font-small-1 font-weight-bold">Protocolo</small>
@@ -480,11 +825,15 @@
                 <!-- Input Column -->
                 <div class="col-md-6 mb-1">
                   <div class="card h-100 shadow-none border mb-0 rounded-lg">
-                    <div class="card-header bg-white p-50 border-bottom">
+                    <div class="card-header bg-white p-50 border-bottom d-flex align-items-center justify-content-between">
                       <h6 class="mb-0 font-weight-bolder small d-flex align-items-center text-dark">
                         <span [data-feather]="'log-in'" [size]="14" class="mr-50 text-secondary"></span>
                         CONFIGURACIÓN DE ENTRADA
                       </h6>
+                      <button type="button" class="btn btn-sm btn-flat-secondary py-0 px-50 font-small-1"
+                        (click)="cargarPlantillaEntrada()">
+                        Cargar Plantilla
+                      </button>
                     </div>
                     <div class="card-body p-1">
                       <div class="form-group mb-1">
@@ -553,7 +902,7 @@
                   <textarea [formControl]="codeTypeJsCtrl" class="form-control border-0 font-small-2 bg-light-analysis"
                     rows="15"
                     style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem !important; color: #5e5873;"
-                  readonly></textarea>
+                    readonly></textarea>
                 </div>
               </div>
             </ng-template>
@@ -574,3 +923,6 @@
         </button>
       </div>
     </ng-template>
+
+  </div>
+</div>

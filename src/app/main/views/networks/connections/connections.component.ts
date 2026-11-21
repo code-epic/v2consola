@@ -390,7 +390,7 @@ export class ConnectionsComponent implements OnInit {
   async ListarHostname() {
     await this.comunicacionesService.Listar().subscribe(
       (data) => {
-        this.hosts = data
+        this.hosts = Array.isArray(data) ? data : (Array.isArray(data?.Cuerpo) ? data.Cuerpo : []);
       },
       (error) => {
         console.log(error)
@@ -399,38 +399,87 @@ export class ConnectionsComponent implements OnInit {
   }
 
   CambiarVisibilidadDriver(e: any) {
+    const bdCtrl = this.loginForm?.get('basedatos');
+    const puertoCtrl = this.loginForm?.get('puerto');
+
     if (e == "puenteurl") {
       this.showBaseDatos = false
       this.showPuente = true
+      bdCtrl?.clearValidators();
+      puertoCtrl?.clearValidators();
+    } else if (e == null) {
+      this.showBaseDatos = false
+      this.showPuente = false
+      bdCtrl?.setValidators([Validators.required]);
+      puertoCtrl?.setValidators([Validators.required]);
     } else {
       this.showBaseDatos = true
       this.showPuente = false
-    } if (e === 'oracle19c') {
+      bdCtrl?.setValidators([Validators.required]);
+      puertoCtrl?.setValidators([Validators.required]);
+    }
+
+    if (e === 'oracle19c') {
       this.lbd = "Oracle_SID"
     } else {
       this.lbd = "Base de Datos"
-    } if (e == null) {
-      this.showBaseDatos = false
-      this.showPuente = false
     }
+
+    bdCtrl?.updateValueAndValidity({ emitEvent: false });
+    puertoCtrl?.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private resolverAplicacionValor(appValue: any): string {
+    if (!appValue) return '';
+    const target = (typeof appValue === 'object'
+      ? (appValue.nombre || appValue.identificador || appValue.id || '')
+      : String(appValue)
+    ).trim();
+    if (!target) return '';
+
+    const lista = this._ListaAplicaciones() || [];
+    const match = lista.find((item: any) => {
+      const nom = (item.nombre || '').toLowerCase();
+      const ident = (item.identificador || '').toLowerCase();
+      const id = (item.id || '').toLowerCase();
+      const t = target.toLowerCase();
+      return nom === t || ident === t || id === t;
+    });
+
+    if (match) {
+      return match.nombre;
+    }
+
+    if (lista.length > 0) {
+      this._ListaAplicaciones.set([
+        ...lista,
+        { id: target, identificador: target, nombre: target, name: target }
+      ]);
+    }
+    return target;
   }
 
   ModalEdit(modal, data) {
     this.LimpiarForm();
     this.CambiarVisibilidadDriver(data.driver);
+    const appResolved = this.resolverAplicacionValor(data.aplicacion);
+    const estatusResolved = data.estatus !== undefined && data.estatus !== null
+      ? this.isRowActive(data)
+      : true;
+
     this.loginForm.patchValue({
       id: data.id || '',
       usuario: data.usuario || '',
       basedatos: data.basedatos || '',
       url: data.url || '',
-      estatus: data.estatus,
+      estatus: estatusResolved,
       driver: data.driver,
       clave: data.clave || '',
       protocolo: data.protocolo || '',
       host: data.host,
-      puerto: data.puerto || '',
+      puerto: data.puerto ? String(data.puerto) : '',
       descripcion: data.descripcion || '',
-      aplicacion: data.aplicacion || '',
+      aplicacion: appResolved,
     });
     const modalRef = this.modalService.open(modal, {
       centered: true,
@@ -486,28 +535,36 @@ export class ConnectionsComponent implements OnInit {
     );
   }
 
+  private prepararObjetoConexion() {
+    const raw = { ...this.loginForm.getRawValue() };
+    raw.id = (raw.id || '').toString().trim();
+    raw.aplicacion = this.resolverAplicacionValor(raw.aplicacion);
+    return raw;
+  }
+
   GuardarConexion() {
     this.submitted = true;
     if (this.loginForm.invalid) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Complete los campos requeridos de la conexión', 3000);
       return;
     } else {
+      const payload = this.prepararObjetoConexion();
       var obj = {
         "coleccion": environment.colecciones.SYS_DRIVERS,
-        "objeto": this.loginForm.value,
-        "donde": JSON.stringify({ id: this.loginForm.value.id }),
+        "objeto": payload,
+        "donde": JSON.stringify({ id: payload.id }),
         "driver": environment.driver.PRINCIPAL,
         "upsert": true
       }
-      this._rowData.set([...this._rowData(), this._ListaConexiones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
           this._ListaConexiones.set([])
           this.CargarListaConexiones()
           this.modalService.dismissAll('Close')
-          this.utilservice.AlertMini('top-end', 'success', `Tu (Conexión) ha sido registrada codigo: ${data.UpsertedID}`, 3000)
+          this.utilservice.AlertMini('top-end', 'success', `Tu (Conexión) ha sido registrada codigo: ${data?.UpsertedID || payload.id}`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardar los Datos', 3000)
         }
       )
     }
@@ -516,16 +573,17 @@ export class ConnectionsComponent implements OnInit {
   EditarDispositivo() {
     this.submitted = true;
     if (this.loginForm.invalid) {
+      this.utilservice.AlertMini('top-end', 'warning', 'Complete los campos requeridos para actualizar la conexión', 3000);
       return;
     } else {
+      const payload = this.prepararObjetoConexion();
       var obj = {
         "coleccion": environment.colecciones.SYS_DRIVERS,
-        "objeto": this.loginForm.value,
-        "donde": JSON.stringify({ id: this.loginForm.value.id }),
+        "objeto": payload,
+        "donde": JSON.stringify({ id: payload.id }),
         "driver": environment.driver.PRINCIPAL,
         "upsert": true
       }
-      this._rowData.set([...this._rowData(), this._ListaConexiones()])
       this.apiService.ExecColeccion(obj).subscribe(
         (data) => {
           this._ListaConexiones.set([])
@@ -534,7 +592,7 @@ export class ConnectionsComponent implements OnInit {
           this.utilservice.AlertMini('top-end', 'success', `Tu (Conexión) ha sido actualizada`, 3000)
           this.LimpiarForm()
         }, (error) => {
-          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardadar los Datos', 3000)
+          this.utilservice.AlertMini('top-end', 'error', 'Error al Guardar los Datos', 3000)
         }
       )
 
@@ -548,9 +606,15 @@ export class ConnectionsComponent implements OnInit {
     this.xAPI.valores = ''
     await this.apiService.Ejecutar(this.xAPI).subscribe(
       (data) => {
-        this._ListaAplicaciones.set(data.Cuerpo.map(e => {
-          e.name = e.nombre + ' : ' + e.VERSION
-          return e
+        const raw = Array.isArray(data?.Cuerpo) ? data.Cuerpo : (Array.isArray(data) ? data : []);
+        this._ListaAplicaciones.set(raw.map((e: any) => {
+          const nombreApp = (e.nombre || e.identificador || e.id || '').toString().trim();
+          const versionApp = (e.VERSION || e.version || '').toString().trim();
+          e.id = e.id || e.identificador || nombreApp;
+          e.identificador = e.identificador || e.id || nombreApp;
+          e.nombre = nombreApp;
+          e.name = versionApp ? `${nombreApp} : ${versionApp}` : nombreApp;
+          return e;
         }));
       },
       (error) => {

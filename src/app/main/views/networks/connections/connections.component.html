@@ -77,7 +77,12 @@
             </div>
           </div>
 
-          <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center" style="gap: 0.5rem;">
+            <button type="button" class="btn btn-swal-neutral d-inline-flex align-items-center"
+              (click)="CargarListaConexiones()" [disabled]="isLoading" ngbTooltip="Actualizar listado de conexiones">
+              <span [data-feather]="'refresh-cw'" [size]="14" class="mr-50"></span>
+              Actualizar
+            </button>
             <button type="button" class="btn btn-swal-purple" (click)="ModalAdd(ModalAddDevice)">
               Agregar Conexión
             </button>
@@ -428,19 +433,37 @@
           }
         </div>
 
+        <!-- Identificador -->
+        <div class="col-md-4 col-12 form-group">
+          <label class="form-label-formal">Identificador</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'hash'" [size]="14"></span></span>
+            </div>
+            <input type="text" formControlName="id" class="form-control" placeholder="Código o ID único"
+              [ngClass]="{ 'is-invalid': submitted && f.id.errors }" />
+          </div>
+          @if (submitted && f.id.errors) {
+            <div class="invalid-feedback d-block">Identificador es requerido</div>
+          }
+        </div>
+
         <!-- Estatus -->
-        <div class="col-md-6 col-12 form-group">
+        <div class="col-md-4 col-12 form-group">
           <label class="form-label-formal">Estatus</label>
           <ng-select [items]="status" formControlName="estatus" bindLabel="name"
             placeholder="Seleccione Estatus" bindValue="id" class="custom-select-formal">
           </ng-select>
+          @if (submitted && f.estatus.errors) {
+            <div class="invalid-feedback d-block">Estatus es requerido</div>
+          }
         </div>
 
         <!-- Aplicación -->
-        <div class="col-md-6 col-12 form-group">
+        <div class="col-md-4 col-12 form-group">
           <label class="form-label-formal">Aplicación</label>
           <ng-select [items]="ListaAplicaciones" formControlName="aplicacion" bindLabel="name"
-            placeholder="Seleccione Aplicación" bindValue="id" class="custom-select-formal">
+            placeholder="Seleccione Aplicación" bindValue="nombre" class="custom-select-formal">
           </ng-select>
         </div>
 
@@ -608,19 +631,37 @@
           }
         </div>
 
+        <!-- Identificador -->
+        <div class="col-md-4 col-12 form-group">
+          <label class="form-label-formal">Identificador</label>
+          <div class="input-group-pastel">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><span [data-feather]="'hash'" [size]="14"></span></span>
+            </div>
+            <input type="text" [readOnly]="true" formControlName="id" class="form-control" placeholder="Código o ID único"
+              [ngClass]="{ 'is-invalid': submitted && f.id.errors }" />
+          </div>
+          @if (submitted && f.id.errors) {
+            <div class="invalid-feedback d-block">Identificador es requerido</div>
+          }
+        </div>
+
         <!-- Estatus -->
-        <div class="col-md-6 col-12 form-group">
+        <div class="col-md-4 col-12 form-group">
           <label class="form-label-formal">Estatus</label>
           <ng-select [items]="status" formControlName="estatus" bindLabel="name"
             placeholder="Seleccione Estatus" bindValue="id" class="custom-select-formal">
           </ng-select>
+          @if (submitted && f.estatus.errors) {
+            <div class="invalid-feedback d-block">Estatus es requerido</div>
+          }
         </div>
 
         <!-- Aplicación -->
-        <div class="col-md-6 col-12 form-group">
+        <div class="col-md-4 col-12 form-group">
           <label class="form-label-formal">Aplicación</label>
           <ng-select [items]="ListaAplicaciones" formControlName="aplicacion" bindLabel="name"
-            placeholder="Seleccione Aplicación" bindValue="id" class="custom-select-formal">
+            placeholder="Seleccione Aplicación" bindValue="nombre" class="custom-select-formal">
           </ng-select>
         </div>
 

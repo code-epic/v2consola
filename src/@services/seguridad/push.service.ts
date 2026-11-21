@@ -1,10 +1,11 @@
 // src/app/services/push.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { Observable, from, throwError, Subject } from 'rxjs';
 import { tap, switchMap, catchError, map } from 'rxjs/operators';
 import { environment } from 'environments/environment';
+import { getHttpOptions } from '../apicore/api.service';
 
 
 /**
@@ -48,12 +49,9 @@ export class PushService {
    */
   public readonly notificationClicks$ = this.notificationClicksSubject.asObservable();
 
-  public httpOptions = {
-    headers: new HttpHeaders({
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + sessionStorage.getItem("token"),
-    }),
-  };
+  public get httpOptions() {
+    return getHttpOptions();
+  }
 
   constructor(private http: HttpClient, private swPush: SwPush) { }
 

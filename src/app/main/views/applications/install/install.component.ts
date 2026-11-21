@@ -1,4 +1,6 @@
-import { Component, OnInit, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewEncapsulation, ViewChild, ChangeDetectorRef } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -38,7 +40,18 @@ import { ContentHeaderComponent } from 'app/layout/components/content-header/con
 ]
 })
 
-export class InstallComponent implements OnInit {
+export class InstallComponent implements OnInit, OnDestroy {
+  private _unsubscribeAll = new Subject<void>();
+  private _backupTimer: any = null;
+  public isRestoring: boolean = false;
+  public restoreProgress: number = 0;
+  public operationMode: 'idle' | 'backup' | 'restore' = 'idle';
+  public backupPhase: 'idle' | 'connecting' | 'dumping' | 'packaging' | 'completed' = 'idle';
+  public backupBytesText: string = '0 KB';
+  public backupSpeedText: string = 'Canal cifrado listo';
+  public backupStatusLabel: string = 'Inicializando motor de respaldo Sandra...';
+  public backupElapsedSeconds: number = 0;
+  public backupFileName: string = '';
 
   hosts = []
   public isLoadingApp: boolean = false;
@@ -166,17 +179,17 @@ export class InstallComponent implements OnInit {
   ]
 
   public basesDatos = [
-    { id: "POSTGRES", descripcion: 'POSTGRES' },
-    { id: "MYSQL", descripcion: 'MYSQL' },
-    { id: "MARIADB", descripcion: 'MARIADB' },
-    { id: "SQLSERVER", descripcion: 'SQLSERVER' },
-    { id: "ORACLE", descripcion: 'ORACLE' },
-    { id: "SYBASE", descripcion: 'SYBASE' },
-    { id: "INFORMIX", descripcion: 'INFORMIX' },
-    { id: "MONGODB", descripcion: 'MONGODB' },
-    { id: "RETHINKDB", descripcion: 'RETHINKDB' },
-    { id: "SQLSERVER", descripcion: 'SQLSERVER' },
-    { id: "FIREBASE", descripcion: 'FIREBASE' },
+    { id: "POSTGRES", descripcion: 'POSTGRESQL', motor: 'Relational SQL', icon: 'assets/images/icons/db/postgres.svg', matteClass: 'db-matte-postgres' },
+    { id: "MYSQL", descripcion: 'MYSQL', motor: 'Relational SQL', icon: 'assets/images/icons/db/mysql.svg', matteClass: 'db-matte-mysql' },
+    { id: "MARIADB", descripcion: 'MARIADB', motor: 'Relational SQL', icon: 'assets/images/icons/db/mariadb.svg', matteClass: 'db-matte-mariadb' },
+    { id: "MONGODB", descripcion: 'MONGODB', motor: 'NoSQL Document', icon: 'assets/images/icons/db/mongodb.svg', matteClass: 'db-matte-mongodb' },
+    { id: "COUCHDB", descripcion: 'COUCHDB', motor: 'NoSQL Document', icon: 'assets/images/icons/db/couchdb.svg', matteClass: 'db-matte-couchdb' },
+    { id: "RETHINKDB", descripcion: 'RETHINKDB', motor: 'NoSQL Realtime', icon: 'assets/images/icons/db/rethinkdb.svg', matteClass: 'db-matte-rethinkdb' },
+    { id: "SQLSERVER", descripcion: 'SQL SERVER', motor: 'Enterprise SQL', icon: 'assets/images/icons/db/sqlserver.svg', matteClass: 'db-matte-sqlserver' },
+    { id: "ORACLE", descripcion: 'ORACLE', motor: 'Enterprise SQL', icon: 'assets/images/icons/db/database.svg', matteClass: 'db-matte-neutral' },
+    { id: "SYBASE", descripcion: 'SYBASE', motor: 'Enterprise SQL', icon: 'assets/images/icons/db/database.svg', matteClass: 'db-matte-neutral' },
+    { id: "INFORMIX", descripcion: 'INFORMIX', motor: 'Enterprise SQL', icon: 'assets/images/icons/db/database.svg', matteClass: 'db-matte-neutral' },
+    { id: "FIREBASE", descripcion: 'FIREBASE', motor: 'Cloud NoSQL', icon: 'assets/images/icons/db/database.svg', matteClass: 'db-matte-neutral' },
   ]
 
   public lenguaje = [
@@ -279,30 +292,154 @@ export class InstallComponent implements OnInit {
       }
     }
 
-    this.mensajeService.finalizacion$.subscribe(
-      (fx) => {
-        this.bDescarga = fx.estatus
-        this.cdr.detectChanges();
-      },
-      (error) => {
-        console.log(error)
-      }
-    )
+    this.mensajeService.progreso$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((prog) => {
+        if (!prog || (this.bDescarga && !this.isRestoring)) return;
+
+        if (prog.from === 'exec-pipe') {
+          if (prog.message?.error) {
+            this.finalizarCicloRespaldo(false);
+            return;
+          }
+
+          if (prog.type === 'progress' && !this.bDescarga) {
+            const bytes = Number(prog.message?.bytes || 0);
+            const speed = Number(prog.message?.speed || 0);
+            if (bytes > 0) {
+              this.backupPhase = 'dumping';
+              this.backupBytesText = this.formatBytes(bytes);
+              this.backupSpeedText = speed > 0 ? `${this.formatBytes(speed)}/s` : 'Extrayendo bloques...';
+              this.backupStatusLabel = 'Extrayendo esquema y bloques de datos...';
+            } else {
+              this.backupPhase = 'connecting';
+              this.backupStatusLabel = 'Conectando y preparando volcado seguro...';
+            }
+            this.cdr.detectChanges();
+          } else if (prog.type === 'dump_finished' && !this.bDescarga) {
+            this.backupPhase = 'packaging';
+            this.backupFileName = prog.message?.file || '';
+            this.backupStatusLabel = 'Empaquetando respaldo y sincronizando descarga única...';
+            this.cdr.detectChanges();
+          } else if (prog.type === 'restore' && this.isRestoring) {
+            const pct = this.formatPercentage(prog.message?.percentage ?? 0);
+            this.restoreProgress = pct;
+            this.backupPhase = 'packaging';
+            this.backupBytesText = `${pct}% restaurado`;
+            this.backupSpeedText = 'Inyectando bloques SQL';
+            this.backupStatusLabel = pct > 0
+              ? `Inyectando estructura y registros en el motor (${pct}%)...`
+              : 'Ejecutando restauración transaccional en el motor...';
+            this.cdr.detectChanges();
+          } else if (prog.type === 'restore_finished' && this.isRestoring) {
+            this.restoreProgress = 100;
+            this.backupPhase = 'completed';
+            this.backupBytesText = '100% completado';
+            this.backupSpeedText = 'Base sincronizada';
+            this.backupStatusLabel = 'Restauración de base de datos completada con éxito';
+            this.cdr.detectChanges();
+          }
+        }
+      });
+
+    this.mensajeService.finalizacion$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (fx) => {
+          if ((!this.bDescarga || this.isRestoring) && fx?.estatus) {
+            this.backupPhase = 'completed';
+            this.backupStatusLabel = this.isRestoring
+              ? 'Base de datos restaurada y sincronizada correctamente'
+              : 'Respaldo verificado y descargado correctamente';
+            this.cdr.detectChanges();
+            setTimeout(() => {
+              this.finalizarCicloRespaldo(true);
+            }, 850);
+          } else if (fx?.estatus !== undefined) {
+            this.bDescarga = fx.estatus;
+            this.cdr.detectChanges();
+          }
+        },
+        error: (error) => {
+          console.log(error);
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.detenerTimerRespaldo();
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
+  }
+
+  private iniciarTimerRespaldo(): void {
+    this.detenerTimerRespaldo();
+    this.backupElapsedSeconds = 0;
+    this._backupTimer = setInterval(() => {
+      this.backupElapsedSeconds++;
+      this.cdr.detectChanges();
+    }, 1000);
+  }
+
+  private detenerTimerRespaldo(): void {
+    if (this._backupTimer) {
+      clearInterval(this._backupTimer);
+      this._backupTimer = null;
+    }
+  }
+
+  private finalizarCicloRespaldo(exito: boolean): void {
+    const wasRestore = this.isRestoring || this.operationMode === 'restore';
+    this.detenerTimerRespaldo();
+    this.bDescarga = true;
+    this.isRestoring = false;
+    this.restoreProgress = 0;
+    this.operationMode = 'idle';
+    this.backupPhase = 'idle';
+    if (exito) {
+      const msg = wasRestore
+        ? 'Ciclo de restauración de base de datos completado con éxito'
+        : 'Ciclo de respaldo y descarga completado con éxito';
+      this.utilservice.AlertMini('top-end', 'success', msg, 3000);
+    }
+    this.cdr.detectChanges();
   }
 
   async ListarHostname() {
+    const repoHosts = [
+      { id: 'REPOSITORIO', host: 'github.com', descripcion: '@GITHUB' },
+      { id: 'REPOSITORIO', host: 'gitlab.com', descripcion: '@GITLAB' },
+      { id: 'REPOSITORIO', host: 'code-epic.io', descripcion: '@GITEA' }
+    ];
+
     this.comunicacionesService.Listar().subscribe({
       next: (data) => {
-        const repoHosts = [
-          { id: 'REPOSITORIO', host: 'github.com', descripcion: '@GITHUB' },
-          { id: 'REPOSITORIO', host: 'gitlab.com', descripcion: '@GITLAB' },
-          { id: 'REPOSITORIO', host: 'code-epic.io', descripcion: '@GITEA' }
-        ];
-        this.hosts = [...(data || []), ...repoHosts];
+        this.hosts = [...(Array.isArray(data) ? data : []), ...repoHosts];
         this.cdr.detectChanges();
       },
-      error: (error) => {
-        console.error('Error listando hosts/comunicaciones:', error);
+      error: () => {
+        // Respaldo mediante ApiService (_SYS_LstComunicaciones, igual que networks/communications)
+        const xAPI: IAPICore = {
+          funcion: '_SYS_LstComunicaciones',
+          parametros: '',
+          valores: {},
+        };
+        this.apiService.Ejecutar(xAPI).subscribe({
+          next: (fallbackData: any) => {
+            const list = Array.isArray(fallbackData)
+              ? fallbackData
+              : Array.isArray(fallbackData?.Cuerpo)
+                ? fallbackData.Cuerpo
+                : [];
+            this.hosts = [...list, ...repoHosts];
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error('Error listando hosts/comunicaciones:', err);
+            this.hosts = [...repoHosts];
+            this.cdr.detectChanges();
+          }
+        });
       }
     });
   }
@@ -397,13 +534,28 @@ export class InstallComponent implements OnInit {
     }
   }
 
+  getDbIcon(engine: string): string {
+    const d = (engine || '').toLowerCase();
+    if (d.includes('mariadb')) return 'assets/images/icons/db/mariadb.svg';
+    if (d.includes('mysql')) return 'assets/images/icons/db/mysql.svg';
+    if (d.includes('postgres') || d.includes('pgsql')) return 'assets/images/icons/db/postgres.svg';
+    if (d.includes('mongo')) return 'assets/images/icons/db/mongodb.svg';
+    if (d.includes('couch')) return 'assets/images/icons/db/couchdb.svg';
+    if (d.includes('rethink')) return 'assets/images/icons/db/rethinkdb.svg';
+    if (d.includes('sqlserver') || d.includes('mssql')) return 'assets/images/icons/db/sqlserver.svg';
+    return 'assets/images/icons/db/database.svg';
+  }
+
   getDriverBadgeClass(driverType: string): string {
     const d = (driverType || '').toLowerCase();
-    if (d.includes('mongo')) return 'badge-light-success';
-    if (d.includes('mysql')) return 'badge-light-info';
-    if (d.includes('postgres')) return 'badge-light-primary';
-    if (d.includes('oracle')) return 'badge-light-danger';
-    return 'badge-light-secondary';
+    if (d.includes('mariadb')) return 'db-matte-mariadb';
+    if (d.includes('mysql')) return 'db-matte-mysql';
+    if (d.includes('postgres') || d.includes('pgsql')) return 'db-matte-postgres';
+    if (d.includes('mongo')) return 'db-matte-mongodb';
+    if (d.includes('couch')) return 'db-matte-couchdb';
+    if (d.includes('rethink')) return 'db-matte-rethinkdb';
+    if (d.includes('sqlserver') || d.includes('mssql')) return 'db-matte-sqlserver';
+    return 'db-matte-neutral';
   }
 
   onSubmit() {
@@ -810,6 +962,12 @@ export class InstallComponent implements OnInit {
    * @param bytes El número de bytes.
    * @param decimals El número de decimales.
    */
+  public formatPercentage(value: any): number {
+    const num = Number(value ?? 0);
+    if (!Number.isFinite(num)) return 0;
+    return parseFloat(num.toFixed(3));
+  }
+
   private formatBytes(bytes: number, decimals = 2): string {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -905,14 +1063,38 @@ export class InstallComponent implements OnInit {
       console.error('No se encontró el formulario con el nombre "forma".');
       return;
     }
+    const fileToUpload = this.selectedFile!;
+    const fileToUploadSize = this.fileSize || this.formatBytes(fileToUpload.size);
     const frm = new FormData(formElement);
-    frm.append("archivos", this.selectedFile!, this.selectedFile!.name);
+    frm.append("archivos", fileToUpload, fileToUpload.name);
     frm.append("identificador", btoa(this.iApp.nombre + '|' + this.iApp.version));
     frm.append("return", 'true');
+
+    // Activar modo Restauración con la animación digital de Sandra y ocultar Crear Respaldo
+    this.isRestoring = true;
+    this.operationMode = 'restore';
+    this.restoreProgress = 0;
+    this.backupPhase = 'connecting';
+    this.backupFileName = fileToUpload.name;
+    this.backupBytesText = `0% de ${fileToUploadSize}`;
+    this.backupSpeedText = 'Subiendo script...';
+    this.backupStatusLabel = `Transfiriendo script "${fileToUpload.name}" al núcleo Sandra...`;
+    this.iniciarTimerRespaldo();
+    this.cdr.detectChanges();
 
     this.fileService.EnviarArchivosProgress(frm).subscribe({
       next: (event) => {
         if (event.state === 'LOADING') {
+          const pct = this.formatPercentage(event.progress || 0);
+          this.restoreProgress = pct;
+          this.backupPhase = 'connecting';
+          this.backupBytesText = `${this.formatBytes(event.loaded)} / ${this.formatBytes(event.total)}`;
+          this.backupSpeedText = `${pct}% transferido`;
+          this.backupStatusLabel = pct < 99
+            ? `Subiendo script "${fileToUpload.name}" (${pct}%)...`
+            : 'Verificando integridad del paquete en servidor...';
+          this.cdr.detectChanges();
+
           this.mensajeService.progreso$.emit({
             from: 'file-upload',
             type: 'progress',
@@ -921,23 +1103,28 @@ export class InstallComponent implements OnInit {
             progress: event.progress
           });
         } else if (event.state === 'DONE') {
+          this.backupPhase = 'dumping';
+          this.backupBytesText = fileToUploadSize;
+          this.backupSpeedText = 'Hash verificado';
+          this.backupStatusLabel = 'Script verificado. Preparando inyección en motor de base de datos...';
+          this.cdr.detectChanges();
+
           this.mensajeService.progreso$.emit({
             from: 'file-upload',
             type: 'finished',
             message: 'Archivo subido con éxito.'
           });
-          this.utilservice.AlertMini('top-end', 'success', `El archivo ${this.selectedFile.name} subio correctamente`, 2000);
-          formElement.reset();
+          formElement?.reset();
           const body = event.body;
+          this.removeFile(new MouseEvent('click'));
           setTimeout(() => {
             this.RealizarRestore(body);
-          }, 1500);
-
-          this.removeFile(new MouseEvent('click'));
+          }, 800);
         }
       },
       error: (err) => {
         console.error('Error al subir el archivo:', err);
+        this.finalizarCicloRespaldo(false);
         this.utilservice.AlertMini('top-end', 'error', 'Ocurrió un error al subir el archivo.', 5000);
         this.mensajeService.progreso$.emit({
           from: 'file-upload',
@@ -952,10 +1139,20 @@ export class InstallComponent implements OnInit {
   }
 
   RealizarRestore(body: any) {
+    if (!body?.msj || !body?.contenido?.[0]) {
+      this.finalizarCicloRespaldo(false);
+      this.utilservice.AlertMini('top-end', 'error', 'Respuesta de archivo inválida para restaurar.', 4000);
+      return;
+    }
     const Hash = body.msj.split('|')[1];
     const Archivo = body.contenido[0].split('|')[1];
     const selectedDriver = this.driver || this.driverCtrl.value;
     const driverId = selectedDriver?.id ?? (typeof selectedDriver === 'string' ? selectedDriver : undefined);
+
+    this.backupPhase = 'packaging';
+    this.backupSpeedText = 'Inyectando bloques SQL';
+    this.backupStatusLabel = 'Ejecutando restauración transaccional en la base de datos...';
+    this.cdr.detectChanges();
 
     // Disparar barra de progreso en el vertical menu de la sidebar
     this.mensajeService.progreso$.emit({
@@ -971,11 +1168,12 @@ export class InstallComponent implements OnInit {
       "file": Archivo
     };
     this.apiService.ExecRestore(restore).subscribe({
-      next: (data) => {
+      next: () => {
         // el websocket informará el progreso
       },
       error: (error) => {
         console.error('Error al restaurar:', error);
+        this.finalizarCicloRespaldo(false);
         this.utilservice.AlertMini('top-end', 'error', 'Error al ejecutar restauración.', 4000);
       }
     });
@@ -1037,6 +1235,10 @@ export class InstallComponent implements OnInit {
   }
 
   backupDatabase() {
+    if (!this.bDescarga || this.isRestoring) {
+      return;
+    }
+
     const selectedDriver = this.driver || this.driverCtrl.value;
     const driverId = selectedDriver?.id ?? (typeof selectedDriver === 'string' ? selectedDriver : undefined);
 
@@ -1046,6 +1248,14 @@ export class InstallComponent implements OnInit {
     }
 
     this.bDescarga = false;
+    this.operationMode = 'backup';
+    this.backupPhase = 'connecting';
+    this.backupBytesText = '0 KB';
+    this.backupSpeedText = 'Canal cifrado activo';
+    this.backupFileName = '';
+    this.backupStatusLabel = 'Inicializando motor de respaldo Sandra...';
+    this.iniciarTimerRespaldo();
+    this.cdr.detectChanges();
 
     // Levantar de inmediato el indicador de progreso en el vertical-menu (sidebar)
     this.mensajeService.progreso$.emit({
@@ -1060,14 +1270,18 @@ export class InstallComponent implements OnInit {
     };
 
     this.apiService.ExecBackup(dump).subscribe({
-      next: (data) => {
+      next: () => {
         // Sandra enviará los chunks de progreso por WebSocket
+        if (this.backupPhase === 'connecting') {
+          this.backupPhase = 'dumping';
+          this.backupStatusLabel = 'Extrayendo esquema y bloques de datos...';
+          this.cdr.detectChanges();
+        }
       },
       error: (error) => {
         console.error('Error al ejecutar backup:', error);
-        this.bDescarga = true;
+        this.finalizarCicloRespaldo(false);
         this.utilservice.AlertMini('top-end', 'error', 'Error al solicitar el respaldo de la base de datos.', 4000);
-        this.cdr.detectChanges();
       }
     });
   }

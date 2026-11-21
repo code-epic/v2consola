@@ -3,14 +3,26 @@
     <!-- content-header component -->
     <app-content-header [contentHeader]="contentHeader"></app-content-header>
 
-    <!-- Invoice List -->
-    <section class="invoice-list-wrapper">
-      <div class="card">
+    <!-- Workflow Studio -->
+    <section class="invoice-list-wrapper wkf-studio">
+      <div class="card wkf-card">
 
-        <div class="container">
+        <div class="container wkf-card-inner">
+          <div class="wkf-section-header">
+            <div class="wkf-title-wrap">
+              <div class="wkf-icon-pill">
+                <span [data-feather]="'git-branch'" [size]="18"></span>
+              </div>
+              <div>
+                <h5>Definición de Workflow</h5>
+                <p>Configure la aplicación, arquitectura, estados, transiciones y red operativa</p>
+              </div>
+            </div>
+          </div>
+
           <!-- INICIO REGISTRO DE WORKFLOW -->
           <div class="row">
-            <div class="col-md-12" style="margin-top: 25px;">
+            <div class="col-md-12">
 
               <form class="normal-form">
                 <div class="row">
@@ -74,37 +86,34 @@
                   </div>
 
                   <div class="form-group col-md-8">
-                    <label class="form-label" for="descripcion">Descripción</label>
-                    <div class="input-group mb-3">
-                      <div class="input-group-pastel" style="flex: 1;">
+                    <label class="form-label" for="wkf-descripcion">Descripción</label>
+                    <div class="wkf-inline-action-row">
+                      <div class="input-group-pastel">
                         <div class="input-group-prepend">
                           <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
                         </div>
                         <input [formControl]="descripcionCtrl"
-                          required type="text" name="descripcion" id="`descripcion"
+                          required type="text" name="descripcion" id="wkf-descripcion"
                           class="form-control" placeholder="Descripción del workflow" />
                       </div>
 
-                      <div class="input-group-prepend">
+                      <div class="wkf-btn-group">
                         @if (!isButtonVisibleSalvar) {
-                          <div class="form-group col-md-1">
-                            <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
-                              (click)="salvar()">Salvar
-                            </button>
-                          </div>
+                          <button type="button" class="btn wkf-btn wkf-btn-sage" [disabled]="isBtnSalvar"
+                            (click)="salvar()">
+                            <span [data-feather]="'save'" [size]="15"></span> Salvar
+                          </button>
                         }
 
                         @if (isButtonVisibleUpdate) {
-                          <div>
-                            &nbsp;
-                            <button type="button" class="btn btn-success" [disabled]="isBtnSalvar"
-                              (click)="modificar()"><i class="fa fa-edit" aria-hidden="true"></i> Modificar
-                            </button>
-                            &nbsp;
-                            <button type="button" class="btn btn-danger" [disabled]="isBtnSalvar"
-                              (click)="limpiarRegistroWKF()"><i class="fa fa-ban" aria-hidden="true"></i> Cancelar
-                            </button>
-                          </div>
+                          <button type="button" class="btn wkf-btn wkf-btn-sage" [disabled]="isBtnSalvar"
+                            (click)="modificar()">
+                            <span [data-feather]="'edit-2'" [size]="15"></span> Modificar
+                          </button>
+                          <button type="button" class="btn wkf-btn wkf-btn-rose" [disabled]="isBtnSalvar"
+                            (click)="limpiarRegistroWKF()">
+                            <span [data-feather]="'x'" [size]="15"></span> Cancelar
+                          </button>
                         }
                       </div>
                     </div>
@@ -121,12 +130,14 @@
 
           <!-- TABLA DE WORKFLOW -->
           @if (showWKF) {
-            <div class="row">
-              <div class="col-md-12 ">
-                <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs justify-content-center">
+            <div class="row wkf-workspace">
+              <div class="col-md-12">
+                <ul ngbNav #navWithIcons="ngbNav" class="nav-tabs wkf-nav-tabs">
                   <li ngbNavItem>
-                    <a ngbNavLink><span [data-feather]="'layout'"></span>FORMULARIO BASE</a>
+                    <a ngbNavLink><span [data-feather]="'layout'" [size]="15"></span><span>FORMULARIO BASE</span></a>
                     <ng-template ngbNavContent>
+                      <div class="wkf-tab-pane-animate">
+                      <div class="wkf-form-surface">
                       <div class="row">
                         <div class="form-group col-md-4">
                           <label class="form-label" for="nombre">Nombre del campo</label>
@@ -199,53 +210,46 @@
                           </div>
                         </div>
                         <div class="form-group col-md-2 d-flex align-items-end">
-                          <label class="form-label"></label>
-                          <button type="button" class="btn btn-primary" (click)="addItemForm()" style="width: 100%;">
-                            <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+                          <button type="button" class="btn wkf-btn wkf-btn-indigo w-100" (click)="addItemForm()">
+                            <span [data-feather]="'plus'" [size]="15"></span> Agregar
                           </button>
                         </div>
                       </div>
-                      <div class="row">
-                        <div class="col-md">
-                        </div>
                       </div>
-                      <div class="row" style="overflow: auto;">
-                        <div class="col-md-12">
-                          <hr>
-                            <table class="table">
-                              <thead>
-                                <tr>
-                                  <th>NOMBRE</th>
-                                  <th>DESCRIPCION</th>
-                                  <th>TIPO</th>
-                                  <th>ORIGEN</th>
-                                  <th>DATOS</th>
-                                  <tr>
-                                  </thead>
-                                  <tbody>
-                                    @for (e of rowForm; track e) {
-                                      <tr>
-                                        <td>{{e.nombre}}</td>
-                                        <td>{{e.descripcion}}</td>
-                                        <td>{{e.tipo}}</td>
-                                        <td>{{e.origen}}</td>
-                                        <td>{{e.data}}</td>
-                                      </tr>
-                                    }
-                                  </tbody>
-                                  <tfoot>
-                                  </tfoot>
-                                </table>
-                                <br>
-                                </div>
-                              </div>
-                            </ng-template>
-                          </li>
-                          <li ngbNavItem>
-                            <a ngbNavLink><span [data-feather]="'cast'"></span>ESTADOS</a>
-                            <ng-template ngbNavContent>
-                              <!-- INICIO REGISTRO ESTADOS WORKFLOW -->
-                              <div class="row">
+                      <div class="wkf-table-wrap table-responsive">
+                        <table class="table wkf-clean-table">
+                          <thead>
+                            <tr>
+                              <th>NOMBRE</th>
+                              <th>DESCRIPCIÓN</th>
+                              <th>TIPO</th>
+                              <th>ORIGEN</th>
+                              <th>DATOS</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            @for (e of rowForm; track e) {
+                              <tr>
+                                <td class="font-weight-bold">{{e.nombre}}</td>
+                                <td>{{e.descripcion}}</td>
+                                <td><span class="badge badge-light-primary">{{e.tipo}}</span></td>
+                                <td>{{e.origen}}</td>
+                                <td>{{e.data}}</td>
+                              </tr>
+                            }
+                          </tbody>
+                        </table>
+                      </div>
+                      </div>
+                    </ng-template>
+                  </li>
+                  <li ngbNavItem>
+                    <a ngbNavLink><span [data-feather]="'cast'" [size]="15"></span><span>ESTADOS</span></a>
+                    <ng-template ngbNavContent>
+                      <div class="wkf-tab-pane-animate">
+                      <!-- INICIO REGISTRO ESTADOS WORKFLOW -->
+                      <div class="wkf-form-surface">
+                      <div class="row align-items-end">
                                 <div class="form-group col-md-3">
                                   <label class="form-label" for="nombre">Nombre</label>
                                   <div class="input-group-pastel">
@@ -279,16 +283,18 @@
                                     </ng-select>
                                   </div>
                                 </div>
-                                <div class="form-group col-md-2" style="margin-top: 22px;">
-                                  <button type="button" class="btn btn-primary" (click)="Guardar()" style="width: 100%;"><i class="fa fa-arrow-down"
-                                  aria-hidden="true"></i> Agregar
-                                </button>
+                                <div class="form-group col-md-2 d-flex align-items-end">
+                                  <button type="button" class="btn wkf-btn wkf-btn-indigo w-100" (click)="Guardar()">
+                                    <span [data-feather]="'plus'" [size]="15"></span> Agregar
+                                  </button>
                               </div>
+                            </div>
                             </div>
                             <!-- FIN  REGISTRO ESTADOS WORKFLOW -->
                             <!-- INICIO TABLA ESTADOS WORKFLOW -->
                             <div class="row">
                               <div class="col-md-12">
+                                <div class="wkf-table-wrap">
                                 <ngx-datatable [rows]="rowEstado" [rowHeight]="58"
                                   class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
                                   [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'" [class.loading]="isLoading" [loadingIndicator]="isLoading" >
@@ -328,105 +334,122 @@
                                   </ng-template>
                                 </ngx-datatable-column> -->
                               </ngx-datatable>
+                                </div>
                             </div>
+                          </div>
                           </div>
                           <!-- FIN TABLA ESTADOS WORKFLOW -->
                         </ng-template>
                       </li>
                       <li ngbNavItem>
-                        <a ngbNavLink><span [data-feather]="'settings'"></span>ESTATUS</a>
+                        <a ngbNavLink><span [data-feather]="'settings'" [size]="15"></span><span>ESTATUS</span></a>
                         <ng-template ngbNavContent>
+                          <div class="wkf-tab-pane-animate">
                           <!-- INICIO REGISTRO ESTATUS WORKFLOW -->
+                          <div class="wkf-form-surface">
                           <div class="row">
-                            <div class="form-group col-md-3">
-                              <label class="form-label" for="origen">Estado Origen</label>
+                            <div class="form-group col-md-5">
+                              <label class="form-label" for="estatus-origen">Estado Origen</label>
                               <div class="ng-select-group-pastel">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><span [data-feather]="'cast'" [size]="16"></span></span>
                                 </div>
-                                <ng-select [formControl]="estadoCtrl" bindLabel="descripcion" name="origen"
-                                  id="origen" required placeholder="Seleccione" bindValue="id" (change)="lstEstatus()">
-                                  @for (e of rowEstado; track e; let i = $index) {
-                                    <ng-option value="{{ e.id }}">{{e.nomb |
-                                    uppercase}}</ng-option>
-                                  }
+                                <ng-select
+                                  [items]="rowEstado"
+                                  [formControl]="estadoCtrl"
+                                  bindLabel="nomb"
+                                  bindValue="id"
+                                  name="origen"
+                                  id="estatus-origen"
+                                  required
+                                  placeholder="Seleccione estado..."
+                                  (change)="lstEstatus($event)"
+                                  (clear)="lstEstatus(null)">
                                 </ng-select>
                               </div>
                             </div>
-                            <div class="form-group col-md-2">
-                              <label class="form-label" for="nombre">Nombre</label>
+                            <div class="form-group col-md-4">
+                              <label class="form-label" for="estatus-nombre">Nombre del Estatus</label>
                               <div class="input-group-pastel">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
                                 </div>
                                 <input [formControl]="wkfEstatusNombreCtrl" autocomplete="off"
-                                  required type="text" name="nombre" id="nombre"
-                                  placeholder="Enter ..." class="form-control" />
+                                  required type="text" name="nombre" id="estatus-nombre"
+                                  placeholder="Ej: RECIBIDO" class="form-control" />
                               </div>
                             </div>
                             <div class="form-group col-md-3">
-                              <label class="form-label" for="descripcion">Descripción</label>
+                              <label class="form-label" for="estatus-orden">Orden / Control (IDC)</label>
+                              <div class="ng-select-group-pastel">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
+                                </div>
+                                <ng-select
+                                  [items]="lstOrden"
+                                  [formControl]="ordenCtrl"
+                                  name="orden"
+                                  id="estatus-orden"
+                                  required
+                                  placeholder="Seleccione orden...">
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row align-items-end">
+                            <div class="form-group col-md-9">
+                              <label class="form-label" for="estatus-desc">Descripción</label>
                               <div class="input-group-pastel">
                                 <div class="input-group-prepend">
                                   <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
                                 </div>
                                 <input [formControl]="wkfEstatusDescripcionCtrl" autocomplete="off"
-                                  value="" required type="text"
-                                  name="descripcion" id="descripcion" placeholder="Enter ..." class="form-control" />
+                                  required type="text"
+                                  name="descripcion" id="estatus-desc" placeholder="Descripción del estatus..." class="form-control" />
                               </div>
                             </div>
-                            <div class="col-md-2">
-                              <label class="form-label" for="orden">Orden</label>
-                              <div class="ng-select-group-pastel">
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text"><span [data-feather]="'hash'" [size]="16"></span></span>
-                                </div>
-                                <ng-select [formControl]="ordenCtrl" bindLabel="descripcion" name="orden" id="orden" required
-                                  placeholder="Seleccione" bindValue="id">
-                                  @for (e of lstOrden; track e) {
-                                    <ng-option value="{{ e }}">{{e}}</ng-option>
-                                  }
-                                </ng-select>
-                              </div>
+                            <div class="form-group col-md-3 d-flex align-items-end">
+                              <button type="button" class="btn wkf-btn wkf-btn-indigo w-100"
+                                [disabled]="isSavingEstatus" (click)="GuardarEstatus()">
+                                <span [data-feather]="'plus'" [size]="15"></span>
+                                <span>{{ isSavingEstatus ? 'Guardando...' : 'Agregar' }}</span>
+                              </button>
                             </div>
-                            <div class="col-md-2 mb-md-0 mb-1" style="margin-top: 23px;">
-                              <button type="button" class="btn btn-primary" (click)="GuardarEstatus()" style="width: 100%;"><i
-                              class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
-                            </button>
                           </div>
                         </div>
                         <!-- FIN  REGISTRO ESTATUS WORKFLOW -->
                         <!-- INICIO TABLA ESTATUS WORKFLOW -->
                         <div class="row">
                           <div class="col-md-12">
+                            <div class="wkf-table-wrap">
                             <ngx-datatable [rows]="rowEstatus" [rowHeight]="58"
                               class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
                               [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
-                              <ngx-datatable-column name="#" prop="id" [width]="10">
-                                <ng-template let-basedatos="value" ngx-datatable-cell-template>
-                                  <div>
-                                    <span class="font-weight-bold">{{ basedatos.toUpperCase() }} </span>
+                              <ngx-datatable-column name="#" prop="idc" [width]="90">
+                                <ng-template let-row="row" ngx-datatable-cell-template>
+                                  <div [title]="'ID interno: ' + row.id">
+                                    <span class="badge badge-light-primary font-weight-bold">{{ row.idc }}</span>
                                   </div>
                                 </ng-template>
                               </ngx-datatable-column>
-                              <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="200">
+                              <ngx-datatable-column name="NOMBRE" prop="nomb" [width]="220">
                                 <ng-template let-nomb="value" ngx-datatable-cell-template>
                                   <div>
-                                    <span class="font-weight-bold">{{ nomb.toUpperCase() }} </span>
+                                    <span class="font-weight-bold">{{ (nomb || '').toUpperCase() }}</span>
                                   </div>
                                 </ng-template>
                               </ngx-datatable-column>
-                              <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="500">
+                              <ngx-datatable-column name="DESCRIPCIÓN" prop="obse" [width]="420">
                                 <ng-template let-obse="value" ngx-datatable-cell-template>
                                   <div>
-                                    <span class="font-weight-bold">{{ obse.toUpperCase() }} </span>
+                                    <span>{{ (obse || '').toUpperCase() }}</span>
                                   </div>
                                 </ng-template>
                               </ngx-datatable-column>
-                              <ngx-datatable-column name="ESTADO" prop="ide" [width]="200">
+                              <ngx-datatable-column name="ESTADO" prop="ide" [width]="120">
                                 <ng-template let-ide="value" ngx-datatable-cell-template>
                                   <div>
-                                    <span class="font-weight-bold">{{ ide.toUpperCase() }} </span>
+                                    <span class="badge badge-light-secondary">#{{ ide }}</span>
                                   </div>
                                 </ng-template>
                               </ngx-datatable-column>
@@ -564,39 +587,52 @@
                                 </ng-template>
                               </ngx-datatable-column>
                             </ngx-datatable>
+                            </div>
                           </div>
+                        </div>
                         </div>
                         <!-- FIN TABLA ESTATUS WORKFLOW -->
                       </ng-template>
                     </li>
                     <li ngbNavItem>
-                      <a ngbNavLink><span [data-feather]="'lock'"></span>TRANSACIONES</a>
+                      <a ngbNavLink><span [data-feather]="'lock'" [size]="15"></span><span>TRANSACCIONES</span></a>
                       <ng-template ngbNavContent>
+                        <div class="wkf-tab-pane-animate">
                         <!-- INICIO REGISTRO DE TRANSACCIONES WORKFLOW -->
-                        <div class="row">
+                        <div class="wkf-form-surface">
+                        <div class="row align-items-end">
                           <div class="form-group col-md-4">
                             <label class="form-label" for="funciones">Funciones</label>
-                            <ng-select [items]="ListaFunciones" [formControl]="wkfTransicionFuncionCtrl" bindValue="nombre"
-                            bindLabel="nombre" placeholder="Seleccione Aplicación"></ng-select>
+                            <div class="ng-select-group-pastel">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'code'" [size]="16"></span></span>
+                              </div>
+                              <ng-select [items]="ListaFunciones" [formControl]="wkfTransicionFuncionCtrl" bindValue="nombre"
+                              bindLabel="nombre" placeholder="Seleccione Función"></ng-select>
+                            </div>
                           </div>
-                          <div class="col-md-8">
-                            <label class="form-label" for="descripcion">Parametros</label>
-                            <div class="input-group mb-3">
-                              <input style="font-size:14px;" type="text" [formControl]="wkfTransicionParametroCtrl"
-                                autocomplete="off" class="form-control">
-                              <div>
-                                &nbsp;
-                                <button type="button" class="btn btn-primary" (click)="GuardarTransaccion()"><i
-                                class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
+                          <div class="form-group col-md-8">
+                            <label class="form-label" for="wkf-parametros">Parámetros</label>
+                            <div class="wkf-inline-action-row">
+                              <div class="input-group-pastel">
+                                <div class="input-group-prepend">
+                                  <span class="input-group-text"><span [data-feather]="'sliders'" [size]="16"></span></span>
+                                </div>
+                                <input type="text" id="wkf-parametros" [formControl]="wkfTransicionParametroCtrl"
+                                  autocomplete="off" class="form-control" placeholder="Parámetros de la transición..." />
+                              </div>
+                              <button type="button" class="btn wkf-btn wkf-btn-indigo" (click)="GuardarTransaccion()">
+                                <span [data-feather]="'plus'" [size]="15"></span> Agregar
                               </button>
                             </div>
                           </div>
                         </div>
-                      </div>
+                        </div>
                       <!-- FIN REGISTRO DE TRANSACCIONES WORKFLOW -->
                       <!-- INICIO TABLA DE TRANSACCIONES WORKFLOW -->
                       <div class="row">
                         <div class="col-md-12">
+                          <div class="wkf-table-wrap">
                           <ngx-datatable [rows]="rowDataTransiciones" [rowHeight]="58"
                             class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
                             [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
@@ -615,215 +651,293 @@
                               </ng-template>
                             </ngx-datatable-column>
                           </ngx-datatable>
+                          </div>
                         </div>
+                      </div>
                       </div>
                       <!-- FIN TABLA DE TRANSACCIONES WORKFLOW -->
                     </ng-template>
                   </li>
                   <li ngbNavItem>
-                    <a ngbNavLink><span [data-feather]="'award'"></span>RED</a>
+                    <a ngbNavLink><span [data-feather]="'award'" [size]="15"></span><span>RED</span></a>
                     <ng-template ngbNavContent>
+                      <div class="wkf-tab-pane-animate">
                       <!-- INICIO REGISTRO DE RED WORKFLOW -->
+                      <div class="wkf-form-surface">
+                      @if (ListaRedes.length > 0) {
+                        <div class="row align-items-end mb-2 pb-1" style="border-bottom: 1px dashed rgba(15, 23, 42, 0.08);">
+                          <div class="form-group col-md-9">
+                            <label class="form-label" for="wkf-red-existente">Redes Existentes (WKF_CRed)</label>
+                            <div class="ng-select-group-pastel">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'share-2'" [size]="16"></span></span>
+                              </div>
+                              <ng-select
+                                id="wkf-red-existente"
+                                [formControl]="redSeleccionadaCtrl"
+                                placeholder="Seleccione una red existente para continuar o cree una nueva..."
+                                (change)="seleccionarRedExistente($event)">
+                                @for (r of ListaRedes; track r.id) {
+                                  <ng-option [value]="'' + r.id">
+                                    #{{ r.id }} · {{ r.nomb }} @if (getTipologiaName(r.tipo)) { ({{ getTipologiaName(r.tipo) }}) } @if (r.obse) { — {{ r.obse }} }
+                                  </ng-option>
+                                }
+                              </ng-select>
+                            </div>
+                          </div>
+                          <div class="form-group col-md-3 d-flex align-items-end">
+                            <button type="button" class="btn wkf-btn wkf-btn-indigo w-100" (click)="nuevaRed()">
+                              <span [data-feather]="'plus-circle'" [size]="15"></span>
+                              <span>Nueva Red</span>
+                            </button>
+                          </div>
+                        </div>
+                      }
                       <div class="row">
-                        <div class="form-group col-md-4">
-                          <label class="form-label" for="descripcion">Nombre</label>
-                          <input style="font-size:14px;" [formControl]="descripcionRedNombreCtrl"
-                            type="text" class="form-control">
-                        </div>
-                        <div class="form-group col-md-4">
-                          <label class="form-label" for="origen">Tipologia</label>
-                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                            bindValue="id" [formControl]="descripcionRedTipoCtrl">
-                            @for (e of rowTipologia; track e; let i = $index) {
-                              <ng-option
-                              value="{{ e.id }}">{{e.name}}</ng-option>
-                            }
-                          </ng-select>
-                        </div>
-                        <div class="form-group col-md-4">
-                          <label class="form-label" for="origen">Estatus</label>
-                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                            bindValue="id" [formControl]="descripcionRedEstatusCtrl">
-                            @for (e of rowStatus; track e; let i = $index) {
-                              <ng-option
-                              value="{{ e.id }}">{{e.name}}</ng-option>
-                            }
-                          </ng-select>
-                        </div>
-                        <div class="form-group col-md-12">
-                          <label class="form-label" for="descripcion">Descripción</label>
-                          <div class="input-group md-4">
-                            <input [formControl]="descripcionRedDescripcionCtrl"
-                              type="text" class="form-control" />
+                        <div class="form-group col-md-6">
+                          <label class="form-label" for="wkf-red-nombre">Nombre de la Red</label>
+                          <div class="input-group-pastel">
                             <div class="input-group-prepend">
-                              <div class="form-group col-md-2">
-                                <button type="button" class="btn btn-success" (click)="salvarRed()">Salvar
-                                </button>
-                              </div>
+                              <span class="input-group-text"><span [data-feather]="'type'" [size]="16"></span></span>
                             </div>
+                            <input id="wkf-red-nombre" [formControl]="descripcionRedNombreCtrl"
+                              type="text" class="form-control" placeholder="Ej: Sicoex.WKF" />
+                          </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label class="form-label" for="wkf-red-tipo">Tipología</label>
+                          <div class="ng-select-group-pastel">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text"><span [data-feather]="'layers'" [size]="16"></span></span>
+                            </div>
+                            <ng-select bindLabel="name" name="tipologia" id="wkf-red-tipo" required placeholder="Seleccione tipología..."
+                              bindValue="id" [formControl]="descripcionRedTipoCtrl">
+                              @for (e of rowTipologia; track e.id) {
+                                <ng-option [value]="e.id">{{ e.name }}</ng-option>
+                              }
+                            </ng-select>
                           </div>
                         </div>
                         <div class="form-group col-md-12">
-                          <hr>
-                          </div>
-                          <!-- <div class="form-group col-md-12">
-                          <label class="form-label" for="descripcion">Descripción</label>
-                          <input style="font-size:14px;" [(ngModel)]="DescripcionRed.descripcion"
-                            [ngModelOptions]="{standalone: true}" type="text" class="form-control">
-                          <div class="input-group-prepend">
-                            <div class="form-group col-md-1">
-                              <div>
-                                <button type="button" class="btn btn-success"
-                                  (click)="salvarRed()">Salvar Red
-                                </button>
+                          <label class="form-label" for="wkf-red-desc">Descripción</label>
+                          <div class="wkf-inline-action-row">
+                            <div class="input-group-pastel">
+                              <div class="input-group-prepend">
+                                <span class="input-group-text"><span [data-feather]="'file-text'" [size]="16"></span></span>
                               </div>
+                              <input id="wkf-red-desc" [formControl]="descripcionRedDescripcionCtrl"
+                                type="text" class="form-control" placeholder="Propósito o alcance de la red..." />
                             </div>
-                          </div>
-                        </div> -->
-                        <div class="form-group col-md-6">
-                          <label class="form-label" for="origen">Estado Origen</label>
-                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                            bindValue="id" (change)="lstEstatusRedV($event)" [formControl]="wkfRedEstadoOrigenCtrl">
-                            @for (e of rowEstado; track e; let i = $index) {
-                              <ng-option
-                              value="{{ e.id }}">{{e.nomb}}</ng-option>
+                            @if (!isRedSaved) {
+                              <button type="button" class="btn wkf-btn wkf-btn-sage" (click)="salvarRed()">
+                                <span [data-feather]="'save'" [size]="15"></span>
+                                <span>Salvar</span>
+                              </button>
+                            } @else {
+                              <span class="wkf-locked-pill" title="Definición bloqueada. Pulse 'Nueva Red' para registrar otra.">
+                                <span [data-feather]="'lock'" [size]="14"></span>
+                                <span>{{ idRed > 0 ? 'Red #' + idRed : 'Guardada' }}</span>
+                              </span>
                             }
-                          </ng-select>
-                        </div>
-                        <div class="form-group col-md-6">
-                          <label class="form-label" for="origen">Estatus Origen</label>
-                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                            bindValue="id" [formControl]="wkfRedEstatusOrigenCtrl">
-                            @for (e of rowEstatusRedV; track e; let i = $index) {
-                              <ng-option
-                              value="{{ e.id }}">{{e.nomb}}</ng-option>
-                            }
-                          </ng-select>
-                        </div>
-                        <div class="form-group col-md-12">
-                          <label class="form-label" for="origen">Transición</label>
-                          <ng-select bindLabel="descripcion" [formControl]="wkfRedTransicionVCtrl"
-                            name="origen" id="origen" required
-                            placeholder="Seleccione" bindValue="id">
-                            @for (e of ListaTransiciones; track e; let i = $index) {
-                              <ng-option
-                              value="{{ e.id }}">{{e.func}}</ng-option>
-                            }
-                          </ng-select>
-                        </div>
-                        <div class="col-2 col-md-1" style="padding-right: 0!important;">
-                          <div class="d-flex flex-column align-items-center justify-content-center rounded playBtn"
-                            style="height: 92%; width: 100%; font-size: 1.6rem; padding: 0;">
-                            <i class="fa fa-play" aria-hiddden="true"></i>
-                            <!-- <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRriEIzmXue30hGxs5MIzqsG6D9Zqdm-dscBFp3PiU6lq6Z9Ho7dk5zJSHhRsB_FQTWIYg&usqp=CAU" style="transform: scaleX(-1); rotate: 90deg;"> -->
                           </div>
-                        </div>
-                        <div class="col-10 col-md-11">
-                          <div class="row">
-                            <div class="form-group col-md-6">
-                              <label class="form-label" for="destino">Estado Destino Verdadero <i
-                              class="fa fa-check-circle" aria-hidden="true"></i></label>
-                              <ng-select bindLabel="descripcion" [formControl]="wkfRedEstadoDestVCtrl"
-                                (change)="lstEstatusRedF($event)" name="destino"
-                                id="destino" required placeholder="Seleccione" bindValue="id" class="wkfTrue">
-                                @for (e of rowEstado; track e; let i = $index) {
-                                  <ng-option
-                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
-                                }
-                              </ng-select>
-                            </div>
-                            <div class="form-group col-md-6">
-                              <label class="form-label" for="destino">Estatus Destino Verdadero <i
-                              class="fa fa-check-circle" aria-hidden="true"></i></label>
-                              <ng-select bindLabel="descripcion" name="destino" id="destino" required
-                                placeholder="Seleccione" bindValue="id" [formControl]="wkfRedEstatusDestVCtrl"
-                                class="wkfTrue">
-                                @for (e of rowEstatusRedF; track e; let i = $index) {
-                                  <ng-option
-                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
-                                }
-                              </ng-select>
-                            </div>
-                          </div>
-                          <div class="row">
-                            <div class="form-group col-md-6">
-                              <label class="form-label" for="destino">Estado Destino Falso <i class="fa fa-times-circle"
-                              aria-hidden="true"></i></label>
-                              <ng-select bindLabel="descripcion" [formControl]="wkfRedEstadoDestFCtrl"
-                                name="destino" id="destino" required
-                                placeholder="Seleccione" bindValue="id" (change)="lstEstatusRedDF($event)"
-                                class="wkfFalse">
-                                @for (e of rowEstado; track e; let i = $index) {
-                                  <ng-option
-                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
-                                }
-                              </ng-select>
-                            </div>
-                            <div class="form-group col-md-6">
-                              <label class="form-label" for="destino">Estatus Destino Falso <i class="fa fa-times-circle"
-                              aria-hidden="true"></i></label>
-                              <ng-select bindLabel="descripcion" name="destino" id="destino" required
-                                placeholder="Seleccione" bindValue="id" [formControl]="wkfRedEstatusDestFCtrl"
-                                class="wkfFalse">
-                                @for (e of rowEstatusDF; track e; let i = $index) {
-                                  <ng-option
-                                  value="{{ e.id }}">{{e.nomb}}</ng-option>
-                                }
-                              </ng-select>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="col-lg-10 col-md-9 form-group mt-1">
-                          <label class="form-label" for="origen">Transición Error</label>
-                          <ng-select bindLabel="descripcion" name="origen" id="origen" required placeholder="Seleccione"
-                            bindValue="id" [formControl]="wkfRedTransicionFCtrl">
-                            @for (e of ListaTransiciones; track e; let i = $index) {
-                              <ng-option
-                              value="{{ e.id }}">{{e.func}}</ng-option>
-                            }
-                          </ng-select>
-                        </div>
-                        <div class="form-group col-lg-2 col-md-3 d-flex align-items-end mt-1">
-                          <button type="button" class="btn btn-danger" (click)="GuardarRed()" style="width: 100%;">
-                            <i class="fa fa-arrow-down" aria-hidden="true"></i> Agregar
-                          </button>
                         </div>
                       </div>
-                      <br>
-                        <hr>
+                      </div>
+
+                      <!-- Constructor Visual de Máquina de Estados Finitos (FSM) -->
+                      <div class="wkf-branch-box">
+                        <div class="wkf-fsm-step-header">
+                          <span class="fsm-step-badge">1 · NODO ORIGEN</span>
+                          <span class="fsm-step-hint">Defina desde qué estado y estatus parte la transición</span>
+                        </div>
+                        <div class="row">
+                          <div class="form-group col-md-6">
+                            <label class="form-label" for="origen-est">Estado Origen</label>
+                            <ng-select bindLabel="descripcion" name="origen-est" id="origen-est" required placeholder="Seleccione estado origen..."
+                              bindValue="id" (change)="lstEstatusRedV($event)" [formControl]="wkfRedEstadoOrigenCtrl">
+                              @for (e of rowEstado; track e; let i = $index) {
+                                <ng-option value="{{ e.id }}">{{e.nomb}}</ng-option>
+                              }
+                            </ng-select>
+                          </div>
+                          <div class="form-group col-md-6">
+                            <label class="form-label" for="origen-estatus">Estatus Origen</label>
+                            <ng-select bindLabel="descripcion" name="origen-estatus" id="origen-estatus" required placeholder="Seleccione estatus origen..."
+                              bindValue="id" [formControl]="wkfRedEstatusOrigenCtrl">
+                              @for (e of rowEstatusRedV; track e; let i = $index) {
+                                <ng-option value="{{ e.id }}">{{e.nomb}}</ng-option>
+                              }
+                            </ng-select>
+                          </div>
+                        </div>
+
+                        <div class="wkf-fsm-connector">
+                          <span class="fsm-arrow">↓</span>
+                          <span class="fsm-step-badge">2 · CONDICIÓN / TRANSICIÓN</span>
+                          <span class="fsm-step-hint">Opcional — si se omite se enviará <code>0</code> (transición directa)</span>
+                        </div>
+
+                        <div class="row">
+                          <div class="form-group col-md-12">
+                            <label class="form-label" for="transicion-v">Función de Transición</label>
+                            <ng-select bindLabel="descripcion" [formControl]="wkfRedTransicionVCtrl"
+                              name="transicion-v" id="transicion-v"
+                              placeholder="Opcional: seleccione función o deje vacío (valor por defecto: 0)" bindValue="id">
+                              @for (e of ListaTransiciones; track e; let i = $index) {
+                                <ng-option value="{{ e.id }}">{{e.func}}</ng-option>
+                              }
+                            </ng-select>
+                          </div>
+                        </div>
+
+                        <div class="wkf-fsm-connector">
+                          <span class="fsm-arrow">↓</span>
+                          <span class="fsm-step-badge">3 · DESTINOS (BIFURCACIÓN)</span>
+                          <span class="fsm-step-hint">Rutas resultantes al evaluarse verdadera o falsa la transición</span>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="wkf-outcome-card true-branch">
+                              <div class="outcome-title true">
+                                <span [data-feather]="'check-circle'" [size]="15"></span>
+                                <span>Camino Verdadero (Éxito)</span>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label" for="dest-v-est">Estado Destino Verdadero</label>
+                                <ng-select bindLabel="descripcion" [formControl]="wkfRedEstadoDestVCtrl"
+                                  (change)="lstEstatusRedF($event)" name="dest-v-est"
+                                  id="dest-v-est" placeholder="Seleccione estado destino..." bindValue="id" class="wkfTrue">
+                                  @for (e of rowEstado; track e; let i = $index) {
+                                    <ng-option value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                  }
+                                </ng-select>
+                              </div>
+                              <div class="form-group mb-0">
+                                <label class="form-label" for="dest-v-estatus">Estatus Destino Verdadero</label>
+                                <ng-select bindLabel="descripcion" name="dest-v-estatus" id="dest-v-estatus"
+                                  placeholder="Seleccione estatus destino..." bindValue="id" [formControl]="wkfRedEstatusDestVCtrl"
+                                  class="wkfTrue">
+                                  @for (e of rowEstatusRedF; track e; let i = $index) {
+                                    <ng-option value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                  }
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-md-6">
+                            <div class="wkf-outcome-card false-branch">
+                              <div class="outcome-title false">
+                                <span [data-feather]="'x-circle'" [size]="15"></span>
+                                <span>Camino Falso / Error</span>
+                              </div>
+                              <div class="form-group">
+                                <label class="form-label" for="dest-f-est">Estado Destino Falso</label>
+                                <ng-select bindLabel="descripcion" [formControl]="wkfRedEstadoDestFCtrl"
+                                  name="dest-f-est" id="dest-f-est"
+                                  placeholder="Opcional: estado alterno..." bindValue="id" (change)="lstEstatusRedDF($event)"
+                                  class="wkfFalse">
+                                  @for (e of rowEstado; track e; let i = $index) {
+                                    <ng-option value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                  }
+                                </ng-select>
+                              </div>
+                              <div class="form-group mb-0">
+                                <label class="form-label" for="dest-f-estatus">Estatus Destino Falso</label>
+                                <ng-select bindLabel="descripcion" name="dest-f-estatus" id="dest-f-estatus"
+                                  placeholder="Opcional: estatus alterno..." bindValue="id" [formControl]="wkfRedEstatusDestFCtrl"
+                                  class="wkfFalse">
+                                  @for (e of rowEstatusDF; track e; let i = $index) {
+                                    <ng-option value="{{ e.id }}">{{e.nomb}}</ng-option>
+                                  }
+                                </ng-select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row align-items-end mt-2">
+                          <div class="col-lg-10 col-md-9 form-group mb-0">
+                            <label class="form-label" for="transicion-f">Transición Error (Opcional · defecto 0)</label>
+                            <ng-select bindLabel="descripcion" name="transicion-f" id="transicion-f"
+                              placeholder="Opcional: función de compensación o vacío (0)"
+                              bindValue="id" [formControl]="wkfRedTransicionFCtrl">
+                              @for (e of ListaTransiciones; track e; let i = $index) {
+                                <ng-option value="{{ e.id }}">{{e.func}}</ng-option>
+                              }
+                            </ng-select>
+                          </div>
+                          <div class="form-group col-lg-2 col-md-3 mb-0 d-flex align-items-end">
+                            <button type="button" class="btn wkf-btn wkf-btn-indigo w-100" (click)="GuardarRed()">
+                              <span [data-feather]="'plus'" [size]="15"></span> Agregar Regla
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                           <!-- FIN REGISTRO DE RED WORKFLOW -->
                           <!-- INICIO TABLA DE RED WORKFLOW -->
                           <div class="row">
                             <div class="col-md-12">
+                              <div class="wkf-table-wrap">
                               <ngx-datatable [rows]="rowDataRed" [rowHeight]="58"
                                 class="bootstrap core-bootstrap bordered-table" [limit]="10" [headerHeight]="40"
                                 [footerHeight]="50" [scrollbarH]="true" [columnMode]="'force'">
-                                <ngx-datatable-column name="AREA DE ORIGEN" prop="area_origen" [width]="250">
-                                  <ng-template let-area_origen="value" ngx-datatable-cell-template>
-                                    <div>
-                                      <span class="font-weight-bold">{{ area_origen }}</span>
+                                <ngx-datatable-column name="NODO ORIGEN" prop="origen_area" [width]="215">
+                                  <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center" style="gap: 6px;">
+                                        <span class="badge badge-light-secondary">#{{ row.origen_id }}</span>
+                                        <span class="font-weight-bold">{{ row.origen_area }}</span>
+                                      </div>
+                                      <small class="text-muted">Estatus ({{ row.estatus_origen_id }}): {{ row.estatus_origen }}</small>
                                     </div>
                                   </ng-template>
                                 </ngx-datatable-column>
-                                <ngx-datatable-column name="ESTATUS DE ORIGEN" prop="area_estatus" [width]="250">
-                                  <ng-template let-area_estatus="value" ngx-datatable-cell-template>
-                                    <div>
-                                      <span class="font-weight-bold">{{ area_estatus }}</span>
+                                <ngx-datatable-column name="TRANS. VÁLIDA" prop="transicion_valida" [width]="185">
+                                  <ng-template let-row="row" ngx-datatable-cell-template>
+                                    @if (row.transicion_valida) {
+                                      <div class="d-flex flex-column" [title]="row.transicion_valida_desc || ''">
+                                        <span class="badge badge-light-primary align-self-start">{{ row.transicion_valida }}</span>
+                                        @if (row.transicion_valida_desc) {
+                                          <small class="text-muted text-truncate" style="max-width: 170px;">{{ row.transicion_valida_desc }}</small>
+                                        }
+                                      </div>
+                                    } @else {
+                                      <span class="badge badge-light-secondary">Directa (0)</span>
+                                    }
+                                  </ng-template>
+                                </ngx-datatable-column>
+                                <ngx-datatable-column name="DESTINO VÁLIDO (✓)" prop="destino_valido_area" [width]="215">
+                                  <ng-template let-row="row" ngx-datatable-cell-template>
+                                    <div class="d-flex flex-column">
+                                      <div class="d-flex align-items-center" style="gap: 6px;">
+                                        <span class="badge badge-light-success">#{{ row.destino_valido_id }}</span>
+                                        <span class="font-weight-bold">{{ row.destino_valido_area }}</span>
+                                      </div>
+                                      <small class="text-muted">Estatus ({{ row.estatus_destino_valido_id }}): {{ row.estatus_destino_valido }}</small>
                                     </div>
                                   </ng-template>
                                 </ngx-datatable-column>
-                                <ngx-datatable-column name="AREA DE DESTINO" prop="area_destino" [width]="250">
-                                  <ng-template let-area_destino="value" ngx-datatable-cell-template>
-                                    <div>
-                                      <span class="font-weight-bold">{{ area_destino }}</span>
-                                    </div>
-                                  </ng-template>
-                                </ngx-datatable-column>
-                                <ngx-datatable-column name="ESTATUS DESTINO" prop="estatus_destino" [width]="250">
-                                  <ng-template let-estatus_destino="value" ngx-datatable-cell-template>
-                                    <div>
-                                      <span class="font-weight-bold">{{ estatus_destino }}</span>
-                                    </div>
+                                <ngx-datatable-column name="DESTINO FALSO (✕)" prop="destino_falso_area" [width]="235">
+                                  <ng-template let-row="row" ngx-datatable-cell-template>
+                                    @if (row.destino_falso_area) {
+                                      <div class="d-flex flex-column">
+                                        <div class="d-flex align-items-center" style="gap: 6px;">
+                                          <span class="badge badge-light-danger">#{{ row.destino_falso_id }}</span>
+                                          <span class="font-weight-bold">{{ row.destino_falso_area }}</span>
+                                          @if (row.destino_falso_id === row.origen_id && row.estatus_destino_falso_id === row.estatus_origen_id) {
+                                            <span class="badge badge-light-warning" title="Permanece en el mismo nodo">↺</span>
+                                          }
+                                        </div>
+                                        <small class="text-muted">
+                                          Estatus ({{ row.estatus_destino_falso_id }}): {{ row.estatus_destino_falso }}
+                                          @if (row.transicion_falsa) { · <strong>{{ row.transicion_falsa }}</strong> }
+                                        </small>
+                                      </div>
+                                    } @else {
+                                      <span class="text-muted">—</span>
+                                    }
                                   </ng-template>
                                 </ngx-datatable-column>
                                 <!-- <ngx-datatable-column name="Status" prop="est" [width]="200">
@@ -833,14 +947,226 @@
                                 </ng-template>
                               </ngx-datatable-column> -->
                             </ngx-datatable>
+                              </div>
                           </div>
+                        </div>
                         </div>
                         <!-- FIN TABLA RED WORKFLOW -->
                       </ng-template>
                     </li>
                     <li ngbNavItem>
-                      <a ngbNavLink><span [data-feather]="'git-merge'"></span>DIAGRAMA</a>
+                      <a ngbNavLink><span [data-feather]="'git-merge'" [size]="15"></span><span>DIAGRAMA</span></a>
                       <ng-template ngbNavContent>
+                        <div class="wkf-tab-pane-animate">
+                          <!-- Resumen MEF -->
+                          <div class="fsm-stats-strip">
+                            <div class="fsm-stat"><span>Segmentos (Estados)</span><strong>{{ fsmAnalysis.stats.totalEstados }}</strong></div>
+                            <div class="fsm-stat"><span>Estatus en Red</span><strong>{{ fsmAnalysis.nodes.length }}</strong></div>
+                            <div class="fsm-stat success"><span>Decisiones SI (✓)</span><strong>{{ fsmAnalysis.stats.arcosValidos }}</strong></div>
+                            <div class="fsm-stat danger"><span>Desvíos NO (✕)</span><strong>{{ fsmAnalysis.stats.desviosRechazo }}</strong></div>
+                            <div class="fsm-stat primary"><span>Con Función</span><strong>{{ fsmAnalysis.stats.conTransicion }}</strong></div>
+                          </div>
+
+                          <!-- Barra de Leyenda, Vista JSON y Exportación (Siempre visible) -->
+                          <div class="petri-toolbar">
+                            <div class="petri-legend">
+                              <span class="leg-item"><span class="leg-dot token"></span> Lugar Inicial (Token)</span>
+                              <span class="leg-item"><span class="leg-dot place"></span> Lugar / Estatus</span>
+                              <span class="leg-item"><span class="leg-bar"></span> Transición</span>
+                              <span class="leg-item"><span class="leg-line si"></span> Flujo SI</span>
+                              <span class="leg-item"><span class="leg-line no"></span> Desvío NO</span>
+                            </div>
+                            <div class="petri-toolbar-actions">
+                              <div class="petri-mode-switch">
+                                <button type="button" class="petri-mode-btn" [class.active]="diagramViewMode === 'petri'" (click)="setDiagramViewMode('petri')">
+                                  Diagrama
+                                </button>
+                                <button type="button" class="petri-mode-btn" [class.active]="diagramViewMode === 'json'" (click)="setDiagramViewMode('json')">
+                                  Vista JSON
+                                </button>
+                              </div>
+                              @if (diagramViewMode === 'petri' && fsmAnalysis.arcs.length > 0) {
+                                <button type="button" class="petri-toggle-btn" [class.active]="showSelfLoops" (click)="toggleSelfLoops()">
+                                  {{ showSelfLoops ? 'Ocultar ↺' : 'Mostrar ↺' }}
+                                </button>
+                                <button type="button" class="petri-toggle-btn" (click)="descargarSvgRed()" title="Exportar diagrama vectorial .SVG">
+                                  ↓ SVG
+                                </button>
+                              } @else if (diagramViewMode === 'json') {
+                                <button type="button" class="petri-toggle-btn" (click)="copiarJsonRed()" title="Copiar JSON al portapapeles">
+                                  Copiar
+                                </button>
+                              }
+                              <button type="button" class="petri-toggle-btn primary" (click)="descargarJsonRed()" title="Descargar definición MEF en JSON">
+                                ↓ JSON
+                              </button>
+                            </div>
+                          </div>
+
+                          <!-- Vista JSON Elegante Exportable -->
+                          @if (diagramViewMode === 'json') {
+                            <div class="petri-json-wrap">
+                              <div class="petri-json-meta">
+                                <span>Esquema: <code>sandra.workflow.mef-petri/v1</code> · Red #{{ idRed || xidW || 0 }}</span>
+                                <span>{{ fsmAnalysis.segments.length }} segmentos · {{ fsmAnalysis.arcs.length }} arcos</span>
+                              </div>
+                              <pre class="petri-json-code">{{ exportableJsonText }}</pre>
+                            </div>
+                          }
+
+                          <!-- Lienzo SVG Interactivo Red de Petri -->
+                          @if (diagramViewMode === 'petri') {
+                            @if (fsmAnalysis.arcs.length === 0) {
+                              <div class="wkf-empty-diagram" style="border-top-left-radius: 0; border-top-right-radius: 0;">
+                                <span [data-feather]="'git-merge'" [size]="28"></span>
+                                <h6>Red #{{ idRed || xidW || 0 }} ({{ descripcionRedNombreCtrl.value || 'Sin selección' }}) sin reglas registradas</h6>
+                                <p>La consulta <code>WKF_CMapaRed</code> devolvió 0 flujos para esta red. Seleccione otra red o agregue reglas en la pestaña <strong>RED</strong> (o revise la <strong>Vista JSON</strong> arriba).</p>
+                              </div>
+                            } @else {
+                            <div class="petri-canvas-wrap">
+                              <svg
+                                class="petri-svg"
+                                [attr.viewBox]="'0 0 ' + petriDiagram.width + ' ' + petriDiagram.height"
+                                [attr.width]="petriDiagram.width"
+                                [attr.height]="petriDiagram.height"
+                                role="img"
+                                aria-label="Diagrama de Flujo Red de Petri">
+                                <defs>
+                                  <marker id="arrow-si" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                                    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#10b981" />
+                                  </marker>
+                                  <marker id="arrow-no" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+                                    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#ef4444" />
+                                  </marker>
+                                  <marker id="arrow-loop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
+                                    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#94a3b8" />
+                                  </marker>
+                                  <filter id="petri-shadow" x="-15%" y="-15%" width="130%" height="130%">
+                                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.08" />
+                                  </filter>
+                                </defs>
+
+                                <!-- 1. Swimlanes / Segmentos por Estado -->
+                                @for (lane of petriDiagram.swimlanes; track lane.estadoId) {
+                                  <g class="petri-lane" [ngClass]="lane.role.toLowerCase()">
+                                    <rect
+                                      [attr.x]="lane.x"
+                                      [attr.y]="lane.y"
+                                      [attr.width]="lane.width"
+                                      [attr.height]="lane.height"
+                                      rx="14"
+                                      class="lane-bg" />
+                                    <rect
+                                      [attr.x]="lane.x"
+                                      [attr.y]="lane.y"
+                                      [attr.width]="lane.width"
+                                      height="40"
+                                      rx="14"
+                                      class="lane-header" />
+                                    <text [attr.x]="lane.x + 14" [attr.y]="lane.y + 25" class="lane-id">#{{ lane.estadoId }}</text>
+                                    <text [attr.x]="lane.x + 42" [attr.y]="lane.y + 25" class="lane-title">{{ lane.area }}</text>
+                                  </g>
+                                }
+
+                                <!-- 2. Arcos / Aristas Bézier (SI, NO, LOOP) -->
+                                @for (edge of petriDiagram.edges; track edge.id) {
+                                  @if (edge.kind !== 'LOOP' || showSelfLoops) {
+                                    <g class="petri-edge-group" [ngClass]="edge.kind.toLowerCase()">
+                                      <title>{{ edge.tooltip }}</title>
+                                      <path
+                                        [attr.d]="edge.path"
+                                        fill="none"
+                                        class="petri-arc"
+                                        [ngClass]="edge.kind.toLowerCase()"
+                                        [attr.marker-end]="edge.kind === 'SI' ? 'url(#arrow-si)' : (edge.kind === 'NO' ? 'url(#arrow-no)' : 'url(#arrow-loop)')" />
+                                      @if (edge.label) {
+                                        <text
+                                          [attr.x]="edge.labelX"
+                                          [attr.y]="edge.labelY"
+                                          text-anchor="middle"
+                                          class="petri-arc-label"
+                                          [ngClass]="edge.kind.toLowerCase()">
+                                          {{ edge.label }}
+                                        </text>
+                                      }
+                                    </g>
+                                  }
+                                }
+
+                                <!-- 3. Transiciones (Barras de Red de Petri) -->
+                                @for (tr of petriDiagram.transitions; track tr.id) {
+                                  <g class="petri-transition-group" [class.has-fn]="tr.hasFunc" filter="url(#petri-shadow)">
+                                    <title>{{ tr.desc }}</title>
+                                    <rect
+                                      [attr.x]="tr.x"
+                                      [attr.y]="tr.y"
+                                      [attr.width]="tr.width"
+                                      [attr.height]="tr.height"
+                                      rx="7"
+                                      class="petri-trans-rect" />
+                                    <text
+                                      [attr.x]="tr.x + tr.width / 2"
+                                      [attr.y]="tr.y + tr.height / 2 + 4"
+                                      text-anchor="middle"
+                                      class="petri-trans-text">
+                                      {{ tr.label }}
+                                    </text>
+                                  </g>
+                                }
+
+                                <!-- 4. Lugares / Places (Círculos MEF con Token Inicial) -->
+                                @for (pl of petriDiagram.places; track pl.key) {
+                                  <g class="petri-place-group" [ngClass]="pl.role.toLowerCase()" filter="url(#petri-shadow)">
+                                    <title>#{{ pl.estadoId }} {{ pl.area }} · {{ pl.estatus }} ({{ pl.role }})</title>
+                                    <circle
+                                      [attr.cx]="pl.cx"
+                                      [attr.cy]="pl.cy"
+                                      [attr.r]="pl.r"
+                                      class="petri-place-circle" />
+                                    @if (pl.role === 'FINAL') {
+                                      <circle
+                                        [attr.cx]="pl.cx"
+                                        [attr.cy]="pl.cy"
+                                        [attr.r]="pl.r - 5"
+                                        fill="none"
+                                        class="petri-place-inner-ring" />
+                                    }
+                                    @if (pl.role === 'INICIAL') {
+                                      <circle
+                                        [attr.cx]="pl.cx"
+                                        [attr.cy]="pl.cy"
+                                        r="7"
+                                        class="petri-token" />
+                                    } @else {
+                                      <text
+                                        [attr.x]="pl.cx"
+                                        [attr.y]="pl.cy + 4"
+                                        text-anchor="middle"
+                                        class="petri-place-id">
+                                        {{ pl.estatusId }}
+                                      </text>
+                                    }
+                                    <text
+                                      [attr.x]="pl.cx"
+                                      [attr.y]="pl.cy + pl.r + 17"
+                                      text-anchor="middle"
+                                      class="petri-place-name">
+                                      {{ pl.estatus }}
+                                    </text>
+                                    <text
+                                      [attr.x]="pl.cx"
+                                      [attr.y]="pl.cy + pl.r + 30"
+                                      text-anchor="middle"
+                                      class="petri-place-role">
+                                      {{ pl.role }}
+                                    </text>
+                                  </g>
+                                }
+                              </svg>
+                            </div>
+                            }
+                          }
+                        </div>
                       </ng-template>
                     </li>
                   </ul>

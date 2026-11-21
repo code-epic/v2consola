@@ -437,4 +437,482 @@
   100% { transform: scale(1); }
 }
 
+/* ========================================================
+   MATTE DATABASE COMBOS & LIGHTWEIGHT LOCAL DB ICONS
+   ======================================================== */
+.text-slate-matte {
+  color: #334155 !important;
+}
+
+.db-select-matte {
+  .ng-select .ng-select-container {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #334155 !important;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f1f5f9 !important;
+      border-color: #94a3b8 !important;
+    }
+  }
+
+  .ng-select.ng-select-focused .ng-select-container {
+    background-color: #ffffff !important;
+    border-color: #64748b !important;
+    box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.12) !important;
+  }
+
+  .ng-dropdown-panel {
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08) !important;
+    border-radius: 10px !important;
+    overflow: hidden;
+
+    .ng-dropdown-panel-items .ng-option {
+      padding: 0.45rem 0.75rem !important;
+      background-color: #ffffff;
+      border-bottom: 1px solid #f1f5f9;
+      transition: background-color 0.15s ease;
+
+      &.ng-option-marked {
+        background-color: #f1f5f9 !important;
+        color: #1e293b !important;
+      }
+
+      &.ng-option-selected {
+        background-color: #e2e8f0 !important;
+        color: #0f172a !important;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+.db-icon-holder {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(100, 116, 139, 0.18);
+  background-color: #f1f5f9;
+
+  &.db-icon-sm {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+
+    .db-svg-icon {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  .db-svg-icon {
+    width: 17px;
+    height: 17px;
+    object-fit: contain;
+    display: block;
+  }
+}
+
+.db-option-title,
+.db-selected-text {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+  letter-spacing: 0.01em;
+}
+
+.db-engine-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.14rem 0.55rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border: 1px solid transparent;
+}
+
+.db-matte-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.14rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+/* Matte Color Palettes per DB Engine */
+.db-matte-mysql {
+  background-color: #ebf3f7 !important;
+  color: #3b6e8c !important;
+  border-color: #cbe0ec !important;
+}
+
+.db-matte-mariadb {
+  background-color: #f7f1eb !important;
+  color: #8c6239 !important;
+  border-color: #e6d5c3 !important;
+}
+
+.db-matte-postgres {
+  background-color: #edf2f7 !important;
+  color: #476a8a !important;
+  border-color: #cbd8e6 !important;
+}
+
+.db-matte-mongodb {
+  background-color: #eaf4ee !important;
+  color: #3d7a5a !important;
+  border-color: #c5e0d0 !important;
+}
+
+.db-matte-couchdb {
+  background-color: #f9eded !important;
+  color: #9e4747 !important;
+  border-color: #e8caca !important;
+}
+
+.db-matte-rethinkdb {
+  background-color: #ebf4f5 !important;
+  color: #3b7a82 !important;
+  border-color: #c4dfe3 !important;
+}
+
+.db-matte-sqlserver {
+  background-color: #f7edef !important;
+  color: #8c4650 !important;
+  border-color: #e5cad0 !important;
+}
+
+.db-matte-neutral {
+  background-color: #f1f5f9 !important;
+  color: #526071 !important;
+  border-color: #cbd5e1 !important;
+}
+
+/* ========================================================
+   SANDRA DIGITAL BACKUP TELEMETRY ANIMATION
+   ======================================================== */
+.sandra-backup-telemetry-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  background: linear-gradient(145deg, #f8fafc 0%, #f1f5f9 55%, #eef2f6 100%);
+  border: 1px solid #cbd5e1;
+  box-shadow: inset 0 1px 0 #ffffff, 0 8px 24px rgba(15, 23, 42, 0.05);
+  animation: fadeIn 0.3s ease-out;
+
+  .sandra-cyber-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, rgba(100, 116, 139, 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(100, 116, 139, 0.06) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none;
+  }
+
+  .sandra-scanline {
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(99, 102, 241, 0.05) 50%,
+      transparent 100%
+    );
+    animation: sandraScanSweep 3.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: none;
+  }
+
+  .sandra-telemetry-content {
+    position: relative;
+    z-index: 2;
+  }
+
+  .sandra-digital-nodes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.1rem;
+  }
+
+  .sandra-core-hub,
+  .sandra-db-hub {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+
+    .hub-caption {
+      margin-top: 0.55rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #475569;
+    }
+  }
+
+  .sandra-core-hub {
+    .sandra-logo-emblem {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 18px rgba(71, 85, 105, 0.12);
+      position: relative;
+      z-index: 2;
+
+      img {
+        width: 42px;
+        height: 42px;
+        object-fit: contain;
+        animation: sandraPulseEmblem 2.4s ease-in-out infinite;
+      }
+    }
+
+    .orbital-ring {
+      position: absolute;
+      top: 34px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      pointer-events: none;
+
+      &.ring-outer {
+        width: 84px;
+        height: 84px;
+        border: 1.5px dashed rgba(99, 102, 241, 0.35);
+        animation: sandraOrbitSpin 9s linear infinite;
+      }
+
+      &.ring-inner {
+        width: 76px;
+        height: 76px;
+        border: 1px solid rgba(71, 85, 105, 0.18);
+        animation: sandraOrbitPulse 2.2s ease-out infinite;
+      }
+    }
+  }
+
+  .sandra-db-hub {
+    .db-hub-ring {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid #cbd5e1;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.07);
+
+      img {
+        width: 32px;
+        height: 32px;
+        object-fit: contain;
+      }
+    }
+  }
+
+  .sandra-data-stream {
+    flex: 1;
+    min-width: 180px;
+    max-width: 310px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .stream-track {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+
+      .data-packet {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 34%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, transparent, #4f46e5, #0ea5e9, transparent);
+        animation: sandraPacketFlow 1.7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+        &.pkt-2 {
+          animation-delay: 0.55s;
+        }
+        &.pkt-3 {
+          animation-delay: 1.1s;
+        }
+      }
+    }
+
+    .stream-metrics {
+      margin-top: 0.45rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #475569;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 0.18rem 0.65rem;
+      border-radius: 999px;
+      border: 1px solid #e2e8f0;
+
+      .metric-pill {
+        color: #1e293b;
+        font-weight: 700;
+      }
+      .metric-rate {
+        color: #4f46e5;
+      }
+    }
+  }
+
+  .sandra-telemetry-status {
+    .status-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.22rem 0.75rem;
+      border-radius: 999px;
+      background: #e2e8f0;
+      color: #334155;
+      font-size: 0.69rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+
+      .status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        animation: pulseLoader 1.2s infinite;
+      }
+    }
+
+    .telemetry-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .telemetry-subtitle {
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+  }
+
+  .sandra-backup-stages {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.75rem;
+
+    .stage-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.38rem;
+      padding: 0.28rem 0.68rem;
+      border-radius: 8px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      font-size: 0.73rem;
+      font-weight: 600;
+      color: #94a3b8;
+      transition: all 0.25s ease;
+
+      .stage-index {
+        font-size: 0.66rem;
+        font-weight: 700;
+        padding: 0.08rem 0.32rem;
+        border-radius: 5px;
+        background: #f1f5f9;
+        color: #64748b;
+      }
+
+      &.active {
+        border-color: #6366f1;
+        background: #eef2ff;
+        color: #312e81;
+        box-shadow: 0 2px 8px rgba(99, 102, 241, 0.12);
+
+        .stage-index {
+          background: #4f46e5;
+          color: #ffffff;
+        }
+      }
+
+      &.done {
+        border-color: #a7f3d0;
+        background: #f0fdf4;
+        color: #166534;
+
+        .stage-index {
+          background: #10b981;
+          color: #ffffff;
+        }
+      }
+    }
+
+    .stage-connector {
+      width: 16px;
+      height: 1.5px;
+      background: #cbd5e1;
+    }
+  }
+}
+
+@keyframes sandraOrbitSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes sandraOrbitPulse {
+  0% { transform: translate(-50%, -50%) scale(0.96); opacity: 0.8; }
+  50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.35; }
+  100% { transform: translate(-50%, -50%) scale(0.96); opacity: 0.8; }
+}
+
+@keyframes sandraPulseEmblem {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+@keyframes sandraPacketFlow {
+  0% { left: -35%; }
+  100% { left: 100%; }
+}
+
+@keyframes sandraScanSweep {
+  0% { left: -45%; }
+  100% { left: 115%; }
+}
+
+
 
