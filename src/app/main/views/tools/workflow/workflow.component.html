@@ -935,11 +935,25 @@
                                           @if (row.transicion_falsa) { · <strong>{{ row.transicion_falsa }}</strong> }
                                         </small>
                                       </div>
-                                    } @else {
-                                      <span class="text-muted">—</span>
-                                    }
-                                  </ng-template>
-                                </ngx-datatable-column>
+                                      } @else {
+                                        <span class="text-muted">—</span>
+                                      }
+                                    </ng-template>
+                                  </ngx-datatable-column>
+                                  <ngx-datatable-column name="ACCIONES" prop="id" [width]="74" [sortable]="false">
+                                    <ng-template let-row="row" ngx-datatable-cell-template>
+                                      <div class="d-flex align-items-center justify-content-center">
+                                        <button type="button"
+                                          class="btn btn-outline-danger d-inline-flex align-items-center justify-content-center"
+                                          style="width: 32px; height: 32px; padding: 0; border-radius: 8px;"
+                                          [attr.aria-label]="row.id ? ('Eliminar regla #' + row.id) : 'Eliminar regla'"
+                                          [title]="row.id ? ('Eliminar regla #' + row.id) : 'Eliminar regla'"
+                                          (click)="eliminarReglaMapa(row)">
+                                          <span [data-feather]="'trash-2'" [inner]="true" [size]="'15'"></span>
+                                        </button>
+                                      </div>
+                                    </ng-template>
+                                  </ngx-datatable-column>
                                 <!-- <ngx-datatable-column name="Status" prop="est" [width]="200">
                                 <ng-template let-est="value" ngx-datatable-cell-template>
                                   <div class="badge badge-success" *ngIf="est == 1">Activo</div>
@@ -972,6 +986,7 @@
                             <div class="petri-legend">
                               <span class="leg-item"><span class="leg-dot token"></span> Lugar Inicial (Token)</span>
                               <span class="leg-item"><span class="leg-dot place"></span> Lugar / Estatus</span>
+                              <span class="leg-item"><span class="leg-dot final-token"></span> Fin del Proceso</span>
                               <span class="leg-item"><span class="leg-bar"></span> Transición</span>
                               <span class="leg-item"><span class="leg-line si"></span> Flujo SI</span>
                               <span class="leg-item"><span class="leg-line no"></span> Desvío NO</span>
@@ -986,6 +1001,18 @@
                                 </button>
                               </div>
                               @if (diagramViewMode === 'petri' && fsmAnalysis.arcs.length > 0) {
+                                <div class="petri-zoom-control" title="Control de zoom del diagrama">
+                                  <button type="button" class="petri-zoom-btn" (click)="zoomOutDiagram()" [disabled]="diagramZoom <= 0.55" title="Alejar">
+                                    <span [data-feather]="'zoom-out'" [inner]="true" [size]="'13'"></span>
+                                  </button>
+                                  <button type="button" class="petri-zoom-val" (click)="resetDiagramZoom()" title="Restablecer zoom a 100%">
+                                    <span [data-feather]="'search'" [inner]="true" [size]="'12'"></span>
+                                    <span>{{ getDiagramZoomPercent() }}%</span>
+                                  </button>
+                                  <button type="button" class="petri-zoom-btn" (click)="zoomInDiagram()" [disabled]="diagramZoom >= 1.85" title="Acercar">
+                                    <span [data-feather]="'zoom-in'" [inner]="true" [size]="'13'"></span>
+                                  </button>
+                                </div>
                                 <button type="button" class="petri-toggle-btn" [class.active]="showSelfLoops" (click)="toggleSelfLoops()">
                                   {{ showSelfLoops ? 'Ocultar ↺' : 'Mostrar ↺' }}
                                 </button>
@@ -1027,22 +1054,22 @@
                               <svg
                                 class="petri-svg"
                                 [attr.viewBox]="'0 0 ' + petriDiagram.width + ' ' + petriDiagram.height"
-                                [attr.width]="petriDiagram.width"
-                                [attr.height]="petriDiagram.height"
+                                [attr.width]="petriDiagram.width * diagramZoom"
+                                [attr.height]="petriDiagram.height * diagramZoom"
                                 role="img"
                                 aria-label="Diagrama de Flujo Red de Petri">
                                 <defs>
                                   <marker id="arrow-si" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-                                    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#10b981" />
+                                    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#4d7a64" />
                                   </marker>
                                   <marker id="arrow-no" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
-                                    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#ef4444" />
+                                    <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#9e5a6a" />
                                   </marker>
                                   <marker id="arrow-loop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5.5" markerHeight="5.5" orient="auto-start-reverse">
                                     <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="#94a3b8" />
                                   </marker>
                                   <filter id="petri-shadow" x="-15%" y="-15%" width="130%" height="130%">
-                                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.08" />
+                                    <feDropShadow dx="0" dy="1.5" stdDeviation="2" flood-color="#5b537d" flood-opacity="0.06" />
                                   </filter>
                                 </defs>
 
@@ -1130,8 +1157,12 @@
                                         [attr.r]="pl.r - 5"
                                         fill="none"
                                         class="petri-place-inner-ring" />
-                                    }
-                                    @if (pl.role === 'INICIAL') {
+                                      <circle
+                                        [attr.cx]="pl.cx"
+                                        [attr.cy]="pl.cy"
+                                        r="9"
+                                        class="petri-final-token" />
+                                    } @else if (pl.role === 'INICIAL') {
                                       <circle
                                         [attr.cx]="pl.cx"
                                         [attr.cy]="pl.cy"
@@ -1148,17 +1179,18 @@
                                     }
                                     <text
                                       [attr.x]="pl.cx"
-                                      [attr.y]="pl.cy + pl.r + 17"
+                                      [attr.y]="pl.cy + pl.r + 15"
                                       text-anchor="middle"
                                       class="petri-place-name">
                                       {{ pl.estatus }}
                                     </text>
                                     <text
                                       [attr.x]="pl.cx"
-                                      [attr.y]="pl.cy + pl.r + 30"
+                                      [attr.y]="pl.cy + pl.r + 27"
                                       text-anchor="middle"
-                                      class="petri-place-role">
-                                      {{ pl.role }}
+                                      class="petri-place-role"
+                                      [class.is-fin]="pl.role === 'FINAL'">
+                                      {{ pl.role === 'FINAL' ? 'FIN DEL PROCESO' : pl.role }}
                                     </text>
                                   </g>
                                 }

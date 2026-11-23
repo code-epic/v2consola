@@ -570,8 +570,14 @@ export class RegisterApiComponent implements OnInit {
     this.xdmlCtrl.valueChanges.subscribe((v) => {
       if (v) this.onDml(v);
     });
-    this.entradasCtrl.valueChanges.subscribe((v) => this.setEditorContent(v));
-    this.queryCtrl.valueChanges.subscribe((v) => this.setEditorContent(v));
+    this.entradasCtrl.valueChanges.subscribe((v) => {
+      this.autoSanitizarControl(this.entradasCtrl, v);
+      this.setEditorContent(v);
+    });
+    this.queryCtrl.valueChanges.subscribe((v) => {
+      this.autoSanitizarControl(this.queryCtrl, v);
+      this.setEditorContent(v);
+    });
     this.aplicacionCtrl.valueChanges.subscribe((v: any) => {
       if (v) {
         this.xAPIDB.aplicacion = typeof v === "object" && v !== null ? (v.nombre || v.name || v.identificador || "") : v;
@@ -635,8 +641,8 @@ export class RegisterApiComponent implements OnInit {
     this.xAPIDB.metodo = this.metodoCtrl.value;
     this.xAPIDB.relacional = this.relacionalCtrl.value;
     this.xAPIDB.coleccion = this.coleccionCtrl.value;
-    this.xAPIDB.entradas = this.entradasCtrl.value;
-    this.xAPIDB.query = this.queryCtrl.value;
+    this.xAPIDB.entradas = this.sanitizarTextoCodigo(this.entradasCtrl.value);
+    this.xAPIDB.query = this.sanitizarTextoCodigo(this.queryCtrl.value);
     this.xAPIDB.parametros = this.parametrosCtrl.value;
     this.xAPIDB.consumidores = this.consumidoresCtrl.value;
     this.xAPIDB.cache = this.cacheCtrl.value;
@@ -721,6 +727,9 @@ export class RegisterApiComponent implements OnInit {
       );
       return;
     }
+    if (!this.validarAntesDeGuardar()) {
+      return;
+    }
     this.syncToModel();
     // Asegurar que driver siempre sea string
     if (typeof this.xAPIDB.driver === 'object' && this.xAPIDB.driver !== null) {
@@ -793,6 +802,9 @@ export class RegisterApiComponent implements OnInit {
   }
 
   async UpdateAPI(funcion: string, entorno: string) {
+    if (!this.validarAntesDeGuardar()) {
+      return;
+    }
     this.syncToModel();
 
     // Evaluar y calcular la nueva versión antes de enviar la petición
@@ -1583,6 +1595,104 @@ export class RegisterApiComponent implements OnInit {
   limpiarQuerySql(): void {
     this.queryCtrl.setValue("");
     this.clickRefresh(null);
+  }
+
+  /**
+   * Limpia caracteres invisibles, comillas tipográficas, espacios duros (NBSP),
+   * BOM y caracteres de control al pegar SQL o JSON para evitar errores en servidor.
+   */
+  sanitizarTextoCodigo(raw: any): string {
+    if (raw == null) return "";
+    return String(raw)
+      // Eliminar BOM y espacios invisibles de ancho cero
+      .replace(/[\uFEFF\u200B-\u200D\u2060]/g, "")
+      // Reemplazar espacios no separables (NBSP, thin space, etc.) por espacio estándar
+      .replace(/[\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]/g, " ")
+      // Normalizar comillas tipográficas inteligentes a comillas ASCII
+      .replace(/[\u201C\u201D\u201E\u201F\u00AB\u00BB]/g, '"')
+      .replace(/[\u2018\u2019\u201A\u201B\u2032]/g, "'")
+      // Normalizar guiones largos tipográficos a guión ASCII
+      .replace(/[\u2013\u2014\u2212]/g, "-")
+      // Normalizar saltos de línea CRLF / CR a LF
+      .replace(/\r\n?/g, "\n")
+      // Eliminar caracteres de control ASCII inválidos (preservando \t y \n)
+      .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, "");
+  }
+
+  private autoSanitizarControl(ctrl: FormControl, value: any): void {
+    if (typeof value !== "string" || !value) return;
+    const cleaned = this.sanitizarTextoCodigo(value);
+    if (cleaned !== value) {
+      ctrl.setValue(cleaned, { emitEvent: false });
+      this.utilservice.AlertMini(
+        "top-end",
+        "info",
+        "Se limpiaron caracteres especiales/invisibles al pegar",
+        2500,
+      );
+    }
+  }
+
+  sanitizarConsultaSql(): void {
+    const raw = this.queryCtrl.value || "";
+    const cleaned = this.sanitizarTextoCodigo(raw);
+    this.queryCtrl.setValue(cleaned, { emitEvent: false });
+    this.clickRefresh(null);
+    this.utilservice.AlertMini(
+      "top-end",
+      "success",
+      cleaned !== raw
+        ? "Caracteres especiales limpiados en la consulta SQL"
+        : "La consulta SQL ya está limpia y sin caracteres especiales",
+      2200,
+    );
+  }
+
+  /**
+   * Sanitiza los editores y valida que el Esquema de Entrada sea un JSON válido
+   * (cuando no está vacío) antes de enviarlo a Sandra Server.
+   */
+  private validarAntesDeGuardar(): boolean {
+    const entradasLimpias = this.sanitizarTextoCodigo(this.entradasCtrl.value).trim();
+    const queryLimpia = this.sanitizarTextoCodigo(this.queryCtrl.value);
+
+    if (entradasLimpias !== (this.entradasCtrl.value || "")) {
+      this.entradasCtrl.setValue(entradasLimpias, { emitEvent: false });
+    }
+    if (queryLimpia !== (this.queryCtrl.value || "")) {
+      this.queryCtrl.setValue(queryLimpia, { emitEvent: false });
+    }
+
+    if (entradasLimpias) {
+      try {
+        JSON.parse(entradasLimpias);
+      } catch (err: any) {
+        const detalle = err?.message || "Sintaxis JSON inválida";
+        Swal.fire({
+          title: "Esquema de Entrada JSON inválido",
+          html: `
+            <div style="text-align:left; font-size:0.84rem; color:#4b5563; line-height:1.5;">
+              <p style="margin:0 0 8px 0;">
+                El campo <strong>Esquema de Entrada (JSON)</strong> contiene un formato inválido y no se enviará al servidor para evitar errores de ejecución.
+              </p>
+              <div style="background:#f8f1f3; border:1px solid #e4cdd3; color:#844453; border-radius:8px; padding:8px 10px; font-family:monospace; font-size:0.78rem;">
+                ${detalle}
+              </div>
+              <p style="margin:8px 0 0 0; font-size:0.78rem; color:#64748b;">
+                Verifique que no haya pegado SQL dentro de <strong>Esquema de Entrada</strong> (el SQL va en el panel derecho <em>Consulta / Sentencia</em>) o déjelo vacío si la API no usa esquema JSON.
+              </p>
+            </div>
+          `,
+          icon: "warning",
+          confirmButtonText: "Ir al Paso 2 para corregir",
+        }).then(() => {
+          this.irAPaso(2);
+        });
+        return false;
+      }
+    }
+
+    return true;
   }
 
   copiarTexto(texto: string, etiqueta: string = "Contenido"): void {

@@ -509,3 +509,270 @@ ngb-modal-window {
   100% { left: 110%; }
 }
 
+/* =========================================================================================
+   TEMA GLOBAL: SANDRA MORADO ELEGANTE (SECO PASTEL SIN BRILLO)
+   Unifica botones, encabezados, navegación, modales y controles eliminando brillos y colores estridentes
+   ========================================================================================= */
+:root {
+  --sandra-purple-deep: #5b537d;
+  --sandra-purple-main: #6e5fa8;
+  --sandra-purple-hover: #5c4d94;
+  --sandra-purple-border: #5f5096;
+  --sandra-purple-soft-bg: #f4f2fb;
+  --sandra-purple-soft-hover: #eae5f7;
+  --sandra-purple-soft-border: #dcd5f2;
+  --sandra-purple-text: #5b4c91;
+  --sandra-purple-text-dark: #463a75;
+  --sandra-slate-bg: #f6f7fb;
+  --sandra-slate-border: #dfe3ec;
+  --sandra-slate-text: #4f5b6e;
+}
+
+/* 1. Eliminación Global de Brillos (Box-Shadow) y Degradados en Botones */
+.btn,
+button.btn,
+a.btn {
+  box-shadow: none !important;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.16s ease, border-color 0.16s ease, color 0.16s ease !important;
+
+  &:focus,
+  &:active,
+  &.active,
+  &:hover {
+    box-shadow: none !important;
+  }
+}
+
+/* 2. Botones Primarios y de Confirmación -> Sandra Morado Elegante Mate */
+.btn-primary,
+.btn-success,
+.btn-gradient-primary,
+.btn-gradient-success,
+.btn-relief-primary,
+.btn-relief-success {
+  background: var(--sandra-purple-main) !important;
+  background-color: var(--sandra-purple-main) !important;
+  border: 1px solid var(--sandra-purple-border) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+
+  &:hover:not(:disabled):not(.disabled),
+  &:focus:not(:disabled):not(.disabled),
+  &:active:not(:disabled):not(.disabled) {
+    background: var(--sandra-purple-hover) !important;
+    background-color: var(--sandra-purple-hover) !important;
+    border-color: #4f4182 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+}
+
+/* 3. Botones Secundarios / Info / Warning -> Lavanda Suave Mate (Sin Naranjas ni Celestes Brillantes) */
+.btn-info,
+.btn-warning,
+.btn-gradient-info,
+.btn-gradient-warning,
+.btn-relief-info,
+.btn-relief-warning {
+  background: var(--sandra-purple-soft-bg) !important;
+  background-color: var(--sandra-purple-soft-bg) !important;
+  border: 1px solid var(--sandra-purple-soft-border) !important;
+  color: var(--sandra-purple-text) !important;
+  box-shadow: none !important;
+
+  &:hover:not(:disabled):not(.disabled),
+  &:focus:not(:disabled):not(.disabled),
+  &:active:not(:disabled):not(.disabled) {
+    background: var(--sandra-purple-soft-hover) !important;
+    background-color: var(--sandra-purple-soft-hover) !important;
+    border-color: #c8bee8 !important;
+    color: var(--sandra-purple-text-dark) !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+}
+
+/* 4. Botones Neutros / Secondary / Light */
+.btn-secondary,
+.btn-gradient-secondary,
+.btn-relief-secondary {
+  background: var(--sandra-slate-bg) !important;
+  background-color: var(--sandra-slate-bg) !important;
+  border: 1px solid var(--sandra-slate-border) !important;
+  color: var(--sandra-slate-text) !important;
+  box-shadow: none !important;
+
+  &:hover:not(:disabled):not(.disabled),
+  &:focus:not(:disabled):not(.disabled),
+  &:active:not(:disabled):not(.disabled) {
+    background: #eceef6 !important;
+    background-color: #eceef6 !important;
+    border-color: #cdd3e2 !important;
+    color: #374151 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* 5. Botones Outline y Flat -> Contorno Lavanda-Pizarra Mate */
+.btn-outline-primary,
+.btn-outline-success,
+.btn-outline-info,
+.btn-outline-warning,
+.btn-outline-secondary,
+.btn-flat-primary,
+.btn-flat-success,
+.btn-flat-info,
+.btn-flat-warning,
+.btn-flat-secondary {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  border: 1px solid var(--sandra-purple-soft-border) !important;
+  color: var(--sandra-purple-text) !important;
+  box-shadow: none !important;
+
+  &:hover:not(:disabled):not(.disabled),
+  &:focus:not(:disabled):not(.disabled),
+  &:active:not(:disabled):not(.disabled),
+  &.active {
+    background: var(--sandra-purple-soft-bg) !important;
+    background-color: var(--sandra-purple-soft-bg) !important;
+    border-color: #c4bae6 !important;
+    color: var(--sandra-purple-text-dark) !important;
+    box-shadow: none !important;
+  }
+}
+
+/* 6. Botones Peligro / Eliminar -> Ciruela-Rosa Seco Mate (Sin Rojo Neón) */
+.btn-danger,
+.btn-outline-danger,
+.btn-flat-danger,
+.btn-gradient-danger,
+.btn-relief-danger {
+  background: #f8f1f3 !important;
+  background-color: #f8f1f3 !important;
+  border: 1px solid #e4cdd3 !important;
+  color: #844453 !important;
+  box-shadow: none !important;
+
+  &:hover:not(:disabled):not(.disabled),
+  &:focus:not(:disabled):not(.disabled),
+  &:active:not(:disabled):not(.disabled) {
+    background: #f0e3e7 !important;
+    background-color: #f0e3e7 !important;
+    border-color: #d6b6bf !important;
+    color: #6b3340 !important;
+    box-shadow: none !important;
+  }
+}
+
+/* 7. Encabezado de Página (Content Header), Breadcrumbs y Botón Flotante Customizer */
+.content-header {
+  .content-header-title {
+    color: #3b4254 !important;
+    font-weight: 700 !important;
+  }
+
+  .breadcrumb {
+    .breadcrumb-item {
+      a {
+        color: var(--sandra-purple-text) !important;
+        font-weight: 500;
+
+        &:hover {
+          color: var(--sandra-purple-text-dark) !important;
+          text-decoration: underline;
+        }
+      }
+
+      &.active {
+        color: #687385 !important;
+      }
+    }
+  }
+
+  .content-header-right {
+    .btn-primary,
+    .btn-icon,
+    .dropdown-toggle {
+      background: var(--sandra-purple-soft-bg) !important;
+      border: 1px solid var(--sandra-purple-soft-border) !important;
+      color: var(--sandra-purple-text) !important;
+      box-shadow: none !important;
+
+      &:hover,
+      &:focus {
+        background: var(--sandra-purple-main) !important;
+        border-color: var(--sandra-purple-border) !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+}
+
+.customizer .customizer-toggle {
+  background: var(--sandra-purple-deep) !important;
+  box-shadow: none !important;
+}
+
+/* 8. Menú Lateral (Vertical Menu), Nav-Pills, Tabs, Paginación y SweetAlert2 */
+.main-menu.menu-light .navigation > li.active > a,
+.main-menu.menu-light .navigation > li .active > a {
+  background: var(--sandra-purple-main) !important;
+  box-shadow: 0 2px 6px rgba(91, 83, 125, 0.16) !important;
+  color: #ffffff !important;
+  border-radius: 8px;
+}
+
+.nav-pills .nav-link.active,
+.nav-pills .show > .nav-link {
+  background-color: var(--sandra-purple-main) !important;
+  border-color: var(--sandra-purple-border) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--sandra-purple-text) !important;
+  border-bottom-color: var(--sandra-purple-main) !important;
+}
+
+.page-item.active .page-link,
+.pagination .page-item.active .page-link {
+  background-color: var(--sandra-purple-main) !important;
+  border-color: var(--sandra-purple-border) !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: var(--sandra-purple-main) !important;
+  border-color: var(--sandra-purple-border) !important;
+  box-shadow: none !important;
+}
+
+.swal2-popup {
+  .swal2-styled.swal2-confirm {
+    background-color: var(--sandra-purple-main) !important;
+    border: 1px solid var(--sandra-purple-border) !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+
+    &:hover {
+      background-color: var(--sandra-purple-hover) !important;
+    }
+  }
+
+  .swal2-styled.swal2-cancel {
+    background-color: var(--sandra-slate-bg) !important;
+    border: 1px solid var(--sandra-slate-border) !important;
+    color: var(--sandra-slate-text) !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+  }
+}
+
+

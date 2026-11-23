@@ -658,6 +658,10 @@
                           <span class="editor-badge">SQL · NoSQL</span>
                         </div>
                         <div class="editor-toolbar">
+                          <button type="button" class="btn-editor-tool" (click)="sanitizarConsultaSql()" title="Limpiar caracteres especiales o invisibles al pegar SQL">
+                            <span [data-feather]="'shield'" [size]="12"></span>
+                            <span>Sanitizar</span>
+                          </button>
                           <button type="button" class="btn-editor-tool" (click)="clickRefresh(null)" title="Refrescar editor de código">
                             <span [data-feather]="'refresh-cw'" [size]="12"></span>
                             <span>Refrescar</span>

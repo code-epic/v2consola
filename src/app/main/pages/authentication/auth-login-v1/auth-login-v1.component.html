@@ -18,11 +18,11 @@
           </div>
           <!-- Login Form -->
           @if (!showTotpSection) {
-            <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="login()">
+            <form class="auth-login-form mt-2" [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="on">
               <div class="form-group">
                 <label for="login-email" class="form-label">Usuario</label>
-                <input id="login-email" type="text" formControlName="email" class="form-control" placeholder="Usuario"
-                  aria-describedby="login-email" tabindex="1"
+                <input id="login-email" name="username" type="text" formControlName="email" class="form-control" placeholder="Usuario"
+                  autocomplete="username" aria-describedby="login-email" tabindex="1"
                   [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
                 @if (submitted && f.email.errors) {
                   <div class="invalid-feedback">
@@ -35,9 +35,9 @@
               <div class="form-group">
                 <label for="login-password" class="form-label">Clave</label>
                 <div class="input-group input-group-merge form-password-toggle">
-                  <input id="login-password" [type]="passwordTextType ? 'text' : 'password'" formControlName="password"
+                  <input id="login-password" name="password" [type]="passwordTextType ? 'text' : 'password'" formControlName="password"
                     class="form-control form-control-merge" tabindex="2" placeholder="·········"
-                    aria-describedby="login-password"
+                    autocomplete="current-password" aria-describedby="login-password"
                     [ngClass]="{ 'is-invalid error': submitted && f.password.errors }" />
                   <div class="input-group-append">
                   <span class="input-group-text cursor-pointer"><i class="feather font-small-4" [ngClass]="{
@@ -72,7 +72,7 @@
                       <span class="sr-only">Validando...</span>
                     </div>
                   } @else if (botValidado) {
-                    <span [data-feather]="'check'" class="check-icono text-success"></span>
+                    <span [data-feather]="'check'" [inner]="true" [size]="'18'" class="check-icono text-success"></span>
                   } @else {
                     <div class="checkbox-box"></div>
                   }
@@ -90,14 +90,15 @@
                   <span class="validador-marca">Sandra Server Core • Reto PoW L7</span>
                 </div>
                 <div class="validador-icono">
-                  <span [data-feather]="'shield'" [class.icono-activo]="botValidado"></span>
+                  <span [data-feather]="'shield'" [inner]="true" [size]="'18'" [class.icono-activo]="botValidado"></span>
                 </div>
               </div>
 
               <!-- Recuérdame y Olvido de contraseña unificados elegantemente -->
               <div class="form-group d-flex justify-content-between align-items-center flex-wrap my-2 auth-remember-forgot">
                 <div class="custom-control custom-checkbox">
-                  <input class="custom-control-input" type="checkbox" id="remember-me" tabindex="4" />
+                  <input class="custom-control-input" type="checkbox" id="remember-me" formControlName="rememberMe"
+                    (change)="onRememberMeChange()" tabindex="4" />
                   <label class="custom-control-label font-small-3" for="remember-me"> Recuérdame </label>
                 </div>
                 <a routerLink="/authentication/forgot-password-v1" class="forgot-password-link">
@@ -189,7 +190,7 @@
                       <span class="sr-only">Validando...</span>
                     </div>
                   } @else if (botValidado) {
-                    <span [data-feather]="'check'" class="check-icono text-success"></span>
+                    <span [data-feather]="'check'" [inner]="true" [size]="'18'" class="check-icono text-success"></span>
                   } @else {
                     <div class="checkbox-box"></div>
                   }
@@ -207,7 +208,7 @@
                   <span class="validador-marca">Sandra Server Core • BDV L7</span>
                 </div>
                 <div class="validador-icono">
-                  <span [data-feather]="'shield'" [class.icono-activo]="botValidado"></span>
+                  <span [data-feather]="'shield'" [inner]="true" [size]="'18'" [class.icono-activo]="botValidado"></span>
                 </div>
               </div>
 

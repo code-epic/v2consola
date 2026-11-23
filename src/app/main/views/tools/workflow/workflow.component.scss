@@ -1299,8 +1299,8 @@
   justify-content: space-between;
   gap: 12px;
   padding: 10px 14px;
-  background: #ffffff;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #faf9fd;
+  border: 1px solid #e4e0f2;
   border-radius: 12px 12px 0 0;
   border-bottom: none;
 }
@@ -1312,7 +1312,7 @@
   gap: 14px;
   font-size: 0.74rem;
   font-weight: 500;
-  color: #475569;
+  color: #525c70;
 
   .leg-item {
     display: inline-flex;
@@ -1324,12 +1324,18 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    border: 2px solid #7367f0;
+    border: 2px solid #6e5fa8;
     background: #ffffff;
 
     &.token {
-      background: #7367f0;
-      box-shadow: 0 0 0 3px rgba(115, 103, 240, 0.2);
+      background: #6e5fa8;
+      box-shadow: 0 0 0 3px rgba(110, 95, 168, 0.16);
+    }
+
+    &.final-token {
+      border-color: #262b36;
+      background: #262b36;
+      box-shadow: inset 0 0 0 2px #ffffff;
     }
   }
 
@@ -1337,22 +1343,68 @@
     width: 16px;
     height: 9px;
     border-radius: 3px;
-    background: #1e293b;
+    background: #6e5fa8;
   }
 
   .leg-line {
     width: 18px;
     height: 2px;
 
-    &.si { background: #10b981; }
-    &.no { border-top: 2px dashed #ef4444; background: transparent; }
+    &.si { background: #4d7a64; }
+    &.no { border-top: 2px dashed #9e5a6a; background: transparent; }
+  }
+}
+
+.petri-zoom-control {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dcd5f2;
+  border-radius: 8px;
+  overflow: hidden;
+
+  .petri-zoom-btn,
+  .petri-zoom-val {
+    border: none;
+    background: transparent;
+    color: #5b4c91;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+
+    &:hover:not(:disabled) {
+      background: #f4f2fb;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  .petri-zoom-btn {
+    width: 28px;
+    padding: 0;
+  }
+
+  .petri-zoom-val {
+    padding: 0 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    border-left: 1px solid #ebe6f7;
+    border-right: 1px solid #ebe6f7;
+    min-width: 58px;
   }
 }
 
 .petri-toggle-btn {
-  border: 1px solid rgba(15, 23, 42, 0.12);
-  background: #f8fafc;
-  color: #475569;
+  border: 1px solid #dcd5f2;
+  background: #ffffff;
+  color: #5b4c91;
   font-size: 0.74rem;
   font-weight: 600;
   padding: 5px 11px;
@@ -1360,20 +1412,34 @@
   cursor: pointer;
   transition: all 160ms ease;
 
+  &:hover {
+    background: #f4f2fb;
+  }
+
   &.active {
-    background: rgba(115, 103, 240, 0.1);
-    border-color: rgba(115, 103, 240, 0.3);
-    color: #5b4fd6;
+    background: #f2effa;
+    border-color: #c7bde8;
+    color: #4a3c7d;
+  }
+
+  &.primary {
+    background: #6e5fa8;
+    border-color: #5f5096;
+    color: #ffffff;
+
+    &:hover {
+      background: #5c4d94;
+    }
   }
 }
 
 .petri-canvas-wrap {
   width: 100%;
-  overflow-x: auto;
-  background-color: #fafbfe;
-  background-image: radial-gradient(rgba(100, 116, 139, 0.18) 1px, transparent 1px);
+  overflow: auto;
+  background-color: #fbfafd;
+  background-image: radial-gradient(rgba(110, 95, 168, 0.14) 1px, transparent 1px);
   background-size: 20px 20px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid #e4e0f2;
   border-radius: 0 0 14px 14px;
   padding: 12px;
 }
@@ -1383,87 +1449,88 @@
   margin: 0 auto;
   overflow: visible;
   font-family: inherit;
+  transition: width 160ms ease, height 160ms ease;
 }
 
 .petri-lane {
   .lane-bg {
-    fill: rgba(255, 255, 255, 0.86);
-    stroke: rgba(15, 23, 42, 0.09);
+    fill: rgba(255, 255, 255, 0.9);
+    stroke: #e4e0f2;
     stroke-width: 1.2;
   }
   .lane-header {
-    fill: #f1f5f9;
+    fill: #f4f2fb;
   }
-  &.inicial .lane-header { fill: rgba(115, 103, 240, 0.1); }
-  &.final .lane-header { fill: rgba(16, 185, 129, 0.1); }
+  &.inicial .lane-header { fill: #eeeaf9; }
+  &.final .lane-header { fill: #eaf2ee; }
 
   .lane-id {
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
-    fill: #5b4fd6;
+    fill: #63549c;
   }
   .lane-title {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    fill: #1e293b;
+    fill: #3b4254;
   }
 }
 
 .petri-arc {
-  stroke-width: 2.2;
+  stroke-width: 2;
   stroke-linecap: round;
   transition: stroke-width 160ms ease;
 
   &.si {
-    stroke: #10b981;
+    stroke: #4d7a64;
   }
   &.no {
-    stroke: #ef4444;
+    stroke: #9e5a6a;
     stroke-dasharray: 6 4;
   }
   &.loop {
     stroke: #94a3b8;
-    stroke-width: 1.5;
+    stroke-width: 1.4;
     stroke-dasharray: 3 3;
   }
 }
 
 .petri-edge-group:hover .petri-arc {
-  stroke-width: 3.2;
+  stroke-width: 2.8;
 }
 
 .petri-arc-label {
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 700;
   paint-order: stroke;
-  stroke: #fafbfe;
+  stroke: #fbfafd;
   stroke-width: 4px;
 
-  &.si { fill: #047857; }
-  &.no { fill: #dc2626; }
-  &.loop { fill: #64748b; font-size: 9.5px; }
+  &.si { fill: #3b6350; }
+  &.no { fill: #844453; }
+  &.loop { fill: #64748b; font-size: 9px; }
 }
 
 .petri-transition-group {
   cursor: pointer;
 
   .petri-trans-rect {
-    fill: #ffffff;
-    stroke: #334155;
-    stroke-width: 1.8;
+    fill: #faf9fd;
+    stroke: #cfc7ea;
+    stroke-width: 1.5;
     transition: fill 160ms ease, stroke 160ms ease;
   }
   .petri-trans-text {
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 700;
-    fill: #1e293b;
+    fill: #4e427d;
     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 
   &.has-fn {
     .petri-trans-rect {
-      fill: #7367f0;
-      stroke: #5b4fd6;
+      fill: #6e5fa8;
+      stroke: #5b4d91;
     }
     .petri-trans-text {
       fill: #ffffff;
@@ -1476,52 +1543,62 @@
 
   .petri-place-circle {
     fill: #ffffff;
-    stroke: #64748b;
-    stroke-width: 2.2;
+    stroke: #8c96ad;
+    stroke-width: 2;
   }
   &.inicial .petri-place-circle {
-    stroke: #7367f0;
-    fill: #f5f3ff;
+    stroke: #6e5fa8;
+    fill: #f4f2fb;
   }
   &.intermedio .petri-place-circle {
-    stroke: #0ea5e9;
-    fill: #f0f9ff;
+    stroke: #7b88a8;
+    fill: #f6f7fb;
   }
   &.final .petri-place-circle {
-    stroke: #10b981;
-    fill: #ecfdf5;
+    stroke: #262b36;
+    fill: #f4f5f8;
+    stroke-width: 2.2;
   }
   &.rechazo .petri-place-circle {
-    stroke: #ef4444;
-    fill: #fef2f2;
+    stroke: #9e5a6a;
+    fill: #f8f1f3;
   }
 
   .petri-place-inner-ring {
-    stroke: #10b981;
-    stroke-width: 1.6;
+    stroke: #262b36;
+    stroke-width: 1.4;
+    opacity: 0.35;
+  }
+
+  .petri-final-token {
+    fill: #262b36;
   }
 
   .petri-token {
-    fill: #7367f0;
+    fill: #6e5fa8;
   }
 
   .petri-place-id {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    fill: #334155;
+    fill: #3b4254;
   }
 
   .petri-place-name {
-    font-size: 11.5px;
+    font-size: 10.5px;
     font-weight: 700;
-    fill: #1e293b;
+    fill: #2d3748;
   }
 
   .petri-place-role {
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 700;
     letter-spacing: 0.04em;
-    fill: #64748b;
+    fill: #718096;
+
+    &.is-fin {
+      fill: #262b36;
+    }
   }
 }
 
@@ -1535,16 +1612,16 @@
 
 .petri-mode-switch {
   display: inline-flex;
-  background: #f1f5f9;
+  background: #f1eef9;
   padding: 2px;
   border-radius: 8px;
-  border: 1px solid rgba(15, 23, 42, 0.08);
+  border: 1px solid #e0daf2;
 }
 
 .petri-mode-btn {
   border: none;
   background: transparent;
-  color: #64748b;
+  color: #63549c;
   font-size: 0.73rem;
   font-weight: 600;
   padding: 4px 10px;
@@ -1554,8 +1631,8 @@
 
   &.active {
     background: #ffffff;
-    color: #5b4fd6;
-    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    color: #4a3c7d;
+    box-shadow: 0 1px 2px rgba(91, 83, 125, 0.1);
   }
 }
 

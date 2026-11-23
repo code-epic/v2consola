@@ -1053,17 +1053,17 @@
   font-size: 0.76rem !important;
   font-weight: 700 !important;
   line-height: 1.2 !important;
-  background: #4d7a64 !important;
+  background: #6e5fa8 !important;
   color: #ffffff !important;
-  border: 1px solid #426b57 !important;
+  border: 1px solid #5f5096 !important;
   cursor: pointer;
   outline: none !important;
   box-shadow: none !important;
   transition: background-color 0.16s ease;
 
   &:hover:not(:disabled) {
-    background: #3b6350 !important;
-    border-color: #335746 !important;
+    background: #5c4d94 !important;
+    border-color: #4e4082 !important;
   }
 
   &:disabled {
@@ -1142,10 +1142,14 @@
       justify-content: center;
       flex-shrink: 0;
 
-      &.box-violet { background: #edf1f6; color: #46556b; border: 1px solid #d0d9e4; }
-      &.box-sky { background: #eaf1f5; color: #3f667d; border: 1px solid #cddde6; }
-      &.box-emerald { background: #e8f0ec; color: #3b6350; border: 1px solid #c8dad0; }
-      &.box-amber { background: #f3eee8; color: #786046; border: 1px solid #dfd4c6; }
+      &.box-violet,
+      &.box-sky,
+      &.box-emerald,
+      &.box-amber {
+        background: #f4f2fb;
+        color: #63549c;
+        border: 1px solid #dcd5f2;
+      }
     }
 
     .section-title {
@@ -1214,11 +1218,14 @@
       justify-content: center;
       flex-shrink: 0;
 
-      &.icon-violet { background: #edf1f6; color: #46556b; }
-      &.icon-sky { background: #eaf1f5; color: #3f667d; }
-      &.icon-emerald { background: #e8f0ec; color: #3b6350; }
-      &.icon-amber { background: #f3eee8; color: #786046; }
-      &.icon-rose { background: #f4ebeb; color: #824e4e; }
+      &.icon-violet,
+      &.icon-sky,
+      &.icon-emerald,
+      &.icon-amber,
+      &.icon-rose {
+        background: #f4f2fb;
+        color: #63549c;
+      }
     }
 
     .spec-name {
@@ -1231,21 +1238,21 @@
       font-size: 0.76rem;
       font-weight: 700;
       color: #334152;
-      background: #f3f6f9;
+      background: #f4f5f9;
       padding: 0.16rem 0.55rem;
       border-radius: 6px;
-      border: 1px solid #dfe5ec;
+      border: 1px solid #e1e4ee;
     }
 
     .spec-mono-chip {
       font-family: 'Fira Code', 'Monaco', monospace;
       font-size: 0.74rem;
       font-weight: 700;
-      color: #3b6350;
-      background: #e8f0ec;
+      color: #5b4c91;
+      background: #f4f2fb;
       padding: 0.16rem 0.55rem;
       border-radius: 6px;
-      border: 1px solid #c8dad0;
+      border: 1px solid #dcd5f2;
     }
 
     .policy-pill {
@@ -1413,58 +1420,57 @@
     transform: translateY(-1px);
   }
 
-  /* Verde Mate Seco */
-  &.btn-lively-emerald {
-    background: #e8f0ec;
-    color: #3b6350;
-    border-color: #c8dad0;
-    .btn-icon-box { color: #3b6350; }
-    &:hover { background: #dce8e2; border-color: #b3cbbd; }
-  }
-
-  /* Pizarra Mate Seco */
-  &.btn-lively-violet {
-    background: #edf1f6;
-    color: #46556b;
-    border-color: #d0d9e4;
-    .btn-icon-box { color: #46556b; }
-    &:hover { background: #e2e8f0; border-color: #bcc8d6; }
-  }
-
-  /* Azul Petróleo Mate Seco */
-  &.btn-lively-sky {
-    background: #eaf1f5;
-    color: #3f667d;
-    border-color: #cddde6;
-    .btn-icon-box { color: #3f667d; }
-    &:hover { background: #dee9ef; border-color: #b7cedb; }
-  }
-
-  /* Arena Mate Seco */
+  /* Acciones Unificadas en Tema Sandra Morado Elegante (Sin Verdes ni Colores Múltiples) */
+  &.btn-lively-emerald,
+  &.btn-lively-violet,
+  &.btn-lively-sky,
   &.btn-lively-amber {
-    background: #f3eee8;
-    color: #786046;
-    border-color: #dfd4c6;
-    .btn-icon-box { color: #786046; }
-    &:hover { background: #ebe3da; border-color: #cfc0ae; }
+    background: #f5f3fb;
+    color: #524485;
+    border-color: #dcd5f2;
+    .btn-icon-box {
+      background: #ffffff;
+      color: #63549c;
+      border: 1px solid #e3ddf5;
+    }
+    &:hover {
+      background: #ebe6f8;
+      border-color: #c8bee8;
+      color: #423570;
+    }
   }
 
-  /* Terracota Mate Seco */
+  /* Terracota Ciruela Mate Seco (Solo para Retirar / Acción Inversa) */
   &.btn-lively-rose {
-    background: #f4ebeb;
-    color: #824e4e;
-    border-color: #e2cfcf;
-    .btn-icon-box { color: #824e4e; }
-    &:hover { background: #ebdcdc; border-color: #d1b6b6; }
+    background: #f7f1f3;
+    color: #7d4856;
+    border-color: #e4d2d7;
+    .btn-icon-box {
+      background: #ffffff;
+      color: #7d4856;
+      border: 1px solid #eadbe0;
+    }
+    &:hover {
+      background: #efe4e8;
+      border-color: #d4bcc3;
+    }
   }
 
-  /* Gris Neutro Mate Seco */
+  /* Gris-Lavanda Neutro Mate Seco (Volver al Listado) */
   &.btn-lively-slate {
-    background: #f6f8fa;
-    color: #46556b;
-    border-color: #d5dde7;
-    .btn-icon-box { color: #5a687a; }
-    &:hover { background: #edf1f6; border-color: #bcc8d6; }
+    background: #f8f8fb;
+    color: #525c70;
+    border-color: #e0e2ec;
+    .btn-icon-box {
+      background: #ffffff;
+      color: #63549c;
+      border: 1px solid #e6e4f0;
+    }
+    &:hover {
+      background: #f0eff7;
+      border-color: #cfcbe3;
+      color: #453a73;
+    }
   }
 }
 

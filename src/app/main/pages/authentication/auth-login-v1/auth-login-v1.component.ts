@@ -67,6 +67,7 @@ export class AuthLoginV1Component implements OnInit {
   public transitionPercent: number = 10;
 
   // Private
+  private readonly REMEMBER_USER_KEY = "sandra_remember_user";
   private _unsubscribeAll: Subject<any>;
   public showTotpSection = false;
   public otp: string[] = new Array(6).fill("");
@@ -153,10 +154,17 @@ export class AuthLoginV1Component implements OnInit {
 
     this.version = environment.version;
 
+    const savedUser = (localStorage.getItem(this.REMEMBER_USER_KEY) || "").trim();
+
     this.loginForm = this._formBuilder.group({
-      email: ["", [Validators.required]],
+      email: [savedUser, [Validators.required]],
       password: ["", Validators.required],
+      rememberMe: [Boolean(savedUser)],
     });
+
+    if (savedUser) {
+      this.usuarioCtrl.setValue(savedUser, { emitEvent: false });
+    }
 
     // Subscribe to config changes
     this._coreConfigService.config
@@ -207,6 +215,25 @@ export class AuthLoginV1Component implements OnInit {
     }
   }
 
+  onRememberMeChange(): void {
+    const remember = Boolean(this.loginForm?.get("rememberMe")?.value);
+    const currentUser = (this.loginForm?.get("email")?.value || "").trim();
+    if (remember && currentUser) {
+      localStorage.setItem(this.REMEMBER_USER_KEY, currentUser);
+    } else if (!remember) {
+      localStorage.removeItem(this.REMEMBER_USER_KEY);
+    }
+  }
+
+  private persistRememberedUser(username: string, remember: boolean): void {
+    const cleanUser = (username || "").trim();
+    if (remember && cleanUser) {
+      localStorage.setItem(this.REMEMBER_USER_KEY, cleanUser);
+    } else {
+      localStorage.removeItem(this.REMEMBER_USER_KEY);
+    }
+  }
+
   async login() {
     this.submitted = true;
     // stop here if form is invalid
@@ -218,11 +245,15 @@ export class AuthLoginV1Component implements OnInit {
       await this.validarHumano();
     }
 
+    const emailVal = (this.loginForm.value.email || "").trim();
+    const rememberVal = Boolean(this.loginForm.value.rememberMe);
+
     this.loading = true;
     this.loginService
-      .getLogin(this.loginForm.value.email, this.loginForm.value.password, this.captchaData)
+      .getLogin(emailVal, this.loginForm.value.password, this.captchaData)
       .subscribe(
         (itk) => {
+          this.persistRememberedUser(emailVal, rememberVal);
           this.loading = false;
           this.isHidden = false;
           let tk: any = this.loginService.getUserDecrypt(itk.token);

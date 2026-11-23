@@ -555,8 +555,16 @@
     .check-icono {
       width: 20px;
       height: 20px;
-      color: #28c76f !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #4d7a64 !important;
       animation: aparecerCheck 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
     }
   }
 

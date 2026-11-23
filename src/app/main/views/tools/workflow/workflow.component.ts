@@ -19,6 +19,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ContentHeaderComponent } from 'app/layout/components/content-header/content-header.component';
 
 export interface MapaRedRow {
+  id?: string | null;
   origen_id: string;
   origen_area: string;
   estatus_origen_id: string;
@@ -1171,7 +1172,9 @@ export class WorkflowComponent implements OnInit, OnDestroy {
     const destFalsoId = raw?.destino_falso_id != null && raw?.destino_falso_id !== ''
       ? String(raw.destino_falso_id)
       : null;
+    const rawId = raw?.id ?? raw?.id_regla ?? raw?.regla_id ?? raw?.id_mapa ?? raw?.mapa_id ?? null;
     return {
+      id: rawId != null && String(rawId).trim() !== '' ? String(rawId).trim() : null,
       origen_id: String(raw?.origen_id ?? raw?.origen ?? ''),
       origen_area: String(raw?.origen_area ?? raw?.area_origen ?? '---'),
       estatus_origen_id: String(raw?.estatus_origen_id ?? raw?.so ?? ''),
@@ -1302,13 +1305,24 @@ export class WorkflowComponent implements OnInit, OnDestroy {
       }
     });
 
+    const isFinLabel = (txt: string): boolean =>
+      /\bfin\b|fin\s+del\s+proceso|finalizad[oa]/i.test((txt || '').trim());
+
     const nodes = Array.from(nodeMap.values());
     nodes.forEach((n) => {
-      if (n.inDegree === 0 && n.outDegree > 0) n.role = 'INICIAL';
-      else if (n.inDegree === 0 && n.outDegree === 0 && n.inFalseDegree > 0) n.role = 'RECHAZO';
-      else if (n.inDegree > 0 && n.outDegree === 0) n.role = 'FINAL';
-      else if (n.inDegree > 0 && n.outDegree > 0) n.role = 'INTERMEDIO';
-      else n.role = 'AISLADO';
+      if (isFinLabel(n.estatus) || isFinLabel(n.area)) {
+        n.role = 'FINAL';
+      } else if (n.inDegree === 0 && n.outDegree > 0) {
+        n.role = 'INICIAL';
+      } else if (n.inDegree === 0 && n.outDegree === 0 && n.inFalseDegree > 0) {
+        n.role = 'RECHAZO';
+      } else if (n.inDegree > 0 && n.outDegree === 0) {
+        n.role = 'FINAL';
+      } else if (n.inDegree > 0 && n.outDegree > 0) {
+        n.role = 'INTERMEDIO';
+      } else {
+        n.role = 'AISLADO';
+      }
     });
 
     const initialNodes = nodes.filter((n) => n.role === 'INICIAL');
@@ -1374,12 +1388,17 @@ export class WorkflowComponent implements OnInit, OnDestroy {
     const validByOrigin = new Map<string, FsmArc>();
     validArcs.forEach((a) => validByOrigin.set(a.fromKey, a));
 
-    // Ordenar los segmentos siguiendo el orden de aparición en las trazas principales
+    // Ordenar los segmentos y sus estatus internos siguiendo el flujo topológico de las trazas
     const orderedEstadoIds: string[] = [];
+    const nodeFlowOrder = new Map<string, number>();
+    let flowOrderCounter = 0;
     traces.forEach((trace) => {
       trace.forEach((step) => {
         if (!orderedEstadoIds.includes(step.node.estadoId)) {
           orderedEstadoIds.push(step.node.estadoId);
+        }
+        if (!nodeFlowOrder.has(step.node.key)) {
+          nodeFlowOrder.set(step.node.key, flowOrderCounter++);
         }
       });
     });
@@ -1389,10 +1408,28 @@ export class WorkflowComponent implements OnInit, OnDestroy {
       }
     });
 
+    const roleRank = (r: FsmNode['role']): number => {
+      switch (r) {
+        case 'INICIAL': return 0;
+        case 'INTERMEDIO': return 1;
+        case 'FINAL': return 2;
+        case 'RECHAZO': return 3;
+        default: return 4;
+      }
+    };
+
     orderedEstadoIds.forEach((estId) => {
       const stateNodes = nodes
         .filter((n) => n.estadoId === estId)
-        .sort((a, b) => Number(a.estatusId || 0) - Number(b.estatusId || 0));
+        .sort((a, b) => {
+          const oa = nodeFlowOrder.has(a.key) ? nodeFlowOrder.get(a.key)! : 9999;
+          const ob = nodeFlowOrder.has(b.key) ? nodeFlowOrder.get(b.key)! : 9999;
+          if (oa !== ob) return oa - ob;
+          const ra = roleRank(a.role);
+          const rb = roleRank(b.role);
+          if (ra !== rb) return ra - rb;
+          return Number(a.estatusId || 0) - Number(b.estatusId || 0);
+        });
       if (stateNodes.length === 0) return;
 
       const estatuses: FsmStatusItem[] = stateNodes.map((n) => {
@@ -1465,40 +1502,43 @@ export class WorkflowComponent implements OnInit, OnDestroy {
       return { width: 900, height: 320, swimlanes: [], places: [], transitions: [], edges: [] };
     }
 
-    const COL_W = 240;
-    const COL_GAP = 140;
-    const PAD_X = 32;
-    const LANE_TOP = 24;
-    const HEADER_H = 44;
-    const ROW_H = 165;
-    const R = 26;
+    const COL_W = 212;
+    const COL_GAP = 124;
+    const PAD_X = 28;
+    const LANE_TOP = 18;
+    const HEADER_H = 38;
+    const ROW_H = 136;
+    const R = 22;
 
     const maxRows = Math.max(1, ...segments.map((s) => s.estatuses.length));
-    const laneH = HEADER_H + maxRows * ROW_H + 36;
+    const baseLaneH = HEADER_H + maxRows * ROW_H + 34;
     const totalW = PAD_X * 2 + segments.length * COL_W + Math.max(0, segments.length - 1) * COL_GAP;
-    const totalH = LANE_TOP + laneH + 54;
 
     const swimlanes: PetriSwimlane[] = [];
+    const laneByEstado = new Map<string, { lane: PetriSwimlane; colIdx: number }>();
     const places: PetriPlace[] = [];
     const placeMap = new Map<string, PetriPlace>();
+    const placeMeta = new Map<string, { colIdx: number; rowIdx: number }>();
     const transitions: PetriTransitionNode[] = [];
     const edges: PetriEdge[] = [];
 
     segments.forEach((seg, colIdx) => {
       const x = PAD_X + colIdx * (COL_W + COL_GAP);
-      swimlanes.push({
+      const lane: PetriSwimlane = {
         estadoId: seg.estadoId,
         area: seg.area,
         role: seg.role,
         x,
         y: LANE_TOP,
         width: COL_W,
-        height: laneH,
-      });
+        height: baseLaneH,
+      };
+      swimlanes.push(lane);
+      laneByEstado.set(seg.estadoId, { lane, colIdx });
 
       seg.estatuses.forEach((st, rowIdx) => {
         const cx = x + COL_W / 2;
-        const cy = LANE_TOP + HEADER_H + 64 + rowIdx * ROW_H;
+        const cy = LANE_TOP + HEADER_H + 54 + rowIdx * ROW_H;
         const place: PetriPlace = {
           key: st.key,
           estadoId: seg.estadoId,
@@ -1513,111 +1553,308 @@ export class WorkflowComponent implements OnInit, OnDestroy {
         };
         places.push(place);
         placeMap.set(place.key, place);
+        placeMeta.set(place.key, { colIdx, rowIdx });
       });
     });
 
-    // 1. Arcos Válidos (SI) con barra de Transición de Red de Petri
+    // Cajas ocupadas para resolver colisiones de etiquetas de transición y evitar montajes
+    interface RectBox { x: number; y: number; w: number; h: number; }
+    const occupiedBoxes: RectBox[] = places.map((p) => ({
+      x: p.cx - 56,
+      y: p.cy - R - 10,
+      w: 112,
+      h: R * 2 + 44,
+    }));
+
+    const overlapsAny = (box: RectBox, pad: number = 8): boolean =>
+      occupiedBoxes.some(
+        (b) =>
+          box.x - pad < b.x + b.w &&
+          box.x + box.w + pad > b.x &&
+          box.y - pad < b.y + b.h &&
+          box.y + box.h + pad > b.y,
+      );
+
+    const placeTransitionFree = (
+      prefX: number,
+      prefY: number,
+      tw: number,
+      th: number,
+      preferHorizontal: boolean,
+    ): { tx: number; ty: number } => {
+      const offsets: Array<[number, number]> = [[0, 0]];
+      const stepY = th + 14;
+      const stepX = tw + 16;
+      for (let k = 1; k <= 6; k++) {
+        if (preferHorizontal) {
+          offsets.push([0, k * stepY], [0, -k * stepY], [k * (stepX * 0.6), 0], [-k * (stepX * 0.6), 0]);
+        } else {
+          offsets.push([k * (stepX * 0.85), 0], [-k * (stepX * 0.85), 0], [0, k * stepY], [0, -k * stepY]);
+        }
+      }
+      for (const [dx, dy] of offsets) {
+        const cx = prefX + dx;
+        const cy = Math.max(LANE_TOP + HEADER_H + 18, prefY + dy);
+        const box: RectBox = { x: cx - tw / 2, y: cy - th / 2, w: tw, h: th };
+        if (!overlapsAny(box, 8)) {
+          occupiedBoxes.push(box);
+          return { tx: cx, ty: cy };
+        }
+      }
+      const fallback: RectBox = { x: prefX - tw / 2, y: prefY - th / 2, w: tw, h: th };
+      occupiedBoxes.push(fallback);
+      return { tx: prefX, ty: prefY };
+    };
+
+    // Contar arcos paralelos entre el mismo par (fromKey -> toKey)
+    const pairTotal = new Map<string, number>();
+    const pairSeen = new Map<string, number>();
+    analysis.validArcs.forEach((arc) => {
+      const pk = `${arc.fromKey}->${arc.toKey}`;
+      pairTotal.set(pk, (pairTotal.get(pk) || 0) + 1);
+    });
+
+    let maxBottomY = LANE_TOP + baseLaneH;
+    let backwardSlot = 0;
+    let sameColBypassCount = 0;
+
+    // 1. Arcos Válidos (SI) con barra de Transición de Red de Petri y enrutamiento anti-colisiones
     analysis.validArcs.forEach((arc, idx) => {
       const from = placeMap.get(arc.fromKey);
       const to = placeMap.get(arc.toKey);
-      if (!from || !to) return;
+      const fromMeta = placeMeta.get(arc.fromKey);
+      const toMeta = placeMeta.get(arc.toKey);
+      if (!from || !to || !fromMeta || !toMeta) return;
 
       const labelText = arc.transicion || 'Directa';
-      const tw = Math.min(132, Math.max(76, labelText.length * 7.2 + 20));
+      const tw = Math.min(138, Math.max(76, labelText.length * 7.1 + 22));
       const th = 26;
-      const sameCol = Math.abs(from.cx - to.cx) < 10;
+
+      const pk = `${arc.fromKey}->${arc.toKey}`;
+      const pTotal = pairTotal.get(pk) || 1;
+      const pIdx = pairSeen.get(pk) || 0;
+      pairSeen.set(pk, pIdx + 1);
+      const parallelOffset = pTotal > 1 ? pIdx - (pTotal - 1) / 2 : 0;
+
+      const sameCol = fromMeta.colIdx === toMeta.colIdx;
+      const fromLane = swimlanes[fromMeta.colIdx];
 
       if (sameCol) {
-        // Transición vertical interna dentro del mismo Estado (ej: Recibido -> Conformacion)
-        const tx = from.cx;
-        const ty = (from.cy + to.cy) / 2 + 12;
-        transitions.push({
-          id: `T-V-${idx}`,
-          x: tx - tw / 2,
-          y: ty - th / 2,
-          width: tw,
-          height: th,
-          label: labelText,
-          desc: arc.transicionDesc || 'Transición directa (SI)',
-          hasFunc: !arc.esDirecta,
-        });
+        const rowDiff = Math.abs(toMeta.rowIdx - fromMeta.rowIdx);
+        const goingDown = to.cy >= from.cy;
 
-        // Arco Place Origen -> Transición (saliendo por debajo del texto del lugar)
-        const startY = from.cy + R + 28;
-        const endTransY = ty - th / 2 - 2;
-        edges.push({
-          id: `E-V1-${idx}`,
-          kind: 'SI',
-          path: `M ${from.cx} ${startY} L ${tx} ${endTransY}`,
-          label: '',
-          labelX: tx,
-          labelY: (startY + endTransY) / 2,
-          tooltip: arc.transicionDesc || 'Entrada a transición',
-        });
+        if (rowDiff > 1) {
+          // Salto vertical dentro de la misma columna (ej. #13 -> DEVUELTO saltando #15):
+          // Enrutar por canal lateral izquierdo/derecho del carril para NO atravesar círculos intermedios
+          const useLeftSide = sameColBypassCount % 2 === 0;
+          sameColBypassCount++;
+          const sideX = useLeftSide
+            ? fromLane.x + 22
+            : fromLane.x + fromLane.width - 22;
+          const prefTx = useLeftSide ? sideX + 22 : sideX - 22;
+          const prefTy = (from.cy + to.cy) / 2;
+          const { tx, ty } = placeTransitionFree(prefTx, prefTy, tw, th, true);
 
-        // Arco Transición -> Place Destino
-        const startTransY = ty + th / 2;
-        const endY = to.cy - R - 4;
-        edges.push({
-          id: `E-V2-${idx}`,
-          kind: 'SI',
-          path: `M ${tx} ${startTransY} L ${to.cx} ${endY}`,
-          label: 'SI',
-          labelX: tx + 18,
-          labelY: (startTransY + endY) / 2,
-          tooltip: `SI → ${to.area} · ${to.estatus}`,
-        });
+          transitions.push({
+            id: `T-VB-${idx}`,
+            x: tx - tw / 2,
+            y: ty - th / 2,
+            width: tw,
+            height: th,
+            label: labelText,
+            desc: arc.transicionDesc || 'Transición directa (SI)',
+            hasFunc: !arc.esDirecta,
+          });
+
+          const exitX = useLeftSide ? from.cx - R - 2 : from.cx + R + 2;
+          const enterX = useLeftSide ? to.cx - R - 5 : to.cx + R + 5;
+          const tTopY = goingDown ? ty - th / 2 - 2 : ty + th / 2 + 2;
+          const tBotY = goingDown ? ty + th / 2 : ty - th / 2;
+
+          edges.push({
+            id: `E-VB1-${idx}`,
+            kind: 'SI',
+            path: `M ${exitX} ${from.cy} C ${tx} ${from.cy}, ${tx} ${(from.cy + tTopY) / 2}, ${tx} ${tTopY}`,
+            label: '',
+            labelX: tx,
+            labelY: (from.cy + tTopY) / 2,
+            tooltip: arc.transicionDesc || 'Entrada a transición',
+          });
+
+          edges.push({
+            id: `E-VB2-${idx}`,
+            kind: 'SI',
+            path: `M ${tx} ${tBotY} C ${tx} ${(tBotY + to.cy) / 2}, ${tx} ${to.cy}, ${enterX} ${to.cy}`,
+            label: 'SI',
+            labelX: useLeftSide ? tx - 16 : tx + 16,
+            labelY: (tBotY + to.cy) / 2,
+            tooltip: `SI → ${to.area} · ${to.estatus}`,
+          });
+        } else {
+          // Transición vertical adyacente (ej. #2 -> #3), con separación horizontal si hay reglas paralelas
+          const spreadX = parallelOffset * (tw + 18);
+          const prefTx = from.cx + spreadX;
+          const prefTy = (from.cy + to.cy) / 2 + 12;
+          const { tx, ty } = placeTransitionFree(prefTx, prefTy, tw, th, false);
+
+          transitions.push({
+            id: `T-V-${idx}`,
+            x: tx - tw / 2,
+            y: ty - th / 2,
+            width: tw,
+            height: th,
+            label: labelText,
+            desc: arc.transicionDesc || 'Transición directa (SI)',
+            hasFunc: !arc.esDirecta,
+          });
+
+          const startY = goingDown ? from.cy + R + 30 : from.cy - R - 6;
+          const endTransY = goingDown ? ty - th / 2 - 2 : ty + th / 2 + 2;
+          const startTransY = goingDown ? ty + th / 2 : ty - th / 2;
+          const endY = goingDown ? to.cy - R - 5 : to.cy + R + 32;
+          const startX = from.cx + parallelOffset * 12;
+          const endX = to.cx + parallelOffset * 12;
+
+          const inPath =
+            Math.abs(startX - tx) < 2
+              ? `M ${startX} ${startY} L ${tx} ${endTransY}`
+              : `M ${startX} ${startY} C ${startX} ${(startY + endTransY) / 2}, ${tx} ${(startY + endTransY) / 2}, ${tx} ${endTransY}`;
+
+          const outPath =
+            Math.abs(endX - tx) < 2
+              ? `M ${tx} ${startTransY} L ${endX} ${endY}`
+              : `M ${tx} ${startTransY} C ${tx} ${(startTransY + endY) / 2}, ${endX} ${(startTransY + endY) / 2}, ${endX} ${endY}`;
+
+          edges.push({
+            id: `E-V1-${idx}`,
+            kind: 'SI',
+            path: inPath,
+            label: '',
+            labelX: tx,
+            labelY: (startY + endTransY) / 2,
+            tooltip: arc.transicionDesc || 'Entrada a transición',
+          });
+
+          edges.push({
+            id: `E-V2-${idx}`,
+            kind: 'SI',
+            path: outPath,
+            label: 'SI',
+            labelX: tx + (parallelOffset < 0 ? -18 : 18),
+            labelY: (startTransY + endY) / 2,
+            tooltip: `SI → ${to.area} · ${to.estatus}`,
+          });
+        }
       } else {
-        // Transición horizontal entre segmentos (ej: ENTRADA -> CONFORMACION -> GERENTE)
-        const goRight = to.cx > from.cx;
-        const startX = goRight ? from.cx + R + 4 : from.cx - R - 4;
-        const endX = goRight ? to.cx - R - 6 : to.cx + R + 6;
-        const tx = (startX + endX) / 2;
-        const ty = (from.cy + to.cy) / 2;
+        const goRight = toMeta.colIdx > fromMeta.colIdx;
+        const colSpan = Math.abs(toMeta.colIdx - fromMeta.colIdx);
 
-        transitions.push({
-          id: `T-H-${idx}`,
-          x: tx - tw / 2,
-          y: ty - th / 2,
-          width: tw,
-          height: th,
-          label: labelText,
-          desc: arc.transicionDesc || 'Transición directa (SI)',
-          hasFunc: !arc.esDirecta,
-        });
+        if (goRight) {
+          // Avance hacia la derecha: ubicar la caja de transición en el corredor entre columnas (fuera de los carriles)
+          const gapCenterX =
+            colSpan === 1
+              ? fromLane.x + fromLane.width + COL_GAP / 2
+              : (from.cx + to.cx) / 2;
+          const prefTy = (from.cy + to.cy) / 2 + parallelOffset * 38;
+          const { tx, ty } = placeTransitionFree(gapCenterX, prefTy, tw, th, true);
 
-        const tInX = goRight ? tx - tw / 2 - 2 : tx + tw / 2 + 2;
-        const tOutX = goRight ? tx + tw / 2 : tx - tw / 2;
-        const c1x = (startX + tInX) / 2;
-        const c2x = (tOutX + endX) / 2;
+          transitions.push({
+            id: `T-H-${idx}`,
+            x: tx - tw / 2,
+            y: ty - th / 2,
+            width: tw,
+            height: th,
+            label: labelText,
+            desc: arc.transicionDesc || 'Transición directa (SI)',
+            hasFunc: !arc.esDirecta,
+          });
 
-        edges.push({
-          id: `E-H1-${idx}`,
-          kind: 'SI',
-          path: `M ${startX} ${from.cy} C ${c1x} ${from.cy}, ${c1x} ${ty}, ${tInX} ${ty}`,
-          label: '',
-          labelX: c1x,
-          labelY: from.cy - 8,
-          tooltip: arc.transicionDesc || 'Entrada a transición',
-        });
+          const startX = from.cx + R + 4;
+          const endX = to.cx - R - 6;
+          const tInX = tx - tw / 2 - 2;
+          const tOutX = tx + tw / 2;
+          const c1x = (startX + tInX) / 2;
+          const c2x = (tOutX + endX) / 2;
 
-        edges.push({
-          id: `E-H2-${idx}`,
-          kind: 'SI',
-          path: `M ${tOutX} ${ty} C ${c2x} ${ty}, ${c2x} ${to.cy}, ${endX} ${to.cy}`,
-          label: 'SI',
-          labelX: (tOutX + endX) / 2,
-          labelY: (ty + to.cy) / 2 - 10,
-          tooltip: `SI → ${to.area} · ${to.estatus}`,
-        });
+          edges.push({
+            id: `E-H1-${idx}`,
+            kind: 'SI',
+            path: `M ${startX} ${from.cy} C ${c1x} ${from.cy}, ${c1x} ${ty}, ${tInX} ${ty}`,
+            label: '',
+            labelX: c1x,
+            labelY: from.cy - 8,
+            tooltip: arc.transicionDesc || 'Entrada a transición',
+          });
+
+          edges.push({
+            id: `E-H2-${idx}`,
+            kind: 'SI',
+            path: `M ${tOutX} ${ty} C ${c2x} ${ty}, ${c2x} ${to.cy}, ${endX} ${to.cy}`,
+            label: 'SI',
+            labelX: (tOutX + endX) / 2,
+            labelY: (ty + to.cy) / 2 - 10,
+            tooltip: `SI → ${to.area} · ${to.estatus}`,
+          });
+        } else {
+          // Retorno hacia una columna anterior (ej. #17 -> #15):
+          // Enrutar por corredor inferior dedicado para evitar cruzar flujos de avance y nodos intermedios
+          const baseReturnY = Math.max(from.cy, to.cy) + 64 + backwardSlot * 44;
+          backwardSlot++;
+          const midGapX =
+            colSpan > 1
+              ? swimlanes[toMeta.colIdx].x + swimlanes[toMeta.colIdx].width + COL_GAP / 2
+              : (from.cx + to.cx) / 2;
+          const { tx, ty } = placeTransitionFree(midGapX, baseReturnY, tw, th, true);
+          maxBottomY = Math.max(maxBottomY, ty + th / 2 + 36);
+
+          transitions.push({
+            id: `T-R-${idx}`,
+            x: tx - tw / 2,
+            y: ty - th / 2,
+            width: tw,
+            height: th,
+            label: labelText,
+            desc: arc.transicionDesc || 'Transición de retorno (SI)',
+            hasFunc: !arc.esDirecta,
+          });
+
+          const startX = from.cx - R - 4;
+          const startY = from.cy + 8;
+          const endX = to.cx + R + 6;
+          const endY = to.cy + 6;
+          const tInX = tx + tw / 2 + 2;
+          const tOutX = tx - tw / 2;
+
+          edges.push({
+            id: `E-R1-${idx}`,
+            kind: 'SI',
+            path: `M ${startX} ${startY} C ${startX - 45} ${ty}, ${tInX + 45} ${ty}, ${tInX} ${ty}`,
+            label: '',
+            labelX: (startX + tInX) / 2,
+            labelY: ty - 10,
+            tooltip: arc.transicionDesc || 'Entrada a transición de retorno',
+          });
+
+          edges.push({
+            id: `E-R2-${idx}`,
+            kind: 'SI',
+            path: `M ${tOutX} ${ty} C ${tOutX - 38} ${ty}, ${endX + 42} ${endY}, ${endX} ${endY}`,
+            label: 'SI',
+            labelX: (tOutX + endX) / 2,
+            labelY: (ty + endY) / 2 - 10,
+            tooltip: `SI → ${to.area} · ${to.estatus}`,
+          });
+        }
       }
     });
 
-    // 2. Arcos Falsos (NO): Desvíos de rechazo (curva Bézier inferior limpia) + Auto-retornos (↺)
+    // 2. Arcos Falsos (NO): Auto-retornos (↺) + Desvíos de rechazo por canal lateral/inferior sin cruzar nodos
+    let rejectSlot = 0;
     analysis.falseArcs.forEach((arc, idx) => {
       const from = placeMap.get(arc.fromKey);
       const to = placeMap.get(arc.toKey);
-      if (!from || !to) return;
+      const fromMeta = placeMeta.get(arc.fromKey);
+      if (!from || !to || !fromMeta) return;
 
       if (arc.esAutoRetorno) {
         const lx1 = from.cx - 12;
@@ -1633,26 +1870,46 @@ export class WorkflowComponent implements OnInit, OnDestroy {
           tooltip: `NO: permanece en ${from.area} · ${from.estatus}`,
         });
       } else {
-        // Curva elegante por debajo o lateral sin cruzar los nodos principales
+        // Salir hacia el canal libre entre columnas (gutter) antes de bajar al corredor inferior de rechazos
         const goLeft = to.cx < from.cx;
+        const fromLane = swimlanes[fromMeta.colIdx];
         const startX = goLeft ? from.cx - R - 2 : from.cx + R + 2;
-        const startY = from.cy + 8;
+        const startY = from.cy + 4;
+        const gutterX = goLeft ? fromLane.x - 24 - rejectSlot * 10 : fromLane.x + fromLane.width + 24 + rejectSlot * 10;
         const endX = goLeft ? to.cx + R + 6 : to.cx - R - 6;
-        const endY = to.cy + 4;
-        const midX = (startX + endX) / 2;
-        const curveY = Math.max(startY, endY) + 56;
+        const endY = to.cy + 6;
+        const curveY = Math.max(maxBottomY - 12, Math.max(startY, endY) + 52) + rejectSlot * 30;
+        rejectSlot++;
+        maxBottomY = Math.max(maxBottomY, curveY + 26);
+
+        // Polilínea suave con esquinas redondeadas (Q) bajando por el canal libre sin cruzar círculos ni etiquetas
+        const bend = 24;
+        const dir = goLeft ? -1 : 1;
+        const path =
+          `M ${startX} ${startY} ` +
+          `L ${gutterX - dir * bend} ${startY} ` +
+          `Q ${gutterX} ${startY}, ${gutterX} ${startY + bend} ` +
+          `L ${gutterX} ${curveY - bend} ` +
+          `Q ${gutterX} ${curveY}, ${gutterX + dir * bend} ${curveY} ` +
+          `L ${endX - dir * bend} ${curveY} ` +
+          `Q ${endX} ${curveY}, ${endX} ${endY}`;
 
         edges.push({
           id: `E-N-${idx}`,
           kind: 'NO',
-          path: `M ${startX} ${startY} C ${startX} ${curveY}, ${endX} ${curveY}, ${endX} ${endY}`,
+          path,
           label: arc.transicion ? `NO · ${arc.transicion}` : 'NO · Rechazo',
-          labelX: midX,
-          labelY: curveY - 12,
+          labelX: (gutterX + endX) / 2,
+          labelY: curveY - 10,
           tooltip: `NO → ${to.area} · ${to.estatus}${arc.transicion ? ' (' + arc.transicion + ')' : ''}`,
         });
       }
     });
+
+    // Ajustar altura final de carriles y canvas SVG para que ningún arco inferior quede recortado
+    const finalLaneH = Math.max(baseLaneH, maxBottomY - LANE_TOP + 12);
+    swimlanes.forEach((l) => (l.height = finalLaneH));
+    const totalH = LANE_TOP + finalLaneH + 40;
 
     return {
       width: totalW,
@@ -1662,6 +1919,24 @@ export class WorkflowComponent implements OnInit, OnDestroy {
       transitions,
       edges,
     };
+  }
+
+  public diagramZoom: number = 1;
+
+  zoomInDiagram(): void {
+    this.diagramZoom = Math.min(1.85, Number((this.diagramZoom + 0.15).toFixed(2)));
+  }
+
+  zoomOutDiagram(): void {
+    this.diagramZoom = Math.max(0.55, Number((this.diagramZoom - 0.15).toFixed(2)));
+  }
+
+  resetDiagramZoom(): void {
+    this.diagramZoom = 1;
+  }
+
+  getDiagramZoomPercent(): number {
+    return Math.round(this.diagramZoom * 100);
   }
 
   toggleSelfLoops() {
@@ -1921,8 +2196,136 @@ export class WorkflowComponent implements OnInit, OnDestroy {
       : Array.isArray(payload?.segmentos)
         ? payload.segmentos
         : [];
+    const arcosAll = Array.isArray(petriNet.arcos)
+      ? petriNet.arcos
+      : Array.isArray(payload?.arcos)
+        ? payload.arcos
+        : [];
 
-    // 1. Intentar leer desde segmentos[].lugares[] (o estatuses[] / nodos[])
+    // Extraer ID numérico real de WKF_005_Red_Descripcion (NO el #idx sintético de arcos tipo "V:1:1->2:1#0")
+    const extractRuleId = (obj: any): string | null => {
+      if (!obj || typeof obj !== 'object') return null;
+      const explicitCand =
+        obj.regla_id ??
+        obj.id_regla ??
+        obj.id_mapa ??
+        obj.mapa_id ??
+        obj.id_desc ??
+        obj.idred_desc ??
+        null;
+      if (explicitCand != null) {
+        const s = String(explicitCand).trim();
+        if (/^\d+$/.test(s) && s !== '0') return s;
+      }
+      if (obj.id != null) {
+        const s = String(obj.id).trim();
+        // Aceptar obj.id únicamente si es numérico puro (> 0), nunca strings como "V:1:1->2:1#0"
+        if (/^\d+$/.test(s) && s !== '0') return s;
+      }
+      return null;
+    };
+
+    const extractArcIdx = (obj: any): string | null => {
+      const idStr = String(obj?.id ?? '');
+      const m = idStr.match(/#(\d+)$/);
+      return m ? m[1] : null;
+    };
+
+    const getKey = (node: any, fallbackEstado: any, fallbackEstatus: any): string =>
+      String(node?.key ?? `${node?.estado_id ?? fallbackEstado ?? ''}:${node?.estatus_id ?? fallbackEstatus ?? ''}`);
+
+    // 1. Priorizar petri_net.arcos[] (fuente de verdad sin LIMIT 1: soporta múltiples bifurcaciones desde el mismo origen)
+    if (arcosAll.length > 0) {
+      if (arcosAll[0]?.origen_area !== undefined) {
+        return arcosAll.map((r: any) => this.normalizeMapaRedRow(r));
+      }
+
+      const isSiArc = (a: any) => {
+        const dec = String(a?.decision ?? a?.tipo ?? 'SI').toUpperCase();
+        return dec === 'SI' || dec === 'VALIDO' || dec === 'TRUE';
+      };
+      const isNoArc = (a: any) => {
+        const dec = String(a?.decision ?? a?.tipo ?? '').toUpperCase();
+        return dec === 'NO' || dec === 'FALSO' || dec === 'FALSE';
+      };
+
+      const arcosSi = arcosAll.filter(isSiArc);
+      const arcosNo = arcosAll.filter(isNoArc);
+
+      // Contar cuántas salidas SI tiene cada nodo origen (para evitar cruzar arcos NO entre bifurcaciones distintas)
+      const siCountByOrigin = new Map<string, number>();
+      arcosSi.forEach((a: any) => {
+        const oKey = getKey(a?.origen, a?.origen_id, a?.estatus_origen_id);
+        if (oKey && oKey !== ':') {
+          siCountByOrigin.set(oKey, (siCountByOrigin.get(oKey) || 0) + 1);
+        }
+      });
+
+      // Indexar arcos NO por regla_id, por #idx de la fila SQL y por origen (respaldo 1:1)
+      const arcosNoByRuleId = new Map<string, any>();
+      const arcosNoByIdx = new Map<string, any>();
+      const arcosNoByOrigen = new Map<string, any>();
+
+      arcosNo.forEach((a: any) => {
+        const rid = extractRuleId(a);
+        if (rid && !arcosNoByRuleId.has(rid)) arcosNoByRuleId.set(rid, a);
+        const arcIdx = extractArcIdx(a);
+        if (arcIdx != null && !arcosNoByIdx.has(arcIdx)) arcosNoByIdx.set(arcIdx, a);
+        const oKey = getKey(a?.origen, a?.origen_id, a?.estatus_origen_id);
+        if (oKey && oKey !== ':' && !arcosNoByOrigen.has(oKey)) arcosNoByOrigen.set(oKey, a);
+      });
+
+      arcosSi.forEach((a: any) => {
+        const oKey = getKey(a?.origen, a?.origen_id, a?.estatus_origen_id);
+        const dKey = getKey(a?.destino, a?.destino_id, a?.estatus_destino_id);
+        const oParts = oKey.split(':');
+        const dParts = dKey.split(':');
+
+        const rid = extractRuleId(a);
+        const arcIdx = extractArcIdx(a);
+        const noArc =
+          (rid ? arcosNoByRuleId.get(rid) : undefined) ??
+          (arcIdx != null ? arcosNoByIdx.get(arcIdx) : undefined) ??
+          ((siCountByOrigin.get(oKey) || 0) <= 1 ? arcosNoByOrigen.get(oKey) : undefined);
+
+        const fKey = noArc
+          ? getKey(noArc?.destino, noArc?.destino_id, noArc?.estatus_destino_id)
+          : '';
+        const fParts = fKey ? fKey.split(':') : [];
+
+        rows.push({
+          id: rid,
+          origen_id: String(a?.origen?.estado_id ?? oParts[0] ?? ''),
+          origen_area: String(a?.origen?.area ?? a?.origen_area ?? '---'),
+          estatus_origen_id: String(a?.origen?.estatus_id ?? oParts[1] ?? ''),
+          estatus_origen: String(a?.origen?.estatus ?? a?.estatus_origen ?? '---'),
+          transicion_valida:
+            a?.transicion && a.transicion !== 'Directa' ? String(a.transicion) : null,
+          transicion_valida_desc: a?.descripcion ?? null,
+          destino_valido_id: String(a?.destino?.estado_id ?? dParts[0] ?? ''),
+          destino_valido_area: String(a?.destino?.area ?? a?.destino_area ?? '---'),
+          estatus_destino_valido_id: String(a?.destino?.estatus_id ?? dParts[1] ?? ''),
+          estatus_destino_valido: String(a?.destino?.estatus ?? a?.estatus_destino ?? '---'),
+          destino_falso_id: noArc ? String(noArc?.destino?.estado_id ?? fParts[0] ?? '') : null,
+          destino_falso_area: noArc ? String(noArc?.destino?.area ?? noArc?.destino_area ?? '') : null,
+          estatus_destino_falso_id: noArc
+            ? String(noArc?.destino?.estatus_id ?? fParts[1] ?? '')
+            : null,
+          estatus_destino_falso: noArc
+            ? String(noArc?.destino?.estatus ?? noArc?.estatus_destino ?? '')
+            : null,
+          transicion_falsa:
+            noArc?.transicion && noArc.transicion !== 'Directa'
+              ? String(noArc.transicion)
+              : null,
+          transicion_falsa_desc: noArc?.descripcion ?? null,
+        });
+      });
+
+      if (rows.length > 0) return rows;
+    }
+
+    // 2. Respaldo: leer desde segmentos[].lugares[] (si el payload no trajo petri_net.arcos[])
     if (segmentos.length > 0) {
       segmentos.forEach((seg: any) => {
         const lugares = Array.isArray(seg?.lugares)
@@ -1951,16 +2354,29 @@ export class WorkflowComponent implements OnInit, OnDestroy {
               ? String(noObj.transicion)
               : null;
 
+          const origenEstadoId = String(seg.estado_id ?? seg.estadoId ?? seg.id ?? '');
+          const origenEstatusId = String(lugar.estatus_id ?? lugar.estatusId ?? lugar.id ?? '');
+          const destEstadoId = String(siObj.estado_id ?? siObj.estadoId ?? siParts[0] ?? '');
+          const destEstatusId = String(siObj.estatus_id ?? siObj.estatusId ?? siParts[1] ?? '');
+
+          const rawRuleId =
+            extractRuleId(siObj) ??
+            (lugar?.regla_id ?? lugar?.id_regla ?? lugar?.id_mapa ?? lugar?.mapa_id ??
+              (lugar?.estatus_id != null && lugar?.id != null && String(lugar.id) !== String(lugar.estatus_id)
+                ? String(lugar.id)
+                : null));
+
           rows.push({
-            origen_id: String(seg.estado_id ?? seg.estadoId ?? seg.id ?? ''),
+            id: rawRuleId != null && String(rawRuleId).trim() !== '' ? String(rawRuleId).trim() : null,
+            origen_id: origenEstadoId,
             origen_area: String(seg.area ?? seg.nombre ?? '---'),
-            estatus_origen_id: String(lugar.estatus_id ?? lugar.estatusId ?? lugar.id ?? ''),
+            estatus_origen_id: origenEstatusId,
             estatus_origen: String(lugar.estatus ?? lugar.nombre ?? '---'),
             transicion_valida: transVal,
             transicion_valida_desc: siObj.descripcion ?? null,
-            destino_valido_id: String(siObj.estado_id ?? siObj.estadoId ?? siParts[0] ?? ''),
+            destino_valido_id: destEstadoId,
             destino_valido_area: String(siObj.area ?? '---'),
-            estatus_destino_valido_id: String(siObj.estatus_id ?? siObj.estatusId ?? siParts[1] ?? ''),
+            estatus_destino_valido_id: destEstatusId,
             estatus_destino_valido: String(siObj.estatus ?? '---'),
             destino_falso_id: noObj ? String(noObj.estado_id ?? noObj.estadoId ?? noParts[0] ?? '') : null,
             destino_falso_area: noObj ? String(noObj.area ?? '') : null,
@@ -1973,83 +2389,7 @@ export class WorkflowComponent implements OnInit, OnDestroy {
           });
         });
       });
-      if (rows.length > 0) return rows;
     }
-
-    // 2. Respaldo: reconstruir desde petri_net.arcos[] (si segmentos no trajo .si/.no o vino null)
-    const arcos = Array.isArray(petriNet.arcos)
-      ? petriNet.arcos
-      : Array.isArray(payload?.arcos)
-        ? payload.arcos
-        : [];
-    if (arcos.length > 0 && arcos[0]?.origen_area !== undefined) {
-      return arcos.map((r: any) => this.normalizeMapaRedRow(r));
-    }
-
-    const isSiArc = (a: any) => {
-      const dec = String(a?.decision ?? a?.tipo ?? 'SI').toUpperCase();
-      return dec === 'SI' || dec === 'VALIDO' || dec === 'TRUE';
-    };
-    const isNoArc = (a: any) => {
-      const dec = String(a?.decision ?? a?.tipo ?? '').toUpperCase();
-      return dec === 'NO' || dec === 'FALSO' || dec === 'FALSE';
-    };
-
-    const arcosSi = arcos.filter(isSiArc);
-    const arcosNoByOrigen = new Map<string, any>();
-    arcos.filter(isNoArc).forEach((a: any) => {
-      const key = String(
-        a?.origen?.key ??
-          `${a?.origen?.estado_id ?? a?.origen_id ?? ''}:${a?.origen?.estatus_id ?? a?.estatus_origen_id ?? ''}`,
-      );
-      if (key && key !== ':') arcosNoByOrigen.set(key, a);
-    });
-
-    arcosSi.forEach((a: any) => {
-      const oKey = String(
-        a?.origen?.key ??
-          `${a?.origen?.estado_id ?? a?.origen_id ?? ''}:${a?.origen?.estatus_id ?? a?.estatus_origen_id ?? ''}`,
-      );
-      const dKey = String(
-        a?.destino?.key ??
-          `${a?.destino?.estado_id ?? a?.destino_id ?? ''}:${a?.destino?.estatus_id ?? a?.estatus_destino_id ?? ''}`,
-      );
-      const oParts = oKey.split(':');
-      const dParts = dKey.split(':');
-      const noArc = arcosNoByOrigen.get(oKey);
-      const fKey = String(
-        noArc?.destino?.key ??
-          `${noArc?.destino?.estado_id ?? noArc?.destino_id ?? ''}:${noArc?.destino?.estatus_id ?? noArc?.estatus_destino_id ?? ''}`,
-      );
-      const fParts = fKey.split(':');
-
-      rows.push({
-        origen_id: String(a?.origen?.estado_id ?? oParts[0] ?? ''),
-        origen_area: String(a?.origen?.area ?? a?.origen_area ?? '---'),
-        estatus_origen_id: String(a?.origen?.estatus_id ?? oParts[1] ?? ''),
-        estatus_origen: String(a?.origen?.estatus ?? a?.estatus_origen ?? '---'),
-        transicion_valida:
-          a?.transicion && a.transicion !== 'Directa' ? String(a.transicion) : null,
-        transicion_valida_desc: a?.descripcion ?? null,
-        destino_valido_id: String(a?.destino?.estado_id ?? dParts[0] ?? ''),
-        destino_valido_area: String(a?.destino?.area ?? a?.destino_area ?? '---'),
-        estatus_destino_valido_id: String(a?.destino?.estatus_id ?? dParts[1] ?? ''),
-        estatus_destino_valido: String(a?.destino?.estatus ?? a?.estatus_destino ?? '---'),
-        destino_falso_id: noArc ? String(noArc?.destino?.estado_id ?? fParts[0] ?? '') : null,
-        destino_falso_area: noArc ? String(noArc?.destino?.area ?? noArc?.destino_area ?? '') : null,
-        estatus_destino_falso_id: noArc
-          ? String(noArc?.destino?.estatus_id ?? fParts[1] ?? '')
-          : null,
-        estatus_destino_falso: noArc
-          ? String(noArc?.destino?.estatus ?? noArc?.estatus_destino ?? '')
-          : null,
-        transicion_falsa:
-          noArc?.transicion && noArc.transicion !== 'Directa'
-            ? String(noArc.transicion)
-            : null,
-        transicion_falsa_desc: noArc?.descripcion ?? null,
-      });
-    });
 
     return rows;
   }
@@ -2185,6 +2525,145 @@ export class WorkflowComponent implements OnInit, OnDestroy {
     this.wkfRedEstadoDestFCtrl.setValue(undefined)
     this.wkfRedEstatusDestFCtrl.setValue(undefined)
     this.wkfRedTransicionFCtrl.setValue(undefined)
+  }
+
+  eliminarReglaMapa(row: MapaRedRow): void {
+    const reglaId = String(row?.id ?? '').trim();
+    if (!reglaId) {
+      console.warn('[WorkflowComponent] Fila sin ID de regla para WKF_DMapaRed:', row);
+      Swal.fire({
+        title: 'ID de regla no disponible',
+        html: `
+          <div style="text-align:left; font-size:0.84rem; color:#4b5563; line-height:1.5;">
+            La consulta <code>WKF_CMapaRed</code> no incluyó el campo <strong>id</strong> de <code>WKF_005_Red_Descripcion</code> en el JSON de esta fila.
+            <div style="margin-top:8px; background:#faf9fd; border:1px solid #e3dff2; border-radius:8px; padding:8px 10px; font-size:0.78rem;">
+              Asegúrate de proyectar <code>'id', rd.id</code> (o <code>'regla_id', rd.id</code>) dentro del objeto de la regla/arco en el SQL de <code>WKF_CMapaRed</code>.
+            </div>
+          </div>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Entendido',
+      });
+      return;
+    }
+
+    const destinoFalsoHtml = row.destino_falso_area
+      ? `<div style="display:flex; justify-content:space-between; gap:8px; padding-top:6px; margin-top:6px; border-top:1px dashed #e5e2f0;">
+           <span style="color:#6b7280; font-weight:600;">Destino Falso:</span>
+           <span style="color:#374151; text-align:right;">#${row.destino_falso_id} ${row.destino_falso_area} <small style="color:#6b7280;">(${row.estatus_destino_falso})</small></span>
+         </div>`
+      : '';
+
+    Swal.fire({
+      title: '¿Está seguro de eliminar esta regla?',
+      html: `
+        <div style="text-align:left; font-size:0.84rem; color:#4b5563;">
+          <p style="margin:0 0 10px 0; text-align:center; color:#64748b;">
+            Esta acción eliminará permanentemente la regla <strong style="color:#5b4c91;">#${reglaId}</strong> del mapa de red actual.
+          </p>
+          <div style="background:#faf9fd; border:1px solid #e3dff2; border-radius:10px; padding:10px 12px;">
+            <div style="display:flex; justify-content:space-between; gap:8px;">
+              <span style="color:#6b7280; font-weight:600;">Nodo Origen:</span>
+              <span style="color:#1f2937; font-weight:600; text-align:right;">#${row.origen_id} ${row.origen_area} <small style="color:#6b7280; font-weight:400;">(${row.estatus_origen})</small></span>
+            </div>
+            <div style="display:flex; justify-content:space-between; gap:8px; padding-top:6px; margin-top:6px; border-top:1px dashed #e5e2f0;">
+              <span style="color:#6b7280; font-weight:600;">Destino Válido:</span>
+              <span style="color:#1f2937; font-weight:600; text-align:right;">#${row.destino_valido_id} ${row.destino_valido_area} <small style="color:#6b7280; font-weight:400;">(${row.estatus_destino_valido})</small></span>
+            </div>
+            ${destinoFalsoHtml}
+          </div>
+        </div>
+      `,
+      icon: 'warning',
+      iconColor: '#844453',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, eliminar regla',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+      focusCancel: true,
+    }).then((result) => {
+      if (!result.isConfirmed) return;
+
+      const xAPI: IAPICore = {
+        funcion: 'WKF_DMapaRed',
+        parametros: reglaId,
+        valores: {},
+      };
+
+      this.apiService.Ejecutar(xAPI).subscribe({
+        next: (data: any) => {
+          const rawMsj = String(data?.msj ?? '').trim();
+          const hasExplicitError =
+            data?.tipo === 0 ||
+            /error|fail|invalid|exception/i.test(rawMsj);
+
+          if (hasExplicitError) {
+            const detalleError = data?.contenido || rawMsj || 'Error inesperado al eliminar la regla';
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'error',
+              showConfirmButton: false,
+              timer: 4200,
+              timerProgressBar: true,
+              background: '#ffffff',
+              html: `
+                <div style="text-align:left; font-size:0.82rem; line-height:1.4; color:#4b5563;">
+                  <div style="font-weight:700; color:#844453; margin-bottom:2px;">No se pudo eliminar la regla #${reglaId}</div>
+                  <div style="font-size:0.76rem; color:#64748b;">${detalleError}</div>
+                </div>
+              `,
+            });
+            return;
+          }
+
+          const isGenericCode = !rawMsj || /^\d+$/.test(rawMsj) || /^(ok|true|success)$/i.test(rawMsj);
+          const detalleExito = isGenericCode
+            ? `Se ha eliminado la regla <strong>#${reglaId}</strong> (${row.origen_area} → ${row.destino_valido_area}) del mapa de red.`
+            : rawMsj;
+
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            iconColor: '#6e5fa8',
+            showConfirmButton: false,
+            timer: 3400,
+            timerProgressBar: true,
+            background: '#ffffff',
+            html: `
+              <div style="text-align:left; font-size:0.82rem; line-height:1.4; color:#4b5563;">
+                <div style="font-weight:700; color:#5b4c91; margin-bottom:2px;">Regla eliminada correctamente</div>
+                <div style="font-size:0.76rem; color:#64748b;">${detalleExito}</div>
+              </div>
+            `,
+          });
+
+          const targetIdRed = this.idRed > 0 ? this.idRed : this.xidW;
+          if (targetIdRed > 0) {
+            this.lstRed(String(targetIdRed));
+          }
+        },
+        error: (err) => {
+          console.error('[WorkflowComponent] Error en WKF_DMapaRed:', err);
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'error',
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            background: '#ffffff',
+            html: `
+              <div style="text-align:left; font-size:0.82rem; line-height:1.4; color:#4b5563;">
+                <div style="font-weight:700; color:#844453; margin-bottom:2px;">Error de conexión</div>
+                <div style="font-size:0.76rem; color:#64748b;">No se pudo completar la eliminación de la regla #${reglaId}.</div>
+              </div>
+            `,
+          });
+        },
+      });
+    });
   }
 
 

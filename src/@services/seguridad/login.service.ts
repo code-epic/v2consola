@@ -322,8 +322,16 @@ export class LoginService {
       // Esto SIEMPRE debe ejecutarse para garantizar el cierre de sesión en el cliente.
 
       sessionStorage.clear();
-      localStorage.clear();
+      this.clearLocalStoragePreservingRemember();
       await this.taskService.clear();
+    }
+  }
+
+  private clearLocalStoragePreservingRemember(): void {
+    const rememberedUser = localStorage.getItem("sandra_remember_user");
+    localStorage.clear();
+    if (rememberedUser) {
+      localStorage.setItem("sandra_remember_user", rememberedUser);
     }
   }
 
@@ -499,13 +507,13 @@ export class LoginService {
               icon: "error",
             });
             sessionStorage.clear();
-            localStorage.clear();
+            this.clearLocalStoragePreservingRemember();
             reject(e);
           }
         },
         (error) => {
           sessionStorage.clear();
-          localStorage.clear();
+          this.clearLocalStoragePreservingRemember();
           console.error("Fallo conectando al perfil del usuario: ", error);
           reject(error);
         },
